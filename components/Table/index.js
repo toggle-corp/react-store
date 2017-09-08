@@ -51,7 +51,7 @@ const propTypes = {
     /**
      * A function that returns key from the row data
      */
-    keyExtractor: PropTypes.func.isRequired,
+    keyExtractor: PropTypes.func,
 };
 
 const defaultProps = {
@@ -64,6 +64,8 @@ const defaultProps = {
     },
 
     defaultSort: undefined,
+
+    keyExtractor: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
