@@ -2,8 +2,9 @@ import React from 'react';
 import CSSModules from 'react-css-modules';
 import { scaleLinear } from 'd3-scale';
 import { line, curveLinear, area } from 'd3-shape';
-import { select } from 'd3-selection';
+import { select, mouse, event } from 'd3-selection';
 import { max } from 'd3-array';
+import { axisBottom, axisLeft } from 'd3-axis';
 import styles from './styles.scss';
 import SegmentButton from '../SegmentButton';
 
@@ -55,10 +56,10 @@ class TimeSeries extends React.PureComponent {
         };
 
         this.margins = {
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10,
+            top: 16,
+            right: 16,
+            bottom: 48,
+            left: 56,
         };
 
         this.scaleX = scaleLinear();
@@ -81,6 +82,7 @@ class TimeSeries extends React.PureComponent {
                 this.svgContainer.offsetHeight - top - bottom,
                 0,
             ]);
+            this.height = this.svgContainer.offsetHeight - top - bottom;
             this.renderTimeSeries();
         }, 0);
     }
@@ -95,6 +97,7 @@ class TimeSeries extends React.PureComponent {
             this.svgContainer.offsetHeight - top - bottom,
             0,
         ]);
+        this.height = this.svgContainer.offsetHeight - top - bottom;
         this.renderTimeSeries();
     }
 
@@ -117,19 +120,32 @@ class TimeSeries extends React.PureComponent {
             .y0(this.scaleY(0))
             .y1(d => this.scaleY(d.y));
 
-        svg.select('*').remove();
+        svg.selectAll('*').remove();
+
+        // TODO: thenav56 create focus
+
+        svg.append('g')
+            .attr('transform', `translate(${left}, ${this.height + top})`)
+            .call(axisBottom(this.scaleX));
+        svg.append('g')
+            .attr('transform', `translate(${left}, ${top})`)
+            .call(axisLeft(this.scaleY));
+
         const container = svg.append('g')
             .attr('transform', `translate(${left}, ${top})`)
             .data([renderData]);
+
         container.append('path')
             .attr('fill', 'lightblue')
             .attr('d', ar);
+
         container.append('path')
             .attr('stroke', 'blue')
             .attr('stroke-width', '2')
             .attr('fill', 'none')
             .attr('d', this.line);
     }
+
     render() {
         const { selectedTimeInterval, segmentButton } = this.state;
 
