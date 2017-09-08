@@ -1,0 +1,61 @@
+@import '../../../stylesheets/base';
+
+.button {
+    @include shadow-medium;
+    outline: none;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: $spacing-medium;
+    text-transform: uppercase;
+    font-family: inherit;
+    font-size: $font-size-normal-alt;
+    font-weight: $font-weight-normal;
+    margin: $spacing-vertical-default $spacing-horizontal-default;
+
+    &:hover {
+        background-color: $color-background-button-hover;
+    }
+
+    &:active {
+        @include shadow-small;
+        transform: translateY(1px);
+    }
+
+    &.button-default {
+        background-color: $color-background-button-default;
+        color: $color-label;
+    }
+
+    &.button-primary {
+        background-color: $color-primary;
+        color: $color-text-on-primary;
+    }
+
+    &.button-danger {
+        background-color: $color-danger;
+        color: $color-text-on-primary;
+    }
+
+    &.button-success {
+        background-color: $color-success;
+        color: $color-text-on-primary;
+    }
+
+    &.button-warning {
+        background-color: $color-warning;
+        color: $color-text-on-primary;
+    }
+
+    .icon-button {
+        margin-right: $spacing-small;
+    }
+
+    &:disabled {
+        box-shadow: none;
+        background-color: $color-background-disabled;
+        cursor: default;
+        color: $color-text-disabled;
+    }
+
+}

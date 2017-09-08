@@ -1,0 +1,81 @@
+@import '../../../stylesheets/base';
+
+.table {
+    width: 100%;
+    border-spacing: 0;
+    $height-header: 32px;
+
+    thead {
+        background-color: $color-foreground;
+
+        tr {
+            th {
+                position: sticky;
+                top: 0;
+                border-right: $width-separator-thin solid $color-separator;
+                border-bottom: $width-separator-normal solid $color-accent;
+                border-left: $width-separator-thin solid $color-separator;
+                background-color: $color-background-header;
+                padding: 0 $spacing-medium;
+                height: $height-header;
+                text-transform: uppercase;
+                font-size: $font-size-small;
+                font-weight: $font-weight-normal;
+
+                &.sortable {
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-background-hover;
+                    }
+
+                    &::before {
+                        display: inline-block;
+                        transform: rotate(90deg);
+                        margin-right: $spacing-small;
+                        width: $width-icon-medium;
+                        font-family: 'Ionicons';
+                        content: '\f268';
+                    }
+
+                    &.active {
+                        color: $color-accent;
+
+                        &::before {
+                            transform: rotate(0);
+                        }
+
+                        &.asc {
+                            &::before {
+                                content: '\f35d';
+                            }
+                        }
+
+                        &.dsc {
+                            &::before {
+                                content: '\f366';
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    tbody {
+        background-color: $color-background;
+
+        tr {
+            background-color: $color-foreground;
+
+            td {
+                padding: $spacing-medium-alt;
+            }
+
+            &:nth-child(even) {
+                background-color: $color-background-alt-row;
+            }
+        }
+    }
+}
