@@ -3,12 +3,13 @@
 .table {
     width: 100%;
     border-spacing: 0;
-    $height-header: 32px;
 
     thead {
         background-color: $color-foreground;
 
         tr {
+            background-color: $color-background-header;
+
             th {
                 position: sticky;
                 top: 0;
@@ -16,11 +17,11 @@
                 border-bottom: $width-separator-normal solid $color-accent;
                 border-left: $width-separator-thin solid $color-separator;
                 background-color: $color-background-header;
-                padding: 0 $spacing-medium;
-                height: $height-header;
+                padding: $spacing-medium-alt $spacing-medium;
                 text-transform: uppercase;
                 font-size: $font-size-small;
                 font-weight: $font-weight-normal;
+                user-select: none;
 
                 &.sortable {
                     cursor: pointer;
