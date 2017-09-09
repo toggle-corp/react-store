@@ -2,14 +2,14 @@ import React from 'react';
 import CSSModules from 'react-css-modules';
 import { scaleLinear } from 'd3-scale';
 import { line, curveLinear, area } from 'd3-shape';
-import { select, mouse, event } from 'd3-selection';
-import { max } from 'd3-array';
+import { select, mouse } from 'd3-selection';
+import { max, bisector } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
 import styles from './styles.scss';
 import SegmentButton from '../SegmentButton';
 
 
-class TimeSeries extends React.PureComponent {
+class MountainChart extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -64,6 +64,7 @@ class TimeSeries extends React.PureComponent {
 
         this.scaleX = scaleLinear();
         this.scaleY = scaleLinear();
+        this.bisectX = bisector(d => d.x).left;
 
         this.line = line()
             .curve(curveLinear)
@@ -83,6 +84,7 @@ class TimeSeries extends React.PureComponent {
                 0,
             ]);
             this.height = this.svgContainer.offsetHeight - top - bottom;
+            this.width = this.svgContainer.offsetWidth - left - right;
             this.renderTimeSeries();
         }, 0);
     }
@@ -98,12 +100,75 @@ class TimeSeries extends React.PureComponent {
             0,
         ]);
         this.height = this.svgContainer.offsetHeight - top - bottom;
+        this.width = this.svgContainer.offsetWidth - left - right;
         this.renderTimeSeries();
     }
 
     onSegmentButtonClick = (val) => {
         const selectedTimeInterval = val;
         this.setState({ ...this.state, selectedTimeInterval });
+    }
+
+    addTooltip(container, yCrosshair = false) {
+        // TODO: review function, requirment
+        const svg = select(this.svg);
+        const { top, left } = this.margins;
+
+        // Append tooltip to svg
+        const focus = svg.append('g')
+            .attr('class', 'focus')
+            .style('display', 'none');
+
+        // Append line to tooltip
+        focus.append('line')
+            .attr('class', 'x-hover-line hover-line')
+            .attr('y2', yCrosshair && this.height)
+            .attr('stroke-width', 2)
+            .attr('stroke', 'black');
+
+        // Append circle to tooltip
+        focus.append('circle')
+            .attr('r', 7.5);
+
+        // Append text to tooltip
+        focus.append('text')
+            .text('here')
+            .attr('y', -10)
+            .attr('dy', 1);
+
+
+        // Append rect over other (Append at last)
+        // TODO: Add style to scss
+        svg.append('rect')
+            .attr('transform', `translate(${left}, ${top})`)
+            .attr('class', 'overlay')
+            .style('fill', 'none')
+            .style('pointer-events', 'all')
+            .attr('width', this.width)
+            .attr('height', this.height)
+            .on('mouseover', () => { focus.style('display', null); })
+            .on('mouseout', () => { focus.style('display', 'none'); })
+            .on('mousemove', () => {
+                const data = this.state.data[this.state.selectedTimeInterval];
+                const x0 = this.scaleX.invert(mouse(container.node())[0]);
+                const i = this.bisectX(data, x0, 1);
+                const d0 = data[i - 1];
+                const d1 = data[i];
+                const d = x0 - d0.x > d1.x - x0 ? d1 : d0;
+
+                const translate = {
+                    x: this.scaleX(d.x) + left,
+                    y: !yCrosshair ? this.scaleY(d.y) + top : top,
+                };
+
+                focus.attr('transform', !yCrosshair ? `translate(${translate.x}, ${translate.y})` :
+                    `translate(${translate.x}, ${translate.y})`);
+
+                focus.select('text').text(() => (d.y));
+                focus.select(!yCrosshair ? '.x-hover-line' : 'circle')
+                    .attr(!yCrosshair ? 'y2' : 'cy',
+                        !yCrosshair ? this.height - this.scaleY(d.y) : this.scaleY(d.y));
+            });
     }
 
     renderTimeSeries() {
@@ -121,8 +186,6 @@ class TimeSeries extends React.PureComponent {
             .y1(d => this.scaleY(d.y));
 
         svg.selectAll('*').remove();
-
-        // TODO: thenav56 create focus
 
         svg.append('g')
             .attr('transform', `translate(${left}, ${this.height + top})`)
@@ -144,6 +207,8 @@ class TimeSeries extends React.PureComponent {
             .attr('stroke-width', '2')
             .attr('fill', 'none')
             .attr('d', this.line);
+
+        this.addTooltip(container);
     }
 
     render() {
@@ -171,4 +236,4 @@ class TimeSeries extends React.PureComponent {
     }
 }
 
-export default CSSModules(TimeSeries, styles, { allowMultiple: true });
+export default CSSModules(MountainChart, styles, { allowMultiple: true });
