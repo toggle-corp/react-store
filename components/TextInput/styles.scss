@@ -1,0 +1,85 @@
+@import '../../../stylesheets/base';
+
+.text-input-wrapper {
+    width: 400px;
+    padding: $spacing-medium 0;
+
+    .text-input {
+        padding: $spacing-small $spacing-medium;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
+        border-radius: 3px;
+        background-color: $color-foreground;
+
+        .label {
+            margin-bottom: $spacing-small;
+            width: 100%;
+            text-transform: uppercase;
+            color: $color-label;
+            font-size: $font-size-small;
+        }
+
+        .input {
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            width: 100%;
+            color: $color-text;
+            font-family: inherit;
+            font-size: $font-size-medium-alt;
+        }
+
+        &:hover {
+            border-bottom-color: $color-separator-hover;
+        }
+
+        &.focused {
+            border-bottom-color: $color-accent;
+
+            .label {
+                color: $color-accent;
+            }
+        }
+
+        &.invalid {
+            border-bottom-color: $color-danger;
+
+            .label {
+                color: $color-danger;
+            }
+        }
+
+        &.required {
+            .label {
+                font-weight: $font-weight-normal;
+
+                &::after {
+                    content: '*';
+                }
+            }
+        }
+    }
+
+    .hint {
+        margin: 0;
+        padding: $spacing-small $spacing-medium 0;
+        color: $color-label;
+
+        &::before {
+            margin-right: $spacing-small;
+            font-family: $font-family-icons;
+            content: '\f149';
+        }
+    }
+
+    .error {
+        margin: 0;
+        padding: $spacing-small $spacing-medium 0;
+        color: $color-danger;
+
+        &::before {
+            margin-right: $spacing-small;
+            font-family: $font-family-icons;
+            content: '\f3bc';
+        }
+    }
+}
