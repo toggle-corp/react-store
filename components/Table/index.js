@@ -52,6 +52,11 @@ const propTypes = {
      * A function that returns key from the row data
      */
     keyExtractor: PropTypes.func,
+
+    /**
+     * A function that return a renderable for when table is empty
+     */
+    emptyRenderer: PropTypes.func,
 };
 
 const defaultProps = {
@@ -66,6 +71,8 @@ const defaultProps = {
     defaultSort: undefined,
 
     keyExtractor: undefined,
+
+    emptyRenderer: () => (<p>Nothing here</p>),
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -155,7 +162,7 @@ export default class Table extends React.PureComponent {
     }
 
     render() {
-        const { keyExtractor, hideHeaders } = this.props;
+        const { keyExtractor, hideHeaders, emptyRenderer } = this.props;
         const headers = this.headers;
         const { headerMeta, data } = this.state;
 
@@ -169,11 +176,22 @@ export default class Table extends React.PureComponent {
                         onClick={this.onHeaderClick}
                     />
                 }
-                <Body
-                    headers={headers}
-                    keyExtractor={keyExtractor}
-                    data={data}
-                />
+                {
+                    data.length > 0
+                        ? <Body
+                            headers={headers}
+                            keyExtractor={keyExtractor}
+                            data={data}
+                            emptyRenderer={emptyRenderer}
+                        />
+                        : <tbody>
+                            <tr>
+                                <td colSpan={headers.length} styleName="empty-data">
+                                    {emptyRenderer()}
+                                </td>
+                            </tr>
+                        </tbody>
+                }
             </table>
         );
     }

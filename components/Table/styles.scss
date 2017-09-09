@@ -72,11 +72,19 @@
 
             td {
                 padding: $spacing-medium-alt;
+
+                &.empty-data {
+                    padding: $spacing-medium;
+                    text-align: center;
+                    color: $color-label;
+                }
             }
 
             &:nth-child(even) {
                 background-color: $color-background-alt-row;
             }
         }
+
+
     }
 }
