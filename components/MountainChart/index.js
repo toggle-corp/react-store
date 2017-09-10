@@ -86,7 +86,7 @@ class MountainChart extends React.PureComponent {
             this.height = this.svgContainer.offsetHeight - top - bottom;
             this.width = this.svgContainer.offsetWidth - left - right;
             this.renderTimeSeries();
-        }, 0);
+        }, 100);
     }
 
     componentDidUpdate() {
@@ -109,7 +109,7 @@ class MountainChart extends React.PureComponent {
         this.setState({ ...this.state, selectedTimeInterval });
     }
 
-    addTooltip(container, yCrosshair = false) {
+    addTooltip(yCrosshair = false) {
         // TODO: review function, requirment
         const svg = select(this.svg);
         const { top, left } = this.margins;
@@ -139,18 +139,16 @@ class MountainChart extends React.PureComponent {
 
         // Append rect over other (Append at last)
         // TODO: Add style to scss
-        svg.append('rect')
+        const overlay = svg.append('rect')
             .attr('transform', `translate(${left}, ${top})`)
             .attr('class', 'overlay')
-            .style('fill', 'none')
-            .style('pointer-events', 'all')
             .attr('width', this.width)
             .attr('height', this.height)
             .on('mouseover', () => { focus.style('display', null); })
             .on('mouseout', () => { focus.style('display', 'none'); })
             .on('mousemove', () => {
                 const data = this.state.data[this.state.selectedTimeInterval];
-                const x0 = this.scaleX.invert(mouse(container.node())[0]);
+                const x0 = this.scaleX.invert(mouse(overlay.node())[0]);
                 const i = this.bisectX(data, x0, 1);
                 const d0 = data[i - 1];
                 const d1 = data[i];
@@ -208,7 +206,7 @@ class MountainChart extends React.PureComponent {
             .attr('fill', 'none')
             .attr('d', this.line);
 
-        this.addTooltip(container);
+        this.addTooltip();
     }
 
     render() {

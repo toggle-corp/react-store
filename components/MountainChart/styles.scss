@@ -31,3 +31,8 @@ $height-header: 48px;
   }
 
 }
+
+:global .overlay {
+  fill: none;
+  pointer-events: all;
+}
