@@ -85,7 +85,7 @@ class MountainChart extends React.PureComponent {
             ]);
             this.height = this.svgContainer.offsetHeight - top - bottom;
             this.width = this.svgContainer.offsetWidth - left - right;
-            this.renderTimeSeries();
+            this.renderMountainChart();
         }, 100);
     }
 
@@ -101,7 +101,7 @@ class MountainChart extends React.PureComponent {
         ]);
         this.height = this.svgContainer.offsetHeight - top - bottom;
         this.width = this.svgContainer.offsetWidth - left - right;
-        this.renderTimeSeries();
+        this.renderMountainChart();
     }
 
     onSegmentButtonClick = (val) => {
@@ -109,8 +109,7 @@ class MountainChart extends React.PureComponent {
         this.setState({ ...this.state, selectedTimeInterval });
     }
 
-    addTooltip(yCrosshair = false) {
-        // TODO: review function, requirment
+    addTooltip() {
         const svg = select(this.svg);
         const { top, left } = this.margins;
 
@@ -119,12 +118,11 @@ class MountainChart extends React.PureComponent {
             .attr('class', 'focus')
             .style('display', 'none');
 
-        // Append line to tooltip
-        focus.append('line')
-            .attr('class', 'x-hover-line hover-line')
-            .attr('y2', yCrosshair && this.height)
-            .attr('stroke-width', 2)
-            .attr('stroke', 'black');
+        focus.append('path')
+            .attr('class', 'mouse-line')
+            .style('stroke', 'red')
+            .style('stroke-width', '2px')
+            .attr('transform', `translate(${left}, ${top})`);
 
         // Append circle to tooltip
         focus.append('circle')
@@ -132,9 +130,11 @@ class MountainChart extends React.PureComponent {
 
         // Append text to tooltip
         focus.append('text')
-            .text('here')
-            .attr('y', -10)
-            .attr('dy', 1);
+            .attr('class', 'tooltip')
+            .style('text-anchor', 'start')
+            .style('stroke', 'steelblue')
+            .style('fill', 'red')
+            .attr('dy', '.35em');
 
 
         // Append rect over other (Append at last)
@@ -147,29 +147,33 @@ class MountainChart extends React.PureComponent {
             .on('mouseover', () => { focus.style('display', null); })
             .on('mouseout', () => { focus.style('display', 'none'); })
             .on('mousemove', () => {
+                const xpos = mouse(overlay.node())[0];
                 const data = this.state.data[this.state.selectedTimeInterval];
-                const x0 = this.scaleX.invert(mouse(overlay.node())[0]);
-                const i = this.bisectX(data, x0, 1);
+                const x0 = this.scaleX.invert(xpos);
+                const i = this.bisectX(data, x0, 1, data.length - 1);
                 const d0 = data[i - 1];
                 const d1 = data[i];
                 const d = x0 - d0.x > d1.x - x0 ? d1 : d0;
 
-                const translate = {
-                    x: this.scaleX(d.x) + left,
-                    y: !yCrosshair ? this.scaleY(d.y) + top : top,
-                };
+                focus.select('.mouse-line')
+                    .attr('d', () => {
+                        let w = `M${xpos},${this.height}`;
+                        w += ` ${xpos}, 0`;
+                        return w;
+                    });
 
-                focus.attr('transform', !yCrosshair ? `translate(${translate.x}, ${translate.y})` :
-                    `translate(${translate.x}, ${translate.y})`);
+                focus.select('circle')
+                    .attr('transform', `translate(${this.scaleX(d.x) + left}, ${top})`)
+                    .attr('cy', this.scaleY(d.y));
 
-                focus.select('text').text(() => (d.y));
-                focus.select(!yCrosshair ? '.x-hover-line' : 'circle')
-                    .attr(!yCrosshair ? 'y2' : 'cy',
-                        !yCrosshair ? this.height - this.scaleY(d.y) : this.scaleY(d.y));
+                focus.select('text')
+                    .attr('x', xpos + left)
+                    .attr('y', this.scaleY(d.y))
+                    .text(() => (d.y));
             });
     }
 
-    renderTimeSeries() {
+    renderMountainChart() {
         const renderData = this.state.data[this.state.selectedTimeInterval];
         const { top, left } = this.margins;
 
@@ -218,7 +222,7 @@ class MountainChart extends React.PureComponent {
                 styleName="time-series"
             >
                 <header>
-                    <h3>Time series</h3>
+                    <h3>Mountain Chart</h3>
                     <SegmentButton
                         data={segmentButton.data}
                         name={segmentButton.name}
