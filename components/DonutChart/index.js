@@ -6,6 +6,7 @@ import { schemeCategory20, scaleOrdinal } from 'd3-scale';
 import { arc, pie } from 'd3-shape';
 
 const propTypes = {
+    // eslint-disable-next-line
     data: PropTypes.array,
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
