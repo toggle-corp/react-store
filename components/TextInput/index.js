@@ -11,20 +11,21 @@ const propTypes = {
     value: PropTypes.string,
     label: PropTypes.string,
     hint: PropTypes.string,
-    validator: PropTypes.func,
     required: PropTypes.bool,
+    error: PropTypes.string,
+    onFocusIn: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     value: '',
     label: '',
     hint: '',
-    validator: undefined,
     required: false,
+    error: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
-export default class Table extends React.PureComponent {
+export default class TextInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -34,31 +35,25 @@ export default class Table extends React.PureComponent {
         this.state = {
             value: this.props.value,
             focused: false,
-            valid: true,
         };
 
         this.inputId = randomString();
     }
 
+    // Publics
+    value = () => this.state.value;
+    isFocused = () => this.state.focused;
+
     handleChange = (event) => {
-        const { validator } = this.props;
         const { value } = event.target;
-        let valid = true;
-
-        if (validator && value.length > 0) {
-            const check = validator(value);
-            valid = check.valid;
-
-            this.errorMsg = check.valid ? undefined : check.errorMsg;
-        } else {
-            this.errorMsg = undefined;
-        }
-
-        this.setState({ value, valid });
+        this.setState({ value });
     }
 
     handleFocus = () => {
-        this.setState({ focused: true });
+        this.setState(
+            { focused: true },
+            () => { this.props.onFocusIn(); },
+        );
     }
 
     handleBlur = () => {
@@ -66,18 +61,11 @@ export default class Table extends React.PureComponent {
     }
 
     renderError = () => {
-        if (this.errorMsg && this.errorMsg.length > 0) {
-            return (
-                <p styleName="error">{this.errorMsg}</p>
-            );
-        }
-
-        return '';
     }
 
     render() {
-        const { label, hint, required } = this.props;
-        const { value, focused, valid } = this.state;
+        const { label, error, required } = this.props;
+        const { value, focused } = this.state;
 
         return (
             <div styleName="text-input-wrapper">
@@ -85,7 +73,7 @@ export default class Table extends React.PureComponent {
                     styleName={`
                         text-input
                         ${focused ? 'focused' : ''}
-                        ${valid ? '' : 'invalid'}
+                        ${error ? 'invalid' : ''}
                         ${required ? 'required' : ''}
                     `}
                 >
@@ -105,8 +93,12 @@ export default class Table extends React.PureComponent {
                         onBlur={this.handleBlur}
                     />
                 </div>
-                { this.renderError() }
-                <p styleName="hint">{hint}</p>
+                <p styleName="error">
+                    {error}
+                </p>
+                <p styleName="hint">
+                    {this.props.hint}
+                </p>
             </div>
         );
     }

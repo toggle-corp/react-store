@@ -6,23 +6,23 @@ import {
 // VALIDATION RULES
 export const requiredCondition = {
     truth: value => !isFalsy(value) && value !== '',
-    message: 'field-must-not-be-empty',
+    message: 'Field must not be empty',
 };
 export const numberCondition = {
     truth: value => isFalsy(value) || !isFalsy(+value),
-    message: 'value-must-be-number',
+    message: 'Value must be a number',
 };
 export const integerCondition = {
     truth: value => !isFloat(+value),
-    message: 'value-must-be-integer',
+    message: 'Value must be an integer',
 };
 export const greaterThanZeroCondition = {
     truth: value => value >= 0,
-    message: 'value-must-be-greater-than-zero',
+    message: 'Value must be greater than zero',
 };
 export const lengthFourCondition = {
     truth: value => isFalsy(value) || value.length === 4,
-    message: 'value-must-be-4-characters-long',
+    message: 'Value must have 4 characters',
 };
 export const emailCondition = {
     truth: (value) => {
@@ -30,7 +30,7 @@ export const emailCondition = {
         // NOTE: valid if falsy value as well
         return isFalsy(value) || re.test(value);
     },
-    message: 'value-must-be-valid-email',
+    message: 'Value must be a valid email',
 };
 
 // FORM CLASS
@@ -56,12 +56,12 @@ class Form {
         this.addons = addons;
     }
 
-    setCallbackForFocus = (fn) => {
-        this.focusCallback = fn;
+    setCallbackForFocusIn = (fn) => {
+        this.focusInCallback = fn;
     }
 
     // Generally: this.setState(addon);
-    setCallbackForChangeValue = (fn) => {
+    setCallbackForChange = (fn) => {
         this.changeTextCallback = fn;
     }
 
@@ -74,12 +74,15 @@ class Form {
 
     // NOTE: can be used from outside (used in addon)
     isValid = (name, value) => {
-        for (const validation of this.validations[name] || []) {
-            if (!validation.truth(value)) {
-                return { status: false, message: validation.message };
+        let returnVal = { status: true };
+        this.validations[name].every((validation) => {
+            const valid = validation.truth(value);
+            if (!valid) {
+                returnVal = { status: false, message: validation.message };
             }
-        }
-        return { status: true };
+            return valid;
+        });
+        return returnVal;
     };
 
     // NOTE: can be called from outside
@@ -97,17 +100,18 @@ class Form {
         this[name].value()
     )
 
-    onFocus = (overrideName) => {
+    onFocusIn = (overrideName) => {
         const errors = { ...this.errors };
-        for (const name in errors) {
+        Object.keys(errors).every((name) => {
             const ref = this[name];
             if ((ref && ref.isFocused()) || overrideName === name) {
                 delete errors[name];
             }
-        }
+            return true;
+        });
         this.errors = errors;
 
-        this.focusCallback({ errors });
+        this.focusInCallback(errors);
     }
 
     onChangeValue = (text) => {
@@ -138,6 +142,8 @@ class Form {
         let errorCount = 0;
 
         const validate = (name) => {
+            console.log(name);
+            console.log(this[name]);
             const value = this[name].value();
             const res = this.isValid(name, value);
             if (!res.status) {
@@ -149,13 +155,14 @@ class Form {
         this.errors = errors;
 
         if (errorCount > 0) {
-            this.failureSubmitCallback({ errors });
+            this.failureSubmitCallback(errors);
         } else {
             // success
             const result = {};
-            for (const name of this.elements) {
+            this.elements.every((name) => {
                 result[name] = this[name].value();
-            }
+                return true;
+            });
             this.successSubmitCallback(result);
         }
     }
