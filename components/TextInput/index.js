@@ -13,8 +13,8 @@ const propTypes = {
     label: PropTypes.string,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
+    initialValue: PropTypes.string,
     required: PropTypes.bool,
-    value: PropTypes.string,
 };
 
 const defaultProps = {
@@ -23,8 +23,8 @@ const defaultProps = {
     label: '',
     onBlur: undefined,
     onFocus: undefined,
+    initialValue: '',
     required: false,
-    value: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -37,7 +37,7 @@ export default class TextInput extends React.PureComponent {
 
         this.state = {
             focused: false,
-            value: this.props.value,
+            value: this.props.initialValue,
         };
 
         this.inputId = randomString();
@@ -80,19 +80,33 @@ export default class TextInput extends React.PureComponent {
             }
         };
 
+
         // Invoke only after state has changed
         this.setState({ focused: false }, invokeBlurCallback);
     }
 
     render() {
         const {
+            // NOTE: Professional stuff, don't try to alter these
+            // eslint-disable-next-line
+            initialValue,
+            // eslint-disable-next-line
+            onFocus,
+            // eslint-disable-next-line
+            onChange,
+            // eslint-disable-next-line
+            onBlur,
+
+            hint,
             error,
             label,
             required,
+            ...otherProps
         } = this.props;
+
         const {
-            focused,
             value,
+            focused,
         } = this.state;
 
         return (
@@ -117,14 +131,14 @@ export default class TextInput extends React.PureComponent {
                         onChange={this.handleChange}
                         onFocus={this.handleFocus}
                         styleName="input"
-                        type="text"
                         value={value}
+                        {...otherProps}
                     />
                 </div>
                 {
                     !error &&
                     <p styleName="hint">
-                        {this.props.hint}
+                        {hint}
                     </p>
                 }
                 {

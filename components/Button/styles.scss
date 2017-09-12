@@ -2,7 +2,6 @@
 
 .button {
     @include shadow-medium;
-    margin: $spacing-vertical-default $spacing-horizontal-default;
     outline: none;
     border: 0;
     border-radius: 3px;
