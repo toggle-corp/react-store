@@ -2,6 +2,7 @@
 
 .button {
     @include shadow-medium;
+    margin: $spacing-vertical-default $spacing-horizontal-default;
     outline: none;
     border: 0;
     border-radius: 3px;
@@ -11,7 +12,6 @@
     font-family: inherit;
     font-size: $font-size-normal-alt;
     font-weight: $font-weight-normal;
-    margin: $spacing-vertical-default $spacing-horizontal-default;
 
     &:hover {
         background-color: $color-background-button-hover;
@@ -20,6 +20,10 @@
     &:active {
         @include shadow-small;
         transform: translateY(1px);
+    }
+
+    &:focus {
+        border-bottom: $width-separator-normal solid $color-accent;
     }
 
     &.button-default {
