@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactFauxDOM from 'react-faux-dom';
 import PropTypes from 'prop-types';
-import { select } from 'd3-selection';
-import { scaleOrdinal } from 'd3-scale';
+import { select, selectAll } from 'd3-selection';
+import { schemeCategory20, scaleOrdinal } from 'd3-scale';
 import { arc, pie } from 'd3-shape';
 
 const propTypes = {
@@ -36,15 +36,12 @@ export default class DonutChart extends React.PureComponent {
         const width = 400;
         const radius = Math.min(width, height) / 2;
 
-        const color = scaleOrdinal()
-            .range([
-                '#98abc5', '#8a89a6', '#7b6888',
-                '#6b486b', '#a05d56', '#d0743c', '#ff8c00',
-            ]);
+        const colorRange = schemeCategory20;
+        const color = scaleOrdinal().range(colorRange);
 
         const arch = arc()
             .outerRadius(radius - 10)
-            .innerRadius(radius - 70);
+            .innerRadius(radius - 80);
 
         const pies = pie().value(valueAccessor);
 
@@ -69,8 +66,31 @@ export default class DonutChart extends React.PureComponent {
         group.append('text')
             .attr('transform', d => `translate(${arch.centroid(d)})`)
             .attr('dy', '1em')
+            .attr('class', 'text-label')
             .attr('text-anchor', 'middle')
             .text(d => labelAccessor(d.data));
+
+        svg.selectAll('.arc')
+            .on('mouseover', (datum) => {
+                console.log('fired here');
+                const chart = select('svg');
+                chart.append('circle')
+                    .attr('class', 'toolTip')
+                    .attr('cx', width / 2)
+                    .attr('cy', height / 2)
+                    .attr('r', radius * 0.55)
+                    .attr('fill', color(valueAccessor(datum.data)));
+
+                chart.append('text')
+                    .attr('class', 'toolTip')
+                    .attr('dy', '1em')
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', `translate(${width / 2}, ${height / 2})`)
+                    .text(labelAccessor(datum.data));
+            })
+            .on('mouseout', () => {
+                selectAll('.toolTip').remove();
+            });
 
         return el.toReact();
     }
