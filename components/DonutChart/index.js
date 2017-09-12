@@ -31,7 +31,7 @@ export default class DonutChart extends React.PureComponent {
             valueAccessor,
             labelAccessor,
         } = this.props;
-        //TODO: dynamic height,
+        // TODO: dynamic height,
         const height = 400;
         const width = 400;
         const radius = Math.min(width, height) / 2;

@@ -33,16 +33,24 @@ export const emailCondition = {
     message: 'Value must be a valid email',
 };
 
-// FORM CLASS
-
+// TODO: Use builder pattern
 class Form {
     constructor() {
+        // List of reference names
         this.elements = [];
+        // Contains validation objects containing a validator and error message
         this.validations = {};
+        // Contains addons objects for complex relationships
         this.addons = {};
 
+        // Stores all the errors
         this.errors = {};
+        // TODO: add warning
+
+        this.references = {};
     }
+
+    // Setters
 
     setElements(elements) {
         this.elements = elements;
@@ -56,114 +64,104 @@ class Form {
         this.addons = addons;
     }
 
-    setCallbackForFocusIn = (fn) => {
-        this.focusInCallback = fn;
+    setCallbackForFocus = (focusFn) => {
+        this.focusCallback = focusFn;
     }
 
-    // Generally: this.setState(addon);
-    setCallbackForChange = (fn) => {
-        this.changeTextCallback = fn;
+    setCallbackForChange = (changeFn) => {
+        this.changeCallback = changeFn;
     }
 
-    // Generally: success: this.props.onSubmit(result); // callback
-    // Generally: failure: this.setState({ errors });
-    setCallbackForSuccessAndFailure= (success, failure) => {
-        this.successSubmitCallback = success;
-        this.failureSubmitCallback = failure;
+    setCallbackForSuccessAndFailure= (successFn, failureFn) => {
+        this.successCallback = successFn;
+        this.failureCallback = failureFn;
     }
 
-    // NOTE: can be used from outside (used in addon)
+    // Used to reference of a component locally using element 'name'
+    // ACCESS: public
+    updateRef = name => (ref) => {
+        this.references[name] = ref;
+    }
+
+    // Access component using the locally saved element 'name'
+    // ACCESS: public
+    getRef = name => (
+        this.references[name]
+    )
+
+    // Check if a value is valid for certain element
+    // ACCESS: public (eg. from addons)
     isValid = (name, value) => {
-        let returnVal = { status: true };
-        this.validations[name].every((validation) => {
-            const valid = validation.truth(value);
+        let returnVal = { ok: true };
+        const validationRules = this.validations[name] || [];
+
+        // Checks for every rule until one of them is invalid,
+        // and set returnVal to specific error
+        validationRules.every((validationRule) => {
+            const valid = validationRule.truth(value);
             if (!valid) {
-                returnVal = { status: false, message: validation.message };
+                returnVal = { ok: false, message: validationRule.message };
             }
             return valid;
         });
         return returnVal;
     };
 
-    // NOTE: can be called from outside
-    updateRef = name => (ref) => {
-        this[name] = ref;
+    // Remove the error for the element which is currently focused
+    // or whose name is equal to overrideName
+    onFocus = (overrideName) => {
+        // Get name of element to be deleted
+        const findFn = name => this.getRef(name).isFocused() || overrideName === name;
+        const deletionName = Object.keys(this.errors).find(findFn);
+
+        if (deletionName) {
+            // delete error for 'deletionName'
+            this.errors = { ...this.errors, [deletionName]: undefined };
+        }
+        this.focusCallback(this.errors);
     }
 
-    // NOTE: can be called from outside
-    getRef = name => (
-        this[name]
-    )
+    onChange = (text) => {
+        // Get name of element to be modified
+        const findFn = name => this.getRef(name).isFocused();
+        const modificationName = this.elements.find(findFn);
 
-    // NOTE: can be called from outside
-    getRefValue = name => (
-        this[name].value()
-    )
-
-    onFocusIn = (overrideName) => {
-        const errors = { ...this.errors };
-        Object.keys(errors).every((name) => {
-            const ref = this[name];
-            if ((ref && ref.isFocused()) || overrideName === name) {
-                delete errors[name];
-            }
-            return true;
-        });
-        this.errors = errors;
-
-        this.focusInCallback(errors);
-    }
-
-    onChangeValue = (text) => {
-        // callbacks
-        const getNameWithObject = name => ({
-            name,
-            ref: this[name],
-        });
-        const setTextIfFocused = ({ name, ref }) => {
-            if (ref && ref.isFocused()) {
-                const addonFunc = this.addons[name];
-
-                const change = {
-                    [name]: text,
-                };
-                const additionalChange = addonFunc ? addonFunc(text) : {};
-                this.changeTextCallback({ ...change, ...additionalChange });
-            }
-        };
-
-        this.elements
-            .map(getNameWithObject)
-            .forEach(setTextIfFocused);
+        if (modificationName) {
+            const change = {
+                [modificationName]: text,
+            };
+            const addonRule = this.addons[modificationName];
+            const addonChange = addonRule ? addonRule(text) : {};
+            this.changeCallback({ ...change, ...addonChange });
+        }
     }
 
     onSubmit = () => {
-        const errors = {};
-        let errorCount = 0;
-
-        const validate = (name) => {
-            console.log(name);
-            console.log(this[name]);
-            const value = this[name].value();
+        // get errors and error counts
+        const { errorCount, errors } = this.elements.reduce((acc, name) => {
+            const value = this.getRef(name).value();
             const res = this.isValid(name, value);
-            if (!res.status) {
-                errors[name] = res.message;
-                errorCount += 1;
+            if (!res.ok) {
+                return {
+                    errorCount: acc.errorCount + 1,
+                    errors: { ...acc.errors, [name]: res.message },
+                };
             }
-        };
-        this.elements.forEach(validate);
+            return acc;
+        }, { errorCount: 0, errors: {} });
+
         this.errors = errors;
 
         if (errorCount > 0) {
-            this.failureSubmitCallback(errors);
+            this.failureCallback(errors);
         } else {
             // success
-            const result = {};
+            const returnVal = {};
             this.elements.every((name) => {
-                result[name] = this[name].value();
+                returnVal[name] = this.getRef(name).value();
                 return true;
             });
-            this.successSubmitCallback(result);
+            this.successCallback(returnVal);
         }
     }
 }
