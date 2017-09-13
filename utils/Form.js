@@ -16,14 +16,32 @@ export const integerCondition = {
     truth: value => !isFloat(+value),
     message: 'Value must be an integer',
 };
-export const greaterThanZeroCondition = {
-    truth: value => value >= 0,
-    message: 'Value must be greater than zero',
-};
-export const lengthFourCondition = {
-    truth: value => isFalsy(value) || value.length === 4,
-    message: 'Value must have 4 characters',
-};
+
+export const lessThanCondition = n => ({
+    truth: value => value < n,
+    message: `Value must be less than ${n}`,
+});
+
+export const greaterThanCondition = n => ({
+    truth: value => value > n,
+    message: `Value must be greater than ${n}`,
+});
+
+export const lengthLessThanCondition = n => ({
+    truth: value => isFalsy(value) || value.length < n,
+    message: `Length must be less than ${n} characters`,
+});
+
+export const lengthGreaterThanCondition = n => ({
+    truth: value => isFalsy(value) || value.length > n,
+    message: `Length must be greater than ${n} characters`,
+});
+
+export const lengthEqualToCondition = n => ({
+    truth: value => isFalsy(value) || value.length === n,
+    message: `Length must have exactly ${n} characters`,
+});
+
 export const emailCondition = {
     truth: (value) => {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

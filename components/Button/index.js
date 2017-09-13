@@ -33,13 +33,14 @@ const propTypes = {
     /**
      * action to invoke when the button is clicked
      */
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
     buttonType: 'button-default',
     disabled: false,
     iconName: undefined,
+    onClick: () => {},
 };
 
 /**

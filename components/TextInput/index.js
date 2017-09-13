@@ -20,7 +20,7 @@ const propTypes = {
 const defaultProps = {
     error: '',
     hint: '',
-    label: '',
+    label: ' ',
     onBlur: undefined,
     onFocus: undefined,
     initialValue: '',
@@ -147,6 +147,7 @@ export default class TextInput extends React.PureComponent {
                         {error}
                     </p>
                 }
+                { !error && !hint && <p styleName="empty">-</p> }
             </div>
         );
     }
