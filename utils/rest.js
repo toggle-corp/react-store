@@ -7,11 +7,13 @@
 export class RestRequest {
     // handle error in response
     static handleError = (response) => {
+        // console.log(response);
         if (response.ok) {
             return response;
         }
         return Promise.reject({
-            message: `${response.status}: ${response.statusText}`,
+            responseCode: response.status,
+            message: response.statusText,
         });
     };
 
@@ -52,8 +54,8 @@ export class RestRequest {
                 }
             })
             .catch((response) => {
-                const { message } = response;
-                this.fatal(message);
+                const { responseCode, message } = response;
+                this.fatal(`${responseCode}: ${message}`);
                 if (this.retry > 0) {
                     this.retryId = setTimeout(this.start, this.retry);
                 }
