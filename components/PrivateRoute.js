@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import {
     Route,
@@ -8,18 +7,20 @@ import {
 } from 'react-router-dom';
 
 
-const mapStateToProps = state => ({
-    authenticated: state.auth.authenticated,
-});
-
-
-@connect(mapStateToProps)
 export default class PrivateRoute extends React.PureComponent {
     static propTypes = {
         component: PropTypes.func.isRequired,
         authenticated: PropTypes.bool.isRequired,
-        location: PropTypes.object.isRequired,
+        location: PropTypes.shape({
+            pathname: PropTypes.string.isRequired,
+        }),
     };
+
+    static defaultProps = {
+        location: {
+            pathname: '/',
+        },
+    }
 
     render() {
         const { component: Component, authenticated, ...otherProps } = this.props;
