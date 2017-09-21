@@ -4,12 +4,13 @@ import Table from '../index';
 
 
 describe('<Table />', () => {
-    const tableData = [
-        { a: 'b', c: 'd' },
-        { a: 'e', c: 'f' },
-    ];
     const tableHeaders = [
-        { a: '1', c: '2' },
+        { key: 'a', label: 'atest', order: 1 },
+        { key: 'b', label: 'btest', order: 2 },
+    ];
+    const tableData = [
+        { a: 'a1', b: 'b1' },
+        { a: 'a2', b: 'b2' },
     ];
 
     const wrapper = shallow(

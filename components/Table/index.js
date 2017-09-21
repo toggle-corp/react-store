@@ -17,6 +17,19 @@ import {
 } from '../../utils/common';
 
 
+// Test for
+// 01. render
+// 02. default sort
+// 03. no sort in default (but sortable headers)
+// 04. no sort in default (no sortable headers)
+// 05. Change in data
+// 06. Change in header (added new header)
+// 07. Change in header (removed a header, not active)
+// 08. Change in header (removed a header, active: has sortable headers)
+// 09. Change in header (removed a header, active: has no sortable headers)
+// 10. Change in header (removed a header, active: it is the default sort, no other sortable)
+// 11. Change in header (removed a header, active: it is the default sort, other are sortable)
+
 const ASC = 'asc';
 const DSC = 'dsc';
 
@@ -103,9 +116,12 @@ export default class Table extends React.PureComponent {
         const { data, headers, defaultSort } = this.props;
         // NOTE: order and number of columns cannot change after initialization
         // Sort headers according to order (horizontalSort)
-        this.headers = [...headers].sort((a, b) => a.order - b.order);
+        this.state.headers = [...headers].sort((a, b) => a.order - b.order);
 
+        // the column by which data should be sorted (recieved via props)
         let activeSort = defaultSort;
+
+        // if defaultSort is not provided, make first sortable column as defaultSort
         if (!activeSort) {
             const sortableHeaders = headers.filter(a => a.sortable);
             if (sortableHeaders.length > 0) {
@@ -124,11 +140,49 @@ export default class Table extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { headers, data } = nextProps;
+        const {
+            data,
+            defaultSort,
+            headers,
+        } = this.props;
         const { headerMeta } = this.state;
 
-        const newData = Table.getSortedData(headers, data, headerMeta);
-        this.setState({ data: newData });
+        let newData = nextProps.data;
+        let newHeaders = nextProps.headers;
+
+        let newHeaderMeta = headerMeta;
+
+        if (headers !== newHeaders) {
+            // NOTE: order and number of columns cannot change after initialization
+            // Sort headers according to order (horizontalSort)
+            newHeaders = [...headers].sort((a, b) => a.order - b.order);
+
+            // the column by which data should be sorted (recieved via props)
+            let activeSort = defaultSort;
+
+            // if defaultSort is not provided, make first sortable column as defaultSort
+            if (!activeSort) {
+                const sortableHeaders = headers.filter(a => a.sortable);
+                if (sortableHeaders.length > 0) {
+                    activeSort = { key: sortableHeaders[0].key, order: ASC };
+                }
+            }
+
+            if (activeSort) {
+                newHeaderMeta = { activeKey: activeSort.key, sortOrder: activeSort.order };
+                newData = Table.getSortedData(headers, data, headerMeta);
+            } else {
+                newData = data;
+            }
+        } else if (data !== newData) {
+            newData = Table.getSortedData(headers, data, headerMeta);
+        }
+
+        this.setState({
+            data: newData,
+            headerMeta: newHeaderMeta,
+            headers: newHeaders,
+        });
     }
 
     onHeaderClick = (key) => {
@@ -162,9 +216,17 @@ export default class Table extends React.PureComponent {
     }
 
     render() {
-        const { keyExtractor, hideHeaders, emptyRenderer } = this.props;
-        const headers = this.headers;
-        const { headerMeta, data } = this.state;
+        const {
+            emptyRenderer,
+            hideHeaders,
+            keyExtractor,
+        } = this.props;
+
+        const {
+            data,
+            headerMeta,
+            headers,
+        } = this.state;
 
         return (
             <table styleName="table" role="grid">
