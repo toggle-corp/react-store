@@ -167,26 +167,29 @@ export default class Table extends React.PureComponent {
         const { headerMeta, data } = this.state;
 
         return (
-            <table styleName="table">
+            <table styleName="table" role="grid">
                 {
                     !hideHeaders &&
                     <Header
-                        headers={headers}
                         headerMeta={headerMeta}
+                        headers={headers}
                         onClick={this.onHeaderClick}
                     />
                 }
                 {
                     data.length > 0
                         ? <Body
-                            headers={headers}
-                            keyExtractor={keyExtractor}
                             data={data}
                             emptyRenderer={emptyRenderer}
+                            headers={headers}
+                            keyExtractor={keyExtractor}
                         />
                         : <tbody>
                             <tr>
-                                <td colSpan={headers.length} styleName="empty-data">
+                                <td
+                                    colSpan={headers.length}
+                                    styleName="empty-data"
+                                >
                                     {emptyRenderer()}
                                 </td>
                             </tr>

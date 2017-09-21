@@ -53,7 +53,11 @@ export default class DataRow extends React.PureComponent {
             <tr key={keyExtractor(rowData)}>
                 {
                     headers.map(header => (
-                        <td key={header.key}>
+                        <td
+                            role="gridcell"
+                            key={header.key}
+                            onClick={() => header.onClick && header.onClick(rowData)}
+                        >
                             {
                                 header.modifier
                                     ? header.modifier(rowData)
