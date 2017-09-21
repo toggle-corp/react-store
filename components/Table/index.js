@@ -155,7 +155,7 @@ export default class Table extends React.PureComponent {
         if (headers !== newHeaders) {
             // NOTE: order and number of columns cannot change after initialization
             // Sort headers according to order (horizontalSort)
-            newHeaders = [...headers].sort((a, b) => a.order - b.order);
+            newHeaders = [...newHeaders].sort((a, b) => a.order - b.order);
 
             // the column by which data should be sorted (recieved via props)
             let activeSort = defaultSort;
@@ -175,14 +175,16 @@ export default class Table extends React.PureComponent {
                 newData = data;
             }
         } else if (data !== newData) {
-            newData = Table.getSortedData(headers, data, headerMeta);
+            newData = Table.getSortedData(headers, newData, headerMeta);
         }
 
-        this.setState({
+        const newState = {
             data: newData,
             headerMeta: newHeaderMeta,
             headers: newHeaders,
-        });
+        };
+        console.log(newState);
+        this.setState(newState);
     }
 
     onHeaderClick = (key) => {
