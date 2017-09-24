@@ -30,6 +30,9 @@ const propTypes = {
     }).isRequired,
 };
 
+// FIXME: using keyExtractor just hides the problem, It doesn't solve the problem of
+// unnecessary renders. This suppresses the warning which could have been useful for
+// debugging the problem. Please remove this
 const defaultProps = {
     keyExtractor: () => randomString(),
 };
@@ -49,14 +52,17 @@ export default class DataRow extends React.PureComponent {
             rowData,
         } = this.props;
 
+        // FIXME: its better to define a separate function for onClick
+        // inline functions are disrouraged. It also causes unnecessary renders
+
         return (
             <tr key={keyExtractor(rowData)}>
                 {
                     headers.map(header => (
                         <td
-                            role="gridcell"
                             key={header.key}
                             onClick={() => header.onClick && header.onClick(rowData)}
+                            role="gridcell"
                         >
                             {
                                 header.modifier

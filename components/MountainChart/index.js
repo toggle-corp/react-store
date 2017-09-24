@@ -5,13 +5,14 @@ import { line, curveLinear, area } from 'd3-shape';
 import { select, mouse } from 'd3-selection';
 import { max, bisector } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
+
 import styles from './styles.scss';
 import SegmentButton from '../SegmentButton';
-
 
 class MountainChart extends React.PureComponent {
     constructor(props) {
         super(props);
+
         this.state = {
             selectedTimeInterval: '_1d',
             segmentButton: {

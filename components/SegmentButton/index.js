@@ -1,54 +1,71 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import CSSModules from 'react-css-modules';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import styles from './styles.scss';
 import { randomString } from '../../utils/common';
 
-class SegmentButton extends React.PureComponent {
+// TODO: @adityakhatri47, Rename property 'onPress' to 'onClick' for consistency
+const propTypes = {
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            label: PropTypes.string,
+            value: PropTypes.string,
+        }).isRequired,
+    ).isRequired,
+    onPress: PropTypes.func.isRequired,
+    selected: PropTypes.string.isRequired,
+};
+
+@CSSModules(styles, { allowMultiple: true })
+export default class SegmentButton extends React.PureComponent {
+    static propTypes = propTypes;
+
     constructor(props) {
         super(props);
-        this.state = {
-            selectedValue: this.props.selected,
-        };
-
-        // NOTE: TO aviod conflict name due to khatri
+        // NOTE: Appending randomStr in identifiers to avoid conflict in global namespace
         const randomStr = randomString(5);
-        const { data } = this.props;
+
+        const { data, selected } = this.props;
+        // NOTE: 'data' cannot not change after initialization
         this.buttonGroupName = `buttonGroup-${randomStr}`;
-        // NOTE: 'this.props.data' must not change after initialization
         this.buttonIdentifiers = data.map((val, i) => `input-${i}-${randomStr}`);
+
+        this.state = {
+            selectedValue: selected,
+        };
     }
 
     handleOptionChange = (changeEvent) => {
-        this.props.onPress(changeEvent.target.value);
-        this.setState({
-            selectedValue: changeEvent.target.value,
-        });
+        const { value } = changeEvent.target;
+        this.props.onPress(value);
+        this.setState({ selectedValue: value });
     };
 
     render() {
-        const { selectedValue } = this.state;
         const { data } = this.props;
+        const { selectedValue } = this.state;
 
         return (
             <div styleName="segment-container">
-
                 {
                     data.map((button, i) => (
                         <label
+                            htmlFor={this.buttonIdentifiers[i]}
                             key={button.value}
                             styleName={`segment-label ${selectedValue === button.value ? 'active' : ''}`}
-                            htmlFor={this.buttonIdentifiers[i]}
                         >
                             <input
-                                name={this.buttonGroupName}
+                                checked={selectedValue === button.value}
                                 id={this.buttonIdentifiers[i]}
+                                name={this.buttonGroupName}
+                                onChange={this.handleOptionChange}
                                 type="radio"
                                 value={button.value}
-                                onChange={this.handleOptionChange}
-                                checked={selectedValue === button.value}
                             />
-                            <p styleName="segment-name">{button.label}</p>
+                            <p styleName="segment-name">
+                                {button.label}
+                            </p>
                         </label>
                     ))
                 }
@@ -56,17 +73,3 @@ class SegmentButton extends React.PureComponent {
         );
     }
 }
-
-// TODO: @adityakhatri47, Rename property 'onPress' to 'onClick' for consistency
-SegmentButton.propTypes = {
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            label: PropTypes.string,
-            value: PropTypes.string,
-        }).isRequired,
-    ).isRequired,
-    selected: PropTypes.string.isRequired,
-    onPress: PropTypes.func.isRequired,
-};
-
-export default CSSModules(SegmentButton, styles, { allowMultiple: true });

@@ -71,8 +71,10 @@ export default class Header extends React.PureComponent {
     render() {
         const { headers, headerMeta, onClick } = this.props;
 
+        // FIXME: why not make a static function?
         const activeHeaderStyleName = headerMeta ? `active ${headerMeta.sortOrder}` : '';
 
+        // FIXME: why not make a static function?
         const getStyleName = header => (
             header.sortable
                 ? `sortable ${
@@ -82,6 +84,8 @@ export default class Header extends React.PureComponent {
                 }`
                 : ''
         );
+
+        // FIXME: dont' use inline functions (in onClick)
 
         return (
             <thead>

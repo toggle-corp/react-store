@@ -1,3 +1,7 @@
+/**
+ * @author tnagorra <weathermist@gmail.com>
+ */
+
 import originalUpdate from 'immutability-helper';
 
 originalUpdate.extend('$auto', (value, object) => (
