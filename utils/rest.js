@@ -1,3 +1,7 @@
+/**
+ * @author tnagorra <weathermist@gmail.com>
+ */
+
 export class RestRequest {
     constructor(
         url, params, success, failure, fatal,

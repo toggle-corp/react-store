@@ -1,3 +1,7 @@
+/**
+ * @author tnagorra <weathermist@gmail.com>
+ */
+
 export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false
 );

@@ -22,23 +22,37 @@ export default class PrivateRoute extends React.PureComponent {
         },
     }
 
+    // NOTE: this could be optimized
+    renderFn = (props) => {
+        const { component: Component, authenticated } = this.props;
+
+        if (authenticated) {
+            return <Component {...props} />;
+        }
+
+        return (
+            <Redirect
+                to={{
+                    pathname: '/login',
+                    state: { from: props.location },
+                }}
+            />
+        );
+    }
+
     render() {
-        const { component: Component, authenticated, ...otherProps } = this.props;
+        const {
+            // NOTE: Professional stuff, don't try to alter these
+            component, // eslint-disable-line
+            authenticated, // eslint-disable-line
+
+            ...otherProps
+        } = this.props;
+
         return (
             <Route
                 {...otherProps}
-                render={props => (
-                    authenticated ? (
-                        <Component {...props} />
-                    ) : (
-                        <Redirect
-                            to={{
-                                pathname: '/login',
-                                state: { from: props.location },
-                            }}
-                        />
-                    )
-                )}
+                render={this.renderFn}
             />
         );
     }

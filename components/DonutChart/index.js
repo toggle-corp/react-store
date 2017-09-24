@@ -6,10 +6,9 @@ import { schemeCategory20, scaleOrdinal } from 'd3-scale';
 import { arc, pie } from 'd3-shape';
 
 const propTypes = {
-    // eslint-disable-next-line
-    data: PropTypes.array,
-    valueAccessor: PropTypes.func.isRequired,
+    data: PropTypes.array, // eslint-disable-line
     labelAccessor: PropTypes.func.isRequired,
+    valueAccessor: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: [],
@@ -29,8 +28,8 @@ export default class DonutChart extends React.PureComponent {
     render() {
         const {
             data,
-            valueAccessor,
             labelAccessor,
+            valueAccessor,
         } = this.props;
         // TODO: dynamic height,
         const height = 400;

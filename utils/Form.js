@@ -1,3 +1,7 @@
+/**
+ * @author tnagorra <weathermist@gmail.com>
+ */
+
 import {
     isFalsy,
     isFloat,

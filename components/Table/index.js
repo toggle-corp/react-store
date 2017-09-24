@@ -230,8 +230,17 @@ export default class Table extends React.PureComponent {
             headers,
         } = this.state;
 
+
+        // FIXME: empty rendered could be called in constructor once
+        // Calling it inside causes multiple renders
+
+
+        // NOTE: role "grid" was added to table so that onClick could be attached to <td>
         return (
-            <table styleName="table" role="grid">
+            <table
+                styleName="table"
+                role="grid"
+            >
                 {
                     !hideHeaders &&
                     <Header
