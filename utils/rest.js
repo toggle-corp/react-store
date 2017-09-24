@@ -1,83 +1,83 @@
-// TODO:
-// 3. Channel system
-// 4. Only retry for 5xx errors and network error
-
 export class RestRequest {
     constructor(
         url, params, success, failure, fatal,
-        retry = 300, retryAttempts = -1, maxTimeout = -1, decay = -1,
+        retryTime = -1, maxRetryAttempts = -1, maxRetryTime = -1, decay = -1,
     ) {
         this.url = url;
         this.params = params;
         this.success = success || (() => { console.warn('There is no callback for success'); });
         this.failure = failure || (() => { console.warn('There is no callback for failure'); });
-        this.fatal = fatal || failure;
-        this.retry = retry;
+        this.fatal = fatal || (() => { console.warn('There is no callback for fatal'); });
+        this.retryTime = retryTime;
         this.retryCount = 1;
         this.retryId = null;
-        this.retryAttempts = retryAttempts;
-        this.maxTimeout = maxTimeout;
+        this.maxRetryAttempts = maxRetryAttempts;
+        this.maxRetryTime = maxRetryTime;
         this.decay = decay;
+    }
+
+    // get time after which retry is to be performed
+    calculateTime = () => {
+        let time;
+        if (this.decay >= 0) {
+            time = this.decay * (Math.pow(2, this.retryCount) - 1) * 1000; // eslint-disable-line
+            if (this.maxRetryTime >= 0) {
+                time = Math.min(time, this.maxRetryTime);
+            }
+        } else {
+            time = this.retryTime;
+        }
+        return time;
+    }
+
+    retry = () => {
+        if (this.retryCount > this.maxRetryAttempts && this.maxRetryAttempts >= 0) {
+            console.warn('Max number of retries exceeded.');
+            return false;
+        }
+        const time = this.calculateTime();
+        if (time < 0) {
+            console.warn('Retry time is invalid. Please configure RestRequest properly.');
+            return false;
+        }
+        this.retryId = setTimeout(this.start, time);
+        this.retryCount += 1;
+        return true;
     }
 
     start = async () => {
         // console.log('Fetching', this.url);
         let response;
         try {
-            response = await fetch(this.url, this.params);
-
-            // NOTE: always required a body with message and responseCode
-            if (!response.ok) {
-                const ex = {
-                    responseCode: response.status,
-                    message: response.statusText,
-                };
-                throw ex;
-            }
+            const parameters = typeof this.params === 'function' ? this.params() : this.params;
+            response = await fetch(this.url, parameters);
         } catch (ex) {
-            // NOTE: only catch network related error here
-            const { responseCode = 0, message } = ex;
-            // fatal error
-            this.fatal(`${responseCode}: ${message}`);
-            if (this.retryCount > this.retryAttempts && this.retryAttempts >= 0) {
-                console.log('3: The total number of retries exceeded');
-            } else {
-                let time;
-                if (this.decay >= 0) {
-                    time = this.decay * (Math.pow(2, this.retryCount) - 1) * 1000; // eslint-disable-line
-                    // console.log(time, 'decay', this.decay);
-                    if (this.maxTimeout >= 0) {
-                        time = Math.min(time, this.maxTimeout);
-                        // console.log(time, 'max timeout');
-                    }
-                } else {
-                    time = this.retry;
-                    console.log(time, 'no decay');
-                }
-
-                this.retryId = setTimeout(this.start, time);
-                this.retryCount += 1;
+            const retryable = this.retry();
+            if (!retryable) {
+                this.fatal({ errorMessage: ex.message, errorCode: ex.statusCode });
             }
             return;
         }
 
-        let message;
-        let responseCode;
+        let responseBody;
         try {
-            const json = await response.json();
-            message = json.message;
-            responseCode = json.responseCode;
+            responseBody = await response.json();
         } catch (ex) {
-            // NOTE: No retry here
-            this.fatal('1: Could not parse body as json');
+            // NOTE: some parse error
+            this.fatal({ errorMessage: 'Error while parsing json', errorCode: null });
             return;
         }
 
-        // TODO: success or failure condition using custom error code
-        if (responseCode >= 200 && responseCode < 300) {
-            this.success(message);
+        console.log(response);
+
+        if (response.ok) {
+            this.success(responseBody);
         } else {
-            this.failure(`${responseCode}: ${message}`);
+            const is5xxError = Math.floor(response.status / 100) === 5;
+            const retryable = is5xxError && this.retry();
+            if (!retryable) {
+                this.failure(responseBody);
+            }
         }
     }
 
@@ -113,13 +113,13 @@ export class RestBuilder {
         return this;
     }
 
-    retry(val = 3000) {
-        this.retryVal = val;
+    retryTime(val = 3000) {
+        this.retryTimeVal = val;
         return this;
     }
 
-    retryAttempts(val) {
-        this.retryAttemptsVal = val;
+    maxRetryAttempts(val) {
+        this.maxRetryAttemptsVal = val;
         return this;
     }
 
@@ -128,8 +128,8 @@ export class RestBuilder {
         return this;
     }
 
-    maxTimeout(val) {
-        this.maxTimeoutVal = val;
+    maxRetryTime(val) {
+        this.maxRetryTimeVal = val;
         return this;
     }
 
@@ -140,9 +140,9 @@ export class RestBuilder {
             this.successFn,
             this.failureFn,
             this.fatalFn,
-            this.retryVal,
-            this.retryAttemptsVal,
-            this.maxTimeoutVal,
+            this.retryTimeVal,
+            this.maxRetryAttemptsVal,
+            this.maxRetryTimeVal,
             this.decayVal,
         );
     }
