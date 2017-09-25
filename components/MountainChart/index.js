@@ -45,7 +45,7 @@ export default class MountainChart extends React.PureComponent {
                         <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
                     </linearGradient>
                 </defs>
-                <XAxis dataKey="timestamp" scale="time" tickFormatter={dateFormat} />
+                <XAxis dataKey="timestamp" type="number" scale="time" domain={['dataMin', 'dataMax']} tickFormatter={dateFormat} />
                 <YAxis domain={['dataMin', 'dataMax']} />
                 <Tooltip labelFormatter={dateFormat} />
                 <Area type="linear" dataKey="value" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
