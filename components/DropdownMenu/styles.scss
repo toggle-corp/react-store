@@ -1,0 +1,78 @@
+@import '../../../stylesheets/base';
+
+$width-dropdown: 196px;
+
+.item-icon {
+    display: inline-block;
+    width: $width-icon-large-alt;
+}
+
+:global .ion-chevron-down {
+    transition: .4s all ease-in-out;
+}
+
+.rotated {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    .dropdown-header {
+        display: flex;
+        justify-content: space-between;
+        outline: none;
+        border: 0;
+        background-color: transparent;
+        cursor: pointer;
+        width: 216px;
+        text-align: left;
+        text-transform: uppercase;
+        color: $color-text-on-primary;
+        font-family: inherit;
+        font-size: $font-size-normal;
+        font-weight: $font-weight-light;
+    }
+}
+
+.dropdown-list {
+    @include shadow-small;
+    display: none;
+    position: absolute;
+    transform: translateX(-100%);
+    background-color: $color-foreground;
+    color: $color-text;
+}
+
+.group {
+    border-bottom: $width-separator-thin solid $color-separator;
+}
+
+.group-header {
+    background-color: $color-background-header-alt;
+    padding: $spacing-small $spacing-medium;
+    text-transform: capitalize;
+}
+
+.dropdown-item {
+    display: block;
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: $spacing-medium-alt $spacing-large;
+    width: $width-dropdown;
+    text-align: left;
+    text-transform: uppercase;
+    font-family: inherit;
+    font-size: $font-size-small;
+    font-weight: $font-weight-light;
+
+    &:hover {
+        background-color: $color-background-header;
+    }
+}
+
+.shown {
+    display: inline-block;
+}
+
+
