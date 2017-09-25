@@ -90,3 +90,7 @@ export const formattedNormalize = (number) => {
         normalizeSuffix,
     };
 };
+
+export const getRandomFromList = (items = []) => (
+    items[Math.floor(Math.random() * items.length)]
+);
