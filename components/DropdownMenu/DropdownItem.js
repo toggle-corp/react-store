@@ -2,17 +2,18 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LinkOutsideRouter from '../LinkOutsideRouter';
 import styles from './styles.scss';
 
 const propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     iconName: PropTypes.string,
-    linkTo: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
+    title: '',
     iconName: '',
+    onClick: () => {},
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -21,13 +22,12 @@ export default class DropdownItem extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { title, iconName, linkTo } = this.props;
-
+        const { title, iconName, onClick } = this.props;
 
         return (
-            <LinkOutsideRouter
+            <button
+                onClick={onClick}
                 styleName="dropdown-item"
-                to={linkTo}
             >
                 { iconName !== '' &&
                     <i
@@ -41,7 +41,7 @@ export default class DropdownItem extends React.PureComponent {
                     />
                 }
                 {title}
-            </LinkOutsideRouter>
+            </button>
         );
     }
 }
