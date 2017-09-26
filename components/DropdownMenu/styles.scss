@@ -16,6 +16,9 @@ $width-dropdown: 196px;
 }
 
 .dropdown {
+    width: 100%;
+    height: 100%;
+
     .dropdown-header {
         display: flex;
         justify-content: space-between;
@@ -24,6 +27,7 @@ $width-dropdown: 196px;
         background-color: transparent;
         cursor: pointer;
         width: 216px;
+        height: 100%;
         text-align: left;
         text-transform: uppercase;
         color: $color-text-on-primary;
