@@ -5,6 +5,10 @@ import ReactDOM from 'react-dom';
 
 import styles from './styles.scss';
 
+/**
+ * DropdownBody takes its children and populates in a container attached
+ * to the main document instead of its hierarchy
+ */
 const propTypes = {
     /**
      * child elements
@@ -13,10 +17,10 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
     ]).isRequired,
-    show: PropTypes.bool.isRequired,
+    marginTop: PropTypes.number.isRequired,
     onCollapse: PropTypes.func.isRequired,
     position: PropTypes.shape({ right: PropTypes.number, top: PropTypes.number }).isRequired,
-    marginTop: PropTypes.number.isRequired,
+    show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {

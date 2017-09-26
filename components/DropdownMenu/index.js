@@ -2,9 +2,14 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import DropdownBody from './DropdownBody';
+import styles from './styles.scss';
 
+/**
+ * Iconleft is the name of ionicon in left of title button
+ * MarginTop is extra top shift if required
+ * showDropdown shows chevron on right of title button
+ * */
 const propTypes = {
     /**
      * child elements
@@ -13,17 +18,17 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
     ]).isRequired,
-    title: PropTypes.string,
     iconLeft: PropTypes.string,
-    showDropdown: PropTypes.bool,
     marginTop: PropTypes.number,
+    ShowDropdown: PropTypes.bool,
+    title: PropTypes.string,
 };
 
 const defaultProps = {
-    title: '',
     iconLeft: '',
-    showDropdown: true,
     marginTop: 0,
+    ShowDropdown: true,
+    title: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -44,26 +49,9 @@ export default class DropdownMenu extends React.PureComponent {
         window.addEventListener('resize', this.calculatePosition);
     }
 
-    calculatePosition = () => {
-    // Client Rect
-        const cr = this.container.getBoundingClientRect();
 
-        const pos = {
-            right: window.innerWidth - (cr.left + cr.width),
-            top: cr.top + cr.height,
-        };
-
-        this.setState({
-            position: pos,
-        });
-    }
-
-    handleDropdownClick = () => {
-        this.calculatePosition();
-
-        this.setState({
-            show: !this.state.show,
-        });
+    getReference = (container) => {
+        this.container = container;
     };
 
     dropdownShow= () => {
@@ -78,36 +66,61 @@ export default class DropdownMenu extends React.PureComponent {
         });
     };
 
+    handleDropdownClick = () => {
+        this.calculatePosition();
+
+        this.setState({
+            show: !this.state.show,
+        });
+    };
+
+    calculatePosition = () => {
+        // Client Rect
+        const cr = this.container.getBoundingClientRect();
+
+        const pos = {
+            right: window.innerWidth - (cr.left + cr.width),
+            top: cr.top + cr.height,
+        };
+
+        this.setState({
+            position: pos,
+        });
+    }
+
     render() {
         const { show } = this.state;
-        const { title, iconLeft, showDropdown, marginTop } = this.props;
+        const { title, iconLeft, ShowDropdown, marginTop } = this.props;
 
         return (
-            <div styleName="dropdown" ref={(container) => { this.container = container; }}>
+            <div
+                styleName="dropdown"
+                ref={this.getReference}
+            >
                 <button
-                    styleName="dropdown-header"
                     onClick={this.handleDropdownClick}
+                    styleName="dropdown-header"
                 >
                     <div>
                         <i
-                            styleName="item-icon"
                             className={iconLeft}
+                            styleName="item-icon"
                         />
                         {title}
                     </div>
-                    {showDropdown &&
+                    {ShowDropdown &&
                         <i
-                            styleName={show ? 'rotated' : ''}
                             className="ion-chevron-down"
+                            styleName={show ? 'rotated' : ''}
                         />
                     }
                 </button>
                 <DropdownBody
-                    show={show}
+                    marginTop={marginTop}
                     onCollapse={this.dropdownCollapse}
                     onDropdownShow={this.dropdownShow}
                     position={this.state.position}
-                    marginTop={marginTop}
+                    show={show}
                 >
                     {this.props.children}
                 </DropdownBody>
@@ -117,5 +130,5 @@ export default class DropdownMenu extends React.PureComponent {
 }
 
 export { default as DropdownItem } from './DropdownItem';
-export { default as GroupTitle } from './GroupTitle';
 export { default as Group } from './Group';
+export { default as GroupTitle } from './GroupTitle';

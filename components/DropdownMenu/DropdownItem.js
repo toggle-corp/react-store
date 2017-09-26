@@ -3,17 +3,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
-
+/*
+ * iconName is left icon in item
+ */
 const propTypes = {
-    title: PropTypes.string,
     iconName: PropTypes.string,
     onClick: PropTypes.func,
+    title: PropTypes.string,
 };
 
 const defaultProps = {
-    title: '',
     iconName: '',
     onClick: () => {},
+    title: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
