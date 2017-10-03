@@ -17,17 +17,17 @@ export const normalize = (value, max, min) => (
 );
 
 export const randomString = (length = 8) => {
-    /*
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < length; i += 1) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-    */
+    /*
     const randomValues = new Uint8Array(length);
     window.crypto.getRandomValues(randomValues);
     return Array.from(randomValues, v => v.toString(36)).join('').substring(0, 8);
+    */
 };
 
 /**
