@@ -5,28 +5,30 @@ import React from 'react';
 import styles from './styles.scss';
 
 /**
+ * comparator: comparator function for sorting, recieves data rows(not column data)
+ *
+ * defaultSortOrder: the sort order which should be applied when clicked,
+ *
  * key: unique key for each column, the key is also used to determine
  *      the data for rows in the body
  *
  * label: text label for the column
  *
+ * modifier: returns a renderable object for the column, recieves whole row of data (not column)
+ *
  * order: the order in which they appear relative to that of other header columns
  *
  * sortable: is element sortable?
- *
- * comparator: comparator function for sorting, recieves data rows(not column data)
- *
- * modifier: returns a renderable object for the column, recieves whole row of data (not column)
  */
 export const TableHeaderPropTypes = PropTypes.arrayOf(
     PropTypes.shape({
+        comparator: PropTypes.func,
+        defaultSortOrder: PropTypes.string,
         key: PropTypes.string,
         label: PropTypes.string,
-        data: PropTypes.string,
+        modifier: PropTypes.func,
         order: PropTypes.number,
         sortable: PropTypes.bool,
-        comparator: PropTypes.func,
-        modifier: PropTypes.func,
     }),
 );
 
