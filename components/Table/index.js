@@ -131,7 +131,10 @@ export default class Table extends React.PureComponent {
         if (!activeSort) {
             const sortableHeaders = headers.filter(a => a.sortable);
             if (sortableHeaders.length > 0) {
-                activeSort = { key: sortableHeaders[0].key, order: ASC };
+                activeSort = {
+                    key: sortableHeaders[0].key,
+                    order: sortableHeaders[0].defaultSortOrder || ASC,
+                };
             }
         }
 
@@ -170,7 +173,10 @@ export default class Table extends React.PureComponent {
             if (!activeSort) {
                 const sortableHeaders = headers.filter(a => a.sortable);
                 if (sortableHeaders.length > 0) {
-                    activeSort = { key: sortableHeaders[0].key, order: ASC };
+                    activeSort = {
+                        key: sortableHeaders[0].key,
+                        order: sortableHeaders[0].defaultSortOrder || ASC,
+                    };
                 }
             }
 
