@@ -35,6 +35,11 @@ const DSC = 'dsc';
 
 const propTypes = {
     /**
+     * To override default style (styleName on component)
+     */
+    className: PropTypes.string,
+
+    /**
      * data for table rows
      *
      * NOTE: see { TableDataPropTypes } in Table/Body for more detail
@@ -73,6 +78,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 
     hideHeaders: false,
 
@@ -222,6 +228,7 @@ export default class Table extends React.PureComponent {
             emptyRenderer,
             hideHeaders,
             keyExtractor,
+            className,
         } = this.props;
 
         const {
@@ -240,6 +247,7 @@ export default class Table extends React.PureComponent {
             <table
                 styleName="table"
                 role="grid"
+                className={className}
             >
                 {
                     !hideHeaders &&
