@@ -77,6 +77,7 @@ export default class Modal extends React.PureComponent {
     }
 
     close = () => {
+        document.removeEventListener('keydown', this.handleKeyPress);
         this.container.remove();
         this.props.onClose();
     }
