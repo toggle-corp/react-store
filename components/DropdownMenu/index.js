@@ -20,14 +20,14 @@ const propTypes = {
     ]).isRequired,
     iconLeft: PropTypes.string,
     marginTop: PropTypes.number,
-    ShowDropdown: PropTypes.bool,
+    showDropdownIcon: PropTypes.bool,
     title: PropTypes.string,
 };
 
 const defaultProps = {
     iconLeft: '',
     marginTop: 0,
-    ShowDropdown: true,
+    showDropdownIcon: true,
     title: '',
 };
 
@@ -47,59 +47,51 @@ export default class DropdownMenu extends React.PureComponent {
 
     componentDidMount() {
         window.addEventListener('resize', this.calculatePosition);
+
+        this.calculatePosition();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.calculatePosition);
     }
 
-
     getReference = (container) => {
         this.container = container;
     };
 
     dropdownShow= () => {
-        this.setState({
-            show: true,
-        });
+        this.setState({ show: true });
     };
 
     dropdownCollapse = () => {
-        this.setState({
-            show: false,
-        });
+        this.setState({ show: false });
     };
 
     handleDropdownClick = () => {
-        this.calculatePosition();
-
-        this.setState({
-            show: !this.state.show,
-        });
+        this.setState({ show: !this.state.show });
     };
 
+    // TODO: Better comment required here
     calculatePosition = () => {
         // Client Rect
         const cr = this.container.getBoundingClientRect();
 
-        const pos = {
+        const position = {
             right: window.innerWidth - (cr.left + cr.width),
             top: cr.top + cr.height,
         };
 
-        this.setState({
-            position: pos,
-        });
+        this.setState({ position });
     }
 
     render() {
         const { show } = this.state;
-        const { title, iconLeft, ShowDropdown, marginTop } = this.props;
+        const { title, iconLeft, showDropdownIcon, marginTop } = this.props;
 
         return (
             <div
-                styleName="dropdown"
                 ref={this.getReference}
+                styleName="dropdown"
             >
                 <button
                     onClick={this.handleDropdownClick}
@@ -112,7 +104,7 @@ export default class DropdownMenu extends React.PureComponent {
                         />
                         {title}
                     </div>
-                    {ShowDropdown &&
+                    { showDropdownIcon &&
                         <i
                             className="ion-chevron-down"
                             styleName={show ? 'rotated' : ''}

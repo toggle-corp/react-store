@@ -36,24 +36,36 @@ export default class DropdownBody extends React.PureComponent {
         this.mountComponent();
     }
 
+    // TODO: change componentDidUpdate to componentWillReceiveProps
     componentDidUpdate() {
         this.mountComponent();
     }
 
-    mountComponent = () => {
-        this.container = document.getElementById('dropdown-container');
+    componentWillUnmount() {
+        // Close dropdown children
+        if (this.container) {
+            this.container.remove();
+        }
 
+        // Remove any listener
+        document.removeEventListener('keydown', this.handleKeyPress);
+        document.removeEventListener('click', this.handleClick);
+    }
+
+    mountComponent = () => {
         document.removeEventListener('keydown', this.handleKeyPress);
         document.removeEventListener('click', this.handleClick);
 
+        this.container = document.getElementById('dropdown-container');
         if (this.props.show) {
             if (!this.container) {
                 this.container = document.createElement('div');
                 this.container.id = 'dropdown-container';
                 document.body.appendChild(this.container);
             }
-            this.container.style.right = `${this.props.position.right}px`;
-            this.container.style.top = `${this.props.position.top + this.props.marginTop}px`;
+            const { position, marginTop } = this.props;
+            this.container.style.right = `${position.right}px`;
+            this.container.style.top = `${position.top + marginTop}px`;
             this.container.style.position = 'absolute';
 
             document.addEventListener('keydown', this.handleKeyPress);
@@ -61,6 +73,7 @@ export default class DropdownBody extends React.PureComponent {
 
             this.updateComponent();
         } else if (this.container) {
+            // NOTE: no this.props.onCollapse() here
             this.container.remove();
         }
     }
@@ -78,20 +91,23 @@ export default class DropdownBody extends React.PureComponent {
     updateComponent = () => {
         ReactDOM.render(
             CSSModules(
-                this.renderBodyContent, styles, { allowMultiple: true })(),
+                this.renderBodyContent,
+                styles,
+                { allowMultiple: true },
+            )(),
             this.container,
         );
     }
 
     close = () => {
-        this.container.remove();
+        // Call a callback
         this.props.onCollapse();
+        // Remove the dropdown child
+        this.container.remove();
     }
 
     renderBodyContent = () => (
-        <div
-            styleName={`dropdown-list ${this.props.show ? 'shown' : ''}`}
-        >
+        <div styleName={`dropdown-list ${this.props.show ? 'shown' : ''}`} >
             { this.props.children }
         </div>
     )
