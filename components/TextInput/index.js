@@ -95,8 +95,8 @@ export default class TextInput extends React.PureComponent {
         const { value } = event.target;
         this.setState({ value });
 
-        if (this.props.onChange()) {
-            this.props.onChange();
+        if (this.props.onChange) {
+            this.props.onChange(event);
         }
     }
 
