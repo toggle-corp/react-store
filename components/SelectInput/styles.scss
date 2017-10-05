@@ -1,0 +1,39 @@
+@import '../../../stylesheets/base';
+
+
+.select-input {
+    color: $color-primary;
+
+    .input {
+        outline: none;
+        border: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: transparent;
+        padding: $spacing-small;
+        width: 100%;
+        font-family: inherit;
+        font-size: inherit;
+    }
+}
+
+.options {
+    @include shadow-small;
+    background-color: $color-foreground;
+}
+
+.option {
+    display: block;
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: $spacing-medium $spacing-large;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+
+    &:hover {
+        background-color: $color-hover;
+    }
+}
