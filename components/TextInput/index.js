@@ -40,6 +40,11 @@ const propTypes = {
     onBlur: PropTypes.func,
 
     /**
+     * A callback for when the input changes its content
+     */
+    onChange: PropTypes.func,
+
+    /**
      * A callback for when the input gets focus
      */
     onFocus: PropTypes.func,
@@ -57,6 +62,7 @@ const defaultProps = {
     initialValue: '',
     label: '',
     onBlur: undefined,
+    onChange: undefined,
     onFocus: undefined,
     required: false,
 };
@@ -88,6 +94,10 @@ export default class TextInput extends React.PureComponent {
     handleChange = (event) => {
         const { value } = event.target;
         this.setState({ value });
+
+        if (this.props.onChange()) {
+            this.props.onChange();
+        }
     }
 
     invokeFocusCallback = () => {
