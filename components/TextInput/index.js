@@ -8,22 +8,54 @@ import {
 } from '../../../public/utils/common';
 
 
-// FIXME: documentation missing
 const propTypes = {
+    /**
+     * required for style override
+     */
+    className: PropTypes.string,
+
+    /**
+     * String to show in case of error
+     */
     error: PropTypes.string,
+
+    /**
+     * Hint text
+     */
     hint: PropTypes.string,
+
+    /**
+     * Initial value for the input
+     */
     initialValue: PropTypes.string,
+
+    /**
+     * Input label
+     */
     label: PropTypes.string,
+
+    /**
+     * A callback for when the input loses focus
+     */
     onBlur: PropTypes.func,
+
+    /**
+     * A callback for when the input gets focus
+     */
     onFocus: PropTypes.func,
+
+    /**
+     * Is a required element for form
+     */
     required: PropTypes.bool,
 };
 
 const defaultProps = {
+    className: '',
     error: '',
     hint: '',
     initialValue: '',
-    label: ' ',
+    label: '',
     onBlur: undefined,
     onFocus: undefined,
     required: false,
@@ -106,7 +138,10 @@ export default class TextInput extends React.PureComponent {
         } = this.state;
 
         return (
-            <div styleName="text-input-wrapper">
+            <div
+                styleName="text-input-wrapper"
+                className={this.props.className}
+            >
                 <div
                     styleName={`
                         text-input
@@ -132,13 +167,13 @@ export default class TextInput extends React.PureComponent {
                     />
                 </div>
                 {
-                    !error &&
+                    !error && hint &&
                     <p styleName="hint">
                         {hint}
                     </p>
                 }
                 {
-                    error &&
+                    error && !hint &&
                     <p styleName="error">
                         {error}
                     </p>
