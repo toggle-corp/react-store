@@ -18,6 +18,12 @@ export class RestRequest {
         return paramsJson;
     }
 
+    static prepareUrlParams(params) {
+        return Object.keys(params)
+            .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+            .join('&');
+    }
+
     constructor(
         url, params, success, failure, fatal,
         retryTime = -1, maxRetryAttempts = -1, maxRetryTime = -1, decay = -1,
