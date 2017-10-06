@@ -7,7 +7,9 @@ describe('Button', () => {
     const wrapper = shallow(
         <Button
             title="Test"
-        />,
+        >
+            Button
+        </Button>,
     );
 
     it('renders properly', () => {
@@ -22,11 +24,13 @@ describe('Button', () => {
         <Button
             disabled={false}
             onClick={onClick}
-        />,
+        >
+            Button
+        </Button>,
     );
 
     it('checks if clicked properly', () => {
-        console.log(wrapper.props());
+        // console.log(wrapper.props());
         wrapper.setProps({
             disabled: true,
         });
@@ -37,6 +41,6 @@ describe('Button', () => {
         });
         wrapper.find('button').simulate('click');
         expect(testObject.clicked).toBeTruthy();
-        console.log(wrapper.props());
+        // console.log(wrapper.props());
     });
 });
