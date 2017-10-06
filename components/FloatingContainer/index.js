@@ -10,8 +10,8 @@ const propTypes = {
      * child elements
      */
     children: PropTypes.oneOfType([
-        PropTypes.arrayOf(PropTypes.element),
-        PropTypes.element,
+        PropTypes.node,
+        PropTypes.arrayOf(PropTypes.node),
     ]).isRequired,
 
     /**
@@ -25,14 +25,24 @@ const propTypes = {
     closeOnBlur: PropTypes.bool,
 
     /**
-     * Should container close on escape?
+     * Should container close on Escape keypress?
      */
     closeOnEscape: PropTypes.bool,
+
+    /**
+     * Should container close on Tab keypress?
+     */
+    closeOnTab: PropTypes.bool,
 
     /**
      * Unique id for the container
      */
     containerId: PropTypes.string.isRequired,
+
+    /**
+     * Callback for dynamic style
+     */
+    onDynamicStyleOverride: PropTypes.func,
 
     /**
      * A callback when the container is closed
@@ -57,23 +67,46 @@ const defaultProps = {
     className: '',
     closeOnBlur: false,
     closeOnEscape: false,
+    closeOnTab: false,
+    onDynamicStyleOverride: undefined,
     styleOverride: {},
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class FloatingContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    componentDidMount() {
-        this.mountComponent();
-    }
-
     componentDidUpdate() {
-        this.mountComponent();
+        const { onDynamicStyleOverride } = this.props;
+
+        if (onDynamicStyleOverride && this.container) {
+            const dynamicStyles = onDynamicStyleOverride(this.container);
+
+            if (dynamicStyles) {
+                Object.assign(this.container.style, dynamicStyles);
+            }
+        }
     }
 
-    mountComponent = () => {
+    componentWillUnmount() {
+        if (this.container) {
+            this.removeContainer();
+        }
+    }
+
+    getContent = () => (
+        <div
+            className={this.props.className}
+            styleName="wrap"
+        >
+            { this.props.children }
+        </div>
+    )
+
+    getValue = () => (this.state.inputValue)
+
+
+    getContainer = () => {
         const {
             containerId,
             styleOverride,
@@ -81,35 +114,57 @@ export default class FloatingContainer extends React.PureComponent {
 
         this.container = document.getElementById(containerId);
 
-        if (this.props.show) {
-            if (!this.container) {
-                this.container = document.createElement('div');
-                this.container.id = containerId;
-                this.container.style.position = 'absolute';
-
-                document.body.appendChild(this.container);
-            }
-
-            if (this.props.closeOnEscape) {
-                document.removeEventListener('keydown', this.handleKeyPress);
-                document.addEventListener('keydown', this.handleKeyPress);
-            }
-
-            if (this.props.closeOnBlur) {
-                window.removeEventListener('mousedown', this.handleClick);
-                window.addEventListener('mousedown', this.handleClick);
-            }
-
-            Object.assign(this.container.style, styleOverride);
-
-            this.updateComponent();
-        } else if (this.container) {
-            this.container.remove();
+        // Remove any old container
+        if (this.container) {
+            this.removeContainer();
         }
+
+        // Create a new container
+        this.container = document.createElement('div');
+        this.container.id = containerId;
+        this.container.style.position = 'absolute';
+
+        // Add new container to DOM
+        document.body.appendChild(this.container);
+
+        // Add event listeners
+        if (this.props.closeOnEscape || this.props.closeOnTab) {
+            document.addEventListener('keydown', this.handleKeyPress);
+        }
+        if (this.props.closeOnBlur) {
+            window.addEventListener('mousedown', this.handleClick);
+        }
+
+        // append style provided by parent 
+        Object.assign(this.container.style, styleOverride);
+
+        return this.container;
+    }
+
+    isFocused = () => (this.state.showOptions)
+
+    removeContainer = () => {
+        // remove listeners
+        document.removeEventListener('keydown', this.handleKeyPress);
+        window.removeEventListener('mousedown', this.handleClick);
+
+        // remove container element from DOM
+        this.container.remove();
+    }
+
+    close = () => {
+        this.removeContainer();
+
+        // call callback
+        this.props.onClose();
     }
 
     handleKeyPress = (e) => {
         if (this.props.closeOnEscape && e.code === 'Escape') {
+            this.close();
+        }
+
+        if (this.props.closeOnTab && e.code === 'Tab') {
             this.close();
         }
     }
@@ -124,28 +179,13 @@ export default class FloatingContainer extends React.PureComponent {
         }
     }
 
-    updateComponent = () => {
-        ReactDOM.render(CSSModules(this.renderContent, styles)(), this.container);
-    }
-
-    close = () => {
-        document.removeEventListener('keydown', this.handleKeyPress);
-        window.removeEventListener('mousedown', this.handleClick);
-
-        this.container.remove();
-        this.props.onClose();
-    }
-
-    renderContent = () => (
-        <div
-            styleName="wrap"
-            className={this.props.className}
-        >
-            { this.props.children }
-        </div>
-    )
-
     render() {
-        return null;
+        if (!this.props.show) {
+            return null;
+        }
+        return ReactDOM.createPortal(
+            CSSModules(this.getContent, styles)(),
+            this.getContainer(),
+        );
     }
 }

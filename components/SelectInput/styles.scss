@@ -7,18 +7,29 @@
     .input {
         outline: none;
         border: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: $width-separator-medium solid $color-separator;
         background-color: transparent;
         padding: $spacing-small;
         width: 100%;
         font-family: inherit;
         font-size: inherit;
+
+        &:focus {
+            border-bottom-color: $color-accent;
+        }
     }
 }
 
 .options {
     @include shadow-small;
     background-color: $color-foreground;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .empty {
+        padding: $spacing-medium $spacing-large;
+        color: $color-text-disabled;
+    }
 }
 
 .option {
@@ -33,7 +44,13 @@
     font-family: inherit;
     font-size: inherit;
 
-    &:hover {
+    &:hover,
+    &.marked {
         background-color: $color-hover;
+    }
+
+    &.selected {
+        background-color: $color-accent;
+        color: $color-text-on-accent;
     }
 }

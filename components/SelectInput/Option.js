@@ -11,17 +11,38 @@ const propTypes = {
             PropTypes.node,
         ),
     ]).isRequired,
+
+    /**
+     * is option currently selected?
+     */
+    selected: PropTypes.bool,
+
+    /**
+     * is option marked currently? (for selection)
+     */
+    marked: PropTypes.bool,
+
     onClick: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    selected: false,
+    marked: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
 export default class Option extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     render() {
         return (
             <button
-                styleName="option"
+                styleName={`
+                    option
+                    ${this.props.selected ? 'selected' : ''}
+                    ${this.props.marked ? 'marked' : ''}
+                `}
                 onClick={this.props.onClick}
             >
                 { this.props.children }
