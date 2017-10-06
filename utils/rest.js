@@ -3,6 +3,27 @@
  */
 
 export class RestRequest {
+    static parseUrlParams(stringParams) {
+        /*
+         * Input: stringParams (this.props.location.search.replace('?', ''))
+         * Output: {'param': 'value', ....}
+         */
+        // TODO: Decode
+        const params = stringParams.split('&');
+        const paramsJson = {};
+        params.forEach((param) => {
+            const split = param.split('=');
+            paramsJson[split[0]] = split[1];
+        });
+        return paramsJson;
+    }
+
+    static prepareUrlParams(params) {
+        return Object.keys(params)
+            .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+            .join('&');
+    }
+
     constructor(
         url, params, success, failure, fatal,
         retryTime = -1, maxRetryAttempts = -1, maxRetryTime = -1, decay = -1,
