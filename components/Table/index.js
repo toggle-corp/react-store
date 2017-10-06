@@ -169,9 +169,11 @@ export default class Table extends React.PureComponent {
             // the column by which data should be sorted (recieved via props)
             let activeSort = defaultSort;
 
+            // TODO: if the header with 'defaultSort' is removed, write handler
+
             // if defaultSort is not provided, make first sortable column as defaultSort
             if (!activeSort) {
-                const sortableHeaders = headers.filter(a => a.sortable);
+                const sortableHeaders = newHeaders.filter(a => a.sortable);
                 if (sortableHeaders.length > 0) {
                     activeSort = {
                         key: sortableHeaders[0].key,
@@ -182,9 +184,7 @@ export default class Table extends React.PureComponent {
 
             if (activeSort) {
                 newHeaderMeta = { activeKey: activeSort.key, sortOrder: activeSort.order };
-                newData = Table.getSortedData(headers, data, headerMeta);
-            } else {
-                newData = data;
+                newData = Table.getSortedData(newHeaders, newData, newHeaderMeta);
             }
         } else if (data !== newData) {
             newData = Table.getSortedData(headers, newData, headerMeta);
@@ -195,7 +195,7 @@ export default class Table extends React.PureComponent {
             headerMeta: newHeaderMeta,
             headers: newHeaders,
         };
-        console.log(newState);
+        // console.log(newState);
         this.setState(newState);
     }
 
