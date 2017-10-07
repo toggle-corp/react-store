@@ -1,48 +1,52 @@
 import CSSModules from 'react-css-modules';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import FloatingContainer from '../FloatingContainer';
 import Option from './Option';
 import styles from './styles.scss';
 
-// TODO:
-// 1. Keyboard aware
-// 2. Discard if there is no match (DONE)
-// 3. Show no match (DONE)
-// 4. Open dropdown on focus (REJECTED)
-// 5. Retain focus on selection (DONE)
-// 6. Update on layout change (DONE)
-// 7. Update on scroll (NO_NEED)
-// 8. Dropdown symbol on right for text input
-// 9. Up or down position of option container (DONE)
+const propTypes = {
+    /**
+     * for styling
+     */
+    className: PropTypes.string,
+
+    /**
+     * Options to be shown
+     */
+    options: PropTypes.arrayOf(
+        PropTypes.shape({
+            key: PropTypes.string,
+            label: PropTypes.string,
+        }),
+    ),
+
+    /**
+     * Placeholder for the input
+     */
+    placeholder: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+    options: [],
+    placeholder: 'Select an option',
+};
 
 @CSSModules(styles, { allowMultiple: true })
 export default class SelectInput extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
 
-        this.options = [
-            { key: 'opt-1', label: 'Pineapple' },
-            { key: 'opt-2', label: 'Orange' },
-            { key: 'opt-3', label: 'Apple' },
-            { key: 'opt-4', label: 'Guava' },
-            { key: 'opt-5', label: 'Banana' },
-            { key: 'opt-6', label: 'Lemon' },
-            { key: 'opt-7', label: 'Pear' },
-            { key: 'opt-8', label: 'Melon' },
-            { key: 'opt-9', label: 'Strawberry' },
-            { key: 'opt-10', label: 'Mango' },
-            { key: 'opt-11', label: 'Raspberry' },
-            { key: 'opt-12', label: 'Grape' },
-            { key: 'opt-13', label: 'Gooseberry' },
-            { key: 'opt-14', label: 'Coconut' },
-            { key: 'opt-15', label: 'Blackberry' },
-        ];
 
         this.state = {
             showOptions: false,
             inputValue: '',
-            displayOptions: this.options,
+            displayOptions: this.props.options,
             optionContainerStyle: {},
             selectedOption: {},
             markedOption: {},
@@ -134,6 +138,10 @@ export default class SelectInput extends React.PureComponent {
         }
     }
 
+    selectMarkedOption = () => {
+        this.handleOptionClick(this.state.markedOption.key);
+    }
+
     handleKeyPress = (e) => {
         if (this.state.showOptions) {
             switch (e.code) {
@@ -143,10 +151,14 @@ export default class SelectInput extends React.PureComponent {
                 case 'ArrowUp':
                     this.markPreviousOption();
                     break;
+                case 'Enter':
+                    this.selectMarkedOption();
+                    break;
                 default:
                     break;
             }
         }
+        return false;
     }
 
     handleScroll = () => {
@@ -198,7 +210,7 @@ export default class SelectInput extends React.PureComponent {
 
         const { value } = e.target;
 
-        const options = this.options.filter(option => (
+        const options = this.props.options.filter(option => (
             option.label.toLowerCase().includes(value.toLowerCase())
         ));
 
@@ -221,12 +233,12 @@ export default class SelectInput extends React.PureComponent {
     }
 
     handleOptionClick = (key) => {
-        const option = this.options.find(d => d.key === key);
+        const option = this.props.options.find(d => d.key === key);
 
         this.setState({
             showOptions: false,
             inputValue: option.label,
-            displayOptions: this.options, // reset the filter on click
+            displayOptions: this.props.options, // reset the filter on click
             selectedOption: option,
         });
 
@@ -238,11 +250,13 @@ export default class SelectInput extends React.PureComponent {
     close = () => {
         let newState = {};
         const { inputValue } = this.state;
-        const option = this.options.find(d => d.label === inputValue);
+        const option = this.props.options.find(d => d.label === inputValue);
         if (!option) {
             newState = {
                 inputValue: '',
-                displayOptions: this.options, // reset the filter
+                displayOptions: this.props.options, // reset the filter
+                selectedOption: {},
+                markedOption: {},
             };
         }
         // close options
@@ -253,7 +267,8 @@ export default class SelectInput extends React.PureComponent {
     render() {
         return (
             <div
-                styleName="select-input"
+                styleName={`select-input ${this.state.showOptions ? 'options-shown' : ''}`}
+                className={this.props.className}
                 ref={(el) => { this.container = el; }}
             >
                 <input
@@ -262,7 +277,11 @@ export default class SelectInput extends React.PureComponent {
                     type="text"
                     value={this.state.inputValue}
                     onChange={this.handleInputChange}
-                    placeholder="Select a fruit"
+                    placeholder={this.props.placeholder}
+                />
+                <span
+                    styleName="dropdown-icon"
+                    className="ion-android-arrow-dropdown"
                 />
                 <FloatingContainer
                     ref={(el) => { this.optionsContainer = el; }}

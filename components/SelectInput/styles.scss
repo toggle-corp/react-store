@@ -2,7 +2,7 @@
 
 
 .select-input {
-    color: $color-primary;
+    position: relative;
 
     .input {
         outline: none;
@@ -16,6 +16,19 @@
 
         &:focus {
             border-bottom-color: $color-accent;
+        }
+    }
+
+    .dropdown-icon {
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        transform: none;
+    }
+
+    &.options-shown {
+        .dropdown-icon {
+            transform: rotate(180deg);
         }
     }
 }
@@ -35,7 +48,7 @@
 .option {
     display: block;
     outline: none;
-    border: 0;
+    border: $width-separator-medium dotted transparent;
     background-color: transparent;
     cursor: pointer;
     padding: $spacing-medium $spacing-large;
@@ -44,9 +57,12 @@
     font-family: inherit;
     font-size: inherit;
 
-    &:hover,
-    &.marked {
+    &:hover {
         background-color: $color-hover;
+    }
+
+    &.marked {
+        border: $width-separator-medium dashed $color-separator;
     }
 
     &.selected {
