@@ -1,0 +1,22 @@
+@import '../../../stylesheets/base';
+
+$color-white: #fff;
+
+.date-input-wrapper {
+    display: inline-flex;
+
+    input {
+        border: 0;
+        flex-basis: 30%;
+        outline: 0;
+        padding-left: 5%;
+        text-align: center;
+        width: 30%;
+    }
+
+    .separator {
+        background-color: $color-white;
+        flex-basis: 5%;
+        width: 5%;
+    }
+}
