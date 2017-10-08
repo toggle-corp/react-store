@@ -1,0 +1,72 @@
+@import '../../../stylesheets/base';
+
+
+.select-input {
+    position: relative;
+
+    .input {
+        outline: none;
+        border: 0;
+        border-bottom: $width-separator-medium solid $color-separator;
+        background-color: transparent;
+        padding: $spacing-small;
+        width: 100%;
+        font-family: inherit;
+        font-size: inherit;
+
+        &:focus {
+            border-bottom-color: $color-accent;
+        }
+    }
+
+    .dropdown-icon {
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        transform: none;
+    }
+
+    &.options-shown {
+        .dropdown-icon {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.options {
+    @include shadow-small;
+    background-color: $color-foreground;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .empty {
+        padding: $spacing-medium $spacing-large;
+        color: $color-text-disabled;
+    }
+}
+
+.option {
+    display: block;
+    outline: none;
+    border: $width-separator-medium dotted transparent;
+    background-color: transparent;
+    cursor: pointer;
+    padding: $spacing-medium $spacing-large;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+
+    &:hover {
+        background-color: $color-hover;
+    }
+
+    &.marked {
+        border: $width-separator-medium dashed $color-separator;
+    }
+
+    &.selected {
+        background-color: $color-accent;
+        color: $color-text-on-accent;
+    }
+}

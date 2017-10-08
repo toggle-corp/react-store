@@ -207,7 +207,7 @@ describe('Table Header', () => {
     );
 
     it('sorts properly when first header is removed', () => {
-        // console.log(wrapper.state('data'));
+        console.log(wrapper.state('data'));
         const newHeaders = tableHeaders.slice(1, tableHeaders.length);
         // console.log(newHeaders);
         wrapper.setProps({
@@ -217,10 +217,10 @@ describe('Table Header', () => {
         const thead = wrapper.find('thead');
         const th = thead.find('th');
         th.at(1).simulate('click');
-        // console.log(wrapper.state('data'));
+        console.log(wrapper.state('data'));
         expect(wrapper.state('data')).toEqual(dscDataForB);
         th.at(1).simulate('click');
-        // console.log(wrapper.state('data'));
+        console.log(wrapper.state('data'));
         // expect(wrapper.state('data')).toEqual(ascDataForB);
     });
 });

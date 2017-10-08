@@ -195,7 +195,7 @@ export default class Table extends React.PureComponent {
             headerMeta: newHeaderMeta,
             headers: newHeaders,
         };
-        // console.log(newState);
+
         this.setState(newState);
     }
 
