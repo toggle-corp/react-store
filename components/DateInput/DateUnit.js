@@ -1,24 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { isTruthy, leftPad } from '../../utils/common';
+
 
 const propTypes = {
-    nextUnit: PropTypes.shape({
-        input: PropTypes.shape({
-            focus: PropTypes.func.isRequired,
-        }).isRequired,
-    }),
-    max: PropTypes.number,
-    length: PropTypes.number.isRequired,
     className: PropTypes.string,
+    length: PropTypes.number.isRequired,
+    max: PropTypes.number,
+    nextUnit: PropTypes.shape({
+        focus: PropTypes.func.isRequired,
+    }),
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
     placeholder: PropTypes.string,
+    value: PropTypes.string,
 };
 
 const defaultProps = {
-    nextUnit: undefined,
-    max: undefined,
     className: '',
+    max: undefined,
+    nextUnit: undefined,
+    onChange: undefined,
+    onFocus: undefined,
+    onBlur: undefined,
     placeholder: '',
+    value: '',
 };
 
 
@@ -26,18 +34,32 @@ export default class DateUnit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    maxValidate = () => {
-        const { max } = this.props;
+    componentWillReceiveProps(newProps) {
+        this.maxValidate(newProps.max);
+    }
+
+    getValue() {
+        return this.input.value;
+    }
+
+    setValue(value) {
+        this.input.value = value;
+    }
+
+    focus() {
+        this.input.focus();
+    }
+
+    maxValidate = (max) => {
         const currentValue = +this.input.value;
 
         if (max && currentValue > max) {
-            // this.input.value = (currentValue % (max + 1)) + 1;
             this.input.value = max;
         }
     }
 
     handleInputChange = () => {
-        const { length } = this.props;
+        const { length, max } = this.props;
         const currentValue = this.input.value;
         const currentLength = currentValue.length;
 
@@ -47,7 +69,11 @@ export default class DateUnit extends React.PureComponent {
             this.input.value = currentValue.substring(currentLength - length);
         }
 
-        this.maxValidate();
+        this.maxValidate(max);
+
+        if (this.props.onChange) {
+            this.props.onChange(this.input.value);
+        }
     }
 
     handleKeyUp = (e) => {
@@ -63,7 +89,7 @@ export default class DateUnit extends React.PureComponent {
 
         if (!this.justFocused && key >= '0' && key <= '9') {
             if (currentLength >= length) {
-                nextUnit.input.focus();
+                nextUnit.focus();
             }
         }
 
@@ -73,17 +99,25 @@ export default class DateUnit extends React.PureComponent {
     handleFocus = () => {
         this.input.select();
         this.justFocused = true;
+
+        if (this.props.onFocus) {
+            this.props.onFocus();
+        }
     }
 
     handleBlur = () => {
         const currentValue = this.input.value;
         const currentLength = currentValue.length;
+        const length = this.props.length;
 
         if (currentLength < length && +currentValue !== 0) {
-            const len = (length - currentLength) + 1;
-            this.input.value = Array(len).join('0') + currentValue;
+            this.input.value = leftPad(currentValue, length);
         } else if (currentLength === length && +currentValue === 0) {
             this.input.value = '';
+        }
+
+        if (this.props.onBlur) {
+            this.props.onBlur();
         }
     }
 
@@ -95,16 +129,19 @@ export default class DateUnit extends React.PureComponent {
 
         return (
             <input
-                type="number"
-                min="1"
-                placeholder={placeholder}
                 className={className}
-                ref={(input) => { this.input = input; }}
+                min="1"
 
-                onChange={this.handleInputChange}
-                onKeyUp={this.handleKeyUp}
-                onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
+                onChange={this.handleInputChange}
+                onFocus={this.handleFocus}
+                onKeyUp={this.handleKeyUp}
+
+                placeholder={placeholder}
+                ref={(input) => { this.input = input; }}
+                type="number"
+
+                value={isTruthy(this.props.value) ? this.props.value : ''}
             />
         );
     }
