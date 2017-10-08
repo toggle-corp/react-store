@@ -45,7 +45,7 @@ export default class Option extends React.PureComponent {
                 <input
                     styleName="input"
                     type="radio"
-                    checked={checked}
+                    defaultChecked={checked}
                     id={this.inputId}
                     {...otherProps}
                 />
