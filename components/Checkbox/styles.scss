@@ -1,0 +1,29 @@
+@import '../../../stylesheets/base';
+
+
+
+.checkbox {
+    cursor: pointer;
+    width: 100%;
+    user-select: none;
+
+    .checkmark {
+        display: inline-block;
+        margin-right: $spacing-small;
+        font-size: 1.1em;
+    }
+
+    .input {
+        display: none;
+    }
+
+    .label {
+        color: $color-text;
+    }
+
+    &.checked {
+        .checkmark {
+            color: $color-accent;
+        }
+    }
+}
