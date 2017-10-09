@@ -185,6 +185,9 @@ export default class FloatingContainer extends React.PureComponent {
 
     render() {
         if (!this.props.show) {
+            if (this.container) {
+                this.removeContainer();
+            }
             return null;
         }
         return ReactDOM.createPortal(
