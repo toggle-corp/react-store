@@ -55,6 +55,16 @@ export const emailCondition = {
     message: 'Value must be a valid email',
 };
 
+export const urlCondition = {
+    truth: (value) => {
+        const re = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
+        // NOTE: NOT valid for unicode
+        // NOTE: valid if falsy value as well
+        return isFalsy(value) || re.test(value);
+    },
+    message: 'Value must be a valid URL',
+};
+
 // TODO: Use builder pattern
 class Form {
     constructor() {
