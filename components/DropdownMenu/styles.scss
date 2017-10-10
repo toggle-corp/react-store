@@ -57,7 +57,6 @@ $width-dropdown: 196px;
 }
 
 .dropdown-item {
-    display: block;
     outline: none;
     border: 0;
     background-color: transparent;
@@ -69,6 +68,14 @@ $width-dropdown: 196px;
     font-family: inherit;
     font-size: $font-size-small;
     font-weight: $font-weight-light;
+
+    .icon {
+        width: $width-icon-medium;
+    }
+
+    .label {
+        color: $color-text;
+    }
 
     &:hover {
         background-color: $color-background-header;

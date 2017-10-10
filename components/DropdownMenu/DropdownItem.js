@@ -33,16 +33,16 @@ export default class DropdownItem extends React.PureComponent {
             >
                 { iconName !== '' &&
                     <i
-                        styleName="item-icon"
+                        styleName="icon"
                         className={iconName}
                     />
                 }
                 { iconName === '' &&
                     <i
-                        styleName="item-icon"
+                        styleName="icon"
                     />
                 }
-                {title}
+                <span styleName="label">{title}</span>
             </button>
         );
     }
