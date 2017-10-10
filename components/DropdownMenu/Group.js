@@ -9,7 +9,7 @@ const propTypes = {
      * child elements
      */
     children: PropTypes.oneOfType([
-        PropTypes.arrayOf(PropTypes.element),
+        PropTypes.arrayOf(PropTypes.node),
         PropTypes.element,
     ]).isRequired,
 };
