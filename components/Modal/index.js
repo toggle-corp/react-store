@@ -1,8 +1,8 @@
 import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
+import FloatingContainer from '../FloatingContainer';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -15,9 +15,19 @@ const propTypes = {
     ]).isRequired,
 
     /**
+     * required for style override
+     */
+    className: PropTypes.string,
+
+    /**
      * Should modal close on escape?
      */
     closeOnEscape: PropTypes.bool,
+
+    /**
+     * Should modal close on outside click?
+     */
+    closeOnBlur: PropTypes.bool,
 
     /**
      * A callback when the modal is closed
@@ -31,7 +41,9 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     closeOnEscape: false,
+    closeOnBlur: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -39,57 +51,25 @@ export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    componentDidMount() {
-        this.mountComponent();
-    }
-
-    componentDidUpdate() {
-        this.mountComponent();
-    }
-
-    mountComponent = () => {
-        this.container = document.getElementById('modal-container');
-
-        if (this.props.show) {
-            if (!this.container) {
-                this.container = document.createElement('div');
-                this.container.id = 'modal-container';
-                document.body.appendChild(this.container);
-            }
-
-            document.removeEventListener('keydown', this.handleKeyPress);
-            document.addEventListener('keydown', this.handleKeyPress);
-
-            this.updateComponent();
-        } else if (this.container) {
-            this.container.remove();
-        }
-    }
-
-    handleKeyPress = (e) => {
-        if (this.props.closeOnEscape && e.code === 'Escape') {
-            this.close();
-        }
-    }
-
-    updateComponent = () => {
-        ReactDOM.render(CSSModules(this.renderModalContent, styles)(), this.container);
-    }
-
-    close = () => {
-        document.removeEventListener('keydown', this.handleKeyPress);
-        this.container.remove();
-        this.props.onClose();
-    }
-
-    renderModalContent = () => (
-        <div styleName="modal-content">
-            { this.props.children }
-        </div>
-    )
 
     render() {
-        return null;
+        return (
+            <FloatingContainer
+                show={this.props.show}
+                onClose={this.props.onClose}
+                containerId="modal-container"
+                closeOnEscape={this.props.closeOnEscape}
+                closeOnBlur={this.props.closeOnBlur}
+                className={this.props.className}
+            >
+                <div
+                    className="modal-content"
+                    styleName="modal-content"
+                >
+                    { this.props.children }
+                </div>
+            </FloatingContainer>
+        );
     }
 }
 
