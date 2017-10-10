@@ -116,6 +116,10 @@ export default class DateUnit extends React.PureComponent {
             this.input.value = '';
         }
 
+        if (this.props.onChange) {
+            this.props.onChange(this.input.value);
+        }
+
         if (this.props.onBlur) {
             this.props.onBlur();
         }
@@ -140,7 +144,6 @@ export default class DateUnit extends React.PureComponent {
                 placeholder={placeholder}
                 ref={(input) => { this.input = input; }}
                 type="number"
-
                 value={isTruthy(this.props.value) ? this.props.value : ''}
             />
         );

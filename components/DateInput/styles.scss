@@ -1,35 +1,63 @@
 @import '../../../stylesheets/base';
 
 .date-input-wrapper {
-    display: inline-flex;
-    flex-wrap: wrap;
+    .date-input {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: $width-separator-medium solid $color-separator;
+
+        &.focus {
+            border-bottom-color: $color-accent;
+        }
+
+        .inputs {
+            input {
+                outline: 0;
+                border: 0;
+                background-color: transparent;
+                text-align: left;
+
+                color: inherit;
+                font-family: $font-family-monospace;
+                font-size: inherit;
+
+                &.day {
+                    width: calc(2ch + 16px);
+                }
+
+                &.month {
+                    width: calc(2ch + 16px);
+                }
+
+                &.year {
+                    width: calc(4ch + 16px);
+                }
+            }
+
+            .separator {
+                padding: $spacing-small;
+            }
+        }
+
+        .actions {
+            display: flex;
+            padding: $spacing-small;
+
+            button {
+                outline: 0;
+                border: 0;
+                background-color: transparent;
+                cursor: pointer;
+
+                &.active {
+                    color: $color-accent;
+                }
+
+                &.hidden {
+                    visibility: hidden;
+                }
+            }
+        }
+    }
 }
 
-.date-input {
-    display: inline-flex;
-    flex-basis: 100%;
-    border-bottom: $width-separator-medium solid $color-separator;
-
-    &.focus {
-        border-bottom-color: $color-accent;
-    }
-
-    input {
-        flex-basis: 30%;
-        outline: 0;
-        border: 0;
-        background-color: transparent;
-        padding-left: 5%;
-        width: 30%;
-        text-align: center;
-
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-    }
-
-    .separator {
-        flex-basis: 5%;
-        width: 5%;
-    }
-}

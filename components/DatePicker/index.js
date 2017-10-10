@@ -75,7 +75,9 @@ export default class DatePicker extends React.PureComponent {
         const monthName = DatePicker.monthNames[currentMonth];
 
         return (
-            <div styleName="month-title">{monthName}</div>
+            <div styleName="month-title">
+                {monthName}
+            </div>
         );
     }
 

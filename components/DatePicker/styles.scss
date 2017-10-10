@@ -4,6 +4,8 @@
 .date-picker-wrapper {
     display: flex-inline;
     flex-wrap: wrap;
+    background-color: $color-foreground;
+    padding: $spacing-small;
 
     .date-picker-header {
         display: flex;
@@ -35,6 +37,7 @@
         justify-content: space-between;
 
         > span {
+            flex: 1;
             padding: 4px;
             text-align: center;
         }

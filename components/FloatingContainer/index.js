@@ -114,13 +114,12 @@ export default class FloatingContainer extends React.PureComponent {
 
         this.container = document.getElementById(containerId);
 
-        // Remove any old container
-        if (this.container) {
-            this.removeContainer();
+        // Create the container if it doesn't exist
+        if (!this.container) {
+            this.container = document.createElement('div');
         }
 
-        // Create a new container
-        this.container = document.createElement('div');
+        // Style the container
         this.container.id = containerId;
         this.container.style.position = 'absolute';
 
