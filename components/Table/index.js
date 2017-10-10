@@ -67,6 +67,34 @@ const propTypes = {
     hideHeaders: PropTypes.bool,
 
     /**
+     * Object of { columnKey, rowKey } for cell to highlight
+     */
+    highlightCellKey: PropTypes.shape({
+        rowKey: PropTypes.string,
+        rowColumn: PropTypes.string,
+    }),
+
+    /**
+     * Key for column to highlight
+     */
+    highlightColumnKey: PropTypes.string,
+
+    /**
+     * Key for row to highlight
+     */
+    highlightRowKey: PropTypes.string,
+
+    /**
+     * Is row hoverable ?
+     */
+    hoverableCell: PropTypes.bool,
+
+    /**
+     * Is row hoverable ?
+     */
+    hoverableRow: PropTypes.bool,
+
+    /**
      * A function that returns key from the row data
      */
     keyExtractor: PropTypes.func,
@@ -86,6 +114,16 @@ const defaultProps = {
         comparator: (a, b) => a - b,
         sortable: false,
     },
+
+    highlightColumnKey: undefined,
+
+    highlightRowKey: undefined,
+
+    highlightCellKey: {},
+
+    hoverableCell: false,
+
+    hoverableRow: false,
 
     defaultSort: undefined,
 
@@ -146,6 +184,21 @@ export default class Table extends React.PureComponent {
         } else {
             this.state.data = data;
         }
+
+        const {
+            highlightColumnKey,
+            highlightRowKey,
+            highlightCellKey,
+            hoverableCell,
+            hoverableRow,
+        } = this.props;
+        console.log(
+            highlightColumnKey,
+            highlightRowKey,
+            highlightCellKey,
+            hoverableCell,
+            hoverableRow,
+        );
     }
 
     componentWillReceiveProps(nextProps) {
@@ -231,10 +284,15 @@ export default class Table extends React.PureComponent {
 
     render() {
         const {
+            className,
             emptyRenderer,
             hideHeaders,
+            highlightCellKey,
+            highlightColumnKey,
+            highlightRowKey,
+            hoverableCell,
+            hoverableRow,
             keyExtractor,
-            className,
         } = this.props;
 
         const {
@@ -242,11 +300,6 @@ export default class Table extends React.PureComponent {
             headerMeta,
             headers,
         } = this.state;
-
-
-        // FIXME: empty rendered could be called in constructor once
-        // Calling it inside causes multiple renders
-
 
         // NOTE: role "grid" was added to table so that onClick could be attached to <td>
         return (
@@ -270,6 +323,11 @@ export default class Table extends React.PureComponent {
                             emptyRenderer={emptyRenderer}
                             headers={headers}
                             keyExtractor={keyExtractor}
+                            highlightCellKey={highlightCellKey}
+                            highlightColumnKey={highlightColumnKey}
+                            highlightRowKey={highlightRowKey}
+                            hoverableCell={hoverableCell}
+                            hoverableRow={hoverableRow}
                         />
                         : <tbody>
                             <tr>
