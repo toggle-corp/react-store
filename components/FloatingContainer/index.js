@@ -135,10 +135,6 @@ export default class FloatingContainer extends React.PureComponent {
             window.addEventListener('mousedown', this.handleClick);
         }
 
-        this.container.onscroll = () => {
-            console.log('scroll');
-        };
-
         // append style provided by parent 
         Object.assign(this.container.style, styleOverride);
 

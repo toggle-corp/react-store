@@ -13,9 +13,14 @@ const propTypes = {
     ]).isRequired,
 
     /**
-     * is option currently selected?
+     * Is option checkable ? (for multiselect)
      */
-    selected: PropTypes.bool,
+    checkable: PropTypes.bool,
+
+    /**
+     * Is option currently checked ?
+     */
+    checked: PropTypes.bool,
 
     /**
      * is option marked currently? (for selection)
@@ -31,12 +36,19 @@ const propTypes = {
      * callback on mouse over
      */
     onMouseOver: PropTypes.func,
+
+    /**
+     * is option currently selected?
+     */
+    selected: PropTypes.bool,
 };
 
 const defaultProps = {
-    selected: false,
+    checkable: false,
+    checked: false,
     marked: false,
     onMouseOver: undefined,
+    selected: false,
 };
 
 /*
@@ -54,6 +66,14 @@ export default class Option extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            checked: this.props.checked,
+        };
+    }
+
     componentDidMount() {
         if (this.props.marked) {
             this.container.scrollIntoView({
@@ -62,6 +82,20 @@ export default class Option extends React.PureComponent {
                 inline: 'nearest',
             });
             // this.container.scrollIntoViewIfNeeded();
+        }
+    }
+
+    handleClick = (e) => {
+        e.stopPropagation();
+
+        if (this.props.checkable) {
+            const checked = !this.state.checked;
+            this.setState({
+                checked,
+            });
+            this.props.onClick(checked);
+        } else {
+            this.props.onClick();
         }
     }
 
@@ -74,9 +108,20 @@ export default class Option extends React.PureComponent {
                     ${this.props.selected ? 'selected' : ''}
                     ${this.props.marked ? 'marked' : ''}
                 `}
-                onClick={this.props.onClick}
+                onClick={this.handleClick}
                 onMouseOver={this.props.onMouseOver}
             >
+                {
+                    this.props.checkable &&
+                        <span
+                            styleName="checkmark"
+                            className={`${
+                                this.state.checked
+                                    ? 'ion-android-checkbox'
+                                    : 'ion-android-checkbox-outline-blank'
+                            }`}
+                        />
+                }
                 { this.props.children }
             </button>
         );
