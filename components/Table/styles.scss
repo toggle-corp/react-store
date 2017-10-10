@@ -61,6 +61,7 @@
                     }
                 }
             }
+
         }
     }
 
@@ -78,13 +79,47 @@
                     text-align: center;
                     color: $color-label;
                 }
+
+                &.hoverable {
+                    &:hover {
+                        background-color: $color-background-hover;
+                        color: $color-text;
+                    }
+                }
+
+                &.highlight {
+                    background-color: $color-accent;
+                    color: $color-text-on-accent;
+
+                    &:hover {
+                        background-color: $color-accent;
+                        color: $color-text-on-accent;
+                    }
+                }
             }
 
             &:nth-child(even) {
                 background-color: $color-background-alt-row;
             }
+
+            &.hoverable {
+                &:hover {
+                    background-color: $color-background-hover;
+                    color: $color-text;
+                }
+            }
+
+            &.highlight {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+
+                &:hover {
+                    background-color: $color-accent;
+                    color: $color-text-on-accent;
+                }
+            }
         }
-
-
     }
 }
+
+

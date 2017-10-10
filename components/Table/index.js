@@ -17,19 +17,6 @@ import {
 } from '../../utils/common';
 
 
-// Test for
-// 01. render
-// 02. default sort
-// 03. no sort in default (but sortable headers)
-// 04. no sort in default (no sortable headers)
-// 05. Change in data
-// 06. Change in header (added new header)
-// 07. Change in header (removed a header, not active)
-// 08. Change in header (removed a header, active: has sortable headers)
-// 09. Change in header (removed a header, active: has no sortable headers)
-// 10. Change in header (removed a header, active: it is the default sort, no other sortable)
-// 11. Change in header (removed a header, active: it is the default sort, other are sortable)
-
 const ASC = 'asc';
 const DSC = 'dsc';
 
@@ -67,6 +54,34 @@ const propTypes = {
     hideHeaders: PropTypes.bool,
 
     /**
+     * Object of { columnKey, rowKey } for cell to highlight
+     */
+    highlightCellKey: PropTypes.shape({
+        rowKey: PropTypes.string,
+        rowColumn: PropTypes.string,
+    }),
+
+    /**
+     * Key for column to highlight
+     */
+    highlightColumnKey: PropTypes.string,
+
+    /**
+     * Key for row to highlight
+     */
+    highlightRowKey: PropTypes.string,
+
+    /**
+     * Is row hoverable ?
+     */
+    hoverableCell: PropTypes.bool,
+
+    /**
+     * Is row hoverable ?
+     */
+    hoverableRow: PropTypes.bool,
+
+    /**
      * A function that returns key from the row data
      */
     keyExtractor: PropTypes.func,
@@ -86,6 +101,16 @@ const defaultProps = {
         comparator: (a, b) => a - b,
         sortable: false,
     },
+
+    highlightColumnKey: '',
+
+    highlightRowKey: '',
+
+    highlightCellKey: {},
+
+    hoverableCell: false,
+
+    hoverableRow: false,
 
     defaultSort: undefined,
 
@@ -231,10 +256,15 @@ export default class Table extends React.PureComponent {
 
     render() {
         const {
+            className,
             emptyRenderer,
             hideHeaders,
+            highlightCellKey,
+            highlightColumnKey,
+            highlightRowKey,
+            hoverableCell,
+            hoverableRow,
             keyExtractor,
-            className,
         } = this.props;
 
         const {
@@ -242,11 +272,6 @@ export default class Table extends React.PureComponent {
             headerMeta,
             headers,
         } = this.state;
-
-
-        // FIXME: empty rendered could be called in constructor once
-        // Calling it inside causes multiple renders
-
 
         // NOTE: role "grid" was added to table so that onClick could be attached to <td>
         return (
@@ -270,6 +295,11 @@ export default class Table extends React.PureComponent {
                             emptyRenderer={emptyRenderer}
                             headers={headers}
                             keyExtractor={keyExtractor}
+                            highlightCellKey={highlightCellKey}
+                            highlightColumnKey={highlightColumnKey}
+                            highlightRowKey={highlightRowKey}
+                            hoverableCell={hoverableCell}
+                            hoverableRow={hoverableRow}
                         />
                         : <tbody>
                             <tr>
