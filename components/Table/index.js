@@ -17,19 +17,6 @@ import {
 } from '../../utils/common';
 
 
-// Test for
-// 01. render
-// 02. default sort
-// 03. no sort in default (but sortable headers)
-// 04. no sort in default (no sortable headers)
-// 05. Change in data
-// 06. Change in header (added new header)
-// 07. Change in header (removed a header, not active)
-// 08. Change in header (removed a header, active: has sortable headers)
-// 09. Change in header (removed a header, active: has no sortable headers)
-// 10. Change in header (removed a header, active: it is the default sort, no other sortable)
-// 11. Change in header (removed a header, active: it is the default sort, other are sortable)
-
 const ASC = 'asc';
 const DSC = 'dsc';
 
@@ -115,9 +102,9 @@ const defaultProps = {
         sortable: false,
     },
 
-    highlightColumnKey: undefined,
+    highlightColumnKey: '',
 
-    highlightRowKey: undefined,
+    highlightRowKey: '',
 
     highlightCellKey: {},
 
@@ -184,21 +171,6 @@ export default class Table extends React.PureComponent {
         } else {
             this.state.data = data;
         }
-
-        const {
-            highlightColumnKey,
-            highlightRowKey,
-            highlightCellKey,
-            hoverableCell,
-            hoverableRow,
-        } = this.props;
-        console.log(
-            highlightColumnKey,
-            highlightRowKey,
-            highlightCellKey,
-            hoverableCell,
-            hoverableRow,
-        );
     }
 
     componentWillReceiveProps(nextProps) {

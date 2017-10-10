@@ -52,38 +52,51 @@ export default class DataRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
+    getTableData = (header) => {
         const {
-            headers,
             rowData,
             highlightColumnKey,
             hoverableCell,
         } = this.props;
 
+        const styleNames = [];
+
+        if (highlightColumnKey === header.key) {
+            styleNames.push('highlight');
+        }
+
+        if (hoverableCell) {
+            styleNames.push('hoverable');
+        }
+
+        const styleName = styleNames.join(' ');
+
+        return (
+            <td
+                key={header.key}
+                onClick={() => header.onClick && header.onClick(rowData)}
+                role="gridcell"
+                styleName={styleName}
+            >
+                {
+                    header.modifier
+                        ? header.modifier(rowData)
+                        : rowData[header.key]
+                }
+            </td>
+        );
+    }
+    render() {
+        const {
+            headers,
+        } = this.props;
+
         return (
             <tr className={this.props.className}>
                 {
-                    headers.map((header) => {
-                        const styleNames = [];
-                        if (highlightColumnKey === header.key) styleNames.push('highlight');
-                        if (hoverableCell) styleNames.push('hoverable');
-
-                        const styleName = styleNames.join(' ');
-                        return (
-                            <td
-                                key={header.key}
-                                onClick={() => header.onClick && header.onClick(rowData)}
-                                role="gridcell"
-                                styleName={styleName}
-                            >
-                                {
-                                    header.modifier
-                                        ? header.modifier(rowData)
-                                        : rowData[header.key]
-                                }
-                            </td>
-                        );
-                    })
+                    headers.map(header => (
+                        this.getTableData(header)
+                    ))
                 }
             </tr>
         );

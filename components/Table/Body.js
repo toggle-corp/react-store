@@ -93,8 +93,13 @@ export default class Body extends React.PureComponent {
         const key = keyExtractor(rowData);
         const styleNames = [];
 
-        if (highlightRowKey === key) styleNames.push('highlight');
-        if (hoverableRow) styleNames.push('hoverable');
+        if (highlightRowKey === key) {
+            styleNames.push('highlight');
+        }
+
+        if (hoverableRow) {
+            styleNames.push('hoverable');
+        }
 
         const styleName = styleNames.join(' ');
 
