@@ -8,6 +8,11 @@ export const isFalsy = val => (
 
 export const isTruthy = val => !isFalsy(val);
 
+// added by @frozenhelium
+export const isEqualAndTruthy = (a, b) => (
+    isTruthy(a) && (a === b)
+);
+
 export const bound = (value, max, min) => (
     Math.max(min, Math.min(max, value))
 );
@@ -23,7 +28,12 @@ export const randomString = (length = 8) => {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+
     /*
+     * -------------------------------------------------
+     * better Algorithm, but not supported by enzyme :(
+     * -------------------------------------------------
+
     const randomValues = new Uint8Array(length);
     window.crypto.getRandomValues(randomValues);
     return Array.from(randomValues, v => v.toString(36)).join('').substring(0, 8);
