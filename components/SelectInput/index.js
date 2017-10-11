@@ -13,6 +13,18 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Key selector function
+     * should return key from provided row data
+     */
+    keySelector: PropTypes.func,
+
+    /**
+     * Value selector function
+     * should return value from provided row data
+     */
+    labelSelector: PropTypes.func,
+
+    /**
      * Multiple selection
      */
     multiple: PropTypes.bool,
@@ -35,6 +47,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    keySelector: d => d.key,
+    labelSelector: d => d.label,
     multiple: false,
     options: [],
     placeholder: 'Select an option',
@@ -115,8 +129,12 @@ export default class SelectInput extends React.PureComponent {
     )
 
     getValue = () => {
+        const {
+            keySelector,
+        } = this.props;
+
         if (this.props.multiple) {
-            const values = this.state.selectedValues.map(d => d.key);
+            const values = this.state.selectedValues.map(d => keySelector(d));
             return values;
         }
 
@@ -126,34 +144,46 @@ export default class SelectInput extends React.PureComponent {
     getOptions = () => {
         let options;
         const { selectedOptions } = this.state;
+        const {
+            keySelector,
+            labelSelector,
+        } = this.props;
 
         if (this.props.multiple) {
-            options = this.state.displayOptions.map(option => (
-                <Option
-                    key={option.key}
-                    marked={this.state.markedOption.key === option.key}
-                    checkable
-                    checked={selectedOptions.find(d => d.key === option.key) != null}
-                    onClick={(checked) => {
-                        this.handleOptionClick(option.key, checked);
-                    }}
-                >
-                    { option.label }
-                </Option>
-            ));
+            options = this.state.displayOptions.map((option) => {
+                const key = keySelector(option);
+
+                return (
+                    <Option
+                        key={key}
+                        marked={keySelector(this.state.markedOption) === key}
+                        checkable
+                        checked={selectedOptions.find(d => keySelector(d) === key) != null}
+                        onClick={(checked) => {
+                            this.handleOptionClick(key, checked);
+                        }}
+                    >
+                        { labelSelector(option) }
+                    </Option>
+                );
+            });
         } else {
-            options = this.state.displayOptions.map(option => (
-                <Option
-                    key={option.key}
-                    selected={this.state.selectedOption.key === option.key}
-                    marked={this.state.markedOption.key === option.key}
-                    onClick={() => {
-                        this.handleOptionClick(option.key);
-                    }}
-                >
-                    { option.label }
-                </Option>
-            ));
+            options = this.state.displayOptions.map((option) => {
+                const key = keySelector(option);
+
+                return (
+                    <Option
+                        key={key}
+                        selected={this.state.selectedOption.key === key}
+                        marked={this.state.markedOption.key === key}
+                        onClick={() => {
+                            this.handleOptionClick(key);
+                        }}
+                    >
+                        { labelSelector(option) }
+                    </Option>
+                );
+            });
         }
 
         return options;
@@ -291,10 +321,14 @@ export default class SelectInput extends React.PureComponent {
             newState = this.getDimension();
         }
 
+        const {
+            labelSelector,
+        } = this.props;
+
         const { value } = e.target;
 
         const options = this.props.options.filter(option => (
-            option.label.toLowerCase().includes(value.toLowerCase())
+            labelSelector(option).toLowerCase().includes(value.toLowerCase())
         ));
 
         options.sort((a, b) => (
@@ -316,7 +350,12 @@ export default class SelectInput extends React.PureComponent {
     }
 
     handleOptionClick = (key, checked) => {
-        const option = this.props.options.find(d => d.key === key);
+        const {
+            keySelector,
+            labelSelector,
+        } = this.props;
+
+        const option = this.props.options.find(d => keySelector(d) === key);
 
         if (this.props.multiple) {
             const selectedOptions = [...this.state.selectedOptions];
@@ -324,7 +363,7 @@ export default class SelectInput extends React.PureComponent {
             if (checked) {
                 selectedOptions.push(option);
             } else {
-                const index = selectedOptions.findIndex(d => d.key === key);
+                const index = selectedOptions.findIndex(d => keySelector(d) === key);
 
                 if (index !== -1) {
                     selectedOptions.splice(index, 1);
@@ -340,7 +379,7 @@ export default class SelectInput extends React.PureComponent {
         } else {
             this.setState({
                 showOptions: false,
-                inputValue: option.label,
+                inputValue: labelSelector(option),
                 displayOptions: this.props.options, // reset the filter on click
                 selectedOption: option,
             });
@@ -351,9 +390,15 @@ export default class SelectInput extends React.PureComponent {
 
     // close gracefully
     close = () => {
+        const {
+            labelSelector,
+        } = this.props;
+
         let newState = {};
         const { inputValue } = this.state;
-        const option = this.props.options.find(d => d.label === inputValue);
+
+        const option = this.props.options.find(d => labelSelector(d) === inputValue);
+
         if (!option) {
             newState = {
                 inputValue: '',
