@@ -114,6 +114,15 @@ export default class SelectInput extends React.PureComponent {
         str.toLowerCase().indexOf(content.toLowerCase())
     )
 
+    getValue = () => {
+        if (this.props.multiple) {
+            const values = this.state.selectedValues.map(d => d.key);
+            return values;
+        }
+
+        return this.state.selectedValue;
+    }
+
     getOptions = () => {
         let options;
         const { selectedOptions } = this.state;
