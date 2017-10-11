@@ -8,16 +8,17 @@ describe('Table', () => {
         { key: 'b', label: 'btest', order: 2 },
     ];
     const tableData = [
-        { a: 5, b: 67 },
-        { a: 44, b: 823 },
-        { a: 44, b: 823 },
-        { a: 34, b: 1 },
+        { id: 1, a: 5, b: 67 },
+        { id: 2, a: 44, b: 823 },
+        { id: 3, a: 44, b: 823 },
+        { id: 4, a: 34, b: 1 },
     ];
 
     const wrapper = shallow(
         <Table
             data={tableData}
             headers={tableHeaders}
+            keyExtractor={row => row.id}
         />,
     );
 
@@ -25,6 +26,7 @@ describe('Table', () => {
         expect(wrapper.length).toEqual(1);
     });
 });
+
 describe('Table', () => {
     const tableHeaders = [
         { key: 'a', label: 'atest', order: 1 },
@@ -33,16 +35,17 @@ describe('Table', () => {
 
     ];
     const tableData = [
-        { a: 5, b: 67 },
-        { a: 44, b: 823 },
-        { a: 44, b: 823 },
-        { a: 34, b: 1 },
+        { id: 1, a: 5, b: 67 },
+        { id: 2, a: 44, b: 823 },
+        { id: 3, a: 44, b: 823 },
+        { id: 4, a: 34, b: 1 },
     ];
 
     const wrapper = shallow(
         <Table
             data={tableData}
             headers={tableHeaders}
+            keyExtractor={row => row.id}
         />,
     );
 
@@ -50,6 +53,7 @@ describe('Table', () => {
         expect(wrapper.length).toEqual(1);
     });
 });
+
 describe('Table Header', () => {
     const tableHeaders = [
         {
@@ -75,43 +79,44 @@ describe('Table Header', () => {
 
 
     const tableData = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
     ];
 
     const ascDataForA = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
     ];
 
     const dscDataForA = [
-        { a: 84, b: 21, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 5, b: 67, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
     ];
     const ascDataForB = [
-        { a: 44, b: 13, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 5, b: 67, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
     ];
 
     const dscDataForB = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
     ];
 
     const wrapper = mount(
         <Table
             data={tableData}
             headers={tableHeaders}
+            keyExtractor={row => row.id}
         />,
     );
 
@@ -166,43 +171,24 @@ describe('Table Header', () => {
 
 
     const tableData = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-    ];
-
-    const ascDataForA = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-    ];
-
-    const dscDataForA = [
-        { a: 84, b: 21, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 5, b: 67, c: 'ok' },
-    ];
-    const ascDataForB = [
-        { a: 44, b: 13, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 5, b: 67, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
     ];
 
     const dscDataForB = [
-        { a: 5, b: 67, c: 'ok' },
-        { a: 6, b: 29, c: 'ok' },
-        { a: 84, b: 21, c: 'ok' },
-        { a: 44, b: 13, c: 'ok' },
+        { id: 1, a: 5, b: 67, c: 'ok' },
+        { id: 3, a: 6, b: 29, c: 'ok' },
+        { id: 4, a: 84, b: 21, c: 'ok' },
+        { id: 2, a: 44, b: 13, c: 'ok' },
     ];
 
     const wrapper = mount(
         <Table
             data={tableData}
             headers={tableHeaders}
+            keyExtractor={row => row.id}
         />,
     );
 
