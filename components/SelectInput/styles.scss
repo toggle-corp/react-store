@@ -57,6 +57,10 @@
     font-family: inherit;
     font-size: inherit;
 
+    .checkmark {
+        margin-right: $spacing-medium;
+    }
+
     &:hover {
         background-color: $color-hover;
     }
