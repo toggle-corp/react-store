@@ -1,0 +1,11 @@
+@import '../../../stylesheets/base';
+
+.raw-table {
+    .table-body {
+        .table-row {
+            .table-cell {
+                color: $color-text;
+            }
+        }
+    }
+}

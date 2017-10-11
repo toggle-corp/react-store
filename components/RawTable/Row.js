@@ -29,6 +29,10 @@ const propTypes = {
 
     onClick: PropTypes.func,
 
+    rowData: PropTypes.shape({
+        dummy: PropTypes.string,
+    }).isRequired,
+
     uniqueKey: PropTypes.string.isRequired,
 };
 
@@ -104,6 +108,7 @@ export default class Row extends React.PureComponent {
             headers,
             areCellsHoverable,
             highlightCellKey,
+            rowData,
         } = this.props;
 
         return (
@@ -116,7 +121,9 @@ export default class Row extends React.PureComponent {
                             onClick={this.handleCellClick}
                             hoverable={areCellsHoverable}
                             highlighted={isEqualAndTruthy(header.key, highlightCellKey)}
-                        />
+                        >
+                            { rowData[header.key] }
+                        </Cell>
                     ))
                 }
             </tr>

@@ -115,6 +115,7 @@ export default class Body extends React.PureComponent {
                 hoverable={areRowsHoverable}
                 key={key}
                 onClick={this.handleRowClick}
+                rowData={rowData}
                 uniqueKey={key}
             />
         );
