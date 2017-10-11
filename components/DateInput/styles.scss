@@ -22,9 +22,17 @@
                 background-color: transparent;
                 text-align: left;
 
-                color: inherit;
+                color: $color-text;
                 font-family: $font-family-monospace;
                 font-size: inherit;
+
+                &:disabled {
+                    color: $color-text-disabled;
+                }
+
+                &::placeholder {
+                    color: $color-text-disabled;
+                }
 
                 &.day {
                     width: calc(2ch + 16px);
@@ -41,6 +49,11 @@
 
             .separator {
                 padding: $spacing-small;
+                color: $color-text;
+
+                &.disabled {
+                    color: $color-text-disabled;
+                }
             }
         }
 

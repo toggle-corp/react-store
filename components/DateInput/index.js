@@ -23,6 +23,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * If disabled, action is blocked
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * String to show in case of error
      */
     error: PropTypes.string,
@@ -59,6 +64,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     error: '',
     format: 'd/m/y',
     hint: '',
@@ -315,6 +321,8 @@ export default class DateInput extends React.PureComponent {
                     matches.map((match, i) => (
                         (['d', 'm', 'y'].indexOf(match) !== -1 && (
                             <DateUnit
+                                disabled={this.props.disabled}
+
                                 key={match}
                                 length={map[match].length}
                                 max={map[match].max}
@@ -346,7 +354,7 @@ export default class DateInput extends React.PureComponent {
     renderSeparator = (symbol, index) => (
         <span
             key={`${symbol}-${index}`}
-            styleName="separator"
+            styleName={`separator ${this.props.disabled ? 'disabled' : ''}`}
         >
             {symbol}
         </span>
@@ -355,7 +363,7 @@ export default class DateInput extends React.PureComponent {
     render() {
         const {
             className,
-
+            disabled,
             error,
             hint,
             label,
@@ -393,6 +401,7 @@ export default class DateInput extends React.PureComponent {
                     <div styleName="actions">
                         <button
                             className="clear-button"
+                            disabled={disabled}
                             onClick={this.clear}
                             styleName={isFalsy(this.state.date) && 'hidden'}
                             tabIndex="0"
@@ -401,6 +410,7 @@ export default class DateInput extends React.PureComponent {
                         </button>
                         <button
                             className="today-button"
+                            disabled={disabled}
                             onClick={this.setToday}
                             styleName={isToday && 'active'}
                             tabIndex="0"
@@ -409,6 +419,7 @@ export default class DateInput extends React.PureComponent {
                         </button>
                         <button
                             className="show-picker-button"
+                            disabled={disabled}
                             onClick={this.showDatePicker}
                             tabIndex="0"
                         >
@@ -438,7 +449,7 @@ export default class DateInput extends React.PureComponent {
 
                 <FloatingContainer
                     ref={(el) => { this.pickerContainer = el; }}
-                    show={this.state.showDatePicker}
+                    show={this.state.showDatePicker && !this.state.disabled}
                     onClose={this.handleDatePickerClosed}
                     containerId="datepicker-container"
                     styleOverride={this.state.pickerContainerStyle}

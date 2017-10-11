@@ -11,6 +11,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * is input disabled
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * Number of digits, used to limit the digits
      * as well as to left pad with zeros
      */
@@ -57,6 +62,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     max: undefined,
     nextUnit: undefined,
     onBlur: undefined,
@@ -186,12 +192,14 @@ export default class DateUnit extends React.PureComponent {
     render() {
         const {
             className,
+            disabled,
             placeholder,
         } = this.props;
 
         return (
             <input
                 className={className}
+                disabled={disabled}
                 min="1"
 
                 onBlur={this.handleBlur}
