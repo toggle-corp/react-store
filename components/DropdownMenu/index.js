@@ -41,18 +41,18 @@ export default class DropdownMenu extends React.PureComponent {
 
         this.state = {
             show: false,
-            position: { right: 0, top: 0 },
+            dimension: { left: '', top: '', width: '' },
         };
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.calculatePosition);
-
-        this.calculatePosition();
+        window.addEventListener('resize', this.calculateDimension);
+        this.calculateDimension();
+        console.log(this.state.dimension);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.calculatePosition);
+        window.removeEventListener('resize', this.calculateDimension);
     }
 
     getReference = (container) => {
@@ -68,20 +68,22 @@ export default class DropdownMenu extends React.PureComponent {
     };
 
     handleDropdownClick = () => {
+        this.calculateDimension();
         this.setState({ show: !this.state.show });
     };
 
     // TODO: Better comment required here
-    calculatePosition = () => {
+    calculateDimension = () => {
         // Client Rect
         const cr = this.container.getBoundingClientRect();
 
-        const position = {
-            right: window.innerWidth - (cr.left + cr.width),
-            top: cr.top + cr.height,
+        const dimension = {
+            left: `${cr.left}px`,
+            top: `${(cr.top + window.scrollY) + cr.height}px`,
+            width: `${cr.width}px`,
         };
 
-        this.setState({ position });
+        this.setState({ dimension });
     }
 
     render() {
@@ -107,7 +109,7 @@ export default class DropdownMenu extends React.PureComponent {
                     { showDropdownIcon &&
                         <i
                             className="ion-chevron-down"
-                            styleName={show ? 'rotated' : ''}
+                            styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
                         />
                     }
                 </button>
@@ -115,7 +117,7 @@ export default class DropdownMenu extends React.PureComponent {
                     marginTop={marginTop}
                     onCollapse={this.dropdownCollapse}
                     onDropdownShow={this.dropdownShow}
-                    position={this.state.position}
+                    dimension={this.state.dimension}
                     show={show}
                 >
                     {this.props.children}

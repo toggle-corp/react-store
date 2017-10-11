@@ -17,9 +17,12 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
     ]).isRequired,
-    marginTop: PropTypes.number.isRequired,
     onCollapse: PropTypes.func.isRequired,
-    position: PropTypes.shape({ right: PropTypes.number, top: PropTypes.number }).isRequired,
+    dimension: PropTypes.shape({
+        right: PropTypes.string,
+        top: PropTypes.string,
+        width: PropTypes.string,
+    }).isRequired,
     show: PropTypes.bool.isRequired,
 };
 
@@ -63,9 +66,10 @@ export default class DropdownBody extends React.PureComponent {
                 this.container.id = 'dropdown-container';
                 document.body.appendChild(this.container);
             }
-            const { position, marginTop } = this.props;
-            this.container.style.right = `${position.right}px`;
-            this.container.style.top = `${position.top + marginTop}px`;
+            const { dimension } = this.props;
+            this.container.style.left = dimension.left;
+            this.container.style.top = dimension.top;
+            this.container.style.width = dimension.width;
             this.container.style.position = 'absolute';
 
             document.addEventListener('keydown', this.handleKeyPress);
