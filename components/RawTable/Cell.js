@@ -39,17 +39,21 @@ export default class Cell extends React.PureComponent {
         super(props);
 
         const className = this.getClassName(props);
+        const styleName = this.getStyleName(props);
 
         this.state = {
             className,
+            styleName,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
+        const styleName = this.getStyleName(nextProps);
 
         this.setState({
             className,
+            styleName,
         });
     }
 
@@ -62,7 +66,7 @@ export default class Cell extends React.PureComponent {
         } = props;
 
         // default className for global override
-        classNames.push('table-cell');
+        classNames.push('cell');
 
         // className provided by parent (through styleName)
         classNames.push(className);
@@ -74,6 +78,29 @@ export default class Cell extends React.PureComponent {
         if (highlighted) {
             classNames.push('highlighted');
         }
+
+        return classNames.join(' ');
+    }
+
+    getStyleName = (props) => {
+        const styleNames = [];
+        const {
+            hoverable,
+            highlighted,
+        } = props;
+
+        // default className for global override
+        styleNames.push('cell');
+
+        if (hoverable) {
+            styleNames.push('hoverable');
+        }
+
+        if (highlighted) {
+            styleNames.push('highlighted');
+        }
+
+        return styleNames.join(' ');
     }
 
     handleClick = (e) => {
@@ -88,11 +115,14 @@ export default class Cell extends React.PureComponent {
     }
 
     render() {
+        console.log('Rendering Cell');
+
         return (
             <td
                 className={this.state.className}
                 role="gridcell"
                 onClick={this.handleClick}
+                styleName={this.state.styleName}
             >
                 { this.props.children }
             </td>

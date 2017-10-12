@@ -23,6 +23,8 @@ const propTypes = {
         }),
     ).isRequired,
 
+    dataModifier: PropTypes.func,
+
     headers: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string,
@@ -40,16 +42,20 @@ const propTypes = {
      * keyExtractor is used to get a unique key associated with rowData
      */
     keyExtractor: PropTypes.func.isRequired,
+
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
     areCellsHoverable: false,
     areRowsHoverable: false,
     className: '',
+    dataModifier: undefined,
     highlightCellKey: {},
     highlightRowKey: undefined,
     highlighted: false,
     hoverable: false,
+    onClick: undefined,
 };
 
 
@@ -62,17 +68,21 @@ export default class Body extends React.PureComponent {
         super(props);
 
         const className = this.getClassName(props);
+        const styleName = this.getStyleName(props);
 
         this.state = {
             className,
+            styleName,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
+        const styleName = this.getStyleName(nextProps);
 
         this.setState({
             className,
+            styleName,
         });
     }
 
@@ -83,16 +93,21 @@ export default class Body extends React.PureComponent {
         } = props;
 
         // default className for global override
-        classNames.push('table-body');
+        classNames.push('body');
 
         // className provided by parent (through styleName)
         classNames.push(className);
+
+        return classNames.join(' ');
     }
+
+    getStyleName = () => ('body')
 
     getRow = (rowData) => {
         const {
             areCellsHoverable,
             areRowsHoverable,
+            dataModifier,
             headers,
             highlightCellKey,
             highlightRowKey,
@@ -109,6 +124,7 @@ export default class Body extends React.PureComponent {
         return (
             <Row
                 areCellsHoverable={areCellsHoverable}
+                dataModifier={dataModifier}
                 headers={headers}
                 highlighted={isEqualAndTruthy(key, highlightRowKey)}
                 highlightCellKey={cellKey}
@@ -121,17 +137,26 @@ export default class Body extends React.PureComponent {
         );
     }
 
-    handleRowClick = (rowKey, cellKey) => {
-        console.log(rowKey, cellKey);
+    handleRowClick = (rowKey, cellKey, e) => {
+        const { onClick } = this.props;
+
+        if (onClick) {
+            onClick(rowKey, cellKey, e);
+        }
     }
 
     render() {
+        console.log('Rendering Body');
+
         const {
             data,
         } = this.props;
 
         return (
-            <tbody className={this.state.className}>
+            <tbody
+                className={this.state.className}
+                styleName={this.state.styleName}
+            >
                 {
                     data.map(rowData => (
                         this.getRow(rowData)

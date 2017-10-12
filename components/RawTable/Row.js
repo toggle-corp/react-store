@@ -15,6 +15,8 @@ const propTypes = {
 
     className: PropTypes.string,
 
+    dataModifier: PropTypes.func,
+
     headers: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string,
@@ -39,6 +41,7 @@ const propTypes = {
 const defaultProps = {
     areCellsHoverable: false,
     className: '',
+    dataModifier: undefined,
     highlightCellKey: undefined,
     highlighted: false,
     hoverable: false,
@@ -55,17 +58,21 @@ export default class Row extends React.PureComponent {
         super(props);
 
         const className = this.getClassName(props);
+        const styleName = this.getStyleName(props);
 
         this.state = {
             className,
+            styleName,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
+        const styleName = this.getStyleName(nextProps);
 
         this.setState({
             className,
+            styleName,
         });
     }
 
@@ -78,7 +85,7 @@ export default class Row extends React.PureComponent {
         } = props;
 
         // default className for global override
-        classNames.push('table-row');
+        classNames.push('row');
 
         // className provided by parent (through styleName)
         classNames.push(className);
@@ -90,6 +97,56 @@ export default class Row extends React.PureComponent {
         if (highlighted) {
             classNames.push('highlighted');
         }
+
+        return classNames.join(' ');
+    }
+
+    getStyleName = (props) => {
+        const styleNames = [];
+        const {
+            hoverable,
+            highlighted,
+        } = props;
+
+        // default className for global override
+        styleNames.push('row');
+
+        if (hoverable) {
+            styleNames.push('hoverable');
+        }
+
+        if (highlighted) {
+            styleNames.push('highlighted');
+        }
+
+        return styleNames.join(' ');
+    }
+
+    getCell = (header) => {
+        const {
+            areCellsHoverable,
+            dataModifier,
+            highlightCellKey,
+            rowData,
+        } = this.props;
+
+        let data = rowData[header.key];
+
+        if (dataModifier) {
+            data = dataModifier(rowData, header.key);
+        }
+
+        return (
+            <Cell
+                key={header.key}
+                uniqueKey={header.key}
+                onClick={this.handleCellClick}
+                hoverable={areCellsHoverable}
+                highlighted={isEqualAndTruthy(header.key, highlightCellKey)}
+            >
+                { data }
+            </Cell>
+        );
     }
 
     handleCellClick = (key, e) => {
@@ -104,26 +161,20 @@ export default class Row extends React.PureComponent {
     }
 
     render() {
+        console.log('Rendering Row');
+
         const {
             headers,
-            areCellsHoverable,
-            highlightCellKey,
-            rowData,
         } = this.props;
 
         return (
-            <tr className={this.state.className}>
+            <tr
+                className={this.state.className}
+                styleName={this.state.styleName}
+            >
                 {
                     headers.map(header => (
-                        <Cell
-                            key={header.key}
-                            uniqueKey={header.key}
-                            onClick={this.handleCellClick}
-                            hoverable={areCellsHoverable}
-                            highlighted={isEqualAndTruthy(header.key, highlightCellKey)}
-                        >
-                            { rowData[header.key] }
-                        </Cell>
+                        this.getCell(header)
                     ))
                 }
             </tr>

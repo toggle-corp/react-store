@@ -2,8 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Body from './Body';
-import Headers from './Headers';
+import Header from './Header';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -12,40 +11,23 @@ const propTypes = {
     headers: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string,
-            label: PropTypes.string,
         }),
     ).isRequired,
 
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string,
-        }),
-    ).isRequired,
-
-    dataModifier: PropTypes.func,
+    onClick: PropTypes.func,
 
     headerModifier: PropTypes.func,
-
-    /**
-     * keyExtractor is used to get a unique key associated with rowData
-     */
-    keyExtractor: PropTypes.func.isRequired,
-
-    onBodyClick: PropTypes.func,
-
-    onHeaderClick: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    onBodyClick: undefined,
-    onHeaderClick: undefined,
-    dataModifier: undefined,
+    onClick: undefined,
     headerModifier: undefined,
 };
 
+
 @CSSModules(styles, { allowMultiple: true })
-export default class RawTable extends React.PureComponent {
+export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -78,7 +60,7 @@ export default class RawTable extends React.PureComponent {
         } = props;
 
         // default className for global override
-        classNames.push('raw-table');
+        classNames.push('headers');
 
         // className provided by parent (through styleName)
         classNames.push(className);
@@ -86,39 +68,68 @@ export default class RawTable extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getStyleName = () => ('raw-table')
+    getStyleName = () => {
+        const styleNames = [];
 
-    render() {
-        console.log('Rendering RawTable');
+        // default className for global override
+        styleNames.push('headers');
 
+        return styleNames.join(' ');
+    }
+
+    getHeader = (headerData) => {
         const {
-            data,
-            dataModifier,
             headers,
             headerModifier,
-            keyExtractor,
-            onHeaderClick,
-            onBodyClick,
+        } = this.props;
+
+        let header = headerData.label;
+
+        if (headerModifier) {
+            header = headerModifier(headerData, headers);
+        }
+
+        return (
+            <Header
+                key={headerData.key}
+                onClick={this.handleHeaderClick}
+                uniqueKey={headerData.key}
+            >
+                {header}
+            </Header>
+        );
+    }
+
+    handleHeaderClick = (key, e) => {
+        const {
+            onClick,
+        } = this.props;
+
+        if (onClick) {
+            onClick(key, e);
+        }
+    }
+
+    render() {
+        console.log('Rendering Headers');
+
+        const {
+            headers,
         } = this.props;
 
         return (
-            <table
+            <thead
                 className={this.state.className}
                 styleName={this.state.styleName}
             >
-                <Headers
-                    headers={headers}
-                    headerModifier={headerModifier}
-                    onClick={onHeaderClick}
-                />
-                <Body
-                    data={data}
-                    dataModifier={dataModifier}
-                    headers={headers}
-                    keyExtractor={keyExtractor}
-                    onClick={onBodyClick}
-                />
-            </table>
+                <tr>
+                    {
+                        headers.map(header => (
+                            this.getHeader(header)
+                        ))
+                    }
+                </tr>
+            </thead>
         );
     }
 }
