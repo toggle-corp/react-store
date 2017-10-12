@@ -43,6 +43,8 @@ const propTypes = {
      * Placeholder for the input
      */
     placeholder: PropTypes.string,
+
+    selectedOptionKey: PropTypes.string,
 };
 
 const defaultProps = {
@@ -52,6 +54,7 @@ const defaultProps = {
     multiple: false,
     options: [],
     placeholder: 'Select an option',
+    selectedOptionKey: undefined,
 };
 
 /*
@@ -82,12 +85,20 @@ export default class SelectInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const {
+            selectedOptionKey,
+            options,
+            keySelector,
+            labelSelector,
+        } = this.props;
+        const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
+
         this.state = {
             showOptions: false,
-            inputValue: '',
+            inputValue: labelSelector(selectedOption) || '',
             displayOptions: this.props.options,
             optionContainerStyle: {},
-            selectedOption: {},
+            selectedOption,
             selectedOptions: [],
             markedOption: {},
         };
@@ -174,8 +185,8 @@ export default class SelectInput extends React.PureComponent {
                 return (
                     <Option
                         key={key}
-                        selected={this.state.selectedOption.key === key}
-                        marked={this.state.markedOption.key === key}
+                        selected={keySelector(this.state.selectedOption) === key}
+                        marked={keySelector(this.state.markedOption) === key}
                         onClick={() => {
                             this.handleOptionClick(key);
                         }}
@@ -209,12 +220,16 @@ export default class SelectInput extends React.PureComponent {
 
     markNextOption = () => {
         const {
+            keySelector,
+        } = this.props;
+
+        const {
             displayOptions,
             markedOption,
         } = this.state;
 
         const currentlyMarkedElementIndex = displayOptions.findIndex(
-            d => d.key === markedOption.key,
+            d => keySelector(d) === keySelector(markedOption),
         );
 
         if (currentlyMarkedElementIndex < (displayOptions.length - 1)) {
@@ -226,12 +241,16 @@ export default class SelectInput extends React.PureComponent {
 
     markPreviousOption = () => {
         const {
+            keySelector,
+        } = this.props;
+
+        const {
             displayOptions,
             markedOption,
         } = this.state;
 
         const currentlyMarkedElementIndex = displayOptions.findIndex(
-            d => d.key === markedOption.key,
+            d => keySelector(d) === keySelector(markedOption),
         );
 
         if (currentlyMarkedElementIndex > 0) {
@@ -243,16 +262,22 @@ export default class SelectInput extends React.PureComponent {
 
     selectMarkedOption = () => {
         const {
+            keySelector,
+        } = this.props;
+
+        const {
             markedOption,
             selectedOptions,
         } = this.state;
 
-        if (markedOption.key) {
+        if (keySelector(markedOption)) {
             if (this.props.multiple) {
-                const index = selectedOptions.findIndex(d => d.key === markedOption.key);
-                this.handleOptionClick(markedOption.key, !(index > -1));
+                const index = selectedOptions.findIndex(
+                    d => keySelector(d) === keySelector(markedOption),
+                );
+                this.handleOptionClick(keySelector(markedOption), !(index > -1));
             } else {
-                this.handleOptionClick(markedOption.key);
+                this.handleOptionClick(keySelector(markedOption));
             }
         }
     }
