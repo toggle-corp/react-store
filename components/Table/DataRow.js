@@ -1,8 +1,9 @@
 import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
-import React from 'react';
 
+import React from 'react';
 import styles from './styles.scss';
+
 import {
     TableHeaderPropTypes,
 } from './Header';

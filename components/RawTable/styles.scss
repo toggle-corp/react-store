@@ -1,0 +1,31 @@
+@import '../../../stylesheets/base';
+
+.raw-table {
+    width: 100%;
+    border-spacing: 0;
+
+}
+
+.headers {
+    .header {
+        background-color: $color-background-header;
+        padding: $spacing-small $spacing-medium;
+        text-transform: uppercase;
+        font-size: $font-size-small;
+        font-weight: $font-weight-normal;
+    }
+}
+
+.body {
+    .row {
+        background-color: $color-background-row;
+
+        .cell {
+            padding: $spacing-small $spacing-medium;
+        }
+
+        &:nth-child(odd) {
+            background-color: $color-background-row-alt;
+        }
+    }
+}
