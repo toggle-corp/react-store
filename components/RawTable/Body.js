@@ -146,7 +146,7 @@ export default class Body extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Body');
+        // console.log('Rendering Body');
 
         const {
             data,

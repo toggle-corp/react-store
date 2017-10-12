@@ -120,7 +120,7 @@ export default class Header extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Header');
+        // console.log('Rendering Header');
 
         return (
             <th

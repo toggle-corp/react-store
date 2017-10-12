@@ -89,7 +89,7 @@ export default class RawTable extends React.PureComponent {
     getStyleName = () => ('raw-table')
 
     render() {
-        console.log('Rendering RawTable');
+        // console.log('Rendering RawTable');
 
         const {
             data,

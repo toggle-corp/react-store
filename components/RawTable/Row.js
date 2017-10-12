@@ -136,6 +136,7 @@ export default class Row extends React.PureComponent {
             data = dataModifier(rowData, header.key);
         }
 
+        // Un-necessary cell re-render because of dataModifier
         return (
             <Cell
                 key={header.key}
@@ -161,7 +162,7 @@ export default class Row extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Row');
+        // console.log('Rendering Row');
 
         const {
             headers,

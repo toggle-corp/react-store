@@ -115,7 +115,7 @@ export default class Cell extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Cell');
+        // console.log('Rendering Cell');
 
         return (
             <td

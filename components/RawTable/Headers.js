@@ -111,7 +111,7 @@ export default class Body extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Headers');
+        // console.log('Rendering Headers');
 
         const {
             headers,
