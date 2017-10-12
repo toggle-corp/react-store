@@ -43,6 +43,8 @@ const propTypes = {
      * Placeholder for the input
      */
     placeholder: PropTypes.string,
+
+    selectedOptionKey: PropTypes.string,
 };
 
 const defaultProps = {
@@ -52,6 +54,7 @@ const defaultProps = {
     multiple: false,
     options: [],
     placeholder: 'Select an option',
+    selectedOptionKey: undefined,
 };
 
 /*
@@ -82,12 +85,20 @@ export default class SelectInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const {
+            selectedOptionKey,
+            options,
+            keySelector,
+            labelSelector,
+        } = this.props;
+        const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
+
         this.state = {
             showOptions: false,
-            inputValue: '',
+            inputValue: labelSelector(selectedOption) || '',
             displayOptions: this.props.options,
             optionContainerStyle: {},
-            selectedOption: {},
+            selectedOption,
             selectedOptions: [],
             markedOption: {},
         };
