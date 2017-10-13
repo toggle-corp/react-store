@@ -13,6 +13,11 @@ const propTypes = {
     buttonType: PropTypes.string,
 
     /**
+     * required for style override
+    */
+    className: PropTypes.string,
+
+    /**
      * children can contain a simple string or a react element
      */
     children: PropTypes.oneOfType([
@@ -38,6 +43,7 @@ const propTypes = {
 
 const defaultProps = {
     buttonType: 'button-default',
+    className: '',
     disabled: false,
     iconName: undefined,
     onClick: () => {},
@@ -50,6 +56,45 @@ const defaultProps = {
 export default class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        const className = this.getClassName(props);
+
+        this.state = {
+            className,
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const className = this.getClassName(nextProps);
+
+        this.setState = ({
+            className,
+        });
+    }
+
+    getClassName = (props) => {
+        const {
+            buttonType,
+            className,
+        } = props;
+
+        const classNames = [];
+
+        classNames.push('button');
+
+        if (className) {
+            classNames.push(className);
+        }
+
+        if (buttonType) {
+            classNames.push(buttonType);
+        }
+
+        return classNames.join(' ');
+    }
 
     render() {
         const {
@@ -65,11 +110,12 @@ export default class Button extends React.PureComponent {
                 disabled={disabled}
                 onClick={onClick}
                 styleName={`button ${buttonType}`}
+                className={this.state.className}
             >
                 {
                     iconName &&
                     <i
-                        className={iconName}
+                        className={`${iconName} icon`}
                         styleName="icon-button"
                     />
                 }
@@ -83,6 +129,10 @@ export const PrimaryButton = props => (
     <Button buttonType="button-primary" {...props} />
 );
 
+export const accentButton = props => (
+    <Button buttonType="button-accent" {...props} />
+);
+
 export const SuccessButton = props => (
     <Button buttonType="button-success" {...props} />
 );
@@ -93,4 +143,28 @@ export const DangerButton = props => (
 
 export const WarningButton = props => (
     <Button buttonType="button-warning" {...props} />
+);
+
+export const TransparentButton = props => (
+    <Button buttonType="transparent" {...props} />
+);
+
+export const TransparentPrimaryButton = props => (
+    <Button buttonType="button-primary transparent" {...props} />
+);
+
+export const TransparentAccentButton = props => (
+    <Button buttonType="button-accent transparent" {...props} />
+);
+
+export const TransparentSuccessButton = props => (
+    <Button buttonType="button-success transparent" {...props} />
+);
+
+export const TransparentDangerButton = props => (
+    <Button buttonType="button-danger transparent" {...props} />
+);
+
+export const TransparentWarningButton = props => (
+    <Button buttonType="button-warning transparent" {...props} />
 );
