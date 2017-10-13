@@ -104,3 +104,20 @@ export const formattedNormalize = (number) => {
 export const getRandomFromList = (items = []) => (
     items[Math.floor(Math.random() * items.length)]
 );
+
+
+export const leftPad = (number, length, pad = '0') => {
+    const numStr = String(number);
+    return numStr.length >= length ? numStr :
+        new Array((length - numStr.length) + 1).join(pad) + numStr;
+};
+
+export const getNumDaysInMonth = date => (
+    date ? (
+        new Date(
+            date.getFullYear(),
+            date.getMonth() + 1,
+            0,
+        ).getDate()
+    ) : 32
+);
