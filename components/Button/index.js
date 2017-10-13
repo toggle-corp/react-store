@@ -83,6 +83,10 @@ export const PrimaryButton = props => (
     <Button buttonType="button-primary" {...props} />
 );
 
+export const accentButton = props => (
+    <Button buttonType="button-accent" {...props} />
+);
+
 export const SuccessButton = props => (
     <Button buttonType="button-success" {...props} />
 );
@@ -93,4 +97,24 @@ export const DangerButton = props => (
 
 export const WarningButton = props => (
     <Button buttonType="button-warning" {...props} />
+);
+
+export const TransparentPrimaryButton = props => (
+    <Button buttonType="button-primary transparent" {...props} />
+);
+
+export const TransparentAccentButton = props => (
+    <Button buttonType="button-accent transparent" {...props} />
+);
+
+export const TransparentSuccessButton = props => (
+    <Button buttonType="button-success transparent" {...props} />
+);
+
+export const TransparentDangerButton = props => (
+    <Button buttonType="button-danger transparent" {...props} />
+);
+
+export const TransparentWarningButton = props => (
+    <Button buttonType="button-warning transparent" {...props} />
 );

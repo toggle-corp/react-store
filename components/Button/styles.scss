@@ -29,30 +29,63 @@
     &.button-default {
         background-color: $color-background-button-default;
         color: $color-label;
+
+        &.transparent {
+            color: $color-label;
+        }
+    }
+
+    &.button-accent {
+        background-color: $color-accent;
+        color: $color-text-on-accent;
+
+        &.transparent {
+            color: $color-accent;
+        }
     }
 
     &.button-primary {
         background-color: $color-primary;
         color: $color-text-on-primary;
+
+        &.transparent {
+            color: $color-primary;
+        }
     }
 
     &.button-danger {
         background-color: $color-danger;
         color: $color-text-on-primary;
+
+        &.transparent {
+            color: $color-danger;
+        }
     }
 
     &.button-success {
         background-color: $color-success;
         color: $color-text-on-primary;
+
+        &.transparent {
+            color: $color-success;
+        }
     }
 
     &.button-warning {
         background-color: $color-warning;
         color: $color-text-on-primary;
+
+        &.transparent {
+            color: $color-warning;
+        }
     }
 
     .icon-button {
         margin-right: $spacing-small;
+
+        &.transparent {
+            color: $color-primary;
+        }
     }
 
     &:disabled {
@@ -62,4 +95,13 @@
         color: $color-text-disabled;
     }
 
+    &.transparent {
+        box-shadow: none;
+        background-color: transparent;
+
+        &:focus {
+            border-bottom: 0;
+            background-color: $color-hover;
+        }
+    }
 }
