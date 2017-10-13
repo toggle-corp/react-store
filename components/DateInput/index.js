@@ -136,7 +136,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Public method used by Form
-    value = () => this.state.date.getTime();
+    value = () => this.state.date && this.state.date.getTime();
 
     // Public method used by Form
     isFocused = () => this.state.focused;
