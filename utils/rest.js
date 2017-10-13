@@ -71,10 +71,10 @@ export class RestRequest {
     }
 
     start = async () => {
-        // console.log('Fetching', this.url);
         let response;
         try {
             const parameters = typeof this.params === 'function' ? this.params() : this.params;
+            console.log(`Fetching ${this.url}`, parameters);
             response = await fetch(this.url, parameters);
         } catch (ex) {
             const retryable = this.retry();
@@ -93,8 +93,7 @@ export class RestRequest {
             return;
         }
 
-        console.log(response);
-
+        console.log(`Fetching ${this.url}`, responseBody);
         if (response.ok) {
             this.success(responseBody);
         } else {

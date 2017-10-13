@@ -29,6 +29,8 @@ const propTypes = {
      */
     multiple: PropTypes.bool,
 
+    onChange: PropTypes.func,
+
     /**
      * Options to be shown
      */
@@ -44,7 +46,10 @@ const propTypes = {
      */
     placeholder: PropTypes.string,
 
-    selectedOptionKey: PropTypes.string,
+    selectedOptionKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 };
 
 const defaultProps = {
@@ -55,6 +60,7 @@ const defaultProps = {
     options: [],
     placeholder: 'Select an option',
     selectedOptionKey: undefined,
+    onChange: undefined,
 };
 
 /*
@@ -378,6 +384,7 @@ export default class SelectInput extends React.PureComponent {
         const {
             keySelector,
             labelSelector,
+            onChange,
         } = this.props;
 
         const option = this.props.options.find(d => keySelector(d) === key);
@@ -411,6 +418,9 @@ export default class SelectInput extends React.PureComponent {
         }
 
         this.input.focus();
+        if (key !== keySelector(this.state.selectedOption) && onChange) {
+            onChange(key);
+        }
     }
 
     // close gracefully
