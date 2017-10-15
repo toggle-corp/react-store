@@ -4,7 +4,7 @@
 
 import {
     isFalsy,
-    isFloat,
+    isInteger,
 } from './common';
 
 // VALIDATION RULES
@@ -16,8 +16,9 @@ export const numberCondition = {
     truth: value => isFalsy(value) || !isFalsy(+value),
     message: 'Value must be a number',
 };
+
 export const integerCondition = {
-    truth: value => !isFloat(+value),
+    truth: value => isInteger(+value),
     message: 'Value must be an integer',
 };
 
@@ -30,6 +31,17 @@ export const greaterThanCondition = n => ({
     truth: value => value > n,
     message: `Value must be greater than ${n}`,
 });
+
+export const lessThanOrEqualToCondition = n => ({
+    truth: value => value <= n,
+    message: `Value must be less than or equal to ${n}`,
+});
+
+export const greaterThanOrEqualToCondition = n => ({
+    truth: value => value >= n,
+    message: `Value must be greater than or equal to ${n}`,
+});
+
 
 export const lengthLessThanCondition = n => ({
     truth: value => isFalsy(value) || value.length < n,
