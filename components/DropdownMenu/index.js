@@ -11,6 +11,8 @@ import styles from './styles.scss';
  * showDropdown shows chevron on right of title button
  * */
 const propTypes = {
+    className: PropTypes.string,
+
     /**
      * child elements
      */
@@ -18,13 +20,18 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
     ]).isRequired,
+
     iconLeft: PropTypes.string,
+
     marginTop: PropTypes.number,
+
     showDropdownIcon: PropTypes.bool,
+
     title: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     iconLeft: '',
     marginTop: 0,
     showDropdownIcon: true,
@@ -93,6 +100,7 @@ export default class DropdownMenu extends React.PureComponent {
         return (
             <div
                 ref={this.getReference}
+                className={this.props.className}
                 styleName="dropdown"
             >
                 <button

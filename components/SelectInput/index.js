@@ -97,6 +97,7 @@ export default class SelectInput extends React.PureComponent {
             keySelector,
             labelSelector,
         } = this.props;
+
         const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
 
         this.state = {
@@ -118,6 +119,22 @@ export default class SelectInput extends React.PureComponent {
         window.addEventListener('click', this.handleMouseDown);
         window.addEventListener('scroll', this.handleScroll);
         document.addEventListener('keydown', this.handleKeyPress);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            keySelector,
+            options,
+            selectedOptionKey,
+        } = nextProps;
+
+        if (nextProps.selectedOptionKey) {
+            const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
+
+            this.setState({
+                selectedOption,
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -205,7 +222,6 @@ export default class SelectInput extends React.PureComponent {
 
         return options;
     }
-
 
     handleDynamicStyleOverride = (optionContainer) => {
         const optionRect = optionContainer.getBoundingClientRect();
@@ -418,8 +434,13 @@ export default class SelectInput extends React.PureComponent {
         }
 
         this.input.focus();
-        if (key !== keySelector(this.state.selectedOption) && onChange) {
-            onChange(key);
+
+        if (onChange) {
+            if (this.props.multiple) {
+                onChange(key, checked);
+            } else if (key !== keySelector(this.state.selectedOption)) {
+                onChange(key);
+            }
         }
     }
 
@@ -445,7 +466,6 @@ export default class SelectInput extends React.PureComponent {
         // close options
         this.setState({ ...newState, showOptions: false });
     }
-
 
     render() {
         const { selectedOptions } = this.state;
