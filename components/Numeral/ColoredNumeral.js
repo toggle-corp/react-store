@@ -7,6 +7,11 @@ import Numeral from './Numeral';
 
 const propTypes = {
     /**
+     * reqired for style override
+     */
+    className: PropTypes.string,
+
+    /**
      * The value of the numeral
      */
     value: PropTypes.number,
@@ -23,6 +28,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     value: undefined,
     referenceValue: undefined,
     referenceLine: undefined,
@@ -38,16 +44,20 @@ export default class ColoredNumeral extends React.PureComponent {
 
     render() {
         const {
+            className,
+            referenceLine = 0,
             value,
             referenceValue = value,
-            referenceLine = 0,
             ...props
         } = this.props;
 
         const styleName = referenceValue - referenceLine >= 0 ? 'gain-positive' : 'gain-negative';
 
         return (
-            <span styleName={styleName} >
+            <span
+                className={className}
+                styleName={styleName}
+            >
                 <Numeral
                     value={value}
                     {...props}

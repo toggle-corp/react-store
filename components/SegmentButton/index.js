@@ -7,6 +7,7 @@ import { randomString } from '../../utils/common';
 
 // TODO: @adityakhatri47, Rename property 'onPress' to 'onClick' for consistency
 const propTypes = {
+    className: PropTypes.string,
     data: PropTypes.arrayOf(
         PropTypes.shape({
             label: PropTypes.string,
@@ -17,9 +18,14 @@ const propTypes = {
     selected: PropTypes.string.isRequired,
 };
 
+const defaultProps = {
+    className: '',
+};
+
 @CSSModules(styles, { allowMultiple: true })
 export default class SegmentButton extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -43,11 +49,17 @@ export default class SegmentButton extends React.PureComponent {
     };
 
     render() {
-        const { data } = this.props;
+        const {
+            className,
+            data,
+        } = this.props;
         const { selectedValue } = this.state;
 
         return (
-            <div styleName="segment-container">
+            <div
+                className={className}
+                styleName="segment-container"
+            >
                 {
                     data.map((button, i) => (
                         <label

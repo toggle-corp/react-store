@@ -16,9 +16,8 @@
             align-items: center;
             justify-content: center;
             margin: 0;
-            width: $width-segment-button;
-            height: $height-segment-button;
-            font-size: $font-size-large;
+            padding: $spacing-extra-small $spacing-medium-alt;
+            font-size: $font-size-medium;
         }
 
         &:not(:last-child) {

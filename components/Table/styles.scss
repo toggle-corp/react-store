@@ -17,7 +17,8 @@
                 border-bottom: $width-separator-normal solid $color-separator;
                 border-left: $width-separator-thin solid $color-separator;
                 background-color: $color-background-header;
-                padding: $spacing-medium-alt $spacing-medium;
+                padding: $spacing-small $spacing-medium;
+                text-align: left;
                 text-transform: uppercase;
                 font-size: $font-size-small;
                 font-weight: $font-weight-normal;
@@ -34,7 +35,7 @@
                         display: inline-block;
                         transform: rotate(90deg);
                         margin-right: $spacing-small;
-                        width: $width-icon-medium;
+                        // width: $width-icon-medium;
                         font-family: 'Ionicons';
                         content: '\f268';
                     }
