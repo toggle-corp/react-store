@@ -9,7 +9,10 @@ const propTypes = {
     /**
      * Timestamp
      */
-    date: PropTypes.number,
+    date: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+    ]),
     /**
      * Options
      */
