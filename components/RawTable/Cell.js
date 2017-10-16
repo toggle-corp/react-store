@@ -10,7 +10,7 @@ const propTypes = {
         PropTypes.arrayOf(
             PropTypes.node,
         ),
-    ]).isRequired,
+    ]),
 
     className: PropTypes.string,
 
@@ -28,6 +28,7 @@ const defaultProps = {
     highlighted: false,
     hoverable: false,
     onClick: undefined,
+    children: '-',
 };
 
 @CSSModules(styles, { allowMultiple: true })
