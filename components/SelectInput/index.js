@@ -97,6 +97,7 @@ export default class SelectInput extends React.PureComponent {
             keySelector,
             labelSelector,
         } = this.props;
+
         const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
 
         this.state = {
@@ -118,6 +119,22 @@ export default class SelectInput extends React.PureComponent {
         window.addEventListener('click', this.handleMouseDown);
         window.addEventListener('scroll', this.handleScroll);
         document.addEventListener('keydown', this.handleKeyPress);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            keySelector,
+            options,
+            selectedOptionKey,
+        } = nextProps;
+
+        if (nextProps.selectedOptionKey) {
+            const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
+
+            this.setState({
+                selectedOption,
+            });
+        }
     }
 
     componentWillUnmount() {
