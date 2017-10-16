@@ -206,7 +206,6 @@ export default class SelectInput extends React.PureComponent {
         return options;
     }
 
-
     handleDynamicStyleOverride = (optionContainer) => {
         const optionRect = optionContainer.getBoundingClientRect();
         const cr = this.boundingClientRect;
@@ -418,8 +417,13 @@ export default class SelectInput extends React.PureComponent {
         }
 
         this.input.focus();
-        if (key !== keySelector(this.state.selectedOption) && onChange) {
-            onChange(key);
+
+        if (onChange) {
+            if (this.props.multiple) {
+                onChange(key, checked);
+            } else if (key !== keySelector(this.state.selectedOption)) {
+                onChange(key);
+            }
         }
     }
 
@@ -445,7 +449,6 @@ export default class SelectInput extends React.PureComponent {
         // close options
         this.setState({ ...newState, showOptions: false });
     }
-
 
     render() {
         const { selectedOptions } = this.state;
