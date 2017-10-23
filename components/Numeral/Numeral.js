@@ -15,6 +15,11 @@ import {
 
 const propTypes = {
     /**
+     * reqired for style override
+     */
+    className: PropTypes.string,
+
+    /**
      * Normalize numer into Lac, Cr, Ar
      */
     normal: PropTypes.bool,
@@ -49,6 +54,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     normal: false,
     precision: 2,
     prefix: undefined,
@@ -70,6 +76,7 @@ export default class Numeral extends React.PureComponent {
 
     render() {
         const {
+            className,
             normal,
             precision,
             prefix,
@@ -82,7 +89,11 @@ export default class Numeral extends React.PureComponent {
 
         if (isFalsy(value)) {
             return (
-                <span>?</span>
+                <span
+                    className={className}
+                >
+                    ?
+                </span>
             );
         }
 
@@ -108,7 +119,10 @@ export default class Numeral extends React.PureComponent {
         }
 
         return (
-            <span styleName="numeral">
+            <span
+                className={className}
+                styleName="numeral"
+            >
                 {
                     isTruthy(prefix) &&
                     <span>
