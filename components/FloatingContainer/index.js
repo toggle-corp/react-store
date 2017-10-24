@@ -45,6 +45,11 @@ const propTypes = {
     onDynamicStyleOverride: PropTypes.func,
 
     /**
+     * A callback for when mouse is clicked outside container
+     */
+    onBlur: PropTypes.func,
+
+    /**
      * A callback when the container is closed
      */
     onClose: PropTypes.func.isRequired,
@@ -68,6 +73,7 @@ const defaultProps = {
     closeOnBlur: false,
     closeOnEscape: false,
     closeOnTab: false,
+    onBlur: undefined,
     onDynamicStyleOverride: undefined,
     styleOverride: {},
 };
@@ -97,14 +103,11 @@ export default class FloatingContainer extends React.PureComponent {
     getContent = () => (
         <div
             className={this.props.className}
-            styleName="wrap"
+            styleName="floating-container-wrap"
         >
             { this.props.children }
         </div>
     )
-
-    getValue = () => (this.state.inputValue)
-
 
     getContainer = () => {
         const {
@@ -130,12 +133,14 @@ export default class FloatingContainer extends React.PureComponent {
         if (this.props.closeOnEscape || this.props.closeOnTab) {
             document.addEventListener('keydown', this.handleKeyPress);
         }
-        if (this.props.closeOnBlur) {
-            window.addEventListener('mousedown', this.handleClick);
+        if (this.props.closeOnBlur || this.props.onBlur) {
+            window.addEventListener('click', this.handleClick);
         }
 
         // append style provided by parent 
-        Object.assign(this.container.style, styleOverride);
+        if (styleOverride) {
+            Object.assign(this.container.style, styleOverride);
+        }
 
         return this.container;
     }
@@ -169,12 +174,17 @@ export default class FloatingContainer extends React.PureComponent {
     }
 
     handleClick = (e) => {
-        if (
-            this.props.closeOnBlur
-            && e.target !== this.container
-            && !this.container.contains(e.target)
-        ) {
-            this.close();
+        if (this.props.onBlur || this.props.closeOnBlur) {
+            if (e.target !== this.container
+                && !this.container.contains(e.target)
+            ) {
+                if (this.props.onBlur) {
+                    this.props.onBlur();
+                }
+                if (this.props.closeOnBlur) {
+                    this.close();
+                }
+            }
         }
     }
 
