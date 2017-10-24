@@ -2,7 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FloatingContainer from '../FloatingContainer';
+// import FloatingContainer from '../FloatingContainer';
+import Options from './Options';
 import Option from './Option';
 import styles from './styles.scss';
 
@@ -63,26 +64,6 @@ const defaultProps = {
     onChange: undefined,
 };
 
-/*
-const isOption = (child) => {
-    console.log(child.id);
-    let parentNode = child.parentNode;
-    let isParent = false;
-
-    while (parentNode) {
-        if (parentNode.id === 'options-container') {
-            isParent = true;
-            break;
-        }
-
-        parentNode = parentNode.parentNode;
-        console.log(parentNode);
-    }
-
-    return isParent;
-};
-*/
-
 @CSSModules(styles, { allowMultiple: true })
 export default class SelectInput extends React.PureComponent {
     static propTypes = propTypes;
@@ -110,15 +91,7 @@ export default class SelectInput extends React.PureComponent {
             markedOption: {},
         };
 
-        // this.selectedOptions = [];
         this.boundingClientRect = {};
-    }
-
-    componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-        window.addEventListener('click', this.handleMouseDown);
-        window.addEventListener('scroll', this.handleScroll);
-        document.addEventListener('keydown', this.handleKeyPress);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -136,26 +109,6 @@ export default class SelectInput extends React.PureComponent {
             });
         }
     }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('click', this.handleMouseDown);
-        window.removeEventListener('scroll', this.handleScroll);
-        document.removeEventListener('keydown', this.handleKeyPress);
-    }
-
-    getDimension = () => {
-        const cr = this.container.getBoundingClientRect();
-        this.boundingClientRect = cr;
-
-        return {
-            optionContainerStyle: {
-                left: `${cr.left}px`,
-                top: `${(cr.top + window.scrollY) + cr.height}px`,
-                width: `${cr.width}px`,
-            },
-        };
-    };
 
     // rates the string for content
     getRating = (str, content) => (
@@ -223,151 +176,8 @@ export default class SelectInput extends React.PureComponent {
         return options;
     }
 
-    handleDynamicStyleOverride = (optionContainer) => {
-        const optionRect = optionContainer.getBoundingClientRect();
-        const cr = this.boundingClientRect;
-
-        const pageOffset = window.innerHeight;
-        const containerOffset = cr.top + optionRect.height + cr.height;
-
-        const newStyle = {
-        };
-
-        if (pageOffset < containerOffset) {
-            newStyle.top = `${(cr.top + window.scrollY) - optionRect.height}px`;
-        }
-
-        return newStyle;
-    }
-
-    markNextOption = () => {
-        const {
-            keySelector,
-        } = this.props;
-
-        const {
-            displayOptions,
-            markedOption,
-        } = this.state;
-
-        const currentlyMarkedElementIndex = displayOptions.findIndex(
-            d => keySelector(d) === keySelector(markedOption),
-        );
-
-        if (currentlyMarkedElementIndex < (displayOptions.length - 1)) {
-            this.setState({
-                markedOption: displayOptions[currentlyMarkedElementIndex + 1],
-            });
-        }
-    }
-
-    markPreviousOption = () => {
-        const {
-            keySelector,
-        } = this.props;
-
-        const {
-            displayOptions,
-            markedOption,
-        } = this.state;
-
-        const currentlyMarkedElementIndex = displayOptions.findIndex(
-            d => keySelector(d) === keySelector(markedOption),
-        );
-
-        if (currentlyMarkedElementIndex > 0) {
-            this.setState({
-                markedOption: displayOptions[currentlyMarkedElementIndex - 1],
-            });
-        }
-    }
-
-    selectMarkedOption = () => {
-        const {
-            keySelector,
-        } = this.props;
-
-        const {
-            markedOption,
-            selectedOptions,
-        } = this.state;
-
-        if (keySelector(markedOption)) {
-            if (this.props.multiple) {
-                const index = selectedOptions.findIndex(
-                    d => keySelector(d) === keySelector(markedOption),
-                );
-                this.handleOptionClick(keySelector(markedOption), !(index > -1));
-            } else {
-                this.handleOptionClick(keySelector(markedOption));
-            }
-        }
-    }
-
-    handleKeyPress = (e) => {
-        if (this.state.showOptions) {
-            switch (e.code) {
-                case 'ArrowDown':
-                    this.markNextOption();
-                    break;
-                case 'ArrowUp':
-                    this.markPreviousOption();
-                    break;
-                case 'Enter':
-                    this.selectMarkedOption();
-                    break;
-                default:
-                    break;
-            }
-        }
-        return false;
-    }
-
-    handleScroll = () => {
-        if (this.state.showOptions) {
-            const newState = this.getDimension();
-            this.setState(newState);
-        }
-    }
-
-    handleResize = () => {
-        const newState = this.getDimension();
-        this.setState(newState);
-    };
-
-    handleMouseDown = (e) => {
-        if (
-            e.target === this.container
-            || this.container.contains(e.target)
-        ) {
-            this.mouseDownOn = 'container';
-
-            const newState = this.getDimension();
-
-            // show options
-            this.setState({ ...newState, showOptions: true });
-        } else if (
-            this.optionsContainer.container && (
-                e.target === this.optionsContainer.container
-                || this.optionsContainer.container.contains(e.target)
-            )
-        ) {
-            this.mouseDownOn = 'options';
-            // NOTE: don't close options here
-        } else {
-            this.mouseDownOn = 'outside';
-            this.close();
-        }
-    };
-
     // filtering
     handleInputChange = (e) => {
-        // Calculate only once when clicked
-        let newState = {};
-        if (!this.state.optionContainerStyle.width) {
-            newState = this.getDimension();
-        }
-
         const {
             labelSelector,
         } = this.props;
@@ -379,106 +189,117 @@ export default class SelectInput extends React.PureComponent {
         ));
 
         options.sort((a, b) => (
-            this.getRating(a.label, value) - this.getRating(b.label, value)
+            this.getRating(labelSelector(a), value) - this.getRating(labelSelector(b), value)
         ));
 
 
         this.setState({
-            ...newState,
             inputValue: value,
             displayOptions: options,
             showOptions: true,
         });
     }
 
-    // called by floating container when it is closed
-    handleOptionClosed = () => {
-        this.close();
+    handleInputFocus = () => {
+        if (!this.state.showOptions) {
+            this.boundingClientRect = this.container.getBoundingClientRect();
+            this.setState({
+                showOptions: true,
+                displayOptions: this.props.options, // reset the filter
+            });
+        }
     }
 
-    handleOptionClick = (key, checked) => {
+    handleOptionClick = (key) => {
         const {
             keySelector,
             labelSelector,
+            multiple,
             onChange,
         } = this.props;
 
-        const option = this.props.options.find(d => keySelector(d) === key);
 
-        if (this.props.multiple) {
-            const selectedOptions = [...this.state.selectedOptions];
+        if (multiple) {
+            // Multi select input
+            this.input.focus();
 
-            if (checked) {
-                selectedOptions.push(option);
-            } else {
-                const index = selectedOptions.findIndex(d => keySelector(d) === key);
-
-                if (index !== -1) {
-                    selectedOptions.splice(index, 1);
-                }
+            if (onChange) {
+                onChange();
             }
-
-            this.setState({
-                showOptions: true,
-                selectedOptions,
-            });
-
-            // this.selectedOptions = selectedOptions;
         } else {
+            // Single select input
+            const prevOptionKey = keySelector(this.state.selectedOption);
+            const selectedOption = this.props.options.find(d => keySelector(d) === key);
+
             this.setState({
+                selectedOption,
+                inputValue: labelSelector(selectedOption),
                 showOptions: false,
-                inputValue: labelSelector(option),
-                displayOptions: this.props.options, // reset the filter on click
-                selectedOption: option,
             });
-        }
 
-        this.input.focus();
-
-        if (onChange) {
-            if (this.props.multiple) {
-                onChange(key, checked);
-            } else if (key !== keySelector(this.state.selectedOption)) {
+            if (onChange && key !== prevOptionKey) {
                 onChange(key);
             }
         }
     }
 
-    // close gracefully
-    close = () => {
-        const {
-            labelSelector,
-        } = this.props;
+    handleOptionsBlur = () => {
+        // close options only if not focused on input
+        if (document.activeElement !== this.input) {
+            const {
+                labelSelector,
+                multiple,
+            } = this.props;
 
-        let newState = {};
-        const { inputValue } = this.state;
+            let newState = {};
+            const { inputValue } = this.state;
 
-        const option = this.props.options.find(d => labelSelector(d) === inputValue);
+            if (!multiple) {
+                // validate input text
+                const option = this.props.options.find(d => labelSelector(d) === inputValue);
 
-        if (!option) {
-            newState = {
-                inputValue: '',
-                displayOptions: this.props.options, // reset the filter
-                selectedOption: {},
-                markedOption: {},
-            };
+                if (!option || option.key !== this.state.selectedOption.key) {
+                    newState = {
+                        inputValue: '',
+                        displayOptions: this.props.options, // reset the filter
+                        selectedOption: {},
+                        markedOption: {},
+                    };
+                }
+            }
+
+            this.setState({
+                ...newState,
+                showOptions: false,
+            });
         }
-        // close options
-        this.setState({ ...newState, showOptions: false });
     }
 
     render() {
-        const { selectedOptions } = this.state;
-        let placeholder = '';
+        const {
+            displayOptions,
+            selectedOption, // for single select input 
+            selectedOptions, // for multi select input
+            showOptions,
+        } = this.state;
 
-        if (this.props.multiple) {
+        const {
+            multiple,
+            keySelector,
+            labelSelector,
+            placeholder,
+        } = this.props;
+
+        let ph = '';
+
+        if (multiple) {
             if (selectedOptions.length > 0) {
-                placeholder = `${selectedOptions.length} selected`;
+                ph = `${selectedOptions.length} selected`;
             } else {
-                placeholder = this.props.placeholder;
+                ph = placeholder;
             }
         } else {
-            placeholder = this.props.placeholder;
+            ph = placeholder;
         }
 
         return (
@@ -493,30 +314,23 @@ export default class SelectInput extends React.PureComponent {
                     type="text"
                     value={this.state.inputValue}
                     onChange={this.handleInputChange}
-                    placeholder={placeholder}
+                    onFocus={this.handleInputFocus}
+                    placeholder={ph}
                 />
                 <span
                     styleName="dropdown-icon"
                     className="ion-android-arrow-dropdown"
                 />
-                <FloatingContainer
-                    ref={(el) => { this.optionsContainer = el; }}
-                    show={this.state.showOptions}
-                    onClose={this.handleOptionClosed}
-                    containerId="options-container"
-                    styleName="options"
-                    styleOverride={this.state.optionContainerStyle}
-                    onDynamicStyleOverride={this.handleDynamicStyleOverride}
-                    closeOnTab
-                >
-                    { this.getOptions() }
-                    {
-                        this.state.displayOptions.length <= 0 &&
-                            <div styleName="empty">
-                                No option available
-                            </div>
-                    }
-                </FloatingContainer>
+                <Options
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    onBlur={this.handleOptionsBlur}
+                    onOptionClick={this.handleOptionClick}
+                    options={displayOptions}
+                    parentClientRect={this.boundingClientRect}
+                    selectedOptionKey={keySelector(selectedOption)}
+                    show={showOptions}
+                />
             </div>
         );
     }
