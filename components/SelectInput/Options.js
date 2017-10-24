@@ -26,7 +26,10 @@ const propTypes = {
         top: PropTypes.number,
     }),
 
-    selectedOptionKey: PropTypes.string,
+    selectedOptionKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 
     show: PropTypes.bool.isRequired,
 };

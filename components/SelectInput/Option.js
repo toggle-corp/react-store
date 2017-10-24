@@ -51,16 +51,6 @@ const defaultProps = {
     selected: false,
 };
 
-/*
-const isVisibleInParent = (el) => {
-    const parent = el.parentNode;
-    const pcr = parent.getBoundingClientRect();
-    const cr = el.getBoundingClientRect();
-
-    return (cr.top >= pcr.top) && (pcr.top + pcr.height) > (cr.top + cr.height);
-};
-*/
-
 @CSSModules(styles, { allowMultiple: true })
 export default class Option extends React.PureComponent {
     static propTypes = propTypes;
@@ -74,8 +64,8 @@ export default class Option extends React.PureComponent {
         };
     }
 
-    componentDidMount() {
-        if (this.props.marked) {
+    componentDidUpdate() {
+        if (this.props.marked && this.container) {
             this.container.scrollIntoView({
                 behavior: 'instant',
                 block: 'nearest',
