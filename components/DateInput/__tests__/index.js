@@ -21,7 +21,7 @@ describe('DateInput', () => {
     });
 
     it('returns proper date', () => {
-        expect(wrapper.instance().value())
+        expect(wrapper.instance().getValue())
             .toEqual(initialValue);
     });
 
@@ -30,13 +30,13 @@ describe('DateInput', () => {
         today.setHours(0, 0, 0, 0);
 
         wrapper.find('.today-button').simulate('click');
-        expect(wrapper.instance().value())
+        expect(wrapper.instance().getValue())
             .toEqual(today.getTime());
     });
 
     it('has working clear button', () => {
         wrapper.find('.clear-button').simulate('click');
-        expect(wrapper.instance().value())
+        expect(wrapper.instance().getValue())
             .toEqual(null);
     });
 
