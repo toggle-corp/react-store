@@ -134,7 +134,7 @@ export default class FloatingContainer extends React.PureComponent {
             document.addEventListener('keydown', this.handleKeyPress);
         }
         if (this.props.closeOnBlur || this.props.onBlur) {
-            window.addEventListener('click', this.handleClick);
+            window.addEventListener('mousedown', this.handleClick);
         }
 
         // append style provided by parent 

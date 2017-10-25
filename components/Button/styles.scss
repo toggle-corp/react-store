@@ -4,7 +4,7 @@
     @include shadow-medium;
     outline: none;
     border: 0;
-    border-bottom: $width-separator-normal solid transparent;
+    // border-bottom: $width-separator-normal solid transparent;
     border-radius: 3px;
     cursor: pointer;
     padding: $spacing-medium;
@@ -23,7 +23,7 @@
     }
 
     &:focus {
-        border-bottom: $width-separator-normal solid $color-accent;
+        // border-bottom: $width-separator-normal solid $color-accent;
     }
 
     &.button-default {

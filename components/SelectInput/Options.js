@@ -132,7 +132,7 @@ export default class Options extends React.PureComponent {
     }
 
     handleContainerClose = () => {
-        console.log('options closed');
+        // console.log('options closed');
     }
 
     render() {
