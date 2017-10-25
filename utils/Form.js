@@ -77,21 +77,6 @@ export const urlCondition = {
     message: 'Value must be a valid URL',
 };
 
-function extractFn(...parameters) {
-    const args = [...parameters];
-    if (args.length <= 0) {
-        console.warn('No arguments supplied');
-        return {};
-    }
-    const fn = args.splice(args.length - 1, 1);
-    if (typeof fn !== 'function') {
-        console.warn('Last argument must be a function');
-        return {};
-    }
-    return { fn, args };
-}
-
-
 // TODO: Use builder pattern
 class Form {
     constructor() {
@@ -116,8 +101,22 @@ class Form {
         this.validations = validations;
     }
 
-    setValidation(validation) {
-        this.validation = validation;
+    setValidation(...parameters) {
+        const args = [...parameters];
+        console.log(args);
+        if (args.length <= 0) {
+            console.warn('No arguments supplied');
+            this.validation = undefined;
+            return;
+        }
+        const fn = args.splice(args.length - 1, 1)[0];
+        console.log(fn, typeof fn);
+        if (typeof fn !== 'function') {
+            console.warn('Last argument must be a function');
+            this.validation = undefined;
+            return;
+        }
+        this.validation = { fn, args };
     }
 
     setCallbacks({
@@ -138,15 +137,30 @@ class Form {
         this.references[name]
     )
 
+    getRefValue = (name) => {
+        const element = this.getRef(name);
+        if (!element) {
+            console.warn(`Element '${name}' not found.`);
+            return undefined;
+        }
+        return element.value();
+    }
+
+    isRefFocused = (name) => {
+        const element = this.getRef(name);
+        if (!element) {
+            console.warn(`Element '${name}' not found.`);
+            return false;
+        }
+        return element.isFocused();
+    }
+
     // Calls changeCallback
     // onChange is triggered by all input elements
     // the input element is idenfied by isFocused() of input element
     onChange = (value) => {
         // Get name of element to be modified
-        const elementName = this.elements.find((name) => {
-            const element = this.getRef(name);
-            return element.isFocused();
-        });
+        const elementName = this.elements.find(name => this.isRefFocused(name));
 
         if (elementName) {
             // change value of current element
@@ -180,8 +194,7 @@ class Form {
             // success
             const values = {};
             this.elements.every((name) => {
-                const element = this.getRef(name);
-                values[name] = element.getValue();
+                values[name] = this.getRefValue(name);
                 return true;
             });
             this.successCallback(values, { error, errors });
@@ -195,8 +208,7 @@ class Form {
         // get errors and errors count from individual validation
         const { errorCount, errors } = this.elements.reduce(
             (acc, name) => {
-                const element = this.getRef(name);
-                const value = element.getValue();
+                const value = this.getRefValue(name);
                 const res = this.isValid(name, value);
                 // If response is ok, send accumulator as is
                 if (res.ok) {
@@ -215,11 +227,8 @@ class Form {
 
         let error;
         if (this.validation) {
-            const { fn, args } = extractFn(this.validation);
-            const superArgs = args.map((name) => {
-                const element = this.getRef(name);
-                return element.getValue();
-            });
+            const { fn, args } = this.validation;
+            const superArgs = args.map(name => this.getRefValue(name));
             const res = fn(...superArgs);
             if (!res.ok) {
                 error = res.message;
@@ -228,6 +237,7 @@ class Form {
 
         return { error, errors, errorCount };
     }
+
 
     // Check if a value is valid for certain element
     // ACCEPTS: name: String, value: String
