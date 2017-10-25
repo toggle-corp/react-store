@@ -5,11 +5,24 @@ import React from 'react';
 import styles from './styles.scss';
 import { randomString } from '../../utils/common';
 
+/**
+ * Note to SAFAR
+ * 
+ * changes:
+ * Add show status prop
+ * Add support for children (the label for fileinput button)
+ */
+
 const propTypes = {
     /**
      * Show preview?
      */
     showPreview: PropTypes.bool,
+
+    /**
+     * Show file status? (eg: File name, 'No file selected')
+     */
+    showStatus: PropTypes.bool,
 
     /**
      * a function that return Promise object
@@ -18,13 +31,23 @@ const propTypes = {
     previewExtractor: PropTypes.func,
 
     className: PropTypes.string,
+
+    children: PropTypes.oneOfType([
+        PropTypes.node,
+        PropTypes.arrayOf(
+            PropTypes.node,
+        ),
+    ]).isRequired,
 };
 
 const defaultProps = {
     showPreview: false,
+    showStatus: true,
     previewExtractor: undefined,
     className: '',
 };
+
+// TODO @frozenhelium: consider multiple files,
 
 @CSSModules(styles, { allowMultiple: true })
 export default class FileInput extends React.PureComponent {
@@ -59,8 +82,10 @@ export default class FileInput extends React.PureComponent {
     render() {
         const {
             showPreview,
+            showStatus,
             previewExtractor, // eslint-disable-line
             className,
+            children,
             ...otherProps
         } = this.props;
 
@@ -91,7 +116,7 @@ export default class FileInput extends React.PureComponent {
                     )
                 }
                 <label htmlFor={this.inputId}>
-                    Select an image
+                    { children }
                 </label>
                 <input
                     id={this.inputId}
@@ -100,9 +125,13 @@ export default class FileInput extends React.PureComponent {
                     ref={(el) => { this.fileInput = el; }}
                     {...otherProps}
                 />
-                <p styleName="status">
-                    { files.length > 0 ? files[0].name : 'No file choosen' }
-                </p>
+                {
+                    showStatus && (
+                        <p styleName="status">
+                            { files.length > 0 ? files[0].name : 'No file choosen' }
+                        </p>
+                    )
+                }
             </div>
         );
     }
@@ -121,5 +150,7 @@ export const ImageInput = props => (
         )}
         accept="image/*"
         {...props}
-    />
+    >
+        Select an image
+    </FileInput>
 );
