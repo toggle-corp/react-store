@@ -97,8 +97,6 @@ export default class Button extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering Button');
-
         const {
             buttonType,
             children,

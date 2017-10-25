@@ -202,9 +202,9 @@ export default class SelectInput extends React.PureComponent {
 
     value = () => (this.getValue())
 
-    /*
     handleInputFocus = () => {
         if (!this.state.showOptions) {
+            this.input.select();
             this.boundingClientRect = this.container.getBoundingClientRect();
             this.setState({
                 showOptions: true,
@@ -212,12 +212,10 @@ export default class SelectInput extends React.PureComponent {
             });
         }
     }
-    */
 
     handleInputClick = () => {
-        console.log('Input click');
-
         if (!this.state.showOptions) {
+            this.input.select();
             this.boundingClientRect = this.container.getBoundingClientRect();
             this.setState({
                 showOptions: true,
