@@ -79,13 +79,13 @@ export default class Form extends React.PureComponent {
         return false;
     }
 
-    // TODO: check if formName is string and length > 0
+    // TODO: check if formname is string and length > 0
     getCondition = props => (
-        props.formName && props.formName.length > 0
+        props.formname && props.formname.length > 0
     )
 
     getPropertyFn = props => ({
-        ref: this.form.updateRef(props.formName),
+        ref: this.form.updateRef(props.formname),
         onChange: this.form.onChange,
     })
 
