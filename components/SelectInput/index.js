@@ -121,11 +121,11 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         if (this.props.multiple) {
-            const values = this.state.selectedValues.map(d => keySelector(d));
+            const values = this.state.selectedOptions.map(d => keySelector(d));
             return values;
         }
 
-        return this.state.selectedValue;
+        return keySelector(this.state.selectedOption);
     }
 
     getOptions = () => {
@@ -200,8 +200,22 @@ export default class SelectInput extends React.PureComponent {
         });
     }
 
+    value = () => (this.getValue())
+
     handleInputFocus = () => {
         if (!this.state.showOptions) {
+            this.input.select();
+            this.boundingClientRect = this.container.getBoundingClientRect();
+            this.setState({
+                showOptions: true,
+                displayOptions: this.props.options, // reset the filter
+            });
+        }
+    }
+
+    handleInputClick = () => {
+        if (!this.state.showOptions) {
+            this.input.select();
             this.boundingClientRect = this.container.getBoundingClientRect();
             this.setState({
                 showOptions: true,
@@ -244,35 +258,39 @@ export default class SelectInput extends React.PureComponent {
     }
 
     handleOptionsBlur = () => {
-        // close options only if not focused on input
-        if (document.activeElement !== this.input) {
-            const {
-                labelSelector,
-                multiple,
-            } = this.props;
+        // setTimeout is used to let document.activeElement
+        // to be changed before test
+        setTimeout(() => {
+            // close options only if not focused on input
+            if (document.activeElement !== this.input) {
+                const {
+                    labelSelector,
+                    multiple,
+                } = this.props;
 
-            let newState = {};
-            const { inputValue } = this.state;
+                let newState = {};
+                const { inputValue } = this.state;
 
-            if (!multiple) {
-                // validate input text
-                const option = this.props.options.find(d => labelSelector(d) === inputValue);
+                if (!multiple) {
+                    // validate input text
+                    const option = this.props.options.find(d => labelSelector(d) === inputValue);
 
-                if (!option || option.key !== this.state.selectedOption.key) {
-                    newState = {
-                        inputValue: '',
-                        displayOptions: this.props.options, // reset the filter
-                        selectedOption: {},
-                        markedOption: {},
-                    };
+                    if (!option || option.key !== this.state.selectedOption.key) {
+                        newState = {
+                            inputValue: '',
+                            displayOptions: this.props.options, // reset the filter
+                            selectedOption: {},
+                            markedOption: {},
+                        };
+                    }
                 }
-            }
 
-            this.setState({
-                ...newState,
-                showOptions: false,
-            });
-        }
+                this.setState({
+                    ...newState,
+                    showOptions: false,
+                });
+            }
+        }, 0);
     }
 
     render() {
@@ -314,7 +332,7 @@ export default class SelectInput extends React.PureComponent {
                     type="text"
                     value={this.state.inputValue}
                     onChange={this.handleInputChange}
-                    onFocus={this.handleInputFocus}
+                    onClick={this.handleInputClick}
                     placeholder={ph}
                 />
                 <span

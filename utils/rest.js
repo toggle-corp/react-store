@@ -2,6 +2,8 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+import { isTruthy } from './common';
+
 export class RestRequest {
     static parseUrlParams(stringParams) {
         /*
@@ -20,6 +22,7 @@ export class RestRequest {
 
     static prepareUrlParams(params) {
         return Object.keys(params)
+            .filter(k => isTruthy(params[k]))
             .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
             .join('&');
     }
