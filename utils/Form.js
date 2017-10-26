@@ -77,6 +77,27 @@ export const urlCondition = {
     message: 'Value must be a valid URL',
 };
 
+// Validator
+
+export function createValidation(...parameters) {
+    const args = [...parameters];
+    console.log(args);
+    if (args.length <= 0) {
+        console.warn('No arguments supplied');
+        this.validation = undefined;
+        return {};
+    }
+    const fn = args.splice(args.length - 1, 1)[0];
+    console.log(fn, typeof fn);
+    if (typeof fn !== 'function') {
+        console.warn('Last argument must be a function');
+        this.validation = undefined;
+        return {};
+    }
+    return { fn, args };
+}
+
+
 // TODO: Use builder pattern
 class Form {
     constructor() {
@@ -89,6 +110,7 @@ class Form {
 
         // Internal store for references
         this.references = {};
+        this.referenceCollector = {};
     }
 
     // Setters
@@ -101,22 +123,8 @@ class Form {
         this.validations = validations;
     }
 
-    setValidation(...parameters) {
-        const args = [...parameters];
-        console.log(args);
-        if (args.length <= 0) {
-            console.warn('No arguments supplied');
-            this.validation = undefined;
-            return;
-        }
-        const fn = args.splice(args.length - 1, 1)[0];
-        console.log(fn, typeof fn);
-        if (typeof fn !== 'function') {
-            console.warn('Last argument must be a function');
-            this.validation = undefined;
-            return;
-        }
-        this.validation = { fn, args };
+    setValidation(validation) {
+        this.validation = validation;
     }
 
     setCallbacks({
@@ -128,8 +136,15 @@ class Form {
     }
 
     // Used to reference of a component locally using element 'name'
-    updateRef = name => (ref) => {
-        this.references[name] = ref;
+    updateRef = (name) => {
+        if (this.referenceCollector[name]) {
+            return this.referenceCollector[name];
+        }
+        const referenceFn = (ref) => {
+            this.references[name] = ref;
+        };
+        this.referenceCollector[name] = referenceFn;
+        return referenceFn;
     }
 
     // Access component using the locally saved element 'name'

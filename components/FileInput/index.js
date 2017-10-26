@@ -38,6 +38,8 @@ const propTypes = {
             PropTypes.node,
         ),
     ]).isRequired,
+
+    onChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -77,15 +79,20 @@ export default class FileInput extends React.PureComponent {
             files,
             preview: undefined,
         });
+
+        this.props.onChange(files);
     }
 
     render() {
         const {
             showPreview,
             showStatus,
-            previewExtractor, // eslint-disable-line
             className,
             children,
+
+            previewExtractor, // eslint-disable-line
+            onChange, // eslint-disable-line
+
             ...otherProps
         } = this.props;
 

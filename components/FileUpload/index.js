@@ -9,19 +9,19 @@ import {
 } from '../Button';
 
 const propTypes = {
-    file: PropTypes.object.isRequired, // eslint-disable-line
     autoStart: PropTypes.bool,
-    uploadUrl: PropTypes.string,
+    file: PropTypes.object.isRequired, // eslint-disable-line
     /*
+    onAbort: PropTypes.func.isRequired,
     onComplete: PropTypes.func.isRequired,
     onFailure: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
     */
+    uploadUrl: PropTypes.string,
 };
 
 const defaultProps = {
-    uploadUrl: '/upload/url/',
     autoStart: false,
+    uploadUrl: '/v1/upload/url/',
 };
 
 // Upload States
@@ -32,6 +32,9 @@ const COMPLETE = 2; // upload has completed
 const FAIL = 3; // upload failed
 
 // TODO: handle fail
+// TODO: get response from server
+// TODO: multiple file uploads at once in FileInput
+// TODO: add fromName props in all inputs for form
 
 /**
  * Basic FileUploader component
@@ -45,8 +48,8 @@ export default class FileUploader extends React.PureComponent {
         super(props);
 
         this.state = {
-            status: NOT_READY,
             progress: 0,
+            status: NOT_READY,
         };
 
         const autoUploadFn = () => {
@@ -59,8 +62,8 @@ export default class FileUploader extends React.PureComponent {
         reader.onload = (evt) => {
             this.setState(
                 {
-                    status: READY,
                     fileToSend: evt.target.result,
+                    status: READY,
                 },
                 autoUploadFn,
             );
@@ -94,7 +97,7 @@ export default class FileUploader extends React.PureComponent {
 
     createXHRRequest = () => {
         const xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('progess', (e) => {
+        xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
                 const progress = Math.round((e.loaded * 100) / e.total);
                 this.setState({ status: UPLOADING, progress });
@@ -114,24 +117,29 @@ export default class FileUploader extends React.PureComponent {
 
     render() {
         console.log('Rendering FileUploader');
-
+        const { status } = this.state;
         return (
             <div>
-                { this.state.status === NOT_READY &&
+                { status === NOT_READY &&
                     <p>
                         Please Wait
                     </p>
                 }
                 {
-                    this.state.ready === READY &&
-                    <TransparentPrimaryButton
-                        onClick={this.onStart}
-                    >
-                        Start
-                    </TransparentPrimaryButton>
+                    status === READY &&
+                    <div>
+                        <TransparentPrimaryButton
+                            onClick={this.onStart}
+                        >
+                            Start
+                        </TransparentPrimaryButton>
+                        <p>
+                            { this.props.file.name }
+                        </p>
+                    </div>
                 }
                 {
-                    this.state.ready === FAIL &&
+                    status === FAIL &&
                     <div>
                         <TransparentPrimaryButton
                             onClick={this.onStart}
@@ -143,7 +151,7 @@ export default class FileUploader extends React.PureComponent {
                         </p>
                     </div>
                 }
-                { this.state.status === UPLOADING &&
+                { status === UPLOADING &&
                     <div>
                         <TransparentDangerButton
                             onClick={this.onAbort}
@@ -156,9 +164,9 @@ export default class FileUploader extends React.PureComponent {
                         />
                     </div>
                 }
-                { this.state.status === COMPLETE &&
+                { status === COMPLETE &&
                     <p>
-                        Complete
+                        { this.props.file.name }
                     </p>
                 }
             </div>
