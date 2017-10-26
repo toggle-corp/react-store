@@ -31,10 +31,8 @@ const UPLOADING = 1; // upload has started
 const COMPLETE = 2; // upload has completed
 const FAIL = 3; // upload failed
 
-// TODO: handle fail
 // TODO: get response from server
 // TODO: multiple file uploads at once in FileInput
-// TODO: add fromName props in all inputs for form
 
 /**
  * Basic FileUploader component
@@ -88,24 +86,44 @@ export default class FileUploader extends React.PureComponent {
         this.xhr.open('POST', this.props.uploadUrl);
         // this.xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
         this.xhr.send(formData);
+
+        this.setState({ status: UPLOADING, progress: 0 });
     }
 
     onAbort = () => {
         this.closeXHRRequest();
-        this.setState({ status: READY });
     }
 
     createXHRRequest = () => {
         const xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('progress', (e) => {
+
+        xhr.upload.onprogress = (e) => {
+            console.log('Upload Progress');
             if (e.lengthComputable) {
                 const progress = Math.round((e.loaded * 100) / e.total);
                 this.setState({ status: UPLOADING, progress });
             }
-        }, false);
-        xhr.upload.addEventListener('load', (e) => { // eslint-disable-line
-            this.setState({ status: COMPLETE, progress: 100 });
-        }, false);
+        };
+
+        xhr.onabort = () => {
+            console.log('Abort');
+            this.setState({ status: READY, progress: 0 });
+        };
+
+        xhr.onerror = () => {
+            console.log('Error');
+            this.setState({ status: FAIL, progress: 0 });
+        };
+
+        xhr.onload = () => {
+            console.log('Load');
+            if (Math.floor(xhr.status / 100) === 2) {
+                this.setState({ status: COMPLETE, progress: 100 });
+            } else {
+                this.setState({ status: FAIL, progress: 0 });
+            }
+        };
+
         return xhr;
     }
 

@@ -89,7 +89,7 @@ export default class FormHelper {
             const errors = {
                 [elementName]: undefined,
             };
-            const error = undefined;
+            const error = [];
 
             this.changeCallback(values, { error, errors });
         } else {
@@ -137,7 +137,7 @@ export default class FormHelper {
             },
         );
 
-        let error;
+        let error = [];
         if (this.validation) {
             const { fn, args } = this.validation;
             const superArgs = args.map(name => this.getRefValue(name));

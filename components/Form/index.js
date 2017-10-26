@@ -15,12 +15,13 @@ const propTypes = {
     elements: PropTypes.array.isRequired, // eslint-disable-line
     failureCallback: PropTypes.func.isRequired,
     successCallback: PropTypes.func.isRequired,
-    validation: PropTypes.object.isRequired, // eslint-disable-line
+    validation: PropTypes.object, // eslint-disable-line
     validations: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 const defaultProps = {
     className: '',
+    validation: undefined,
 };
 
 // NOTE: various optimizations can be done for this function
