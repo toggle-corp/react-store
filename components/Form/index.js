@@ -10,18 +10,22 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    changeCallback: PropTypes.func.isRequired,
+    changeCallback: PropTypes.func,
     children: PropTypes.node.isRequired, // eslint-disable-line
     elements: PropTypes.array.isRequired, // eslint-disable-line
-    failureCallback: PropTypes.func.isRequired,
-    successCallback: PropTypes.func.isRequired,
+    failureCallback: PropTypes.func,
+    successCallback: PropTypes.func,
     validation: PropTypes.object, // eslint-disable-line
-    validations: PropTypes.object.isRequired, // eslint-disable-line
+    validations: PropTypes.object, // eslint-disable-line
 };
 
 const defaultProps = {
+    changeCallback: () => { console.log('No change callback'); },
     className: '',
+    failureCallback: () => { console.log('No failure callback'); },
+    successCallback: () => { console.log('No success callback'); },
     validation: undefined,
+    validations: {},
 };
 
 // NOTE: various optimizations can be done for this function
@@ -87,7 +91,7 @@ export default class Form extends React.PureComponent {
 
     getPropertyFn = props => ({
         ref: this.form.updateRef(props.formname),
-        onChange: this.form.onChange,
+        onChange: this.form.updateChangeFn(props.formname),
     })
 
     // access this from outside

@@ -14,6 +14,7 @@ export default class FormHelper {
         // Internal store for references
         this.references = {};
         this.referenceCollector = {};
+        this.changeFnCollector = {};
     }
 
     // Setters
@@ -50,6 +51,18 @@ export default class FormHelper {
         return referenceFn;
     }
 
+    updateChangeFn = (name) => {
+        if (this.changeFnCollector[name]) {
+            return this.changeFnCollector[name];
+        }
+        const changeFn = (value) => {
+            this.onChange(name, value);
+        };
+        this.changeFnCollector[name] = changeFn;
+        return changeFn;
+    }
+
+
     // Access component using the locally saved element 'name'
     getRef = name => (
         this.references[name]
@@ -64,37 +77,20 @@ export default class FormHelper {
         return element.value();
     }
 
-    isRefFocused = (name) => {
-        const element = this.getRef(name);
-        if (!element) {
-            console.warn(`Element '${name}' not found.`);
-            return false;
-        }
-        return element.isFocused();
-    }
-
     // Calls changeCallback
     // onChange is triggered by all input elements
-    // the input element is idenfied by isFocused() of input element
-    onChange = (value) => {
-        // Get name of element to be modified
-        const elementName = this.elements.find(name => this.isRefFocused(name));
+    onChange = (elementName, value) => {
+        // change value of current element
+        const values = {
+            [elementName]: value,
+        };
+        // clear error for current element
+        const errors = {
+            [elementName]: undefined,
+        };
+        const error = [];
 
-        if (elementName) {
-            // change value of current element
-            const values = {
-                [elementName]: value,
-            };
-            // clear error for current element
-            const errors = {
-                [elementName]: undefined,
-            };
-            const error = [];
-
-            this.changeCallback(values, { error, errors });
-        } else {
-            this.console.warn('No element found which triggered onChange');
-        }
+        this.changeCallback(values, { error, errors });
     }
 
     // Calls successCallback or failureCallback
