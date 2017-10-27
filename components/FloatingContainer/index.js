@@ -95,6 +95,7 @@ export default class FloatingContainer extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        console.log('Unmounting FloatingContainer');
         if (this.container) {
             this.removeContainer();
         }
@@ -120,26 +121,26 @@ export default class FloatingContainer extends React.PureComponent {
         // Create the container if it doesn't exist
         if (!this.container) {
             this.container = document.createElement('div');
-        }
 
-        // Style the container
-        this.container.id = containerId;
-        this.container.style.position = 'absolute';
+            // Style the container
+            this.container.id = containerId;
+            this.container.style.position = 'absolute';
 
-        // Add new container to DOM
-        document.body.appendChild(this.container);
+            // Add new container to DOM
+            document.body.appendChild(this.container);
 
-        // Add event listeners
-        if (this.props.closeOnEscape || this.props.closeOnTab) {
-            document.addEventListener('keydown', this.handleKeyPress);
-        }
-        if (this.props.closeOnBlur || this.props.onBlur) {
-            window.addEventListener('mousedown', this.handleClick);
-        }
+            // Add event listeners
+            if (this.props.closeOnEscape || this.props.closeOnTab) {
+                document.addEventListener('keydown', this.handleKeyPress);
+            }
+            if (this.props.closeOnBlur || this.props.onBlur) {
+                window.addEventListener('mousedown', this.handleClick);
+            }
 
-        // append style provided by parent 
-        if (styleOverride) {
-            Object.assign(this.container.style, styleOverride);
+            // append style provided by parent 
+            if (styleOverride) {
+                Object.assign(this.container.style, styleOverride);
+            }
         }
 
         return this.container;
@@ -189,6 +190,7 @@ export default class FloatingContainer extends React.PureComponent {
     }
 
     render() {
+        console.log('Rending FloatingContainer');
         if (!this.props.show) {
             if (this.container) {
                 this.removeContainer();
