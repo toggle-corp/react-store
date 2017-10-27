@@ -1,9 +1,17 @@
 @import '../../../stylesheets/base';
 
+:global .modal-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+}
+
 .modal-content {
     margin: auto;
     background-color: $color-foreground;
     width: $width-modal-medium;
+    max-height: 96vh;
+    overflow: none;
 }
 
 .header {
@@ -21,7 +29,9 @@
 }
 
 .body {
+    max-height: calc(96vh - #{$height-modal-header} - #{$height-modal-footer});
     padding: $spacing-large;
+    overflow: auto;
 }
 
 .footer {

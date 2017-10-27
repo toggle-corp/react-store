@@ -51,8 +51,16 @@ export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    componentWillMount() {
+        console.log('Mounting Modal');
+    }
+
+    componentWillUnmount() {
+        console.log('Unmounting Modal');
+    }
 
     render() {
+        console.log('Rendering Modal');
         return (
             <FloatingContainer
                 show={this.props.show}
@@ -60,7 +68,7 @@ export default class Modal extends React.PureComponent {
                 containerId="modal-container"
                 closeOnEscape={this.props.closeOnEscape}
                 closeOnBlur={this.props.closeOnBlur}
-                className={this.props.className}
+                className={`${this.props.className} modal-wrapper`}
             >
                 <div
                     className="modal-content"
