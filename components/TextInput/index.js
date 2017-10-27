@@ -128,6 +128,8 @@ export default class TextInput extends React.PureComponent {
     }
 
     render() {
+        console.log('Rendering TextInput');
+
         const {
             // NOTE: Professional stuff, don't try to alter these
             initialValue, // eslint-disable-line

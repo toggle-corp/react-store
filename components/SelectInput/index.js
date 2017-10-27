@@ -224,7 +224,7 @@ export default class SelectInput extends React.PureComponent {
         }
     }
 
-    handleOptionClick = (key) => {
+    handleOptionClick = (key, checked) => {
         const {
             keySelector,
             labelSelector,
@@ -236,9 +236,24 @@ export default class SelectInput extends React.PureComponent {
         if (multiple) {
             // Multi select input
             this.input.focus();
+            const selectedOptions = [...this.state.selectedOptions];
+            const option = this.props.options.find(d => keySelector(d) === key);
+
+            if (checked) {
+                selectedOptions.push(option);
+            } else {
+                const index = selectedOptions.findIndex(d => keySelector(d) === key);
+                selectedOptions.splice(index, 1);
+            }
+
+            this.setState({
+                selectedOptions,
+                inputValue: '',
+                showOptions: true,
+            });
 
             if (onChange) {
-                onChange();
+                onChange(key, checked);
             }
         } else {
             // Single select input
