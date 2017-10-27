@@ -68,7 +68,7 @@ export default class Modal extends React.PureComponent {
                 containerId="modal-container"
                 closeOnEscape={this.props.closeOnEscape}
                 closeOnBlur={this.props.closeOnBlur}
-                className={this.props.className}
+                className={`${this.props.className} modal-wrapper`}
             >
                 <div
                     className="modal-content"
