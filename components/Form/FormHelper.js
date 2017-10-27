@@ -85,19 +85,19 @@ export default class FormHelper {
             [elementName]: value,
         };
         // clear error for current element
-        const errors = {
+        const formFieldErrors = {
             [elementName]: undefined,
         };
-        const error = [];
+        const formErrors = [];
 
-        this.changeCallback(values, { error, errors });
+        this.changeCallback(values, { formFieldErrors, formErrors });
     }
 
     // Calls successCallback or failureCallback
     onSubmit = () => {
-        const { hasError, error, errors } = this.checkForErrors();
+        const { hasError, formErrors, formFieldErrors } = this.checkForErrors();
         if (hasError) {
-            this.failureCallback({ error, errors });
+            this.failureCallback({ formErrors, formFieldErrors });
         } else {
             // success
             const values = {};
@@ -110,7 +110,7 @@ export default class FormHelper {
                     values[name] = this.getRefValue(name);
                 }
             });
-            this.successCallback(values, { error, errors });
+            this.successCallback(values, { formErrors, formFieldErrors });
         }
     }
 
@@ -121,7 +121,7 @@ export default class FormHelper {
         // get errors and errors count from individual validation
         const validityMap = {};
 
-        let { hasError, errors } = this.elements.reduce(
+        let { hasError, formFieldErrors } = this.elements.reduce(
             (acc, name) => {
                 const element = this.getRef(name);
                 // skipping validation
@@ -139,16 +139,16 @@ export default class FormHelper {
                 }
                 return {
                     hasError: true,
-                    errors: { ...acc.errors, [name]: res.message },
+                    formFieldErrors: { ...acc.formFieldErrors, [name]: res.message },
                 };
             },
             {
                 hasError: false,
-                errors: {},
+                formFieldErrors: {},
             },
         );
 
-        let error = [];
+        let formErrors = [];
         if (this.validation) {
             const { fn, args } = this.validation;
 
@@ -158,14 +158,14 @@ export default class FormHelper {
                 const superArgs = args.map(name => this.getRefValue(name));
                 const res = fn(...superArgs);
                 if (!res.ok) {
-                    error = res.formErrors;
-                    errors = { ...errors, ...res.formFieldErrors };
+                    formErrors = res.formErrors;
+                    formFieldErrors = { ...formFieldErrors, ...res.formFieldErrors };
                     hasError = true;
                 }
             }
         }
 
-        return { error, errors, hasError };
+        return { formErrors, formFieldErrors, hasError };
     }
 
     // Check if a value is valid for certain element
