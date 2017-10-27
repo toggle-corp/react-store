@@ -105,9 +105,14 @@ export default class FormHelper {
         } else {
             // success
             const values = {};
-            this.elements.every((name) => {
-                values[name] = this.getRefValue(name);
-                return true;
+            this.elements.forEach((name) => {
+                const element = this.getRef(name);
+                // skipping in final output
+                if (!element) {
+                    console.warn(`Element '${name}' not found.`);
+                } else {
+                    values[name] = this.getRefValue(name);
+                }
             });
             this.successCallback(values, { error, errors });
         }
@@ -118,10 +123,20 @@ export default class FormHelper {
     // RETURNS: { error: String, errors: List.String, hasError: Boolean }
     checkForErrors = () => {
         // get errors and errors count from individual validation
+        const validityMap = {};
+
         let { hasError, errors } = this.elements.reduce(
             (acc, name) => {
+                const element = this.getRef(name);
+                // skipping validation
+                if (!element) {
+                    console.warn(`Element '${name}' not found.`);
+                    validityMap[name] = true;
+                    return acc;
+                }
                 const value = this.getRefValue(name);
                 const res = this.isValid(name, value);
+                validityMap[name] = res.ok;
                 // If response is ok, send accumulator as is
                 if (res.ok) {
                     return acc;
@@ -140,12 +155,17 @@ export default class FormHelper {
         let error = [];
         if (this.validation) {
             const { fn, args } = this.validation;
-            const superArgs = args.map(name => this.getRefValue(name));
-            const res = fn(...superArgs);
-            if (!res.ok) {
-                error = res.formErrors;
-                errors = { ...errors, ...res.formFieldErrors };
-                hasError = true;
+
+            // Checks for every rule until one of them is invalid
+            const validity = args.every(arg => validityMap[arg]);
+            if (validity) {
+                const superArgs = args.map(name => this.getRefValue(name));
+                const res = fn(...superArgs);
+                if (!res.ok) {
+                    error = res.formErrors;
+                    errors = { ...errors, ...res.formFieldErrors };
+                    hasError = true;
+                }
             }
         }
 
