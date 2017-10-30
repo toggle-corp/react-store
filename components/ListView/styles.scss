@@ -6,5 +6,7 @@
 }
 
 .list-item {
-    padding: $spacing-medium;
+    display: flex;
+    align-items: stretch;
+    padding: 0;
 }
