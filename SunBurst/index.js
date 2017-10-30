@@ -1,23 +1,67 @@
 import React, { PureComponent } from 'react';
+import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
 import { scaleLinear, schemeCategory20b, scaleSqrt, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
+import { PropTypes } from 'prop-types';
+import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+@CSSModules(styles)
 export default class SunBurst extends PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            boundingClientRect: {},
+            render: false,
+        };
+    }
+
     componentDidMount() {
-        this.renderChart();
+        window.addEventListener('resize', this.handleResize);
+
+        setTimeout(() => {
+            this.setState({
+                render: true,
+                boundingClientRect: this.container.getBoundingClientRect(),
+            });
+        }, 0);
     }
 
     componentDidUpdate() {
-        return false;
+        this.renderChart();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+
+    handleResize = () => {
+        this.setState({
+            render: true,
+            boundingClientRect: this.container.getBoundingClientRect(),
+        });
     }
 
     renderChart() {
-        const width = 600;
-        const height = 600;
+        if (!this.state.render) {
+            return;
+        }
+        const { width, height } = this.state.boundingClientRect;
         const radius = Math.min(width, height) / 2;
 
         const x = scaleLinear()
@@ -28,6 +72,7 @@ export default class SunBurst extends PureComponent {
             .range(schemeCategory20b);
 
         const el = select(this.svg);
+        el.selectAll('*').remove();
 
         const group = el.attr('width', width)
             .attr('height', height)
@@ -122,8 +167,15 @@ export default class SunBurst extends PureComponent {
 
     render() {
         return (
-            <div>
-                <svg ref={(elem) => { this.svg = elem; }} />
+            <div
+                ref={(el) => { this.container = el; }}
+                styleName="sun-burst"
+                className={this.props.className}
+            >
+                <svg
+                    styleName="svg"
+                    ref={(el) => { this.svg = el; }}
+                />
             </div>
         );
     }

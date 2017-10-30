@@ -1,19 +1,62 @@
 import React from 'react';
+import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { cluster, hierarchy } from 'd3-hierarchy';
+import { PropTypes } from 'prop-types';
+import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+@CSSModules(styles)
 export default class RadialDendrogram extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            boundingClientRect: {},
+            render: false,
+        };
+    }
+
     componentDidMount() {
-        this.renderChart();
+        window.addEventListener('resize', this.handleResize);
+
+        setTimeout(() => {
+            this.setState({
+                render: true,
+                boundingClientRect: this.container.getBoundingClientRect(),
+            });
+        }, 0);
     }
 
     componentDidUpdate() {
-        return false;
+        this.renderChart();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+
+    handleResize = () => {
+        this.setState({
+            render: true,
+            boundingClientRect: this.container.getBoundingClientRect(),
+        });
+    }
     renderChart() {
-        const height = 600;
-        const width = 600;
+        if (!this.state.render) {
+            return;
+        }
+        const { width, height } = this.state.boundingClientRect;
 
         const data = {
             name: 'TOPICS',
@@ -73,7 +116,8 @@ export default class RadialDendrogram extends React.PureComponent {
         }
         group
             .selectAll('.link')
-            .data(root.descendants().slice(1))
+            .data(root.descendants()
+                .slice(1))
             .enter()
             .append('path')
             .attr('class', 'link')
@@ -83,7 +127,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('storke-width', 1.5)
             .attr('d', d =>
                 `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}` +
-                          ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`);
+                ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`);
 
         const node = group
             .selectAll('.node')
@@ -107,8 +151,15 @@ export default class RadialDendrogram extends React.PureComponent {
     }
     render() {
         return (
-            <div>
-                <div ref={(elem) => { this.div = elem; }} />
+            <div
+                ref={(el) => { this.container = el; }}
+                styleName="radialdendrogram-container"
+                className={this.props.className}
+            >
+                <svg
+                    styleName="svg"
+                    ref={(elem) => { this.div = elem; }}
+                />
             </div>
         );
     }

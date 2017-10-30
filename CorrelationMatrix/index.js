@@ -1,23 +1,67 @@
 import React from 'react';
+import CSSModules from 'react-css-modules';
 import { scaleLinear, scaleBand, scaleSequential } from 'd3-scale';
 import { interpolateGnBu } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
 import { max, min, range } from 'd3-array';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
+import { PropTypes } from 'prop-types';
+import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+@CSSModules(styles)
 export default class CorrelationMatrix extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            boundingClientRect: {},
+            render: false,
+        };
+    }
+
     componentDidMount() {
-        this.renderChart();
+        window.addEventListener('resize', this.handleResize);
+
+        setTimeout(() => {
+            this.setState({
+                render: true,
+                boundingClientRect: this.container.getBoundingClientRect(),
+            });
+        }, 0);
     }
 
     componentDidUpdate() {
-        return false;
+        this.renderChart();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+
+    handleResize = () => {
+        this.setState({
+            render: true,
+            boundingClientRect: this.container.getBoundingClientRect(),
+        });
     }
 
     renderChart() {
-        const height = 600;
-        const width = 600;
+        if (!this.state.render) {
+            return;
+        }
+        let { width, height } = this.state.boundingClientRect;
         const {
             top,
             right,
@@ -43,12 +87,17 @@ export default class CorrelationMatrix extends React.PureComponent {
         const noofrows = data.length;
         const noofcols = data[0].length;
 
-        const widthLegend = 100;
+        const parentWidth = width;
+        width = (0.8 * width) - left - right;
+        height = height - top - bottom;
+
+        const widthLegend = parentWidth - width - left - right;
         const maxValue = max(data, layer => max(layer, d => d));
         const minValue = min(data, layer => min(layer, d => d));
 
-        const svg = select(this.div)
-            .append('svg');
+        const svg = select(this.svg);
+        svg.selectAll('*')
+            .remove();
 
         const group = svg
             .attr('width', width + left + right)
@@ -173,10 +222,11 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('text-anchor', 'end')
             .text(d => d);
 
-        const legend = select(this.div)
-            .append('svg')
+        const legend = select(this.svg)
+            .append('g')
             .attr('width', widthLegend)
-            .attr('height', height + top + bottom);
+            .attr('height', height + top + bottom)
+            .attr('transform', `translate(${width + left + right}, 0)`);
 
         legend
             .selectAll('.bars')
@@ -206,8 +256,15 @@ export default class CorrelationMatrix extends React.PureComponent {
 
     render() {
         return (
-            <div>
-                <div ref={(elem) => { this.div = elem; }} />
+            <div
+                ref={(el) => { this.container = el; }}
+                styleName="correlation-matrix"
+                className={this.props.className}
+            >
+                <svg
+                    styleName="svg-chart"
+                    ref={(elem) => { this.svg = elem; }}
+                />
             </div>
         );
     }

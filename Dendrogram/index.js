@@ -1,19 +1,63 @@
 import React from 'react';
+import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { cluster, hierarchy } from 'd3-hierarchy';
+import { PropTypes } from 'prop-types';
+import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+@CSSModules(styles)
 export default class Dendrogram extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            boundingClientRect: {},
+            render: false,
+        };
+    }
+
     componentDidMount() {
-        this.renderChart();
+        window.addEventListener('resize', this.handleResize);
+
+        setTimeout(() => {
+            this.setState({
+                render: true,
+                boundingClientRect: this.container.getBoundingClientRect(),
+            });
+        }, 0);
     }
 
     componentDidUpdate() {
-        return false;
+        this.renderChart();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+
+    handleResize = () => {
+        this.setState({
+            render: true,
+            boundingClientRect: this.container.getBoundingClientRect(),
+        });
     }
 
     renderChart() {
-        const height = 600;
-        const width = 600;
+        if (!this.state.render) {
+            return;
+        }
+        let { width, height } = this.state.boundingClientRect;
         const {
             top,
             right,
@@ -64,6 +108,10 @@ export default class Dendrogram extends React.PureComponent {
         const svg = select(this.div)
             .append('svg');
 
+
+        width = width - left - right;
+        height = height - top - bottom;
+
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
@@ -110,8 +158,15 @@ export default class Dendrogram extends React.PureComponent {
     }
     render() {
         return (
-            <div>
-                <div ref={(elem) => { this.div = elem; }} />
+            <div
+                ref={(el) => { this.container = el; }}
+                styleName="dendrogram-container"
+                className={this.props.className}
+            >
+                <svg
+                    styleName="svg"
+                    ref={(elem) => { this.div = elem; }}
+                />
             </div>
         );
     }
