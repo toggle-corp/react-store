@@ -21,8 +21,8 @@ const propTypes = {
      * children can contain a simple string or a react element
      */
     children: PropTypes.oneOfType([
-        PropTypes.element,
-        PropTypes.string,
+        PropTypes.node,
+        PropTypes.arrayOf(PropTypes.node),
     ]).isRequired,
 
     /**
