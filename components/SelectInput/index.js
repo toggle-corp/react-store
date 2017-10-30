@@ -281,6 +281,7 @@ export default class SelectInput extends React.PureComponent {
                 const {
                     labelSelector,
                     multiple,
+                    onChange,
                 } = this.props;
 
                 let newState = {};
@@ -297,6 +298,10 @@ export default class SelectInput extends React.PureComponent {
                             selectedOption: {},
                             markedOption: {},
                         };
+
+                        if (onChange) {
+                            onChange('');
+                        }
                     }
                 }
 
