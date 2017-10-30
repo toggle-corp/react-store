@@ -1,65 +1,73 @@
 export default class Coordinator {
-    constructor() {
-        this.maxActiveUploads = 3;
-        this.currentUploads = [];
-        this.uploadQueue = [];
-        this.uploaders = [];
+    constructor(maxActiveUploads = 3) {
+        this.maxActiveUploads = maxActiveUploads;
+        this.uploaders = []; //
 
-        this.uploadQueued = false;
+        this.queuedUploaders = [];
+        this.activeUploaders = [];
+        this.hasActiveQueue = false;
     }
 
-    add = (id, uploader) => {
-        const newUploader = uploader;
+    getUploaderById = id => this.uploaders.find(uploader => uploader.id === id);
 
-        this.uploaders.push({
+    add = (id, u) => {
+        const oldUploader = this.getUploaderById(id);
+        if (oldUploader) {
+            console.warn(`Uploder with id '${id}' already registered.`);
+            return;
+        }
+
+        const nativeUploader = u;
+        const uploader = {
             id,
-            uploader: newUploader,
-            onLoad: uploader.onLoad,
-        });
-
-        newUploader.onLoad = (status, response) => {
+            nativeUploader,
+            onLoad: nativeUploader.onLoad,
+        };
+        // override onLoad of uploader
+        nativeUploader.onLoad = (status, response) => {
             this.handleUploaderLoad(id, status, response);
         };
+        // add upload wrapper to list
+        this.uploaders.push(uploader);
     }
 
-    start = (id) => {
-        const uploader = this.uploaders.find(d => d.id === id);
-
-        if (uploader) {
-            uploader.start();
-        } else {
-            console.warn(`Uploader with id = ${id} not found`);
+    updateActiveUploaders = () => {
+        if (!this.hasActiveQueue || this.activeUploaders.length >= this.maxActiveUploads) {
+            return;
         }
-    }
-
-    updateQueue = () => {
-        if (this.uploadQueued && this.uploadQueue.length < this.maxActiveUploads) {
-            if (this.currentUploads.length > 0) {
-                this.uploadQueue.push(this.currentUploads[0]);
-                this.currentUploads[0].uploader.start();
-                this.currentUploads.shift();
-                this.updateQueue();
-            } else {
-                this.uploadQueued = false;
-            }
+        if (this.queuedUploaders.lengh <= 0) {
+            this.hasActiveQueue = false;
+            return;
         }
+
+        const toBeActiveUploader = this.queuedUploaders[0];
+        this.activeUploaders.push(toBeActiveUploader);
+        this.queuedUploaders.shift();
+
+        // start uploader
+        toBeActiveUploader.nativeUploader.start();
+
+        // call recurisively
+        this.updateActiveUploaders();
     }
 
     handleUploaderLoad = (id, status, response) => {
-        const uploaderIndex = this.uploadQueue.findIndex(d => d.id === id);
-        const uploader = this.uploaders.find(d => d.id === id);
+        const uploaderIndex = this.activeUploaders.findIndex(d => d.id === id);
+        this.activeUploaders.splice(uploaderIndex, 1);
+        this.updateActiveUploaders();
 
-        this.uploadQueue.splice(uploaderIndex, 1);
-        this.updateQueue();
-
+        const uploader = this.getUploaderById(id);
         if (uploader.onLoad) {
             uploader.onLoad(status, response);
         }
     }
 
+    // PUBLIC
     queueAll = () => {
-        this.currentUploads = [...this.uploaders];
-        this.uploadQueued = true;
-        this.updateQueue();
+        this.queuedUploaders = [...this.uploaders];
+        this.hasActiveQueue = true;
+        this.updateActiveUploaders();
     }
+
+    // TODO: start, abort
 }

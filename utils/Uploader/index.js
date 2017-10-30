@@ -1,43 +1,58 @@
 export default class Uploader {
-    constructor(file, uploadUrl, header) {
+    constructor(file, uploadUrl, requestHeader) {
         this.file = file;
         this.uploadUrl = uploadUrl;
-        this.requestHeader = header;
+        this.requestHeader = requestHeader;
+        this.pending = false;
+        this.progress = 0;
+
+        this.onProgress = undefined;
+        this.onAbort = undefined;
+        this.onError = undefined;
+        this.onLoad = undefined;
 
         const xhr = new XMLHttpRequest();
-        this.pending = false;
-
         xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
                 const progress = Math.round((e.loaded * 100) / e.total);
                 this.progress = progress;
             }
-
             if (this.onProgress) {
                 this.onProgress(this.progress, e);
             }
         };
 
         xhr.onabort = () => {
+            this.progress = 0;
             this.pending = false;
+
+            if (this.resolveUpload) {
+                this.resolveUpload(xhr.status, xhr.response);
+            }
+            if (this.onAbort) {
+                this.onAbort(xhr.status, xhr.response);
+            }
         };
 
         xhr.onerror = () => {
+            this.progress = 0;
             this.pending = false;
+
+            if (this.resolveUpload) {
+                this.resolveUpload(xhr.status, xhr.response);
+            }
+            if (this.onError) {
+                this.onError(xhr.status, xhr.response);
+            }
         };
 
         xhr.onload = () => {
-            if (Math.floor(xhr.status / 100) === 2) {
-                this.progress = 100;
-            } else {
-                this.progress = 0;
-            }
-
+            this.progress = Math.floor(xhr.status / 100) === 2 ? 100 : 0;
             this.pending = false;
-            if (this.resolveUpload) {
-                this.resolveUpload(xhr.response);
-            }
 
+            if (this.resolveUpload) {
+                this.resolveUpload(xhr.status, xhr.response);
+            }
             if (this.onLoad) {
                 this.onLoad(xhr.status, xhr.response);
             }
@@ -46,12 +61,8 @@ export default class Uploader {
         this.xhr = xhr;
     }
 
+    // PUBLIC (Promise)
     upload = () => {
-        if (this.pending) {
-            console.error('Uploader already started');
-            return null;
-        }
-
         const promise = new Promise((resolve) => {
             this.resolveUpload = resolve;
             this.start();
