@@ -11,6 +11,8 @@ const propTypes = {
 
     labelSelector: PropTypes.func.isRequired,
 
+    multiple: PropTypes.bool,
+
     options: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string,
@@ -31,10 +33,18 @@ const propTypes = {
         PropTypes.number,
     ]),
 
+    selectedOptionKeys: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    ),
+
     show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
+    multiple: false,
     options: [],
     onBlur: undefined,
     onOptionClick: undefined,
@@ -42,6 +52,7 @@ const defaultProps = {
         top: 0,
     },
     selectedOptionKey: undefined,
+    selectedOptionKeys: [],
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -68,11 +79,30 @@ export default class Options extends React.PureComponent {
         const {
             keySelector,
             labelSelector,
+            multiple,
             selectedOptionKey,
+            selectedOptionKeys,
         } = this.props;
 
         const options = this.props.options.map((option) => {
             const key = keySelector(option);
+
+            if (multiple) {
+                const isChecked = selectedOptionKeys.findIndex(d => d === key) !== -1;
+
+                return (
+                    <Option
+                        checkable
+                        key={key}
+                        checked={isChecked}
+                        onClick={(checked) => {
+                            this.handleOptionClick(key, checked);
+                        }}
+                    >
+                        { labelSelector(option) }
+                    </Option>
+                );
+            }
 
             return (
                 <Option
@@ -125,9 +155,9 @@ export default class Options extends React.PureComponent {
         });
     }
 
-    handleOptionClick = (key) => {
+    handleOptionClick = (key, checked) => {
         if (this.props.onOptionClick) {
-            this.props.onOptionClick(key);
+            this.props.onOptionClick(key, checked);
         }
     }
 

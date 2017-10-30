@@ -51,16 +51,24 @@ const propTypes = {
         PropTypes.string,
         PropTypes.number,
     ]),
+
+    selectedOptionKeys: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    ),
 };
 
 const defaultProps = {
     className: '',
-    keySelector: d => d.key,
-    labelSelector: d => d.label,
+    keySelector: d => (d || {}).key,
+    labelSelector: d => (d || {}).label,
     multiple: false,
     options: [],
     placeholder: 'Select an option',
     selectedOptionKey: undefined,
+    selectedOptionKeys: [],
     onChange: undefined,
 };
 
@@ -72,43 +80,68 @@ export default class SelectInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {
-            selectedOptionKey,
-            options,
-            keySelector,
-            labelSelector,
-        } = this.props;
-
-        const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
-
         this.state = {
             showOptions: false,
-            inputValue: labelSelector(selectedOption) || '',
+            inputValue: '',
             displayOptions: this.props.options,
             optionContainerStyle: {},
-            selectedOption,
             selectedOptions: [],
             markedOption: {},
+            ...this.getOptionsFromProps(props),
         };
 
         this.boundingClientRect = {};
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            ...this.getOptionsFromProps(nextProps),
+        });
+    }
+
+    getOptionsFromProps = (props) => {
         const {
             keySelector,
+            labelSelector,
+            multiple,
             options,
             selectedOptionKey,
-        } = nextProps;
+            selectedOptionKeys,
+        } = props;
 
-        if (nextProps.selectedOptionKey) {
-            const selectedOption = options.find(d => keySelector(d) === selectedOptionKey) || {};
+        let newState = {};
 
-            this.setState({
-                selectedOption,
+        if (multiple) {
+            const selectedOptions = [];
+            selectedOptionKeys.forEach((key) => {
+                const optionIndex = options.findIndex(d => keySelector(d) === key);
+
+                if (optionIndex !== -1) {
+                    selectedOptions.push(options[optionIndex]);
+                }
             });
+
+            if (props.selectedOptionKeys) {
+                newState = {
+                    selectedOptionKeys,
+                    selectedOptions,
+                };
+            }
+        } else if (props.selectedOptionKey) {
+            const selectedOption = options.find(
+                d => keySelector(d) === selectedOptionKey,
+            ) || {};
+
+            newState = {
+                selectedOptionKey,
+                selectedOption,
+                inputValue: labelSelector(selectedOption) || '',
+            };
         }
+
+        return newState;
     }
+
 
     // rates the string for content
     getRating = (str, content) => (
@@ -192,15 +225,12 @@ export default class SelectInput extends React.PureComponent {
             this.getRating(labelSelector(a), value) - this.getRating(labelSelector(b), value)
         ));
 
-
         this.setState({
             inputValue: value,
             displayOptions: options,
             showOptions: true,
         });
     }
-
-    value = () => (this.getValue())
 
     handleInputFocus = () => {
         if (!this.state.showOptions) {
@@ -230,6 +260,7 @@ export default class SelectInput extends React.PureComponent {
             labelSelector,
             multiple,
             onChange,
+            options,
         } = this.props;
 
 
@@ -258,7 +289,7 @@ export default class SelectInput extends React.PureComponent {
         } else {
             // Single select input
             const prevOptionKey = keySelector(this.state.selectedOption);
-            const selectedOption = this.props.options.find(d => keySelector(d) === key);
+            const selectedOption = options.find(d => keySelector(d) === key);
 
             this.setState({
                 selectedOption,
@@ -281,6 +312,7 @@ export default class SelectInput extends React.PureComponent {
                 const {
                     labelSelector,
                     multiple,
+                    onChange,
                 } = this.props;
 
                 let newState = {};
@@ -297,6 +329,10 @@ export default class SelectInput extends React.PureComponent {
                             selectedOption: {},
                             markedOption: {},
                         };
+
+                        if (onChange) {
+                            onChange('');
+                        }
                     }
                 }
 
@@ -311,7 +347,7 @@ export default class SelectInput extends React.PureComponent {
     render() {
         const {
             displayOptions,
-            selectedOption, // for single select input 
+            selectedOption,
             selectedOptions, // for multi select input
             showOptions,
         } = this.state;
@@ -334,6 +370,9 @@ export default class SelectInput extends React.PureComponent {
         } else {
             ph = placeholder;
         }
+
+        const selectedOptionKey = keySelector(selectedOption);
+        const selectedOptionKeys = selectedOptions.map(d => keySelector(d));
 
         return (
             <div
@@ -361,8 +400,10 @@ export default class SelectInput extends React.PureComponent {
                     onOptionClick={this.handleOptionClick}
                     options={displayOptions}
                     parentClientRect={this.boundingClientRect}
-                    selectedOptionKey={keySelector(selectedOption)}
+                    selectedOptionKey={selectedOptionKey}
+                    selectedOptionKeys={selectedOptionKeys}
                     show={showOptions}
+                    multiple={multiple}
                 />
             </div>
         );

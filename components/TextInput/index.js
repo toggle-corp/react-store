@@ -76,20 +76,19 @@ export default class TextInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            focused: false,
             value: this.props.initialValue,
         };
 
         this.inputId = randomString();
     }
 
-    // Public method used by Form
-    value = () => this.state.value;
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            value: nextProps.initialValue,
+        });
+    }
 
-    // Public method used by Form
-    isFocused = () => this.state.focused;
-
-    // TODO: implement componentWillReceiveProps
+    getValue = () => this.state.value;
 
     handleChange = (event) => {
         const { value } = event.target;
@@ -100,40 +99,11 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
-    invokeFocusCallback = () => {
-        // invoke onFocus callback if defined
-        const { onFocus } = this.props;
-        if (onFocus) {
-            onFocus();
-        }
-    };
-
-    // TODO: move this in constructor
-    invokeBlurCallback = () => {
-        // invoke onBlur callback if defined
-        const { onBlur } = this.props;
-        if (onBlur) {
-            onBlur();
-        }
-    };
-
-    handleFocus = () => {
-        // Invoke focus callback only after state has changed
-        this.setState({ focused: true }, this.invokeFocusCallback);
-    }
-
-    handleBlur = () => {
-        // Invoke blur callback only after state has changed
-        this.setState({ focused: false }, this.invokeBlurCallback);
-    }
-
     render() {
         const {
-            // NOTE: Professional stuff, don't try to alter these
+            // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
-            onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
-            onFocus, // eslint-disable-line
 
             error,
             hint,
@@ -177,22 +147,34 @@ export default class TextInput extends React.PureComponent {
                     />
                 </div>
                 {
-                    !error && hint &&
-                    <p styleName="hint">
-                        {hint}
-                    </p>
+                    !error && hint && (
+                        <p
+                            className="hint"
+                            styleName="hint"
+                        >
+                            {hint}
+                        </p>
+                    )
                 }
                 {
-                    error && !hint &&
-                    <p styleName="error">
-                        {error}
-                    </p>
+                    error && !hint && (
+                        <p
+                            styleName="error"
+                            className="error"
+                        >
+                            {error}
+                        </p>
+                    )
                 }
                 {
-                    !error && !hint &&
-                    <p styleName="empty">
-                        -
-                    </p>
+                    !error && !hint && (
+                        <p
+                            styleName="empty"
+                            className="error empty"
+                        >
+                            -
+                        </p>
+                    )
                 }
             </div>
         );

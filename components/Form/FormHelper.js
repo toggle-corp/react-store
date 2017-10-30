@@ -74,7 +74,7 @@ export default class FormHelper {
             console.warn(`Element '${name}' not found.`);
             return undefined;
         }
-        return element.value();
+        return element.getValue();
     }
 
     // Calls changeCallback
