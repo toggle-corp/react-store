@@ -78,8 +78,6 @@ export default class Uploader {
         }
         this.pending = true;
 
-        console.log('Upload started');
-
         const formData = new FormData();
         formData.append('file', this.file);
         formData.append('title', this.file.name);

@@ -35,7 +35,7 @@ export default class Coordinator {
         if (!this.hasActiveQueue || this.activeUploaders.length >= this.maxActiveUploads) {
             return;
         }
-        if (this.queuedUploaders.lengh <= 0) {
+        if (this.queuedUploaders.length <= 0) {
             this.hasActiveQueue = false;
             return;
         }
