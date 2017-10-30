@@ -5,14 +5,6 @@ import React from 'react';
 import styles from './styles.scss';
 import { randomString } from '../../utils/common';
 
-/**
- * Note to SAFAR
- * 
- * changes:
- * Add show status prop
- * Add support for children (the label for fileinput button)
- */
-
 const propTypes = {
     /**
      * Show preview?
@@ -144,6 +136,7 @@ export default class FileInput extends React.PureComponent {
     }
 }
 
+// Separator the preview implementation
 export const ImageInput = props => (
     <FileInput
         previewExtractor={file => (
