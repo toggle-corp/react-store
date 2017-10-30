@@ -9,17 +9,18 @@ const propTypes = {
      * child elements
      */
     children: PropTypes.oneOfType([
-        PropTypes.arrayOf(PropTypes.element),
-        PropTypes.element,
-    ]).isRequired,
+        PropTypes.arrayOf(PropTypes.node),
+        PropTypes.node,
+    ]),
 };
 
 const defaultProps = {
+    children: null,
 };
 
 
 @CSSModules(styles, { allowMultiple: true })
-export default class Header extends React.PureComponent {
+export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
