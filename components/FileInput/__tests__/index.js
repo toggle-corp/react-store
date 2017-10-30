@@ -4,8 +4,13 @@ import FileInput from '../index';
 
 
 describe('<FileInput />', () => {
+    const onChange = (files) => { console.log(files.length); };
     const wrapper = shallow(
-        <FileInput />,
+        <FileInput
+            onChange={onChange}
+        >
+            Open File
+        </FileInput>,
     );
 
     it('renders properly', () => {
