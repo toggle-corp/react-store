@@ -62,8 +62,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    keySelector: d => d.key,
-    labelSelector: d => d.label,
+    keySelector: d => (d || {}).key,
+    labelSelector: d => (d || {}).label,
     multiple: false,
     options: [],
     placeholder: 'Select an option',
