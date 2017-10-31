@@ -1,7 +1,7 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
-import { cluster, hierarchy } from 'd3-hierarchy';
+import { tree, hierarchy } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
 import styles from './styles.scss';
 
@@ -56,7 +56,18 @@ export default class RadialDendrogram extends React.PureComponent {
         if (!this.state.render) {
             return;
         }
-        const { width, height } = this.state.boundingClientRect;
+        let { width, height } = this.state.boundingClientRect;
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = {
+            top: 50,
+            right: 50,
+            bottom: 50,
+            left: 50,
+        };
 
         const data = {
             name: 'TOPICS',
@@ -94,24 +105,28 @@ export default class RadialDendrogram extends React.PureComponent {
         };
 
         const svg = select(this.svg);
+        svg.selectAll('*').remove();
+
+        width = width - left - right;
+        height = height - top - bottom;
 
         const group = svg
-            .attr('width', width)
-            .attr('height', height)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
             .append('g')
-            .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
+            .attr('transform', `translate(${((width + left + right) / 2)}, ${((height + top + bottom) / 2)})`);
 
-        const tree = cluster()
-            .size([360, 200])
+        const radius = width < height ? width / 2 : height / 2;
+        const trees = tree()
+            .size([360, radius])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
         const root = hierarchy(data);
-        tree(root);
+        trees(root);
 
         function project(x, y) {
             const angle = ((x - 90) / 180) * Math.PI;
-            const radius = y;
-            return [radius * Math.cos(angle), radius * Math.sin(angle)];
+            return [y * Math.cos(angle), y * Math.sin(angle)];
         }
         group
             .selectAll('.link')

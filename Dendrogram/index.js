@@ -106,6 +106,7 @@ export default class Dendrogram extends React.PureComponent {
         };
 
         const svg = select(this.svg);
+        svg.selectAll('*').remove();
 
         width = width - left - right;
         height = height - top - bottom;
@@ -116,7 +117,7 @@ export default class Dendrogram extends React.PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
         const tree = cluster()
-            .size([height, width - 100]);
+            .size([height, width]);
 
         const root = hierarchy(data);
         tree(root);
