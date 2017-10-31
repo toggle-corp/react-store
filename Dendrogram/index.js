@@ -105,9 +105,7 @@ export default class Dendrogram extends React.PureComponent {
             }],
         };
 
-        const svg = select(this.div)
-            .append('svg');
-
+        const svg = select(this.svg);
 
         width = width - left - right;
         height = height - top - bottom;
@@ -165,7 +163,7 @@ export default class Dendrogram extends React.PureComponent {
             >
                 <svg
                     styleName="svg"
-                    ref={(elem) => { this.div = elem; }}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </div>
         );

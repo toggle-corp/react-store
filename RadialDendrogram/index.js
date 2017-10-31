@@ -93,8 +93,7 @@ export default class RadialDendrogram extends React.PureComponent {
             }],
         };
 
-        const svg = select(this.div)
-            .append('svg');
+        const svg = select(this.svg);
 
         const group = svg
             .attr('width', width)
@@ -158,7 +157,7 @@ export default class RadialDendrogram extends React.PureComponent {
             >
                 <svg
                     styleName="svg"
-                    ref={(elem) => { this.div = elem; }}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </div>
         );
