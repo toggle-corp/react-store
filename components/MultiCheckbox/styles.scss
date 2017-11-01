@@ -1,0 +1,73 @@
+@import '../../../stylesheets/base';
+
+.multicheck {
+
+    .parent-container {
+        display: flex;
+        align-items: center;
+        border-bottom: $width-separator-thin solid $color-separator;
+
+        .parent-check {
+            display: flex;
+            align-items: center;
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            color: $color-text;
+
+            .icon {
+                margin-right: $spacing-small;
+                color: $color-accent;
+                font-size: 1.2em;
+
+                &.unchecked {
+                    color: $color-text;
+                }
+            }
+        }
+
+        .title {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .arrow {
+            display: flex;
+            align-items: center;
+            transition: .2s all ease-in-out;
+            margin: 0 $spacing-small;
+            padding: $spacing-small;
+
+            &:focus,
+            &.active,
+            &.hover {
+                background-color: transparent;
+            }
+
+            .chevron {
+                transition: .2s all ease-in-out;
+
+                &.show {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    .options-container {
+        display: none;
+        margin-left: $spacing-extra-large;
+
+        .checkbox {
+            display: block;
+            border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-medium 0;
+        }
+
+        &.show {
+            display: block;
+            max-height: 100%;
+        }
+    }
+}
