@@ -190,7 +190,6 @@ export default class FloatingContainer extends React.PureComponent {
     }
 
     render() {
-        console.log('Rending FloatingContainer');
         if (!this.props.show) {
             if (this.container) {
                 this.removeContainer();

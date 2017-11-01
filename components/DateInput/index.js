@@ -124,7 +124,9 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Set date to today
-    setToday = () => {
+    setToday = (e) => {
+        e.preventDefault();
+
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         this.setValue(date);
@@ -141,7 +143,8 @@ export default class DateInput extends React.PureComponent {
     // Public method used by Form
     isFocused = () => this.state.focused;
 
-    clear = () => {
+    clear = (e) => {
+        e.preventDefault();
         this.setValue(null);
     }
 
@@ -274,7 +277,9 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Show date picker
-    showDatePicker = () => {
+    showDatePicker = (e) => {
+        e.preventDefault();
+
         this.setState({
             showDatePicker: true,
             ...this.getDimension(),

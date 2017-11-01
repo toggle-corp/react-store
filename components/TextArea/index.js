@@ -68,7 +68,7 @@ const defaultProps = {
 };
 
 @CSSModules(styles, { allowMultiple: true })
-export default class TextInput extends React.PureComponent {
+export default class TextArea extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -120,7 +120,7 @@ export default class TextInput extends React.PureComponent {
 
         return (
             <div
-                styleName="text-input-wrapper"
+                styleName="textarea-wrapper"
                 className={this.props.className}
             >
                 <div
@@ -137,7 +137,7 @@ export default class TextInput extends React.PureComponent {
                     >
                         {label}
                     </label>
-                    <input
+                    <textarea
                         id={this.inputId}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}

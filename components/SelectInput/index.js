@@ -2,7 +2,6 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-// import FloatingContainer from '../FloatingContainer';
 import Options from './Options';
 import Option from './Option';
 import styles from './styles.scss';
@@ -37,7 +36,10 @@ const propTypes = {
      */
     options: PropTypes.arrayOf(
         PropTypes.shape({
-            key: PropTypes.string,
+            key: PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.number,
+            ]),
             label: PropTypes.string,
         }),
     ),
@@ -284,7 +286,8 @@ export default class SelectInput extends React.PureComponent {
             });
 
             if (onChange) {
-                onChange(key, checked);
+                const values = selectedOptions.map(d => keySelector(d));
+                onChange(values);
             }
         } else {
             // Single select input
@@ -310,6 +313,7 @@ export default class SelectInput extends React.PureComponent {
             // close options only if not focused on input
             if (document.activeElement !== this.input) {
                 const {
+                    keySelector,
                     labelSelector,
                     multiple,
                     onChange,
@@ -322,7 +326,9 @@ export default class SelectInput extends React.PureComponent {
                     // validate input text
                     const option = this.props.options.find(d => labelSelector(d) === inputValue);
 
-                    if (!option || option.key !== this.state.selectedOption.key) {
+                    if (!option || (
+                        keySelector(option) !== keySelector(this.state.selectedOption)
+                    )) {
                         newState = {
                             inputValue: '',
                             displayOptions: this.props.options, // reset the filter
@@ -330,7 +336,7 @@ export default class SelectInput extends React.PureComponent {
                             markedOption: {},
                         };
 
-                        if (onChange) {
+                        if (onChange && keySelector(this.state.selectedOption)) {
                             onChange('');
                         }
                     }
