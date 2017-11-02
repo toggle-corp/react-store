@@ -18,49 +18,73 @@ const propTypes = {
     ).isRequired,
 
     onChange: PropTypes.func.isRequired,
+
+    showDropdownArrow: PropTypes.bool,
+};
+
+const defaultProps = {
+    showDropdownArrow: true,
 };
 
 @CSSModules(styles, { allowMultiple: true })
 export default class MultiCheckbox extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
 
+        let allChecked = true;
+        let allUnChecked = true;
+
+        this.props.options.forEach((item) => {
+            if (item.isChecked) {
+                allUnChecked = false;
+            } else {
+                allChecked = false;
+            }
+        });
+
         this.state = {
             initialCheck: true,
-            allChecked: false,
-            allUnChecked: false,
+            allChecked,
+            allUnChecked,
             showOptions: false,
             displayOptions: this.props.options,
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ displayOptions: nextProps.options });
     }
 
     onButtonClick = () => {
         const { allChecked } = this.state;
         let displayOptions = [...this.state.displayOptions];
 
+        let newState;
         if (!allChecked) {
             displayOptions = displayOptions.map(option => ({
                 ...option,
                 isChecked: true,
             }));
-            this.setState({
+            newState = {
+                displayOptions,
                 allChecked: true,
                 allUnChecked: false,
-            });
+            };
         } else {
             displayOptions = displayOptions.map(option => ({
                 ...option,
                 isChecked: false,
             }));
-            this.setState({
+            newState = {
+                displayOptions,
                 allChecked: false,
                 allUnChecked: true,
-            });
+            };
         }
-
-        this.setState({ displayOptions });
+        this.setState(newState, () => this.props.onChange(displayOptions));
     }
 
     onClickShowButton = () => {
@@ -77,12 +101,12 @@ export default class MultiCheckbox extends React.PureComponent {
         return 'ion-android-checkbox-blank';
     }
 
-
     handleOptionChange = (key, value) => {
         let allChecked = true;
         let allUnChecked = true;
 
         const displayOptions = [...this.state.displayOptions];
+        console.log(displayOptions);
 
         const option = displayOptions.find(d => d.key === key);
         option.isChecked = value;
@@ -107,12 +131,17 @@ export default class MultiCheckbox extends React.PureComponent {
             allUnChecked,
             displayOptions,
         });
+
+        // Callback is called after an option is changed
         this.props.onChange(this.state.displayOptions);
     }
 
 
     render() {
-        const { title } = this.props;
+        const {
+            title,
+            showDropdownArrow,
+        } = this.props;
         const {
             allChecked,
             allUnChecked,
@@ -132,18 +161,23 @@ export default class MultiCheckbox extends React.PureComponent {
                             className={this.getButtonStyle(allChecked, allUnChecked)}
                         />
                     </button>
-                    <p styleName="title">
-                        {title}
-                    </p>
-                    <TransparentButton
+                    <button
                         onClick={this.onClickShowButton}
-                        styleName="arrow"
+                        styleName="title"
                     >
-                        <span
-                            className="ion-chevron-down"
-                            styleName={showOptions ? 'chevron show' : 'chevron'}
-                        />
-                    </TransparentButton>
+                        {title}
+                    </button>
+                    {showDropdownArrow &&
+                        <TransparentButton
+                            onClick={this.onClickShowButton}
+                            styleName="arrow"
+                        >
+                            <span
+                                className="ion-chevron-down"
+                                styleName={showOptions ? 'chevron show' : 'chevron'}
+                            />
+                        </TransparentButton>
+                    }
                 </div>
                 <div
                     styleName={showOptions ? 'options-container show' : 'options-container'}
@@ -153,7 +187,7 @@ export default class MultiCheckbox extends React.PureComponent {
                             <Checkbox
                                 key={option.key}
                                 label={option.title}
-                                styleName="checkbox"
+                                styleName="checkbox-indent"
                                 initialValue={option.isChecked}
                                 onChange={
                                     (value) => {
