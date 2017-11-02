@@ -1,12 +1,12 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import DateInput from '../index';
 
 
 describe('DateInput', () => {
     const initialValue = new Date('2017-08-11').getTime();
 
-    const wrapper = shallow(
+    const wrapper = mount(
         <DateInput
             initialValue={initialValue}
             format="d/m/y"
