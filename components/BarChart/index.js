@@ -12,10 +12,16 @@ import styles from './styles.scss';
 
 const propTypes = {
     /*
-     * Chart Data for x-axis and y-axis
+     * Padding between bars
      */
-    xKey: PropTypes.string.isRequired,
-    yKey: PropTypes.string.isRequired,
+    barPadding: PropTypes.number,
+    /*
+     * Data
+     * [{
+     *    xKey: value,
+     *    yKey: value,
+     *  },...]
+     */
     data: PropTypes.arrayOf(PropTypes.shape({
         x: PropTypes.oneOfType([
             PropTypes.string,
@@ -26,28 +32,43 @@ const propTypes = {
             PropTypes.number,
         ]),
     })).isRequired,
+    /*
+     * Highlight which bar
+     */
+    highlightBarX: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+    /*
+     * Chart Margins
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    barPadding: PropTypes.number,
-    highlightBarX: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
+    /*
+     * if lenght is greater, than rotate X-axis label
+     */
+    maxNuOfRow: PropTypes.number,
+    /*
+     * key for for x-axis and y-axis in Data
+     */
+    xKey: PropTypes.string.isRequired,
+    yKey: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
+    barPadding: 0.01,
+    highlightBarX: null,
     margins: {
         top: 10,
         right: 10,
         bottom: 30,
         left: 30,
     },
-    barPadding: 0.01,
-    highlightBarX: null,
+    maxNuOfRow: 30,
 };
 
 @CSSModules(styles)
@@ -65,22 +86,14 @@ export default class BarChart extends React.PureComponent {
     }
 
     componentDidMount() {
-        const { top, right, bottom, left } = this.props.margins;
-
-        setTimeout(() => {
-            this.scaleX.range([
-                0,
-                this.svgContainer.offsetWidth - left - right,
-            ]);
-            this.scaleY.range([
-                this.svgContainer.offsetHeight - top - bottom,
-                0,
-            ]);
-            this.renderTimeSeries();
-        }, 0);
+        this.updateRender();
     }
 
     componentDidUpdate() {
+        this.updateRender();
+    }
+
+    updateRender() {
         const { top, right, bottom, left } = this.props.margins;
 
         this.scaleX.range([
@@ -99,13 +112,13 @@ export default class BarChart extends React.PureComponent {
         const { top, bottom, left, right } = this.props.margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
+        const nuOfRow = renderData.length;
 
         this.scaleX.domain(renderData.map(d => d[this.props.xKey]));
         this.scaleY.domain([min([0, min(renderData, d => d[this.props.yKey])]),
             max([0, max(renderData, d => d[this.props.yKey])])]);
         this.scaleX.range([0, width]);
         this.scaleY.range([height, 0]);
-        console.log(this.scaleY.domain());
 
 
         const svg = select(this.svg);
@@ -116,16 +129,24 @@ export default class BarChart extends React.PureComponent {
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
 
-        root.append('g')
+        const xAxisSvg = root.append('g')
             .attr('class', 'axis axis--x')
             .attr('transform', `translate(0, ${height})`)
             .call(xAxis);
+
+        if (nuOfRow > this.props.maxNuOfRow) {
+            xAxisSvg.selectAll('text')
+                .attr('y', 0)
+                .attr('x', 9)
+                .attr('dy', '.35em')
+                .attr('transform', 'rotate(90)')
+                .style('text-anchor', 'start');
+        }
 
         root.append('g')
             .attr('class', 'axis')
             .call(yAxis);
 
-        console.log(this.props.highlightBarX);
         root.append('g')
             .selectAll('.bar')
             .data(renderData)
@@ -140,8 +161,8 @@ export default class BarChart extends React.PureComponent {
             ))
             .attr('width', this.scaleX.bandwidth())
             .attr('height', d => (
-                d[this.props.yKey] > 0 ? this.scaleY(0) - this.scaleY(d[this.props.yKey]) :
-                    this.scaleY(d[this.props.yKey]) - this.scaleY(0)
+                (d[this.props.yKey] > 0 ? this.scaleY(0) - this.scaleY(d[this.props.yKey]) :
+                    this.scaleY(d[this.props.yKey]) - this.scaleY(0)) || 0
             ));
     }
 
