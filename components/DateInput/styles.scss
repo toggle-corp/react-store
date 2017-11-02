@@ -1,14 +1,17 @@
 @import '../../../stylesheets/base';
 
 .date-input-wrapper {
+    padding: $spacing-medium 0;
+    width: 100%;
+
     .date-input {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        border-bottom: $width-separator-medium solid $color-separator;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
 
         .label {
-            margin-bottom: $spacing-large;
+            margin-top: $spacing-extra-small;
             width: 100%;
             text-transform: uppercase;
             color: $color-label;
@@ -16,12 +19,14 @@
         }
 
         .inputs {
+            padding: $spacing-small 0;
+
             input {
                 outline: 0;
                 border: 0;
                 background-color: transparent;
+                padding: 0;
                 text-align: left;
-
                 color: $color-text;
                 font-family: $font-family-monospace;
                 font-size: inherit;
@@ -48,7 +53,7 @@
             }
 
             .separator {
-                padding: $spacing-small;
+                padding: 0 $spacing-small;
                 color: $color-text;
 
                 &.disabled {
@@ -59,7 +64,7 @@
 
         .actions {
             display: flex;
-            padding: $spacing-small;
+            padding: 0 $spacing-small;
 
             button {
                 outline: 0;

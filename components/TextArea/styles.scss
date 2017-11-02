@@ -1,11 +1,14 @@
 @import '../../../stylesheets/base';
 
-.text-input-wrapper {
+.textarea-wrapper {
     padding: $spacing-medium 0;
     width: 100%;
 
     .text-input {
+        border-radius: 3px;
+
         .label {
+            margin-bottom: $spacing-large;
             width: 100%;
             text-transform: uppercase;
             color: $color-label;
@@ -21,7 +24,8 @@
             width: 100%;
             color: $color-text;
             font-family: inherit;
-            font-size: inherit;
+            font-size: $font-size-medium-alt;
+            resize: vertical;
 
             &::placeholder {
                 color: $color-text-disabled;

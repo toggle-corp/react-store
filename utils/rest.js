@@ -80,6 +80,7 @@ export class RestRequest {
             console.log(`Fetching ${this.url}`, parameters);
             response = await fetch(this.url, parameters);
         } catch (ex) {
+            console.error(ex);
             const retryable = this.retry();
             if (!retryable) {
                 this.fatal({ errorMessage: ex.message, errorCode: ex.statusCode });
