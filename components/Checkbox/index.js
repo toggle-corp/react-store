@@ -11,6 +11,13 @@ const propTypes = {
      */
     className: PropTypes.string,
 
+    initialValue: PropTypes.bool,
+
+    /**
+     * A callback for when the input changes its content
+     */
+    onChange: PropTypes.func,
+
     /**
      * label for the checkbox
      */
@@ -19,6 +26,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    initialValue: false,
+    onChange: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -30,22 +39,33 @@ export default class Checkbox extends React.PureComponent {
         super(props);
 
         this.state = {
-            checked: false,
+            checked: this.props.initialValue,
         };
 
         this.inputId = randomString();
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ checked: nextProps.initialValue });
+    }
+
     handleInputClick = (e) => {
-        this.setState({
-            checked: e.target.checked,
-        });
+        const checked = e.target.checked;
+
+        this.setState({ checked });
+
+        if (this.props.onChange && checked !== this.state.checked) {
+            this.props.onChange(checked);
+        }
     }
 
     render() {
         const { checked } = this.state;
         const {
             label,
+            onChange, // eslint-disable-line
+            initialValue, // eslint-disable-line
+            className,
             ...otherProps
         } = this.props;
 
@@ -53,7 +73,7 @@ export default class Checkbox extends React.PureComponent {
             <label
                 htmlFor={this.inputId}
                 styleName={`checkbox ${checked ? 'checked' : ''}`}
-                className={this.props.className}
+                className={className}
             >
                 <span
                     styleName="checkmark"
@@ -67,6 +87,7 @@ export default class Checkbox extends React.PureComponent {
                     onClick={this.handleInputClick}
                     styleName="input"
                     type="checkbox"
+                    defaultChecked={checked}
                     id={this.inputId}
                     {...otherProps}
                 />

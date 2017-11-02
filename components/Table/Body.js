@@ -64,20 +64,7 @@ export default class Body extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {
-            highlightColumnKey,
-            highlightRowKey,
-            highlightCellKey,
-            hoverableCell,
-            hoverableRow,
-        } = this.props;
-        console.log(
-            highlightColumnKey,
-            highlightRowKey,
-            highlightCellKey,
-            hoverableCell,
-            hoverableRow,
-        );
+        const { highlightCellKey } = this.props; // eslint-disable-line
     }
 
     getDataRow = (rowData) => {
