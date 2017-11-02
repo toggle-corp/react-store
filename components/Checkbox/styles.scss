@@ -1,7 +1,5 @@
 @import '../../../stylesheets/base';
 
-
-
 .checkbox {
     cursor: pointer;
     width: 100%;
@@ -10,7 +8,7 @@
     .checkmark {
         display: inline-block;
         margin-right: $spacing-small;
-        font-size: 1.1em;
+        font-size: $font-size-medium-alt;
     }
 
     .input {
@@ -19,6 +17,7 @@
 
     .label {
         color: $color-text;
+        font-weight: $font-weight-normal;
     }
 
     &.checked {
