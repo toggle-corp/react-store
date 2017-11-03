@@ -103,8 +103,12 @@ export default class ChordDiagram extends React.PureComponent {
         width = width - left - right;
         height = height - top - bottom;
 
-        const outerRadius = (Math.min(width, height) * 0.5) - 40;
-        const innerRadius = outerRadius - 30;
+        const outerRadius = (Math.min(width, height) * 0.5);
+        let innerRadius = outerRadius - 24;
+
+        if (innerRadius < 0) {
+            innerRadius = 0;
+        }
 
         const chords = chord()
             .padAngle(0.05)
@@ -123,7 +127,7 @@ export default class ChordDiagram extends React.PureComponent {
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
             .append('g')
-            .attr('transform', `translate(${width / 2}, ${height / 2})`)
+            .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
             .datum(chords(matrix));
 
         function fade(opacity) {
@@ -168,8 +172,8 @@ export default class ChordDiagram extends React.PureComponent {
         groupText
             .filter(function filtrate(d, i) {
                 // eslint-disable-next-line no-underscore-dangle
-                return (groupPath._groups[0][i].getTotalLength() / 2) - 16
-                < this.getComputedTextLength();
+                return (((groupPath._groups[0][i].getTotalLength() / 2) - 30)
+                < this.getComputedTextLength());
             })
             .remove();
 
