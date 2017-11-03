@@ -38,6 +38,8 @@ const propTypes = {
 
     highlightRowKey: PropTypes.string,
 
+    highlightColumnKey: PropTypes.string,
+
     /**
      * keyExtractor is used to get a unique key associated with rowData
      */
@@ -53,6 +55,7 @@ const defaultProps = {
     dataModifier: undefined,
     highlightCellKey: {},
     highlightRowKey: undefined,
+    highlightColumnKey: undefined,
     highlighted: false,
     hoverable: false,
     onClick: undefined,
@@ -110,6 +113,7 @@ export default class Body extends React.PureComponent {
             dataModifier,
             headers,
             highlightCellKey,
+            highlightColumnKey,
             highlightRowKey,
             keyExtractor,
         } = this.props;
@@ -127,6 +131,7 @@ export default class Body extends React.PureComponent {
                 dataModifier={dataModifier}
                 headers={headers}
                 highlighted={isEqualAndTruthy(key, highlightRowKey)}
+                highlightColumnKey={highlightColumnKey}
                 highlightCellKey={cellKey}
                 hoverable={areRowsHoverable}
                 key={key}
@@ -146,8 +151,6 @@ export default class Body extends React.PureComponent {
     }
 
     render() {
-        // console.log('Rendering Body');
-
         const {
             data,
         } = this.props;

@@ -6,6 +6,11 @@ import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
 
+const propTypeKey = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+]);
+
 const propTypes = {
     className: PropTypes.string,
 
@@ -34,6 +39,15 @@ const propTypes = {
     onBodyClick: PropTypes.func,
 
     onHeaderClick: PropTypes.func,
+
+    highlightCellKey: PropTypes.shape({
+        columnKey: propTypeKey,
+        rowKey: propTypeKey,
+    }),
+
+    highlightColumnKey: propTypeKey,
+
+    highlightRowKey: propTypeKey,
 };
 
 const defaultProps = {
@@ -42,6 +56,10 @@ const defaultProps = {
     onHeaderClick: undefined,
     dataModifier: undefined,
     headerModifier: undefined,
+
+    highlightCellKey: {},
+    highlightColumnKey: undefined,
+    highlightRowKey: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -99,6 +117,9 @@ export default class RawTable extends React.PureComponent {
             keyExtractor,
             onHeaderClick,
             onBodyClick,
+            highlightCellKey,
+            highlightRowKey,
+            highlightColumnKey,
         } = this.props;
 
         return (
@@ -117,6 +138,9 @@ export default class RawTable extends React.PureComponent {
                     headers={headers}
                     keyExtractor={keyExtractor}
                     onClick={onBodyClick}
+                    highlightCellKey={highlightCellKey}
+                    highlightRowKey={highlightRowKey}
+                    highlightColumnKey={highlightColumnKey}
                 />
             </table>
         );

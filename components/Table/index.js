@@ -2,28 +2,56 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import RawTable from '../RawTable';
+import ColumnHeader from './ColumnHeader';
 import styles from './styles.scss';
 
-import Header, {
-    TableHeaderPropTypes,
-} from './Header';
-
-import Body, {
-    TableDataPropTypes,
-} from './Body';
-
 import {
+    isEqualAndTruthy,
     isFalsy,
 } from '../../utils/common';
 
+const propTypeKey = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+]);
 
-const ASC = 'asc';
-const DSC = 'dsc';
+/**
+ * comparator: comparator function for sorting, recieves data rows(not column data)
+ *
+ * defaultSortOrder: the sort order which should be applied when clicked,
+ *
+ * key: unique key for each column, the key is also used to determine
+ *      the data for rows in the body
+ *
+ * label: text label for the column
+ *
+ * modifier: returns a renderable object for the column, recieves whole row of data (not column)
+ *
+ * order: the order in which they appear relative to that of other header columns
+ *
+ * sortable: is element sortable?
+ */
+const TableHeaderPropTypes = PropTypes.arrayOf(
+    PropTypes.shape({
+        comparator: PropTypes.func,
+        defaultSortOrder: PropTypes.string,
+        key: PropTypes.string,
+        label: PropTypes.string,
+        modifier: PropTypes.func,
+        order: PropTypes.number,
+        sortable: PropTypes.bool,
+    }),
+);
+
+const TableDataPropTypes = PropTypes.arrayOf(
+    PropTypes.shape({
+        key: PropTypes.string,
+        // Note: Shape is dynamic
+    }).isRequired,
+);
 
 const propTypes = {
-    /**
-     * To override default style (styleName on component)
-     */
     className: PropTypes.string,
 
     /**
@@ -49,90 +77,173 @@ const propTypes = {
     headers: TableHeaderPropTypes.isRequired,
 
     /**
-     * hide table headers?
-     */
-    hideHeaders: PropTypes.bool,
-
-    /**
-     * Object of { columnKey, rowKey } for cell to highlight
-     */
-    highlightCellKey: PropTypes.shape({
-        rowKey: PropTypes.string,
-        rowColumn: PropTypes.string,
-    }),
-
-    /**
-     * Key for column to highlight
-     */
-    highlightColumnKey: PropTypes.string,
-
-    /**
-     * Key for row to highlight
-     */
-    highlightRowKey: PropTypes.string,
-
-    /**
-     * Is row hoverable ?
-     */
-    hoverableCell: PropTypes.bool,
-
-    /**
-     * Is row hoverable ?
-     */
-    hoverableRow: PropTypes.bool,
-
-    /**
      * A function that returns key from the row data
      */
-    keyExtractor: PropTypes.func,
+    keyExtractor: PropTypes.func.isRequired,
 
-    /**
-     * A function that return a renderable for when table is empty
-     */
-    emptyRenderer: PropTypes.func,
+    highlightCellKey: PropTypes.shape({
+        columnKey: propTypeKey,
+        rowKey: propTypeKey,
+    }),
+
+    highlightColumnKey: propTypeKey,
+
+    highlightRowKey: propTypeKey,
 };
 
 const defaultProps = {
     className: '',
-
-    hideHeaders: false,
-
-    headers: {
-        comparator: (a, b) => a - b,
-        sortable: false,
-    },
-
-    highlightColumnKey: '',
-
-    highlightRowKey: '',
-
-    highlightCellKey: {},
-
-    hoverableCell: false,
-
-    hoverableRow: false,
-
     defaultSort: undefined,
 
-    keyExtractor: undefined,
-
-    emptyRenderer: () => (<p>Nothing here</p>),
+    highlightCellKey: {},
+    highlightColumnKey: undefined,
+    highlightRowKey: undefined,
 };
+
+const isArrayEqual = (array1, array2) => (
+    array1.length === array2.length && array1.every((d, i) => d === array2[i])
+);
 
 @CSSModules(styles, { allowMultiple: true })
 export default class Table extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getSortedData = (headers, data, headerMeta) => {
-        if (isFalsy(headerMeta)) {
+    constructor(props) {
+        super(props);
+
+        const {
+            headers,
+            data,
+            defaultSort,
+        } = this.props;
+
+        let activeSort = defaultSort;
+
+        // Get activeSort if there is no defaultSort
+        if (!activeSort) {
+            activeSort = this.getActiveSort(headers);
+        }
+
+        const newHeaders = this.getStateHeaders(headers, activeSort);
+
+        // initially sort the data
+        const newData = this.getSortedData(headers, data, activeSort);
+
+        this.state = {
+            activeSort,
+            headers: newHeaders,
+            data: newData,
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            data: nextData,
+            headers: nextHeaders,
+            defaultSort: nextDefaultSort,
+        } = nextProps;
+        let {
+            data: newData,
+            headers: newHeaders,
+        } = this.props;
+
+        const headersChanged = !isArrayEqual(nextHeaders, newHeaders);
+        // NOTE: This is necessary
+        if (headersChanged) {
+            newHeaders = nextHeaders;
+        }
+
+        // To be set in state
+        let { activeSort: newActiveSort } = this.state;
+
+        // Determine new active sort
+        // Priority: state > nextDefaultSort > first sortable header
+        if (isFalsy(newActiveSort.key)) {
+            newActiveSort = nextDefaultSort || this.getActiveSort(newHeaders);
+        }
+
+        newHeaders = this.getStateHeaders(newHeaders, newActiveSort);
+
+        const dataChanged = !isArrayEqual(nextData, newData);
+        if (dataChanged || headersChanged) {
+            newData = this.getSortedData(nextData, newHeaders, newActiveSort);
+        }
+
+        this.setState({
+            activeSort: newActiveSort,
+            data: newData,
+            headers: newHeaders,
+        });
+    }
+
+    // eslint-disable-next-line react/sort-comp
+    handleHeaderClick = (key) => {
+        const clickedHeader = this.state.headers.find(d => d.key === key);
+        if (!clickedHeader) {
+            console.error(`Header with key '${key}' not found`);
+        }
+        if (!clickedHeader || !clickedHeader.sortable) {
+            return;
+        }
+
+        let { activeSort: newActiveSort } = this.state;
+        if (newActiveSort.key === key) {
+            newActiveSort = {
+                ...newActiveSort,
+                order: newActiveSort.order === 'asc' ? 'dsc' : 'asc',
+            };
+        } else {
+            newActiveSort = {
+                key,
+                order: clickedHeader.defaultSortOrder || 'asc',
+            };
+        }
+
+        const newHeaders = this.getStateHeaders(this.state.headers, newActiveSort);
+
+        const newData = this.getSortedData(newHeaders, this.props.data, newActiveSort);
+
+        this.setState({
+            activeSort: newActiveSort,
+            data: newData,
+            headers: newHeaders,
+        });
+    }
+
+    getActiveSort = (newHeaders) => {
+        const sortableHeaders = newHeaders.filter(d => d.sortable);
+
+        let newActiveSort = {};
+        if (sortableHeaders && sortableHeaders.length > 0) {
+            newActiveSort = {
+                key: sortableHeaders[0].key,
+                order: sortableHeaders[0].defaultSortOrder || 'asc',
+            };
+        }
+        return newActiveSort;
+    };
+
+    // add isActiveSort and currentSortOrder in headers
+    getStateHeaders = (headers, activeSort) => headers.map(header => ({
+        ...header,
+        isActiveSort: isEqualAndTruthy(header.key, activeSort.key),
+        currentSortOrder: isEqualAndTruthy(header.key, activeSort.key) ? activeSort.order : '',
+    }));
+
+    getSortedData = (headers, data, activeSort) => {
+        if (isFalsy(activeSort) || !activeSort.key) {
             return data;
         }
 
-        const activeHeader = headers.find(header => header.key === headerMeta.activeKey);
+        const activeHeader = headers.find(header => header.key === activeSort.key);
+
+        if (!activeHeader) {
+            return data;
+        }
 
         const sortByHeader = (a, b) => (
-            (headerMeta.sortOrder === DSC ? -1 : 1) * activeHeader.comparator(a, b)
+            (activeSort.order === 'dsc' ? -1 : 1) * activeHeader.comparator(a, b)
         );
 
         const newData = [...data].sort(sortByHeader);
@@ -140,179 +251,64 @@ export default class Table extends React.PureComponent {
         return newData;
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {};
+    dataModifier = (data, columnKey) => {
+        const header = this.state.headers.find(d => d.key === columnKey);
 
-        const { data, headers, defaultSort } = this.props;
-        // NOTE: order and number of columns cannot change after initialization
-        // Sort headers according to order (horizontalSort)
-        this.state.headers = [...headers].sort((a, b) => a.order - b.order);
-
-        // the column by which data should be sorted (recieved via props)
-        let activeSort = defaultSort;
-
-        // if defaultSort is not provided, make first sortable column as defaultSort
-        if (!activeSort) {
-            const sortableHeaders = headers.filter(a => a.sortable);
-            if (sortableHeaders.length > 0) {
-                activeSort = {
-                    key: sortableHeaders[0].key,
-                    order: sortableHeaders[0].defaultSortOrder || ASC,
-                };
-            }
+        if (header.modifier) {
+            return header.modifier(data);
         }
 
-        if (activeSort) {
-            const headerMeta = { activeKey: activeSort.key, sortOrder: activeSort.order };
-            this.state.headerMeta = headerMeta;
-
-            this.state.data = Table.getSortedData(headers, data, headerMeta);
-        } else {
-            this.state.data = data;
-        }
+        return data[columnKey];
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            data,
-            defaultSort,
-            headers,
-        } = this.props;
-        const { headerMeta } = this.state;
+    headerModifier = (header) => {
+        const { activeSort } = this.state;
+        let active = false;
+        let sortOrder = '';
 
-        let newData = nextProps.data;
-        let newHeaders = nextProps.headers;
-
-        let newHeaderMeta = headerMeta;
-
-        if (headers !== newHeaders) {
-            // NOTE: order and number of columns cannot change after initialization
-            // Sort headers according to order (horizontalSort)
-            newHeaders = [...newHeaders].sort((a, b) => a.order - b.order);
-
-            // the column by which data should be sorted (recieved via props)
-            let activeSort = defaultSort;
-
-            // TODO: if the header with 'defaultSort' is removed, write handler
-
-            // if defaultSort is not provided, make first sortable column as defaultSort
-            if (!activeSort) {
-                const sortableHeaders = newHeaders.filter(a => a.sortable);
-                if (sortableHeaders.length > 0) {
-                    activeSort = {
-                        key: sortableHeaders[0].key,
-                        order: sortableHeaders[0].defaultSortOrder || ASC,
-                    };
-                }
-            }
-
-            if (activeSort) {
-                newHeaderMeta = { activeKey: activeSort.key, sortOrder: activeSort.order };
-                newData = Table.getSortedData(newHeaders, newData, newHeaderMeta);
-            }
-        } else if (data !== newData) {
-            newData = Table.getSortedData(headers, newData, headerMeta);
+        if (activeSort.key === header.key) {
+            active = true;
+            sortOrder = activeSort.order;
         }
 
-        const newState = {
-            data: newData,
-            headerMeta: newHeaderMeta,
-            headers: newHeaders,
-        };
-
-        this.setState(newState);
-    }
-
-    onHeaderClick = (key) => {
-        const { headers, data } = this.props;
-        const { headerMeta } = this.state;
-
-        const activeHeader = headers.find(header => header.key === key) || { sortable: false };
-
-        if (!activeHeader.sortable) {
-            return;
-        }
-
-        let sortOrder;
-        if (headerMeta.activeKey === key) {
-            sortOrder = headerMeta.sortOrder === ASC ? DSC : ASC;
-        } else {
-            sortOrder = ASC;
-        }
-
-        const newHeaderMeta = {
-            activeKey: key,
-            sortOrder,
-        };
-
-        const newData = Table.getSortedData(headers, data, newHeaderMeta);
-
-        this.setState({
-            headerMeta: newHeaderMeta,
-            data: newData,
-        });
+        return (
+            <ColumnHeader
+                label={header.label}
+                active={active}
+                sortOrder={sortOrder}
+                sortable={header.sortable}
+            />
+        );
     }
 
     render() {
         const {
             className,
-            emptyRenderer,
-            hideHeaders,
-            highlightCellKey,
-            highlightColumnKey,
-            highlightRowKey,
-            hoverableCell,
-            hoverableRow,
             keyExtractor,
+            highlightCellKey,
+            highlightRowKey,
+            highlightColumnKey,
         } = this.props;
 
         const {
             data,
-            headerMeta,
             headers,
         } = this.state;
 
-        // NOTE: role "grid" was added to table so that onClick could be attached to <td>
         return (
-            <table
-                styleName="table"
-                role="grid"
+            <RawTable
                 className={className}
-            >
-                {
-                    !hideHeaders &&
-                    <Header
-                        headerMeta={headerMeta}
-                        headers={headers}
-                        onClick={this.onHeaderClick}
-                    />
-                }
-                {
-                    data.length > 0
-                        ? <Body
-                            data={data}
-                            emptyRenderer={emptyRenderer}
-                            headers={headers}
-                            keyExtractor={keyExtractor}
-                            highlightCellKey={highlightCellKey}
-                            highlightColumnKey={highlightColumnKey}
-                            highlightRowKey={highlightRowKey}
-                            hoverableCell={hoverableCell}
-                            hoverableRow={hoverableRow}
-                        />
-                        : <tbody>
-                            <tr>
-                                <td
-                                    colSpan={headers.length}
-                                    styleName="empty-data"
-                                >
-                                    {emptyRenderer()}
-                                </td>
-                            </tr>
-                        </tbody>
-                }
-            </table>
+                data={data}
+                dataModifier={this.dataModifier}
+                headerModifier={this.headerModifier}
+                headers={headers}
+                keyExtractor={keyExtractor}
+                onHeaderClick={this.handleHeaderClick}
+                styleName="table"
+                highlightCellKey={highlightCellKey}
+                highlightRowKey={highlightRowKey}
+                highlightColumnKey={highlightColumnKey}
+            />
         );
     }
 }
