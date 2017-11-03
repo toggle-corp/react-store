@@ -7,12 +7,12 @@ import styles from './styles.scss';
 import Checkbox from '../Checkbox';
 
 const propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.node.isRequired,
 
     options: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string.isRequired,
-            title: PropTypes.string.isRequired,
+            title: PropTypes.node.isRequired,
             isChecked: PropTypes.bool.isRequired,
         }).isRequired,
     ).isRequired,

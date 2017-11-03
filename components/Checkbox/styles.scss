@@ -1,6 +1,7 @@
 @import '../../../stylesheets/base';
 
 .checkbox {
+    display: flex;
     cursor: pointer;
     width: 100%;
     user-select: none;

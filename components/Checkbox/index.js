@@ -21,7 +21,7 @@ const propTypes = {
     /**
      * label for the checkbox
      */
-    label: PropTypes.string.isRequired,
+    label: PropTypes.node.isRequired,
 };
 
 const defaultProps = {
