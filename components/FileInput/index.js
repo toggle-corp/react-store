@@ -35,13 +35,11 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
+    previewExtractor: undefined,
     showPreview: false,
     showStatus: true,
-    previewExtractor: undefined,
-    className: '',
 };
-
-// TODO @frozenhelium: consider multiple files,
 
 @CSSModules(styles, { allowMultiple: true })
 export default class FileInput extends React.PureComponent {

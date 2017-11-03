@@ -46,7 +46,7 @@ const defaultProps = {
     className: '',
     disabled: false,
     iconName: undefined,
-    onClick: () => {},
+    onClick: () => {}, // no-op
 };
 
 /**
@@ -107,10 +107,10 @@ export default class Button extends React.PureComponent {
 
         return (
             <button
+                className={this.state.className}
                 disabled={disabled}
                 onClick={onClick}
                 styleName={`button ${buttonType}`}
-                className={this.state.className}
             >
                 {
                     iconName &&

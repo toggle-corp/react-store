@@ -9,13 +9,23 @@ import FormHelper from './FormHelper';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    /* fn to be called when value of any element change */
     changeCallback: PropTypes.func,
+    /* children of the form */
     children: PropTypes.node.isRequired, // eslint-disable-line
-    elements: PropTypes.array.isRequired, // eslint-disable-line
+    /* class name for styling */
+    className: PropTypes.string,
+    /* list of elements to be validated */
+    elements: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /* fn to be called when form validation fails */
     failureCallback: PropTypes.func,
+    /* fn to be called when form validation succeds */
     successCallback: PropTypes.func,
+    /* dependency injected global function  to validate interdependent elements
+     * should be created using createValidation helper function
+    */
     validation: PropTypes.object, // eslint-disable-line
+    /* map of validation function for individual element */
     validations: PropTypes.object, // eslint-disable-line
 };
 
@@ -28,7 +38,6 @@ const defaultProps = {
     validations: {},
 };
 
-// NOTE: various optimizations can be done for this function
 const mapChildrenRecursive = (children, condition, propertyFn) => {
     const mapFn = (child) => {
         if (!React.isValidElement(child)) {
@@ -48,6 +57,9 @@ const mapChildrenRecursive = (children, condition, propertyFn) => {
     return React.Children.map(children, mapFn);
 };
 
+/*
+ * Form Component for field validations
+ */
 @CSSModules(styles)
 export default class Form extends React.PureComponent {
     static propTypes = propTypes;
@@ -84,7 +96,6 @@ export default class Form extends React.PureComponent {
         return false;
     }
 
-    // TODO: check if formname is string and length > 0
     getCondition = props => (
         props.formname && props.formname.length > 0
     )
@@ -94,22 +105,22 @@ export default class Form extends React.PureComponent {
         onChange: this.form.updateChangeFn(props.formname),
     })
 
-    // access this from outside
+    /* Submit a form from parent */
     submit = () => {
-        this.form.obSubmit();
+        this.form.onSubmit();
     }
 
     render() {
         const {
-            className,
             children,
+            className,
         } = this.props;
 
         return (
             <form
                 className={className}
-                styleName="form"
                 onSubmit={this.onSubmit}
+                styleName="form"
             >
                 { mapChildrenRecursive(
                     children,
