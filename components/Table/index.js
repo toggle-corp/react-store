@@ -167,7 +167,7 @@ export default class Table extends React.PureComponent {
 
         const dataChanged = !isArrayEqual(nextData, newData);
         if (dataChanged || headersChanged) {
-            newData = this.getSortedData(nextData, newHeaders, newActiveSort);
+            newData = this.getSortedData(nextHeaders, newData, newActiveSort);
         }
 
         this.setState({
