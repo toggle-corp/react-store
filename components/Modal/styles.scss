@@ -29,8 +29,8 @@
 }
 
 .body {
-    max-height: calc(96vh - #{$height-modal-header} - #{$height-modal-footer});
     padding: $spacing-large;
+    max-height: calc(96vh - #{$height-modal-header} - #{$height-modal-footer});
     overflow: auto;
 }
 

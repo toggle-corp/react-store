@@ -14,19 +14,21 @@
             height: 100%;
 
             .bar {
-              fill: steelblue;
+                fill: $color-accent;
             }
 
             .bar-selected {
-              fill: #FEA900;
+                fill: $color-bar-selected;
             }
 
             .axis {
-                line, path {
-                  stroke: #e4e4e4;
+                line,
+                path {
+                    stroke: $color-background-header-alt;
                 }
+
                 text {
-                  fill: #545454;
+                    fill: $color-text;
                 }
             }
         }

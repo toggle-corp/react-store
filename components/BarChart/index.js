@@ -22,6 +22,8 @@ const propTypes = {
      *    yKey: value,
      *  },...]
      */
+    className: PropTypes.string,
+
     data: PropTypes.arrayOf(PropTypes.shape({
         x: PropTypes.oneOfType([
             PropTypes.string,
@@ -61,6 +63,7 @@ const propTypes = {
 
 const defaultProps = {
     barPadding: 0.01,
+    className: '',
     highlightBarX: null,
     margins: {
         top: 10,
@@ -167,10 +170,12 @@ export default class BarChart extends React.PureComponent {
     }
 
     render() {
+        const { className } = this.props;
         return (
             <div
-                ref={(div) => { this.root = div; }}
+                className={className}
                 styleName="bar-chart"
+                ref={(div) => { this.root = div; }}
             >
                 <div styleName="content" ref={(div) => { this.svgContainer = div; }}>
                     <svg ref={(svg) => { this.svg = svg; }} />

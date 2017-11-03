@@ -12,9 +12,12 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
     ]),
+
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     children: null,
 };
 
@@ -25,10 +28,16 @@ export default class Body extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { children } = this.props;
+        const {
+            children,
+            className,
+        } = this.props;
 
         return (
-            <div styleName="body">
+            <div
+                styleName="body"
+                className={className}
+            >
                 { children }
             </div>
         );
