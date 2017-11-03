@@ -9,7 +9,11 @@ import { max, min } from 'd3-array';
 
 import styles from './styles.scss';
 
-
+/*
+  TODO:
+  1. GridLine support (both x-axis and y-axis)
+  2. Axis label auto padding
+  */
 const propTypes = {
     /*
      * Padding between bars
