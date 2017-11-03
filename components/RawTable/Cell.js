@@ -16,6 +16,8 @@ const propTypes = {
 
     highlighted: PropTypes.bool,
 
+    columnHighlighted: PropTypes.bool,
+
     hoverable: PropTypes.bool,
 
     onClick: PropTypes.func,
@@ -26,6 +28,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     highlighted: false,
+    columnHighlighted: false,
     hoverable: false,
     onClick: undefined,
     children: '-',
@@ -64,6 +67,7 @@ export default class Cell extends React.PureComponent {
             hoverable,
             highlighted,
             className,
+            columnHighlighted,
         } = props;
 
         // default className for global override
@@ -80,6 +84,10 @@ export default class Cell extends React.PureComponent {
             classNames.push('highlighted');
         }
 
+        if (columnHighlighted) {
+            classNames.push('column-highlighted');
+        }
+
         return classNames.join(' ');
     }
 
@@ -88,6 +96,7 @@ export default class Cell extends React.PureComponent {
         const {
             hoverable,
             highlighted,
+            columnHighlighted,
         } = props;
 
         // default className for global override
@@ -99,6 +108,10 @@ export default class Cell extends React.PureComponent {
 
         if (highlighted) {
             styleNames.push('highlighted');
+        }
+
+        if (columnHighlighted) {
+            styleNames.push('column-highlighted');
         }
 
         return styleNames.join(' ');

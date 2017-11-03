@@ -23,7 +23,15 @@ const propTypes = {
         }),
     ).isRequired,
 
-    highlightCellKey: PropTypes.bool,
+    highlightCellKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+
+    highlightColumnKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 
     highlighted: PropTypes.bool,
 
@@ -35,7 +43,10 @@ const propTypes = {
         dummy: PropTypes.string,
     }).isRequired,
 
-    uniqueKey: PropTypes.string.isRequired,
+    uniqueKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
 };
 
 const defaultProps = {
@@ -43,6 +54,7 @@ const defaultProps = {
     className: '',
     dataModifier: undefined,
     highlightCellKey: undefined,
+    highlightColumnKey: undefined,
     highlighted: false,
     hoverable: false,
     onClick: undefined,
@@ -127,6 +139,7 @@ export default class Row extends React.PureComponent {
             areCellsHoverable,
             dataModifier,
             highlightCellKey,
+            highlightColumnKey,
             rowData,
         } = this.props;
 
@@ -144,6 +157,7 @@ export default class Row extends React.PureComponent {
                 onClick={this.handleCellClick}
                 hoverable={areCellsHoverable}
                 highlighted={isEqualAndTruthy(header.key, highlightCellKey)}
+                columnHighlighted={isEqualAndTruthy(header.key, highlightColumnKey)}
             >
                 { data }
             </Cell>

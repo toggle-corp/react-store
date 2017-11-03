@@ -20,8 +20,33 @@
     .row {
         background-color: $color-background-row;
 
+        &.hoverable {
+            &:hover {
+                background-color: $color-background-hover;
+                color: $color-text;
+            }
+        }
+
+        &.highlighted {
+            background-color: $color-accent;
+            color: $color-text-on-accent;
+        }
+
         .cell {
             padding: $spacing-small $spacing-medium;
+
+            &.hoverable {
+                &:hover {
+                    background-color: $color-background-hover;
+                    color: $color-text;
+                }
+            }
+
+            &.highlighted,
+            &.column-highlighted {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+            }
         }
 
         &:nth-child(odd) {
