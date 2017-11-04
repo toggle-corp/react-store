@@ -170,7 +170,8 @@ export default class BarChart extends React.PureComponent {
                 .attr('x', 9)
                 .attr('dy', '.35em')
                 .attr('transform', 'rotate(90)')
-                .style('text-anchor', 'start');
+                .style('text-anchor', 'start')
+                .style('font-size', '9px');
         }
 
         root.append('g')
