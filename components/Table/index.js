@@ -89,6 +89,10 @@ const propTypes = {
     highlightColumnKey: propTypeKey,
 
     highlightRowKey: propTypeKey,
+
+    onBodyClick: PropTypes.func,
+
+    onDataSort: PropTypes.func,
 };
 
 const defaultProps = {
@@ -98,6 +102,8 @@ const defaultProps = {
     highlightCellKey: {},
     highlightColumnKey: undefined,
     highlightRowKey: undefined,
+    onBodyClick: undefined,
+    onDataSort: undefined,
 };
 
 const isArrayEqual = (array1, array2) => (
@@ -147,6 +153,9 @@ export default class Table extends React.PureComponent {
             data: newData,
             headers: newHeaders,
         } = this.props;
+        const {
+            data: stateData,
+        } = this.state;
 
         const headersChanged = !isArrayEqual(nextHeaders, newHeaders);
         // NOTE: This is necessary
@@ -167,7 +176,9 @@ export default class Table extends React.PureComponent {
 
         const dataChanged = !isArrayEqual(nextData, newData);
         if (dataChanged || headersChanged) {
-            newData = this.getSortedData(nextHeaders, newData, newActiveSort);
+            newData = this.getSortedData(nextHeaders, nextData, newActiveSort);
+        } else {
+            newData = stateData;
         }
 
         this.setState({
@@ -248,6 +259,10 @@ export default class Table extends React.PureComponent {
 
         const newData = [...data].sort(sortByHeader);
 
+        if (this.props.onDataSort) {
+            this.props.onDataSort(newData);
+        }
+
         return newData;
     }
 
@@ -288,6 +303,7 @@ export default class Table extends React.PureComponent {
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
+            onBodyClick,
         } = this.props;
 
         const {
@@ -308,6 +324,7 @@ export default class Table extends React.PureComponent {
                 highlightCellKey={highlightCellKey}
                 highlightRowKey={highlightRowKey}
                 highlightColumnKey={highlightColumnKey}
+                onBodyClick={onBodyClick}
             />
         );
     }
