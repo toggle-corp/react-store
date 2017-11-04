@@ -61,6 +61,7 @@ const propTypes = {
     /*
      * key for for x-axis and y-axis in Data
      */
+    updateFromProps: PropTypes.bool,
     xKey: PropTypes.string.isRequired,
     yKey: PropTypes.string.isRequired,
 };
@@ -76,6 +77,7 @@ const defaultProps = {
         left: 30,
     },
     maxNuOfRow: 30,
+    updateFromProps: true,
 };
 
 @CSSModules(styles)
@@ -86,6 +88,12 @@ export default class BarChart extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const { data } = props;
+
+        this.state = {
+            data,
+        };
+
         this.scaleX = scaleBand().padding(this.props.barPadding);
         this.scaleY = scaleLinear();
     }
@@ -94,8 +102,25 @@ export default class BarChart extends React.PureComponent {
         this.updateRender();
     }
 
+    componentWillReceiveProps(nextProps) {
+        // TODO: Is there better way ?
+        // TODO: also use nexProps for updateFromProps
+        const { data } = nextProps;
+        if (this.props.updateFromProps) {
+            this.setData(data);
+        }
+    }
+
     componentDidUpdate() {
         this.updateRender();
+    }
+
+    setData = (newData) => {
+        // TODO: Is there better way ?
+        // Added to support sorted data from table
+        this.setState({
+            data: newData,
+        });
     }
 
     updateRender() {
@@ -113,7 +138,7 @@ export default class BarChart extends React.PureComponent {
     }
 
     renderTimeSeries() {
-        const renderData = this.props.data;
+        const renderData = this.state.data;
         const { top, bottom, left, right } = this.props.margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
