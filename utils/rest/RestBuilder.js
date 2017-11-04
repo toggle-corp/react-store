@@ -31,6 +31,21 @@ export default class RestBuilder {
         return this;
     }
 
+    abort(fn) {
+        this.abortFn = fn;
+        return this;
+    }
+
+    preLoad(fn) {
+        this.preLoadFn = fn;
+        return this;
+    }
+
+    postLoad(fn) {
+        this.postLoadFn = fn;
+        return this;
+    }
+
     retryTime(val) {
         this.retryTimeVal = val;
         return this;
@@ -58,6 +73,9 @@ export default class RestBuilder {
             this.successFn,
             this.failureFn,
             this.fatalFn,
+            this.abortFn,
+            this.preLoadFn,
+            this.postLoadFn,
             this.retryTimeVal,
             this.maxRetryTimeVal,
             this.decayVal,

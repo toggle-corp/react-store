@@ -7,6 +7,9 @@ import { isTruthy } from '../common';
 const defaultSuccessFn = () => { console.warn('No success callback defined'); };
 const defaultFailureFn = () => { console.warn('No failure callback defined'); };
 const defaultFatalFn = () => { console.warn('No fatal callback defined'); };
+const defaultAbortFn = () => { console.warn('No abort callback defined'); };
+const defaultPreLoadFn = () => { console.warn('No preload callback defined'); };
+const defaultPostLoadFn = () => { console.warn('No postload callback defined'); };
 
 /* Class for xhr requests with retry built in */
 export default class RestRequest {
@@ -39,13 +42,17 @@ export default class RestRequest {
     constructor(
         url, params,
         success = defaultSuccessFn, failure = defaultFailureFn, fatal = defaultFatalFn,
+        abort = defaultAbortFn, preLoad = defaultPreLoadFn, postLoad = defaultPostLoadFn,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
     ) {
         this.url = url;
         this.params = params;
-        this.success = success;
-        this.failure = failure;
-        this.fatal = fatal;
+        this.success = (...attrs) => { postLoad(); success(...attrs); };
+        this.failure = (...attrs) => { postLoad(); failure(...attrs); };
+        this.fatal = (...attrs) => { postLoad(); fatal(...attrs); };
+        this.abort = (...attrs) => { postLoad(); abort(...attrs); };
+        this.preLoad = preLoad;
+        this.postLoad = postLoad;
         this.retryTime = retryTime;
         this.maxRetryTime = maxRetryTime;
         this.decay = decay;
@@ -104,18 +111,21 @@ export default class RestRequest {
             ? this.params()
             : this.params;
 
+        // Call function before fetch
+        this.preLoad();
+
         // DEBUG:
         console.log(`Fetching ${this.url}`, parameters);
         let response;
         try {
             response = await fetch(this.url, parameters);
             if (this.aborted) {
-                // NOTE: just ignore any response
+                this.abort();
                 return;
             }
         } catch (ex) {
             if (this.aborted) {
-                // NOTE: just ignore any response
+                this.abort();
                 return;
             }
             // NOTE: a network problem may occur
