@@ -55,7 +55,7 @@ const propTypes = {
         left: PropTypes.number,
     }),
     /*
-     * if lenght is greater, than rotate X-axis label
+     * if length is greater, than rotate X-axis label
      */
     maxNuOfRow: PropTypes.number,
     /*
@@ -85,8 +85,6 @@ export default class BarChart extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {
-        };
 
         this.scaleX = scaleBand().padding(this.props.barPadding);
         this.scaleY = scaleLinear();
