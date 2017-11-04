@@ -2,8 +2,11 @@
 
 
 .date-picker-wrapper {
+    @include shadow-medium;
+
     display: flex-inline;
     flex-wrap: wrap;
+    z-index: 1;
     background-color: $color-foreground;
     padding: $spacing-small;
 

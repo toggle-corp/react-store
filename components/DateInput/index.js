@@ -57,6 +57,11 @@ const propTypes = {
     label: PropTypes.string,
 
     /**
+     * Event triggered when input value changes
+     */
+    onChange: PropTypes.func,
+
+    /**
      * Is a required element for form
      */
     required: PropTypes.bool,
@@ -68,8 +73,9 @@ const defaultProps = {
     error: '',
     format: 'd/m/y',
     hint: '',
-    initialValue: '',
+    initialValue: undefined,
     label: '',
+    onChange: undefined,
     required: false,
 };
 
@@ -88,8 +94,6 @@ export default class DateInput extends React.PureComponent {
             yearUnit: undefined,
 
             showDatePicker: false,
-            pickerContainerStyle: {},
-
             ...this.decodeTimestamp(this.props.initialValue),
         };
 
@@ -97,30 +101,12 @@ export default class DateInput extends React.PureComponent {
         this.inputId = randomString();
     }
 
-    componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-        window.addEventListener('scroll', this.handleScroll);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('scroll', this.handleScroll);
-    }
-
-    getDimension = () => {
-        // Calculate the left, top and width dimensions,
-        // used for date picker floating container.
-
-        const cr = this.container.getBoundingClientRect();
-        this.boundingClientRect = cr;
-
-        return {
-            pickerContainerStyle: {
-                left: `${cr.right - 250}px`,
-                top: `${(cr.top + window.scrollY) + cr.height}px`,
-                width: '250px',
-            },
-        };
+    componentWillReceiveProps(nextProps) {
+        if (this.props.initialValue !== nextProps.initialValue) {
+            this.setState({
+                ...this.decodeTimestamp(nextProps.initialValue),
+            });
+        }
     }
 
     // Set date to today
@@ -130,11 +116,13 @@ export default class DateInput extends React.PureComponent {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         this.setValue(date);
+        this.triggerChange();
     }
 
     // Set value by timestamp
     setValue = (timestamp) => {
         this.setState(this.decodeTimestamp(timestamp));
+        this.triggerChange();
     }
 
     // Public method used by Form
@@ -203,6 +191,7 @@ export default class DateInput extends React.PureComponent {
 
         newState.date = date;
         this.setState(newState);
+        this.triggerChange();
     }
 
     // Handle close event of date picker floating container
@@ -224,12 +213,16 @@ export default class DateInput extends React.PureComponent {
     // floating container
     handleDynamicStyleOverride = (pickerContainer) => {
         const pickerRect = pickerContainer.getBoundingClientRect();
-        const cr = this.boundingClientRect;
+        const cr = (this.container && this.container.getBoundingClientRect())
+            || this.boundingClientRect;
 
         const pageOffset = window.innerHeight;
         const containerOffset = cr.top + pickerRect.height + cr.height;
 
         const newStyle = {
+            left: `${cr.right - 250}px`,
+            top: `${((cr.top + window.scrollY) + cr.height) - 16}px`,
+            width: '250px',
         };
 
         if (pageOffset < containerOffset) {
@@ -239,18 +232,6 @@ export default class DateInput extends React.PureComponent {
         return newStyle;
     }
 
-    handleScroll = () => {
-        if (this.state.showOptions) {
-            const newState = this.getDimension();
-            this.setState(newState);
-        }
-    }
-
-    handleResize = () => {
-        const newState = this.getDimension();
-        this.setState(newState);
-    };
-
     // Handle focus event of date unit inputs
     handleUnitFocus = () => {
         this.setState({ focused: true });
@@ -259,6 +240,12 @@ export default class DateInput extends React.PureComponent {
     // Handle blur event of date unit inputs
     handleUnitBlur = () => {
         this.setState({ focused: false });
+    }
+
+    triggerChange = () => {
+        if (this.props.onChange) {
+            this.props.onChange(this.getValue());
+        }
     }
 
     // Parse format and generate an object of information
@@ -280,9 +267,9 @@ export default class DateInput extends React.PureComponent {
     showDatePicker = (e) => {
         e.preventDefault();
 
+        this.boundingClientRect = this.container.getBoundingClientRect();
         this.setState({
             showDatePicker: true,
-            ...this.getDimension(),
         });
     }
 
@@ -453,13 +440,12 @@ export default class DateInput extends React.PureComponent {
                 }
 
                 <FloatingContainer
+                    closeOnBlur
+                    containerId="datepicker-container"
+                    onClose={this.handleDatePickerClosed}
+                    onDynamicStyleOverride={this.handleDynamicStyleOverride}
                     ref={(el) => { this.pickerContainer = el; }}
                     show={this.state.showDatePicker && !this.state.disabled}
-                    onClose={this.handleDatePickerClosed}
-                    containerId="datepicker-container"
-                    styleOverride={this.state.pickerContainerStyle}
-                    onDynamicStyleOverride={this.handleDynamicStyleOverride}
-                    closeOnBlur
                 >
                     <DatePicker
                         date={this.state.date && this.state.date.getTime()}

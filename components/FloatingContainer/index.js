@@ -82,23 +82,22 @@ export default class FloatingContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    componentDidMount() {
+        window.addEventListener('resize', this.handleResize);
+        window.addEventListener('scroll', this.handleScroll);
+    }
+
     componentDidUpdate() {
-        const { onDynamicStyleOverride } = this.props;
-
-        if (onDynamicStyleOverride && this.container) {
-            const dynamicStyles = onDynamicStyleOverride(this.container);
-
-            if (dynamicStyles) {
-                Object.assign(this.container.style, dynamicStyles);
-            }
-        }
+        this.invalidateStyles();
     }
 
     componentWillUnmount() {
-        console.log('Unmounting FloatingContainer');
         if (this.container) {
             this.removeContainer();
         }
+
+        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('scroll', this.handleScroll);
     }
 
     getContent = () => (
@@ -146,6 +145,18 @@ export default class FloatingContainer extends React.PureComponent {
         return this.container;
     }
 
+    invalidateStyles() {
+        const { onDynamicStyleOverride } = this.props;
+
+        if (onDynamicStyleOverride && this.container) {
+            const dynamicStyles = onDynamicStyleOverride(this.container);
+
+            if (dynamicStyles) {
+                Object.assign(this.container.style, dynamicStyles);
+            }
+        }
+    }
+
     isFocused = () => (this.state.showOptions)
 
     removeContainer = () => {
@@ -187,6 +198,14 @@ export default class FloatingContainer extends React.PureComponent {
                 }
             }
         }
+    }
+
+    handleResize = () => {
+        this.invalidateStyles();
+    }
+
+    handleScroll = () => {
+        this.invalidateStyles();
     }
 
     render() {

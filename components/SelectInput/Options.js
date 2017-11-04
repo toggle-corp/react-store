@@ -179,13 +179,13 @@ export default class Options extends React.PureComponent {
 
         return (
             <FloatingContainer
-                show={show}
                 containerId="select-options-container"
-                ref={(el) => { this.container = el; }}
-                styleName="options"
                 onBlur={onBlur}
                 onClose={this.handleContainerClose}
                 onDynamicStyleOverride={this.handleDynamicStyling}
+                ref={(el) => { this.container = el; }}
+                show={show}
+                styleName="options"
             >
                 { this.getOptions() }
                 {
