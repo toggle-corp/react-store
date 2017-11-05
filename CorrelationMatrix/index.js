@@ -58,10 +58,10 @@ export default class CorrelationMatrix extends React.PureComponent {
     }
 
     renderChart() {
+        let { width, height } = this.state.boundingClientRect;
         if (!this.state.render) {
             return;
         }
-        let { width, height } = this.state.boundingClientRect;
         const {
             top,
             right,
@@ -88,10 +88,15 @@ export default class CorrelationMatrix extends React.PureComponent {
         const noofcols = data[0].length;
 
         const parentWidth = width;
-        width = (0.8 * width) - left - right;
+        width = (0.8 * parentWidth) - left - right;
         height = height - top - bottom;
 
-        const widthLegend = parentWidth - width - left - right;
+        if (width < 0) width = 0;
+        if (height < 0) height = 0;
+
+        let widthLegend = parentWidth - width - left - right;
+        if (widthLegend < 0) widthLegend = 0;
+
         const maxValue = max(data, layer => max(layer, d => d));
         const minValue = min(data, layer => min(layer, d => d));
 
@@ -191,7 +196,7 @@ export default class CorrelationMatrix extends React.PureComponent {
         columnLabels
             .append('text')
             .attr('x', 0)
-            .attr('y', y.bandwidth() / 2)
+            .attr('y', x.bandwidth() / 2)
             .attr('dy', '.5em')
             .attr('text-anchor', 'end')
             .attr('transform', 'rotate(-60)')
