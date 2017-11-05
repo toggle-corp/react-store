@@ -45,9 +45,7 @@ export default class PrivateRoute extends React.PureComponent {
 
     renderFn = (props) => {
         const {
-            authenticated,
             component: Component,
-            invertBehavior,
             redirectLink,
         } = this.props;
 
