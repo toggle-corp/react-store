@@ -258,11 +258,6 @@ export default class Table extends React.PureComponent {
         );
 
         const newData = [...data].sort(sortByHeader);
-
-        if (this.props.onDataSort) {
-            this.props.onDataSort(newData);
-        }
-
         return newData;
     }
 
@@ -304,6 +299,7 @@ export default class Table extends React.PureComponent {
             highlightRowKey,
             highlightColumnKey,
             onBodyClick,
+            onDataSort,
         } = this.props;
 
         const {
@@ -325,6 +321,7 @@ export default class Table extends React.PureComponent {
                 highlightRowKey={highlightRowKey}
                 highlightColumnKey={highlightColumnKey}
                 onBodyClick={onBodyClick}
+                onDataSort={onDataSort}
             />
         );
     }

@@ -48,6 +48,8 @@ const propTypes = {
     highlightColumnKey: propTypeKey,
 
     highlightRowKey: propTypeKey,
+
+    onDataSort: PropTypes.func,
 };
 
 const defaultProps = {
@@ -60,7 +62,13 @@ const defaultProps = {
     highlightCellKey: {},
     highlightColumnKey: undefined,
     highlightRowKey: undefined,
+
+    onDataSort: undefined,
 };
+
+const isArrayEqual = (array1, array2) => (
+    array1.length === array2.length && array1.every((d, i) => d === array2[i])
+);
 
 @CSSModules(styles, { allowMultiple: true })
 export default class RawTable extends React.PureComponent {
@@ -82,6 +90,12 @@ export default class RawTable extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
         const styleName = this.getStyleName(nextProps);
+
+        if (!isArrayEqual(this.props.data, nextProps.data)) {
+            if (this.props.onDataSort) {
+                this.props.onDataSort(nextProps.data);
+            }
+        }
 
         this.setState({
             className,
