@@ -4,19 +4,20 @@ import { Route, Redirect } from 'react-router-dom';
 
 const propTypes = {
     /*
-     * the child component 
+     * any react child component
      */
     component: PropTypes.func.isRequired,
     /*
-     * identifies if the user is authenticated or not
+     * identifies if the session is authenticated or not
      */
     authenticated: PropTypes.bool.isRequired,
     /*
-     * if behavior is inverted then redirect occurs if user is authenticated
+     * if invertBehavior is true then route is inaccessible
+     * when session is authenticated
      */
     invertBehavior: PropTypes.bool,
     /*
-     * link to be redirected, if the redirection occurs
+     * link to be redirected to
      */
     redirectLink: PropTypes.string,
 };
@@ -27,46 +28,51 @@ const defaultProps = {
 };
 
 /*
- * When user is not authenticated, this route is inaccessible
- * And the user is redirect to 'redirectLink'
+ * When session is not authenticated, this route is inaccessible
+ * And route is redirected to 'redirectLink'
  */
 export default class PrivateRoute extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    shouldRedirect = () => {
+        const {
+            invertBehavior,
+            authenticated,
+        } = this.props;
+        return (!invertBehavior && !authenticated) || (invertBehavior && authenticated);
+    }
+
     renderFn = (props) => {
         const {
-            authenticated,
             component: Component,
-            invertBehavior,
             redirectLink,
         } = this.props;
 
-        // return child component when normal behavior and authenticated
-        // or inverted behavior and non-authenticated
-        if ((!invertBehavior && authenticated) || (invertBehavior && !authenticated)) {
-            return <Component {...props} />;
+        if (this.shouldRedirect()) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: redirectLink,
+                        from: props.location || { pathname: '/' },
+                    }}
+                />
+            );
         }
 
-        // else redirect
-        return (
-            <Redirect
-                to={{
-                    pathname: redirectLink,
-                    from: props.location || { pathname: '/' },
-                }}
-            />
-        );
+        return <Component {...props} />;
     }
 
     render() {
         const {
-            // NOTE: Professional stuff, don't try to alter these
-            authenticated, // eslint-disable-line
-            component, // eslint-disable-line
-            invertBehavior, // eslint-disable-line
-            redirectLink, // eslint-disable-line
+            /* eslint-disable no-unused-vars */
+            authenticated,
+            component,
+            invertBehavior,
+            redirectLink,
+            /* eslint-enable no-unused-vars */
 
+            // NOTE: Passing all other props to Route component
             ...otherProps
         } = this.props;
 
@@ -80,7 +86,7 @@ export default class PrivateRoute extends React.PureComponent {
 }
 
 /*
- * ExclusivelyPublicRoute is the opposite of PrivateRoute
+ * ExclusivelyPublicRoute has inverted behavior to PrivateRoute
  * When user is authenticated, this route is inaccessible
  * And the user is redirect to 'redirectLink'
  */

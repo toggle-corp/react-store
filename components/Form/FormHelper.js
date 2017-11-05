@@ -2,6 +2,10 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+/*
+ * Helper class to store all the information about a form
+ * Carries out the form validations
+ */
 export default class FormHelper {
     constructor() {
         // List of reference names
@@ -19,18 +23,22 @@ export default class FormHelper {
 
     // Setters
 
+    /* Set name of elements to be validated */
     setElements(elements) {
         this.elements = elements;
     }
 
+    /* Set each element with a validation function */
     setValidations(validations) {
         this.validations = validations;
     }
 
+    /* Set a global validation function to validate interdependent elements */
     setValidation(validation) {
         this.validation = validation;
     }
 
+    /* Set callbacks */
     setCallbacks({
         changeCallback, successCallback, failureCallback,
     }) {
@@ -39,46 +47,10 @@ export default class FormHelper {
         this.failureCallback = failureCallback;
     }
 
-    // Used to reference of a component locally using element 'name'
-    updateRef = (name) => {
-        if (this.referenceCollector[name]) {
-            return this.referenceCollector[name];
-        }
-        const referenceFn = (ref) => {
-            this.references[name] = ref;
-        };
-        this.referenceCollector[name] = referenceFn;
-        return referenceFn;
-    }
-
-    updateChangeFn = (name) => {
-        if (this.changeFnCollector[name]) {
-            return this.changeFnCollector[name];
-        }
-        const changeFn = (value) => {
-            this.onChange(name, value);
-        };
-        this.changeFnCollector[name] = changeFn;
-        return changeFn;
-    }
-
-
-    // Access component using the locally saved element 'name'
-    getRef = name => (
-        this.references[name]
-    )
-
-    getRefValue = (name) => {
-        const element = this.getRef(name);
-        if (!element) {
-            console.warn(`Element '${name}' not found.`);
-            return undefined;
-        }
-        return element.getValue();
-    }
-
-    // Calls changeCallback
-    // onChange is triggered by all input elements
+    /* PRIVATE: calls changeCallback with value of current element,
+     * clears form field error of current element
+     * clears form error
+     */
     onChange = (elementName, value) => {
         // change value of current element
         const values = {
@@ -93,7 +65,11 @@ export default class FormHelper {
         this.changeCallback(values, { formFieldErrors, formErrors });
     }
 
-    // Calls successCallback or failureCallback
+    /* checks for form errors and form field errors
+     * calls failureCallback with form errors and form field errors
+     * calls successCallback with all element values,
+     * clears all form errors and form field errors
+     */
     onSubmit = () => {
         const { hasError, formErrors, formFieldErrors } = this.checkForErrors();
         if (hasError) {
@@ -114,9 +90,46 @@ export default class FormHelper {
         }
     }
 
-    // Aggerate all the errors
-    // ACCEPTS: N/A
-    // RETURNS: { error: String, errors: List.String, hasError: Boolean }
+    /* Create a reference fn for element 'name' */
+    updateRef = (name) => {
+        if (this.referenceCollector[name]) {
+            return this.referenceCollector[name];
+        }
+        const referenceFn = (ref) => {
+            this.references[name] = ref;
+        };
+        this.referenceCollector[name] = referenceFn;
+        return referenceFn;
+    }
+
+    /* Create a update fn for element 'name' */
+    updateChangeFn = (name) => {
+        if (this.changeFnCollector[name]) {
+            return this.changeFnCollector[name];
+        }
+        const changeFn = (value) => {
+            this.onChange(name, value);
+        };
+        this.changeFnCollector[name] = changeFn;
+        return changeFn;
+    }
+
+    /* PRIVATE: Access reference of element 'name' */
+    getRef = name => (
+        this.references[name]
+    )
+
+    /* PRIVATE: Access value of element 'name' */
+    getRefValue = (name) => {
+        const element = this.getRef(name);
+        if (!element) {
+            console.warn(`Element '${name}' not found.`);
+            return undefined;
+        }
+        return element.getValue();
+    }
+
+    /* PRIVATE: Check if value is valid for all elements */
     checkForErrors = () => {
         // get errors and errors count from individual validation
         const validityMap = {};
@@ -168,9 +181,7 @@ export default class FormHelper {
         return { formErrors, formFieldErrors, hasError };
     }
 
-    // Check if a value is valid for certain element
-    // ACCEPTS: name: String, value: String
-    // RETURNS: { ok: Boolean, message: String }
+    /* PRIVATE: Check if a value is valid for certain element */
     isValid = (name, value) => {
         let returnVal = { ok: true };
         const validationRules = this.validations[name] || [];

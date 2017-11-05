@@ -78,6 +78,7 @@ export const urlCondition = {
 
 // Validator
 
+/* Create a validation function for dependency injection */
 export function createValidation(...parameters) {
     const args = [...parameters];
     if (args.length <= 0) {
@@ -93,3 +94,19 @@ export function createValidation(...parameters) {
     }
     return { fn, args };
 }
+
+/* USAGE
+createValidation('email', 'password', (email, password) => {
+  if (password.length > email.length) {
+      return {
+          ok: false,
+          formErrors: ['Form has combined validation error.'],
+          formFieldErrors: {
+              email: 'Email must be longer than password',
+              password: 'Password must be shorter than email',
+          },
+      };
+  }
+  return { ok: true };
+});
+*/
