@@ -55,6 +55,7 @@
             .separator {
                 padding: 0 $spacing-small;
                 color: $color-text;
+                user-select: none;
 
                 &.disabled {
                     color: $color-text-disabled;
