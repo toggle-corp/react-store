@@ -7,14 +7,19 @@ import MultiCheckbox from '../MultiCheckbox';
 import Checkbox from '../Checkbox';
 
 const propTypes = ({
+    className: PropTypes.string,
     options: PropTypes.array.isRequired, // eslint-disable-line
-
     onChange: PropTypes.func.isRequired,
 });
+
+const defaultProps = {
+    className: '',
+};
 
 @CSSModules(styles, { allowMultiple: true })
 export default class MultiCheckboxCollection extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -74,7 +79,7 @@ export default class MultiCheckboxCollection extends React.PureComponent {
         const { displayMultiCheckboxes } = this.state;
 
         return (
-            <div>
+            <div className={this.props.className}>
                 {
                     displayMultiCheckboxes.map(item => this.renderCheckbox(item))
                 }
