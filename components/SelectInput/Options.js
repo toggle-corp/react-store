@@ -44,6 +44,10 @@ const propTypes = {
     ),
 
     show: PropTypes.bool.isRequired,
+
+    offsetTop: PropTypes.number,
+    offsetBottom: PropTypes.number,
+
 };
 
 const defaultProps = {
@@ -56,6 +60,9 @@ const defaultProps = {
     },
     selectedOptionKey: undefined,
     selectedOptionKeys: [],
+
+    offsetTop: 0,
+    offsetBottom: 0,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -126,10 +133,12 @@ export default class Options extends React.PureComponent {
     handleDynamicStyling = (optionContainer) => {
         const {
             parentClientRect,
+            offsetTop,
+            offsetBottom,
         } = this.props;
 
         const newStyle = {
-            top: `${parentClientRect.top + parentClientRect.height}px`,
+            top: `${parentClientRect.top + (parentClientRect.height - offsetBottom)}px`,
             left: `${parentClientRect.left}px`,
             width: `${parentClientRect.width}px`,
         };
@@ -140,7 +149,7 @@ export default class Options extends React.PureComponent {
         const containerOffset = parentClientRect.top + optionRect.height + parentClientRect.height;
 
         if (pageOffset < containerOffset) {
-            newStyle.top = `${(parentClientRect.top + window.scrollY) - optionRect.height}px`;
+            newStyle.top = `${(parentClientRect.top + window.scrollY) - optionRect.height - offsetTop}px`;
         }
 
         return newStyle;
