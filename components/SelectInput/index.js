@@ -60,10 +60,31 @@ const propTypes = {
             PropTypes.number,
         ]),
     ),
+
+    /**
+     * String to show in case of error
+     */
+    error: PropTypes.string,
+
+    /**
+     * Hint text
+     */
+    hint: PropTypes.string,
+
+    /**
+     * Input label
+     */
+    label: PropTypes.string,
+
+    showLabel: PropTypes.bool,
+    showHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    error: '',
+    hint: '',
+    label: '',
     keySelector: d => (d || {}).key,
     labelSelector: d => (d || {}).label,
     multiple: false,
@@ -72,6 +93,8 @@ const defaultProps = {
     selectedOptionKey: undefined,
     selectedOptionKeys: [],
     onChange: undefined,
+    showLabel: false,
+    showHintAndError: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -363,6 +386,11 @@ export default class SelectInput extends React.PureComponent {
             keySelector,
             labelSelector,
             placeholder,
+            error,
+            hint,
+            label,
+            showLabel,
+            showHintAndError,
         } = this.props;
 
         let ph = '';
@@ -386,19 +414,64 @@ export default class SelectInput extends React.PureComponent {
                 className={this.props.className}
                 ref={(el) => { this.container = el; }}
             >
-                <input
-                    ref={(el) => { this.input = el; }}
-                    styleName="input"
-                    type="text"
-                    value={this.state.inputValue}
-                    onChange={this.handleInputChange}
-                    onClick={this.handleInputClick}
-                    placeholder={ph}
-                />
-                <span
-                    styleName="dropdown-icon"
-                    className="ion-android-arrow-dropdown"
-                />
+                {
+                    showLabel && (
+                        <label
+                            htmlFor={this.inputId}
+                            styleName="label"
+                        >
+                            {label}
+                        </label>
+                    )
+                }
+                <div
+                    styleName="input-wrapper"
+                >
+                    <input
+                        ref={(el) => { this.input = el; }}
+                        styleName="input"
+                        type="text"
+                        value={this.state.inputValue}
+                        onChange={this.handleInputChange}
+                        onClick={this.handleInputClick}
+                        placeholder={ph}
+                    />
+                    <span
+                        styleName="dropdown-icon"
+                        className="ion-android-arrow-dropdown"
+                    />
+                </div>
+                {
+                    showHintAndError && [
+                        !error && hint && (
+                            <p
+                                key="hint"
+                                className="hint"
+                                styleName="hint"
+                            >
+                                {hint}
+                            </p>
+                        ),
+                        error && !hint && (
+                            <p
+                                key="error"
+                                styleName="error"
+                                className="error"
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && !hint && (
+                            <p
+                                key="empty"
+                                styleName="empty"
+                                className="error empty"
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
+                }
                 <Options
                     keySelector={keySelector}
                     labelSelector={labelSelector}
@@ -410,6 +483,7 @@ export default class SelectInput extends React.PureComponent {
                     selectedOptionKeys={selectedOptionKeys}
                     show={showOptions}
                     multiple={multiple}
+                    offsetBottom={showHintAndError ? 24 : 0}
                 />
             </div>
         );
