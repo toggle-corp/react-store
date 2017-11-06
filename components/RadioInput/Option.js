@@ -43,19 +43,22 @@ export default class Option extends React.PureComponent {
                 className={`radio-option ${className}`}
             >
                 <input
-                    styleName="input"
-                    type="radio"
+                    className="input"
                     defaultChecked={checked}
                     id={this.inputId}
+                    styleName="input"
+                    type="radio"
                     {...otherProps}
                 />
                 <span
                     styleName="radio"
                     className={`
+                        radio
                         ${checked ? 'ion-android-radio-button-on' : 'ion-android-radio-button-off'}
                     `}
                 />
                 <span
+                    className="label"
                     styleName="label"
                 >
                     { label }
