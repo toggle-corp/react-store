@@ -26,10 +26,19 @@ export default class DaysHeader extends React.PureComponent {
 
     render() {
         return (
-            <div className={this.props.className}>
-                {DaysHeader.dayNames.map(d => (
-                    <span className="day" key={d.key}>{d.value}</span>
-                ))}
+            <div
+                className={`days-header ${this.props.className}`}
+            >
+                {
+                    DaysHeader.dayNames.map(d => (
+                        <span
+                            className="day"
+                            key={d.key}
+                        >
+                            {d.value}
+                        </span>
+                    ))
+                }
             </div>
         );
     }
