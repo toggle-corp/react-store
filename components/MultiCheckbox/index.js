@@ -7,6 +7,7 @@ import styles from './styles.scss';
 import Checkbox from '../Checkbox';
 
 const propTypes = {
+    className: PropTypes.string,
     title: PropTypes.node.isRequired,
 
     options: PropTypes.arrayOf(
@@ -23,6 +24,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     showDropdownArrow: true,
 };
 
@@ -139,6 +141,7 @@ export default class MultiCheckbox extends React.PureComponent {
 
     render() {
         const {
+            className,
             title,
             showDropdownArrow,
         } = this.props;
@@ -150,19 +153,27 @@ export default class MultiCheckbox extends React.PureComponent {
         } = this.state;
 
         return (
-            <div styleName="multicheck">
-                <div styleName="parent-container">
+            <div
+                className={`multicheck ${className}`}
+                styleName="multicheck"
+            >
+                <div
+                    className="parent-container"
+                    styleName="parent-container"
+                >
                     <button
+                        className="parent-check"
                         styleName="parent-check"
                         onClick={this.onButtonClick}
                     >
                         <span
                             styleName={allUnChecked ? 'icon unchecked' : 'icon'}
-                            className={this.getButtonStyle(allChecked, allUnChecked)}
+                            className={`checkbox-icon ${this.getButtonStyle(allChecked, allUnChecked)}`}
                         />
                     </button>
                     <button
                         onClick={this.onClickShowButton}
+                        className="button-title"
                         styleName="title"
                     >
                         {title}
@@ -170,10 +181,11 @@ export default class MultiCheckbox extends React.PureComponent {
                     {showDropdownArrow &&
                         <TransparentButton
                             onClick={this.onClickShowButton}
+                            className="dropdown-arrow"
                             styleName="arrow"
                         >
                             <span
-                                className="ion-chevron-down"
+                                className={`ion-chevron-down ${showOptions ? 'chevron show' : 'chevron'}`}
                                 styleName={showOptions ? 'chevron show' : 'chevron'}
                             />
                         </TransparentButton>
@@ -187,6 +199,7 @@ export default class MultiCheckbox extends React.PureComponent {
                             <Checkbox
                                 key={option.key}
                                 label={option.title}
+                                className="checkbox-indent"
                                 styleName="checkbox-indent"
                                 initialValue={option.isChecked}
                                 onChange={
