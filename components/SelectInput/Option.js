@@ -92,6 +92,11 @@ export default class Option extends React.PureComponent {
     render() {
         return (
             <button
+                className={`
+                    select-option
+                    ${this.props.selected ? 'selected' : ''}
+                    ${this.props.marked ? 'marked' : ''}
+                `}
                 ref={(el) => { this.container = el; }}
                 styleName={`
                     option

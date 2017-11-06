@@ -62,13 +62,16 @@ export default class RadioInput extends React.PureComponent {
     }
 
     render() {
-        const { name } = this.props;
+        const {
+            className,
+            name,
+        } = this.props;
         const { selectedOption } = this.state;
 
         return (
             <div
+                className={`radio-input ${className}`}
                 styleName="radio-input"
-                className={this.props.className}
             >
                 {
                     this.props.options.map(option => (

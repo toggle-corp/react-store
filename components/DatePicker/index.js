@@ -15,7 +15,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    date: null,
+    date: undefined,
     onDatePick: undefined,
 };
 
@@ -136,36 +136,75 @@ export default class DatePicker extends React.PureComponent {
         }
 
         return (
-            <div styleName="weeks">
-                {weeks.map(week => (
-                    <div key={week.week} styleName="week">
-                        {week.days.map(day => (
-                            <div
-                                key={day.key}
-                                styleName={`day ${selectedId === day.key ? 'selected' : ''} ${todayId === day.key ? 'today' : ''}`}
-                            >
-                                <button
-                                    onClick={() => this.selectDateInCurrentMonth(day.value)}
-                                >
-                                    {day.value}
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                ))}
+            <div
+                className="weeks"
+                styleName="weeks"
+            >
+                {
+                    weeks.map(week => (
+                        <div
+                            className="week"
+                            key={week.week}
+                            styleName="week"
+                        >
+                            {
+                                week.days.map(day => (
+                                    <div
+                                        className={`
+                                            day
+                                            ${selectedId === day.key ? 'selected' : ''}
+                                            ${todayId === day.key ? 'today' : ''}
+                                        `}
+                                        key={day.key}
+                                        styleName={`
+                                            day
+                                            ${selectedId === day.key ? 'selected' : ''}
+                                            ${todayId === day.key ? 'today' : ''}
+                                        `}
+                                    >
+                                        <button
+                                            className="day-button"
+                                            onClick={() => this.selectDateInCurrentMonth(day.value)}
+                                        >
+                                            {day.value}
+                                        </button>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    ))
+                }
             </div>
         );
     }
 
     render() {
         return (
-            <div styleName="date-picker-wrapper">
-                <div styleName="date-picker-header">
-                    <button onClick={this.previous}>&lt;</button>
+            <div
+                className="date-picker-wrapper"
+                styleName="date-picker-wrapper"
+            >
+                <div
+                    className="date-picker-header"
+                    styleName="date-picker-header"
+                >
+                    <button
+                        className="previous-button"
+                        onClick={this.previous}
+                    >
+                        &lt;
+                    </button>
                     { this.renderMonthTitle() }
-                    <button onClick={this.next}>&gt;</button>
+                    <button
+                        className="next-button"
+                        onClick={this.next}
+                    >
+                        &gt;
+                    </button>
                 </div>
-                <DaysHeader styleName="days-header" />
+                <DaysHeader
+                    styleName="days-header"
+                />
                 { this.renderWeeks() }
             </div>
         );

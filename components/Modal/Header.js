@@ -5,6 +5,8 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+
     /**
      * component to render on right side of header
      */
@@ -17,6 +19,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     rightComponent: undefined,
 };
 
@@ -27,11 +30,21 @@ export default class Header extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { title, rightComponent } = this.props;
+        const {
+            className,
+            rightComponent,
+            title,
+        } = this.props;
 
         return (
-            <header styleName="header">
-                <h2 styleName="heading">
+            <header
+                className={`modal-header ${className}`}
+                styleName="header"
+            >
+                <h2
+                    className="heading"
+                    styleName="heading"
+                >
                     { title }
                 </h2>
                 { rightComponent }

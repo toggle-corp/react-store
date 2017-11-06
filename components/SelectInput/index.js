@@ -410,9 +410,9 @@ export default class SelectInput extends React.PureComponent {
 
         return (
             <div
-                styleName={`select-input ${this.state.showOptions ? 'options-shown' : ''}`}
-                className={this.props.className}
+                className={`select-input ${this.props.className} ${this.state.showOptions ? 'options-shown' : ''}`}
                 ref={(el) => { this.container = el; }}
+                styleName={`select-input ${this.state.showOptions ? 'options-shown' : ''}`}
             >
                 {
                     showLabel && (
@@ -425,20 +425,22 @@ export default class SelectInput extends React.PureComponent {
                     )
                 }
                 <div
+                    className="input-wrapper"
                     styleName="input-wrapper"
                 >
                     <input
+                        className="input"
+                        onChange={this.handleInputChange}
+                        onClick={this.handleInputClick}
+                        placeholder={ph}
                         ref={(el) => { this.input = el; }}
                         styleName="input"
                         type="text"
                         value={this.state.inputValue}
-                        onChange={this.handleInputChange}
-                        onClick={this.handleInputClick}
-                        placeholder={ph}
                     />
                     <span
                         styleName="dropdown-icon"
-                        className="ion-android-arrow-dropdown"
+                        className="dropdown-icon ion-android-arrow-dropdown"
                     />
                 </div>
                 {

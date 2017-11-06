@@ -5,6 +5,8 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+
     /**
      * child elements
      */
@@ -15,6 +17,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 
@@ -24,10 +27,16 @@ export default class Header extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { children } = this.props;
+        const {
+            children,
+            className,
+        } = this.props;
 
         return (
-            <footer styleName="footer">
+            <footer
+                className={`modal-footer ${className}`}
+                styleName="footer"
+            >
                 { children }
             </footer>
         );

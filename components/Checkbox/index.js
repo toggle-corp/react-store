@@ -78,20 +78,28 @@ export default class Checkbox extends React.PureComponent {
                 <span
                     styleName="checkmark"
                     className={`${
-                        checked
-                            ? 'ion-android-checkbox'
-                            : 'ion-android-checkbox-outline-blank'
-                    }`}
+                        checked ? (
+                            'ion-android-checkbox'
+                        ) : (
+                            'ion-android-checkbox-outline-blank'
+                        )
+                    } checkmark`}
                 />
                 <input
                     onClick={this.handleInputClick}
                     styleName="input"
+                    className="input"
                     type="checkbox"
                     defaultChecked={checked}
                     id={this.inputId}
                     {...otherProps}
                 />
-                <span styleName="label">{ label }</span>
+                <span
+                    styleName="label"
+                    className="label"
+                >
+                    { label }
+                </span>
             </label>
         );
     }

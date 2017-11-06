@@ -91,40 +91,51 @@ export default class FileInput extends React.PureComponent {
         return (
             <div
                 styleName="file-input-wrapper"
-                className={className}
+                className={`file-input ${className}`}
             >
                 {
                     showPreview && (
                         <div
-                            styleName="preview"
                             className="image-input-preview"
+                            styleName="preview"
                         >
                             {
                                 preview ? (
                                     <img
-                                        src={preview}
                                         alt="No preview available"
+                                        className="img"
+                                        src={preview}
                                     />
                                 ) : (
-                                    <p>No preview available</p>
+                                    <p
+                                        className="no-preview-text"
+                                    >
+                                        No preview available
+                                    </p>
                                 )
                             }
                         </div>
                     )
                 }
-                <label htmlFor={this.inputId}>
+                <label
+                    className="label"
+                    htmlFor={this.inputId}
+                >
                     { children }
                 </label>
                 <input
+                    className="input"
                     id={this.inputId}
-                    type="file"
                     onChange={this.handleChange}
                     ref={(el) => { this.fileInput = el; }}
+                    type="file"
                     {...otherProps}
                 />
                 {
                     showStatus && (
-                        <p styleName="status">
+                        <p
+                            styleName="status"
+                        >
                             { files.length > 0 ? files[0].name : 'No file choosen' }
                         </p>
                     )
