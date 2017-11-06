@@ -121,7 +121,7 @@ export default class TextArea extends React.PureComponent {
         return (
             <div
                 styleName="textarea-wrapper"
-                className={this.props.className}
+                className={`textarea ${this.props.className}`}
             >
                 <div
                     styleName={`
@@ -132,12 +132,14 @@ export default class TextArea extends React.PureComponent {
                     `}
                 >
                     <label
+                        className="label"
                         htmlFor={this.inputId}
                         styleName="label"
                     >
                         {label}
                     </label>
                     <textarea
+                        className="input"
                         id={this.inputId}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}
