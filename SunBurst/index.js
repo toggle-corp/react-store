@@ -72,7 +72,8 @@ export default class SunBurst extends PureComponent {
             .range(schemeCategory20b);
 
         const el = select(this.svg);
-        el.selectAll('*').remove();
+        el.selectAll('*')
+            .remove();
 
         const group = el.attr('width', width)
             .attr('height', height)
@@ -122,11 +123,29 @@ export default class SunBurst extends PureComponent {
 
         const partitions = partition();
 
+        function computeTextRotation(d) {
+            const angle = (x(d.x0 + d.x1) / Math.PI) * 90;
+            return (angle < 90 || angle > 270) ? angle : angle + 180;
+        }
+
+        const root = hierarchy(nodeData)
+            .sum(d => d.size);
+
+        const slices = group
+            .selectAll('g')
+            .data(partitions(root)
+                .descendants())
+            .enter()
+            .append('g');
+
         function handleClick(d) {
+            slices.selectAll('text')
+                .transition()
+                .attr('opacity', 0);
             const tran = transition()
                 .duration(750);
-
-            group.transition(tran)
+            slices
+                .transition(tran)
                 .tween('scale', () => {
                     const xd = interpolateArray(x.domain(), [d.x0, d.x1]);
                     const yd = interpolateArray(y.domain(), [d.y0, 1]);
@@ -138,31 +157,34 @@ export default class SunBurst extends PureComponent {
                     };
                 })
                 .selectAll('path')
-                .attrTween('d', t => () => arch(t));
+                .attrTween('d', t => () => arch(t))
+                .on('end', function addLabels(e) {
+                    if (e.x0 >= d.x0 && e.x1 <= d.x1) {
+                        const labelText = select(this.parentNode)
+                            .select('text');
+                        labelText
+                            .transition()
+                            .duration(750)
+                            .attr('opacity', 1)
+                            .attr('transform', t => `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`)
+                            .attr('text-anchor', 'middle');
+                    }
+                });
         }
 
-        function drawSunburst(data) {
-            const root = hierarchy(data)
-                .sum(d => d.size);
+        slices
+            .append('path')
+            .attr('d', arch)
+            .style('stroke', '#fff')
+            .style('fill', d => color((d.children ? d : d.parent)
+                .data.name))
+            .on('click', handleClick);
 
-            const slices = group
-                .selectAll('g')
-                .data(partitions(root)
-                    .descendants())
-                .enter()
-                .append('g');
-
-            slices.append('path')
-                .attr('d', arch)
-                .style('stroke', '#fff')
-                .style('fill', d => color((d.children ? d : d.parent)
-                    .data.name))
-                .on('click', handleClick)
-                .append('title')
-                .text(d => `${d.data.name}\n${d.value}`);
-        }
-
-        drawSunburst(nodeData);
+        slices
+            .append('text')
+            .attr('transform', d => `translate(${arch.centroid(d)})rotate(${computeTextRotation(d)})`)
+            .attr('text-anchor', 'middle')
+            .text(d => d.data.name);
     }
 
     render() {
