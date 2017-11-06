@@ -116,13 +116,13 @@ export default class DateInput extends React.PureComponent {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         this.setValue(date);
-        this.triggerChange();
     }
 
     // Set value by timestamp
     setValue = (timestamp) => {
-        this.setState(this.decodeTimestamp(timestamp));
-        this.triggerChange();
+        this.setState(this.decodeTimestamp(timestamp), () => {
+            this.triggerChange();
+        });
     }
 
     // Public method used by Form
@@ -133,7 +133,7 @@ export default class DateInput extends React.PureComponent {
 
     clear = (e) => {
         e.preventDefault();
-        this.setValue(null);
+        this.setValue(undefined);
     }
 
     // Decode a timestamp and return an object
@@ -142,10 +142,10 @@ export default class DateInput extends React.PureComponent {
     decodeTimestamp = (timestamp) => {
         if (isFalsy(timestamp)) {
             return {
-                date: null,
-                day: null,
-                month: null,
-                year: null,
+                date: undefined,
+                day: undefined,
+                month: undefined,
+                year: undefined,
             };
         }
 
@@ -163,6 +163,12 @@ export default class DateInput extends React.PureComponent {
         const newState = { ...this.state };
         newState[key] = val;
 
+        if (newState.day || newState.month || newState.year) {
+            newState.date = undefined;
+            this.setState(newState);
+            return;
+        }
+
         let date;
 
         // Start with current date
@@ -176,7 +182,7 @@ export default class DateInput extends React.PureComponent {
         // Then set first day of current month and year
         date.setDate(1);
         date.setMonth(newState.month - 1);
-        date.setYear(newState.year);
+        date.setFullYear(newState.year);
 
         // For day we want to limit it to number of days
         // in current month.
@@ -190,8 +196,9 @@ export default class DateInput extends React.PureComponent {
         }
 
         newState.date = date;
-        this.setState(newState);
-        this.triggerChange();
+        this.setState(newState, () => {
+            this.triggerChange();
+        });
     }
 
     // Handle close event of date picker floating container

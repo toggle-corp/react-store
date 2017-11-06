@@ -38,6 +38,15 @@ export default class Pager extends React.PureComponent {
         const numPages = Math.ceil(itemsCount / maxItemsPerPage);
         const pages = [];
 
+        if (numPages === 0) {
+            return (
+                <div
+                    className={className}
+                    styleName="pager"
+                />
+            );
+        }
+
         for (let i = 1; i <= numPages; i += 1) {
             const isActive = activePage === i;
 
