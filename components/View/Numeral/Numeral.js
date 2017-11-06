@@ -11,7 +11,7 @@ import {
     isFalsy,
     isTruthy,
     formattedNormalize,
-} from '../../utils/common';
+} from '../../../utils/common';
 
 const propTypes = {
     /**

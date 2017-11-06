@@ -53,7 +53,7 @@ const defaultProps = {
  * Basic button component
  */
 @CSSModules(styles, { allowMultiple: true })
-export default class Button extends React.PureComponent {
+export class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -129,7 +129,7 @@ export const PrimaryButton = props => (
     <Button buttonType="button-primary" {...props} />
 );
 
-export const accentButton = props => (
+export const AccentButton = props => (
     <Button buttonType="button-accent" {...props} />
 );
 

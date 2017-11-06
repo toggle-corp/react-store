@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 
 import FormattedDate from './FormattedDate';
 import styles from './styles.scss';
-import { getDifferenceInDays } from '../../../public/utils/common';
+import { getDifferenceInDays } from '../../../utils/common';
 
 import {
     currentDateSelector,
-} from '../../../common/selectors/datetime';
+} from '../../../../common/selectors/datetime';
 
 const mapStateToProps = state => ({
     today: currentDateSelector(state),

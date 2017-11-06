@@ -5,7 +5,7 @@ import React from 'react';
 import styles from './styles.scss';
 import {
     randomString,
-} from '../../../public/utils/common';
+} from '../../../utils/common';
 
 
 const propTypes = {

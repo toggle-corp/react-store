@@ -5,7 +5,7 @@
 import {
     isFalsy,
     isInteger,
-} from '../../utils/common';
+} from '../../../utils/common';
 
 // VALIDATION RULES
 export const requiredCondition = {

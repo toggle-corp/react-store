@@ -6,7 +6,7 @@ import styles from './styles.scss';
 import {
     TransparentPrimaryButton,
     TransparentDangerButton,
-} from '../Button';
+} from '../../Action';
 
 const propTypes = {
     autoStart: PropTypes.bool,

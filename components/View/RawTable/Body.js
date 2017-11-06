@@ -6,7 +6,7 @@ import Row from './Row';
 
 import {
     isEqualAndTruthy,
-} from '../../utils/common';
+} from '../../../utils/common';
 
 import styles from './styles.scss';
 

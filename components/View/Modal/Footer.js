@@ -22,7 +22,7 @@ const defaultProps = {
 
 
 @CSSModules(styles, { allowMultiple: true })
-export default class Header extends React.PureComponent {
+export default class Footer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

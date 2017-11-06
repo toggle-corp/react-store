@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { TransparentButton } from '../Button';
+import { TransparentButton } from '../../Action';
 import styles from './styles.scss';
 import Checkbox from '../Checkbox';
 

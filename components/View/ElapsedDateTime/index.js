@@ -5,11 +5,12 @@ import { connect } from 'react-redux';
 
 import {
     getDateDifferenceHumanReadable,
-} from '../../../public/utils/common';
+} from '../../../utils/common';
+
 import {
     currentTimeSelector,
     currentDateSelector,
-} from '../../../common/selectors/datetime';
+} from '../../../../common/selectors/datetime';
 import styles from './styles.scss';
 
 

@@ -9,7 +9,7 @@ import styles from './styles.scss';
 import {
     isEqualAndTruthy,
     isFalsy,
-} from '../../utils/common';
+} from '../../../utils/common';
 
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,

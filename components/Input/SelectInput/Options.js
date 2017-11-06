@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FloatingContainer from '../FloatingContainer';
+import { FloatingContainer } from '../../View';
 import Option from './Option';
 import styles from './styles.scss';
 

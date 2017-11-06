@@ -131,5 +131,3 @@ export default class Form extends React.PureComponent {
         );
     }
 }
-
-export * from './validations';

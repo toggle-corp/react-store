@@ -4,7 +4,7 @@ import React from 'react';
 
 import DatePicker from '../DatePicker';
 import DateUnit from './DateUnit';
-import FloatingContainer from '../FloatingContainer';
+import { FloatingContainer } from '../../View';
 import styles from './styles.scss';
 
 import {
@@ -13,7 +13,7 @@ import {
     leftPad,
     isTruthy,
     randomString,
-} from '../../utils/common';
+} from '../../../utils/common';
 
 
 const propTypes = {

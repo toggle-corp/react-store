@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { isTruthy, leftPad } from '../../utils/common';
+import {
+    isTruthy,
+    leftPad,
+} from '../../../utils/common';
 
 
 const propTypes = {

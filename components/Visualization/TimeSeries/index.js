@@ -5,8 +5,7 @@ import { line, curveMonotoneX } from 'd3-shape';
 import { select } from 'd3-selection';
 import { max } from 'd3-array';
 import styles from './styles.scss';
-import SegmentButton from '../SegmentButton';
-
+import { SegmentButton } from '../../Action';
 
 class TimeSeries extends React.PureComponent {
     constructor(props) {
