@@ -428,22 +428,34 @@ export default class DateInput extends React.PureComponent {
                 </div>
 
                 {
-                    !error && hint &&
-                    <p styleName="hint">
-                        {hint}
-                    </p>
+                    !error && hint && (
+                        <p
+                            className="hint"
+                            styleName="hint"
+                        >
+                            {hint}
+                        </p>
+                    )
                 }
                 {
-                    error && !hint &&
-                    <p styleName="error">
-                        {error}
-                    </p>
+                    error && !hint && (
+                        <p
+                            className="error"
+                            styleName="error"
+                        >
+                            {error}
+                        </p>
+                    )
                 }
                 {
-                    !error && !hint &&
-                    <p styleName="empty">
-                        -
-                    </p>
+                    !error && !hint && (
+                        <p
+                            className="empty"
+                            styleName="empty"
+                        >
+                            -
+                        </p>
+                    )
                 }
 
                 <FloatingContainer
