@@ -121,9 +121,15 @@ export default class TextInput extends React.PureComponent {
         return (
             <div
                 styleName="text-input-wrapper"
-                className={this.props.className}
+                className={`text-input-wrapper ${this.props.className}`}
             >
                 <div
+                    className={`
+                        text-input
+                        ${error ? 'invalid' : ''}
+                        ${focused ? 'focused' : ''}
+                        ${required ? 'required' : ''}
+                    `}
                     styleName={`
                         text-input
                         ${error ? 'invalid' : ''}
@@ -132,12 +138,14 @@ export default class TextInput extends React.PureComponent {
                     `}
                 >
                     <label
+                        className="label"
                         htmlFor={this.inputId}
                         styleName="label"
                     >
                         {label}
                     </label>
                     <input
+                        className="input"
                         id={this.inputId}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}
