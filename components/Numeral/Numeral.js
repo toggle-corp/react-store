@@ -106,11 +106,11 @@ export default class Numeral extends React.PureComponent {
         let number = isTruthy(showSign) ? Math.abs(value) : value;
 
         // Get normalize-suffix and reduce the number
-        let normalizeSuffix;
+        let normalizedSuffix;
         if (normal) {
             const val = formattedNormalize(number);
             number = val.number;
-            normalizeSuffix = val.normalizeSuffix;
+            normalizedSuffix = val.normalizedSuffix;
         }
 
         // Convert number to fixed precision
@@ -125,35 +125,49 @@ export default class Numeral extends React.PureComponent {
 
         return (
             <span
-                className={className}
+                className={`numeral ${className}`}
                 styleName="numeral"
             >
                 {
-                    isTruthy(prefix) &&
-                    <span>
-                        {prefix}
-                    </span>
+                    isTruthy(prefix) && (
+                        <span
+                            className="prefix"
+                        >
+                            {prefix}
+                        </span>
+                    )
                 }
                 {
-                    isTruthy(showSign) && value !== 0 &&
-                    <span>
-                        {value > 0 ? '+' : '-'}
-                    </span>
+                    isTruthy(showSign) && value !== 0 && (
+                        <span
+                            className="sign"
+                        >
+                            {value > 0 ? '+' : '-'}
+                        </span>
+                    )
                 }
-                <span>
+                <span
+                    className="number"
+                >
                     {number}
                 </span>
                 {
-                    isTruthy(normalizeSuffix) &&
-                    <span>
-                        {normalizeSuffix}
-                    </span>
+                    isTruthy(normalizedSuffix) && (
+                        <span
+                            className="normalized-suffix"
+                        >
+                            {normalizedSuffix}
+                        </span>
+                    )
                 }
                 {
-                    isTruthy(suffix) &&
-                    <span>
-                        {suffix}
-                    </span>
+                    isTruthy(suffix) && (
+                        <span
+                            className="suffix"
+                        >
+                            {suffix}
+                        </span>
+                    )
                 }
             </span>
         );
