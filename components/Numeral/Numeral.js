@@ -18,7 +18,11 @@ const propTypes = {
      * reqired for style override
      */
     className: PropTypes.string,
-
+    /**
+     * string to show, if value is unexpected
+     * Default: ?
+     */
+    invalidText: PropTypes.string,
     /**
      * Normalize numer into Lac, Cr, Ar
      */
@@ -55,6 +59,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    invalidText: '?',
     normal: false,
     precision: 2,
     prefix: undefined,
@@ -92,7 +97,7 @@ export default class Numeral extends React.PureComponent {
                 <span
                     className={className}
                 >
-                    ?
+                    {this.props.invalidText}
                 </span>
             );
         }

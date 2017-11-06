@@ -131,3 +131,19 @@ export const getNumDaysInMonth = date => (
         ).getDate()
     ) : 32
 );
+
+/*
+ * Convert camel case to kebab case
+ * eg: camelToDash -> camel-to-dash
+ */
+export const camelToDash = str => str
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => `-${letter.toLowerCase()}`);
+
+/*
+ * Convert camel case to normal case
+ * eg: camelToDash -> camel to dash
+ */
+export const camelToNormal = str => str
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => ` ${letter.toLowerCase()}`);
