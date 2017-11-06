@@ -1,0 +1,13 @@
+@import '../../../stylesheets/base';
+
+.gain-positive {
+    color: $color-positive;
+}
+
+.gain-negative {
+    color: $color-negative;
+}
+
+.numeral {
+    font-family: $font-family-monospace;
+}

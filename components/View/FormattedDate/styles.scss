@@ -1,0 +1,15 @@
+@import '../../../stylesheets/base';
+
+.formatted-date-container {
+    .formatted-date-value {
+        font-family: $font-family-sans-serif;
+    }
+
+    &.positive {
+        color: $color-positive;
+    }
+
+    &.negative {
+        color: $color-negative;
+    }
+}

@@ -1,0 +1,36 @@
+@import '../../../stylesheets/base';
+
+.segment-container {
+    display: flex;
+
+    .segment-label {
+        display: flex;
+        cursor: pointer;
+
+        input {
+            display: none;
+        }
+
+        .segment-name {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: $spacing-extra-small $spacing-medium-alt;
+            font-size: $font-size-medium;
+        }
+
+        &:not(:last-child) {
+            border-right: 1px solid $color-separator;
+        }
+
+        &.active {
+            cursor: default;
+            color: $color-accent;
+        }
+
+        &:not(.active):hover {
+            background-color: $color-background-hover;
+        }
+    }
+}

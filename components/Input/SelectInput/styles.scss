@@ -1,0 +1,111 @@
+@import '../../../stylesheets/base';
+
+
+.select-input {
+    .label {
+        width: 100%;
+        text-transform: uppercase;
+        color: $color-label;
+        font-size: $font-size-extra-small;
+    }
+
+    .input-wrapper {
+        position: relative;
+
+        .input {
+            outline: none;
+            border: 0;
+            border-bottom: $width-separator-medium solid $color-separator-alt;
+            background-color: transparent;
+            padding: $spacing-small 0;
+            width: 100%;
+            font-family: inherit;
+            font-size: inherit;
+
+            &:focus {
+                border-bottom-color: $color-accent;
+            }
+        }
+
+        .dropdown-icon {
+            position: absolute;
+            top: $spacing-small;
+            right: $spacing-small;
+            transform: none;
+            transition: .2s transform ease-in-out;
+        }
+    }
+
+    &.options-shown {
+        .input-wrapper {
+            .dropdown-icon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    .hint {
+        margin: $spacing-small 0 0;
+        color: $color-label;
+        font-size: $font-size-extra-small;
+    }
+
+    .error {
+        margin: $spacing-small 0 0;
+        color: $color-danger;
+        font-size: $font-size-extra-small;
+    }
+
+    .empty {
+        visibility: hidden;
+        margin: $spacing-small 0 0;
+        font-size: $font-size-extra-small;
+    }
+}
+
+.options {
+    @include shadow-small;
+    background-color: $color-foreground;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .empty {
+        padding: $spacing-medium $spacing-large;
+        color: $color-text-disabled;
+    }
+}
+
+.option {
+    display: block;
+    outline: none;
+    border: $width-separator-medium dotted transparent;
+    background-color: transparent;
+    cursor: pointer;
+    padding: $spacing-medium $spacing-large;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+
+    .checkmark {
+        margin-right: $spacing-medium;
+    }
+
+    &:hover {
+        background-color: $color-hover;
+    }
+
+    &.marked {
+        border: $width-separator-medium dashed $color-separator;
+    }
+
+    &.selected {
+        background-color: $color-accent;
+        color: $color-text-on-accent;
+    }
+}
+
+.container {
+    width: 0;
+    height: 0;
+}
