@@ -13,5 +13,6 @@ export { default as HiddenInput } from './HiddenInput';
 export { default as MultiCheckbox } from './MultiCheckbox';
 export { default as MultiCheckboxCollection } from './MultiCheckboxCollection';
 export { default as RadioInput } from './RadioInput';
+export { default as SelectInput } from './SelectInput';
 export { default as TextArea } from './TextArea';
 export { default as TextInput } from './TextInput';

@@ -19,7 +19,7 @@ export {
 export {
     default as DropdownMenu,
     DropdownItem,
-    Group,
-    GroupTitle,
+    Group as DropdownGroup,
+    GroupTitle as DropdownGroupTitle,
 } from './DropdownMenu';
 export { default as SegmentButton } from './SegmentButton';
