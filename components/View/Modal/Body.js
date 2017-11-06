@@ -36,7 +36,7 @@ export default class Body extends React.PureComponent {
         return (
             <div
                 styleName="body"
-                className={className}
+                className={`modal-body ${className}`}
             >
                 { children }
             </div>

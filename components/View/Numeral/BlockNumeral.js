@@ -6,6 +6,8 @@ import Numeral from './Numeral';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+
     /**
      * The label of the numeral
      */
@@ -27,6 +29,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     label: undefined,
     value: undefined,
     referenceValue: undefined,
@@ -44,6 +47,7 @@ export default class BlockNumeral extends React.PureComponent {
 
     render() {
         const {
+            className,
             label,
             value,
             referenceLine = 0,
@@ -54,12 +58,18 @@ export default class BlockNumeral extends React.PureComponent {
         const styleName = referenceValue - referenceLine >= 0 ? 'gain-positive' : 'gain-negative';
 
         return (
-            <div styleName={`block-numeral ${styleName}`}>
+            <div
+                className={`block-numeral ${className}`}
+                styleName={`block-numeral ${styleName}`}
+            >
                 {
-                    label &&
-                    <div>
-                        { label }
-                    </div>
+                    label && (
+                        <div
+                            className="label"
+                        >
+                            { label }
+                        </div>
+                    )
                 }
                 <Numeral
                     value={value}

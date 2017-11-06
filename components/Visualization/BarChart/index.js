@@ -205,8 +205,15 @@ export default class BarChart extends React.PureComponent {
                 styleName="bar-chart"
                 ref={(div) => { this.root = div; }}
             >
-                <div styleName="content" ref={(div) => { this.svgContainer = div; }}>
-                    <svg ref={(svg) => { this.svg = svg; }} />
+                <div
+                    styleName="content"
+                    className="content"
+                    ref={(div) => { this.svgContainer = div; }}
+                >
+                    <svg
+                        className="svg"
+                        ref={(svg) => { this.svg = svg; }}
+                    />
                 </div>
             </div>
         );

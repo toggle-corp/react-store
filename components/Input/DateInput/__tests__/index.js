@@ -37,7 +37,7 @@ describe('DateInput', () => {
     it('has working clear button', () => {
         wrapper.find('.clear-button').simulate('click');
         expect(wrapper.instance().getValue())
-            .toEqual(null);
+            .toEqual(undefined);
     });
 
     // TODO: Test date picker

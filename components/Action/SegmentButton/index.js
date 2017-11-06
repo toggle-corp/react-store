@@ -57,7 +57,7 @@ export default class SegmentButton extends React.PureComponent {
 
         return (
             <div
-                className={className}
+                className={`segment-button ${className}`}
                 styleName="segment-container"
             >
                 {
@@ -65,17 +65,22 @@ export default class SegmentButton extends React.PureComponent {
                         <label
                             htmlFor={this.buttonIdentifiers[i]}
                             key={button.value}
+                            className={`button ${selectedValue === button.value ? 'active' : ''}`}
                             styleName={`segment-label ${selectedValue === button.value ? 'active' : ''}`}
                         >
                             <input
                                 checked={selectedValue === button.value}
+                                className="input"
                                 id={this.buttonIdentifiers[i]}
                                 name={this.buttonGroupName}
                                 onChange={this.handleOptionChange}
                                 type="radio"
                                 value={button.value}
                             />
-                            <p styleName="segment-name">
+                            <p
+                                className="label"
+                                styleName="segment-name"
+                            >
                                 {button.label}
                             </p>
                         </label>

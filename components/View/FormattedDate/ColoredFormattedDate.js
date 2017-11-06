@@ -55,7 +55,10 @@ export default class ColoredFormattedDate extends React.PureComponent {
         const indicator = getDifferenceInDays(today, date) <= 0 ? 'positive' : 'negative';
 
         return (
-            <span styleName={`formatted-date-container ${indicator}`}>
+            <span
+                className={`colored-formatted-date ${indicator}`}
+                styleName={`formatted-date-container ${indicator}`}
+            >
                 <FormattedDate
                     date={date}
                     {...this.props}
