@@ -41,7 +41,7 @@ export default class Pager extends React.PureComponent {
         if (numPages === 0) {
             return (
                 <div
-                    className={className}
+                    className={`pager ${className}`}
                     styleName="pager"
                 />
             );
@@ -52,7 +52,10 @@ export default class Pager extends React.PureComponent {
 
             if (isActive) {
                 pages.push(
-                    <span key={i}>
+                    <span
+                        key={i}
+                        className="page active"
+                    >
                         {i}
                     </span>,
                 );
@@ -61,6 +64,7 @@ export default class Pager extends React.PureComponent {
                     <button
                         key={i}
                         onClick={() => onPageClick(i)}
+                        className="page"
                     >
                         {i}
                     </button>,
@@ -70,14 +74,20 @@ export default class Pager extends React.PureComponent {
 
         return (
             <div
-                className={className}
+                className={`pager ${className}`}
                 styleName="pager"
             >
-                <div styleName="page-list">
+                <div
+                    className="page-list"
+                    styleName="page-list"
+                >
                     {pages}
                 </div>
 
-                <p styleName="info">
+                <p
+                    className="info"
+                    styleName="info"
+                >
                     {'Showing page'}
                     <strong>{activePage}</strong>
                     {'out of'}
