@@ -47,7 +47,10 @@ class ElapsedDateTime extends React.PureComponent {
 
         const diff = getDateDifferenceHumanReadable(end, start);
         return (
-            <span styleName="elapsed-date-value">
+            <span
+                className="elapsed-date-time"
+                styleName="elapsed-date-value"
+            >
                 { diff }
             </span>
         );
