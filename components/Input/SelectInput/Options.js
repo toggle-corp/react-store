@@ -48,6 +48,7 @@ const propTypes = {
     offsetTop: PropTypes.number,
     offsetBottom: PropTypes.number,
 
+    identifier: PropTypes.string,
 };
 
 const defaultProps = {
@@ -63,6 +64,7 @@ const defaultProps = {
 
     offsetTop: 0,
     offsetBottom: 0,
+    identifier: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -184,11 +186,14 @@ export default class Options extends React.PureComponent {
 
         const {
             onBlur,
+            identifier,
         } = this.props;
+
+        const containerId = identifier || 'select-options-container';
 
         return (
             <FloatingContainer
-                containerId="select-options-container"
+                containerId={containerId}
                 onBlur={onBlur}
                 onClose={this.handleContainerClose}
                 onDynamicStyleOverride={this.handleDynamicStyling}
