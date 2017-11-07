@@ -65,6 +65,8 @@ const propTypes = {
      * Is a required element for form
      */
     required: PropTypes.bool,
+
+    value: PropTypes.number,
 };
 
 const defaultProps = {
@@ -77,6 +79,7 @@ const defaultProps = {
     label: '',
     onChange: undefined,
     required: false,
+    value: undefined,
 };
 
 
@@ -94,7 +97,7 @@ export default class DateInput extends React.PureComponent {
             yearUnit: undefined,
 
             showDatePicker: false,
-            ...this.decodeTimestamp(this.props.initialValue),
+            ...this.decodeTimestamp(this.props.value || this.props.initialValue),
         };
 
         this.boundingClientRect = {};
@@ -102,9 +105,9 @@ export default class DateInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.initialValue !== nextProps.initialValue) {
+        if (this.props.value !== nextProps.value) {
             this.setState({
-                ...this.decodeTimestamp(nextProps.initialValue),
+                ...this.decodeTimestamp(nextProps.value),
             });
         }
     }
