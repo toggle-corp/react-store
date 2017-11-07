@@ -11,7 +11,7 @@ export {
     default as FormattedDate,
     ColoredFormattedDate,
 } from './FormattedDate';
-export { default as ListView } from './ListView';
+export { default as ListView, ListItem } from './ListView';
 export {
     default as Modal,
     Header as ModalHeader,
