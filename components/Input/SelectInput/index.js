@@ -78,6 +78,8 @@ const propTypes = {
 
     showLabel: PropTypes.bool,
     showHintAndError: PropTypes.bool,
+
+    optionsIdentifier: PropTypes.string,
 };
 
 const defaultProps = {
@@ -95,6 +97,7 @@ const defaultProps = {
     onChange: undefined,
     showLabel: false,
     showHintAndError: false,
+    optionsIdentifier: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -486,6 +489,7 @@ export default class SelectInput extends React.PureComponent {
                     show={showOptions}
                     multiple={multiple}
                     offsetBottom={showHintAndError ? 24 : 0}
+                    identifier={this.props.optionsIdentifier}
                 />
             </div>
         );
