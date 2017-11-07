@@ -109,7 +109,7 @@ export default class SunBurst extends PureComponent {
                     name: 'Sub A1',
                     size: 4,
                 }, {
-                    name: 'Sub A2',
+                    name: 'Subject AB',
                     size: 4,
                 }],
             }],
@@ -124,8 +124,8 @@ export default class SunBurst extends PureComponent {
         const partitions = partition();
 
         function computeTextRotation(d) {
-            const angle = (x(d.x0 + d.x1) / Math.PI) * 90;
-            return (angle < 90 || angle > 270) ? angle : angle + 180;
+            const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
+            return (angle > 90) ? 180 + angle : angle;
         }
 
         const root = hierarchy(nodeData)
@@ -138,8 +138,16 @@ export default class SunBurst extends PureComponent {
             .enter()
             .append('g');
 
+        function filterText(d, length) {
+            const innerRadius = arch.innerRadius()(d);
+            const outerRadius = arch.outerRadius()(d);
+            const r = outerRadius - innerRadius;
+            console.log(r, length);
+            return (r <= length);
+        }
         function handleClick(d) {
-            slices.selectAll('text')
+            slices
+                .selectAll('text')
                 .transition()
                 .attr('opacity', 0);
             const tran = transition()
@@ -166,7 +174,15 @@ export default class SunBurst extends PureComponent {
                             .transition()
                             .duration(750)
                             .attr('opacity', 1)
-                            .attr('transform', t => `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`)
+                            .attr('transform', (t) => {
+                                if (t.parent === null) return 'translate(0,0)';
+                                return `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`;
+                            })
+                            .filter(function filtrate(t) {
+                                const length = this.getComputedTextLength();
+                                return filterText(t, length);
+                            })
+                            .attr('opacity', 0)
                             .attr('text-anchor', 'middle');
                     }
                 });
@@ -180,11 +196,22 @@ export default class SunBurst extends PureComponent {
                 .data.name))
             .on('click', handleClick);
 
-        slices
+        const labels = slices
             .append('text')
-            .attr('transform', d => `translate(${arch.centroid(d)})rotate(${computeTextRotation(d)})`)
+            .attr('transform', (d) => {
+                if (d.parent === null) return 'translate(0,0)';
+                return `translate(${arch.centroid(d)})rotate(${computeTextRotation(d)})`;
+            })
+            .attr('pointer-events', 'none')
             .attr('text-anchor', 'middle')
             .text(d => d.data.name);
+
+        labels
+            .filter(function filtrate(d) {
+                const length = this.getComputedTextLength();
+                return filterText(d, length);
+            })
+            .attr('opacity', 0);
     }
 
     render() {
