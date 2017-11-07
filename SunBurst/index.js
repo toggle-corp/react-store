@@ -148,7 +148,7 @@ export default class SunBurst extends PureComponent {
         }
 
         function mouseOutArc() {
-            return tooltip.style('display', 'none');
+            return tooltip.transition().style('display', 'none');
         }
         const root = hierarchy(nodeData)
             .sum(d => d.size);
