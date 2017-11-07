@@ -1,0 +1,34 @@
+@import '../../../../stylesheets/base';
+
+.pager {
+    .page-list {
+        button {
+            display: inline-block;
+            outline: 0;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: $spacing-small $spacing-medium;
+            font-family: inherit;
+            font-size: inherit;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
+        }
+
+        span {
+            display: inline-block;
+            padding: $spacing-small $spacing-medium;
+            color: $color-accent;
+            font-weight: $font-weight-medium;
+        }
+    }
+
+    .info {
+        strong {
+            margin: 0 $spacing-small;
+            font-weight: $font-weight-medium;
+        }
+    }
+}

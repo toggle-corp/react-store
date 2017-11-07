@@ -1,0 +1,29 @@
+@import '../../../../stylesheets/base';
+
+.radio-input {
+    width: 100%;
+    user-select: none;
+}
+
+.option {
+    cursor: pointer;
+
+    .input {
+        display: none;
+    }
+
+    .radio {
+        display: inline-block;
+        margin-right: $spacing-small;
+    }
+
+    .label {
+        display: inline-block;
+    }
+
+    &.checked {
+        .radio {
+            color: $color-accent;
+        }
+    }
+}

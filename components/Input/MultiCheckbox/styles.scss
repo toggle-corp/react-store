@@ -1,0 +1,78 @@
+@import '../../../../stylesheets/base';
+
+.multicheck {
+    .parent-container {
+        display: flex;
+        align-items: center;
+        padding: $spacing-small;
+
+        .parent-check {
+            display: flex;
+            align-items: center;
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 0;
+            color: $color-text;
+            font-size: $font-size-medium-alt;
+
+            .icon {
+                margin-right: $spacing-small;
+                color: $color-accent;
+
+                &.unchecked {
+                    color: $color-text;
+                }
+            }
+        }
+
+        .title {
+            margin: 0;
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 0;
+            color: $color-text;
+            font-weight: $font-weight-normal;
+        }
+
+        .arrow {
+            display: flex;
+            align-items: center;
+            transition: .2s all ease-in-out;
+            margin: 0 $spacing-small;
+            padding: 0;
+            font-size: $font-size-small;
+
+            &:focus,
+            &.active,
+            &.hover {
+                background-color: transparent;
+            }
+
+            .chevron {
+                transition: .2s all ease-in-out;
+
+                &.show {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    .options-container {
+        display: none;
+        margin-left: $spacing-extra-large;
+
+        .checkbox-indent {
+            padding: $spacing-small 0;
+        }
+
+        &.show {
+            display: block;
+            max-height: 100%;
+        }
+    }
+}

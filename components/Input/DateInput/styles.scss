@@ -1,0 +1,132 @@
+@import '../../../../stylesheets/base';
+
+.date-input-wrapper {
+    padding: $spacing-medium 0;
+    width: 100%;
+
+    .date-input {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
+
+        .label {
+            margin-top: $spacing-extra-small;
+            width: 100%;
+            text-transform: uppercase;
+            color: $color-label;
+            font-size: $font-size-extra-small;
+        }
+
+        .inputs {
+            padding: $spacing-small 0;
+
+            input {
+                outline: 0;
+                border: 0;
+                background-color: transparent;
+                padding: 0;
+                text-align: left;
+                color: $color-text;
+                font-family: $font-family-monospace;
+                font-size: inherit;
+
+                &:disabled {
+                    color: $color-text-disabled;
+                }
+
+                &::placeholder {
+                    color: $color-text-disabled;
+                }
+
+                &.day {
+                    width: calc(2ch + 16px);
+                }
+
+                &.month {
+                    width: calc(2ch + 16px);
+                }
+
+                &.year {
+                    width: calc(4ch + 16px);
+                }
+            }
+
+            .separator {
+                padding: 0 $spacing-small;
+                color: $color-text;
+                user-select: none;
+
+                &.disabled {
+                    color: $color-text-disabled;
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            padding: 0 $spacing-small;
+
+            button {
+                outline: 0;
+                border: 0;
+                background-color: transparent;
+                cursor: pointer;
+
+                &.active {
+                    color: $color-accent;
+                }
+
+                &.hidden {
+                    visibility: hidden;
+                }
+            }
+        }
+
+        &.focused {
+            border-bottom: $width-separator-normal solid $color-accent;
+
+            .label {
+                color: $color-accent;
+            }
+        }
+
+        &.invalid {
+            border-bottom-color: $color-danger;
+
+            .label {
+                color: $color-danger;
+            }
+        }
+
+        &.required {
+            .label {
+                font-weight: $font-weight-normal;
+
+                &::after {
+                    content: '*';
+                }
+            }
+        }
+    }
+
+    .hint {
+        margin: $spacing-small 0 0;
+        color: $color-label;
+        font-size: $font-size-extra-small;
+    }
+
+    .error {
+        margin: $spacing-small 0 0;
+        color: $color-danger;
+        font-size: $font-size-extra-small;
+    }
+
+    .empty {
+        visibility: hidden;
+        margin: $spacing-small 0 0;
+        font-size: $font-size-extra-small;
+    }
+
+}
+
