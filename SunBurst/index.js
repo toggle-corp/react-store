@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
@@ -75,6 +75,12 @@ export default class SunBurst extends PureComponent {
         el.selectAll('*')
             .remove();
 
+        const tooltip = select(this.container)
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('position', 'absolute')
+            .style('z-index', 10);
+
         const group = el.attr('width', width)
             .attr('height', height)
             .append('g')
@@ -128,6 +134,22 @@ export default class SunBurst extends PureComponent {
             return (angle > 90) ? 180 + angle : angle;
         }
 
+        function mouseOverArc(d) {
+            tooltip.html(`<span class="name">${d.data.name}</span><span class="value">${d.value}</span>`);
+            return tooltip
+                .transition()
+                .style('display', 'inline-block');
+        }
+
+        function mouseMoveArc() {
+            return tooltip
+                .style('top', `${event.pageY - 30}px`)
+                .style('left', `${event.pageX + 20}px`);
+        }
+
+        function mouseOutArc() {
+            return tooltip.style('display', 'none');
+        }
         const root = hierarchy(nodeData)
             .sum(d => d.size);
 
@@ -142,7 +164,6 @@ export default class SunBurst extends PureComponent {
             const innerRadius = arch.innerRadius()(d);
             const outerRadius = arch.outerRadius()(d);
             const r = outerRadius - innerRadius;
-            console.log(r, length);
             return (r <= length);
         }
         function handleClick(d) {
@@ -191,10 +212,13 @@ export default class SunBurst extends PureComponent {
         slices
             .append('path')
             .attr('d', arch)
-            .style('stroke', '#fff')
+            .style('stroke', 'white')
             .style('fill', d => color((d.children ? d : d.parent)
                 .data.name))
-            .on('click', handleClick);
+            .on('click', handleClick)
+            .on('mouseover', mouseOverArc)
+            .on('mousemove', mouseMoveArc)
+            .on('mouseout', mouseOutArc);
 
         const labels = slices
             .append('text')
