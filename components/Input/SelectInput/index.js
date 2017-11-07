@@ -49,18 +49,6 @@ const propTypes = {
      */
     placeholder: PropTypes.string,
 
-    selectedOptionKey: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
-
-    selectedOptionKeys: PropTypes.arrayOf(
-        PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number,
-        ]),
-    ),
-
     /**
      * String to show in case of error
      */
@@ -80,24 +68,34 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 
     optionsIdentifier: PropTypes.string,
+
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.arrayOf(
+            PropTypes.string,
+        ),
+        PropTypes.arrayOf(
+            PropTypes.number,
+        ),
+    ]),
 };
 
 const defaultProps = {
     className: '',
     error: '',
     hint: '',
-    label: '',
     keySelector: d => (d || {}).key,
+    label: '',
     labelSelector: d => (d || {}).label,
     multiple: false,
-    options: [],
-    placeholder: 'Select an option',
-    selectedOptionKey: undefined,
-    selectedOptionKeys: [],
     onChange: undefined,
-    showLabel: false,
-    showHintAndError: false,
+    options: [],
     optionsIdentifier: undefined,
+    placeholder: 'Select an option',
+    showHintAndError: false,
+    showLabel: false,
+    value: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -133,9 +131,17 @@ export default class SelectInput extends React.PureComponent {
             labelSelector,
             multiple,
             options,
-            selectedOptionKey,
-            selectedOptionKeys,
+            value,
         } = props;
+
+        let selectedOptionKey;
+        let selectedOptionKeys;
+
+        if (multiple) {
+            selectedOptionKeys = value;
+        } else {
+            selectedOptionKeys = value;
+        }
 
         let newState = {};
 

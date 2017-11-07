@@ -53,18 +53,27 @@ const propTypes = {
      * Is a required element for form
      */
     required: PropTypes.bool,
+
+    showLabel: PropTypes.bool,
+
+    showHintAndError: PropTypes.bool,
+
+    value: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     error: '',
     hint: '',
-    initialValue: '',
+    initialValue: undefined,
     label: '',
     onBlur: undefined,
     onChange: undefined,
     onFocus: undefined,
     required: false,
+    showLabel: false,
+    showHintAndError: false,
+    value: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -75,17 +84,21 @@ export default class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const value = this.props.value || this.props.initialValue || '';
+
         this.state = {
-            value: this.props.initialValue,
+            value,
         };
 
         this.inputId = randomString();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.initialValue,
-        });
+        if (nextProps.value) {
+            this.setState({
+                value: nextProps.value,
+            });
+        }
     }
 
     getValue = () => this.state.value;
@@ -100,7 +113,6 @@ export default class TextInput extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering TextInput');
         const {
             // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
@@ -110,6 +122,8 @@ export default class TextInput extends React.PureComponent {
             hint,
             label,
             required,
+            showLabel,
+            showHintAndError,
             ...otherProps
         } = this.props;
 
@@ -137,13 +151,17 @@ export default class TextInput extends React.PureComponent {
                         ${required ? 'required' : ''}
                     `}
                 >
-                    <label
-                        className="label"
-                        htmlFor={this.inputId}
-                        styleName="label"
-                    >
-                        {label}
-                    </label>
+                    {
+                        showLabel && (
+                            <label
+                                className="label"
+                                htmlFor={this.inputId}
+                                styleName="label"
+                            >
+                                {label}
+                            </label>
+                        )
+                    }
                     <input
                         className="input"
                         id={this.inputId}
@@ -156,34 +174,35 @@ export default class TextInput extends React.PureComponent {
                     />
                 </div>
                 {
-                    !error && hint && (
-                        <p
-                            className="hint"
-                            styleName="hint"
-                        >
-                            {hint}
-                        </p>
-                    )
-                }
-                {
-                    error && !hint && (
-                        <p
-                            styleName="error"
-                            className="error"
-                        >
-                            {error}
-                        </p>
-                    )
-                }
-                {
-                    !error && !hint && (
-                        <p
-                            styleName="empty"
-                            className="error empty"
-                        >
-                            -
-                        </p>
-                    )
+                    showHintAndError && [
+                        !error && hint && (
+                            <p
+                                key="hint"
+                                className="hint"
+                                styleName="hint"
+                            >
+                                {hint}
+                            </p>
+                        ),
+                        error && !hint && (
+                            <p
+                                key="error"
+                                styleName="error"
+                                className="error"
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && !hint && (
+                            <p
+                                key="empty"
+                                styleName="empty"
+                                className="error empty"
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
                 }
             </div>
         );
