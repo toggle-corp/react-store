@@ -107,8 +107,8 @@ export default class SelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            showOptions: false,
             inputValue: '',
+            showOptions: false,
             displayOptions: this.props.options,
             optionContainerStyle: {},
             selectedOptions: [],
@@ -138,9 +138,9 @@ export default class SelectInput extends React.PureComponent {
         let selectedOptionKeys;
 
         if (multiple) {
-            selectedOptionKeys = value;
+            selectedOptionKeys = value || [];
         } else {
-            selectedOptionKeys = value;
+            selectedOptionKey = value;
         }
 
         let newState = {};
@@ -155,13 +155,11 @@ export default class SelectInput extends React.PureComponent {
                 }
             });
 
-            if (props.selectedOptionKeys) {
-                newState = {
-                    selectedOptionKeys,
-                    selectedOptions,
-                };
-            }
-        } else if (props.selectedOptionKey) {
+            newState = {
+                selectedOptionKeys,
+                selectedOptions,
+            };
+        } else if (selectedOptionKey) {
             const selectedOption = options.find(
                 d => keySelector(d) === selectedOptionKey,
             ) || {};
