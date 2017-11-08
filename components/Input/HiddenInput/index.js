@@ -10,7 +10,7 @@ const propTypes = {
      */
     className: PropTypes.string,
 
-    initialValue: PropTypes.oneOfType([
+    value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
@@ -18,7 +18,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    initialValue: '',
+    value: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -29,14 +29,15 @@ export default class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const value = this.props.value || '';
         this.state = {
-            value: this.props.initialValue,
+            value,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            value: nextProps.initialValue,
+            value: nextProps.value,
         });
     }
 
@@ -53,7 +54,6 @@ export default class TextInput extends React.PureComponent {
 
         return (
             <input
-                styleName="hidden-input"
                 className={className}
                 value={value}
             />
