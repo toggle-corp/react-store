@@ -54,6 +54,7 @@ export default class TextInput extends React.PureComponent {
 
         return (
             <input
+                styleName="hidden-input"
                 className={className}
                 value={value}
             />
