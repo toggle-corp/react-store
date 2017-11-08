@@ -71,9 +71,9 @@ const defaultProps = {
     onChange: undefined,
     onFocus: undefined,
     required: false,
-    showLabel: false,
-    showHintAndError: false,
-    value: undefined,
+    showLabel: true,
+    showHintAndError: true,
+    value: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -84,7 +84,7 @@ export default class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const value = this.props.value || this.props.initialValue || '';
+        const value = this.props.initialValue || this.props.value || '';
 
         this.state = {
             value,
@@ -94,11 +94,9 @@ export default class TextInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.value) {
-            this.setState({
-                value: nextProps.value,
-            });
-        }
+        this.setState({
+            value: nextProps.value,
+        });
     }
 
     getValue = () => this.state.value;
@@ -116,6 +114,7 @@ export default class TextInput extends React.PureComponent {
         const {
             // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
+            value: propValue, // eslint-disable-line
             onChange, // eslint-disable-line
 
             error,
