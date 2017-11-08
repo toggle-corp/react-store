@@ -5,14 +5,18 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
+    /* indicate if it is the active element */
     active: PropTypes.bool,
 
+    /* children inside of ListView */
     children: PropTypes.oneOfType([
         PropTypes.node,
     ]),
 
+    /* class name for overriding style */
     className: PropTypes.string,
 
+    /* if set to true, list is scrolled to the ListItem */
     scrollIntoView: PropTypes.bool,
 };
 
@@ -45,9 +49,7 @@ export default class List extends React.PureComponent {
     }
 
     componentDidUpdate() {
-        const {
-            scrollIntoView,
-        } = this.props;
+        const { scrollIntoView } = this.props;
 
         if (this.container && scrollIntoView) {
             this.container.scrollIntoView({
@@ -75,13 +77,8 @@ export default class List extends React.PureComponent {
     }
 
     render() {
-        const {
-            children,
-        } = this.props;
-
-        const {
-            className,
-        } = this.state;
+        const { children } = this.props;
+        const { className } = this.state;
 
         return (
             <div
