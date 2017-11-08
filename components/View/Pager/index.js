@@ -20,7 +20,6 @@ const defaultProps = {
     maxItemsPerPage: 10,
 };
 
-
 @CSSModules(styles, { allowMultiple: true })
 export default class Pager extends React.PureComponent {
     static propTypes = propTypes;
