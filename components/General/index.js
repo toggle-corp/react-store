@@ -7,3 +7,4 @@ export {
     ExclusivelyPublicRoute,
 } from './PrivateRoute';
 export { default as Bundle } from './Bundle';
+export { default as Responsive } from './Responsive';
