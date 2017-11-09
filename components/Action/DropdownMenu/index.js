@@ -55,7 +55,6 @@ export default class DropdownMenu extends React.PureComponent {
     componentDidMount() {
         window.addEventListener('resize', this.calculateDimension);
         this.calculateDimension();
-        console.log(this.state.dimension);
     }
 
     componentWillUnmount() {
