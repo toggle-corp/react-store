@@ -1,5 +1,6 @@
 @import '../../../../stylesheets/base';
 
+
 .pager {
     .page-list {
         button {
@@ -8,27 +9,29 @@
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-small $spacing-medium;
+            padding: $spacing-small $spacing-small;
             font-family: inherit;
             font-size: inherit;
+            min-width: $width-icon-extra-large;
 
             &:hover {
                 background-color: $color-background-hover;
             }
-        }
+       }
 
         span {
             display: inline-block;
-            padding: $spacing-small $spacing-medium;
-            color: $color-accent;
+            padding: $spacing-small $spacing-small;
+            color: $color-label;
             font-weight: $font-weight-medium;
-        }
-    }
+            min-width: $width-icon-extra-large;
+            text-align: center;
+            user-select: none;
 
-    .info {
-        strong {
-            margin: 0 $spacing-small;
-            font-weight: $font-weight-medium;
+            :global &.active {
+                color: $color-text-on-accent;
+                background-color: $color-accent;
+            }
         }
     }
 }

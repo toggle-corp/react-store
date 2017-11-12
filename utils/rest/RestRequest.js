@@ -8,8 +8,8 @@ const defaultSuccessFn = () => { console.warn('No success callback defined'); };
 const defaultFailureFn = () => { console.warn('No failure callback defined'); };
 const defaultFatalFn = () => { console.warn('No fatal callback defined'); };
 const defaultAbortFn = () => { console.warn('No abort callback defined'); };
-const defaultPreLoadFn = () => { console.warn('No preload callback defined'); };
-const defaultPostLoadFn = () => { console.warn('No postload callback defined'); };
+const defaultPreLoadFn = () => { /* console.warn('No preload callback defined'); */ };
+const defaultPostLoadFn = () => { /* console.warn('No postload callback defined'); */ };
 
 /* Class for xhr requests with retry built in */
 export default class RestRequest {
