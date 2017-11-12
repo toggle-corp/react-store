@@ -3,9 +3,16 @@
 .non-field-errors {
     display: flex;
     color: $color-danger;
+    text-align: center;
 
     .error {
+        flex-basis: 100%;
         padding: $spacing-small;
+
+        &.empty {
+            color: transparent;
+            user-select: none;
+        }
 
         &:not(:last-child) {
             &::after {
