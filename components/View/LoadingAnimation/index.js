@@ -6,9 +6,13 @@ import styles from './styles.scss';
 import { Responsive } from '../../General';
 
 const propTypes = {
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
+    boundingClientRect: {},
 };
 
 @Responsive
