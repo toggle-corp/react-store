@@ -1,0 +1,16 @@
+@import '../../../../stylesheets/base';
+
+.non-field-errors {
+    display: flex;
+    color: $color-danger;
+
+    .error {
+        padding: $spacing-small;
+
+        &:not(:last-child) {
+            &::after {
+                content: ', ';
+            }
+        }
+    }
+}
