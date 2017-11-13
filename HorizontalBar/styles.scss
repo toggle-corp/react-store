@@ -1,17 +1,13 @@
-.horizontal-bar-container{
+:global .horizontalbar{
     width: 100%;
     height: 100%;
-    :global .svg{
-        width: 100%;
-        height: 100%;
-        .x-axis path{
-            stroke: #ADD8C7;
-        }
-        .y-axis path{
-            stroke: #ADD8C7;
-        }
-        .bar {
-            fill:#1693A5;
-        }
+    .x-axis path{
+        stroke: #ADD8C7;
+    }
+    .y-axis path{
+        stroke: #ADD8C7;
+    }
+    .bar {
+        fill:#1693A5;
     }
 }
