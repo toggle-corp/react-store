@@ -63,7 +63,7 @@ export default class Pager extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getPlaceholder = (className, index, key) => (
+    getSpan = (className, index, key) => (
         <span
             className={className}
             key={key || index}
@@ -84,14 +84,19 @@ export default class Pager extends React.PureComponent {
 
     pagination = (totalCapacity, active, total) => {
         const oneSideCapacity = (totalCapacity - 1) / 2;
-
         const startIndex = 1;
         const lastIndex = total;
 
+        // Once upon a time, there were two sides of a town
+        // And every year, each got equal amount of ration
+        // Buth, they had a variable demand, and each year it could change
         const right = new Side(oneSideCapacity, active - startIndex);
         const left = new Side(oneSideCapacity, lastIndex - active);
 
-        // Balance sides
+        // So the two sides made a treaty
+        // If any of the side had an excess that year and the other side had a shortage,
+        // they had to give the excess to the other side
+        // Thay way, all the ration would be used
         const leftExcess = left.excess;
         const rightExcess = right.excess;
         if (right.hasShortage() && leftExcess > 0) {
@@ -103,7 +108,19 @@ export default class Pager extends React.PureComponent {
         left.optimizeCapacity();
         right.optimizeCapacity();
 
-        let lst = [];
+        let lst = [
+            (
+                <button
+                    key={'prev'}
+                    onClick={() => this.props.onPageClick(active - 1)}
+                    disabled={active - 1 < startIndex}
+                    className="paginate-btn"
+                >
+                    ‹
+                </button>
+            ),
+        ];
+
         if (right.capacity > 0) {
             if (right.excess >= 0) {
                 lst = [
@@ -114,7 +131,7 @@ export default class Pager extends React.PureComponent {
                 lst = [
                     ...lst,
                     this.getButton(startIndex),
-                    this.getPlaceholder('tick', '...', 'startTick'),
+                    this.getSpan('tick', '...', 'startTick'),
                     ...range(active - (right.capacity - 2), active - 1).map(this.getButton),
                 ];
             }
@@ -122,7 +139,7 @@ export default class Pager extends React.PureComponent {
 
         lst = [
             ...lst,
-            this.getPlaceholder('active', active),
+            this.getSpan('active', active),
         ];
 
         if (left.capacity > 0) {
@@ -135,11 +152,25 @@ export default class Pager extends React.PureComponent {
                 lst = [
                     ...lst,
                     ...range(active + 1, active + (left.capacity - 2)).map(this.getButton),
-                    this.getPlaceholder('tick', '...', 'endTick'),
+                    this.getSpan('tick', '...', 'endTick'),
                     this.getButton(lastIndex),
                 ];
             }
         }
+
+        lst = [
+            ...lst,
+            (
+                <button
+                    key={'next'}
+                    onClick={() => this.props.onPageClick(active + 1)}
+                    disabled={active + 1 > lastIndex}
+                    className="paginate-btn"
+                >
+                    ›
+                </button>
+            ),
+        ];
         return lst;
     }
 
