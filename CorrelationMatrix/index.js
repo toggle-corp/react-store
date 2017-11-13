@@ -7,82 +7,67 @@ import { max, min, range } from 'd3-array';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    labelsData: PropTypes.arrayOf(PropTypes.string),
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
-    className: '',
+    data: [],
+    labelsData: [],
+    margins: {
+        top: 50,
+        right: 50,
+        bottom: 100,
+        left: 100,
+    },
 };
 
+@Responsive
 @CSSModules(styles)
 export default class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
-
     renderChart() {
-        let { width, height } = this.state.boundingClientRect;
-        if (!this.state.render) {
+        const {
+            data,
+            labelsData,
+            boundingClientRect,
+            margins,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
+        let { width, height } = boundingClientRect;
         const {
             top,
             right,
             bottom,
             left,
-        } = {
-            top: 50,
-            right: 50,
-            bottom: 100,
-            left: 100,
-        };
-
-        const labelsData = ['mpg', 'cyl', 'disp', 'hp', 'drat', 'wt'];
-        const data = [
-            [1.000000, -0.852162, -0.847551, -0.776168, 0.681172, -0.867659],
-            [-0.852162, 1.000000, 0.902033, 0.832447, -0.699938, 0.782496],
-            [-0.847551, 0.902033, 1.000000, 0.790949, -0.710214, 0.887980],
-            [-0.776168, 0.832447, 0.790949, 1.000000, -0.448759, 0.658748],
-            [0.681172, -0.699938, -0.710214, -0.448759, 1.000000, -0.712441],
-            [-0.867659, 0.782496, 0.887980, 0.658748, -0.712441, 1.000000],
-        ];
+        } = margins;
 
         const noofrows = data.length;
         const noofcols = data[0].length;
@@ -261,16 +246,10 @@ export default class CorrelationMatrix extends React.PureComponent {
 
     render() {
         return (
-            <div
-                ref={(el) => { this.container = el; }}
+            <svg
                 styleName="correlation-matrix"
-                className={this.props.className}
-            >
-                <svg
-                    styleName="svg-chart"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
