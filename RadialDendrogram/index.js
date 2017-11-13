@@ -3,106 +3,68 @@ import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { tree, hierarchy } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.shape({
+        name: PropTypes.string,
+    }),
+    labelAccessor: PropTypes.func.isRequired,
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
-    className: '',
+    data: [],
+    margins: {
+        top: 50,
+        right: 50,
+        bottom: 100,
+        left: 100,
+    },
 };
 
+@Responsive
 @CSSModules(styles)
 export default class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
     renderChart() {
-        if (!this.state.render) {
+        const {
+            data,
+            boundingClientRect,
+            labelAccessor,
+            margins,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
-        let { width, height } = this.state.boundingClientRect;
+        let { width, height } = boundingClientRect;
         const {
             top,
             right,
             bottom,
             left,
-        } = {
-            top: 50,
-            right: 50,
-            bottom: 50,
-            left: 50,
-        };
-
-        const data = {
-            name: 'TOPICS',
-            children: [{
-                name: 'Topic A',
-                children: [{
-                    name: 'Sub A1',
-                    size: 4,
-                }, {
-                    name: 'Sub A2',
-                    size: 4,
-                }],
-            }, {
-                name: 'Topic B',
-                children: [{
-                    name: 'Sub B1',
-                    size: 3,
-                }, {
-                    name: 'Sub B2',
-                    size: 3,
-                }, {
-                    name: 'Sub B3',
-                    size: 3,
-                }],
-            }, {
-                name: 'Topic C',
-                children: [{
-                    name: 'Sub A1',
-                    size: 4,
-                }, {
-                    name: 'Sub A2',
-                    size: 4,
-                }],
-            }],
-        };
+        } = margins;
 
         const svg = select(this.svg);
         svg.selectAll('*').remove();
@@ -161,20 +123,14 @@ export default class RadialDendrogram extends React.PureComponent {
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)
-            .text(d => d.data.name);
+            .text(d => labelAccessor(d.data));
     }
     render() {
         return (
-            <div
-                ref={(el) => { this.container = el; }}
-                styleName="radialdendrogram-container"
-                className={this.props.className}
-            >
-                <svg
-                    styleName="svg"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                styleName="radialdendrogram"
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
