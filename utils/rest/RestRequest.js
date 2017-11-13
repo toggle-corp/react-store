@@ -141,9 +141,13 @@ export default class RestRequest {
         try {
             responseBody = await response.json();
         } catch (ex) {
-            // NOTE: some parsing error
-            this.fatal({ errorMessage: 'Error while parsing json', errorCode: null });
-            return;
+            // NOTE: Unless the response is supposed to be NO CONTENT, we
+            // have got parsing error.
+            // For example, this can happend in REST DELETE request.
+            if (response.status !== 204) {
+                this.fatal({ errorMessage: 'Error while parsing json', errorCode: null });
+                return;
+            }
         }
 
         // DEBUG:
