@@ -8,94 +8,66 @@ import { arc } from 'd3-shape';
 import { rgb } from 'd3-color';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    labelsData: PropTypes.arrayOf(PropTypes.string).isRequired,
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
-    className: '',
+    data: [],
+    margins: {
+        top: 50,
+        right: 50,
+        bottom: 100,
+        left: 100,
+    },
 };
 
+@Responsive
 @CSSModules(styles)
 export default class ChordDiagram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
-
     renderChart() {
-        if (!this.state.render) {
+        const {
+            data,
+            boundingClientRect,
+            labelsData,
+            margins,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
-        let { width, height } = this.state.boundingClientRect;
-
-
+        let { width, height } = boundingClientRect;
         const {
             top,
             right,
             bottom,
             left,
-        } = {
-            top: 50,
-            right: 50,
-            bottom: 50,
-            left: 50,
-        };
-
-        const matrix = [
-            [2, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
-            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [1, 0, 0, 1, 0, 0, 4, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-            [1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 9, 0, 0, 1, 1, 0, 1, 1, 0],
-            [1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0],
-            [1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 7, 1, 0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-        ];
+        } = margins;
 
         const svg = select(this.svg);
         svg.selectAll('*').remove();
@@ -128,7 +100,7 @@ export default class ChordDiagram extends React.PureComponent {
             .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
-            .datum(chords(matrix));
+            .datum(chords(data));
 
         function fade(opacity) {
             return function dim(g, i) {
@@ -150,7 +122,6 @@ export default class ChordDiagram extends React.PureComponent {
             .on('mouseover', fade(0.1))
             .on('mouseout', fade(1));
 
-
         const groupPath = group
             .append('path')
             .style('fill', d => color(d.index))
@@ -167,7 +138,7 @@ export default class ChordDiagram extends React.PureComponent {
             .append('textPath')
             .attr('xlink:href', (d, i) => `#group${i}`)
             .attr('pointer-events', 'none')
-            .text(d => d.index);
+            .text(d => labelsData[d.index]);
 
         groupText
             .filter(function filtrate(d, i) {
@@ -191,16 +162,10 @@ export default class ChordDiagram extends React.PureComponent {
 
     render() {
         return (
-            <div
-                ref={(el) => { this.container = el; }}
-                styleName="chorddiagram-container"
-                className={this.props.className}
-            >
-                <svg
-                    styleName="svg"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                styleName="chord-diagram"
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
