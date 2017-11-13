@@ -13,6 +13,7 @@ export {
 } from './FormattedDate';
 // export { default as ListView, ListItem } from './ListView';
 export { default as List, ListView, ListItem } from './List';
+export { default as LoadingAnimation } from './LoadingAnimation';
 export {
     default as Modal,
     Header as ModalHeader,

@@ -1,0 +1,22 @@
+@import '../../../../stylesheets/base';
+
+.loading-animation {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-background-overlay;
+    width: 100%;
+
+    .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: spin 1s linear infinite;
+        width: $width-loading-icon;
+        height: $height-loading-icon;
+        font-size: $font-size-loading-icon;
+    }
+}
