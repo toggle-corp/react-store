@@ -7,61 +7,51 @@ import { interpolateArray } from 'd3-interpolate';
 import { scaleLinear, schemeCategory20b, scaleSqrt, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.shape({
+        name: PropTypes.string,
+    }),
+    labelAccessor: PropTypes.func.isRequired,
+    valueAccessor: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    className: '',
+    data: [],
 };
 
+@Responsive
 @CSSModules(styles)
 export default class SunBurst extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
-
     renderChart() {
-        if (!this.state.render) {
+        const {
+            data,
+            labelAccessor,
+            valueAccessor,
+            boundingClientRect,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
-        const { width, height } = this.state.boundingClientRect;
+        const { width, height } = boundingClientRect;
         const radius = Math.min(width, height) / 2;
 
         const x = scaleLinear()
@@ -70,6 +60,12 @@ export default class SunBurst extends PureComponent {
             .range([0, radius]);
         const color = scaleOrdinal()
             .range(schemeCategory20b);
+
+        const arch = arc()
+            .startAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x0))))
+            .endAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x1))))
+            .innerRadius(d => Math.max(0, y(d.y0)))
+            .outerRadius(d => Math.max(0, y(d.y1)));
 
         const el = select(this.svg);
         el.selectAll('*')
@@ -81,53 +77,11 @@ export default class SunBurst extends PureComponent {
             .style('position', 'absolute')
             .style('z-index', 10);
 
-        const group = el.attr('width', width)
+        const group = el
+            .attr('width', width)
             .attr('height', height)
             .append('g')
             .attr('transform', `translate( ${width / 2}, ${height / 2})`);
-
-        const nodeData = {
-            name: 'TOPICS',
-            children: [{
-                name: 'Topic A',
-                children: [{
-                    name: 'Sub A1',
-                    size: 4,
-                }, {
-                    name: 'Sub A2',
-                    size: 4,
-                }],
-            }, {
-                name: 'Topic B',
-                children: [{
-                    name: 'Sub B1',
-                    size: 3,
-                }, {
-                    name: 'Sub B2',
-                    size: 3,
-                }, {
-                    name: 'Sub B3',
-                    size: 3,
-                }],
-            }, {
-                name: 'Topic C',
-                children: [{
-                    name: 'Sub A1',
-                    size: 4,
-                }, {
-                    name: 'Subject AB',
-                    size: 4,
-                }],
-            }],
-        };
-
-        const arch = arc()
-            .startAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x0))))
-            .endAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x1))))
-            .innerRadius(d => Math.max(0, y(d.y0)))
-            .outerRadius(d => Math.max(0, y(d.y1)));
-
-        const partitions = partition();
 
         function computeTextRotation(d) {
             const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
@@ -148,10 +102,14 @@ export default class SunBurst extends PureComponent {
         }
 
         function mouseOutArc() {
-            return tooltip.transition().style('display', 'none');
+            return tooltip
+                .transition()
+                .style('display', 'none');
         }
-        const root = hierarchy(nodeData)
-            .sum(d => d.size);
+        const partitions = partition();
+
+        const root = hierarchy(data)
+            .sum(d => valueAccessor(d));
 
         const slices = group
             .selectAll('g')
@@ -166,6 +124,7 @@ export default class SunBurst extends PureComponent {
             const r = outerRadius - innerRadius;
             return (r <= length);
         }
+
         function handleClick(d) {
             slices
                 .selectAll('text')
@@ -213,8 +172,7 @@ export default class SunBurst extends PureComponent {
             .append('path')
             .attr('d', arch)
             .style('stroke', 'white')
-            .style('fill', d => color((d.children ? d : d.parent)
-                .data.name))
+            .style('fill', d => color((d.children ? d : d.parent).data.name))
             .on('click', handleClick)
             .on('mouseover', mouseOverArc)
             .on('mousemove', mouseMoveArc)
@@ -228,7 +186,7 @@ export default class SunBurst extends PureComponent {
             })
             .attr('pointer-events', 'none')
             .attr('text-anchor', 'middle')
-            .text(d => d.data.name);
+            .text(d => labelAccessor(d.data));
 
         labels
             .filter(function filtrate(d) {
@@ -242,12 +200,10 @@ export default class SunBurst extends PureComponent {
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                styleName="sun-burst"
-                className={this.props.className}
             >
                 <svg
                     styleName="svg"
-                    ref={(el) => { this.svg = el; }}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </div>
         );
