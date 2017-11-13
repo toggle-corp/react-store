@@ -6,74 +6,70 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { hierarchy, treemap } from 'd3-hierarchy';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.shape({
+        name: PropTypes.string,
+    }),
+    valueAccessor: PropTypes.func.isRequired,
+    labelAccessor: PropTypes.func.isRequired,
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
-    className: '',
+    data: [],
+    margins: {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 50,
+    },
 };
 
+@Responsive
 @CSSModules(styles)
 export default class TreeMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
-
     renderChart() {
-        if (!this.state.render) {
+        const {
+            data,
+            boundingClientRect,
+            valueAccessor,
+            labelAccessor,
+            margins,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
-        let { width, height } = this.state.boundingClientRect;
-
-
+        let { width, height } = boundingClientRect;
         const {
             top,
             right,
             bottom,
             left,
-        } = {
-            top: 50,
-            right: 50,
-            bottom: 50,
-            left: 50,
-        };
+        } = margins;
 
         const svg = select(this.svg);
         svg.selectAll('*').remove();
@@ -90,49 +86,13 @@ export default class TreeMap extends React.PureComponent {
         const color = scaleOrdinal().range(schemePaired);
         const formats = format(',d');
 
-
         const treemaps = treemap()
             .size([width, height])
             .round(true)
             .paddingInner(1);
 
-        const data = {
-            name: 'TOPICS',
-            children: [{
-                name: 'Topic A',
-                children: [{
-                    name: 'Sub A1',
-                    size: 4,
-                }, {
-                    name: 'Sub A2',
-                    size: 4,
-                }],
-            }, {
-                name: 'Topic B',
-                children: [{
-                    name: 'Sub B1',
-                    size: 3,
-                }, {
-                    name: 'Sub B2',
-                    size: 3,
-                }, {
-                    name: 'Sub B3',
-                    size: 3,
-                }],
-            }, {
-                name: 'Topic C',
-                children: [{
-                    name: 'Sub C1',
-                    size: 4,
-                }, {
-                    name: 'Sub C2',
-                    size: 4,
-                }],
-            }],
-        };
-
         const root = hierarchy(data)
-            .sum(d => d.size);
+            .sum(d => valueAccessor(d));
 
         treemaps(root);
 
@@ -147,31 +107,26 @@ export default class TreeMap extends React.PureComponent {
             .attr('id', d => d.data.name)
             .attr('width', d => d.x1 - d.x0)
             .attr('height', d => d.y1 - d.y0)
-            .attr('fill', d => color(d.parent.data.name));
+            .attr('fill', d => color(labelAccessor(d.parent.data)));
 
         cell.append('text')
             .attr('x', d => (d.x1 - d.x0) / 2)
             .attr('y', d => (d.y1 - d.y0) / 2)
             .attr('text-anchor', 'middle')
             .attr('class', 'text-label')
-            .text(d => d.data.name);
+            .text(d => labelAccessor(d.data));
         cell
             .append('title')
-            .text(d => `${d.data.name}\n${formats(d.value)}`);
+            .text(d => `${labelAccessor(d.data)}\n${formats(valueAccessor(d.data))}`);
     }
 
     render() {
         return (
-            <div
-                ref={(el) => { this.container = el; }}
-                styleName="treemap-container"
-                className={this.props.className}
-            >
-                <svg
-                    styleName="svg"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                styleName="treemap"
+                ref={(elem) => { this.svg = elem; }}
+            />
+
         );
     }
 }
