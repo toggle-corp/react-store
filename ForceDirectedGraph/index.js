@@ -154,7 +154,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
         node
             .append('title')
-            .text(d => d.id);
+            .text(d => idAccessor(d));
 
         simulation
             .nodes(data.nodes)
