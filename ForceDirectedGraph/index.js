@@ -6,75 +6,80 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-force';
 import { drag } from 'd3-drag';
 import { PropTypes } from 'prop-types';
+import Responsive from '../Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    boundingClientRect: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
+    data: PropTypes.shape({
+        nodes: PropTypes.arrayOf(PropTypes.object),
+        links: PropTypes.arrayOf(PropTypes.object),
+    }),
+    idAccessor: PropTypes.func.isRequired,
+    groupAccessor: PropTypes.func,
+    valueAccessor: PropTypes.func,
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
-    className: '',
+    data: {
+        nodes: [],
+        link: [],
+    },
+    margins: {
+        top: 50,
+        right: 50,
+        bottom: 100,
+        left: 100,
+    },
+    groupAccessor: d => d.index,
+    valueAccessor: () => 1,
 };
 
+@Responsive
 @CSSModules(styles)
 export default class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            boundingClientRect: {},
-            render: false,
-        };
-    }
-
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-
-        setTimeout(() => {
-            this.setState({
-                render: true,
-                boundingClientRect: this.container.getBoundingClientRect(),
-            });
-        }, 0);
+        this.renderChart();
     }
 
     componentDidUpdate() {
         this.renderChart();
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-    }
-
-    handleResize = () => {
-        this.setState({
-            render: true,
-            boundingClientRect: this.container.getBoundingClientRect(),
-        });
-    }
-
     renderChart() {
-        if (!this.state.render) {
+        const {
+            data,
+            boundingClientRect,
+            idAccessor,
+            groupAccessor,
+            valueAccessor,
+            margins,
+        } = this.props;
+
+        if (!boundingClientRect.width) {
             return;
         }
-        let { width, height } = this.state.boundingClientRect;
-
-
+        let { width, height } = boundingClientRect;
         const {
             top,
             right,
             bottom,
             left,
-        } = {
-            top: 50,
-            right: 50,
-            bottom: 50,
-            left: 50,
-        };
+        } = margins;
 
+        console.log(idAccessor);
         const svg = select(this.svg);
         svg.selectAll('*').remove();
 
@@ -90,27 +95,9 @@ export default class ForceDirectedGraph extends React.PureComponent {
         const color = scaleOrdinal().range(schemePaired);
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => d.id))
+            .force('link', forceLink().id(d => idAccessor(d)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
-
-        const nodes = [
-            { id: 'Toggle', group: 1 },
-            { id: 'Corp', group: 2 },
-            { id: 'Nepal', group: 3 },
-            { id: 'Countries', group: 4 },
-            { id: 'Yes', group: 1 },
-            { id: 'No', group: 2 },
-            { id: 'India', group: 3 },
-        ];
-
-        const links = [
-            { source: 'Corp', target: 'Toggle', value: 1 },
-            { source: 'Nepal', target: 'Countries', value: 2 },
-            { source: 'Yes', target: 'No', value: 2 },
-            { source: 'India', target: 'Countries', value: 3 },
-            { source: 'Corp', target: 'Countries', value: 1 },
-        ];
 
         function dragstarted(d) {
             if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -129,26 +116,25 @@ export default class ForceDirectedGraph extends React.PureComponent {
             d.fy = null;// eslint-disable-line
         }
 
-
         const link = group
             .append('g')
             .attr('class', 'links')
             .selectAll('line')
-            .data(links)
+            .data(data.links)
             .enter()
             .append('line')
             .attr('stroke', color(0))
-            .attr('stroke-width', d => Math.sqrt(d.value));
+            .attr('stroke-width', d => Math.sqrt(valueAccessor(d)));
 
         const node = group
             .append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
-            .data(nodes)
+            .data(data.nodes)
             .enter()
             .append('circle')
             .attr('r', 5)
-            .attr('fill', d => color(d.group))
+            .attr('fill', d => color(groupAccessor(d)))
             .call(drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -171,25 +157,19 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .text(d => d.id);
 
         simulation
-            .nodes(nodes)
+            .nodes(data.nodes)
             .on('tick', ticked);
 
         simulation
             .force('link')
-            .links(links);
+            .links(data.links);
     }
     render() {
         return (
-            <div
-                ref={(el) => { this.container = el; }}
-                styleName="force-container"
-                className={this.props.className}
-            >
-                <svg
-                    styleName="svg"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                styleName="force-directed-graph"
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
