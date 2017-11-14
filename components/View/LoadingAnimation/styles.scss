@@ -2,13 +2,15 @@
 
 .loading-animation {
     display: flex;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     align-items: center;
     justify-content: center;
     background-color: $color-background-overlay;
     width: 100%;
+    height: 100%;
+    z-index: 11;
 
     .icon {
         display: flex;
