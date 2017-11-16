@@ -27,6 +27,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
@@ -42,6 +43,7 @@ const defaultProps = {
     },
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
+    colorScheme: schemePaired,
 };
 
 @Responsive
@@ -65,6 +67,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             idAccessor,
             groupAccessor,
             valueAccessor,
+            colorScheme,
             margins,
         } = this.props;
 
@@ -79,9 +82,14 @@ export default class ForceDirectedGraph extends React.PureComponent {
             left,
         } = margins;
 
-        console.log(idAccessor);
         const svg = select(this.svg);
         svg.selectAll('*').remove();
+
+        const tooltip = select(this.container)
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('position', 'absolute')
+            .style('z-index', 10);
 
         width = width - left - right;
         height = height - top - bottom;
@@ -92,28 +100,56 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
-        const color = scaleOrdinal().range(schemePaired);
+        const color = scaleOrdinal().range(colorScheme);
 
         const simulation = forceSimulation()
             .force('link', forceLink().id(d => idAccessor(d)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
+        function hideTooltip() {
+            tooltip.transition().style('display', 'none');
+        }
+
         function dragstarted(d) {
+            hideTooltip();
             if (!event.active) simulation.alphaTarget(0.3).restart();
             d.fx = d.x;// eslint-disable-line
             d.fy = d.y;// eslint-disable-line
         }
 
         function dragged(d) {
+            hideTooltip();
             d.fx = event.x;// eslint-disable-line
             d.fy = event.y;// eslint-disable-line
         }
 
         function dragended(d) {
+            hideTooltip();
             if (!event.active) simulation.alphaTarget(0);
             d.fx = null;// eslint-disable-line
             d.fy = null;// eslint-disable-line
+        }
+
+        function mouseOverCircle(d) {
+            tooltip.html(`<span class="name">${idAccessor(d)}</span>`);
+            return tooltip
+                .transition()
+                .duration(100)
+                .style('display', 'inline-block');
+        }
+
+        function mouseMoveCircle() {
+            return tooltip
+                .style('top', `${event.pageY - 30}px`)
+                .style('left', `${event.pageX + 20}px`);
+        }
+
+        function mouseOutCircle() {
+            return tooltip
+                .transition()
+                .duration(100)
+                .style('display', 'none');
         }
 
         const link = group
@@ -138,7 +174,10 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .call(drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
-                .on('end', dragended));
+                .on('end', dragended))
+            .on('mouseover', mouseOverCircle)
+            .on('mousemove', mouseMoveCircle)
+            .on('mouseout', mouseOutCircle);
 
         function ticked() {
             link
@@ -152,10 +191,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
                 .attr('cy', d => d.y);
         }
 
-        node
-            .append('title')
-            .text(d => idAccessor(d));
-
         simulation
             .nodes(data.nodes)
             .on('tick', ticked);
@@ -166,10 +201,14 @@ export default class ForceDirectedGraph extends React.PureComponent {
     }
     render() {
         return (
-            <svg
-                styleName="force-directed-graph"
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <div
+                ref={(el) => { this.container = el; }}
+            >
+                <svg
+                    styleName="force-directed-graph"
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </div>
         );
     }
 }
