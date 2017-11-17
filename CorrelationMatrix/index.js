@@ -17,6 +17,8 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     labelsData: PropTypes.arrayOf(PropTypes.string),
+    colorScheme: PropTypes.func,
+    showLabels: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -28,10 +30,12 @@ const propTypes = {
 const defaultProps = {
     data: [],
     labelsData: [],
+    colorScheme: interpolateGnBu,
+    showLabels: true,
     margins: {
-        top: 50,
+        top: 100,
         right: 50,
-        bottom: 100,
+        bottom: 50,
         left: 100,
     },
 };
@@ -52,9 +56,11 @@ export default class CorrelationMatrix extends React.PureComponent {
 
     renderChart() {
         const {
+            boundingClientRect,
             data,
             labelsData,
-            boundingClientRect,
+            colorScheme,
+            showLabels,
             margins,
         } = this.props;
 
@@ -67,6 +73,7 @@ export default class CorrelationMatrix extends React.PureComponent {
             right,
             bottom,
             left,
+
         } = margins;
 
         const noofrows = data.length;
@@ -107,7 +114,7 @@ export default class CorrelationMatrix extends React.PureComponent {
             .domain([height, 0])
             .range([minValue, maxValue]);
 
-        const colorMap = scaleSequential(interpolateGnBu)
+        const colorMap = scaleSequential(colorScheme)
             .domain([minValue, maxValue]);
 
         const row = group.selectAll('.row')
@@ -145,14 +152,16 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('height', y.bandwidth())
             .style('stroke-width', 0);
 
-        cell.append('text')
-            .attr('dy', '.32em')
-            .attr('x', x.bandwidth() / 2)
-            .attr('y', y.bandwidth() / 2)
-            .attr('text-anchor', 'middle')
-            .style('visibility', 'hidden')
-            .style('fill', d => (d >= maxValue / 2 ? 'white' : 'black'))
-            .text(d => format('.2n')(d));
+        if (showLabels) {
+            cell.append('text')
+                .attr('dy', '.32em')
+                .attr('x', x.bandwidth() / 2)
+                .attr('y', y.bandwidth() / 2)
+                .attr('text-anchor', 'middle')
+                .style('visibility', 'hidden')
+                .style('fill', d => (d >= maxValue / 2 ? 'white' : 'black'))
+                .text(d => format('.2n')(d));
+        }
 
         row.selectAll('.cell')
             .data((d, i) => data[i])
@@ -167,7 +176,7 @@ export default class CorrelationMatrix extends React.PureComponent {
             .enter()
             .append('g')
             .attr('class', 'column-labels')
-            .attr('transform', (d, i) => `translate( ${x(i)}, ${height})`);
+            .attr('transform', (d, i) => `translate( ${x(i)}, 0)`);
 
         columnLabels
             .append('line')
@@ -176,15 +185,13 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('x1', x.bandwidth() / 2)
             .attr('x2', x.bandwidth() / 2)
             .attr('y1', 0)
-            .attr('y2', 5);
+            .attr('y2', -5);
 
         columnLabels
             .append('text')
-            .attr('x', 0)
-            .attr('y', x.bandwidth() / 2)
-            .attr('dy', '.5em')
-            .attr('text-anchor', 'end')
-            .attr('transform', 'rotate(-60)')
+            .attr('class', 'labels')
+            .attr('text-anchor', 'start')
+            .attr('transform', `translate(${(x.bandwidth() / 2)}, -5)rotate(-60)`)
             .text(d => d);
 
         const rowLabels = labels
