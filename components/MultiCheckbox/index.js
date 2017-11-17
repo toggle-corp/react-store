@@ -161,34 +161,37 @@ export default class MultiCheckbox extends React.PureComponent {
                     className="parent-container"
                     styleName="parent-container"
                 >
-                    <button
+                    <div
                         className="parent-check"
                         styleName="parent-check"
                         onClick={this.onButtonClick}
+                        role="presentation"
                     >
                         <span
                             styleName={allUnChecked ? 'icon unchecked' : 'icon'}
                             className={`checkbox-icon ${this.getButtonStyle(allChecked, allUnChecked)}`}
                         />
-                    </button>
-                    <button
+                    </div>
+                    <div
                         onClick={this.onClickShowButton}
                         className="button-title"
                         styleName="title"
+                        role="presentation"
                     >
                         {title}
-                    </button>
+                    </div>
                     {showDropdownArrow &&
-                        <TransparentButton
+                        <div
                             onClick={this.onClickShowButton}
                             className="dropdown-arrow"
                             styleName="arrow"
+                            role="presentation"
                         >
                             <span
                                 className={`ion-chevron-down ${showOptions ? 'chevron show' : 'chevron'}`}
                                 styleName={showOptions ? 'chevron show' : 'chevron'}
                             />
-                        </TransparentButton>
+                        </div>
                     }
                 </div>
                 <div
