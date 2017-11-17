@@ -17,8 +17,13 @@
     }
 }
 
-.svg {
+
+:global .svg {
     width: 100%;
     height: 100%;
+
+    .arcs{
+        cursor:pointer;
+    }
 }
 

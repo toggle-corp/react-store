@@ -20,10 +20,17 @@ const propTypes = {
     }),
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func.isRequired,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
+    showLabels: PropTypes.bool,
+    showTooltip: PropTypes.bool,
+
 };
 
 const defaultProps = {
     data: [],
+    colorScheme: schemeCategory20b,
+    showLabels: true,
+    showTooltip: true,
 };
 
 @Responsive
@@ -42,10 +49,13 @@ export default class SunBurst extends PureComponent {
 
     renderChart() {
         const {
+            boundingClientRect,
             data,
             labelAccessor,
             valueAccessor,
-            boundingClientRect,
+            colorScheme,
+            showLabels,
+            showTooltip,
         } = this.props;
 
         if (!boundingClientRect.width) {
@@ -59,7 +69,7 @@ export default class SunBurst extends PureComponent {
         const y = scaleSqrt()
             .range([0, radius]);
         const color = scaleOrdinal()
-            .range(schemeCategory20b);
+            .range(colorScheme);
 
         const arch = arc()
             .startAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x0))))
@@ -86,10 +96,23 @@ export default class SunBurst extends PureComponent {
         function computeTextRotation(d) {
             const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
             return (angle > 90) ? 180 + angle : angle;
+            // return (angle < 90 || angle > 180) ? angle + 90 : angle - 90; // rotation as rims
+        }
+
+        function placeTextLabel(t) {
+            const st = arch.startAngle()(t);
+            const ed = arch.endAngle()(t);
+            const angle = Math.round(Math.abs(st - ed)).toFixed(2);
+            const twoPI = Math.round(2 * Math.PI).toFixed(2);
+            if (t.parent === null) return 'translate(0,0)';
+            if (angle >= twoPI) {
+                return `translate(${arch.centroid(t)})`;
+            }
+            return `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`;
         }
 
         function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${d.data.name}</span><span class="value">${d.value}</span>`);
+            tooltip.html(`<span class="name">${labelAccessor(d.data)}</span><span class="value">${d.value}</span>`);
             return tooltip
                 .transition()
                 .style('display', 'inline-block');
@@ -154,10 +177,7 @@ export default class SunBurst extends PureComponent {
                             .transition()
                             .duration(750)
                             .attr('opacity', 1)
-                            .attr('transform', (t) => {
-                                if (t.parent === null) return 'translate(0,0)';
-                                return `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`;
-                            })
+                            .attr('transform', t => placeTextLabel(t))
                             .filter(function filtrate(t) {
                                 const length = this.getComputedTextLength();
                                 return filterText(t, length);
@@ -168,32 +188,37 @@ export default class SunBurst extends PureComponent {
                 });
         }
 
-        slices
+        const arcs = slices
             .append('path')
+            .attr('class', 'arcs')
             .attr('d', arch)
             .style('stroke', 'white')
-            .style('fill', d => color((d.children ? d : d.parent).data.name))
-            .on('click', handleClick)
-            .on('mouseover', mouseOverArc)
-            .on('mousemove', mouseMoveArc)
-            .on('mouseout', mouseOutArc);
+            .style('fill', d => color(labelAccessor(d.children ? d.data : d.parent.data)))
+            .on('click', handleClick);
 
-        const labels = slices
-            .append('text')
-            .attr('transform', (d) => {
-                if (d.parent === null) return 'translate(0,0)';
-                return `translate(${arch.centroid(d)})rotate(${computeTextRotation(d)})`;
-            })
-            .attr('pointer-events', 'none')
-            .attr('text-anchor', 'middle')
-            .text(d => labelAccessor(d.data));
+        if (showTooltip) {
+            arcs
+                .on('mouseover', mouseOverArc)
+                .on('mousemove', mouseMoveArc)
+                .on('mouseout', mouseOutArc);
+        }
 
-        labels
-            .filter(function filtrate(d) {
-                const length = this.getComputedTextLength();
-                return filterText(d, length);
-            })
-            .attr('opacity', 0);
+        if (showLabels) {
+            const labels = slices
+                .append('text')
+                .attr('class', 'labels')
+                .attr('transform', d => placeTextLabel(d))
+                .attr('pointer-events', 'none')
+                .attr('text-anchor', 'middle')
+                .text(d => labelAccessor(d.data));
+
+            labels
+                .filter(function filtrate(d) {
+                    const length = this.getComputedTextLength();
+                    return filterText(d, length);
+                })
+                .attr('opacity', 0);
+        }
     }
 
     render() {
@@ -202,7 +227,7 @@ export default class SunBurst extends PureComponent {
                 ref={(el) => { this.container = el; }}
             >
                 <svg
-                    styleName="svg"
+                    className="svg"
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>
