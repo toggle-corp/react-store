@@ -6,6 +6,10 @@ export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false
 );
 
+export const isFalsyOrEmptyOrZero = val => (
+    isFalsy(val) || val.length === 0 || val === 0
+);
+
 export const isTruthy = val => !isFalsy(val);
 
 export const isInteger = value => (

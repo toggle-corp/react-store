@@ -10,7 +10,7 @@ import styles from './styles.scss';
 import {
     getNumDaysInMonth,
     isFalsy,
-    leftPad,
+    isFalsyOrEmptyOrZero,
     isTruthy,
     randomString,
 } from '../../../utils/common';
@@ -134,6 +134,14 @@ export default class DateInput extends React.PureComponent {
     // Public method used by Form
     isFocused = () => this.state.focused;
 
+    // Check if the state has all date input filled
+    isFilled = (stateOverride = undefined) => {
+        const state = stateOverride || this.state;
+        return !isFalsyOrEmptyOrZero(state.day) &&
+            !isFalsyOrEmptyOrZero(state.month) &&
+            !isFalsyOrEmptyOrZero(state.year);
+    }
+
     clear = (e) => {
         e.preventDefault();
         this.setValue(undefined);
@@ -153,9 +161,9 @@ export default class DateInput extends React.PureComponent {
         }
 
         const date = new Date(timestamp);
-        const day = leftPad(date.getDate(), 2);
-        const month = leftPad(date.getMonth() + 1, 2);
-        const year = leftPad(date.getFullYear(), 4);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
 
         return { date, day, month, year };
     }
@@ -166,7 +174,7 @@ export default class DateInput extends React.PureComponent {
         const newState = { ...this.state };
         newState[key] = val;
 
-        if (newState.day || newState.month || newState.year) {
+        if (!this.isFilled(newState)) {
             newState.date = undefined;
             this.setState(newState);
             return;
@@ -405,7 +413,7 @@ export default class DateInput extends React.PureComponent {
                             className="clear-button"
                             disabled={disabled}
                             onClick={this.clear}
-                            styleName={isFalsy(this.state.date) && 'hidden'}
+                            styleName={!this.isFilled && 'hidden'}
                             tabIndex="0"
                         >
                             <span className="ion-close-round" />
