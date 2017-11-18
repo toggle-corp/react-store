@@ -19,6 +19,7 @@ export default function (WrappedComponent) {
 
             this.state = {
                 boundingClientRect: {},
+                parentBoundingClientRect: {},
             };
         }
 
@@ -81,7 +82,7 @@ export default function (WrappedComponent) {
             return (
                 <div
                     ref={(el) => { this.container = el; }}
-                    className={className}
+                    className={`responsive-wrapper ${className}`}
                 >
                     <WrappedComponent
                         boundingClientRect={boundingClientRect}
