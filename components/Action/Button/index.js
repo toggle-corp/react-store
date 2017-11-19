@@ -98,19 +98,22 @@ export default class Button extends React.PureComponent {
 
     render() {
         const {
+            className,
             buttonType,
+            iconName,
             children,
             disabled,
-            iconName,
             onClick,
+            ...otherProps
         } = this.props;
 
         return (
             <button
                 className={this.state.className}
+                styleName={`button ${buttonType}`}
                 disabled={disabled}
                 onClick={onClick}
-                styleName={`button ${buttonType}`}
+                {...otherProps}
             >
                 {
                     iconName &&
