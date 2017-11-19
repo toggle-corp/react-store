@@ -81,7 +81,7 @@ export default class Dendrogram extends React.PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
         const tree = cluster()
-            .size([height, width]);
+            .size([height, width - 100]);
 
         const root = hierarchy(data);
         tree(root);
@@ -113,7 +113,7 @@ export default class Dendrogram extends React.PureComponent {
             .attr('r', 2.5);
 
         node.append('text')
-            .attr('dy', 3)
+            .attr('dy', '.3em')
             .attr('dx', d => (d.children ? -8 : 8))
             .style('text-anchor', d => (d.children ? 'end' : 'start'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')

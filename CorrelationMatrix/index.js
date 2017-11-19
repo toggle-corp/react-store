@@ -189,6 +189,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         columnLabels
             .append('text')
+            .attr('font-size', '.8em')
             .attr('class', 'labels')
             .attr('text-anchor', 'start')
             .attr('transform', `translate(${(x.bandwidth() / 2)}, -5)rotate(-60)`)
@@ -213,6 +214,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         rowLabels
             .append('text')
+            .attr('font-size', '.8em')
             .attr('x', -8)
             .attr('y', y.bandwidth() / 2)
             .attr('dy', '.32em')

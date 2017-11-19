@@ -4,7 +4,7 @@ import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
-import { scaleLinear, schemeCategory20b, scaleSqrt, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, schemeCategory20c, scaleSqrt, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import Responsive from '../Responsive';
@@ -28,7 +28,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    colorScheme: schemeCategory20b,
+    colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,
 };

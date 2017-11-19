@@ -83,7 +83,7 @@ export default class RadialDendrogram extends React.PureComponent {
 
         const radius = width < height ? width / 2 : height / 2;
         const trees = tree()
-            .size([360, radius])
+            .size([360, radius - 20])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
         const root = hierarchy(data);
@@ -121,7 +121,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('r', 2.5);
 
         node.append('text')
-            .attr('dy', '.31em')
+            .attr('dy', '.3em')
             .attr('x', d => ((d.x < 180) === (!d.children) ? 6 : -6))
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')

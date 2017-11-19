@@ -98,6 +98,8 @@ export default class ForceDirectedGraph extends React.PureComponent {
         width = width - left - right;
         height = height - top - bottom;
 
+        const radius = Math.min(width, height) / 2;
+
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
@@ -107,7 +109,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
         const color = scaleOrdinal().range(colorScheme);
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idAccessor(d)))
+            .force('link', forceLink().id(d => idAccessor(d)).distance(radius / 4))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
