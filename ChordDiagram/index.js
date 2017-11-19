@@ -1,8 +1,7 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
-import { select } from 'd3-selection';
-import { scaleOrdinal } from 'd3-scale';
-import { schemeSet3 } from 'd3-scale-chromatic';
+import { select, event } from 'd3-selection';
+import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
 import { rgb } from 'd3-color';
@@ -18,6 +17,9 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     labelsData: PropTypes.arrayOf(PropTypes.string).isRequired,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
+    showLabels: PropTypes.bool,
+    showTooltip: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -28,6 +30,9 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    colorScheme: schemeCategory20c,
+    showLabels: true,
+    showTooltip: true,
     margins: {
         top: 50,
         right: 50,
@@ -55,6 +60,9 @@ export default class ChordDiagram extends React.PureComponent {
             data,
             boundingClientRect,
             labelsData,
+            colorScheme,
+            showLabels,
+            showTooltip,
             margins,
         } = this.props;
 
@@ -71,6 +79,12 @@ export default class ChordDiagram extends React.PureComponent {
 
         const svg = select(this.svg);
         svg.selectAll('*').remove();
+
+        const tooltip = select(this.container)
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('position', 'absolute')
+            .style('z-index', 10);
 
         width = width - left - right;
         height = height - top - bottom;
@@ -93,7 +107,7 @@ export default class ChordDiagram extends React.PureComponent {
         const ribbons = ribbon()
             .radius(innerRadius);
 
-        const color = scaleOrdinal().range(schemeSet3);
+        const color = scaleOrdinal().range(colorScheme);
 
         const chart = svg
             .attr('width', width + left + right)
@@ -101,6 +115,25 @@ export default class ChordDiagram extends React.PureComponent {
             .append('g')
             .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
             .datum(chords(data));
+
+        function mouseOverArc(d) {
+            tooltip.html(`<span class="name">${labelsData[d.index]}`);
+            return tooltip
+                .transition()
+                .style('display', 'inline-block');
+        }
+
+        function mouseMoveArc() {
+            return tooltip
+                .style('top', `${event.pageY - 30}px`)
+                .style('left', `${event.pageX + 20}px`);
+        }
+
+        function mouseOutArc() {
+            return tooltip
+                .transition()
+                .style('display', 'none');
+        }
 
         function fade(opacity) {
             return function dim(g, i) {
@@ -124,29 +157,39 @@ export default class ChordDiagram extends React.PureComponent {
 
         const groupPath = group
             .append('path')
+            .attr('class', 'arcs')
             .style('fill', d => color(d.index))
             .attr('id', (d, i) => `group${i}`)
             .style('stroke', d => rgb(color(d.index)).darker())
             .attr('d', arcs);
 
-        const groupText = group
-            .append('text')
-            .attr('x', 6)
-            .attr('dy', 15);
+        if (showTooltip) {
+            groupPath
+                .on('mouseover', mouseOverArc)
+                .on('mousemove', mouseMoveArc)
+                .on('mouseout', mouseOutArc);
+        }
 
-        groupText
-            .append('textPath')
-            .attr('xlink:href', (d, i) => `#group${i}`)
-            .attr('pointer-events', 'none')
-            .text(d => labelsData[d.index]);
+        if (showLabels) {
+            const groupText = group
+                .append('text')
+                .attr('x', 6)
+                .attr('dy', 15);
 
-        groupText
-            .filter(function filtrate(d, i) {
-                // eslint-disable-next-line no-underscore-dangle
-                return (((groupPath._groups[0][i].getTotalLength() / 2) - 30)
-                < this.getComputedTextLength());
-            })
-            .remove();
+            groupText
+                .append('textPath')
+                .attr('xlink:href', (d, i) => `#group${i}`)
+                .attr('pointer-events', 'none')
+                .text(d => labelsData[d.index]);
+
+            groupText
+                .filter(function filtrate(d, i) {
+                    // eslint-disable-next-line no-underscore-dangle
+                    return (((groupPath._groups[0][i].getTotalLength() / 2) - 30)
+                        < this.getComputedTextLength());
+                })
+                .remove();
+        }
 
         chart
             .append('g')
@@ -156,16 +199,21 @@ export default class ChordDiagram extends React.PureComponent {
             .enter()
             .append('path')
             .attr('d', ribbons)
-            .style('fill', d => color(d.target.index))
-            .style('stroke', d => rgb(color(d.target.index)).darker());
+            .style('fill', d => color(d.source.index))
+            .style('stroke', d => rgb(color(d.source.index)).darker());
     }
 
     render() {
         return (
-            <svg
-                styleName="chord-diagram"
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <div
+                className="chord-diagram-container"
+                ref={(el) => { this.container = el; }}
+            >
+                <svg
+                    className="chord-diagram"
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </div>
         );
     }
 }

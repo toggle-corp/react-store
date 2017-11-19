@@ -1,4 +1,21 @@
-.chord-diagram{
-    height: 100%;
-    width: 100%;
+:global .chord-diagram-container{
+    .tooltip {
+        position: absolute;
+        background-color: #fff;
+        color: #616161;
+        box-shadow: 0 1px 10px -3px rgba(0, 0, 0, 0.3);
+        padding: 6px 12px;
+
+        .name {
+            display: block;
+        }
+    }
+    .chord-diagram {
+        height: 100%;
+        width: 100%;
+
+        .arcs {
+            cursor: pointer;
+        }
+    }
 }
