@@ -228,10 +228,11 @@ export default class SunBurst extends PureComponent {
     render() {
         return (
             <div
+                className="sunburst-container"
                 ref={(el) => { this.container = el; }}
             >
                 <svg
-                    className="svg"
+                    className="sunburst"
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

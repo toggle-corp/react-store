@@ -206,10 +206,11 @@ export default class ForceDirectedGraph extends React.PureComponent {
     render() {
         return (
             <div
+                className="force-directed-graph-container"
                 ref={(el) => { this.container = el; }}
             >
                 <svg
-                    styleName="force-directed-graph"
+                    className="force-directed-graph"
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

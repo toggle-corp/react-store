@@ -15,6 +15,7 @@ const propTypes = {
         name: PropTypes.string,
     }),
     labelAccessor: PropTypes.func.isRequired,
+    lineColor: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -25,6 +26,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    lineColor: '#555',
     margins: {
         top: 50,
         right: 50,
@@ -52,6 +54,7 @@ export default class Dendrogram extends React.PureComponent {
             data,
             boundingClientRect,
             labelAccessor,
+            lineColor,
             margins,
         } = this.props;
 
@@ -89,7 +92,7 @@ export default class Dendrogram extends React.PureComponent {
             .enter()
             .append('path')
             .attr('class', 'link')
-            .attr('stroke', '#268073')
+            .attr('stroke', lineColor)
             .attr('fill', 'none')
             .attr('stroke-opacity', 0.4)
             .attr('storke-width', 1.5)
