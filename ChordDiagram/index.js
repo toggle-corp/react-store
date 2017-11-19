@@ -80,6 +80,10 @@ export default class ChordDiagram extends React.PureComponent {
         const svg = select(this.svg);
         svg.selectAll('*').remove();
 
+        select(this.container)
+            .selectAll('.tooltip')
+            .remove();
+
         const tooltip = select(this.container)
             .append('div')
             .attr('class', 'tooltip')
