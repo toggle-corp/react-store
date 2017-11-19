@@ -16,6 +16,7 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
+    showGridLines: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -26,6 +27,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    showGridLines: true,
     margins: {
         top: 50,
         right: 50,
@@ -54,6 +56,7 @@ export default class HorizontalBar extends React.PureComponent {
             boundingClientRect,
             valueAccessor,
             labelAccessor,
+            showGridLines,
             margins,
         } = this.props;
 
@@ -92,6 +95,11 @@ export default class HorizontalBar extends React.PureComponent {
             .domain(data.map(d => labelAccessor(d)))
             .padding(0.2);
 
+        const xx = scaleLinear()
+            .range([0, width]);
+        const yy = scaleLinear()
+            .range([height, 0]);
+
         const xAxis = axisBottom(x);
         const yAxis = axisLeft(y);
 
@@ -105,6 +113,37 @@ export default class HorizontalBar extends React.PureComponent {
             .append('g')
             .attr('class', 'y-axis')
             .call(yAxis);
+
+        function addXgrid() {
+            return axisBottom(xx)
+                .ticks(data.length)
+                .tickSize(-height)
+                .tickFormat('');
+        }
+
+        function addYgrid() {
+            return axisLeft(yy)
+                .ticks(data.length)
+                .tickSize(-width)
+                .tickFormat('');
+        }
+
+        function addGrid() {
+            group
+                .append('g')
+                .attr('class', 'grid')
+                .attr('transform', `translate(0, ${height})`)
+                .call(addXgrid());
+
+            group
+                .append('g')
+                .attr('class', 'grid')
+                .call(addYgrid());
+        }
+
+        if (showGridLines) {
+            addGrid();
+        }
 
         group
             .selectAll('.bar')
