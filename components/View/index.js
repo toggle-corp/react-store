@@ -2,14 +2,9 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
-export {
-    ElapsedDate,
-    ElapsedTime,
-} from './ElapsedDateTime';
 export { default as FloatingContainer } from './FloatingContainer';
 export {
     default as FormattedDate,
-    ColoredFormattedDate,
 } from './FormattedDate';
 export { default as List, ListView, ListItem } from './List';
 export { default as LoadingAnimation } from './LoadingAnimation';
