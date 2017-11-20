@@ -155,7 +155,6 @@ export default class Body extends React.PureComponent {
 
     render() {
         const { data } = this.props;
-
         return (
             <tbody
                 className={this.state.className}
