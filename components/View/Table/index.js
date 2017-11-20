@@ -106,6 +106,7 @@ const defaultProps = {
     onDataSort: undefined,
 };
 
+// TODO: move to common
 const isArrayEqual = (array1, array2) => (
     array1.length === array2.length && array1.every((d, i) => d === array2[i])
 );
