@@ -2,6 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import List from '../List';
 import Row from './Row';
 
 import {
@@ -106,7 +107,13 @@ export default class Body extends React.PureComponent {
 
     getStyleName = () => ('body')
 
-    getRow = (rowData) => {
+    getRowKey = (rowData) => {
+        const { keyExtractor } = this.props;
+        const key = keyExtractor(rowData);
+        return key;
+    }
+
+    getRow = (key, rowData) => {
         const {
             areCellsHoverable,
             areRowsHoverable,
@@ -115,10 +122,7 @@ export default class Body extends React.PureComponent {
             highlightCellKey,
             highlightColumnKey,
             highlightRowKey,
-            keyExtractor,
         } = this.props;
-
-        const key = keyExtractor(rowData);
 
         let cellKey;
         if (highlightCellKey.rowKey === key) {
@@ -130,9 +134,9 @@ export default class Body extends React.PureComponent {
                 areCellsHoverable={areCellsHoverable}
                 dataModifier={dataModifier}
                 headers={headers}
-                highlighted={isEqualAndTruthy(key, highlightRowKey)}
-                highlightColumnKey={highlightColumnKey}
                 highlightCellKey={cellKey}
+                highlightColumnKey={highlightColumnKey}
+                highlighted={isEqualAndTruthy(key, highlightRowKey)}
                 hoverable={areRowsHoverable}
                 key={key}
                 onClick={this.handleRowClick}
@@ -144,27 +148,23 @@ export default class Body extends React.PureComponent {
 
     handleRowClick = (rowKey, cellKey, e) => {
         const { onClick } = this.props;
-
         if (onClick) {
             onClick(rowKey, cellKey, e);
         }
     }
 
     render() {
-        const {
-            data,
-        } = this.props;
-
+        const { data } = this.props;
         return (
             <tbody
                 className={this.state.className}
                 styleName={this.state.styleName}
             >
-                {
-                    data.map(rowData => (
-                        this.getRow(rowData)
-                    ))
-                }
+                <List
+                    data={data}
+                    keyExtractor={this.getRowKey}
+                    modifier={this.getRow}
+                />
             </tbody>
         );
     }

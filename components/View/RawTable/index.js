@@ -50,6 +50,8 @@ const propTypes = {
     highlightRowKey: propTypeKey,
 
     onDataSort: PropTypes.func,
+
+    emptyComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -64,6 +66,8 @@ const defaultProps = {
     highlightRowKey: undefined,
 
     onDataSort: undefined,
+
+    emptyComponent: undefined,
 };
 
 const isArrayEqual = (array1, array2) => (
@@ -132,6 +136,7 @@ export default class RawTable extends React.PureComponent {
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
+            emptyComponent,
         } = this.props;
 
         return (

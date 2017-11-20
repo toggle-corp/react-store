@@ -2,6 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import List from '../List';
+
 import Header from './Header';
 import styles from './styles.scss';
 
@@ -77,34 +79,33 @@ export default class Headers extends React.PureComponent {
         return styleNames.join(' ');
     }
 
-    getHeader = (headerData) => {
+    getHeaderKey = header => header.key;
+
+    getHeader = (key, header) => {
         const {
             headers,
             headerModifier,
         } = this.props;
 
-        let header = headerData.label;
+        let headerContent = header.label;
 
         if (headerModifier) {
-            header = headerModifier(headerData, headers);
+            headerContent = headerModifier(header, headers);
         }
 
         return (
             <Header
-                key={headerData.key}
+                key={key}
                 onClick={this.handleHeaderClick}
-                uniqueKey={headerData.key}
+                uniqueKey={key}
             >
-                {header}
+                {headerContent}
             </Header>
         );
     }
 
     handleHeaderClick = (key, e) => {
-        const {
-            onClick,
-        } = this.props;
-
+        const { onClick } = this.props;
         if (onClick) {
             onClick(key, e);
         }
@@ -121,11 +122,11 @@ export default class Headers extends React.PureComponent {
                 styleName={this.state.styleName}
             >
                 <tr>
-                    {
-                        headers.map(header => (
-                            this.getHeader(header)
-                        ))
-                    }
+                    <List
+                        data={headers}
+                        keyExtractor={this.getHeaderKey}
+                        modifier={this.getHeader}
+                    />
                 </tr>
             </thead>
         );

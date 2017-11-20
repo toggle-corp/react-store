@@ -93,6 +93,8 @@ const propTypes = {
     onBodyClick: PropTypes.func,
 
     onDataSort: PropTypes.func,
+
+    emptyComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -104,6 +106,7 @@ const defaultProps = {
     highlightRowKey: undefined,
     onBodyClick: undefined,
     onDataSort: undefined,
+    emptyComponent: undefined,
 };
 
 // TODO: move to common
@@ -301,6 +304,7 @@ export default class Table extends React.PureComponent {
             highlightColumnKey,
             onBodyClick,
             onDataSort,
+            emptyComponent,
         } = this.props;
 
         const {
@@ -323,6 +327,7 @@ export default class Table extends React.PureComponent {
                 highlightColumnKey={highlightColumnKey}
                 onBodyClick={onBodyClick}
                 onDataSort={onDataSort}
+                emptyComponent={emptyComponent}
             />
         );
     }
