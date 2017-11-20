@@ -6,6 +6,7 @@ import styles from './styles.scss';
 
 const propTypeData = PropTypes.arrayOf(
     PropTypes.oneOfType([
+        PropTypes.number,
         PropTypes.string,
         PropTypes.shape({
             dummy: PropTypes.string,
