@@ -413,7 +413,7 @@ export default class DateInput extends React.PureComponent {
                             className="clear-button"
                             disabled={disabled}
                             onClick={this.clear}
-                            styleName={!this.isFilled && 'hidden'}
+                            styleName={!this.isFilled() && 'hidden'}
                             tabIndex="0"
                         >
                             <span className="ion-close-round" />
