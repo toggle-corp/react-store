@@ -80,9 +80,18 @@ export default class DateUnit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+
+        this.currentValue = props.value;
+    }
+
     componentWillReceiveProps(newProps) {
         // Always max validate whenever props change
         this.maxValidate(newProps.max);
+        if (+this.currentValue !== +newProps.value) {
+            this.currentValue = newProps.value;
+        }
     }
 
     getValue() {
@@ -168,25 +177,6 @@ export default class DateUnit extends React.PureComponent {
     }
 
     handleBlur = () => {
-        // When getting out of focus,
-        // we do some extra validations
-        // including leftPadding the value if it has less number
-        // of digits then required.
-
-        const currentValue = this.input.value;
-        const currentLength = currentValue.length;
-        const length = this.props.length;
-
-        if (currentLength < length && +currentValue !== 0) {
-            this.input.value = leftPad(currentValue, length);
-        } else if (currentLength === length && +currentValue === 0) {
-            this.input.value = '';
-        }
-
-        if (this.props.onChange) {
-            this.props.onChange(this.input.value);
-        }
-
         if (this.props.onBlur) {
             this.props.onBlur();
         }
@@ -197,7 +187,21 @@ export default class DateUnit extends React.PureComponent {
             className,
             disabled,
             placeholder,
+            length,
         } = this.props;
+
+        const focused = document.activeElement === this.input;
+        let displayValue = isTruthy(this.currentValue) ? this.currentValue : '';
+
+        if (!focused) {
+            if (displayValue.length < length && +displayValue !== 0) {
+                displayValue = leftPad(displayValue, length);
+            } else if (displayValue.length === length && +displayValue === 0) {
+                displayValue = '';
+            }
+        }
+
+        this.currentValue = displayValue;
 
         return (
             <input
@@ -213,7 +217,7 @@ export default class DateUnit extends React.PureComponent {
                 placeholder={placeholder}
                 ref={(input) => { this.input = input; }}
                 type="number"
-                value={isTruthy(this.props.value) ? this.props.value : ''}
+                value={displayValue}
             />
         );
     }

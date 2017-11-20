@@ -163,7 +163,7 @@ export default class DateInput extends React.PureComponent {
         const newState = { ...this.state };
         newState[key] = val;
 
-        if (newState.day || newState.month || newState.year) {
+        if (!newState.day || !newState.month || !newState.year) {
             newState.date = undefined;
             this.setState(newState);
             return;
@@ -402,7 +402,7 @@ export default class DateInput extends React.PureComponent {
                             className="clear-button"
                             disabled={disabled}
                             onClick={this.clear}
-                            styleName={isFalsy(this.state.date) && 'hidden'}
+                            styleName={isFalsy(this.state.day) && isFalsy(this.state.month) && isFalsy(this.state.year) && 'hidden'}
                             tabIndex="0"
                         >
                             <span className="ion-close-round" />
