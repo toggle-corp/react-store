@@ -26,11 +26,13 @@ export default class Uploader {
             this.progress = 0;
             this.pending = false;
 
+            const response = JSON.parse(xhr.response);
+
             if (this.resolveUpload) {
-                this.resolveUpload(xhr.status, xhr.response);
+                this.resolveUpload(xhr.status, response);
             }
             if (this.onAbort) {
-                this.onAbort(xhr.status, xhr.response);
+                this.onAbort(xhr.status, response);
             }
         };
 
@@ -38,11 +40,13 @@ export default class Uploader {
             this.progress = 0;
             this.pending = false;
 
+            const response = JSON.parse(xhr.response);
+
             if (this.resolveUpload) {
-                this.resolveUpload(xhr.status, xhr.response);
+                this.resolveUpload(xhr.status, response);
             }
             if (this.onError) {
-                this.onError(xhr.status, xhr.response);
+                this.onError(xhr.status, response);
             }
         };
 
@@ -50,11 +54,13 @@ export default class Uploader {
             this.progress = Math.floor(xhr.status / 100) === 2 ? 100 : 0;
             this.pending = false;
 
+            const response = JSON.parse(xhr.response);
+
             if (this.resolveUpload) {
-                this.resolveUpload(xhr.status, xhr.response);
+                this.resolveUpload(xhr.status, response);
             }
             if (this.onLoad) {
-                this.onLoad(xhr.status, xhr.response);
+                this.onLoad(xhr.status, response);
             }
         };
 
