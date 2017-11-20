@@ -25,7 +25,6 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    emptyComponent: 'Nothing here',
     modifier: undefined,
 };
 

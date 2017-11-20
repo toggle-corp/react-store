@@ -38,8 +38,16 @@
             font-weight: $font-weight-normal;
         }
 
+        .chevron {
+            transition: .2s all ease-in-out;
+
+            &.show {
+                transform: rotate(180deg);
+            }
+        }
+
         .arrow {
-            display: flex;
+            display: inline-block;
             align-items: center;
             transition: .2s all ease-in-out;
             margin: 0 $spacing-small;
@@ -53,13 +61,6 @@
                 background-color: $color-background-hover;
             }
 
-            .chevron {
-                transition: .2s all ease-in-out;
-
-                &.show {
-                    transform: rotate(180deg);
-                }
-            }
         }
     }
 

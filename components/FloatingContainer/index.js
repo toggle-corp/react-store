@@ -136,7 +136,7 @@ export default class FloatingContainer extends React.PureComponent {
                 window.addEventListener('mousedown', this.handleClick);
             }
 
-            // append style provided by parent 
+            // append style provided by parent
             if (styleOverride) {
                 Object.assign(this.container.style, styleOverride);
             }

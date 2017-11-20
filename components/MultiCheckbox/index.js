@@ -2,6 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { ListView } from '../View/List';
 import { TransparentButton } from '../Button';
 import styles from './styles.scss';
 import Checkbox from '../Checkbox';
@@ -57,10 +58,14 @@ export default class MultiCheckbox extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ displayOptions: nextProps.options });
+        if (this.props.options !== nextProps.options) {
+            this.setState({ displayOptions: nextProps.options });
+        }
     }
 
-    onButtonClick = () => {
+    onButtonClick = (e) => {
+        e.preventDefault();
+
         const { allChecked } = this.state;
         let displayOptions = [...this.state.displayOptions];
 
@@ -89,7 +94,8 @@ export default class MultiCheckbox extends React.PureComponent {
         this.setState(newState, () => this.props.onChange(displayOptions));
     }
 
-    onClickShowButton = () => {
+    onClickShowButton = (e) => {
+        e.preventDefault();
         this.setState({ showOptions: !this.state.showOptions });
     }
 
@@ -99,16 +105,30 @@ export default class MultiCheckbox extends React.PureComponent {
         } else if (allUnChecked) {
             return 'ion-android-checkbox-outline-blank';
         }
-
         return 'ion-android-checkbox-blank';
     }
+
+    getOptionKey = option => option.key;
+
+    getOption = (key, option) => (
+        <Checkbox
+            key={option.key}
+            label={option.title}
+            className={`${styles['checkbox-indent']} checkbox-indent`}
+            initialValue={option.isChecked}
+            onChange={
+                (value) => {
+                    this.handleOptionChange(option.key, value);
+                }
+            }
+        />
+    )
 
     handleOptionChange = (key, value) => {
         let allChecked = true;
         let allUnChecked = true;
 
         const displayOptions = [...this.state.displayOptions];
-        console.log(displayOptions);
 
         const option = displayOptions.find(d => d.key === key);
         option.isChecked = value;
@@ -138,7 +158,6 @@ export default class MultiCheckbox extends React.PureComponent {
         this.props.onChange(this.state.displayOptions);
     }
 
-
     render() {
         const {
             className,
@@ -161,59 +180,44 @@ export default class MultiCheckbox extends React.PureComponent {
                     className="parent-container"
                     styleName="parent-container"
                 >
-                    <div
+                    <TransparentButton
                         className="parent-check"
                         styleName="parent-check"
                         onClick={this.onButtonClick}
-                        role="presentation"
                     >
                         <span
                             styleName={allUnChecked ? 'icon unchecked' : 'icon'}
                             className={`checkbox-icon ${this.getButtonStyle(allChecked, allUnChecked)}`}
                         />
-                    </div>
-                    <div
+                    </TransparentButton>
+                    <TransparentButton
                         onClick={this.onClickShowButton}
                         className="button-title"
                         styleName="title"
-                        role="presentation"
                     >
                         {title}
-                    </div>
+                    </TransparentButton>
+                    {/* TODO: arrow should be inside above button
+                      not inside button of itself */}
                     {showDropdownArrow &&
-                        <div
+                        <TransparentButton
                             onClick={this.onClickShowButton}
                             className="dropdown-arrow"
                             styleName="arrow"
-                            role="presentation"
                         >
                             <span
                                 className={`ion-chevron-down ${showOptions ? 'chevron show' : 'chevron'}`}
                                 styleName={showOptions ? 'chevron show' : 'chevron'}
                             />
-                        </div>
+                        </TransparentButton>
                     }
                 </div>
-                <div
+                <ListView
                     styleName={showOptions ? 'options-container show' : 'options-container'}
-                >
-                    {
-                        displayOptions.map(option => (
-                            <Checkbox
-                                key={option.key}
-                                label={option.title}
-                                className="checkbox-indent"
-                                styleName="checkbox-indent"
-                                initialValue={option.isChecked}
-                                onChange={
-                                    (value) => {
-                                        this.handleOptionChange(option.key, value);
-                                    }
-                                }
-                            />
-                        ))
-                    }
-                </div>
+                    data={displayOptions}
+                    keyExtractor={this.getOptionKey}
+                    modifier={this.getOption}
+                />
             </div>
         );
     }
