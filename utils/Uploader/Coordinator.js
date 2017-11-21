@@ -8,7 +8,15 @@ export default class Coordinator {
         this.hasActiveQueue = false;
     }
 
-    getUploaderById = id => this.uploaders.find(uploader => uploader.id === id);
+    getUploaderById = id => this.uploaders.find(
+        uploader => uploader.id === id,
+    )
+
+    getActiveUploaderIndexById = id => this.activeUploaders.findIndex(
+        uploader => uploader.id === id,
+    )
+
+    static fnToIntercept = ['success', 'failure', 'fatal', 'abort'];
 
     add = (id, u) => {
         const oldUploader = this.getUploaderById(id);
@@ -16,21 +24,41 @@ export default class Coordinator {
             console.warn(`Uploder with id '${id}' already registered.`);
             return;
         }
-
         const nativeUploader = u;
-        const uploader = {
-            id,
-            nativeUploader,
-            onLoad: nativeUploader.onLoad,
-        };
-        // override onLoad of uploader
-        nativeUploader.onLoad = (status, response) => {
-            this.handleUploaderLoad(id, status, response);
-        };
+
+        // Copy functions of nativeUploader
+        const interceptedFn = Coordinator.fnToIntercept.reduce(
+            (acc, val) => {
+                acc[val] = nativeUploader[val];
+                return acc;
+            },
+            {},
+        );
+        // NOTE: Override functions of nativeUploader
+        Coordinator.fnToIntercept.forEach((val) => {
+            nativeUploader[val] = this.handleUploaderLoad(id, val);
+        });
+
         // add upload wrapper to list
+        const uploader = { id, nativeUploader, interceptedFn };
         this.uploaders.push(uploader);
     }
 
+    // override function for onload of uploader
+    handleUploaderLoad = (id, fnName) => (status, response) => {
+        const uploaderIndex = this.getActiveUploaderIndexById(id);
+        this.activeUploaders.splice(uploaderIndex, 1);
+        this.updateActiveUploaders();
+
+        const uploader = this.getUploaderById(id);
+        const fn = uploader.interceptedFn[fnName];
+        if (fn) {
+            fn(status, response);
+        }
+    }
+
+    // if there is activeQueue, and the no. of uploaders running is less than
+    // the allowed value then start new uploader
     updateActiveUploaders = () => {
         if (!this.hasActiveQueue || this.activeUploaders.length >= this.maxActiveUploads) {
             return;
@@ -51,17 +79,6 @@ export default class Coordinator {
         this.updateActiveUploaders();
     }
 
-    handleUploaderLoad = (id, status, response) => {
-        const uploaderIndex = this.activeUploaders.findIndex(d => d.id === id);
-        this.activeUploaders.splice(uploaderIndex, 1);
-        this.updateActiveUploaders();
-
-        const uploader = this.getUploaderById(id);
-        if (uploader.onLoad) {
-            uploader.onLoad(status, response);
-        }
-    }
-
     // PUBLIC
     queueAll = () => {
         this.queuedUploaders = [...this.uploaders];
@@ -69,5 +86,5 @@ export default class Coordinator {
         this.updateActiveUploaders();
     }
 
-    // TODO: start, abort
+    // TODO: start, abort individual uploaders
 }
