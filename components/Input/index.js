@@ -3,6 +3,7 @@
  */
 
 export { default as Checkbox } from './Checkbox';
+export { default as DateFilter } from './DateFilter';
 export { default as DateInput } from './DateInput';
 export { default as DatePicker } from './DatePicker';
 export { default as FileInput, ImageInput } from './FileInput';
