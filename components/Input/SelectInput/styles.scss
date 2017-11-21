@@ -27,12 +27,38 @@
             }
         }
 
-        .dropdown-icon {
+        .actions {
             position: absolute;
             top: $spacing-small;
             right: $spacing-small;
-            transform: none;
-            transition: .2s transform ease-in-out;
+
+            .clear-button {
+                display: none;
+                margin: 0;
+                outline: none;
+                border: 0;
+                background-color: transparent;
+                cursor: pointer;
+                padding: 0 $spacing-small;
+                color: $color-text-disabled;
+
+                &:hover {
+                    color: $color-danger;
+                }
+            }
+
+            .dropdown-icon {
+                transform: none;
+                transition: .2s transform ease-in-out;
+            }
+        }
+
+        &:hover {
+            .actions {
+                .clear-button {
+                    display: inline-block;
+                }
+            }
         }
     }
 
