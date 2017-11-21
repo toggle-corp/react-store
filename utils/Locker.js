@@ -20,7 +20,7 @@ export default class Locker {
             const randomTime = Math.round(Math.random() * 2000);
             const maxLockTime = 5000;
             const refreshTime = 1000;
-            this.cleared = false;
+            this.stopped = false;
 
             this.timeouts.push(setTimeout(() => {
                 this.lamportFastLock(maxLockTime, () => {
@@ -28,22 +28,24 @@ export default class Locker {
                         this.resetTimestamp();
                     }, refreshTime));
 
-                    resolve();
+                    if (!this.stopped) {
+                        resolve();
+                    }
                 });
             }, randomTime));
         });
     }
 
     // Clear lock if acquired and all attempts if trying to acquire
-    clear() {
-        this.cleared = true;
+    release() {
+        this.stopped = true;
         this.timeouts.forEach(id => clearTimeout(id));
         this.intervals.forEach(id => clearInterval(id));
         localStorage.removeItem(this.yKey);
     }
 
     lamportFastLock(maxLockTime, callback) {
-        if (this.cleared) {
+        if (this.stopped) {
             return;
         }
 
@@ -51,7 +53,7 @@ export default class Locker {
         const getYTime = y => y.split('|')[1];
 
         localStorage[this.xKey] = this.uniqueId;
-        if (!localStorage[this.yKey] ||
+        if (localStorage[this.yKey] &&
             (Date.now() - getYTime(localStorage[this.yKey]) < maxLockTime)) {
             this.timeouts.push(setTimeout(() => {
                 this.lamportFastLock(maxLockTime, callback);
