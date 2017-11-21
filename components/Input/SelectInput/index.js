@@ -147,11 +147,15 @@ export default class SelectInput extends React.PureComponent {
 
         if (multiple) {
             const selectedOptions = [];
+
+            // Create selected options array from selected option keys
             selectedOptionKeys.forEach((key) => {
                 const optionIndex = options.findIndex(d => keySelector(d) === key);
 
                 if (optionIndex !== -1) {
                     selectedOptions.push(options[optionIndex]);
+                } else {
+                    console.warn(`SelectInput: option with key ${key} not found`);
                 }
             });
 
@@ -159,7 +163,7 @@ export default class SelectInput extends React.PureComponent {
                 selectedOptionKeys,
                 selectedOptions,
             };
-        } else if (selectedOptionKey) {
+        } else {
             const selectedOption = options.find(
                 d => keySelector(d) === selectedOptionKey,
             ) || {};
@@ -380,6 +384,35 @@ export default class SelectInput extends React.PureComponent {
         }, 0);
     }
 
+    handleClearButtonClick = (e) => {
+        e.preventDefault();
+
+        const {
+            multiple,
+            onChange,
+        } = this.props;
+
+        const {
+            selectedOptions: prevSelectedOptions,
+            selectedOption: prevSelectedOption,
+        } = this.state;
+
+        this.setState({
+            selectedOptionKey: undefined,
+            selectedOption: {},
+            selectedOptions: [],
+            inputValue: '',
+        });
+
+        if (multiple) {
+            if (onChange && prevSelectedOptions.length !== 0) {
+                onChange([]);
+            }
+        } else if (onChange && Object.keys(prevSelectedOption).length !== 0) {
+            onChange(undefined);
+        }
+    }
+
     render() {
         const {
             displayOptions,
@@ -445,10 +478,25 @@ export default class SelectInput extends React.PureComponent {
                         type="text"
                         value={this.state.inputValue}
                     />
-                    <span
-                        styleName="dropdown-icon"
-                        className="dropdown-icon ion-android-arrow-dropdown"
-                    />
+                    <div
+                        styleName="actions"
+                        className="actions"
+                    >
+                        <button
+                            onClick={this.handleClearButtonClick}
+                            styleName="clear-button"
+                            className="clear-button"
+                            title="Clear selected option(s)"
+                        >
+                            <span
+                                className="clear-icon ion-android-close"
+                            />
+                        </button>
+                        <span
+                            styleName="dropdown-icon"
+                            className="dropdown-icon ion-android-arrow-dropdown"
+                        />
+                    </div>
                 </div>
                 {
                     showHintAndError && [
