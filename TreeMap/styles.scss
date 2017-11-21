@@ -1,4 +1,51 @@
-.treemap {
+:global .treemap {
     width: 100%;
     height: 100%;
+
+	  rect {
+	      stroke: #fff;
+	      stroke-width: 1px;
+	  }
+    .grandparent text {
+        cursor:pointer;
+    }
+	  .grandparent > rect {
+	      stroke-width: 3px;
+        fill: #1693A5;
+	  }
+	  .grandparent:hover > rect {
+	      fill: grey;
+	  }
+    .children rect.parent,
+	  .grandparent rect {
+	      cursor: pointer;
+	  }
+	  .children rect.child {
+	      opacity: 0;
+	  }
+	  .children:hover rect.child {
+	      opacity: 1;
+	      stroke-width: 1px;
+	  }
+	  .children:hover rect.parent {
+	      opacity: 0;
+	  }
+    .children rect.parent {
+	  }
+	  .form-group {
+	      text-align:left;
+	  }
+	  .textdiv {
+	      font-size: 14px;
+	      padding: 7px;
+	      cursor: pointer;
+	      overflow:none;
+	  }
+	  .textdiv .title {
+	      margin-top: 8px;
+	  }
+	  .textdiv p{
+	      line-height: 13px;
+	      padding:0px;
+	  }
 }
