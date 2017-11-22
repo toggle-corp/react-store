@@ -105,6 +105,7 @@ export default class TextInput extends React.PureComponent {
             // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
             onChange, // eslint-disable-line
+            className,
 
             error,
             hint,
@@ -121,7 +122,7 @@ export default class TextInput extends React.PureComponent {
         return (
             <div
                 styleName="text-input-wrapper"
-                className={`text-input-wrapper ${this.props.className}`}
+                className={`text-input-wrapper ${className}`}
             >
                 <div
                     className={`
