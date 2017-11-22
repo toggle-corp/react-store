@@ -66,6 +66,10 @@ const propTypes = {
      */
     required: PropTypes.bool,
 
+    showLabel: PropTypes.bool,
+
+    showHintAndError: PropTypes.bool,
+
     value: PropTypes.number,
 };
 
@@ -79,6 +83,8 @@ const defaultProps = {
     label: '',
     onChange: undefined,
     required: false,
+    showLabel: true,
+    showHintAndError: true,
     value: undefined,
 };
 
@@ -130,6 +136,45 @@ export default class DateInput extends React.PureComponent {
 
     // Public method used by Form
     getValue = () => this.state.date && this.state.date.getTime();
+
+    getStyleName() {
+        const styleNames = [];
+
+        const {
+            disabled,
+            error,
+            required,
+        } = this.props;
+
+        const {
+            focused,
+            showDatePicker,
+        } = this.state;
+
+        styleNames.push('date-input-wrapper');
+
+        if (disabled) {
+            styleNames.push('disabled');
+        }
+
+        if (focused) {
+            styleNames.push('focused');
+        }
+
+        if (showDatePicker) {
+            styleNames.push('date-picker-shown');
+        }
+
+        if (error) {
+            styleNames.push('error');
+        }
+
+        if (required) {
+            styleNames.push('required');
+        }
+
+        return styleNames.join(' ');
+    }
 
     // Public method used by Form
     isFocused = () => this.state.focused;
@@ -224,7 +269,10 @@ export default class DateInput extends React.PureComponent {
     // Handle pick event of date picker
     handleDatePick = (timestamp) => {
         this.setValue(timestamp);
-        this.setState({ focused: true });
+        this.setState({
+            focused: false,
+            showDatePicker: false,
+        });
     }
 
     // Handle dynamic style override of date picker
@@ -377,35 +425,32 @@ export default class DateInput extends React.PureComponent {
             error,
             hint,
             label,
-            required,
+            showLabel,
+            showHintAndError,
         } = this.props;
 
         const isToday =
             (this.state.date && this.state.date.toDateString()) === (new Date()).toDateString();
+        const styleName = this.getStyleName();
 
         return (
             <div
-                styleName="date-input-wrapper"
-                className={className}
+                className={`${className} ${styleName}`}
+                styleName={styleName}
                 ref={(el) => { this.container = el; }}
             >
+                {showLabel && (
+                    <label
+                        htmlFor={this.inputId}
+                        styleName="label"
+                    >
+                        {label}
+                    </label>
+                )}
                 <div
-                    styleName={`
-                        date-input
-                        ${this.state.focused || this.state.showDatePicker ? 'focused' : ''}
-                        ${error ? 'invalid' : ''}
-                        ${required ? 'required' : ''}
-                    `}
+                    className="date-input"
+                    styleName="date-input"
                 >
-                    {label && (
-                        <label
-                            htmlFor={this.inputId}
-                            styleName="label"
-                        >
-                            {label}
-                        </label>
-                    )}
-
                     { this.renderDateUnits() }
 
                     <div styleName="actions">
@@ -439,36 +484,36 @@ export default class DateInput extends React.PureComponent {
                 </div>
 
                 {
-                    !error && hint && (
-                        <p
-                            className="hint"
-                            styleName="hint"
-                        >
-                            {hint}
-                        </p>
-                    )
+                    showHintAndError && [
+                        !error && hint && (
+                            <p
+                                key="hint"
+                                className="hint"
+                                styleName="hint"
+                            >
+                                {hint}
+                            </p>
+                        ),
+                        error && !hint && (
+                            <p
+                                key="error"
+                                styleName="error"
+                                className="error"
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && !hint && (
+                            <p
+                                key="empty"
+                                styleName="empty"
+                                className="error empty"
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
                 }
-                {
-                    error && !hint && (
-                        <p
-                            className="error"
-                            styleName="error"
-                        >
-                            {error}
-                        </p>
-                    )
-                }
-                {
-                    !error && !hint && (
-                        <p
-                            className="empty"
-                            styleName="empty"
-                        >
-                            -
-                        </p>
-                    )
-                }
-
                 <FloatingContainer
                     closeOnBlur
                     containerId="datepicker-container"

@@ -17,13 +17,22 @@
             border: 0;
             border-bottom: $width-separator-medium solid $color-separator-alt;
             background-color: transparent;
-            padding: $spacing-small 0;
+            padding: $spacing-extra-small 0;
             width: 100%;
+            color: $color-text;
             font-family: inherit;
             font-size: inherit;
 
+            &::placeholder {
+                color: $color-text-disabled;
+            }
+
+            &:hover {
+                border-bottom-color: $color-separator-hover;
+            }
+
             &:focus {
-                border-bottom-color: $color-accent;
+                border-bottom: $width-separator-normal solid $color-accent;
             }
         }
 
@@ -63,6 +72,10 @@
     }
 
     &.options-shown {
+        .label {
+            color: $color-accent;
+        }
+
         .input-wrapper {
             .dropdown-icon {
                 transform: rotate(180deg);
@@ -70,22 +83,58 @@
         }
     }
 
-    .hint {
-        margin: $spacing-small 0 0;
-        color: $color-label;
+    &.error {
+        .input-wrapper {
+            .input {
+                border-bottom-color: $color-danger;
+            }
+        }
+
+        .label {
+            color: $color-danger;
+        }
+
+    }
+
+    .multiple {
+        color: $color-text;
+    }
+
+    %base {
+        margin: $spacing-extra-small 0 0;
         font-size: $font-size-extra-small;
+    }
+
+    .hint {
+        @extend %base;
+        color: $color-label;
     }
 
     .error {
-        margin: $spacing-small 0 0;
+        @extend %base;
         color: $color-danger;
-        font-size: $font-size-extra-small;
     }
 
     .empty {
+        @extend %base;
         visibility: hidden;
-        margin: $spacing-small 0 0;
-        font-size: $font-size-extra-small;
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .input-wrapper {
+            .input {
+                border-bottom-color: $color-separator;
+                color: $color-text-disabled;
+            }
+
+            .actions {
+                color: $color-text-disabled;
+            }
+        }
     }
 }
 

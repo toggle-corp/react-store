@@ -15,6 +15,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Is input disabled?
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * String to show in case of error
      */
     error: PropTypes.string,
@@ -63,6 +68,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     error: '',
     hint: '',
     initialValue: undefined,
@@ -87,6 +93,7 @@ export default class TextInput extends React.PureComponent {
         const value = this.props.initialValue || this.props.value || '';
 
         this.state = {
+            isFocused: false,
             value,
         };
 
@@ -101,6 +108,40 @@ export default class TextInput extends React.PureComponent {
 
     getValue = () => this.state.value;
 
+    getStyleName() {
+        const styleNames = [];
+
+        const {
+            disabled,
+            error,
+            required,
+        } = this.props;
+
+        const {
+            isFocused,
+        } = this.state;
+
+        styleNames.push('text-input');
+
+        if (disabled) {
+            styleNames.push('disabled');
+        }
+
+        if (isFocused) {
+            styleNames.push('focused');
+        }
+
+        if (error) {
+            styleNames.push('error');
+        }
+
+        if (required) {
+            styleNames.push('required');
+        }
+
+        return styleNames.join(' ');
+    }
+
     handleChange = (event) => {
         const { value } = event.target;
         this.setState({ value });
@@ -110,69 +151,84 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
+    handleFocus = () => {
+        const {
+            onFocus,
+        } = this.props;
+
+        this.setState({
+            isFocused: true,
+        });
+
+        if (onFocus) {
+            onFocus();
+        }
+    }
+
+    handleBlur = () => {
+        const {
+            onBlur,
+        } = this.props;
+
+        this.setState({
+            isFocused: false,
+        });
+
+        if (onBlur) {
+            onBlur();
+        }
+    }
+
     render() {
         const {
             // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
             value: propValue, // eslint-disable-line
+            onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
+            onFocus, // eslint-disable-line
             className,
 
             error,
             hint,
             label,
-            required,
             showLabel,
             showHintAndError,
             ...otherProps
         } = this.props;
 
         const {
-            focused,
             value,
         } = this.state;
 
+        const styleName = this.getStyleName();
+
         return (
             <div
-                styleName="text-input-wrapper"
-                className={`text-input-wrapper ${className}`}
+                className={`${styleName} ${className}`}
+                styleName={styleName}
             >
-                <div
-                    className={`
-                        text-input
-                        ${error ? 'invalid' : ''}
-                        ${focused ? 'focused' : ''}
-                        ${required ? 'required' : ''}
-                    `}
-                    styleName={`
-                        text-input
-                        ${error ? 'invalid' : ''}
-                        ${focused ? 'focused' : ''}
-                        ${required ? 'required' : ''}
-                    `}
-                >
-                    {
-                        showLabel && (
-                            <label
-                                className="label"
-                                htmlFor={this.inputId}
-                                styleName="label"
-                            >
-                                {label}
-                            </label>
-                        )
-                    }
-                    <input
-                        className="input"
-                        id={this.inputId}
-                        onBlur={this.handleBlur}
-                        onChange={this.handleChange}
-                        onFocus={this.handleFocus}
-                        styleName="input"
-                        value={value}
-                        {...otherProps}
-                    />
-                </div>
+                {
+                    showLabel && (
+                        <label
+                            className="label"
+                            htmlFor={this.inputId}
+                            styleName="label"
+                        >
+                            {label}
+                        </label>
+                    )
+                }
+                <input
+                    className="input"
+                    id={this.inputId}
+                    onBlur={this.handleBlur}
+                    onChange={this.handleChange}
+                    onFocus={this.handleFocus}
+                    styleName="input"
+                    value={value}
+                    {...otherProps}
+                />
                 {
                     showHintAndError && [
                         !error && hint && (

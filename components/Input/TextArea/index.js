@@ -15,6 +15,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Is input disabled?
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * String to show in case of error
      */
     error: PropTypes.string,
@@ -53,18 +58,28 @@ const propTypes = {
      * Is a required element for form
      */
     required: PropTypes.bool,
+
+    showLabel: PropTypes.bool,
+
+    showHintAndError: PropTypes.bool,
+
+    value: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
     error: '',
     hint: '',
-    initialValue: '',
+    initialValue: undefined,
     label: '',
     onBlur: undefined,
     onChange: undefined,
     onFocus: undefined,
     required: false,
+    showLabel: true,
+    showHintAndError: true,
+    value: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -75,8 +90,11 @@ export default class TextArea extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const value = this.props.initialValue || this.props.value || '';
+
         this.state = {
-            value: this.props.initialValue,
+            isFocused: false,
+            value,
         };
 
         this.inputId = randomString();
@@ -90,94 +108,163 @@ export default class TextArea extends React.PureComponent {
 
     getValue = () => this.state.value;
 
+    getStyleName() {
+        const styleNames = [];
+
+        const {
+            disabled,
+            error,
+            required,
+        } = this.props;
+
+        const {
+            isFocused,
+        } = this.state;
+
+        styleNames.push('text-area');
+
+        if (disabled) {
+            styleNames.push('disabled');
+        }
+
+        if (isFocused) {
+            styleNames.push('focused');
+        }
+
+        if (error) {
+            styleNames.push('error');
+        }
+
+        if (required) {
+            styleNames.push('required');
+        }
+
+        return styleNames.join(' ');
+    }
+
     handleChange = (event) => {
-        const { value } = event.target;
+        const {
+            onChange,
+        } = this.props;
+
+        const {
+            value,
+        } = event.target;
+
         this.setState({ value });
 
-        if (this.props.onChange) {
-            this.props.onChange(value);
+        if (onChange) {
+            onChange(value);
         }
     }
 
+    handleFocus = () => {
+        const {
+            onFocus,
+        } = this.props;
+
+        this.setState({
+            isFocused: true,
+        });
+
+        if (onFocus) {
+            onFocus();
+        }
+    }
+
+    handleBlur = () => {
+        const {
+            onBlur,
+        } = this.props;
+
+        this.setState({
+            isFocused: false,
+        });
+
+        if (onBlur) {
+            onBlur();
+        }
+    }
     render() {
-        console.log('Rendering TextInput');
         const {
             // skip prop injection for initialValue & onChange (used internally)
             initialValue, // eslint-disable-line
+            value: propValue, // eslint-disable-line
+            onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
+            onFocus, // eslint-disable-line
+            className,
 
             error,
             hint,
             label,
-            required,
+            showLabel,
+            showHintAndError,
             ...otherProps
         } = this.props;
 
         const {
-            focused,
             value,
         } = this.state;
 
+        const styleName = this.getStyleName();
+
         return (
             <div
-                styleName="textarea-wrapper"
-                className={`textarea ${this.props.className}`}
+                className={`${styleName} ${className}`}
+                styleName={styleName}
             >
-                <div
-                    styleName={`
-                        text-input
-                        ${error ? 'invalid' : ''}
-                        ${focused ? 'focused' : ''}
-                        ${required ? 'required' : ''}
-                    `}
-                >
-                    <label
-                        className="label"
-                        htmlFor={this.inputId}
-                        styleName="label"
-                    >
-                        {label}
-                    </label>
-                    <textarea
-                        className="input"
-                        id={this.inputId}
-                        onBlur={this.handleBlur}
-                        onChange={this.handleChange}
-                        onFocus={this.handleFocus}
-                        styleName="input"
-                        value={value}
-                        {...otherProps}
-                    />
-                </div>
                 {
-                    !error && hint && (
-                        <p
-                            className="hint"
-                            styleName="hint"
+                    showLabel && (
+                        <label
+                            className="label"
+                            htmlFor={this.inputId}
+                            styleName="label"
                         >
-                            {hint}
-                        </p>
+                            {label}
+                        </label>
                     )
                 }
+                <textarea
+                    className="input"
+                    id={this.inputId}
+                    onBlur={this.handleBlur}
+                    onChange={this.handleChange}
+                    onFocus={this.handleFocus}
+                    styleName="input"
+                    value={value}
+                    {...otherProps}
+                />
                 {
-                    error && !hint && (
-                        <p
-                            styleName="error"
-                            className="error"
-                        >
-                            {error}
-                        </p>
-                    )
-                }
-                {
-                    !error && !hint && (
-                        <p
-                            styleName="empty"
-                            className="error empty"
-                        >
-                            -
-                        </p>
-                    )
+                    showHintAndError && [
+                        !error && hint && (
+                            <p
+                                key="hint"
+                                className="hint"
+                                styleName="hint"
+                            >
+                                {hint}
+                            </p>
+                        ),
+                        error && !hint && (
+                            <p
+                                key="error"
+                                styleName="error"
+                                className="error"
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && !hint && (
+                            <p
+                                key="empty"
+                                styleName="empty"
+                                className="error empty"
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
                 }
             </div>
         );
