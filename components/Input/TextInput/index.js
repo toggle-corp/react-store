@@ -15,6 +15,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Is input disabled?
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * String to show in case of error
      */
     error: PropTypes.string,
@@ -63,6 +68,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     error: '',
     hint: '',
     initialValue: undefined,
@@ -106,6 +112,7 @@ export default class TextInput extends React.PureComponent {
         const styleNames = [];
 
         const {
+            disabled,
             error,
             required,
         } = this.props;
@@ -115,6 +122,10 @@ export default class TextInput extends React.PureComponent {
         } = this.state;
 
         styleNames.push('text-input');
+
+        if (disabled) {
+            styleNames.push('disabled');
+        }
 
         if (isFocused) {
             styleNames.push('focused');

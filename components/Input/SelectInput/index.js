@@ -13,6 +13,16 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Is select input clearable?
+     */
+    clearable: PropTypes.bool,
+
+    /**
+     * Is select input disabled?
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * Key selector function
      * should return key from provided row data
      */
@@ -83,6 +93,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    clearable: true,
+    disabled: false,
     error: '',
     hint: '',
     keySelector: d => (d || {}).key,
@@ -127,6 +139,7 @@ export default class SelectInput extends React.PureComponent {
 
     getOptionsFromProps = (props) => {
         const {
+            clearable,
             keySelector,
             labelSelector,
             multiple,
@@ -136,6 +149,10 @@ export default class SelectInput extends React.PureComponent {
 
         let selectedOptionKey;
         let selectedOptionKeys;
+
+        if (!clearable && !this.value) {
+            console.warn('SelectInput: value must be supplied when not clearable');
+        }
 
         if (multiple) {
             selectedOptionKeys = value || [];
@@ -256,12 +273,20 @@ export default class SelectInput extends React.PureComponent {
         } = this.state;
 
         const {
+            disabled,
+        } = this.props;
+
+        const {
             error,
             multiple,
         } = this.props;
 
         if (multiple) {
             styleNames.push('multiple');
+        }
+
+        if (disabled) {
+            styleNames.push('disabled');
         }
 
         if (areOptionsShown) {
@@ -467,6 +492,7 @@ export default class SelectInput extends React.PureComponent {
     render() {
         const {
             displayOptions,
+            inputValue,
             selectedOption,
             selectedOptions, // for multi select input
             areOptionsShown,
@@ -474,6 +500,8 @@ export default class SelectInput extends React.PureComponent {
 
         const {
             className,
+            clearable,
+            disabled,
             multiple,
             keySelector,
             labelSelector,
@@ -518,22 +546,27 @@ export default class SelectInput extends React.PureComponent {
                         ref={(el) => { this.input = el; }}
                         styleName="input"
                         type="text"
-                        value={this.state.inputValue}
+                        value={inputValue}
+                        disabled={disabled}
                     />
                     <div
                         styleName="actions"
                         className="actions"
                     >
-                        <button
-                            onClick={this.handleClearButtonClick}
-                            styleName="clear-button"
-                            className="clear-button"
-                            title="Clear selected option(s)"
-                        >
-                            <span
-                                className="clear-icon ion-android-close"
-                            />
-                        </button>
+                        {
+                            clearable && (
+                                <button
+                                    onClick={this.handleClearButtonClick}
+                                    styleName="clear-button"
+                                    className="clear-button"
+                                    title="Clear selected option(s)"
+                                >
+                                    <span
+                                        className="clear-icon ion-android-close"
+                                    />
+                                </button>
+                            )
+                        }
                         <span
                             styleName="dropdown-icon"
                             className="dropdown-icon ion-android-arrow-dropdown"

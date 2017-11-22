@@ -59,6 +59,17 @@
         }
     }
 
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .input {
+            border-bottom-color: $color-separator;
+            color: $color-text-disabled;
+        }
+    }
+
     %base {
         margin: $spacing-extra-small 0 0;
         font-size: $font-size-extra-small;
