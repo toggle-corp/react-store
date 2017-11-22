@@ -7,7 +7,9 @@ import { interpolateArray } from 'd3-interpolate';
 import { scaleLinear, schemeCategory20c, scaleSqrt, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -45,6 +47,12 @@ export default class SunBurst extends PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `sunburst-${Date.now()}.svg`);
     }
 
     renderChart() {
@@ -231,6 +239,9 @@ export default class SunBurst extends PureComponent {
                 className="sunburst-container"
                 ref={(el) => { this.container = el; }}
             >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
                 <svg
                     className="sunburst"
                     ref={(elem) => { this.svg = elem; }}
