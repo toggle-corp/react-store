@@ -9,11 +9,11 @@
     .grandparent text {
         cursor:pointer;
     }
-	  .grandparent > rect {
+	  .navigation {
 	      stroke-width: 3px;
         fill: #1693A5;
 	  }
-	  .grandparent:hover > rect {
+	  .navigation {
 	      fill: grey;
 	  }
     .children rect.parent,
@@ -31,7 +31,7 @@
 	      opacity: 0;
 	  }
     .children rect.parent {
-	  }
+    }
 	  .form-group {
 	      text-align:left;
 	  }

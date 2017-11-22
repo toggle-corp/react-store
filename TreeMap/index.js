@@ -251,6 +251,7 @@ export default class TreeMap extends React.PureComponent {
         if (zoomable) {
             grandparent
                 .append('rect')
+                .attr('class', 'navigation')
                 .attr('y', -top)
                 .attr('width', width)
                 .attr('height', top);
