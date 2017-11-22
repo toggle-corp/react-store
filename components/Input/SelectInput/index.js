@@ -108,7 +108,7 @@ export default class SelectInput extends React.PureComponent {
 
         this.state = {
             inputValue: '',
-            showOptions: false,
+            areOptionsShown: false,
             displayOptions: this.props.options,
             optionContainerStyle: {},
             selectedOptions: [],
@@ -245,6 +245,57 @@ export default class SelectInput extends React.PureComponent {
         return options;
     }
 
+    getStyleName = () => {
+        const styleNames = [];
+
+        styleNames.push('select-input');
+
+        const {
+            areOptionsShown,
+            isFocused,
+        } = this.state;
+
+        const {
+            error,
+            multiple,
+        } = this.props;
+
+        if (multiple) {
+            styleNames.push('multiple');
+        }
+
+        if (areOptionsShown) {
+            styleNames.push('options-shown');
+        }
+
+        if (isFocused) {
+            styleNames.push('focused');
+        }
+
+        if (error) {
+            styleNames.push('error');
+        }
+
+        return styleNames.join(' ');
+    }
+
+    getPlaceholder = () => {
+        const {
+            multiple,
+            placeholder,
+        } = this.props;
+
+        const {
+            selectedOptions,
+        } = this.state;
+
+        if (multiple && selectedOptions.length > 0) {
+            return `${selectedOptions.length} selected`;
+        }
+
+        return placeholder;
+    }
+
     // filtering
     handleInputChange = (e) => {
         const {
@@ -264,27 +315,27 @@ export default class SelectInput extends React.PureComponent {
         this.setState({
             inputValue: value,
             displayOptions: options,
-            showOptions: true,
+            areOptionsShown: true,
         });
     }
 
     handleInputFocus = () => {
-        if (!this.state.showOptions) {
+        if (!this.state.areOptionsShown) {
             this.input.select();
             this.boundingClientRect = this.container.getBoundingClientRect();
             this.setState({
-                showOptions: true,
+                areOptionsShown: true,
                 displayOptions: this.props.options, // reset the filter
             });
         }
     }
 
     handleInputClick = () => {
-        if (!this.state.showOptions) {
+        if (!this.state.areOptionsShown) {
             this.input.select();
             this.boundingClientRect = this.container.getBoundingClientRect();
             this.setState({
-                showOptions: true,
+                areOptionsShown: true,
                 displayOptions: this.props.options, // reset the filter
             });
         }
@@ -316,7 +367,7 @@ export default class SelectInput extends React.PureComponent {
             this.setState({
                 selectedOptions,
                 inputValue: '',
-                showOptions: true,
+                areOptionsShown: true,
             });
 
             if (onChange) {
@@ -331,7 +382,7 @@ export default class SelectInput extends React.PureComponent {
             this.setState({
                 selectedOption,
                 inputValue: labelSelector(selectedOption),
-                showOptions: false,
+                areOptionsShown: false,
             });
 
             if (onChange && key !== prevOptionKey) {
@@ -371,14 +422,14 @@ export default class SelectInput extends React.PureComponent {
                         };
 
                         if (onChange && keySelector(this.state.selectedOption)) {
-                            onChange('');
+                            onChange(undefined);
                         }
                     }
                 }
 
                 this.setState({
                     ...newState,
-                    showOptions: false,
+                    areOptionsShown: false,
                 });
             }
         }, 0);
@@ -418,14 +469,14 @@ export default class SelectInput extends React.PureComponent {
             displayOptions,
             selectedOption,
             selectedOptions, // for multi select input
-            showOptions,
+            areOptionsShown,
         } = this.state;
 
         const {
+            className,
             multiple,
             keySelector,
             labelSelector,
-            placeholder,
             error,
             hint,
             label,
@@ -433,26 +484,17 @@ export default class SelectInput extends React.PureComponent {
             showHintAndError,
         } = this.props;
 
-        let ph = '';
-
-        if (multiple) {
-            if (selectedOptions.length > 0) {
-                ph = `${selectedOptions.length} selected`;
-            } else {
-                ph = placeholder;
-            }
-        } else {
-            ph = placeholder;
-        }
-
         const selectedOptionKey = keySelector(selectedOption);
         const selectedOptionKeys = selectedOptions.map(d => keySelector(d));
 
+        const placeholder = this.getPlaceholder();
+        const styleName = this.getStyleName();
+
         return (
             <div
-                className={`select-input ${this.props.className} ${this.state.showOptions ? 'options-shown' : ''}`}
+                className={`${styleName} ${className}`}
                 ref={(el) => { this.container = el; }}
-                styleName={`select-input ${this.state.showOptions ? 'options-shown' : ''}`}
+                styleName={styleName}
             >
                 {
                     showLabel && (
@@ -472,7 +514,7 @@ export default class SelectInput extends React.PureComponent {
                         className="input"
                         onChange={this.handleInputChange}
                         onClick={this.handleInputClick}
-                        placeholder={ph}
+                        placeholder={placeholder}
                         ref={(el) => { this.input = el; }}
                         styleName="input"
                         type="text"
@@ -538,7 +580,7 @@ export default class SelectInput extends React.PureComponent {
                     parentClientRect={this.boundingClientRect}
                     selectedOptionKey={selectedOptionKey}
                     selectedOptionKeys={selectedOptionKeys}
-                    show={showOptions}
+                    show={areOptionsShown}
                     multiple={multiple}
                     offsetBottom={showHintAndError ? 24 : 0}
                     identifier={this.props.optionsIdentifier}
