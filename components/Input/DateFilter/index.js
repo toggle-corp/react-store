@@ -28,6 +28,11 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * Whether the input should be disabled
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * String to show in case of error
      */
     error: PropTypes.string,
@@ -61,6 +66,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     error: '',
     hint: '',
     label: '',
@@ -76,6 +82,15 @@ const defaultProps = {
 export default class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static defaultOptions = [
+        { key: 'today', label: 'Today' },
+        { key: 'yesterday', label: 'Yesterday' },
+        { key: 'current-week', label: 'This week' },
+        { key: 'last-7-days', label: 'Last 7 days' },
+        { key: 'current-month', label: 'This month' },
+        { key: 'last-30-days', label: 'Last 30 days' },
+        { key: 'custom', label: 'Custom range' },
+    ];
 
     constructor(props) {
         super(props);
@@ -216,6 +231,7 @@ export default class DateFilter extends React.PureComponent {
     render() {
         const {
             className,
+            disabled,
             error,
             hint,
             label,
@@ -224,6 +240,7 @@ export default class DateFilter extends React.PureComponent {
             showLabel,
             value,
         } = this.props;
+
         const {
             modalShown,
             startDate,
@@ -231,13 +248,7 @@ export default class DateFilter extends React.PureComponent {
         } = this.state;
 
         const options = [
-            { key: 'today', label: 'Today' },
-            { key: 'yesterday', label: 'Yesterday' },
-            { key: 'current-week', label: 'This week' },
-            { key: 'last-7-days', label: 'Last 7 days' },
-            { key: 'current-month', label: 'This month' },
-            { key: 'last-30-days', label: 'Last 30 days' },
-            { key: 'custom', label: 'Custom range' },
+            ...DateFilter.defaultOptions,
         ];
 
         if (startDate && endDate) {
@@ -253,6 +264,7 @@ export default class DateFilter extends React.PureComponent {
                 className={className}
             >
                 <SelectInput
+                    disabled={disabled}
                     error={error}
                     hint={hint}
                     label={label}
