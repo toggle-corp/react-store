@@ -1,0 +1,13 @@
+@import '../../../../stylesheets/base';
+
+.select-input {
+    width: 250px;
+
+    &.monospace {
+        font-family: $font-family-monospace;
+    }
+}
+
+.modal {
+    width: 400px;
+}
