@@ -1,8 +1,12 @@
 @import '../../../../stylesheets/base';
 
 .date-input-wrapper {
-    padding: $spacing-medium 0;
-    width: 100%;
+    .label {
+        width: 100%;
+        text-transform: uppercase;
+        color: $color-label;
+        font-size: $font-size-extra-small;
+    }
 
     .date-input {
         display: flex;
@@ -10,16 +14,8 @@
         justify-content: space-between;
         border-bottom: $width-separator-medium solid $color-separator-alt;
 
-        .label {
-            margin-top: $spacing-extra-small;
-            width: 100%;
-            text-transform: uppercase;
-            color: $color-label;
-            font-size: $font-size-extra-small;
-        }
-
         .inputs {
-            padding: $spacing-small 0;
+            padding: $spacing-extra-small 0;
 
             input {
                 outline: 0;
@@ -110,23 +106,24 @@
         }
     }
 
-    .hint {
-        margin: $spacing-small 0 0;
-        color: $color-label;
+    %base {
+        margin: $spacing-extra-small 0 0;
         font-size: $font-size-extra-small;
+    }
+
+    .hint {
+        @extend %base;
+        color: $color-label;
     }
 
     .error {
-        margin: $spacing-small 0 0;
+        @extend %base;
         color: $color-danger;
-        font-size: $font-size-extra-small;
     }
 
     .empty {
+        @extend %base;
         visibility: hidden;
-        margin: $spacing-small 0 0;
-        font-size: $font-size-extra-small;
     }
-
 }
 

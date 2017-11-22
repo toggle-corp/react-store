@@ -389,6 +389,14 @@ export default class DateInput extends React.PureComponent {
                 className={className}
                 ref={(el) => { this.container = el; }}
             >
+                {label && (
+                    <label
+                        htmlFor={this.inputId}
+                        styleName="label"
+                    >
+                        {label}
+                    </label>
+                )}
                 <div
                     styleName={`
                         date-input
@@ -397,15 +405,6 @@ export default class DateInput extends React.PureComponent {
                         ${required ? 'required' : ''}
                     `}
                 >
-                    {label && (
-                        <label
-                            htmlFor={this.inputId}
-                            styleName="label"
-                        >
-                            {label}
-                        </label>
-                    )}
-
                     { this.renderDateUnits() }
 
                     <div styleName="actions">
