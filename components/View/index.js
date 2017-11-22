@@ -14,6 +14,8 @@ export {
     Body as ModalBody,
     Footer as ModalFooter,
 } from './Modal';
+export { default as Alert } from './Modal/Alert';
+export { default as Confirm } from './Modal/Confirm';
 export {
     default as Numeral,
     ColoredNumeral,

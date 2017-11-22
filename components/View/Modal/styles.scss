@@ -1,4 +1,7 @@
 @import '../../../../stylesheets/base';
+@import '../../../../stylesheets/modal';
+
+$width-modal-small: 420px !default;
 
 :global .modal-wrapper {
     display: flex;
@@ -6,14 +9,32 @@
     height: 100vh;
 }
 
-.modal-content {
+%modal-basic {
     display: flex;
     flex-direction: column;
     margin: auto;
     background-color: $color-foreground;
+}
+
+.modal-content {
+    @extend %modal-basic;
     width: $width-modal-medium;
     max-height: 96vh;
-    overflow: none;
+}
+
+.alert-content,
+.confirm-content {
+    @extend %modal-basic;
+    width: $width-modal-small;
+
+    .ok-button {
+        box-shadow: none;
+        min-width: 72px;
+    }
+
+    .cancel-button {
+        box-shadow: none;
+    }
 }
 
 .header {
@@ -22,7 +43,7 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: $width-separator-medium solid $color-separator;
-    padding: $spacing-medium-alt;
+    padding: $spacing-medium $spacing-medium-alt;
 
     .heading {
         font-size: $font-size-large;
@@ -42,9 +63,10 @@
     align-items: center;
     justify-content: flex-end;
     background-color: $color-background;
-    padding: $spacing-medium-alt;
+    padding: $spacing-medium $spacing-medium-alt;
 
     >* {
         margin-left: $spacing-medium;
     }
 }
+
