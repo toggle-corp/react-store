@@ -78,31 +78,54 @@
                 }
             }
         }
+    }
 
-        &.focused {
-            border-bottom: $width-separator-normal solid $color-accent;
+    &:hover {
+        .date-input {
+            border-bottom-color: $color-separator-hover;
+        }
+    }
 
-            .label {
-                color: $color-accent;
-            }
+    &.date-picker-shown,
+    &.focused {
+        .label {
+            color: $color-accent;
         }
 
-        &.invalid {
+        .date-input {
+            border-bottom-color: $color-accent;
+        }
+    }
+
+    &.error {
+        .date-input {
             border-bottom-color: $color-danger;
-
-            .label {
-                color: $color-danger;
-            }
         }
 
-        &.required {
-            .label {
-                font-weight: $font-weight-normal;
+        .label {
+            color: $color-danger;
+        }
 
-                &::after {
-                    content: '*';
-                }
+    }
+
+    &.required {
+        .label {
+            font-weight: $font-weight-medium;
+
+            &::after {
+                content: '*';
             }
+        }
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .date-input {
+            border-bottom-color: $color-separator;
+            color: $color-text-disabled;
         }
     }
 
