@@ -19,18 +19,29 @@ export default function (WrappedComponent) {
 
             this.state = {
                 boundingClientRect: {},
+                parentBoundingClientRect: {},
             };
         }
 
         componentDidMount() {
             window.addEventListener('resize', this.handleWindowResize);
             setTimeout(() => {
+                let boundingClientRect = {};
+                let parentBoundingClientRect = {};
+
+                if (this.container) {
+                    boundingClientRect = this.container.getBoundingClientRect();
+
+                    if (this.container.parentNode) {
+                        parentBoundingClientRect = (
+                            this.container.parentNode.getBoundingClientRect()
+                        );
+                    }
+                }
+
                 this.setState({
-                    boundingClientRect: this.container ? (
-                        this.container.getBoundingClientRect()
-                    ) : (
-                        {}
-                    ),
+                    boundingClientRect,
+                    parentBoundingClientRect,
                 });
             }, 0);
         }
@@ -40,18 +51,27 @@ export default function (WrappedComponent) {
         }
 
         handleWindowResize = () => {
+            let boundingClientRect = {};
+            let parentBoundingClientRect = {};
+
+            if (this.container) {
+                boundingClientRect = this.container.getBoundingClientRect();
+
+                if (this.container.parentNode) {
+                    parentBoundingClientRect = this.container.parentNode.getBoundingClientRect();
+                }
+            }
+
             this.setState({
-                boundingClientRect: this.container ? (
-                    this.container.getBoundingClientRect()
-                ) : (
-                    {}
-                ),
+                boundingClientRect,
+                parentBoundingClientRect,
             });
         }
 
         render() {
             const {
                 boundingClientRect,
+                parentBoundingClientRect,
             } = this.state;
 
             const {
@@ -62,10 +82,11 @@ export default function (WrappedComponent) {
             return (
                 <div
                     ref={(el) => { this.container = el; }}
-                    className={className}
+                    className={`responsive-wrapper ${className}`}
                 >
                     <WrappedComponent
                         boundingClientRect={boundingClientRect}
+                        parentBoundingClientRect={parentBoundingClientRect}
                         {...otherProps}
                     />
                 </div>
