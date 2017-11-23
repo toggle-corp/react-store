@@ -109,12 +109,31 @@ export default class TreeMap extends React.PureComponent {
 
         treemaps(root);
 
-        function text(content) {
-            content
-                .attr('x', d => x(d.x) + 6)
-                .attr('y', d => y(d.y) + 6);
+        function visibility(t) {
+            const textLength = this.getComputedTextLength();
+            const elementWidth = (x(t.x1) - x(t.x0)) + 6;
+            return textLength < elementWidth ? 1 : 0;
         }
 
+        function parentText(element) {
+            element
+                .attr('x', d => x(d.x0) + 6)
+                .attr('y', d => y(d.y0) + 6)
+                .style('opacity', visibility);
+        }
+
+        function childText(element) {
+            element
+                .attr('x', t => x(t.x1))
+                .attr('y', t => y(t.y1))
+                .attr('dy', '-.35em')
+                .attr('text-anchor', 'end')
+                .style('opacity', visibility);
+        }
+
+        function name(d) {
+            return d.parent ? `${name(d.parent)}${labelAccessor(d.data)}` : '';
+        }
         function rect(shape) {
             shape
                 .attr('x', d => x(d.x0))
@@ -123,19 +142,6 @@ export default class TreeMap extends React.PureComponent {
                 .attr('height', d => y(d.y1) - y(d.y0));
         }
 
-        function foreign(object) {
-            object
-                .attr('x', d => x(d.x0))
-                .attr('y', d => y(d.y0))
-                .attr('width', d => x(d.x1) - x(d.x0))
-                .attr('height', d => y(d.y1) - y(d.y0));
-        }
-
-        function name(d) {
-            return d.parent ?
-                `${name(d.parent)}/${labelAccessor(d.data)}` :
-                `${labelAccessor(d.data)}`;
-        }
         let transitioning = false;
 
         const grandparent = group
@@ -149,62 +155,69 @@ export default class TreeMap extends React.PureComponent {
                 .select('text')
                 .text(name(d));
 
-            grandparent
-                .datum(d.parent)
-                .select('rect');
-
             const group1 = group
                 .insert('g', '.grandparent')
                 .datum(d)
                 .attr('class', 'depth');
 
-            const children = group1
+            const group2 = group1
                 .selectAll('g')
                 .data(d.children)
                 .enter()
                 .append('g');
 
-            children
+            group2
                 .filter(t => t.children)
                 .classed('children', true)
                 .on('click', transitions); // eslint-disable-line
 
-            children
+
+            const children = group2
                 .selectAll('.child')
                 .data(t => t.children || [t])
                 .enter()
-                .append('rect')
-                .attr('class', 'child')
-                .call(rect);
+                .append('g');
 
             children
+                .append('rect')
+                .attr('class', 'child')
+                .call(rect)
+                .append('title')
+                .text(t => `${labelAccessor(t.data)}`);
+
+            children
+                .append('text')
+                .attr('class', 'child-text')
+                .text(t => `${labelAccessor(t.data)}`)
+                .call(childText);
+
+            group2
                 .append('rect')
                 .attr('class', 'parent')
                 .call(rect)
                 .append('title')
                 .text(t => `${labelAccessor(t.data)}\n${t.value}`);
 
-            children
-                .append('foreignObject')
-                .call(rect)
-                .attr('class', 'foreignobj')
-                .append('xhtml:div')
+            group2
+                .append('text')
+                .attr('class', 'parent-text')
                 .attr('dy', '.75em')
-                .html(t => `<p class='title'> ${labelAccessor(t.data)}</p>`)
-                .attr('class', 'textdiv');
+                .text(t => `${labelAccessor(t.data)}`)
+                .call(parentText);
 
-            children
+            group2
                 .selectAll('rect')
                 .style('fill', t => color(labelAccessor(t.data)));
 
             function transitions(t) {
                 if (transitioning || !t) return;
                 transitioning = true;
-                const group2 = display(t);
+                const childGroup = display(t);
+
                 const first = group1
                     .transition()
                     .duration(650);
-                const second = group2
+                const second = childGroup
                     .transition()
                     .duration(650);
 
@@ -215,29 +228,25 @@ export default class TreeMap extends React.PureComponent {
                 group
                     .selectAll('.depth')
                     .sort((a, b) => a.depth - b.depth);
-                group2.selectAll('text')
+                childGroup.selectAll('text')
                     .style('fill-opacity', 0);
-                group2.selectAll('foreignObject div')
-                    .style('display', 'none');
 
-                first.selectAll('text')
-                    .call(text)
+                first.selectAll('.parent-text')
+                    .call(parentText)
                     .style('fill-opacity', 0);
-                second.selectAll('text')
-                    .call(text)
+                first.selectAll('.child-text')
+                    .call(childText)
+                    .style('fill-opacity', 0);
+                second.selectAll('.parent-text')
+                    .call(parentText)
+                    .style('fill-opacity', 1);
+                second.selectAll('.child-text')
+                    .call(childText)
                     .style('fill-opacity', 1);
                 first.selectAll('rect')
                     .call(rect);
                 second.selectAll('rect')
                     .call(rect);
-                first.selectAll('.textdiv')
-                    .style('display', 'none');
-                first.selectAll('.foreignobj')
-                    .call(foreign);
-                second.selectAll('.textdiv')
-                    .style('display', 'block');
-                second.selectAll('.foreignobj')
-                    .call(foreign);
 
                 first
                     .on('end.remove', function clean() {
@@ -245,7 +254,7 @@ export default class TreeMap extends React.PureComponent {
                         transitioning = false;
                     });
             }
-            return children;
+            return group2;
         }
 
         if (zoomable) {
@@ -282,7 +291,9 @@ export default class TreeMap extends React.PureComponent {
                 .attr('y', d => (d.y1 - d.y0) / 2)
                 .attr('text-anchor', 'middle')
                 .attr('class', 'text-label')
-                .text(d => labelAccessor(d.data));
+                .text(d => labelAccessor(d.data))
+                .style('opacity', visibility);
+
             cell
                 .append('title')
                 .text(d => `${labelAccessor(d.data)}\n${formats(valueAccessor(d.data))}`);
