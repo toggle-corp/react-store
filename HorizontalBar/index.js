@@ -5,6 +5,7 @@ import { scaleLinear, scaleBand } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
 import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
@@ -48,6 +49,12 @@ export default class HorizontalBar extends React.PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `horizontalbar-${Date.now()}.svg`);
     }
 
     renderChart() {
@@ -159,10 +166,18 @@ export default class HorizontalBar extends React.PureComponent {
 
     render() {
         return (
-            <svg
-                className="horizontalbar"
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <div
+                className="horizontalbar-container"
+                ref={(el) => { this.container = el; }}
+            >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
+                <svg
+                    className="horizontalbar"
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </div>
         );
     }
 }

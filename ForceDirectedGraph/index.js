@@ -6,6 +6,7 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-force';
 import { drag } from 'd3-drag';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
@@ -58,6 +59,12 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `forceddirectedgraph-${Date.now()}.svg`);
     }
 
     renderChart() {
@@ -211,6 +218,9 @@ export default class ForceDirectedGraph extends React.PureComponent {
                 className="force-directed-graph-container"
                 ref={(el) => { this.container = el; }}
             >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
                 <svg
                     className="force-directed-graph"
                     ref={(elem) => { this.svg = elem; }}

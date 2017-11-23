@@ -3,6 +3,7 @@ import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { tree, hierarchy } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
@@ -47,6 +48,12 @@ export default class RadialDendrogram extends React.PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `radialdendrogram-${Date.now()}.svg`);
     }
 
     renderChart() {
@@ -130,10 +137,18 @@ export default class RadialDendrogram extends React.PureComponent {
     }
     render() {
         return (
-            <svg
-                styleName="radialdendrogram"
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <div
+                className="radialdendrogram-container"
+                ref={(el) => { this.container = el; }}
+            >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
+                <svg
+                    className="radialdendrogram"
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </div>
         );
     }
 }

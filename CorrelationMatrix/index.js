@@ -7,6 +7,7 @@ import { max, min, range } from 'd3-array';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
@@ -54,6 +55,11 @@ export default class CorrelationMatrix extends React.PureComponent {
         this.renderChart();
     }
 
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `correlationmatrix-${Date.now()}.svg`);
+    }
     renderChart() {
         const {
             boundingClientRect,
@@ -255,10 +261,18 @@ export default class CorrelationMatrix extends React.PureComponent {
 
     render() {
         return (
-            <svg
-                styleName="correlation-matrix"
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <div
+                className="correlationmatrix-container"
+                ref={(el) => { this.container = el; }}
+            >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
+                <svg
+                    className="correlation-matrix"
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </div>
         );
     }
 }

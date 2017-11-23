@@ -7,6 +7,7 @@ import { arc } from 'd3-shape';
 import { rgb } from 'd3-color';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
@@ -53,6 +54,12 @@ export default class ChordDiagram extends React.PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `chorddiagram-${Date.now()}.svg`);
     }
 
     renderChart() {
@@ -213,6 +220,9 @@ export default class ChordDiagram extends React.PureComponent {
                 className="chord-diagram-container"
                 ref={(el) => { this.container = el; }}
             >
+                <button className="save-button" onClick={this.save}>
+                    Save
+                </button>
                 <svg
                     className="chord-diagram"
                     ref={(elem) => { this.svg = elem; }}
