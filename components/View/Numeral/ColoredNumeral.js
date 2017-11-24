@@ -56,7 +56,7 @@ export default class ColoredNumeral extends React.PureComponent {
         return (
             <span
                 className={`colored-numeral ${className}`}
-                styleName={styleName}
+                styleName={`colored-numeral ${styleName}`}
             >
                 <Numeral
                     value={value}
