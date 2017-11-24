@@ -11,8 +11,7 @@ import styles from './styles.scss';
 
 /*
   TODO:
-  1. GridLine support (both x-axis and y-axis)
-  2. Axis label auto padding
+  1. Axis label auto padding
   */
 const propTypes = {
     /*
@@ -64,6 +63,8 @@ const propTypes = {
     updateFromProps: PropTypes.bool,
     xKey: PropTypes.string.isRequired,
     yKey: PropTypes.string.isRequired,
+    xGrid: PropTypes.bool,
+    yGrid: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -78,6 +79,8 @@ const defaultProps = {
     },
     maxNuOfRow: 30,
     updateFromProps: true,
+    xGrid: true,
+    yGrid: true,
 };
 
 @CSSModules(styles)
@@ -134,12 +137,13 @@ export default class BarChart extends React.PureComponent {
             this.svgContainer.offsetHeight - top - bottom,
             0,
         ]);
-        this.renderTimeSeries();
+        this.renderBarChart();
     }
 
-    renderTimeSeries() {
+    renderBarChart() {
         const renderData = this.state.data;
-        const { top, bottom, left, right } = this.props.margins;
+        const { margins, xGrid, yGrid } = this.props;
+        const { top, bottom, left, right } = margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
         const nuOfRow = renderData.length;
@@ -150,12 +154,25 @@ export default class BarChart extends React.PureComponent {
         this.scaleX.range([0, width]);
         this.scaleY.range([height, 0]);
 
+        // const maxScaleY = this.scaleY.domain().map();
+        console.warn(this.scaleY.domain());
 
         const svg = select(this.svg);
         svg.select('*').remove();
 
         const xAxis = axisBottom(this.scaleX);
+        if (xGrid) {
+            xAxis.tickSizeInner(-height)
+                .tickSizeOuter(0);
+        }
+
         const yAxis = axisLeft(this.scaleY);
+        if (yGrid) {
+            yAxis.tickSizeInner(-width)
+                .tickSizeOuter(0);
+        }
+
+
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
 
@@ -163,6 +180,10 @@ export default class BarChart extends React.PureComponent {
             .attr('class', 'axis axis--x')
             .attr('transform', `translate(0, ${height})`)
             .call(xAxis);
+
+        root.append('g')
+            .attr('class', 'axis')
+            .call(yAxis);
 
         if (nuOfRow > this.props.maxNuOfRow) {
             xAxisSvg.selectAll('text')
@@ -173,10 +194,6 @@ export default class BarChart extends React.PureComponent {
                 .style('text-anchor', 'start')
                 .style('font-size', '9px');
         }
-
-        root.append('g')
-            .attr('class', 'axis')
-            .call(yAxis);
 
         root.append('g')
             .selectAll('.bar')
