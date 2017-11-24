@@ -1,0 +1,174 @@
+import CSSModules from 'react-css-modules';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+import { scaleLinear } from 'd3-scale';
+import { select, event } from 'd3-selection';
+import { extent } from 'd3-array';
+import {
+    line as d3Line,
+    curveCardinal,
+} from 'd3-shape';
+
+import { Responsive } from '../../General';
+import Tooltip from '../Tooltip';
+
+
+import styles from './styles.scss';
+
+/*
+  TODO:
+  1. Axis label auto padding
+  */
+const propTypes = {
+    className: PropTypes.string,
+    /*
+     * Data: [
+           {
+                value: value
+                label: label, // tooltip text/node
+           },..
+        ]
+     */
+    data: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.number.isRequired,
+        label: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+            PropTypes.node,
+        ]),
+    })).isRequired,
+    /*
+     * Chart Margins
+     */
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
+    boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+};
+
+const defaultProps = {
+    className: 'spark-lines',
+    margins: {
+        top: 1,
+        right: 1,
+        bottom: 1,
+        left: 1,
+    },
+};
+
+@Responsive
+@CSSModules(styles)
+export default class SparkLine extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tooltip: undefined,
+        };
+
+        this.scaleX = scaleLinear();
+        this.scaleY = scaleLinear();
+    }
+
+    componentDidMount() {
+        this.updateRender();
+    }
+
+    componentDidUpdate() {
+        this.updateRender();
+    }
+
+    onMouseOver = (tip, data) => {
+        tip.style('display', 'inline-block');
+        this.setState({ tooltip: data.label });
+    }
+
+    onMouseMove = (tip) => {
+        if (tip.node()) {
+            const tipShape = tip.node().getBoundingClientRect();
+            tip.style('left', `${event.pageX - (tipShape.width * 0.5)}px`)
+                .style('top', `${event.pageY - tipShape.height - 10}px`);
+        }
+    }
+
+    onMouseOut = (tip) => {
+        tip.style('display', 'none');
+    }
+
+    updateRender() {
+        const { right, top, left, bottom } = this.props.margins;
+        const { height, width } = this.props.boundingClientRect;
+
+        if (!width) {
+            return;
+        }
+
+        const svgHeight = height - bottom;
+        const svgWidth = width - right;
+
+        this.scaleX.range([left, svgWidth]);
+        this.scaleY.range([svgHeight, top]);
+
+        this.renderSparkLines();
+    }
+
+    renderSparkLines() {
+        const { data } = this.props;
+
+        this.scaleX.domain([0, data.length - 1]);
+        this.scaleY.domain(extent(data.map(d => d.value)));
+
+        const svg = select(this.svg);
+
+        svg.select('*').remove();
+
+        const root = svg.append('g');
+
+        const tooltip = select(this.svgContainer)
+            .select('.tooltip');
+
+        const line = d3Line()
+            .x((d, index) => this.scaleX(index))
+            .y(d => this.scaleY(d.value))
+            .curve(curveCardinal);
+
+        root.append('path')
+            .attr('d', line(data));
+
+        root.append('g').selectAll('circle')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('cx', (d, index) => this.scaleX(index))
+            .attr('cy', d => this.scaleY(d.value))
+            .attr('r', 6)
+            .on('mouseover', d => this.onMouseOver(tooltip, d))
+            .on('mousemove', d => this.onMouseMove(tooltip, d))
+            .on('mouseout', d => this.onMouseOut(tooltip, d));
+    }
+
+    render() {
+        const { className } = this.props;
+        const { tooltip } = this.state;
+
+        return (
+            <div
+                className={className}
+                styleName="spark-lines"
+                ref={(div) => { this.svgContainer = div; }}
+            >
+                <svg
+                    ref={(svg) => { this.svg = svg; }}
+                />
+                <Tooltip className="tooltip" tooltip={tooltip} />
+            </div>
+        );
+    }
+}
