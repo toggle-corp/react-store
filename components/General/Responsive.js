@@ -21,6 +21,8 @@ export default function (WrappedComponent) {
                 boundingClientRect: {},
                 parentBoundingClientRect: {},
             };
+
+            this.wrappedComponent = undefined;
         }
 
         componentDidMount() {
@@ -43,6 +45,8 @@ export default function (WrappedComponent) {
                     boundingClientRect,
                     parentBoundingClientRect,
                 });
+
+                this.onResize();
             }, 0);
         }
 
@@ -50,7 +54,15 @@ export default function (WrappedComponent) {
             window.removeEventListener('resize', this.handleWindowResize);
         }
 
+        onResize() {
+            if (this.wrappedComponent && this.wrappedComponent.onResize) {
+                this.wrappedComponent.onResize();
+            }
+        }
+
         handleWindowResize = () => {
+            const previousClientRect = this.state.boundingClientRect;
+
             let boundingClientRect = {};
             let parentBoundingClientRect = {};
 
@@ -66,6 +78,11 @@ export default function (WrappedComponent) {
                 boundingClientRect,
                 parentBoundingClientRect,
             });
+
+            if (previousClientRect.width !== boundingClientRect.width ||
+                previousClientRect.height !== boundingClientRect.height) {
+                this.onResize();
+            }
         }
 
         render() {
@@ -85,6 +102,7 @@ export default function (WrappedComponent) {
                     className={`responsive-wrapper ${className}`}
                 >
                     <WrappedComponent
+                        ref={(element) => { this.wrappedComponent = element; }}
                         boundingClientRect={boundingClientRect}
                         parentBoundingClientRect={parentBoundingClientRect}
                         {...otherProps}

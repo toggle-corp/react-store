@@ -49,7 +49,7 @@ export default class Checkbox extends React.PureComponent {
         this.setState({ checked: nextProps.initialValue });
     }
 
-    handleInputClick = (e) => {
+    handleInputChange = (e) => {
         const checked = e.target.checked;
 
         this.setState({ checked });
@@ -86,11 +86,11 @@ export default class Checkbox extends React.PureComponent {
                     } checkmark`}
                 />
                 <input
-                    onClick={this.handleInputClick}
+                    onChange={this.handleInputChange}
                     styleName="input"
                     className="input"
                     type="checkbox"
-                    defaultChecked={checked}
+                    checked={checked}
                     id={this.inputId}
                     {...otherProps}
                 />
