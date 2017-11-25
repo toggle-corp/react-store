@@ -47,18 +47,8 @@ export default class Uploader {
             this.uploading = false;
             this.progressPercent = 0;
 
-            // TODO: I don't think response is required on abort
-            let response;
-            try {
-                response = JSON.parse(xhr.response);
-            } catch (err) {
-                // callback
-                this.fatal({ errorMessage: 'Error while parsing json', errorCode: null }, xhr.status);
-                return;
-            }
-
             // callback
-            this.abort(response, xhr.status);
+            this.abort();
         };
 
         xhr.onerror = () => {
