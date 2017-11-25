@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { scaleLinear } from 'd3-scale';
-import { select, event } from 'd3-selection';
+import { select } from 'd3-selection';
 import { extent } from 'd3-array';
 import {
     line as d3Line,
@@ -16,10 +16,6 @@ import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
 
-/*
-  TODO:
-  1. Axis label auto padding
-  */
 const propTypes = {
     className: PropTypes.string,
     /*
@@ -81,25 +77,27 @@ export default class SparkLine extends React.PureComponent {
         this.updateRender();
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps !== this.props) {
+            this.updateRender();
+        }
+    }
+
     componentDidUpdate() {
         this.updateRender();
     }
 
-    onMouseOver = (tip, data) => {
-        tip.style('display', 'inline-block');
-        this.setState({ tooltip: data.label });
+    onMouseOver = (label) => {
+        this.setState({ tooltip: label });
+        this.tooltipDiv.show();
     }
 
-    onMouseMove = (tip) => {
-        if (tip.node()) {
-            const tipShape = tip.node().getBoundingClientRect();
-            tip.style('left', `${event.pageX - (tipShape.width * 0.5)}px`)
-                .style('top', `${event.pageY - tipShape.height - 10}px`);
-        }
+    onMouseMove = () => {
+        this.tooltipDiv.move();
     }
 
-    onMouseOut = (tip) => {
-        tip.style('display', 'none');
+    onMouseOut = () => {
+        this.tooltipDiv.hide();
     }
 
     updateRender() {
@@ -131,9 +129,6 @@ export default class SparkLine extends React.PureComponent {
 
         const root = svg.append('g');
 
-        const tooltip = select(this.svgContainer)
-            .select('.tooltip');
-
         const line = d3Line()
             .x((d, index) => this.scaleX(index))
             .y(d => this.scaleY(d.value))
@@ -149,9 +144,9 @@ export default class SparkLine extends React.PureComponent {
             .attr('cx', (d, index) => this.scaleX(index))
             .attr('cy', d => this.scaleY(d.value))
             .attr('r', 6)
-            .on('mouseover', d => this.onMouseOver(tooltip, d))
-            .on('mousemove', d => this.onMouseMove(tooltip, d))
-            .on('mouseout', d => this.onMouseOut(tooltip, d));
+            .on('mouseenter', d => this.onMouseOver(d.label))
+            .on('mousemove', this.onMouseMove)
+            .on('mouseleave', this.onMouseOut);
     }
 
     render() {
@@ -167,7 +162,9 @@ export default class SparkLine extends React.PureComponent {
                 <svg
                     ref={(svg) => { this.svg = svg; }}
                 />
-                <Tooltip className="tooltip" tooltip={tooltip} />
+                <Tooltip ref={(div) => { this.tooltipDiv = div; }} >
+                    {tooltip}
+                </Tooltip>
             </div>
         );
     }
