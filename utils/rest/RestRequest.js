@@ -44,6 +44,7 @@ export default class RestRequest {
         success = defaultSuccessFn, failure = defaultFailureFn, fatal = defaultFatalFn,
         abort = defaultAbortFn, preLoad = defaultPreLoadFn, postLoad = defaultPostLoadFn,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
+        delay = 200,
     ) {
         this.url = url;
         this.params = params;
@@ -57,6 +58,11 @@ export default class RestRequest {
         this.maxRetryTime = maxRetryTime;
         this.decay = decay;
         this.maxRetryAttempts = maxRetryAttempts;
+        this.delay = delay;
+
+        if (this.retryTime <= 0 && this.decay <= 0) {
+            throw new Error('RestRequest is not configured properly.');
+        }
 
         this.retryCount = 1;
         this.retryId = null;
@@ -85,17 +91,22 @@ export default class RestRequest {
     /* Calculate the next retry time and call this.start again */
     retry = () => {
         if (this.maxRetryAttempts >= 0 && this.retryCount > this.maxRetryAttempts) {
-            console.warn('Max number of retries exceeded.');
+            console.warn(`Max no. of retries exceeded ${this.url}`, this.parameters);
             return false;
         }
         const time = this.calculateRetryTime();
         if (time < 0) {
-            console.warn('Retry time is negative.');
+            // NOTE: this should never occur
+            console.warn(`Retry time is negative ${this.url}`, this.parameters);
             return false;
         }
-        this.retryId = setTimeout(this.start, time);
+        this.retryId = setTimeout(this.internalStart, time);
         this.retryCount += 1;
         return true;
+    }
+
+    start = () => {
+        this.retryId = setTimeout(this.internalStart, this.delay);
     }
 
     /* Do a xhr request and parse response as json
@@ -103,11 +114,11 @@ export default class RestRequest {
      * If response.okay is false, calls failure callback
      * Else, calls fatal callback
      */
-    start = async () => {
+    internalStart = async () => {
         this.aborted = false;
 
         // Parameters can be a key-value pair or a function that returns a key-value pair
-        const parameters = typeof this.params === 'function'
+        this.parameters = typeof this.params === 'function'
             ? this.params()
             : this.params;
 
@@ -115,10 +126,10 @@ export default class RestRequest {
         this.preLoad();
 
         // DEBUG:
-        console.log(`Fetching ${this.url}`, parameters);
+        console.log(`Fetching ${this.url}`, this.parameters);
         let response;
         try {
-            response = await fetch(this.url, parameters);
+            response = await fetch(this.url, this.parameters);
             if (this.aborted) {
                 this.abort();
                 return;
