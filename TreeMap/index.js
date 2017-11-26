@@ -10,6 +10,14 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the hierarchical data to be visualized.
+ * labelAccessor: returns the individual label from a unit data.
+ * valueAccessor: return the value for the unit data.
+ * zoomable: if true the treemap can be zoomed in.(show child elements).
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -40,6 +48,9 @@ const defaultProps = {
     },
 };
 
+/**
+ * TreeMap shows hierarchical data  as nested rectangles.
+ */
 @Responsive
 @CSSModules(styles)
 export default class TreeMap extends React.PureComponent {
@@ -141,6 +152,7 @@ export default class TreeMap extends React.PureComponent {
         function name(d) {
             return d.parent ? `${name(d.parent)}${labelAccessor(d.data)}` : '';
         }
+
         function rect(shape) {
             shape
                 .attr('x', d => x(d.x0))
@@ -177,7 +189,6 @@ export default class TreeMap extends React.PureComponent {
                 .filter(t => t.children)
                 .classed('children', true)
                 .on('click', transitions); // eslint-disable-line
-
 
             const children = group2
                 .selectAll('.child')

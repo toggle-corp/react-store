@@ -7,6 +7,13 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the hierarchical data to be visualized.
+ * labelAccessor: returns the individual label from a unit data.
+ * lineColor: the color for the line connecting nodes.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -36,6 +43,10 @@ const defaultProps = {
     },
 };
 
+/**
+ * Dendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical
+ * clustering.
+ */
 @Responsive
 @CSSModules(styles)
 export default class Dendrogram extends React.PureComponent {

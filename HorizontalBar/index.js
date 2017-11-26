@@ -9,6 +9,14 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the categorical data having values.
+ * labelAccessor: returns the individual label from a unit data.
+ * valueAccessor: return the value for the unit data.
+ * showGridLines: if true the gridlines are drawn.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -36,7 +44,10 @@ const defaultProps = {
         left: 100,
     },
 };
-
+/**
+ * A horizontal bar graph shows categorical data with rectangular bars with length proportional
+ * to values they represent.
+ */
 @Responsive
 @CSSModules(styles)
 export default class HorizontalBar extends React.PureComponent {

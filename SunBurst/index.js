@@ -9,9 +9,17 @@ import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
-
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the hierarchical data to be visualized.
+ * labelAccessor: returns the individual label from a unit data.
+ * valueAccessor: return the value for the unit data.
+ * colorScheme: array of hex color values.
+ * showLabels: show labels on the diagram?
+ * showTooltip: show the tooltip?
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -35,6 +43,10 @@ const defaultProps = {
     showTooltip: true,
 };
 
+/*
+ * Sunburst is a multilevel pie chart used to represent proportion of values found at each level
+ * in hierarchy.
+ * */
 @Responsive
 @CSSModules(styles)
 export default class SunBurst extends PureComponent {

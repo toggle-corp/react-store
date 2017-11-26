@@ -11,6 +11,15 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the nxn square matrix representing the directed flow amongst a network of n nodes.
+ * labelsData: array of n string representing the individual nodes.
+ * colorScheme: array of hex color values.
+ * showLabels: if true the labels are drawn.
+ * showTooltip: if true the tooltip is rendered.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -42,6 +51,11 @@ const defaultProps = {
     },
 };
 
+/**
+ * Chord diagram displays  the inter-relationships between data in a matrix.The data are arranged
+ * radially around a circle with the relationships between the data points typically drawn as arcs
+ * connecting the data.
+ */
 @Responsive
 @CSSModules(styles)
 export default class ChordDiagram extends React.PureComponent {

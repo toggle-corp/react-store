@@ -10,6 +10,15 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the object containing array of nodes and links.
+ * idAccessor: returns the id of each node.
+ * groupAccessor: return the group which each nodes belong to.
+ * valueAccessor: returns the value of each link.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ * colorScheme: the array of hex color values.
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -46,6 +55,9 @@ const defaultProps = {
     valueAccessor: () => 1,
     colorScheme: schemePaired,
 };
+/**
+ * Represents the  network of nodes in force layout with many-body force.
+ */
 
 @Responsive
 @CSSModules(styles)

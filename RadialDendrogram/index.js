@@ -7,6 +7,13 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the hierarchical data to be visualized.
+ * labelAccessor: returns the individual label from a unit data.
+ * lineColor: the color for the line connecting nodes.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -36,6 +43,10 @@ const defaultProps = {
     },
 };
 
+/**
+ * RadialDendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical
+ * clustering. The clusters are arranged in circle.
+ */
 @Responsive
 @CSSModules(styles)
 export default class RadialDendrogram extends React.PureComponent {
@@ -113,7 +124,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('storke-width', 1.5)
             .attr('d', d =>
                 `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}` +
-                ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`);
+                          ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`);
 
         const node = group
             .selectAll('.node')

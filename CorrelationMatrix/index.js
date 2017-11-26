@@ -11,6 +11,16 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
 import styles from './styles.scss';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * data: the hierarchical data to be visualized.
+ * labelAccessor: returns the individual label from a unit data.
+ * valueAccessor: return the value for the unit data.
+ * colorScheme: the color interpolation function.
+ * showLabels: show labels on the diagram?
+ * showTooltip: show the tooltip?
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -41,6 +51,10 @@ const defaultProps = {
     },
 };
 
+/*
+ * CorrelationMatrix visualizes the correlation coefficients of multiple variables as colors
+ * in the grid.
+ * */
 @Responsive
 @CSSModules(styles)
 export default class CorrelationMatrix extends React.PureComponent {
