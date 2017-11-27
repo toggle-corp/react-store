@@ -34,6 +34,7 @@ const propTypes = {
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
     circleRadius: PropTypes.number,
+    useVoronoi: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -57,6 +58,7 @@ const defaultProps = {
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
     circleRadius: 30,
+    useVoronoi: true,
     colorScheme: schemePaired,
 };
 /**
@@ -92,6 +94,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             valueAccessor,
             circleRadius,
             colorScheme,
+            useVoronoi,
             margins,
         } = this.props;
 
@@ -208,7 +211,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .data(data.links)
             .enter()
             .append('line')
-            .attr('stroke', color(0))
             .attr('stroke-width', d => Math.sqrt(valueAccessor(d)));
 
         const node = group
@@ -225,15 +227,23 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .on('mousemove', mouseMoveCircle)
             .on('mouseout', mouseOutCircle);
 
-        node
-            .append('circle')
-            .attr('r', circleRadius)
-            .attr('fill', d => color(groupAccessor(d)));
+        if (useVoronoi) {
+            node
+                .append('circle')
+                .attr('class', 'circle')
+                .attr('r', circleRadius)
+                .attr('fill', d => color(groupAccessor(d)));
 
-        node
-            .append('circle')
-            .attr('r', 3)
-            .attr('fill', 'black');
+            node
+                .append('circle')
+                .attr('r', 3)
+                .attr('fill', 'black');
+        } else {
+            node
+                .append('circle')
+                .attr('r', 5)
+                .attr('fill', d => color(groupAccessor(d)));
+        }
 
         function ticked() {
             node.each((d) => {
@@ -247,30 +257,35 @@ export default class ForceDirectedGraph extends React.PureComponent {
                 .attr('x2', d => d.target.x)
                 .attr('y2', d => d.target.y);
 
-            node
-                .attr('transform', d => `translate(${d.x}, ${d.y})`)
-                .attr('clip-path', d => `url(#clip-${d.index})`);
+            if (useVoronoi) {
+                node
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`)
+                    .attr('clip-path', d => `url(#clip-${d.index})`);
 
-            const clip = group
-                .selectAll('clipPath')
-                .data(recenterVoronoi(node.data()), d => d.data.index);
+                const clip = group
+                    .selectAll('clipPath')
+                    .data(recenterVoronoi(node.data()), d => d.data.index);
 
-            clip
-                .enter()
-                .append('clipPath')
-                .attr('id', d => `clip-${d.data.index}`)
-                .attr('class', 'clip');
+                clip
+                    .enter()
+                    .append('clipPath')
+                    .attr('id', d => `clip-${d.data.index}`)
+                    .attr('class', 'clip');
 
-            clip
-                .exit()
-                .remove();
+                clip
+                    .exit()
+                    .remove();
 
-            clip
-                .selectAll('path')
-                .remove();
-            clip
-                .append('path')
-                .attr('d', d => `M${d.join(',')}Z`);
+                clip
+                    .selectAll('path')
+                    .remove();
+                clip
+                    .append('path')
+                    .attr('d', d => `M${d.join(',')}Z`);
+            } else {
+                node
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
+            }
         }
 
         simulation

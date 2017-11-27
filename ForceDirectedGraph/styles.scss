@@ -17,12 +17,15 @@
             font-size: 2em;
         }
     }
-    .nodes {
-        opacity: 0.5;
-
-        &:hover {
-            opacity: 1;
-        }
+    .links {
+        stroke: #999;
+        stroke-opacity: 0.6;
+    }
+    .nodes :hover{
+        opacity: 1;
+    }
+    .circle {
+        opacity: 0.6;
     }
     .save-button {
         border: 0;
