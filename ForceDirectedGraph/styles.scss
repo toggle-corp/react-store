@@ -17,6 +17,13 @@
             font-size: 2em;
         }
     }
+    .nodes {
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
     .save-button {
         border: 0;
         outline: 0;

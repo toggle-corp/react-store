@@ -5,6 +5,7 @@ import { scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
 import { forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-force';
 import { drag } from 'd3-drag';
+import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
@@ -17,6 +18,7 @@ import styles from './styles.scss';
  * groupAccessor: return the group which each nodes belong to.
  * valueAccessor: returns the value of each link.
  * margins: the margin object with properties for the four sides(clockwise from top).
+ * circleRadius: The radius of the circle
  * colorScheme: the array of hex color values.
  */
 const propTypes = {
@@ -31,6 +33,7 @@ const propTypes = {
     idAccessor: PropTypes.func.isRequired,
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
+    circleRadius: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -53,6 +56,7 @@ const defaultProps = {
     },
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
+    circleRadius: 30,
     colorScheme: schemePaired,
 };
 /**
@@ -86,6 +90,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             idAccessor,
             groupAccessor,
             valueAccessor,
+            circleRadius,
             colorScheme,
             margins,
         } = this.props;
@@ -127,8 +132,27 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
         const color = scaleOrdinal().range(colorScheme);
 
+        const voronois = voronoi()
+            .x(d => d.x)
+            .y(d => d.y)
+            .extent([[-10, -10], [width + 10, height + 10]]);
+
+        function recenterVoronoi(nodes) {
+            const shapes = [];
+            voronois.polygons(nodes).forEach((d) => {
+                if (!d.length) return;
+                const n = [];
+                d.forEach((c) => {
+                    n.push([c[0] - d.data.x, c[1] - d.data.y]);
+                });
+                n.data = d.data;
+                shapes.push(n);
+            });
+            return shapes;
+        }
+
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idAccessor(d)).distance(radius / 4))
+            .force('link', forceLink().id(d => idAccessor(d)).distance(radius / 3))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
@@ -188,14 +212,11 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .attr('stroke-width', d => Math.sqrt(valueAccessor(d)));
 
         const node = group
-            .append('g')
-            .attr('class', 'nodes')
-            .selectAll('nodes')
+            .selectAll('.nodes')
             .data(data.nodes)
             .enter()
-            .append('circle')
-            .attr('r', 5)
-            .attr('fill', d => color(groupAccessor(d)))
+            .append('g')
+            .attr('class', 'nodes')
             .call(drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -204,7 +225,22 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .on('mousemove', mouseMoveCircle)
             .on('mouseout', mouseOutCircle);
 
+        node
+            .append('circle')
+            .attr('r', circleRadius)
+            .attr('fill', d => color(groupAccessor(d)));
+
+        node
+            .append('circle')
+            .attr('r', 3)
+            .attr('fill', 'black');
+
         function ticked() {
+            node.each((d) => {
+                d.x = Math.max(circleRadius, Math.min(width - circleRadius, d.x)); // eslint-disable-line
+                d.y = Math.max(circleRadius, Math.min(height - circleRadius, d.y)); // eslint-disable-line
+            });
+
             link
                 .attr('x1', d => d.source.x)
                 .attr('y1', d => d.source.y)
@@ -212,8 +248,29 @@ export default class ForceDirectedGraph extends React.PureComponent {
                 .attr('y2', d => d.target.y);
 
             node
-                .attr('cx', d => d.x)
-                .attr('cy', d => d.y);
+                .attr('transform', d => `translate(${d.x}, ${d.y})`)
+                .attr('clip-path', d => `url(#clip-${d.index})`);
+
+            const clip = group
+                .selectAll('clipPath')
+                .data(recenterVoronoi(node.data()), d => d.data.index);
+
+            clip
+                .enter()
+                .append('clipPath')
+                .attr('id', d => `clip-${d.data.index}`)
+                .attr('class', 'clip');
+
+            clip
+                .exit()
+                .remove();
+
+            clip
+                .selectAll('path')
+                .remove();
+            clip
+                .append('path')
+                .attr('d', d => `M${d.join(',')}Z`);
         }
 
         simulation
