@@ -43,11 +43,13 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    circleRadius: PropTypes.number,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 const defaultProps = {
     className: 'spark-lines',
+    circleRadius: 3,
     margins: {
         top: 1,
         right: 1,
@@ -118,7 +120,7 @@ export default class SparkLine extends React.PureComponent {
     }
 
     renderSparkLines() {
-        const { data } = this.props;
+        const { data, circleRadius } = this.props;
 
         this.scaleX.domain([0, data.length - 1]);
         this.scaleY.domain(extent(data.map(d => d.value)));
@@ -143,7 +145,7 @@ export default class SparkLine extends React.PureComponent {
             .append('circle')
             .attr('cx', (d, index) => this.scaleX(index))
             .attr('cy', d => this.scaleY(d.value))
-            .attr('r', 6)
+            .attr('r', circleRadius)
             .on('mouseenter', d => this.onMouseOver(d.label))
             .on('mousemove', this.onMouseMove)
             .on('mouseleave', this.onMouseOut);

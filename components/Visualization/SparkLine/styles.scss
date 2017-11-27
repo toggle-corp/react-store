@@ -6,13 +6,18 @@ $color: #008080;
     height: 100%;
     width: 100%;
 
-    path {
-        fill: none;
-        stroke: $color;
-    }
+    svg {
+        height: 100%;
+        width: 100%;
 
-    circle {
-        fill: $color;
-        stroke: $color;
+        path {
+            fill: none;
+            stroke: $color;
+        }
+
+        circle {
+            fill: $color;
+            stroke: $color;
+        }
     }
 }
