@@ -66,6 +66,11 @@ export default class RestBuilder {
         return this;
     }
 
+    delay(val) {
+        this.delayVal = val;
+        return this;
+    }
+
     build() {
         return new RestRequest(
             this.urlValue,
@@ -80,6 +85,7 @@ export default class RestBuilder {
             this.maxRetryTimeVal,
             this.decayVal,
             this.maxRetryAttemptsVal,
+            this.delayVal,
         );
     }
 }
