@@ -2,9 +2,10 @@ import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
-import { schemePaired } from 'd3-scale-chromatic';
+import { schemeSet3 } from 'd3-scale-chromatic';
 import { hierarchy, treemap } from 'd3-hierarchy';
 import { format } from 'd3-format';
+import { hsl } from 'd3-color';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
@@ -15,6 +16,7 @@ import styles from './styles.scss';
  * data: the hierarchical data to be visualized.
  * labelAccessor: returns the individual label from a unit data.
  * valueAccessor: return the value for the unit data.
+ * colorScheme: PropTypes.arrayOf(PropTypes.string),
  * zoomable: if true the treemap can be zoomed in.(show child elements).
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
@@ -28,6 +30,7 @@ const propTypes = {
     }),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
     zoomable: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -39,6 +42,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    colorScheme: schemeSet3,
     zoomable: true,
     margins: {
         top: 50,
@@ -77,6 +81,7 @@ export default class TreeMap extends React.PureComponent {
             boundingClientRect,
             valueAccessor,
             labelAccessor,
+            colorScheme,
             zoomable,
             margins,
         } = this.props;
@@ -113,8 +118,12 @@ export default class TreeMap extends React.PureComponent {
             .domain([0, height])
             .range([0, height]);
 
-        const color = scaleOrdinal()
-            .range(schemePaired);
+        const saturations = scaleOrdinal()
+            .range([0.7, 1]);
+
+        const colors = scaleOrdinal()
+            .range(colorScheme);
+
         const formats = format(',d');
 
         const treemaps = treemap()
@@ -142,8 +151,8 @@ export default class TreeMap extends React.PureComponent {
 
         function childText(element) {
             element
-                .attr('x', t => x(t.x1))
-                .attr('y', t => y(t.y1))
+                .attr('x', t => x(t.x1) - 6)
+                .attr('y', t => y(t.y1) - 6)
                 .attr('dy', '-.35em')
                 .attr('text-anchor', 'end')
                 .style('opacity', visibility);
@@ -225,7 +234,11 @@ export default class TreeMap extends React.PureComponent {
 
             group2
                 .selectAll('rect')
-                .style('fill', t => color(labelAccessor(t.data)));
+                .style('fill', (t) => {
+                    const out = hsl(colors(labelAccessor(t.parent.data)));
+                    out.s = saturations(labelAccessor(t.data));
+                    return out;
+                });
 
             function transitions(t) {
                 if (transitioning || !t) return;
@@ -279,7 +292,7 @@ export default class TreeMap extends React.PureComponent {
             grandparent
                 .append('rect')
                 .attr('class', 'navigation')
-                .attr('y', -top)
+                .attr('y', -(top + 5))
                 .attr('width', width)
                 .attr('height', top);
 
@@ -302,7 +315,7 @@ export default class TreeMap extends React.PureComponent {
                 .attr('id', d => d.data.name)
                 .attr('width', d => d.x1 - d.x0)
                 .attr('height', d => d.y1 - d.y0)
-                .attr('fill', d => color(labelAccessor(d.parent.data)));
+                .attr('fill', d => colors(labelAccessor(d.parent.data)));
 
             cell.append('text')
                 .attr('x', d => (d.x1 - d.x0) / 2)

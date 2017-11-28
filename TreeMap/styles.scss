@@ -25,6 +25,7 @@
 	      }
         .grandparent text {
             cursor:pointer;
+            font-weight: 700;
         }
 	      .navigation {
 	          stroke-width: 3px;
@@ -37,15 +38,16 @@
 	      .grandparent rect {
 	          cursor: pointer;
 	      }
-	      .children rect.child {
-	          opacity: 0;
-	      }
-	      .children:hover rect.child {
+        .children rect.child {
 	          opacity: 1;
-	          stroke-width: 1px;
 	      }
-	      .children:hover rect.parent {
-	          opacity: 0;
+	      .children rect.parent {
+            fill-opacity: 0;
+            stroke: grey;
+            stroke-width: 2px;
 	      }
+        .parent-text {
+            font-weight: 700;
+        }
     }
 }
