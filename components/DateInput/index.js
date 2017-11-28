@@ -110,9 +110,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Set date to today
-    setToday = (e) => {
-        e.preventDefault();
-
+    setToday = () => {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         this.setValue(date);
@@ -131,8 +129,7 @@ export default class DateInput extends React.PureComponent {
     // Public method used by Form
     isFocused = () => this.state.focused;
 
-    clear = (e) => {
-        e.preventDefault();
+    clear = () => {
         this.setValue(undefined);
     }
 
@@ -271,9 +268,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Show date picker
-    showDatePicker = (e) => {
-        e.preventDefault();
-
+    showDatePicker = () => {
         this.boundingClientRect = this.container.getBoundingClientRect();
         this.setState({
             showDatePicker: true,
@@ -404,6 +399,7 @@ export default class DateInput extends React.PureComponent {
                             onClick={this.clear}
                             styleName={isFalsy(this.state.day) && isFalsy(this.state.month) && isFalsy(this.state.year) && 'hidden'}
                             tabIndex="0"
+                            type="button"
                         >
                             <span className="ion-close-round" />
                         </button>
@@ -413,6 +409,7 @@ export default class DateInput extends React.PureComponent {
                             onClick={this.setToday}
                             styleName={isToday && 'active'}
                             tabIndex="0"
+                            type="button"
                         >
                             <span className="ion-android-time" />
                         </button>
@@ -421,6 +418,7 @@ export default class DateInput extends React.PureComponent {
                             disabled={disabled}
                             onClick={this.showDatePicker}
                             tabIndex="0"
+                            type="button"
                         >
                             <span className="ion-ios-calendar-outline" />
                         </button>
