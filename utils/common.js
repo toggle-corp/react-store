@@ -23,9 +23,21 @@ export const isEqualAndTruthy = (a, b) => (
 
 // Check if object is empty
 // Also returns false for non-Object types as well as for null/undefined types
-export const isObjectEmpty = obj => (
-    obj && Object.keys(obj).length === 0 && obj.constructor === Object
-);
+// 2 level check
+export const isObjectEmpty = (obj) => {
+    // Just check for keys
+    if (obj && Object.keys(obj).length === 0 && obj.constructor === Object) {
+        // If there are keys, check their values
+        const innerEmpty = Object.values(obj).reduce((a, b) => (
+            a && isFalsyOrEmptyOrZero(b)
+        ), true);
+
+        if (innerEmpty) {
+            return true;
+        }
+    }
+    return false;
+};
 
 export const bound = (value, max, min) => (
     Math.max(min, Math.min(max, value))
