@@ -63,9 +63,7 @@ export default class MultiCheckbox extends React.PureComponent {
         }
     }
 
-    onButtonClick = (e) => {
-        e.preventDefault();
-
+    onButtonClick = () => {
         const { allChecked } = this.state;
         let displayOptions = [...this.state.displayOptions];
 
@@ -94,8 +92,7 @@ export default class MultiCheckbox extends React.PureComponent {
         this.setState(newState, () => this.props.onChange(displayOptions));
     }
 
-    onClickShowButton = (e) => {
-        e.preventDefault();
+    onClickShowButton = () => {
         this.setState({ showOptions: !this.state.showOptions });
     }
 
@@ -184,6 +181,7 @@ export default class MultiCheckbox extends React.PureComponent {
                         className="parent-check"
                         styleName="parent-check"
                         onClick={this.onButtonClick}
+                        type="button"
                     >
                         <span
                             styleName={allUnChecked ? 'icon unchecked' : 'icon'}
@@ -204,6 +202,7 @@ export default class MultiCheckbox extends React.PureComponent {
                             onClick={this.onClickShowButton}
                             className="dropdown-arrow"
                             styleName="arrow"
+                            type="button"
                         >
                             <span
                                 className={`ion-chevron-down ${showOptions ? 'chevron show' : 'chevron'}`}

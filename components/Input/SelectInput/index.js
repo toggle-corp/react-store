@@ -460,9 +460,7 @@ export default class SelectInput extends React.PureComponent {
         }, 0);
     }
 
-    handleClearButtonClick = (e) => {
-        e.preventDefault();
-
+    handleClearButtonClick = () => {
         const {
             multiple,
             onChange,
@@ -556,10 +554,11 @@ export default class SelectInput extends React.PureComponent {
                         {
                             clearable && (
                                 <button
+                                    className="clear-button"
                                     onClick={this.handleClearButtonClick}
                                     styleName="clear-button"
-                                    className="clear-button"
                                     title="Clear selected option(s)"
+                                    type="button"
                                 >
                                     <span
                                         className="clear-icon ion-android-close"

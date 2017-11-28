@@ -165,6 +165,7 @@ export default class DatePicker extends React.PureComponent {
                                         <button
                                             className="day-button"
                                             onClick={() => this.selectDateInCurrentMonth(day.value)}
+                                            type="button"
                                         >
                                             {day.value}
                                         </button>
@@ -191,6 +192,7 @@ export default class DatePicker extends React.PureComponent {
                     <button
                         className="previous-button"
                         onClick={this.previous}
+                        type="button"
                     >
                         &lt;
                     </button>
@@ -198,6 +200,7 @@ export default class DatePicker extends React.PureComponent {
                     <button
                         className="next-button"
                         onClick={this.next}
+                        type="button"
                     >
                         &gt;
                     </button>
