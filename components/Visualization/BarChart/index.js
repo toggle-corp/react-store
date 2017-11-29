@@ -7,6 +7,8 @@ import { axisLeft, axisBottom } from 'd3-axis';
 import { select } from 'd3-selection';
 import { max, min } from 'd3-array';
 
+import { Responsive } from '../../General';
+
 import styles from './styles.scss';
 
 /*
@@ -65,6 +67,7 @@ const propTypes = {
     yKey: PropTypes.string.isRequired,
     xGrid: PropTypes.bool,
     yGrid: PropTypes.bool,
+    boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 const defaultProps = {
@@ -83,6 +86,7 @@ const defaultProps = {
     yGrid: true,
 };
 
+@Responsive
 @CSSModules(styles)
 export default class BarChart extends React.PureComponent {
     static propTypes = propTypes;
@@ -127,16 +131,19 @@ export default class BarChart extends React.PureComponent {
     }
 
     updateRender() {
-        const { top, right, bottom, left } = this.props.margins;
+        const { right, top, left, bottom } = this.props.margins;
+        const { height, width } = this.props.boundingClientRect;
 
-        this.scaleX.range([
-            0,
-            this.svgContainer.offsetWidth - left - right,
-        ]);
-        this.scaleY.range([
-            this.svgContainer.offsetHeight - top - bottom,
-            0,
-        ]);
+        if (!width) {
+            return;
+        }
+
+        const svgHeight = height - bottom;
+        const svgWidth = width - right;
+
+        this.scaleX.range([left, svgWidth]);
+        this.scaleY.range([svgHeight, top]);
+
         this.renderBarChart();
     }
 
