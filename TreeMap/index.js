@@ -6,6 +6,7 @@ import { schemeSet3 } from 'd3-scale-chromatic';
 import { hierarchy, treemap } from 'd3-hierarchy';
 import { format } from 'd3-format';
 import { hsl } from 'd3-color';
+import { range } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../Responsive';
@@ -46,9 +47,9 @@ const defaultProps = {
     zoomable: true,
     margins: {
         top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
 
@@ -97,18 +98,22 @@ export default class TreeMap extends React.PureComponent {
             left,
         } = margins;
 
-        const svg = select(this.svg);
-        svg.selectAll('*')
-            .remove();
 
         width = width - left - right;
         height = height - top - bottom;
 
+        const svg = select(this.svg);
+        svg.selectAll('*')
+            .remove();
+
         const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+            .style('width', width + left + right)
+            .style('height', height + top + bottom)
+            .style('margin-left', `-${left}px`)
+            .style('margin.right', `-${right}px`)
             .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
+            .attr('transform', `translate(${left}, ${top})`)
+            .style('shape-rendering', 'crispEdges');
 
         const x = scaleLinear()
             .domain([0, width])
@@ -119,7 +124,10 @@ export default class TreeMap extends React.PureComponent {
             .range([0, height]);
 
         const saturations = scaleOrdinal()
-            .range([0.7, 1]);
+            .range(range(0.5, 1, 0.1));
+
+        const lightness = scaleOrdinal()
+            .range(range(0.5, 1, 0.1));
 
         const colors = scaleOrdinal()
             .range(colorScheme);
@@ -175,6 +183,7 @@ export default class TreeMap extends React.PureComponent {
         const grandparent = group
             .append('g')
             .attr('class', 'grandparent');
+
 
         function display(d) {
             grandparent
@@ -237,6 +246,7 @@ export default class TreeMap extends React.PureComponent {
                 .style('fill', (t) => {
                     const out = hsl(colors(labelAccessor(t.parent.data)));
                     out.s = saturations(labelAccessor(t.data));
+                    out.l = lightness(labelAccessor(t.data));
                     return out;
                 });
 
@@ -265,12 +275,12 @@ export default class TreeMap extends React.PureComponent {
                 first.selectAll('.parent-text')
                     .call(parentText)
                     .style('fill-opacity', 0);
-                first.selectAll('.child-text')
-                    .call(childText)
-                    .style('fill-opacity', 0);
                 second.selectAll('.parent-text')
                     .call(parentText)
                     .style('fill-opacity', 1);
+                first.selectAll('.child-text')
+                    .call(childText)
+                    .style('fill-opacity', 0);
                 second.selectAll('.child-text')
                     .call(childText)
                     .style('fill-opacity', 1);
@@ -292,9 +302,9 @@ export default class TreeMap extends React.PureComponent {
             grandparent
                 .append('rect')
                 .attr('class', 'navigation')
-                .attr('y', -(top + 5))
+                .attr('y', -top)
                 .attr('width', width)
-                .attr('height', top);
+                .attr('height', top - 5);
 
             grandparent
                 .append('text')
