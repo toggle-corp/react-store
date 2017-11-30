@@ -102,7 +102,7 @@ export default class TextArea extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            value: nextProps.initialValue,
+            value: nextProps.value,
         });
     }
 

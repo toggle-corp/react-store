@@ -105,8 +105,8 @@ const defaultProps = {
     options: [],
     optionsIdentifier: undefined,
     placeholder: 'Select an option',
-    showHintAndError: false,
-    showLabel: false,
+    showHintAndError: true,
+    showLabel: true,
     value: undefined,
 };
 
@@ -139,7 +139,6 @@ export default class SelectInput extends React.PureComponent {
 
     getOptionsFromProps = (props) => {
         const {
-            clearable,
             keySelector,
             labelSelector,
             multiple,
@@ -149,10 +148,6 @@ export default class SelectInput extends React.PureComponent {
 
         let selectedOptionKey;
         let selectedOptionKeys;
-
-        if (!clearable && !this.value) {
-            console.warn('SelectInput: value must be supplied when not clearable');
-        }
 
         if (multiple) {
             selectedOptionKeys = value || [];
