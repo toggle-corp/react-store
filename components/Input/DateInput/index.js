@@ -49,7 +49,10 @@ const propTypes = {
     /**
      * Initial timestamp value for the input
      */
-    initialValue: PropTypes.number,
+    initialValue: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+    ]),
 
     /**
      * Input label
@@ -70,7 +73,10 @@ const propTypes = {
 
     showHintAndError: PropTypes.bool,
 
-    value: PropTypes.number,
+    value: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+    ]),
 };
 
 const defaultProps = {
@@ -133,7 +139,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Public method used by Form
-    getValue = () => this.state.date && this.state.date.getTime();
+    getValue = () => this.state.date && this.state.date.toISOString();
 
     getStyleName() {
         const styleNames = [];

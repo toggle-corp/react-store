@@ -59,8 +59,14 @@ const propTypes = {
 
     value: PropTypes.shape({
         type: PropTypes.string,
-        startDate: PropTypes.number,
-        endDate: PropTypes.number,
+        startDate: PropTypes.oneOfType([
+            PropTypes.number,
+            PropTypes.string,
+        ]),
+        endDate: PropTypes.oneOfType([
+            PropTypes.number,
+            PropTypes.string,
+        ]),
     }),
 };
 
