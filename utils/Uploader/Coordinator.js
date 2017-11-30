@@ -1,134 +1,115 @@
-// TODO: start, abort individual uploaders
-
 export default class Coordinator {
     constructor(maxActiveUploads = 3) {
         this.maxActiveUploads = maxActiveUploads;
 
-        // stores all the uploaders
-        this.uploaders = [];
-        // stores all the uploaders to be started
-        // once started, it is moved to activeUploaders
-        this.queuedUploaders = [];
-        // stores all the uploaders that has started
+        // stores all the actorss
+        this.actors = [];
+        // stores all the actors to be started
+        // once started, it is moved to activeActors
+        this.queuedActors = [];
+        // stores all the actors that has started
         // once completed, it is just removed
-        this.activeUploaders = [];
+        this.activeActors = [];
     }
 
     // INTERNAL
-    static fnToIntercept = ['success', 'failure', 'fatal', 'abort'];
-
-    hasActiveQueue = () => this.queuedUploaders.length > 0;
-
-    // INTERNAL
-    getUploaderById = id => this.uploaders.find(
-        uploader => uploader.id === id,
+    getActorById = id => this.actors.find(
+        actor => actor.id === id,
     )
 
     // INTERNAL
-    getUploaderIndexById = id => this.uploaders.findIndex(
-        uploader => uploader.id === id,
+    getActorIndexById = id => this.actors.findIndex(
+        actor => actor.id === id,
     )
 
     // INTERNAL
-    getQueuedUploaderIndexById = id => this.queuedUploaders.findIndex(
-        uploader => uploader.id === id,
+    getQueuedActorIndexById = id => this.queuedActors.findIndex(
+        actor => actor.id === id,
     )
 
     // INTERNAL
-    getActiveUploaderIndexById = id => this.activeUploaders.findIndex(
-        uploader => uploader.id === id,
+    getActiveActorIndexById = id => this.activeActors.findIndex(
+        actor => actor.id === id,
     )
 
-    add = (id, u) => {
-        const oldUploader = this.getUploaderById(id);
-        if (oldUploader) {
+    add = (id, nativeActor) => {
+        const oldActor = this.getActorById(id);
+        if (oldActor) {
             console.warn(`Uploder with id '${id}' already registered.`);
             return;
         }
-        const nativeUploader = u;
-        // Copy functions of nativeUploader
-        const interceptedFn = Coordinator.fnToIntercept.reduce(
-            (acc, fnName) => {
-                acc[fnName] = nativeUploader[fnName];
-                return acc;
-            },
-            {},
-        );
-        // NOTE: Override functions of nativeUploader
-        Coordinator.fnToIntercept.forEach((fnName) => {
-            nativeUploader[fnName] = this.handleUploaderLoad(id, fnName);
-        });
+
+        // create upload wrapper
+        const actor = { id, nativeActor };
 
         // add upload wrapper to list
-        const uploader = { id, nativeUploader, interceptedFn };
-        this.uploaders.push(uploader);
-        this.queuedUploaders.push(uploader);
+        this.actors.push(actor);
+        this.queuedActors.push(actor);
     }
 
     remove = (id) => {
-        /*
-            // NOTE: removing this caused error with callbacks
-            const indexGlobal = this.getUploaderIndexById(id);
-            if (indexGlobal >= 0) {
-                this.uploaders.splice(indexGlobal, 1);
-            }
-        */
-        const indexInActive = this.getActiveUploaderIndexById(id);
+        const indexGlobal = this.getActorIndexById(id);
+        if (indexGlobal >= 0) {
+            this.actors.splice(indexGlobal, 1);
+        }
+        const indexInActive = this.getActiveActorIndexById(id);
         if (indexInActive >= 0) {
-            const uploader = this.activeUploaders[indexInActive];
-            uploader.nativeUploader.close();
-            this.activeUploaders.splice(indexInActive, 1);
+            const actor = this.activeActors[indexInActive];
+            actor.nativeActor.close();
+            this.activeActors.splice(indexInActive, 1);
         }
-        const indexInQueued = this.getQueuedUploaderIndexById(id);
+        const indexInQueued = this.getQueuedActorIndexById(id);
         if (indexInQueued >= 0) {
-            this.activeUploaders.splice(indexInQueued, 1);
+            this.activeActors.splice(indexInQueued, 1);
         }
     }
 
     // INTERNAL
-    // override function for onload of uploader
-    handleUploaderLoad = (id, fnName) => (status, response) => {
-        // callback
-        const uploader = this.getUploaderById(id);
-        const fn = uploader.interceptedFn[fnName];
-        if (fn) {
-            fn(status, response);
-        }
-
-        // remove from activeUploaders
-        const uploaderIndex = this.getActiveUploaderIndexById(id);
-        this.activeUploaders.splice(uploaderIndex, 1);
-        // recalculate active uploader list
-        this.updateActiveUploaders();
-    }
-
-    // INTERNAL
-    // if there is activeQueue, and the no. of uploaders running is less than
-    // the allowed value then start new uploader
-    updateActiveUploaders = () => {
-        if (this.queuedUploaders.length <= 0) {
+    // if there is activeQueue, and the no. of actors running is less than
+    // the allowed value then start new actor
+    updateActiveActors = () => {
+        if (this.queuedActors.length <= 0) {
             return;
-        } else if (this.activeUploaders.length >= this.maxActiveUploads) {
+        } else if (this.activeActors.length >= this.maxActiveUploads) {
             return;
         }
 
-        const toBeActiveUploader = this.queuedUploaders[0];
-        this.activeUploaders.push(toBeActiveUploader);
-        this.queuedUploaders.shift();
+        const toBeActiveActor = this.queuedActors[0];
+        this.activeActors.push(toBeActiveActor);
+        this.queuedActors.shift();
 
-        // start uploader
-        toBeActiveUploader.nativeUploader.start();
+        // start actor
+        toBeActiveActor.nativeActor.start();
 
         // call recurisively
-        this.updateActiveUploaders();
+        this.updateActiveActors();
     }
 
-    queueAll = () => {
-        // this.queuedUploaders = [...this.uploaders];
-        this.updateActiveUploaders();
+    // actors notify co-ordinator that it has completed with or without errors
+    notifyComplete = (id) => {
+        // remove from activeActors
+        const actorIndex = this.getActiveActorIndexById(id);
+        this.activeActors.splice(actorIndex, 1);
+        // recalculate active actor list
+        this.updateActiveActors();
+    }
+
+    start = () => {
+        // this.queuedActors = [...this.actors];
+        this.updateActiveActors();
     }
 
     close = () => {
-        this.activeUploaders.forEach(uploader => uploader.nativeUploader.close());
+        const oldActiveActors = this.activeActors;
+
+        // Clear everything
+        this.actors = [];
+        this.activeActors = [];
+        this.queuedActors = [];
+
+        // close current
+        oldActiveActors.forEach(actor => actor.nativeActor.close());
     }
+
+    hasActiveQueue = () => this.queuedActors.length > 0;
 }
