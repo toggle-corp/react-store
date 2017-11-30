@@ -139,7 +139,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Public method used by Form
-    getValue = () => this.state.date && this.state.date.toISOString();
+    getValue = () => this.state.date && this.state.date.toISOString().split('T')[0];
 
     getStyleName() {
         const styleNames = [];
