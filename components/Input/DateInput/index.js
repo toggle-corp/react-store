@@ -4,7 +4,10 @@ import React from 'react';
 
 import DatePicker from '../DatePicker';
 import DateUnit from './DateUnit';
-import { FloatingContainer } from '../../View';
+import {
+    FloatingContainer,
+    FormattedDate,
+} from '../../View';
 import styles from './styles.scss';
 
 import {
@@ -139,7 +142,12 @@ export default class DateInput extends React.PureComponent {
     }
 
     // Public method used by Form
-    getValue = () => this.state.date && this.state.date.toISOString().split('T')[0];
+    getValue = () => {
+        if (this.state.date) {
+            return FormattedDate.format(this.state.date, 'yyyy-MM-dd');
+        }
+        return undefined;
+    }
 
     getStyleName() {
         const styleNames = [];

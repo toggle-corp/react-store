@@ -1,10 +1,13 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import DateInput from '../index';
+import {
+    FormattedDate,
+} from '../../../View';
 
 
 describe('DateInput', () => {
-    const initialValue = new Date('2017-08-11').getTime();
+    const initialValue = '2017-08-11';
 
     const wrapper = mount(
         <DateInput
@@ -26,12 +29,11 @@ describe('DateInput', () => {
     });
 
     it('has working today button', () => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = FormattedDate.format(new Date(), 'yyyy-MM-dd');
 
         wrapper.find('.today-button').simulate('click');
         expect(wrapper.instance().getValue())
-            .toEqual(today.getTime());
+            .toEqual(today);
     });
 
     it('has working clear button', () => {
