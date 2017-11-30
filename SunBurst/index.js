@@ -19,6 +19,7 @@ import styles from './styles.scss';
  * colorScheme: array of hex color values.
  * showLabels: show labels on the diagram?
  * showTooltip: show the tooltip?
+ * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
@@ -33,7 +34,12 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
-
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
@@ -41,6 +47,12 @@ const defaultProps = {
     colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,
+    margins: {
+        top: 50,
+        right: 0,
+        bottom: 0,
+        left: 0,
+    },
 };
 
 /*
@@ -67,7 +79,7 @@ export default class SunBurst extends PureComponent {
         svgsaver.asSvg(svg.node(), `sunburst-${Date.now()}.svg`);
     }
 
-    renderChart() {
+    renderChart = () => {
         const {
             boundingClientRect,
             data,
@@ -76,12 +88,22 @@ export default class SunBurst extends PureComponent {
             colorScheme,
             showLabels,
             showTooltip,
+            margins,
         } = this.props;
 
         if (!boundingClientRect.width) {
             return;
         }
-        const { width, height } = boundingClientRect;
+        let { width, height } = boundingClientRect;
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        width = width - left - right;
+        height = height - top - bottom;
         const radius = Math.min(width, height) / 2;
 
         const x = scaleLinear()
@@ -251,8 +273,11 @@ export default class SunBurst extends PureComponent {
                 className="sunburst-container"
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
+                <button className="button" onClick={this.save}>
                     Save
+                </button>
+                <button className="button" onClick={this.renderChart}>
+                    Reset
                 </button>
                 <svg
                     className="sunburst"

@@ -76,7 +76,7 @@ export default class TreeMap extends React.PureComponent {
         svgsaver.asSvg(svg.node(), `treemap-${Date.now()}.svg`);
     }
 
-    renderChart() {
+    renderChart = () => {
         const {
             data,
             boundingClientRect,
@@ -109,8 +109,8 @@ export default class TreeMap extends React.PureComponent {
         const group = svg
             .style('width', width + left + right)
             .style('height', height + top + bottom)
-            .style('margin-left', `-${left}px`)
-            .style('margin.right', `-${right}px`)
+            .style('left', `-${left}px`)
+            .style('right', `-${right}px`)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`)
             .style('shape-rendering', 'crispEdges');
@@ -302,7 +302,7 @@ export default class TreeMap extends React.PureComponent {
             grandparent
                 .append('rect')
                 .attr('class', 'navigation')
-                .attr('y', -top)
+                .attr('y', -(top))
                 .attr('width', width)
                 .attr('height', top - 5);
 
@@ -347,8 +347,11 @@ export default class TreeMap extends React.PureComponent {
                 className="treemap-container"
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
+                <button className="button" onClick={this.save}>
                     Save
+                </button>
+                <button className="button" onClick={this.renderChart}>
+                    Reset
                 </button>
                 <svg
                     className="treemap"
