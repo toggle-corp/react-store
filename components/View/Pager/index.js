@@ -89,7 +89,7 @@ export default class Pager extends React.PureComponent {
 
         // Once upon a time, there were two sides of a town
         // And every year, each got equal amount of ration
-        // Buth, they had a variable demand, and each year it could change
+        // But, they had a variable demand, and each year it could change
         const right = new Side(oneSideCapacity, active - startIndex);
         const left = new Side(oneSideCapacity, lastIndex - active);
 
@@ -116,7 +116,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active - 1 < startIndex}
                     className="paginate-btn"
                 >
-                    ‹
+                    <span className="ion-chevron-left" />
                 </button>
             ),
         ];
@@ -167,7 +167,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active + 1 > lastIndex}
                     className="paginate-btn"
                 >
-                    ›
+                    <span className="ion-chevron-right" />
                 </button>
             ),
         ];

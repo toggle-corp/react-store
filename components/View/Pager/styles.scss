@@ -4,15 +4,18 @@
 .pager {
     .page-list {
         button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             outline: 0;
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-small $spacing-small;
+            padding: 0;
+            min-width: $width-icon-extra-large;
+            min-height: $width-icon-extra-large;
             font-family: inherit;
             font-size: inherit;
-            min-width: $width-icon-extra-large;
 
             &:hover {
                 background-color: $color-background-hover;
@@ -20,17 +23,18 @@
        }
 
         span {
-            display: inline-block;
-            padding: $spacing-small $spacing-small;
-            color: $color-label;
-            font-weight: $font-weight-medium;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             min-width: $width-icon-extra-large;
-            text-align: center;
+            min-height: $width-icon-extra-large;
+            color: $color-label;
+            font-weight: $font-weight-bold;
             user-select: none;
 
             :global &.active {
-                color: $color-text-on-accent;
                 background-color: $color-accent;
+                color: $color-text-on-accent;
             }
         }
     }
