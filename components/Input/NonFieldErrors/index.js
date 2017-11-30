@@ -37,6 +37,7 @@ export default class NonFieldErrors extends React.PureComponent {
                 <div
                     styleName="error"
                     className="error"
+                    key={error}
                 >
                     { error }
                 </div>
