@@ -105,8 +105,8 @@ const defaultProps = {
     options: [],
     optionsIdentifier: undefined,
     placeholder: 'Select an option',
-    showHintAndError: false,
-    showLabel: false,
+    showHintAndError: true,
+    showLabel: true,
     value: undefined,
 };
 
