@@ -547,12 +547,13 @@ export default class SelectInput extends React.PureComponent {
                         className="actions"
                     >
                         {
-                            clearable && (
+                            clearable && !disabled && (
                                 <button
                                     className="clear-button"
                                     onClick={this.handleClearButtonClick}
                                     styleName="clear-button"
                                     title="Clear selected option(s)"
+                                    disabled={disabled}
                                     type="button"
                                 >
                                     <span
