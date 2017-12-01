@@ -2,8 +2,6 @@ export default class Coordinator {
     constructor(maxActiveUploads = 3) {
         this.maxActiveUploads = maxActiveUploads;
 
-        // stores all the actorss
-        this.actors = [];
         // stores all the actors to be started
         // once started, it is moved to activeActors
         this.queuedActors = [];
@@ -13,12 +11,7 @@ export default class Coordinator {
     }
 
     // INTERNAL
-    getActorById = id => this.actors.find(
-        actor => actor.id === id,
-    )
-
-    // INTERNAL
-    getActorIndexById = id => this.actors.findIndex(
+    getActorById = id => [...this.queuedActors, ...this.activeActors].find(
         actor => actor.id === id,
     )
 
@@ -43,15 +36,10 @@ export default class Coordinator {
         const actor = { id, nativeActor };
 
         // add upload wrapper to list
-        this.actors.push(actor);
         this.queuedActors.push(actor);
     }
 
     remove = (id) => {
-        const indexGlobal = this.getActorIndexById(id);
-        if (indexGlobal >= 0) {
-            this.actors.splice(indexGlobal, 1);
-        }
         const indexInActive = this.getActiveActorIndexById(id);
         if (indexInActive >= 0) {
             const actor = this.activeActors[indexInActive];
@@ -95,7 +83,6 @@ export default class Coordinator {
     }
 
     start = () => {
-        // this.queuedActors = [...this.actors];
         this.updateActiveActors();
     }
 
@@ -103,7 +90,6 @@ export default class Coordinator {
         const oldActiveActors = this.activeActors;
 
         // Clear everything
-        this.actors = [];
         this.activeActors = [];
         this.queuedActors = [];
 
