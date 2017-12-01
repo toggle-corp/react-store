@@ -71,6 +71,16 @@
         }
     }
 
+    &.multiple.selected {
+        .input-wrapper {
+            .input {
+                &::placeholder {
+                    color: $color-text;
+                }
+            }
+        }
+    }
+
     &.options-shown {
         .label {
             color: $color-accent;
@@ -164,6 +174,7 @@
 
     .checkmark {
         margin-right: $spacing-medium;
+        color: $color-accent;
     }
 
     &:hover {

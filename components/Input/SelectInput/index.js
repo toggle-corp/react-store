@@ -296,6 +296,11 @@ export default class SelectInput extends React.PureComponent {
             styleNames.push('error');
         }
 
+        const { selectedOptions } = this.state;
+        if (selectedOptions.length > 0) {
+            styleNames.push('selected');
+        }
+
         return styleNames.join(' ');
     }
 
@@ -305,9 +310,7 @@ export default class SelectInput extends React.PureComponent {
             placeholder,
         } = this.props;
 
-        const {
-            selectedOptions,
-        } = this.state;
+        const { selectedOptions } = this.state;
 
         if (multiple && selectedOptions.length > 0) {
             return `${selectedOptions.length} selected`;
