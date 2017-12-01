@@ -60,7 +60,7 @@ export default class RestRequest {
         this.maxRetryAttempts = maxRetryAttempts;
         this.delay = delay;
 
-        if (this.retryTime <= 0 && this.decay <= 0) {
+        if (maxRetryAttempts > 0 && this.retryTime <= 0 && this.decay <= 0) {
             throw new Error('RestRequest is not configured properly.');
         }
 
