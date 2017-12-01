@@ -22,21 +22,22 @@ export const isEqualAndTruthy = (a, b) => (
 );
 
 // Check if object is empty
-// Also returns false for non-Object types as well as for null/undefined types
-// 2 level check
+// when true?  If obj is not object or has zero keys or has isFalsyOrEmptyOrZero(values)
+// TODO: @bibekdahal check if it breaks something.
 export const isObjectEmpty = (obj) => {
-    // Just check for keys
-    if (obj && Object.keys(obj).length === 0 && obj.constructor === Object) {
-        // If there are keys, check their values
+    // check if obj is not undefined, has keys and is object: else return true
+    if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
+        // If obj is object and has keys, check their values
         const innerEmpty = Object.values(obj).reduce((a, b) => (
             a && isFalsyOrEmptyOrZero(b)
         ), true);
 
-        if (innerEmpty) {
-            return true;
+        // if inner is not empty, then return false else return true
+        if (!innerEmpty) {
+            return false;
         }
     }
-    return false;
+    return true;
 };
 
 export const bound = (value, max, min) => (
