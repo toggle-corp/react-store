@@ -107,6 +107,11 @@ export default class Dendrogram extends React.PureComponent {
             return color;
         }
 
+        function diagonal(d) {
+            return `M${d.y},${d.x}C${d.parent.y + 100},${d.x}` +
+                    ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`;
+        }
+
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
@@ -115,7 +120,9 @@ export default class Dendrogram extends React.PureComponent {
         const tree = cluster()
             .size([height, width - 100]);
 
-        const root = hierarchy(data);
+        const root = hierarchy(data)
+            .sum(d => d.size);
+
         tree(root);
 
         group
@@ -127,9 +134,7 @@ export default class Dendrogram extends React.PureComponent {
             .attr('stroke', topicColors)
             .attr('fill', 'none')
             .attr('stroke-width', 1.5)
-            .attr('d', d =>
-                `M${d.y},${d.x}C${d.parent.y + 100},${d.x}` +
-                          ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`);
+            .attr('d', diagonal);
 
         const node = group
             .selectAll('.node')
@@ -141,14 +146,13 @@ export default class Dendrogram extends React.PureComponent {
 
         node.append('circle')
             .style('fill', topicColors)
-            .attr('r', 2.5);
+            .attr('r', d => Math.sqrt(d.value));
 
         node.append('text')
             .attr('dy', '.3em')
             .attr('dx', d => (d.children ? -8 : 8))
             .style('fill', topicColors)
             .style('text-anchor', d => (d.children ? 'end' : 'start'))
-            .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .text(d => labelAccessor(d.data));
     }
     render() {

@@ -107,6 +107,7 @@ export default class RadialDendrogram extends React.PureComponent {
             }
             return color;
         }
+
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
@@ -125,6 +126,12 @@ export default class RadialDendrogram extends React.PureComponent {
             const angle = ((x - 90) / 180) * Math.PI;
             return [y * Math.cos(angle), y * Math.sin(angle)];
         }
+
+        function diagonal(d) {
+            return `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}` +
+                   ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`;
+        }
+
         group
             .selectAll('.link')
             .data(root.descendants()
@@ -135,9 +142,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('stroke', topicColors)
             .attr('fill', 'none')
             .attr('storke-width', 1.5)
-            .attr('d', d =>
-                `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}` +
-                          ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`);
+            .attr('d', diagonal);
 
         const node = group
             .selectAll('.node')
