@@ -1,6 +1,13 @@
+/**
+ * @author frozenhelium
+ * @co-author tnagorra <weathermist@gmail.com>
+ */
+
 export default class Coordinator {
-    constructor(maxActiveUploads = 3) {
-        this.maxActiveUploads = maxActiveUploads;
+    constructor(preSession = undefined, postSession = undefined, maxActiveActors = 3) {
+        this.maxActiveActors = maxActiveActors;
+        this.preSession = preSession;
+        this.postSession = postSession;
 
         // stores all the actors to be started
         // once started, it is moved to activeActors
@@ -57,8 +64,14 @@ export default class Coordinator {
     // the allowed value then start new actor
     updateActiveActors = () => {
         if (this.queuedActors.length <= 0) {
+            if (this.activeActors.length <= 0) {
+                // the session has ended
+                if (this.postSession) {
+                    this.postSession();
+                }
+            }
             return;
-        } else if (this.activeActors.length >= this.maxActiveUploads) {
+        } else if (this.activeActors.length >= this.maxActiveActors) {
             return;
         }
 
@@ -78,11 +91,15 @@ export default class Coordinator {
         // remove from activeActors
         const actorIndex = this.getActiveActorIndexById(id);
         this.activeActors.splice(actorIndex, 1);
+
         // recalculate active actor list
         this.updateActiveActors();
     }
 
     start = () => {
+        if (this.preSession) {
+            this.preSession();
+        }
         this.updateActiveActors();
     }
 
@@ -95,6 +112,10 @@ export default class Coordinator {
 
         // close current
         oldActiveActors.forEach(actor => actor.nativeActor.close());
+
+        if (this.postSession) {
+            this.postSession();
+        }
     }
 
     hasActiveQueue = () => this.queuedActors.length > 0;
