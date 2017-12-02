@@ -73,11 +73,11 @@ export default class Coordinator {
     updateActiveActors = () => {
         if (!this.inSession) {
             // current session has already completed
-            console.log('Session has already completed');
+            // console.log('Session has already completed');
             return;
         } else if (this.queuedActors.length <= 0 && this.activeActors.length <= 0) {
             // session has completed
-            console.log('Session has completed');
+            // console.log('Session has completed');
             this.inSession = false;
             if (this.postSession) {
                 this.postSession();
@@ -85,11 +85,11 @@ export default class Coordinator {
             return;
         } else if (this.queuedActors.length <= 0) {
             // no queued actors left, but has active actors
-            console.log('No queued actors left');
+            // console.log('No queued actors left');
             return;
         } else if (this.activeActors.length >= this.maxActiveActors) {
             // over capacity
-            console.log('Limiting active actors');
+            // console.log('Limiting active actors');
             return;
         }
 
