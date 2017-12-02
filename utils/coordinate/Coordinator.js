@@ -15,6 +15,14 @@ export default class Coordinator {
         // stores all the actors that has started
         // once completed, it is just removed
         this.activeActors = [];
+
+        // NOTE:
+        // If all the actors immediately fail then,
+        // at the time when the notifyComplete is called
+        // the activeActors and queuedActors are both empty which
+        // results in multiple postSession calls.
+        // To prevent this, memorize the session state
+        this.inSession = false;
     }
 
     // INTERNAL
@@ -63,15 +71,25 @@ export default class Coordinator {
     // if there is activeQueue, and the no. of actors running is less than
     // the allowed value then start new actor
     updateActiveActors = () => {
-        if (this.queuedActors.length <= 0) {
-            if (this.activeActors.length <= 0) {
-                // the session has ended
-                if (this.postSession) {
-                    this.postSession();
-                }
+        if (!this.inSession) {
+            // current session has already completed
+            console.log('Session has already completed');
+            return;
+        } else if (this.queuedActors.length <= 0 && this.activeActors.length <= 0) {
+            // session has completed
+            console.log('Session has completed');
+            this.inSession = false;
+            if (this.postSession) {
+                this.postSession();
             }
             return;
+        } else if (this.queuedActors.length <= 0) {
+            // no queued actors left, but has active actors
+            console.log('No queued actors left');
+            return;
         } else if (this.activeActors.length >= this.maxActiveActors) {
+            // over capacity
+            console.log('Limiting active actors');
             return;
         }
 
@@ -97,6 +115,7 @@ export default class Coordinator {
     }
 
     start = () => {
+        this.inSession = true;
         if (this.preSession) {
             this.preSession();
         }

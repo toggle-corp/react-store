@@ -12,7 +12,7 @@ export default class CoorindatorBuilder {
     }
 
     postSession(fn) {
-        this.postSession = fn;
+        this.postSessionFn = fn;
         return this;
     }
 
