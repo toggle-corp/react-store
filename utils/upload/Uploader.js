@@ -124,5 +124,3 @@ export default class Uploader {
         }
     }
 }
-
-export { default as UploadCoordinator } from './Coordinator';
