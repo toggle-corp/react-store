@@ -24,7 +24,7 @@ describe('RadioInput', () => {
             name="RadioInput"
             options={options}
             selected="1"
-        />
+        />,
     );
 
     it('renders properly', () => {
@@ -38,16 +38,15 @@ describe('RadioInput', () => {
             name="RadioInput"
             options={options}
             selected="3"
-        />
+        />,
     );
 
     it('switches options properly', () => {
         wrapper.find('input').at(0).simulate('click');
-        expect(wrapper.state('selectedOption')).toEqual({"key": "1", "label": "Syria Conflict"});
+        expect(wrapper.state('selectedOption')).toEqual({ key: '1', label: 'Syria Conflict' });
         wrapper.find('input').at(1).simulate('click');
-        expect(wrapper.state('selectedOption')).toEqual({"key": "2", "label": "Antigua and Barbuda Global Monitoring"});
+        expect(wrapper.state('selectedOption')).toEqual({ key: '2', label: 'Antigua and Barbuda Global Monitoring' });
         wrapper.find('input').at(2).simulate('click');
-        expect(wrapper.state('selectedOption')).toEqual({"key": "3", "label": "French Polynesia Global Monitoring"});
-;
+        expect(wrapper.state('selectedOption')).toEqual({ key: '3', label: 'French Polynesia Global Monitoring' });
     });
 });
