@@ -55,6 +55,11 @@ const propTypes = {
     onClose: PropTypes.func.isRequired,
 
     /**
+     * Optional parent container to consider while focusing out
+     */
+    parentContainer: PropTypes.object, // eslint-disable-line
+
+    /**
      * show modal ?
      */
     show: PropTypes.bool.isRequired,
@@ -75,6 +80,7 @@ const defaultProps = {
     closeOnTab: false,
     onBlur: undefined,
     onDynamicStyleOverride: undefined,
+    parentContainer: undefined,
     styleOverride: {},
 };
 
@@ -189,6 +195,10 @@ export default class FloatingContainer extends React.PureComponent {
         if (this.props.onBlur || this.props.closeOnBlur) {
             if (e.target !== this.container
                 && !this.container.contains(e.target)
+                && (
+                    !this.props.parentContainer ||
+                    !this.props.parentContainer.contains(e.target)
+                )
             ) {
                 if (this.props.onBlur) {
                     this.props.onBlur();

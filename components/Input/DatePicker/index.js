@@ -34,15 +34,19 @@ export default class DatePicker extends React.PureComponent {
         super(props);
 
         this.today = new Date();
+
         this.state = {
             selected: this.props.date && new Date(this.props.date),
-            current: new Date(this.today.getTime()),
+            current: (props.date && new Date(props.date)) || this.today,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.date !== (this.state.selected && this.state.selected.getTime())) {
-            this.setState({ selected: nextProps.date && new Date(nextProps.date) });
+            this.setState({
+                selected: nextProps.date && new Date(nextProps.date),
+                current: (nextProps.date && new Date(nextProps.date)) || this.state.current,
+            });
         }
     }
 

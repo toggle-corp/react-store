@@ -111,7 +111,7 @@ export default class DateInput extends React.PureComponent {
             monthUnit: undefined,
             yearUnit: undefined,
 
-            showDatePicker: false,
+            datePickerVisible: false,
             ...this.decodeTimestamp(this.props.value || this.props.initialValue),
         };
 
@@ -160,7 +160,7 @@ export default class DateInput extends React.PureComponent {
 
         const {
             focused,
-            showDatePicker,
+            datePickerVisible,
         } = this.state;
 
         styleNames.push('date-input-wrapper');
@@ -173,7 +173,7 @@ export default class DateInput extends React.PureComponent {
             styleNames.push('focused');
         }
 
-        if (showDatePicker) {
+        if (datePickerVisible) {
             styleNames.push('date-picker-shown');
         }
 
@@ -273,17 +273,13 @@ export default class DateInput extends React.PureComponent {
         // Hide date picker and unfocus the input
         this.setState({
             focused: false,
-            showDatePicker: false,
+            datePickerVisible: false,
         });
     }
 
     // Handle pick event of date picker
     handleDatePick = (timestamp) => {
         this.setValue(timestamp);
-        this.setState({
-            focused: false,
-            showDatePicker: false,
-        });
     }
 
     // Handle dynamic style override of date picker
@@ -340,11 +336,11 @@ export default class DateInput extends React.PureComponent {
         return matches.slice(1, 6);
     }
 
-    // Show date picker
-    showDatePicker = () => {
+    // Toggle date picker
+    toggleDatePicker = () => {
         this.boundingClientRect = this.container.getBoundingClientRect();
         this.setState({
-            showDatePicker: true,
+            datePickerVisible: !this.state.datePickerVisible,
         });
     }
 
@@ -486,7 +482,7 @@ export default class DateInput extends React.PureComponent {
                         <button
                             className="show-picker-button"
                             disabled={disabled}
-                            onClick={this.showDatePicker}
+                            onClick={this.toggleDatePicker}
                             tabIndex="0"
                             type="button"
                         >
@@ -531,8 +527,9 @@ export default class DateInput extends React.PureComponent {
                     containerId="datepicker-container"
                     onClose={this.handleDatePickerClosed}
                     onDynamicStyleOverride={this.handleDynamicStyleOverride}
+                    parentContainer={this.container}
                     ref={(el) => { this.pickerContainer = el; }}
-                    show={this.state.showDatePicker && !this.state.disabled}
+                    show={this.state.datePickerVisible && !this.state.disabled}
                 >
                     <DatePicker
                         date={this.state.date && this.state.date.getTime()}
