@@ -63,7 +63,9 @@ export default class RadioInput extends React.PureComponent {
             selectedOption: option,
         });
 
-        this.props.onChange(option.key);
+        if (this.props.onChange) {
+            this.props.onChange(option.key);
+        }
     }
 
     render() {
