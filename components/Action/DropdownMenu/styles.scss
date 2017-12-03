@@ -26,9 +26,6 @@
 }
 
 .dropdown-menu {
-    width: 100%;
-    height: 100%;
-
     .dropdown-header {
         display: flex;
         justify-content: space-between;
@@ -36,7 +33,7 @@
         border: 0;
         background-color: transparent;
         cursor: pointer;
-        padding: 0 $spacing-large;
+        padding: 0 $spacing-medium;
         width: 100%;
         height: 100%;
         text-transform: uppercase;

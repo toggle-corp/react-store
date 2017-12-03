@@ -21,18 +21,18 @@ const propTypes = {
         PropTypes.node,
     ]).isRequired,
 
-    iconLeft: PropTypes.string,
+    iconName: PropTypes.string,
 
-    showDropdownIcon: PropTypes.bool,
+    hideDropdownIcon: PropTypes.bool,
 
     title: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    iconLeft: '',
+    iconName: '',
     marginTop: 0,
-    showDropdownIcon: true,
+    hideDropdownIcon: false,
     title: '',
 };
 
@@ -46,42 +46,24 @@ export default class DropdownMenu extends React.PureComponent {
 
         this.state = {
             show: false,
-            dimension: { left: '', top: '', width: '' },
         };
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.calculateDimension);
-        this.calculateDimension();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.calculateDimension);
     }
 
-    getReference = (container) => {
-        this.container = container;
-    };
-
-    dropdownShow= () => {
-        this.setState({ show: true });
-    };
-
-    dropdownCollapse = () => {
-        this.setState({ show: false });
-    };
-
     handleDropdownClick = () => {
-        this.calculateDimension();
-        this.setState({ show: !this.state.show });
-    };
-
-    // TODO: Better comment required here
-    calculateDimension = () => {
         if (this.container) {
             this.containerClientRect = this.container.getBoundingClientRect();
         }
-    }
+
+        this.setState({ show: true });
+    };
 
     handleDynamicStyling = (optionContainer) => {
         let parentClientRect;
@@ -125,9 +107,19 @@ export default class DropdownMenu extends React.PureComponent {
         });
     }
 
+    handleDropdownContainerBlur = () => {
+        this.setState({
+            show: false,
+        });
+    }
+
     render() {
         const { show } = this.state;
-        const { title, iconLeft, showDropdownIcon } = this.props;
+        const {
+            title,
+            iconName,
+            hideDropdownIcon,
+        } = this.props;
 
         return (
             <div
@@ -141,16 +133,18 @@ export default class DropdownMenu extends React.PureComponent {
                 >
                     <div>
                         <i
-                            className={iconLeft}
+                            className={iconName}
                             styleName="item-icon"
                         />
                         {title}
                     </div>
-                    { showDropdownIcon &&
-                        <i
-                            className="ion-chevron-down"
-                            styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
-                        />
+                    {
+                        !hideDropdownIcon && (
+                            <i
+                                className="ion-chevron-down"
+                                styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
+                            />
+                        )
                     }
                 </button>
                 <FloatingContainer
@@ -160,6 +154,7 @@ export default class DropdownMenu extends React.PureComponent {
                     ref={(el) => { this.dropdownContainer = el; }}
                     show={show}
                     styleName="dropdown-container"
+                    onBlur={this.handleDropdownContainerBlur}
                 >
                     { this.props.children }
                 </FloatingContainer>

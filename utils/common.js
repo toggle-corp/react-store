@@ -162,3 +162,42 @@ export const camelToDash = str => str
 export const camelToNormal = str => str
     .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
     .replace(/([A-Z])/g, ([letter]) => ` ${letter.toLowerCase()}`);
+
+
+/**
+ * get location from pathname
+ */
+export const reverseRoute = (route, params) => {
+    const paths = route.split('/');
+
+    for (let i = 0; i < paths.length; i += 1) {
+        let path = paths[i];
+
+        if (path && path.length > 0 && path.charAt(0) === ':') {
+            path = path.substring(1);
+            let param;
+
+            // optional parameter
+            if (path.slice(-1) === '?') {
+                param = params[path.replace('?', '')];
+
+                // omit if value not supplied
+                if (!param) {
+                    paths.splice(i, 1);
+                } else {
+                    paths[i] = param;
+                }
+            } else {
+                param = params[path];
+
+                if (!param) {
+                    console.error(`value for param ${path} not supplied`);
+                }
+
+                paths[i] = param;
+            }
+        }
+    }
+
+    return paths.join('/');
+};
