@@ -129,7 +129,7 @@ export default class Confirm extends React.PureComponent {
         this.setState({
             show: false,
         });
-        this.props.onClose();
+        this.props.onClose(false);
     }
 
     render() {

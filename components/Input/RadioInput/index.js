@@ -26,6 +26,8 @@ const propTypes = {
         }),
     ).isRequired,
 
+    onChange: PropTypes.func,
+
     /**
      * key for selected option
      */
@@ -34,6 +36,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    onChange: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -59,6 +62,8 @@ export default class RadioInput extends React.PureComponent {
         this.setState({
             selectedOption: option,
         });
+
+        this.props.onChange(option.key);
     }
 
     render() {

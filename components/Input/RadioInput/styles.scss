@@ -26,4 +26,8 @@
             color: $color-accent;
         }
     }
+
+    &:not(:last-child) {
+        margin-right: $spacing-medium;
+    }
 }
