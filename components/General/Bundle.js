@@ -6,7 +6,7 @@ const propTypes = {
     load: PropTypes.func.isRequired,
 };
 
-class Bundle extends React.PureComponent {
+class Bundle extends React.Component {
     static propTypes = propTypes;
 
     constructor(props) {

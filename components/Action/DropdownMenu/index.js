@@ -62,7 +62,7 @@ export default class DropdownMenu extends React.PureComponent {
             this.containerClientRect = this.container.getBoundingClientRect();
         }
 
-        this.setState({ show: true });
+        this.setState({ show: !this.state.show });
     };
 
     handleDynamicStyling = (optionContainer) => {
@@ -113,6 +113,12 @@ export default class DropdownMenu extends React.PureComponent {
         });
     }
 
+    handleDropdownContainerClick = () => {
+        this.setState({
+            show: false,
+        });
+    }
+
     render() {
         const { show } = this.state;
         const {
@@ -155,6 +161,8 @@ export default class DropdownMenu extends React.PureComponent {
                     show={show}
                     styleName="dropdown-container"
                     onBlur={this.handleDropdownContainerBlur}
+                    onClick={this.handleDropdownContainerClick}
+                    parentContainer={this.container}
                 >
                     { this.props.children }
                 </FloatingContainer>
