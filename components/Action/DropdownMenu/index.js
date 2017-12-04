@@ -102,21 +102,15 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     handleContainerClose = () => {
-        this.setState({
-            show: false,
-        });
+        this.setState({ show: false });
     }
 
     handleDropdownContainerBlur = () => {
-        this.setState({
-            show: false,
-        });
+        this.setState({ show: false });
     }
 
     handleDropdownContainerClick = () => {
-        this.setState({
-            show: false,
-        });
+        this.setState({ show: false });
     }
 
     render() {
@@ -154,10 +148,10 @@ export default class DropdownMenu extends React.PureComponent {
                     }
                 </button>
                 <FloatingContainer
+                    ref={(el) => { this.dropdownContainer = el; }}
                     containerId="dropdown-container"
                     onClose={this.handleContainerClose}
                     onDynamicStyleOverride={this.handleDynamicStyling}
-                    ref={(el) => { this.dropdownContainer = el; }}
                     show={show}
                     styleName="dropdown-container"
                     onBlur={this.handleDropdownContainerBlur}
