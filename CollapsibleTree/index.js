@@ -122,7 +122,7 @@ export default class CollapsibleTree extends React.PureComponent {
             .attr('transform', `translate(${left},${top})`);
 
         const trees = tree()
-            .size([height, width]);
+            .size([height, width - 160]);
 
         const root = hierarchy(data, d => d.children);
         root.x0 = height / 2;
@@ -134,10 +134,6 @@ export default class CollapsibleTree extends React.PureComponent {
             const treeData = trees(root);
             const nodes = treeData.descendants();
             const links = treeData.descendants().slice(1);
-
-            nodes.forEach((d) => {
-                d.y = d.depth * 180; //eslint-disable-line
-            });
 
             const node = group
                 .selectAll('g.node')
@@ -176,6 +172,7 @@ export default class CollapsibleTree extends React.PureComponent {
             nodeEnter
                 .append('text')
                 .attr('dy', '.35em')
+                .attr('fill-opacity', 0)
                 .attr('x', d => (d.children || d.childrens ? -13 : 13))
                 .attr('text-anchor', d => ((d.children || d.childrens) ? 'end' : 'start'))
                 .text(d => labelAccessor(d.data));
@@ -193,6 +190,11 @@ export default class CollapsibleTree extends React.PureComponent {
                 .style('fill', topicColors)
                 .style('stroke', d => (d.childrens ? '#039be5' : '#fff'))
                 .attr('cursor', 'pointer');
+
+            nodeUpdate
+                .selectAll('text')
+                .transition()
+                .style('fill-opacity', 1);
 
             const nodeExit = node
                 .exit()
@@ -243,7 +245,7 @@ export default class CollapsibleTree extends React.PureComponent {
                 .remove();
 
             nodes.forEach((d) => {
-                d.x0 = d.x; // eslint-disable-line
+                d.x0  = d.x; // eslint-disable-line
                 d.y0 = d.y; // eslint-disable-line
             });
         }
