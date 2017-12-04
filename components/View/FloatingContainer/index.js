@@ -55,6 +55,11 @@ const propTypes = {
     onClose: PropTypes.func.isRequired,
 
     /**
+     * A callback when the container is clicked
+     */
+    onClick: PropTypes.func,
+
+    /**
      * Optional parent container to consider while focusing out
      */
     parentContainer: PropTypes.object, // eslint-disable-line
@@ -79,6 +84,7 @@ const defaultProps = {
     closeOnEscape: false,
     closeOnTab: false,
     onBlur: undefined,
+    onClick: undefined,
     onDynamicStyleOverride: undefined,
     parentContainer: undefined,
     styleOverride: {},
@@ -119,6 +125,11 @@ export default class FloatingContainer extends React.PureComponent {
         const {
             containerId,
             styleOverride,
+            onClick,
+            onBlur,
+            closeOnBlur,
+            closeOnTab,
+            closeOnEscape,
         } = this.props;
 
         this.container = document.getElementById(containerId);
@@ -135,11 +146,16 @@ export default class FloatingContainer extends React.PureComponent {
             document.body.appendChild(this.container);
 
             // Add event listeners
-            if (this.props.closeOnEscape || this.props.closeOnTab) {
+            if (closeOnEscape || closeOnTab) {
                 document.addEventListener('keydown', this.handleKeyPress);
             }
-            if (this.props.closeOnBlur || this.props.onBlur) {
-                window.addEventListener('mousedown', this.handleClick);
+
+            if (onClick || closeOnBlur || onBlur) {
+                window.addEventListener('mousedown', this.handleMouseDown);
+            }
+
+            if (onClick) {
+                window.addEventListener('click', this.handleMouseClick);
             }
 
             // append style provided by parent
@@ -168,7 +184,8 @@ export default class FloatingContainer extends React.PureComponent {
     removeContainer = () => {
         // remove listeners
         document.removeEventListener('keydown', this.handleKeyPress);
-        window.removeEventListener('mousedown', this.handleClick);
+        window.removeEventListener('mousedown', this.handleMouseDown);
+        window.removeEventListener('click', this.handleMouseClick);
 
         // remove container element from DOM
         this.container.remove();
@@ -191,19 +208,40 @@ export default class FloatingContainer extends React.PureComponent {
         }
     }
 
-    handleClick = (e) => {
-        if (this.props.onBlur || this.props.closeOnBlur) {
+    handleMouseClick = (e) => {
+        const {
+            onClick,
+        } = this.props;
+
+        if (onClick) {
+            if (e.target === this.container
+                || this.container.contains(e.target)
+            ) {
+                onClick();
+            }
+        }
+    }
+
+    handleMouseDown = (e) => {
+        const {
+            onClick,
+            onBlur,
+            closeOnBlur,
+            parentContainer,
+        } = this.props;
+
+        if (onClick || onBlur || closeOnBlur) {
             if (e.target !== this.container
                 && !this.container.contains(e.target)
                 && (
-                    !this.props.parentContainer ||
-                    !this.props.parentContainer.contains(e.target)
+                    !parentContainer ||
+                    !parentContainer.contains(e.target)
                 )
             ) {
-                if (this.props.onBlur) {
-                    this.props.onBlur();
+                if (onBlur) {
+                    onBlur();
                 }
-                if (this.props.closeOnBlur) {
+                if (closeOnBlur) {
                     this.close();
                 }
             }

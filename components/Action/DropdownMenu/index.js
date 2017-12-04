@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DropdownBody from './DropdownBody';
+import { FloatingContainer } from '../../View';
 import styles from './styles.scss';
 
 /**
@@ -21,20 +21,18 @@ const propTypes = {
         PropTypes.node,
     ]).isRequired,
 
-    iconLeft: PropTypes.string,
+    iconName: PropTypes.string,
 
-    marginTop: PropTypes.number,
-
-    showDropdownIcon: PropTypes.bool,
+    hideDropdownIcon: PropTypes.bool,
 
     title: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    iconLeft: '',
+    iconName: '',
     marginTop: 0,
-    showDropdownIcon: true,
+    hideDropdownIcon: false,
     title: '',
 };
 
@@ -48,59 +46,86 @@ export default class DropdownMenu extends React.PureComponent {
 
         this.state = {
             show: false,
-            dimension: { left: '', top: '', width: '' },
         };
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.calculateDimension);
-        this.calculateDimension();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.calculateDimension);
     }
 
-    getReference = (container) => {
-        this.container = container;
-    };
-
-    dropdownShow= () => {
-        this.setState({ show: true });
-    };
-
-    dropdownCollapse = () => {
-        this.setState({ show: false });
-    };
-
     handleDropdownClick = () => {
-        this.calculateDimension();
+        if (this.container) {
+            this.containerClientRect = this.container.getBoundingClientRect();
+        }
+
         this.setState({ show: !this.state.show });
     };
 
-    // TODO: Better comment required here
-    calculateDimension = () => {
-        // Client Rect
-        const cr = this.container.getBoundingClientRect();
+    handleDynamicStyling = (optionContainer) => {
+        let parentClientRect;
 
-        const dimension = {
-            left: `${cr.left}px`,
-            top: `${(cr.top + window.scrollY) + cr.height}px`,
-            width: `${cr.width}px`,
+        if (this.container) {
+            parentClientRect = this.container.getBoundingClientRect();
+        } else if (this.containerClientRect) {
+            parentClientRect = this.containerClientRect;
+        } else {
+            return null;
+        }
+
+        const offsetTop = 0;
+        const offsetBottom = 0;
+
+        const MIN_WIDTH = 192;
+        const width = Math.max(MIN_WIDTH, parentClientRect.width);
+        const xOffset = MIN_WIDTH > parentClientRect.width ? MIN_WIDTH - parentClientRect.width : 0;
+
+        const newStyle = {
+            top: `${parentClientRect.top + (parentClientRect.height - offsetBottom)}px`,
+            left: `${parentClientRect.left - xOffset}px`,
+            width: `${width}px`,
         };
 
-        this.setState({ dimension });
+        const optionRect = optionContainer.getBoundingClientRect();
+
+        const pageOffset = window.innerHeight;
+        const containerOffset = parentClientRect.top + optionRect.height + parentClientRect.height;
+
+        if (pageOffset < containerOffset) {
+            newStyle.top = `${(parentClientRect.top + window.scrollY) - optionRect.height - offsetTop}px`;
+        }
+
+        return newStyle;
+    }
+
+    handleContainerClose = () => {
+        this.setState({ show: false });
+    }
+
+    handleDropdownContainerBlur = () => {
+        this.setState({ show: false });
+    }
+
+    handleDropdownContainerClick = () => {
+        this.setState({ show: false });
     }
 
     render() {
         const { show } = this.state;
-        const { title, iconLeft, showDropdownIcon, marginTop } = this.props;
+        const {
+            title,
+            iconName,
+            hideDropdownIcon,
+        } = this.props;
 
         return (
             <div
-                ref={this.getReference}
+                ref={(el) => { this.container = el; }}
                 className={this.props.className}
-                styleName="dropdown"
+                styleName="dropdown-menu"
             >
                 <button
                     onClick={this.handleDropdownClick}
@@ -108,27 +133,33 @@ export default class DropdownMenu extends React.PureComponent {
                 >
                     <div>
                         <i
-                            className={iconLeft}
+                            className={iconName}
                             styleName="item-icon"
                         />
                         {title}
                     </div>
-                    { showDropdownIcon &&
-                        <i
-                            className="ion-chevron-down"
-                            styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
-                        />
+                    {
+                        !hideDropdownIcon && (
+                            <i
+                                className="ion-chevron-down"
+                                styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
+                            />
+                        )
                     }
                 </button>
-                <DropdownBody
-                    marginTop={marginTop}
-                    onCollapse={this.dropdownCollapse}
-                    onDropdownShow={this.dropdownShow}
-                    dimension={this.state.dimension}
+                <FloatingContainer
+                    ref={(el) => { this.dropdownContainer = el; }}
+                    containerId="dropdown-container"
+                    onClose={this.handleContainerClose}
+                    onDynamicStyleOverride={this.handleDynamicStyling}
                     show={show}
+                    styleName="dropdown-container"
+                    onBlur={this.handleDropdownContainerBlur}
+                    onClick={this.handleDropdownContainerClick}
+                    parentContainer={this.container}
                 >
-                    {this.props.children}
-                </DropdownBody>
+                    { this.props.children }
+                </FloatingContainer>
             </div>
         );
     }

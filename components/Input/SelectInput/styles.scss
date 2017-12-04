@@ -1,6 +1,5 @@
 @import '../../../../stylesheets/base';
 
-
 .select-input {
     .label {
         width: 100%;
@@ -195,3 +194,10 @@
     width: 0;
     height: 0;
 }
+
+:global {
+    #select-options-container {
+        z-index: 111;
+    }
+}
+
