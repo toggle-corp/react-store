@@ -17,6 +17,7 @@ import styles from './styles.scss';
  * idAccessor: returns the id of each node.
  * groupAccessor: return the group which each nodes belong to.
  * valueAccessor: returns the value of each link.
+ * useVoronoi: use Voronoi clipping for nodes.
  * margins: the margin object with properties for the four sides(clockwise from top).
  * circleRadius: The radius of the circle
  * colorScheme: the array of hex color values.

@@ -137,7 +137,7 @@ export default class TreeMap extends React.PureComponent {
         const treemaps = treemap()
             .size([width, height])
             .round(true)
-            .paddingInner(1);
+            .padding(d => d.height);
 
         const root = hierarchy(data)
             .sum(d => valueAccessor(d));
@@ -146,7 +146,7 @@ export default class TreeMap extends React.PureComponent {
 
         function visibility(t) {
             const textLength = this.getComputedTextLength();
-            const elementWidth = (x(t.x1) - x(t.x0)) + 6;
+            const elementWidth = (x(t.x1) - x(t.x0)) - 6;
             return textLength < elementWidth ? 1 : 0;
         }
 
@@ -219,7 +219,7 @@ export default class TreeMap extends React.PureComponent {
                 .attr('class', 'child')
                 .call(rect)
                 .append('title')
-                .text(t => `${labelAccessor(t.data)}`);
+                .text(t => `${labelAccessor(t.data)}\n${valueAccessor(t.data)}`);
 
             children
                 .append('text')
@@ -230,9 +230,7 @@ export default class TreeMap extends React.PureComponent {
             group2
                 .append('rect')
                 .attr('class', 'parent')
-                .call(rect)
-                .append('title')
-                .text(t => `${labelAccessor(t.data)}\n${t.value}`);
+                .call(rect);
 
             group2
                 .append('text')
@@ -304,7 +302,7 @@ export default class TreeMap extends React.PureComponent {
                 .attr('class', 'navigation')
                 .attr('y', -(top))
                 .attr('width', width)
-                .attr('height', top - 5);
+                .attr('height', top - 2);
 
             grandparent
                 .append('text')

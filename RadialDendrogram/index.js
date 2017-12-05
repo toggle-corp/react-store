@@ -38,9 +38,9 @@ const defaultProps = {
     data: [],
     colorScheme: schemePaired,
     margins: {
-        top: 100,
+        top: 0,
         right: 0,
-        bottom: 100,
+        bottom: 0,
         left: 0,
     },
 };
@@ -116,7 +116,7 @@ export default class RadialDendrogram extends React.PureComponent {
 
         const radius = width < height ? width / 2 : height / 2;
         const trees = tree()
-            .size([360, radius - 20])
+            .size([360, radius - 100])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
         const root = hierarchy(data);
