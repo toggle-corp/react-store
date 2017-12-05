@@ -1,3 +1,4 @@
+import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -28,7 +29,8 @@ const defaultProps = {
     emptyComponent: 'Nothing here',
 };
 
-export default class ListView extends React.Component {
+@CSSModules(styles, { allowMultiple: true })
+export default class ListView extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
