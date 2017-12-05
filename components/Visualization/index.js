@@ -2,6 +2,9 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+// required to enable transition
+// eslint-disable-next-line
+import { transition } from 'd3-transition';
 // eslint-disable-next-line import/prefer-default-export
 export { default as BarChart } from './BarChart';
 export { default as SparkLine } from './SparkLine';

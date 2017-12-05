@@ -1,31 +1,48 @@
 @import '../../../../stylesheets/base';
 
 .time-series {
-    background-color: $color-foreground;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     height: 100%;
-    $height-header: 48px;
+    width: 100%;
 
-    header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 $spacing-medium;
-        height: $height-header;
+    svg {
+        height: 100%;
+        width: 100%;
+        flex-grow: 1;
 
-        h3 {
-            color: $color-label;
-            font-weight: $font-weight-normal;
+        :global {
+
+            .axis {
+                line,
+                path {
+                    stroke: $color-background-header-alt;
+                }
+
+                text {
+                    fill: $color-text;
+                }
+            }
+
+            .time-area {
+                path {
+                    fill: blue;
+                    stroke: blue;
+                }
+            }
+
+            .overlay {
+              fill: none;
+              pointer-events: all;
+            }
+
+            .overlay-line,
+            .overlay-circle {
+              display: none;
+              fill: red;
+              stroke: red;
+            }
         }
     }
-
-    .content {
-        height: calc(100% - #{$height-header});
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
 }
