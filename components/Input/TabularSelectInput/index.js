@@ -177,6 +177,11 @@ export default class TabularSelectInput extends React.PureComponent {
         }
     }
 
+    getValue = () => {
+        const { selectedOptionsKeys } = this.state;
+        return selectedOptionsKeys;
+    }
+
     handleSelectInputChange = (values) => {
         const {
             options,
