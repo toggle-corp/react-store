@@ -46,7 +46,10 @@ const TableHeaderPropTypes = PropTypes.arrayOf(
 
 const TableDataPropTypes = PropTypes.arrayOf(
     PropTypes.shape({
-        key: PropTypes.string,
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
         // Note: Shape is dynamic
     }).isRequired,
 );
