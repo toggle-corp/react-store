@@ -103,5 +103,10 @@
             border-bottom: 0;
             background-color: $color-hover;
         }
+
+        &:disabled {
+            cursor: default;
+            color: $color-text-disabled;
+        }
     }
 }

@@ -1,6 +1,13 @@
 /**
  * @author tnagorra <weathermist@gmail.com>
  */
+export const getNumbers = (start, end) => {
+    const list = [];
+    for (let i = start; i < end; i += 1) {
+        list.push(i);
+    }
+    return list;
+};
 
 export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false

@@ -89,13 +89,15 @@ export default class Coordinator {
             return;
         } else if (this.activeActors.length >= this.maxActiveActors) {
             // over capacity
-            // console.log('Limiting active actors');
+            // console.log('Update postponed until notified');
             return;
         }
 
         const toBeActiveActor = this.queuedActors[0];
         this.activeActors.push(toBeActiveActor);
         this.queuedActors.shift();
+
+        // console.log('New actor started');
 
         // start actor
         toBeActiveActor.nativeActor.start();
@@ -110,6 +112,7 @@ export default class Coordinator {
         const actorIndex = this.getActiveActorIndexById(id);
         this.activeActors.splice(actorIndex, 1);
 
+        // console.log('Actor complete');
         // recalculate active actor list
         this.updateActiveActors();
     }
@@ -123,6 +126,7 @@ export default class Coordinator {
     }
 
     close = () => {
+        // console.warn('Session closing');
         const oldActiveActors = this.activeActors;
 
         // Clear everything
