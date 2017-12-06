@@ -67,10 +67,6 @@ export default class SparkLine extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            tooltip: undefined,
-        };
-
         this.scaleX = scaleLinear();
         this.scaleY = scaleLinear();
     }
@@ -90,7 +86,7 @@ export default class SparkLine extends React.PureComponent {
     }
 
     onMouseOver = (label) => {
-        this.setState({ tooltip: label });
+        this.tooltipDiv.setTooltip(label);
         this.tooltipDiv.show();
     }
 
@@ -153,20 +149,16 @@ export default class SparkLine extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const { tooltip } = this.state;
 
         return (
             <div
                 className={className}
                 styleName="spark-lines"
-                ref={(div) => { this.svgContainer = div; }}
             >
                 <svg
                     ref={(svg) => { this.svg = svg; }}
                 />
-                <Tooltip ref={(div) => { this.tooltipDiv = div; }} >
-                    {tooltip}
-                </Tooltip>
+                <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
             </div>
         );
     }

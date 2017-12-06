@@ -179,7 +179,6 @@ export default class BarChart extends React.PureComponent {
                 .tickSizeOuter(0);
         }
 
-
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
 

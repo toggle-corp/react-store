@@ -1,151 +1,235 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
-import { scaleLinear } from 'd3-scale';
-import { line, curveMonotoneX } from 'd3-shape';
-import { select } from 'd3-selection';
-import { max } from 'd3-array';
-import styles from './styles.scss';
-import { SegmentButton } from '../../Action';
+import PropTypes from 'prop-types';
 
-class TimeSeries extends React.PureComponent {
+import { scaleLinear } from 'd3-scale';
+import {
+    area,
+    // curveMonotoneX,
+} from 'd3-shape';
+import { axisLeft, axisBottom } from 'd3-axis';
+import { select, mouse } from 'd3-selection';
+import { extent, bisector } from 'd3-array';
+
+import { Responsive } from '../../General';
+import Tooltip from '../Tooltip';
+
+import styles from './styles.scss';
+
+const propTypes = {
+    className: PropTypes.string,
+    data: PropTypes.arrayOf(PropTypes.shape({})),
+    /*
+     * Chart Margins
+     */
+    margins: PropTypes.shape({
+        top: PropTypes.number,
+        right: PropTypes.number,
+        bottom: PropTypes.number,
+        left: PropTypes.number,
+    }),
+    xKey: PropTypes.string.isRequired,
+    yKey: PropTypes.string.isRequired,
+    xTickFormat: PropTypes.func,
+    yTickFormat: PropTypes.func,
+    tooltipRender: PropTypes.func.isRequired,
+    boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+};
+
+const defaultProps = {
+    className: 'time-series',
+    data: [],
+    margins: {
+        top: 10,
+        right: 10,
+        bottom: 30,
+        left: 30,
+    },
+    xTickFormat: d => d,
+    yTickFormat: d => d,
+};
+
+@Responsive
+@CSSModules(styles, { allowMultiple: true })
+export default class TimeSeries extends React.PureComponent {
+    static defaultProps = defaultProps;
+    static propTypes = propTypes;
+
     constructor(props) {
         super(props);
-        this.state = {
-            selectedTimeInterval: '_1d',
-            segmentButton: {
-                name: 'time-series-intervals',
-                data: [
-                    { label: '1d', value: '_1d' },
-                    { label: '1m', value: '_1m' },
-                    { label: '1y', value: '_1y' },
-                    { label: '5y', value: '_5y' },
-                ],
-            },
-            data: {
-                _1d: [
-                    { x: 0, y: 0 },
-                    { x: 2, y: 2.5 },
-                    { x: 3, y: 5 },
-                    { x: 7, y: 2.7 },
-                    { x: 8, y: 9 },
-                ],
-                _1m: [
-                    { x: 0, y: 0 },
-                    { x: 3, y: 2.5 },
-                    { x: 4, y: 5 },
-                    { x: 7, y: 2.7 },
-                    { x: 8, y: 9 },
-                ],
-                _1y: [
-                    { x: 0, y: 0 },
-                    { x: 1, y: 2.5 },
-                    { x: 3, y: 5 },
-                    { x: 4, y: 2.7 },
-                    { x: 8, y: 9 },
-                ],
-                _5y: [
-                    { x: 0, y: 0 },
-                    { x: 2, y: 2.5 },
-                    { x: 3, y: 5 },
-                    { x: 6, y: 2.7 },
-                    { x: 19, y: 9 },
-                ],
-            },
-        };
-
-        this.margins = {
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10,
-        };
 
         this.scaleX = scaleLinear();
         this.scaleY = scaleLinear();
-
-        this.line = line()
-            .curve(curveMonotoneX)
-            .x(d => this.scaleX(d.x))
-            .y(d => this.scaleY(d.y));
+        this.bisector = bisector(d => d[props.xKey]).left;
     }
 
     componentDidMount() {
-        const { top, right, bottom, left } = this.margins;
+        this.updateRender();
+    }
 
-        setTimeout(() => {
-            this.scaleX.range([
-                0,
-                this.svgContainer.offsetWidth - left - right,
-            ]);
-            this.scaleY.range([
-                this.svgContainer.offsetHeight - top - bottom,
-                0,
-            ]);
-            this.renderTimeSeries();
-        }, 0);
+    componentWillReceiveProps(nextProps) {
+        if (this.props !== nextProps) {
+            this.updateRender();
+        }
     }
 
     componentDidUpdate() {
-        const { top, right, bottom, left } = this.margins;
-
-        this.scaleX.range([
-            0,
-            this.svgContainer.offsetWidth - left - right,
-        ]);
-        this.scaleY.range([
-            this.svgContainer.offsetHeight - top - bottom,
-            0,
-        ]);
-        this.renderTimeSeries();
+        this.updateRender();
     }
 
-    onSegmentButtonClick = (val) => {
-        const selectedTimeInterval = val;
-        this.setState({ ...this.state, selectedTimeInterval });
+    onMouseEnter = (overLayLine, overLayCircle) => {
+        this.tooltipDiv.show();
+        overLayCircle
+            .style('display', 'inline-block');
+        overLayLine
+            .style('display', 'inline-block');
     }
 
-    renderTimeSeries() {
-        const renderData = this.state.data[this.state.selectedTimeInterval];
-        const { top, left } = this.margins;
+    onMouseLeave = (overLayLine, overLayCircle) => {
+        this.tooltipDiv.hide();
+        overLayCircle
+            .style('display', 'none');
+        overLayLine
+            .style('display', 'none');
+    }
 
-        this.scaleX.domain([0, max(renderData, d => d.x)]);
-        this.scaleY.domain([0, max(renderData, d => d.y)]);
+    onMouseMove = (overLay, overLayLine, overLayCircle) => {
+        const { data, xKey, yKey, tooltipRender } = this.props;
+        const x0 = this.scaleX.invert(mouse(overLay.node())[0]);
+        const i = this.bisector(data, x0);
+        const d0 = data[i - 1];
+        const d1 = data[i];
+        let d;
+
+        if (d0 && d1) {
+            d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
+        } else {
+            d = d0 || d1;
+        }
+
+        if (d) {
+            const { x, y } = overLay.node().getBoundingClientRect();
+            const xPoint = this.scaleX(d[xKey]);
+            const yPoint = this.scaleY(d[yKey]);
+
+            this.tooltipDiv.setTooltip(tooltipRender(d));
+            this.tooltipDiv.move(xPoint + x, y + yPoint, 'right', 10, 30);
+
+            overLayCircle
+                .transition()
+                .duration(30)
+                .attr('cx', xPoint)
+                .attr('cy', yPoint);
+            overLayLine
+                .transition()
+                .duration(30)
+                .attr('x', xPoint);
+        } else {
+            this.onMouseLeave(overLayLine, overLayCircle);
+        }
+    }
+
+    updateRender() {
+        const { right, top, left, bottom } = this.props.margins;
+        const { height, width } = this.props.boundingClientRect;
+
+        if (!width) {
+            return;
+        }
+
+        const svgHeight = height - bottom - top;
+        const svgWidth = width - right - left;
+
+        this.scaleX.range([0, svgWidth]);
+        this.scaleY.range([svgHeight, 0]);
+
+        this.renderBarChart(svgHeight, svgWidth);
+    }
+
+    renderBarChart(height, width) {
+        const { data, xKey, yKey, margins, xTickFormat, yTickFormat } = this.props;
+        const { top, left } = margins;
+
+        this.scaleX.domain(extent(data.map(d => d[xKey])));
+        this.scaleY.domain(extent(data.map(d => d[yKey])));
 
         const svg = select(this.svg);
-
         svg.select('*').remove();
-        svg.append('g')
-            .attr('transform', `translate(${left}, ${top})`)
+
+        const xAxis = axisBottom(this.scaleX)
+            // .tickSizeInner(-height)
+            // .tickSizeOuter(0)
+            .tickFormat(xTickFormat)
+            .ticks(5);
+
+        const yAxis = axisLeft(this.scaleY)
+            .tickSizeInner(-width)
+            .tickSizeOuter(0)
+            .tickFormat(yTickFormat);
+
+        const line = area()
+            // .curve(curveMonotoneX)
+            .x(d => this.scaleX(d[xKey]))
+            .y1(d => this.scaleY(d[yKey]))
+            .y0(height);
+
+        const root = svg.append('g')
+            .attr('transform', `translate(${left},${top})`);
+
+        root.append('g')
+            .attr('class', 'axis axis--x')
+            .attr('transform', `translate(0, ${height})`)
+            .call(xAxis);
+
+        root.append('g')
+            .attr('class', 'axis axis--y')
+            .call(yAxis);
+
+        root.append('g')
+            .attr('class', 'time-area')
             .append('path')
-            .data([renderData])
-            .attr('stroke', 'blue')
-            .attr('fill', 'none')
-            .attr('d', this.line);
+            .data([data])
+            .attr('d', line);
+
+        const overLayLine = root.append('rect')
+            .attr('class', 'overlay-line')
+            .attr('width', 0.1)
+            .attr('x', 0)
+            .attr('height', height);
+
+        const overLayCircle = root.append('circle')
+            .attr('class', 'overlay-circle')
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('r', 3);
+
+        const overLay = root.append('rect')
+            .attr('class', 'overlay')
+            .attr('width', width)
+            .attr('height', height)
+            .on('mouseenter', () =>
+                this.onMouseEnter(overLayLine, overLayCircle))
+            .on('mouseleave', () =>
+                this.onMouseLeave(overLayLine, overLayCircle))
+            .on('mousemove', () =>
+                this.onMouseMove(overLay, overLayLine, overLayCircle));
     }
 
     render() {
-        const { selectedTimeInterval, segmentButton } = this.state;
+        const { className } = this.props;
 
         return (
             <div
-                ref={(div) => { this.root = div; }}
+                className={className}
                 styleName="time-series"
             >
-                <header>
-                    <h3>Time series</h3>
-                    <SegmentButton
-                        data={segmentButton.data}
-                        name={segmentButton.name}
-                        onPress={this.onSegmentButtonClick}
-                        selected={selectedTimeInterval}
-                    />
-                </header>
-                <div styleName="content" ref={(div) => { this.svgContainer = div; }}>
-                    <svg ref={(svg) => { this.svg = svg; }} />
-                </div>
+                <svg
+                    ref={(svg) => { this.svg = svg; }}
+                />
+                <Tooltip
+                    ref={(div) => { this.tooltipDiv = div; }}
+                />
             </div>
         );
     }
 }
-
-export default CSSModules(TimeSeries, styles, { allowMultiple: true });

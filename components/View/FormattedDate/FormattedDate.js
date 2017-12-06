@@ -62,7 +62,12 @@ export default class FormattedDate extends React.PureComponent {
             case 'MM-dd-yyyy hh:mm':
                 fDate = `${month}-${day}-${year} ${hour}:${minute}`;
                 break;
-            case 'MMM dd, yyyy':
+            case 'hh:mm tt': {
+                const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+                const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
+                fDate = `${hours}:${minute} ${amPm}`;
+                break;
+            } case 'MMM dd, yyyy':
                 // TODO: fix this
                 fDate = `${monthHR} ${day}, ${year}`;
                 break;
