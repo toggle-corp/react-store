@@ -44,7 +44,7 @@ const TableHeaderPropTypes = PropTypes.arrayOf(
 );
 
 const propTypes = {
-    value: PropTypes.oneOfType([
+    blackList: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
         PropTypes.arrayOf(
@@ -97,7 +97,7 @@ const defaultProps = {
     labelSelector: d => (d || {}).label,
     onChange: undefined,
     options: [],
-    value: [],
+    blackList: [],
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -110,7 +110,7 @@ export default class TabularSelectInput extends React.PureComponent {
 
         const {
             options,
-            value,
+            blackList,
             keySelector,
             tableHeaders,
         } = this.props;
@@ -131,7 +131,7 @@ export default class TabularSelectInput extends React.PureComponent {
         });
 
         const validOptions = options.filter(option => (
-            value.findIndex(d => (d === keySelector(option))) === -1
+            blackList.findIndex(d => (d === keySelector(option))) === -1
         ));
 
         this.state = {
@@ -145,7 +145,7 @@ export default class TabularSelectInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const {
             options,
-            value,
+            blackList,
             keySelector,
             tableHeaders,
         } = nextProps;
@@ -167,7 +167,7 @@ export default class TabularSelectInput extends React.PureComponent {
 
         if (nextProps !== this.props) {
             const validOptions = options.filter(option => (
-                value.findIndex(d => (d === keySelector(option))) === -1
+                blackList.findIndex(d => (d === keySelector(option))) === -1
             ));
 
             this.setState({
