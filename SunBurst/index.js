@@ -34,6 +34,7 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -47,6 +48,7 @@ const defaultProps = {
     colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,
+    className: '',
     margins: {
         top: 50,
         right: 0,
@@ -270,15 +272,9 @@ export default class SunBurst extends PureComponent {
     render() {
         return (
             <div
-                className="sunburst-container"
+                className={`sunburst-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="button" onClick={this.save}>
-                    Save
-                </button>
-                <button className="button" onClick={this.renderChart}>
-                    Reset
-                </button>
                 <svg
                     className="sunburst"
                     ref={(elem) => { this.svg = elem; }}
