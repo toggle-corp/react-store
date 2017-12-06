@@ -1,6 +1,18 @@
 @import '../../../../stylesheets/base';
 
 .tabular-select-input {
+    display: flex;
+    flex-direction: column;
+
+    .select {
+        flex-shrink: 0;
+    }
+
+    .table-container {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
     :global {
         .raw-table {
             .headers {
