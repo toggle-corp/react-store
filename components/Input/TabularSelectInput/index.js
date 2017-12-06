@@ -249,6 +249,7 @@ export default class TabularSelectInput extends React.PureComponent {
                 styleName="tabular-select-input"
             >
                 <SelectInput
+                    styleName="select"
                     value={selectedOptionsKeys}
                     options={validOptions}
                     keySelector={keySelector}
@@ -256,11 +257,13 @@ export default class TabularSelectInput extends React.PureComponent {
                     onChange={this.handleSelectInputChange}
                     multiple
                 />
-                <Table
-                    data={selectedOptions}
-                    headers={tableHeadersWithRemove}
-                    keyExtractor={keySelector}
-                />
+                <div styleName="table-container">
+                    <Table
+                        data={selectedOptions}
+                        headers={tableHeadersWithRemove}
+                        keyExtractor={keySelector}
+                    />
+                </div>
             </div>
         );
     }
