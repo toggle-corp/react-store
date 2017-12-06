@@ -23,7 +23,10 @@ const propTypes = {
 
     data: PropTypes.arrayOf(
         PropTypes.shape({
-            key: PropTypes.string,
+            key: PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.number,
+            ]),
         }),
     ).isRequired,
 

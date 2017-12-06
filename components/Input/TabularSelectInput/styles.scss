@@ -1,0 +1,18 @@
+@import '../../../../stylesheets/base';
+
+.tabular-select-input {
+    :global {
+        .raw-table {
+            .headers {
+                .delete-action-included {
+                    width: 64px;
+                }
+            }
+
+            .delete-button {
+                color: $color-danger;
+            }
+        }
+    }
+
+}
