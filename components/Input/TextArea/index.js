@@ -143,18 +143,13 @@ export default class TextArea extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        const {
-            onChange,
-        } = this.props;
-
-        const {
-            value,
-        } = event.target;
-
+        const { value } = event.target;
         this.setState({ value });
 
+        const { onChange } = this.props;
         if (onChange) {
-            onChange(value);
+            clearTimeout(this.changeTimeout);
+            this.changeTimeout = setTimeout(() => onChange(value), 200);
         }
     }
 
