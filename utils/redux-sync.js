@@ -1,4 +1,4 @@
-import { KEY_PREFIX } from 'redux-persist/constants';
+import { KEY_PREFIX } from 'redux-persist';
 
 
 // Listen to localStorage changes and rehydrate the persistor
