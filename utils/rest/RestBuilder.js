@@ -89,3 +89,24 @@ export default class RestBuilder {
         );
     }
 }
+
+export class BgRestBuilder extends RestBuilder {
+    constructor() {
+        super();
+        this.delayVal = 200; // ms
+
+        this.decayVal = 0.3;
+        this.maxRetryTimeVal = 3000;
+    }
+}
+
+
+export class FgRestBuilder extends RestBuilder {
+    constructor() {
+        super();
+        this.delayVal = 100; // ms
+
+        this.retryTimeVal = 2000;
+        this.maxRetryAttemptsVal = 10;
+    }
+}
