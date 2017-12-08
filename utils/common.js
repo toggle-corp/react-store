@@ -28,6 +28,15 @@ export const isEqualAndTruthy = (a, b) => (
     isTruthy(a) && (a === b)
 );
 
+export const isDifferentAndTruthy = (a, b) => (
+    isTruthy(a) && (a !== b)
+);
+
+export const getKeyByValue = (object, value) => (
+    Object.keys(object).find(key => object[key] === value)
+);
+// ---------------------
+
 // Check if object is empty (or undefined)
 export const isObjectEmpty = (obj) => {
     // Check if obj is defined, has keys and is object: else return true
