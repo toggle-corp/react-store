@@ -51,7 +51,8 @@ export default class RestRequest {
         this.success = (...attrs) => { postLoad(); success(...attrs); };
         this.failure = (...attrs) => { postLoad(); failure(...attrs); };
         this.fatal = (...attrs) => { postLoad(); fatal(...attrs); };
-        this.abort = (...attrs) => { postLoad(); abort(...attrs); };
+        // NOTE: There is no postLoad in abort, as load was interrupted
+        this.abort = abort;
         this.preLoad = preLoad;
         this.postLoad = postLoad;
         this.retryTime = retryTime;
@@ -187,5 +188,6 @@ export default class RestRequest {
         clearTimeout(this.retryId);
         this.retryCount = 1;
         this.aborted = true;
+        // NOTE: fetch is not really aborted, just ignored
     }
 }
