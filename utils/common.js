@@ -1,6 +1,14 @@
 /**
  * @author tnagorra <weathermist@gmail.com>
  */
+
+export const caseInsensitiveSubmatch = (longText, shortText) => (
+    !shortText ||
+    ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
+);
+
+// get numbers from start to end
+// ex: getNumber(2, 6) = [2, 3, 4, 5]
 export const getNumbers = (start, end) => {
     const list = [];
     for (let i = start; i < end; i += 1) {
@@ -8,6 +16,10 @@ export const getNumbers = (start, end) => {
     }
     return list;
 };
+
+export const getRandomFromList = (items = []) => (
+    items[Math.floor(Math.random() * items.length)]
+);
 
 export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false
@@ -35,7 +47,6 @@ export const isDifferentAndTruthy = (a, b) => (
 export const getKeyByValue = (object, value) => (
     Object.keys(object).find(key => object[key] === value)
 );
-// ---------------------
 
 // Check if object is empty (or undefined)
 export const isObjectEmpty = (obj) => {
@@ -141,10 +152,6 @@ export const formattedNormalize = (number) => {
         normalizeSuffix,
     };
 };
-
-export const getRandomFromList = (items = []) => (
-    items[Math.floor(Math.random() * items.length)]
-);
 
 
 export const leftPad = (number, length, pad = '0') => {
