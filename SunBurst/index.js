@@ -19,6 +19,7 @@ import styles from './styles.scss';
  * colorScheme: array of hex color values.
  * showLabels: show labels on the diagram?
  * showTooltip: show the tooltip?
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -28,7 +29,7 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.shape({
         name: PropTypes.string,
-    }),
+    }).isRequired,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -44,7 +45,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    data: [],
     colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,

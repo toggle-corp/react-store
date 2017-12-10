@@ -19,6 +19,7 @@ import styles from './styles.scss';
  * valueAccessor: return the value for the unit data.
  * colorScheme: PropTypes.arrayOf(PropTypes.string),
  * zoomable: if true the treemap can be zoomed in.(show child elements).
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -33,6 +34,7 @@ const propTypes = {
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     zoomable: PropTypes.bool,
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -45,6 +47,7 @@ const defaultProps = {
     data: [],
     colorScheme: schemeSet3,
     zoomable: true,
+    className: '',
     margins: {
         top: 50,
         right: 0,
@@ -342,15 +345,9 @@ export default class TreeMap extends React.PureComponent {
     render() {
         return (
             <div
-                className="treemap-container"
+                className={`treemap-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="button" onClick={this.save}>
-                    Save
-                </button>
-                <button className="button" onClick={this.renderChart}>
-                    Reset
-                </button>
                 <svg
                     className="treemap"
                     ref={(elem) => { this.svg = elem; }}

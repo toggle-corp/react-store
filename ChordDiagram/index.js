@@ -18,8 +18,10 @@ import styles from './styles.scss';
  * colorScheme: array of hex color values.
  * showLabels: if true the labels are drawn.
  * showTooltip: if true the tooltip is rendered.
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
+
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -30,6 +32,7 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -43,11 +46,12 @@ const defaultProps = {
     colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,
+    className: '',
     margins: {
-        top: 50,
-        right: 50,
-        bottom: 100,
-        left: 100,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
 
@@ -231,12 +235,9 @@ export default class ChordDiagram extends React.PureComponent {
     render() {
         return (
             <div
-                className="chord-diagram-container"
+                className={`chord-diagram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="chord-diagram"
                     ref={(elem) => { this.svg = elem; }}

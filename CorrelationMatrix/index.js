@@ -13,12 +13,11 @@ import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
- * data: the hierarchical data to be visualized.
- * labelAccessor: returns the individual label from a unit data.
- * valueAccessor: return the value for the unit data.
+ * data: the correlation data.
  * colorScheme: the color interpolation function.
  * showLabels: show labels on the diagram?
  * showTooltip: show the tooltip?
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -26,10 +25,13 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
-    labelsData: PropTypes.arrayOf(PropTypes.string),
+    data: PropTypes.shape({
+        labels: PropTypes.arrayOf(PropTypes.string),
+        values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    }).isRequired,
     colorScheme: PropTypes.func,
     showLabels: PropTypes.bool,
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -39,10 +41,9 @@ const propTypes = {
 };
 
 const defaultProps = {
-    data: [],
-    labelsData: [],
     colorScheme: interpolateGnBu,
     showLabels: true,
+    className: '',
     margins: {
         top: 100,
         right: 50,
@@ -78,7 +79,6 @@ export default class CorrelationMatrix extends React.PureComponent {
         const {
             boundingClientRect,
             data,
-            labelsData,
             colorScheme,
             showLabels,
             margins,
@@ -88,6 +88,10 @@ export default class CorrelationMatrix extends React.PureComponent {
             return;
         }
         let { width, height } = boundingClientRect;
+
+        const dataLabels = data.labels;
+        const dataValues = data.values;
+
         const {
             top,
             right,
@@ -96,8 +100,8 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         } = margins;
 
-        const noofrows = data.length;
-        const noofcols = data[0].length;
+        const noofrows = dataValues.length;
+        const noofcols = dataValues[0].length;
 
         const parentWidth = width;
         width = (0.8 * parentWidth) - left - right;
@@ -109,8 +113,8 @@ export default class CorrelationMatrix extends React.PureComponent {
         let widthLegend = parentWidth - width - left - right;
         if (widthLegend < 0) widthLegend = 0;
 
-        const maxValue = max(data, layer => max(layer, d => d));
-        const minValue = min(data, layer => min(layer, d => d));
+        const maxValue = max(dataValues, layer => max(layer, d => d));
+        const minValue = min(dataValues, layer => min(layer, d => d));
 
         const svg = select(this.svg);
         svg.selectAll('*')
@@ -138,7 +142,7 @@ export default class CorrelationMatrix extends React.PureComponent {
             .domain([minValue, maxValue]);
 
         const row = group.selectAll('.row')
-            .data(data)
+            .data(dataValues)
             .enter()
             .append('g')
             .attr('class', 'row')
@@ -184,7 +188,7 @@ export default class CorrelationMatrix extends React.PureComponent {
         }
 
         row.selectAll('.cell')
-            .data((d, i) => data[i])
+            .data((d, i) => dataValues[i])
             .style('fill', colorMap);
 
         const labels = group.append('g')
@@ -192,7 +196,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         const columnLabels = labels
             .selectAll('.column-labels')
-            .data(labelsData)
+            .data(dataLabels)
             .enter()
             .append('g')
             .attr('class', 'column-labels')
@@ -217,7 +221,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         const rowLabels = labels
             .selectAll('.row-labels')
-            .data(labelsData)
+            .data(dataLabels)
             .enter()
             .append('g')
             .attr('class', 'row-labels')
@@ -248,11 +252,10 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('transform', `translate(${width + left + right}, 0)`);
 
         legend
-            .selectAll('.bars')
+            .selectAll('rect')
             .data(range(height))
             .enter()
             .append('rect')
-            .attr('class', '.bars')
             .attr('y', (d, i) => i)
             .attr('x', 0)
             .attr('width', (widthLegend / 2))
@@ -276,12 +279,9 @@ export default class CorrelationMatrix extends React.PureComponent {
     render() {
         return (
             <div
-                className="correlationmatrix-container"
+                className={`correlationmatrix-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="correlation-matrix"
                     ref={(elem) => { this.svg = elem; }}

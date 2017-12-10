@@ -18,9 +18,10 @@ import styles from './styles.scss';
  * groupAccessor: return the group which each nodes belong to.
  * valueAccessor: returns the value of each link.
  * useVoronoi: use Voronoi clipping for nodes.
- * margins: the margin object with properties for the four sides(clockwise from top).
  * circleRadius: The radius of the circle
  * colorScheme: the array of hex color values.
+ * className: additional class name for styling.
+ * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
@@ -36,13 +37,14 @@ const propTypes = {
     valueAccessor: PropTypes.func,
     circleRadius: PropTypes.number,
     useVoronoi: PropTypes.bool,
+    className: PropTypes.string,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
@@ -60,6 +62,7 @@ const defaultProps = {
     valueAccessor: () => 1,
     circleRadius: 30,
     useVoronoi: true,
+    className: '',
     colorScheme: schemePaired,
 };
 /**
@@ -300,12 +303,9 @@ export default class ForceDirectedGraph extends React.PureComponent {
     render() {
         return (
             <div
-                className="force-directed-graph-container"
+                className={`force-directed-graph-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="force-directed-graph"
                     ref={(elem) => { this.svg = elem; }}

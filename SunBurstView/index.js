@@ -1,11 +1,22 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
+import { PropTypes } from 'prop-types';
 import SunBurst from '../SunBurst';
-import { hierarchicalData } from '../../dummy-data';
 import styles from './styles.scss';
 
-@CSSModules(styles)
+const propTypes = {
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+@CSSModules(styles, { allowMultiple: true })
 export default class SunBurstView extends PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     handleSave = () => {
         this.chart.wrappedComponent.save();
     }
@@ -14,9 +25,15 @@ export default class SunBurstView extends PureComponent {
         this.chart.wrappedComponent.renderChart();
     }
     render() {
+        const {
+            className,
+            ...otherProps
+        } = this.props;
+
         return (
             <div
                 styleName="sunburst-view"
+                className={className}
             >
                 <div styleName="buttons">
                     <button styleName="button" onClick={this.handleSave}>
@@ -27,11 +44,9 @@ export default class SunBurstView extends PureComponent {
                     </button>
                 </div>
                 <SunBurst
+                    styleName="sunburst"
                     ref={(instance) => { this.chart = instance; }}
-                    data={hierarchicalData}
-                    valueAccessor={d => d.size}
-                    labelAccessor={d => d.name}
-                    className="visualization"
+                    {...otherProps}
                 />
             </div>
         );

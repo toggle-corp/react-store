@@ -14,6 +14,7 @@ import styles from './styles.scss';
  * data: the hierarchical data to be visualized.
  * labelAccessor: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -26,6 +27,7 @@ const propTypes = {
     }),
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -37,6 +39,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     colorScheme: schemePaired,
+    className: '',
     margins: {
         top: 0,
         right: 0,
@@ -115,8 +118,10 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('transform', `translate(${((width + left + right) / 2)}, ${((height + top + bottom) / 2)})`);
 
         const radius = width < height ? width / 2 : height / 2;
+        const leafTextWidth = 100;
+
         const trees = tree()
-            .size([360, radius - 100])
+            .size([360, radius - leafTextWidth])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
         const root = hierarchy(data);
@@ -168,12 +173,9 @@ export default class RadialDendrogram extends React.PureComponent {
     render() {
         return (
             <div
-                className="radialdendrogram-container"
+                className={`radialdendrogram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="radialdendrogram"
                     ref={(elem) => { this.svg = elem; }}

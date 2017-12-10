@@ -15,6 +15,7 @@ import styles from './styles.scss';
  * labelAccessor: returns the individual label from a unit data.
  * valueAccessor: return the value for the unit data.
  * showGridLines: if true the gridlines are drawn.
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -26,6 +27,7 @@ const propTypes = {
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
     showGridLines: PropTypes.bool,
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -37,6 +39,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     showGridLines: true,
+    className: '',
     margins: {
         top: 50,
         right: 50,
@@ -178,12 +181,9 @@ export default class HorizontalBar extends React.PureComponent {
     render() {
         return (
             <div
-                className="horizontalbar-container"
+                className={`horizontalbar-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                <button className="save-button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="horizontalbar"
                     ref={(elem) => { this.svg = elem; }}

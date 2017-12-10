@@ -14,6 +14,7 @@ import styles from './styles.scss';
  * data: the hierarchical data to be visualized.
  * labelAccessor: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
+ * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
  */
 const propTypes = {
@@ -26,6 +27,7 @@ const propTypes = {
     }),
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -37,6 +39,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     colorScheme: schemePaired,
+    className: '',
     margins: {
         top: 50,
         right: 50,
@@ -255,11 +258,8 @@ export default class CollapsibleTree extends React.PureComponent {
     render() {
         return (
             <div
-                className="collapsible-tree-container"
+                className={`collapsible-tree-container ${this.props.className}`}
             >
-                <button className="button" onClick={this.save}>
-                    Save
-                </button>
                 <svg
                     className="collapsible-tree"
                     ref={(elem) => { this.svg = elem; }}
