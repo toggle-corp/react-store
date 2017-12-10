@@ -31,12 +31,13 @@ const propTypes = {
     /**
      * key for selected option
      */
-    selected: PropTypes.string.isRequired,
+    value: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     onChange: undefined,
+    value: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -47,11 +48,24 @@ export default class RadioInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const selectedOption = this.props.options.find(d => d.key === this.props.selected);
-
+        const selectedOption = this.props.value &&
+            this.props.options.find(d => d.key === this.props.value);
         this.state = {
             selectedOption,
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (
+            this.props.value !== nextProps.value ||
+            this.props.options !== nextProps.options
+        ) {
+            const selectedOption = nextProps.value &&
+                nextProps.options.find(d => d.key === nextProps.value);
+            this.setState({
+                selectedOption,
+            });
+        }
     }
 
     getValue = () => (this.state.selectedOption.key)
@@ -86,7 +100,7 @@ export default class RadioInput extends React.PureComponent {
                             key={option.key}
                             label={option.label}
                             name={name}
-                            checked={option.key === selectedOption.key}
+                            checked={selectedOption && option.key === selectedOption.key}
                             onClick={() => this.handleOptionClick(option.key)}
                         />
                     ))

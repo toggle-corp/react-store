@@ -10,7 +10,7 @@ const propTypes = {
     className: PropTypes.string,
     data: PropTypes.arrayOf(
         PropTypes.shape({
-            label: PropTypes.string,
+            label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
             value: PropTypes.string,
         }).isRequired,
     ).isRequired,
@@ -40,6 +40,14 @@ export default class SegmentButton extends React.PureComponent {
         this.state = {
             selectedValue: selected,
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.selected !== nextProps.selected) {
+            this.setState({
+                selectedValue: nextProps.selected,
+            });
+        }
     }
 
     handleOptionChange = (changeEvent) => {
