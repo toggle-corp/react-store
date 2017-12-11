@@ -15,7 +15,7 @@ export default class Uploader {
     ) {
         this.file = file;
         this.uploadUrl = url;
-        this.requestHeader = params.headers;
+        this.params = params;
         this.progress = progress;
         this.success = (...attrs) => { postLoad(); success(...attrs); };
         this.failure = (...attrs) => { postLoad(); failure(...attrs); };
@@ -110,9 +110,10 @@ export default class Uploader {
 
         this.xhr.open('POST', this.uploadUrl);
 
-        const headerKeys = Object.keys(this.requestHeader);
+        const parameters = typeof this.params === 'function' ? this.params() : this.params;
+        const headerKeys = Object.keys(parameters.headers);
         headerKeys.forEach((key) => {
-            this.xhr.setRequestHeader(key, this.requestHeader[key]);
+            this.xhr.setRequestHeader(key, parameters.headers[key]);
         });
 
         this.xhr.send(formData);
