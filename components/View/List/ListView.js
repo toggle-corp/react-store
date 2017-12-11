@@ -30,7 +30,7 @@ const defaultProps = {
 };
 
 @CSSModules(styles, { allowMultiple: true })
-export default class ListView extends React.PureComponent {
+export default class ListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
