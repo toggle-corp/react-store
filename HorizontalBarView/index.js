@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
+import { Button, Dropdown } from 'semantic-ui-react';
+import { categoricalColorNames, getCategoryColorScheme } from '../../ColorScheme';
 import HorizontalBar from '../HorizontalBar';
 import styles from './styles.scss';
 
@@ -16,6 +18,24 @@ const defaultProps = {
 export default class HorizontalBarView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        this.state = { colorScheme: undefined };
+        this.colors = categoricalColorNames()
+            .map(name => ({ text: name, value: name }));
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.setState({ colorScheme: newProps.colorScheme });
+    }
+
+    handleSelection = (e, data) => {
+        const colors = getCategoryColorScheme(data.value);
+        this.setState({
+            colorScheme: colors,
+        });
+    }
 
     handleSave = () => {
         this.chart.wrappedComponent.save();
@@ -33,14 +53,25 @@ export default class HorizontalBarView extends PureComponent {
                 className={className}
             >
                 <div styleName="buttons">
-                    <button styleName="button" onClick={this.handleSave}>
+                    <Button primary onClick={this.handleSave}>
                         Save
-                    </button>
+                    </Button>
+                    <Button primary onClick={this.handleReset}>
+                        Reset
+                    </Button>
+                    <Dropdown
+                        options={this.colors}
+                        openOnFocus
+                        selection
+                        placeholder="ColorScheme"
+                        onChange={this.handleSelection}
+                    />
                 </div>
                 <HorizontalBar
                     styleName="horizontalbar"
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
+                    colorScheme={this.state.colorScheme}
                 />
             </div>
         );

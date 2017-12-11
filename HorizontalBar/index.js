@@ -14,6 +14,7 @@ import styles from './styles.scss';
  * data: the categorical data having values.
  * labelAccessor: returns the individual label from a unit data.
  * valueAccessor: return the value for the unit data.
+ * barColor: the color for bars.
  * showGridLines: if true the gridlines are drawn.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -26,6 +27,7 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
+    barColor: PropTypes.string,
     showGridLines: PropTypes.bool,
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -39,6 +41,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     showGridLines: true,
+    barColor: '#1693A5',
     className: '',
     margins: {
         top: 50,
@@ -77,6 +80,7 @@ export default class HorizontalBar extends React.PureComponent {
             boundingClientRect,
             valueAccessor,
             labelAccessor,
+            barColor,
             showGridLines,
             margins,
         } = this.props;
@@ -175,7 +179,8 @@ export default class HorizontalBar extends React.PureComponent {
             .attr('x', 0)
             .attr('y', d => y(labelAccessor(d)))
             .attr('height', y.bandwidth())
-            .attr('width', d => x(valueAccessor(d)));
+            .attr('width', d => x(valueAccessor(d)))
+            .attr('fill', barColor);
     }
 
     render() {

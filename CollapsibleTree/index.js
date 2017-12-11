@@ -3,6 +3,7 @@ import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { scaleOrdinal } from 'd3-scale';
+import { easeSinInOut } from 'd3-ease';
 import { schemePaired } from 'd3-scale-chromatic';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
@@ -132,7 +133,7 @@ export default class CollapsibleTree extends React.PureComponent {
         root.y0 = 0;
 
         let i = 0;
-        const time = 500;
+        let transitionTime = 0;
         function update(source) {
             const treeData = trees(root);
             const nodes = treeData.descendants();
@@ -156,6 +157,7 @@ export default class CollapsibleTree extends React.PureComponent {
                     d.children = d.childrens; // eslint-disable-line
                     d.childrens = null; // eslint-disable-line
                 }
+                transitionTime = 500;
                 update(d);
             }
 
@@ -184,7 +186,8 @@ export default class CollapsibleTree extends React.PureComponent {
 
             nodeUpdate
                 .transition()
-                .duration(time)
+                .ease(easeSinInOut)
+                .duration(transitionTime)
                 .attr('transform', d => `translate(${d.y}, ${d.x})`);
 
             nodeUpdate
@@ -197,12 +200,14 @@ export default class CollapsibleTree extends React.PureComponent {
             nodeUpdate
                 .selectAll('text')
                 .transition()
+                .ease(easeSinInOut)
                 .style('fill-opacity', 1);
 
             const nodeExit = node
                 .exit()
                 .transition()
-                .duration(time)
+                .ease(easeSinInOut)
+                .duration(transitionTime)
                 .attr('transform', `translate(${source.y}, ${source.x})`)
                 .remove();
 
@@ -234,13 +239,15 @@ export default class CollapsibleTree extends React.PureComponent {
 
             linkUpdate
                 .transition()
-                .duration(time)
+                .ease(easeSinInOut)
+                .duration(transitionTime)
                 .attr('d', d => diagonal(d, d.parent));
 
             link
                 .exit()
                 .transition()
-                .duration(time)
+                .ease(easeSinInOut)
+                .duration(transitionTime)
                 .attr('d', () => {
                     const out = { x: source.x, y: source.y };
                     return diagonal(out, out);

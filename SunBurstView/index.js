@@ -1,21 +1,43 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
+import { Button, Dropdown } from 'semantic-ui-react';
+import { categoricalColorNames, getCategoryColorScheme } from '../../ColorScheme';
 import SunBurst from '../SunBurst';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
     className: '',
+    colorScheme: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
 export default class SunBurstView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        this.state = { colorScheme: undefined };
+        this.colors = categoricalColorNames()
+            .map(name => ({ text: name, value: name }));
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.setState({ colorScheme: newProps.colorScheme });
+    }
+
+    handleSelection = (e, data) => {
+        const colors = getCategoryColorScheme(data.value);
+        this.setState({
+            colorScheme: colors,
+        });
+    }
 
     handleSave = () => {
         this.chart.wrappedComponent.save();
@@ -24,6 +46,7 @@ export default class SunBurstView extends PureComponent {
     handleReset = () => {
         this.chart.wrappedComponent.renderChart();
     }
+
     render() {
         const {
             className,
@@ -36,17 +59,25 @@ export default class SunBurstView extends PureComponent {
                 className={className}
             >
                 <div styleName="buttons">
-                    <button styleName="button" onClick={this.handleSave}>
+                    <Button primary onClick={this.handleSave}>
                         Save
-                    </button>
-                    <button styleName="button" onClick={this.handleReset}>
+                    </Button>
+                    <Button primary onClick={this.handleReset}>
                         Reset
-                    </button>
+                    </Button>
+                    <Dropdown
+                        options={this.colors}
+                        openOnFocus
+                        selection
+                        placeholder="ColorScheme"
+                        onChange={this.handleSelection}
+                    />
                 </div>
                 <SunBurst
                     styleName="sunburst"
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
+                    colorScheme={this.state.colorScheme}
                 />
             </div>
         );
