@@ -119,9 +119,7 @@ export default class RestRequest {
         this.aborted = false;
 
         // Parameters can be a key-value pair or a function that returns a key-value pair
-        this.parameters = typeof this.params === 'function'
-            ? this.params()
-            : this.params;
+        this.parameters = typeof this.params === 'function' ? this.params() : this.params;
 
         // Call function before fetch
         this.preLoad();
