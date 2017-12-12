@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { Button, Dropdown } from 'semantic-ui-react';
-import { categoricalColorNames, getCategoryColorScheme } from '../../ColorScheme';
+import { singleColors } from '../../ColorScheme';
 import HorizontalBar from '../HorizontalBar';
 import styles from './styles.scss';
 
@@ -21,19 +21,18 @@ export default class HorizontalBarView extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = { colorScheme: undefined };
-        this.colors = categoricalColorNames()
+        this.state = { barColor: undefined };
+        this.colors = singleColors
             .map(name => ({ text: name, value: name }));
     }
 
     componentWillReceiveProps(newProps) {
-        this.setState({ colorScheme: newProps.colorScheme });
+        this.setState({ barColor: newProps.barColor });
     }
 
     handleSelection = (e, data) => {
-        const colors = getCategoryColorScheme(data.value);
         this.setState({
-            colorScheme: colors,
+            barColor: data.value,
         });
     }
 
@@ -71,7 +70,7 @@ export default class HorizontalBarView extends PureComponent {
                     styleName="horizontalbar"
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
-                    colorScheme={this.state.colorScheme}
+                    barColor={this.state.barColor}
                 />
             </div>
         );
