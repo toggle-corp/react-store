@@ -49,7 +49,7 @@ const defaultProps = {
     zoomable: true,
     className: '',
     margins: {
-        top: 50,
+        top: 40,
         right: 0,
         bottom: 0,
         left: 0,
@@ -305,7 +305,8 @@ export default class TreeMap extends React.PureComponent {
                 .attr('class', 'navigation')
                 .attr('y', -(top))
                 .attr('width', width)
-                .attr('height', top - 2);
+                .attr('height', top - 2)
+                .attr('fill', colorScheme[0]);
 
             grandparent
                 .append('text')
@@ -315,7 +316,8 @@ export default class TreeMap extends React.PureComponent {
 
             display(root);
         } else {
-            const cell = grandparent
+            const cell = group
+                .select('g')
                 .selectAll('g')
                 .data(root.leaves())
                 .enter()
