@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
+import { iconNames } from '../../../constants';
 
 const propTypes = {
     className: PropTypes.string,
@@ -28,7 +29,7 @@ export default class LoadingAnimation extends React.PureComponent {
                 className={className}
             >
                 <span
-                    className="ion-load-c"
+                    className={iconNames.loading}
                     styleName="icon"
                 />
             </div>

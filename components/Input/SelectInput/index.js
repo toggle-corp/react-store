@@ -6,6 +6,8 @@ import Options from './Options';
 import Option from './Option';
 import styles from './styles.scss';
 
+import { iconNames } from '../../../constants';
+
 const propTypes = {
     /**
      * for styling
@@ -556,14 +558,14 @@ export default class SelectInput extends React.PureComponent {
                                     type="button"
                                 >
                                     <span
-                                        className="clear-icon ion-android-close"
+                                        className={`clear-icon ${iconNames.close}`}
                                     />
                                 </button>
                             )
                         }
                         <span
                             styleName="dropdown-icon"
-                            className="dropdown-icon ion-android-arrow-dropdown"
+                            className={`dropdown-icon ${iconNames.arrowDropdown}`}
                         />
                     </div>
                 </div>

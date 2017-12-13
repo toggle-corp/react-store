@@ -5,6 +5,8 @@ import React from 'react';
 import { FloatingContainer } from '../../View';
 import styles from './styles.scss';
 
+import { iconNames } from '../../../constants';
+
 /**
  * Iconleft is the name of ionicon in left of title button
  * MarginTop is extra top shift if required
@@ -141,7 +143,7 @@ export default class DropdownMenu extends React.PureComponent {
                     {
                         !hideDropdownIcon && (
                             <i
-                                className="ion-chevron-down"
+                                className={iconNames.chevronDown}
                                 styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
                             />
                         )
