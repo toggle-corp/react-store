@@ -1,0 +1,9 @@
+@import '../../stylesheets/base'; // import base from the project
+
+@import 'colors';
+@import 'dimens';
+@import 'utils';
+
+$font-family-sans-serif: sans-serif !default;
+$font-family-monospace: monospace !default;
+$font-family-icons: 'Ionicons' !default;
