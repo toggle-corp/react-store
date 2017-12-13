@@ -12,6 +12,7 @@ const propTypes = {
     headerRightComponent: PropTypes.node,
     onDragStart: PropTypes.func.isRequired,
     onResizeStart: PropTypes.func.isRequired,
+    viewOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -19,6 +20,7 @@ const defaultProps = {
     children: undefined,
     headerRightComponent: undefined,
     title: '',
+    viewOnly: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -26,7 +28,22 @@ export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    getStyleName = () => {
+        const styleNames = [];
+        styleNames.push('grid-item');
+
+        if (this.props.viewOnly) {
+            styleNames.push('view-only');
+        }
+
+        return styleNames.join(' ');
+    }
+
     handleDragHandleMouseDown = (e) => {
+        if (this.props.viewOnly) {
+            return;
+        }
+
         // return if not left mouse button
         if (e.button !== 0) {
             return;
@@ -44,6 +61,10 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleDragHandleMouseUp = () => {
+        if (this.props.viewOnly) {
+            return;
+        }
+
         const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.dragging);
 
@@ -54,6 +75,10 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleResizeHandleMouseDown = (e) => {
+        if (this.props.viewOnly) {
+            return;
+        }
+
         // return if not left mouse button
         if (e.button !== 0) {
             return;
@@ -76,6 +101,10 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleResizeHandleMouseUp = () => {
+        if (this.props.viewOnly) {
+            return;
+        }
+
         const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.resizing);
 
@@ -101,7 +130,7 @@ export default class GridItem extends React.PureComponent {
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                styleName="grid-item"
+                styleName={this.getStyleName()}
                 className={className}
                 style={layout}
             >

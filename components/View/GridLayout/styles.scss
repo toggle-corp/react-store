@@ -6,7 +6,12 @@
     height: 100%;
     user-select: none;
 
+    &:not(.view-only) {
+        background-image: linear-gradient(to right, $color-separator 1px, transparent 1px), linear-gradient(to bottom, $color-separator 1px, transparent 1px);
+    }
+
     .grid-item {
+        @include transition-medium;
         display: flex;
         position: absolute;
         flex-direction: column;
@@ -20,7 +25,6 @@
             .heading {
                 flex-basis: 100%;
                 background-color: $color-accent;
-                cursor: grab;
                 padding: $spacing-small $spacing-medium;
                 color: $color-text-on-accent;
                 font-size: $font-size-small;
@@ -31,31 +35,42 @@
             flex-grow: 1;
         }
 
-        .resize-handle {
-            display: block;
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            background-color: $color-accent;
-            cursor: se-resize;
-            width: 10px;
-            height: 10px;
-        }
+        &:not(.view-only) {
+            .header {
+                .heading {
+                    cursor: grab;
+                }
+            }
 
-        &.dragging {
-            @include shadow-small;
-            opacity: .8;
-            z-index: 11;
-        }
+            .resize-handle {
+                display: block;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                background-color: $color-accent;
+                cursor: se-resize;
+                width: 10px;
+                height: 10px;
+            }
 
-        &.resizing {
-            opacity: .8;
-            z-index: 11;
-            border: 1px solid red;
+            &.dragging {
+                @include shadow-small;
+                transition: none;
+                opacity: .8;
+                z-index: 11;
+            }
+
+            &.resizing {
+                transition: none;
+                opacity: .8;
+                z-index: 11;
+                border: 1px solid red;
+            }
         }
     }
 
     .ghost-item {
+        @include transition-medium;
         position: absolute;
         z-index: 10;
         background-color: rgba(0, 0, 0, .1);
