@@ -13,10 +13,12 @@ const propTypes = {
     modifier: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     keyExtractor: PropTypes.func.isRequired,
+    onLayoutChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    onLayoutChange: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -80,7 +82,6 @@ export default class GridLayout extends React.PureComponent {
             d => this.props.keyExtractor(d) === key,
         );
         this.setState({
-            items: newItems,
             validLayout: {
                 ...newItems[itemIndex].layout,
             },
@@ -97,7 +98,6 @@ export default class GridLayout extends React.PureComponent {
             d => this.props.keyExtractor(d) === key,
         );
         this.setState({
-            items: newItems,
             validLayout: {
                 ...newItems[itemIndex].layout,
             },
@@ -176,6 +176,10 @@ export default class GridLayout extends React.PureComponent {
                 };
             }
 
+            if (this.props.onLayoutChange) {
+                this.props.onLayoutChange(newItems);
+            }
+
             this.setState({
                 items: newItems,
                 validLayout: undefined,
@@ -193,12 +197,16 @@ export default class GridLayout extends React.PureComponent {
                 item => item.layout.height + item.layout.top,
             ));
 
-            for (let i = 1; i < items.length; i += 1) {
+            for (let i = items.length - 1; i >= 1; i -= 1) {
                 if (checkCollision(items, i)) {
                     newItems[i].layout.top = maxHeight;
                     maxHeight += newItems[i].layout.height;
                 }
             }
+        }
+
+        if (this.props.onLayoutChange) {
+            this.props.onLayoutChange(newItems);
         }
         return newItems;
     }
