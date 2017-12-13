@@ -2,10 +2,13 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+export { default as Alert } from './Modal/Alert';
+export { default as Confirm } from './Modal/Confirm';
 export { default as FloatingContainer } from './FloatingContainer';
 export {
     default as FormattedDate,
 } from './FormattedDate';
+export { default as GridLayout } from './GridLayout';
 export { default as List, ListView, ListItem } from './List';
 export { default as LoadingAnimation } from './LoadingAnimation';
 export {
@@ -14,8 +17,6 @@ export {
     Body as ModalBody,
     Footer as ModalFooter,
 } from './Modal';
-export { default as Alert } from './Modal/Alert';
-export { default as Confirm } from './Modal/Confirm';
 export {
     default as Numeral,
     ColoredNumeral,
