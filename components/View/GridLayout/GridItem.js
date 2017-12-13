@@ -8,6 +8,8 @@ const propTypes = {
     className: PropTypes.string,
     data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node,
+    title: PropTypes.string,
+    headerRightComponent: PropTypes.node,
     onDragStart: PropTypes.func.isRequired,
     onResizeStart: PropTypes.func.isRequired,
 };
@@ -15,6 +17,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     children: undefined,
+    headerRightComponent: undefined,
+    title: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -29,10 +33,10 @@ export default class GridItem extends React.PureComponent {
 
         const pos = data.position;
 
-        if (this.dragHandle) {
+        if (this.container) {
             const {
                 style,
-            } = this.dragHandle;
+            } = this.container;
 
             style.left = `${pos.left}px`;
             style.top = `${pos.top}px`;
@@ -41,26 +45,12 @@ export default class GridItem extends React.PureComponent {
         }
     }
 
-    handleDragStart = (e) => {
-        const {
-            clientX,
-            clientY,
-        } = e;
-
-        const transferData = JSON.stringify({ clientX, clientY });
-
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/json', transferData);
-
-        const {
-            onDragStart,
-            data,
-        } = this.props;
-
-        onDragStart(data.key, e);
-    }
-
     handleDragHandleMouseDown = (e) => {
+        // return if not left mouse button
+        if (e.button !== 0) {
+            return;
+        }
+
         const classNames = e.target.className.split(' ');
         const i = classNames.findIndex(d => d === styles.dragging);
 
@@ -83,30 +73,34 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleResizeHandleMouseDown = (e) => {
+        // return if not left mouse button
+        if (e.button !== 0) {
+            return;
+        }
+
         const {
             onResizeStart,
             data,
         } = this.props;
 
-        e.stopPropagation();
-        const classNames = this.dragHandle.className.split(' ');
+        const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.resizing);
 
         if (i === -1) {
             classNames.push(styles.resizing);
-            this.dragHandle.className = classNames.join(' ');
+            this.container.className = classNames.join(' ');
         }
 
         onResizeStart(data.key, e);
     }
 
     handleResizeHandleMouseUp = () => {
-        const classNames = this.dragHandle.className.split(' ');
+        const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.resizing);
 
         if (i !== -1) {
             classNames.splice(i, 1);
-            this.dragHandle.className = classNames.join(' ');
+            this.container.className = classNames.join(' ');
         }
     }
 
@@ -114,18 +108,35 @@ export default class GridItem extends React.PureComponent {
         const {
             className,
             children,
+            title,
+            headerRightComponent,
         } = this.props;
 
         return (
             <div
-                ref={(el) => { this.dragHandle = el; }}
-                role="presentation"
+                ref={(el) => { this.container = el; }}
                 styleName="grid-item"
                 className={className}
-                onMouseDown={this.handleDragHandleMouseDown}
-                onMouseUp={this.handleDragHandleMouseUp}
             >
-                { children }
+                <header
+                    styleName="header"
+                >
+                    <h3
+                        role="presentation"
+                        ref={(el) => { this.dragHandle = el; }}
+                        styleName="heading"
+                        onMouseDown={this.handleDragHandleMouseDown}
+                        onMouseUp={this.handleDragHandleMouseUp}
+                    >
+                        { title }
+                    </h3>
+                    { headerRightComponent }
+                </header>
+                <div
+                    styleName="content"
+                >
+                    { children }
+                </div>
                 <span
                     ref={(el) => { this.resizeHandle = el; }}
                     role="presentation"

@@ -47,6 +47,7 @@ export default class GridLayout extends React.PureComponent {
         return (
             <GridItem
                 key={key}
+                title={item.title}
                 data={gridData}
                 onDragStart={this.handleItemDragStart}
                 onResizeStart={this.handleItemResizeStart}
