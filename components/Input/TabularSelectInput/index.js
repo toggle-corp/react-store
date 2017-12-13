@@ -13,6 +13,8 @@ import {
     Table,
 } from '../../View';
 
+import { iconNames } from '../../../constants';
+
 import styles from './styles.scss';
 
 /**
@@ -125,7 +127,7 @@ export default class TabularSelectInput extends React.PureComponent {
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
                 >
-                    <span className="ion-close" />
+                    <span className={iconNames.close} />
                 </TransparentButton>
             ),
         });
@@ -160,7 +162,7 @@ export default class TabularSelectInput extends React.PureComponent {
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
                 >
-                    <span className="ion-close" />
+                    <span className={iconNames.close} />
                 </TransparentButton>
             ),
         });

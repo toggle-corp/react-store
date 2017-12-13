@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
+import { iconNames } from '../../../constants';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -54,7 +55,7 @@ export default class Option extends React.PureComponent {
                     styleName="radio"
                     className={`
                         radio
-                        ${checked ? 'ion-android-radio-button-on' : 'ion-android-radio-button-off'}
+                        ${checked ? iconNames.radioOn : iconNames.radioOff}
                     `}
                 />
                 <span

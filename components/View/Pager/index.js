@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
+import { iconNames } from '../../../constants';
 
 const propTypes = {
     activePage: PropTypes.number,
@@ -116,7 +117,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active - 1 < startIndex}
                     className="paginate-btn"
                 >
-                    <span className="ion-chevron-left" />
+                    <span className={iconNames.chevronLeft} />
                 </button>
             ),
         ];
@@ -167,7 +168,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active + 1 > lastIndex}
                     className="paginate-btn"
                 >
-                    <span className="ion-chevron-right" />
+                    <span className={iconNames.chevronRight} />
                 </button>
             ),
         ];

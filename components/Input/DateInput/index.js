@@ -18,6 +18,8 @@ import {
     randomString,
 } from '../../../utils/common';
 
+import { iconNames } from '../../../constants';
+
 
 const propTypes = {
     /**
@@ -467,7 +469,7 @@ export default class DateInput extends React.PureComponent {
                             tabIndex="0"
                             type="button"
                         >
-                            <span className="ion-close-round" />
+                            <span className={iconNames.closeRound} />
                         </button>
                         <button
                             className="today-button"
@@ -477,7 +479,7 @@ export default class DateInput extends React.PureComponent {
                             tabIndex="0"
                             type="button"
                         >
-                            <span className="ion-android-time" />
+                            <span className={iconNames.clock} />
                         </button>
                         <button
                             className="show-picker-button"
@@ -486,7 +488,7 @@ export default class DateInput extends React.PureComponent {
                             tabIndex="0"
                             type="button"
                         >
-                            <span className="ion-ios-calendar-outline" />
+                            <span className={iconNames.calendar} />
                         </button>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import React from 'react';
 import { TransparentButton } from '../../Action';
 import styles from './styles.scss';
 import Checkbox from '../Checkbox';
+import { iconNames } from '../../../constants';
 
 const propTypes = {
     title: PropTypes.node.isRequired,
@@ -93,12 +94,12 @@ export default class MultiCheckbox extends React.PureComponent {
 
     getButtonStyle = (allChecked, allUnChecked) => {
         if (allChecked) {
-            return 'ion-android-checkbox';
+            return iconNames.checkbox;
         } else if (allUnChecked) {
-            return 'ion-android-checkbox-outline-blank';
+            return iconNames.checkboxOutlineBlank;
         }
 
-        return 'ion-android-checkbox-blank';
+        return iconNames.checkboxBlank;
     }
 
     handleOptionChange = (key, value) => {
@@ -173,7 +174,7 @@ export default class MultiCheckbox extends React.PureComponent {
                             styleName="arrow"
                         >
                             <span
-                                className="ion-chevron-down"
+                                className={iconNames.chevronDown}
                                 styleName={showOptions ? 'chevron show' : 'chevron'}
                             />
                         </TransparentButton>

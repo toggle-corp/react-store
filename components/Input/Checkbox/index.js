@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
+import { iconNames } from '../../../constants';
 import { randomString } from '../../../utils/common';
 
 const propTypes = {
@@ -79,9 +80,9 @@ export default class Checkbox extends React.PureComponent {
                     styleName="checkmark"
                     className={`${
                         checked ? (
-                            'ion-android-checkbox'
+                            iconNames.checkbox
                         ) : (
-                            'ion-android-checkbox-outline-blank'
+                            iconNames.checkboxOutlineBlank
                         )
                     } checkmark`}
                 />
