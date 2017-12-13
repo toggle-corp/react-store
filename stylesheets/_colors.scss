@@ -1,0 +1,56 @@
+$color-background: #e0e0e0 !default;
+$color-background-header: #ececec !default;
+$color-background-header-alt: #e5e5e5 !default;
+$color-background-alt-row: #f0f0f0 !default;
+$color-background-row: #f0f0f0 !default;
+$color-background-row-alt: #f5f5f5 !default;
+$color-background-disabled: rgba(0, 0, 0, .06) !default;
+$color-foreground: #f8f8f8 !default;
+$color-foreground-alt: #f0f0f0 !default;
+$color-text: rgba(0, 0, 0, .8) !default;
+$color-text-disabled: rgba(0, 0, 0, .3) !default;
+$color-label: rgba(0, 0, 0, .5) !default;
+$color-text-tab: rgba(0, 0, 0, .3) !default;
+
+$color-hover: rgba(0, 0, 0, .06) !default;
+
+$color-navbar: #fff !default;
+$color-text-on-navbar: rgba(0, 0, 0, .9) !default;
+
+$color-primary: #37474f !default;
+$color-text-active-tab: $color-primary !default;
+$color-accent: #009688 !default;
+
+$color-danger: #dd2c00 !default;
+$color-text-on-danger: #fff !default;
+$color-success: #4cbf50 !default;
+$color-text-on-success: #fff !default;
+$color-warning: #fb8c00 !default;
+$color-text-on-warning: #fff !default;
+
+$color-negative: #e74c3c !default;
+$color-positive: #2ecc71 !default;
+
+$color-text-on-primary: rgba(255, 255, 255, .8) !default;
+$color-text-on-accent: rgba(255, 255, 255, .9) !default;
+
+$color-separator: rgba(0, 0, 0, .06) !default;
+$color-separator-alt: rgba(0, 0, 0, .2) !default;
+$color-separator-hover: rgba(0, 0, 0, .3) !default;
+
+$color-shadow-normal: rgba(0, 0, 0, .5) !default;
+$color-shadow-light: rgba(0, 0, 0, .3) !default;
+$color-shadow-dark: rgba(0, 0, 0, .8) !default;
+
+$color-background-hover: #e5e5e5 !default;
+
+$color-background-button-default: $color-foreground !default;
+$color-background-button-hover: #fff !default;
+
+$color-background-scrollbar: #ececec !default;
+$color-foreground-scrollbar: #afafaf !default;
+
+$color-background-overlay: rgba(255, 255, 255, .77) !default;
+$color-accented-dark: #000f0d !default;
+
+$color-background-modal: rgba(0, 0, 0, .8) !default;

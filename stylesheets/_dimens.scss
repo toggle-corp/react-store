@@ -1,0 +1,64 @@
+$font-size-normal: 13px !default;
+$font-size-medium: 13px !default;
+$font-size-normal-alt: 14px !default;
+$font-size-medium-alt: 14px !default;
+$font-size-small: 11px !default;
+$font-size-extra-small: 9px !default;
+$font-size-large: 17px !default;
+$font-size-extra-large: 20px !default;
+$font-size-super-large: 24px !default;
+$font-size-default: $font-size-normal !default;
+
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 400 !default;
+$font-weight-bold: 600 !default;
+$font-weight-default: $font-weight-medium !default;
+
+$spacing-extra-small: 3px !default;
+$spacing-small: 6px !default;
+$spacing-medium: 10px !default;
+$spacing-medium-alt: 12px !default;
+$spacing-large: 18px !default;
+$spacing-extra-large: 24px !default;
+$spacing-super-large: 32px !default;
+$spacing-horizontal-default: $spacing-medium !default;
+$spacing-vertical-default: $spacing-small !default;
+$spacing-default: $spacing-medium !default;
+
+$height-navbar: 48px !default;
+$height-progress-bar: 3px !default;
+
+$width-separator-thin: 1px !default;
+$width-separator-normal: 2px !default;
+$width-separator-medium: 2px !default;
+$width-separator-thick: 4px !default;
+
+
+$width-segment-button: 42px !default;
+$height-segment-button: 32px !default;
+
+$width-icon-medium: 16px !default;
+$width-icon-large-alt: 24px !default;
+$width-icon-large: 24px !default;
+$width-icon-extra-large: 32px !default;
+$width-icon-super-large: 48px !default;
+
+// High Low Indicator
+$height-indicator-line: 4px !default;
+$height-indicator: 10px !default;
+$width-indicator: 10px !default;
+
+$height-header: 48px !default;
+
+$width-modal-medium: 600px !default;
+$height-modal-header: 64px !default;
+$height-modal-footer: 64px !default;
+$height-tabbar: 40px !default;
+
+$width-login-form: 360px !default;
+$width-register-form: 520px !default;
+
+$width-loading-icon: 54px !default;
+$height-loading-icon: 54px !default;
+$font-size-loading-icon: 48px !default;
