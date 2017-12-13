@@ -46,8 +46,8 @@ const defaultProps = {
     className: '',
     margins: {
         top: 100,
-        right: 50,
-        bottom: 50,
+        right: 0,
+        bottom: 0,
         left: 100,
     },
 };
@@ -103,15 +103,14 @@ export default class CorrelationMatrix extends React.PureComponent {
         const noofrows = dataValues.length;
         const noofcols = dataValues[0].length;
 
-        const parentWidth = width;
-        width = (0.8 * parentWidth) - left - right;
+        width = width - left - right;
         height = height - top - bottom;
 
         if (width < 0) width = 0;
         if (height < 0) height = 0;
-
-        let widthLegend = parentWidth - width - left - right;
-        if (widthLegend < 0) widthLegend = 0;
+        const matrixWidth = (0.8 * width);
+        const widthLegend = width - matrixWidth;
+        const legendRectWidth = widthLegend / 4 || 0;
 
         const maxValue = max(dataValues, layer => max(layer, d => d));
         const minValue = min(dataValues, layer => min(layer, d => d));
@@ -128,7 +127,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         const x = scaleBand()
             .domain(range(noofcols))
-            .range([0, width]);
+            .range([0, matrixWidth]);
 
         const y = scaleBand()
             .domain(range(noofrows))
@@ -247,9 +246,7 @@ export default class CorrelationMatrix extends React.PureComponent {
 
         const legend = select(this.svg)
             .append('g')
-            .attr('width', widthLegend)
-            .attr('height', height + top + bottom)
-            .attr('transform', `translate(${width + left + right}, 0)`);
+            .attr('transform', `translate(${matrixWidth + left + right + legendRectWidth}, ${top})`);
 
         legend
             .selectAll('rect')
@@ -258,10 +255,9 @@ export default class CorrelationMatrix extends React.PureComponent {
             .append('rect')
             .attr('y', (d, i) => i)
             .attr('x', 0)
-            .attr('width', (widthLegend / 2))
+            .attr('width', legendRectWidth)
             .attr('height', 1)
-            .style('fill', d => colorMap(values(d)))
-            .attr('transform', `translate(0, ${top})`);
+            .style('fill', d => colorMap(values(d)));
 
         const yticks = scaleLinear()
             .range([height, 0])
@@ -272,7 +268,7 @@ export default class CorrelationMatrix extends React.PureComponent {
         legend
             .append('g')
             .attr('class', 'y-axis')
-            .attr('transform', `translate(${widthLegend / 2} , ${top})`)
+            .attr('transform', `translate(${legendRectWidth} , 0)`)
             .call(yAxis);
     }
 
