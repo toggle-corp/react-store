@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import GridItem from './GridItem';
+import {
+    checkCollision,
+} from './utils';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -25,11 +28,20 @@ export default class GridLayout extends React.PureComponent {
         super(props);
 
         this.state = {
-            items: props.items,
+            items: this.validateItems(props.items),
+            validLayout: undefined,
         };
 
         window.addEventListener('mousemove', this.handleMouseMove);
         window.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.items !== this.state.items) {
+            this.setState({
+                items: this.validateItems(nextProps.items),
+            });
+        }
     }
 
     getGridItem = (item) => {
@@ -41,7 +53,7 @@ export default class GridLayout extends React.PureComponent {
         const key = keyExtractor(item);
         const gridData = {
             key,
-            position: item.position,
+            layout: item.layout,
         };
 
         return (
@@ -62,17 +74,40 @@ export default class GridLayout extends React.PureComponent {
         this.dragTargetKey = key;
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
+
+        const newItems = [...this.state.items];
+        const itemIndex = newItems.findIndex(
+            d => this.props.keyExtractor(d) === key,
+        );
+        this.setState({
+            items: newItems,
+            validLayout: {
+                ...newItems[itemIndex].layout,
+            },
+        });
     }
 
     handleItemResizeStart = (key, e) => {
         this.resizeTargetKey = key;
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
+
+        const newItems = [...this.state.items];
+        const itemIndex = newItems.findIndex(
+            d => this.props.keyExtractor(d) === key,
+        );
+        this.setState({
+            items: newItems,
+            validLayout: {
+                ...newItems[itemIndex].layout,
+            },
+        });
     }
 
     handleMouseMove = (e) => {
         if (this.dragTargetKey || this.resizeTargetKey) {
             const newItems = [...this.state.items];
+            let validLayout = this.state.validLayout;
 
             const dx = e.screenX - this.lastScreenX;
             const dy = e.screenY - this.lastScreenY;
@@ -81,20 +116,39 @@ export default class GridLayout extends React.PureComponent {
                 const itemIndex = newItems.findIndex(
                     d => this.props.keyExtractor(d) === this.dragTargetKey,
                 );
-                newItems[itemIndex].position.left += dx;
-                newItems[itemIndex].position.top += dy;
+                newItems[itemIndex].layout.left = Math.max(
+                    0,
+                    newItems[itemIndex].layout.left + dx,
+                );
+                newItems[itemIndex].layout.top = Math.max(
+                    0,
+                    newItems[itemIndex].layout.top + dy,
+                );
+
+                if (!checkCollision(newItems, itemIndex)) {
+                    validLayout = {
+                        ...newItems[itemIndex].layout,
+                    };
+                }
             }
 
             if (this.resizeTargetKey) {
                 const itemIndex = newItems.findIndex(
                     d => this.props.keyExtractor(d) === this.resizeTargetKey,
                 );
-                newItems[itemIndex].position.width += dx;
-                newItems[itemIndex].position.height += dy;
+                newItems[itemIndex].layout.width += dx;
+                newItems[itemIndex].layout.height += dy;
+
+                if (!checkCollision(newItems, itemIndex)) {
+                    validLayout = {
+                        ...newItems[itemIndex].layout,
+                    };
+                }
             }
 
             this.setState({
                 items: newItems,
+                validLayout,
             });
 
             this.lastScreenX = e.screenX;
@@ -103,8 +157,50 @@ export default class GridLayout extends React.PureComponent {
     }
 
     handleMouseUp = () => {
+        if (this.dragTargetKey || this.resizeTargetKey) {
+            const newItems = [...this.state.items];
+
+            if (this.dragTargetKey) {
+                const itemIndex = newItems.findIndex(
+                    d => this.props.keyExtractor(d) === this.dragTargetKey,
+                );
+                newItems[itemIndex].layout = {
+                    ...this.state.validLayout,
+                };
+            } else if (this.resizeTargetKey) {
+                const itemIndex = newItems.findIndex(
+                    d => this.props.keyExtractor(d) === this.resizeTargetKey,
+                );
+                newItems[itemIndex].layout = {
+                    ...this.state.validLayout,
+                };
+            }
+
+            this.setState({
+                items: newItems,
+                validLayout: undefined,
+            });
+        }
+
         this.dragTargetKey = undefined;
         this.resizeTargetKey = undefined;
+    }
+
+    validateItems = (items) => {
+        const newItems = [...items];
+        if (items.length > 1) {
+            let maxHeight = Math.max(...newItems.map(
+                item => item.layout.height + item.layout.top,
+            ));
+
+            for (let i = 1; i < items.length; i += 1) {
+                if (checkCollision(items, i)) {
+                    newItems[i].layout.top = maxHeight;
+                    maxHeight += newItems[i].layout.height;
+                }
+            }
+        }
+        return newItems;
     }
 
     render() {
@@ -114,7 +210,10 @@ export default class GridLayout extends React.PureComponent {
 
         const {
             items,
+            validLayout,
         } = this.state;
+
+        const ghostLayout = validLayout && { ...validLayout };
 
         return (
             <div
@@ -126,6 +225,12 @@ export default class GridLayout extends React.PureComponent {
                         this.getGridItem(item)
                     ))
                 }
+                { validLayout && (
+                    <div
+                        styleName="ghost-item"
+                        style={ghostLayout}
+                    />
+                )}
             </div>
         );
     }

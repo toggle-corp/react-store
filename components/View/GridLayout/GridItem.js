@@ -26,49 +26,30 @@ export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    componentDidUpdate() {
-        const {
-            data,
-        } = this.props;
-
-        const pos = data.position;
-
-        if (this.container) {
-            const {
-                style,
-            } = this.container;
-
-            style.left = `${pos.left}px`;
-            style.top = `${pos.top}px`;
-            style.width = `${pos.width}px`;
-            style.height = `${pos.height}px`;
-        }
-    }
-
     handleDragHandleMouseDown = (e) => {
         // return if not left mouse button
         if (e.button !== 0) {
             return;
         }
 
-        const classNames = e.target.className.split(' ');
+        const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.dragging);
 
         if (i === -1) {
             classNames.push(styles.dragging);
-            e.target.className = classNames.join(' ');
+            this.container.className = classNames.join(' ');
         }
 
         this.props.onDragStart(this.props.data.key, e);
     }
 
-    handleDragHandleMouseUp = (e) => {
-        const classNames = e.target.className.split(' ');
+    handleDragHandleMouseUp = () => {
+        const classNames = this.container.className.split(' ');
         const i = classNames.findIndex(d => d === styles.dragging);
 
         if (i !== -1) {
             classNames.splice(i, 1);
-            e.target.className = classNames.join(' ');
+            this.container.className = classNames.join(' ');
         }
     }
 
@@ -110,13 +91,19 @@ export default class GridItem extends React.PureComponent {
             children,
             title,
             headerRightComponent,
+            data,
         } = this.props;
+
+        const layout = {
+            ...data.layout,
+        };
 
         return (
             <div
                 ref={(el) => { this.container = el; }}
                 styleName="grid-item"
                 className={className}
+                style={layout}
             >
                 <header
                     styleName="header"

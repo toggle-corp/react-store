@@ -11,8 +11,6 @@
         position: absolute;
         flex-direction: column;
         background-color: $color-foreground;
-        width: 200px;
-        height: 200px;
 
         .header {
             display: flex;
@@ -46,11 +44,20 @@
 
         &.dragging {
             @include shadow-small;
-            z-index: 1;
+            opacity: .8;
+            z-index: 11;
         }
 
         &.resizing {
-            z-index: 1;
+            opacity: .8;
+            z-index: 11;
+            border: 1px solid red;
         }
+    }
+
+    .ghost-item {
+        position: absolute;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, .1);
     }
 }
