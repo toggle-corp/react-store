@@ -116,6 +116,14 @@ export default class GridLayout extends React.PureComponent {
         height: this.snapY(layout.height),
     })
 
+    constrainSize = (layout, minSize) => (
+        minSize ? ({
+            ...layout,
+            width: this.snapX(Math.max(minSize.width, layout.width)),
+            height: this.snapY(Math.max(minSize.height, layout.height)),
+        }) : layout
+    )
+
     handleItemDragStart = (key, e) => {
         if (this.props.viewOnly) {
             return;
@@ -196,9 +204,9 @@ export default class GridLayout extends React.PureComponent {
                 newItems[itemIndex].layout.height += dy;
 
                 if (!checkCollision(newItems, itemIndex)) {
-                    validLayout = this.snap({
+                    validLayout = this.constrainSize(this.snap({
                         ...newItems[itemIndex].layout,
-                    });
+                    }), newItems[itemIndex].minSize);
                 }
             }
 
