@@ -85,6 +85,7 @@ const propTypes = {
         }),
     ),
 
+    optionsIdentifier: PropTypes.string,
     /**
      * headers is an array of the structure objects required for the header
      *
@@ -98,6 +99,7 @@ const defaultProps = {
     keySelector: d => (d || {}).key,
     labelSelector: d => (d || {}).label,
     onChange: undefined,
+    optionsIdentifier: undefined,
     options: [],
     blackList: [],
 };
@@ -236,6 +238,7 @@ export default class TabularSelectInput extends React.PureComponent {
             keySelector,
             labelSelector,
             className,
+            optionsIdentifier,
         } = this.props;
 
         const {
@@ -256,6 +259,7 @@ export default class TabularSelectInput extends React.PureComponent {
                     options={validOptions}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
+                    optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
                     multiple
                 />
