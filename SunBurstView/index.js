@@ -5,6 +5,7 @@ import { Button, Dropdown } from 'semantic-ui-react';
 import { range } from 'd3-array';
 import { categoricalColorNames, getCategoryColorScheme } from '../../ColorScheme';
 import SunBurst from '../SunBurst';
+import ColorPallete from '../ColorPallete';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -30,7 +31,12 @@ export default class SunBurstView extends PureComponent {
         };
         this.categories = [];
         this.colors = categoricalColorNames()
-            .map(name => ({ text: name, value: name }));
+            .map(name => (
+                {
+                    text: name,
+                    value: name,
+                    image: <ColorPallete colorScheme={getCategoryColorScheme(name)} />,
+                }));
     }
 
     componentWillReceiveProps(newProps) {
@@ -76,26 +82,28 @@ export default class SunBurstView extends PureComponent {
                 className={className}
             >
                 <div styleName="buttons">
-                    <Button primary onClick={this.handleSave}>
-                        Save
-                    </Button>
-                    <Button primary onClick={this.handleReset}>
-                        Reset
-                    </Button>
-                    <Dropdown
-                        options={this.colors}
-                        openOnFocus
-                        selection
-                        placeholder="ColorScheme"
-                        onChange={this.handleSelection}
-                    />
-                    <Dropdown
-                        options={this.categories}
-                        openOnFocus
-                        selection
-                        placeholder="No of Data Classes"
-                        onChange={this.handleNoOfCategories}
-                    />
+                    <div>
+                        <Button primary onClick={this.handleSave}>
+                            Save
+                        </Button>
+                        <Button primary onClick={this.handleReset}>
+                            Reset
+                        </Button>
+                        <Dropdown
+                            options={this.colors}
+                            openOnFocus
+                            selection
+                            placeholder="ColorScheme"
+                            onChange={this.handleSelection}
+                        />
+                        <Dropdown
+                            options={this.categories}
+                            openOnFocus
+                            selection
+                            placeholder="No of Data Classes"
+                            onChange={this.handleNoOfCategories}
+                        />
+                    </div>
                 </div>
                 <SunBurst
                     styleName="sunburst"
