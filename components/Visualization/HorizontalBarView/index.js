@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { Button, Dropdown } from 'semantic-ui-react';
-import { singleColors } from '../../ColorScheme';
+import { singleColors } from '../../../utils/ColorScheme';
 import HorizontalBar from '../HorizontalBar';
 import styles from './styles.scss';
 

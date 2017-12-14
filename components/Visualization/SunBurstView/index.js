@@ -3,7 +3,7 @@ import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { Button, Dropdown } from 'semantic-ui-react';
 import { range } from 'd3-array';
-import { categoricalColorNames, getCategoryColorScheme } from '../../ColorScheme';
+import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 import SunBurst from '../SunBurst';
 import ColorPallete from '../ColorPallete';
 import styles from './styles.scss';

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { Button, Dropdown } from 'semantic-ui-react';
-import { sequentialColorNames, getSequentialColorScheme } from '../../ColorScheme';
+import { sequentialColorNames, getSequentialColorScheme } from '../../../utils/ColorScheme';
 import CorrelationMatrix from '../CorrelationMatrix';
 import styles from './styles.scss';
 
