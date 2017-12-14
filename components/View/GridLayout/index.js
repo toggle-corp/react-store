@@ -38,7 +38,9 @@ export default class GridLayout extends React.PureComponent {
             items: this.validateItems(props.items),
             validLayout: undefined,
         };
+    }
 
+    componentWillMount() {
         window.addEventListener('mousemove', this.handleMouseMove);
         window.addEventListener('mouseup', this.handleMouseUp);
     }
@@ -48,7 +50,16 @@ export default class GridLayout extends React.PureComponent {
             this.setState({
                 items: this.validateItems(nextProps.items),
             });
+        } else {
+            this.setState({
+                items: nextProps.items,
+            });
         }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('mousemove', this.handleMouseMove);
+        window.removeEventListener('mouseup', this.handleMouseUp);
     }
 
     getStyleName = () => {
@@ -82,6 +93,7 @@ export default class GridLayout extends React.PureComponent {
                 onDragStart={this.handleItemDragStart}
                 onResizeStart={this.handleItemResizeStart}
                 onMouseDown={this.handleItemMouseDown}
+                headerRightComponent={item.headerRightComponent}
                 viewOnly={viewOnly}
             >
                 { modifier(item) }

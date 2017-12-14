@@ -15,24 +15,33 @@
         display: flex;
         position: absolute;
         flex-direction: column;
+        border: $width-separator-thin solid $color-separator;
         background-color: $color-foreground;
 
         .header {
             display: flex;
             flex-shrink: 0;
             justify-content: space-between;
+            border-bottom: $width-separator-medium solid $color-separator;
 
             .heading {
                 flex-basis: 100%;
-                background-color: $color-accent;
+                background-color: $color-foreground;
                 padding: $spacing-small $spacing-medium;
-                color: $color-text-on-accent;
                 font-size: $font-size-small;
             }
         }
 
         .content {
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
+            padding: $spacing-medium;
+
+            >* {
+                flex-grow: 1;
+                overflow-y: auto;
+            }
         }
 
         &:not(.view-only) {
@@ -45,9 +54,10 @@
             .resize-handle {
                 display: block;
                 position: absolute;
-                right: 0;
-                bottom: 0;
-                background-color: $color-accent;
+                right: $width-separator-medium;
+                bottom: $width-separator-medium;
+                border-right: $width-separator-medium solid $color-separator-alt;
+                border-bottom: $width-separator-medium solid $color-separator-alt;
                 cursor: se-resize;
                 width: 10px;
                 height: 10px;
@@ -64,7 +74,7 @@
                 transition: none;
                 opacity: .8;
                 z-index: 11;
-                border: 1px solid red;
+                border: $width-separator-thin solid $color-danger;
             }
         }
     }
@@ -73,6 +83,6 @@
         @include transition-medium;
         position: absolute;
         z-index: 10;
-        background-color: rgba(0, 0, 0, .1);
+        background-color: $color-separator;
     }
 }

@@ -28,6 +28,14 @@ export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    componentWillMount() {
+        window.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('mouseup', this.handleMouseUp);
+    }
+
     getStyleName = () => {
         const styleNames = [];
         styleNames.push('grid-item');
@@ -60,20 +68,6 @@ export default class GridItem extends React.PureComponent {
         this.props.onDragStart(this.props.data.key, e);
     }
 
-    handleDragHandleMouseUp = () => {
-        if (this.props.viewOnly) {
-            return;
-        }
-
-        const classNames = this.container.className.split(' ');
-        const i = classNames.findIndex(d => d === styles.dragging);
-
-        if (i !== -1) {
-            classNames.splice(i, 1);
-            this.container.className = classNames.join(' ');
-        }
-    }
-
     handleResizeHandleMouseDown = (e) => {
         if (this.props.viewOnly) {
             return;
@@ -100,17 +94,27 @@ export default class GridItem extends React.PureComponent {
         onResizeStart(data.key, e);
     }
 
-    handleResizeHandleMouseUp = () => {
+    handleMouseUp = () => {
         if (this.props.viewOnly) {
             return;
         }
 
         const classNames = this.container.className.split(' ');
-        const i = classNames.findIndex(d => d === styles.resizing);
 
-        if (i !== -1) {
-            classNames.splice(i, 1);
-            this.container.className = classNames.join(' ');
+        {
+            const i = classNames.findIndex(d => d === styles.resizing);
+            if (i !== -1) {
+                classNames.splice(i, 1);
+                this.container.className = classNames.join(' ');
+            }
+        }
+
+        {
+            const i = classNames.findIndex(d => d === styles.dragging);
+            if (i !== -1) {
+                classNames.splice(i, 1);
+                this.container.className = classNames.join(' ');
+            }
         }
     }
 
