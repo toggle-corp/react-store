@@ -104,9 +104,9 @@ export class BgRestBuilder extends RestBuilder {
 export class FgRestBuilder extends RestBuilder {
     constructor() {
         super();
-        this.delayVal = 100; // ms
+        this.delayVal = 50; // ms
 
-        this.retryTimeVal = 2000;
-        this.maxRetryAttemptsVal = 10;
+        this.retryTimeVal = 1000;
+        this.maxRetryAttemptsVal = 5;
     }
 }

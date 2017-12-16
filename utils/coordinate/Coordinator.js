@@ -110,6 +110,10 @@ export default class Coordinator {
     notifyComplete = (id) => {
         // remove from activeActors
         const actorIndex = this.getActiveActorIndexById(id);
+        if (actorIndex < 0) {
+            console.warn('Id doesnt exist');
+            return;
+        }
         this.activeActors.splice(actorIndex, 1);
 
         // console.log('Actor complete');

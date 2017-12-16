@@ -2,6 +2,33 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+export const listToMap = (list = [], keySelector, modifier) => (
+    list.reduce(
+        (acc, elem) => {
+            const key = keySelector(elem);
+            acc[key] = modifier ? modifier(elem, key) : elem;
+            return acc;
+        },
+        {},
+    )
+);
+
+export const groupList = (list = [], keySelector, modifier) => (
+    list.reduce(
+        (acc, elem) => {
+            const key = keySelector(elem);
+            const e = modifier ? modifier(elem, key) : elem;
+            if (acc[key]) {
+                acc[key].push(e);
+            } else {
+                acc[key] = [e];
+            }
+            return acc;
+        },
+        {},
+    )
+);
+
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
     ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
@@ -25,14 +52,15 @@ export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false
 );
 
-export const isFalsyOrEmptyOrZero = val => (
-    isFalsy(val) || val.length === 0 || val === 0
-);
-
 export const isTruthy = val => !isFalsy(val);
 
 export const isInteger = value => (
     typeof value === 'number' && value % 1 === 0
+);
+
+
+export const isFalsyOrEmptyOrZero = val => (
+    isFalsy(val) || val.length === 0 || val === 0
 );
 
 // added by @frozenhelium
@@ -113,6 +141,7 @@ export const getDifferenceInDays = (a, b) => {
 /**
 * Get Difference in human readable for (a - b)
 */
+// TODO: write test
 export const getDateDifferenceHumanReadable = (a, b) => {
     const daysDiff = getDifferenceInDays(a, b);
     return `${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
@@ -160,6 +189,7 @@ export const leftPad = (number, length, pad = '0') => {
         new Array((length - numStr.length) + 1).join(pad) + numStr;
 };
 
+// TODO: write test
 export const getNumDaysInMonth = date => (
     date ? (
         new Date(
@@ -190,6 +220,7 @@ export const camelToNormal = str => str
 /**
  * get location from pathname
  */
+// TODO: write test
 export const reverseRoute = (route, params) => {
     const paths = route.split('/');
 
