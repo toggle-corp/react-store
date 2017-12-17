@@ -181,10 +181,6 @@ test('normalize', () => {
     expect(normalize(12, 20, 10)).toBeCloseTo(0.2);
 });
 
-test('extract date from timestamp', () => {
-    expect(extractDate(1513443573714)).toEqual(1513361700000);
-});
-
 test('get difference in days', () => {
     const a = new Date();
     a.setHours(10);
