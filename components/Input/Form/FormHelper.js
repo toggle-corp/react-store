@@ -90,7 +90,7 @@ export default class FormHelper {
         }
     }
 
-    /* Create a reference fn for element 'name' */
+    /* Get a reference update fn for element 'name' */
     updateRef = (name) => {
         if (this.referenceCollector[name]) {
             return this.referenceCollector[name];

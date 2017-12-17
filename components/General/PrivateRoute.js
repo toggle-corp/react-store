@@ -35,21 +35,20 @@ export default class PrivateRoute extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    shouldRedirect = () => {
-        const {
-            invertBehavior,
-            authenticated,
-        } = this.props;
-        return (!invertBehavior && !authenticated) || (invertBehavior && authenticated);
-    }
+    shouldRedirect = (authenticated, invertBehavior) => (
+        (!invertBehavior && !authenticated) || (invertBehavior && authenticated)
+    )
 
     renderFn = (props) => {
         const {
             component: Component,
             redirectLink,
+
+            authenticated,
+            invertBehavior,
         } = this.props;
 
-        if (this.shouldRedirect()) {
+        if (this.shouldRedirect(authenticated, invertBehavior)) {
             return (
                 <Redirect
                     to={{

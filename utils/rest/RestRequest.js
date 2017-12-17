@@ -44,7 +44,7 @@ export default class RestRequest {
         success = defaultSuccessFn, failure = defaultFailureFn, fatal = defaultFatalFn,
         abort = defaultAbortFn, preLoad = defaultPreLoadFn, postLoad = defaultPostLoadFn,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
-        delay = 200,
+        delay = 0,
     ) {
         this.url = url;
         this.params = params;

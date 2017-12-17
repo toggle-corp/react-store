@@ -12,33 +12,35 @@ export const requiredCondition = {
     truth: value => !isFalsy(value) && value !== '',
     message: 'Field must not be empty',
 };
+
+
 export const numberCondition = {
     truth: value => isFalsy(value) || !isFalsy(+value),
     message: 'Value must be a number',
 };
 
 export const integerCondition = {
-    truth: value => isInteger(+value),
+    truth: value => isFalsy(value) || isInteger(+value),
     message: 'Value must be an integer',
 };
 
 export const lessThanCondition = n => ({
-    truth: value => value < n,
+    truth: value => isFalsy(value) || value < n,
     message: `Value must be less than ${n}`,
 });
 
 export const greaterThanCondition = n => ({
-    truth: value => value > n,
+    truth: value => isFalsy(value) || value > n,
     message: `Value must be greater than ${n}`,
 });
 
 export const lessThanOrEqualToCondition = n => ({
-    truth: value => value <= n,
+    truth: value => isFalsy(value) || value <= n,
     message: `Value must be less than or equal to ${n}`,
 });
 
 export const greaterThanOrEqualToCondition = n => ({
-    truth: value => value >= n,
+    truth: value => isFalsy(value) || value >= n,
     message: `Value must be greater than or equal to ${n}`,
 });
 
@@ -61,7 +63,7 @@ export const emailCondition = {
     truth: (value) => {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         // NOTE: valid if falsy value as well
-        return isFalsy(value) || re.test(value);
+        return isFalsy(value) || value === '' || re.test(value);
     },
     message: 'Value must be a valid email',
 };
@@ -71,7 +73,7 @@ export const urlCondition = {
         // NOTE: NOT valid for unicode
         const re = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
         // NOTE: valid if falsy value as well
-        return isFalsy(value) || re.test(value);
+        return isFalsy(value) || value === '' || re.test(value);
     },
     message: 'Value must be a valid URL',
 };
@@ -79,6 +81,7 @@ export const urlCondition = {
 // Validator
 
 /* Create a validation function for dependency injection */
+// todo: write test
 export function createValidation(...parameters) {
     const args = [...parameters];
     if (args.length <= 0) {
