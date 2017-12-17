@@ -1,8 +1,10 @@
+$tooltip-background-color: rgba(0, 0, 0, .75);
+
 .tooltip {
     position: fixed;
     color: white;
     padding: 8px;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: $tooltip-background-color;
     border-radius: 6px;
     font: 12px sans-serif;
     text-align: center;

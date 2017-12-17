@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Area, Bar, ComposedChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.array, // eslint-disable-line
     labelFormatter: PropTypes.func.isRequired,
 };
 const defaultProps = {
