@@ -15,24 +15,23 @@ export default class Locker {
     // Acquire the lock: returns a promise that resolves when done.
     // To mark a lock continously for this process, it continuously
     // resets the timestamp in localStorage.
-    acquire() {
+    acquire(maxLockTime = 5000, refreshTime = 1000) {
         return new Promise((resolve) => {
             const randomTime = Math.round(Math.random() * 2000);
-            const maxLockTime = 5000;
-            const refreshTime = 1000;
             this.stopped = false;
 
-            this.timeouts.push(setTimeout(() => {
-                this.lamportFastLock(maxLockTime, () => {
-                    this.intervals.push(setInterval(() => {
-                        this.resetTimestamp();
-                    }, refreshTime));
-
+            const timeoutFn = () => {
+                const callbackOnLock = () => {
+                    const intervalFn = () => this.resetTimestamp();
+                    this.intervals.push(setInterval(intervalFn, refreshTime));
+                    // release can be called anytime, so check here
                     if (!this.stopped) {
                         resolve();
                     }
-                });
-            }, randomTime));
+                };
+                this.lamportFastLock(callbackOnLock, maxLockTime);
+            };
+            this.timeouts.push(setTimeout(timeoutFn, randomTime));
         });
     }
 
@@ -44,7 +43,7 @@ export default class Locker {
         localStorage.removeItem(this.yKey);
     }
 
-    lamportFastLock(maxLockTime, callback) {
+    lamportFastLock(callback, maxLockTime) {
         if (this.stopped) {
             return;
         }
@@ -56,7 +55,7 @@ export default class Locker {
         if (localStorage[this.yKey] &&
             (Date.now() - getYTime(localStorage[this.yKey]) < maxLockTime)) {
             this.timeouts.push(setTimeout(() => {
-                this.lamportFastLock(maxLockTime, callback);
+                this.lamportFastLock(callback, maxLockTime);
             }, 100));
             return;
         }
@@ -66,7 +65,7 @@ export default class Locker {
         if (localStorage[this.xKey] !== this.uniqueId) {
             this.timeouts.push(setTimeout(() => {
                 if (getYId(localStorage[this.yKey]) !== this.uniqueId) {
-                    this.lamportFastLock(maxLockTime, callback);
+                    this.lamportFastLock(callback, maxLockTime);
                 } else {
                     callback();
                 }
