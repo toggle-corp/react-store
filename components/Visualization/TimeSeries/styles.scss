@@ -33,15 +33,15 @@
             }
 
             .overlay {
-              fill: none;
-              pointer-events: all;
+                fill: none;
+                pointer-events: all;
             }
 
             .overlay-line,
             .overlay-circle {
-              display: none;
-              fill: red;
-              stroke: red;
+                display: none;
+                fill: red;
+                stroke: red;
             }
         }
     }
