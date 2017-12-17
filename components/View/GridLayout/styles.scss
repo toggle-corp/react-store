@@ -8,6 +8,15 @@
 
     &:not(.view-only) {
         background-image: linear-gradient(to right, $color-separator 1px, transparent 1px), linear-gradient(to bottom, $color-separator 1px, transparent 1px);
+
+        .grid-item {
+            border: $width-separator-thin solid $color-separator;
+            background-color: $color-foreground;
+
+            .header {
+                border-bottom: $width-separator-medium solid $color-separator;
+            }
+        }
     }
 
     .grid-item {
@@ -15,14 +24,11 @@
         display: flex;
         position: absolute;
         flex-direction: column;
-        border: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground;
 
         .header {
             display: flex;
             flex-shrink: 0;
             justify-content: space-between;
-            border-bottom: $width-separator-medium solid $color-separator;
 
             .heading {
                 flex-basis: 100%;
@@ -36,7 +42,6 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding: $spacing-medium;
 
             >* {
                 flex-grow: 1;
