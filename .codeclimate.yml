@@ -56,7 +56,7 @@ plugins:
 exclude_patterns:
 - "config/"
 - "node_modules/"
-- "script/"
+- "scripts/"
 - "**/spec/"
 - "**/test/"
 - "**/tests/"
