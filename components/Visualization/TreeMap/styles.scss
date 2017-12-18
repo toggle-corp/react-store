@@ -1,8 +1,8 @@
 :global .treemap-container {
     .button {
         margin: 2px;
-        border: 0;
         outline: 0;
+        border: 0;
         font-family: inherit;
         font-size: inherit;
         text-transform: uppercase;
@@ -16,25 +16,29 @@
             background-color: darken(#008080, 10%);
         }
     }
+
     .treemap {
         width: 100%;
         height: 100%;
 
         .grandparent text {
-            cursor:pointer;
+            cursor: pointer;
             font-weight: 700;
         }
-	      .navigation:hover {
-	          fill: grey;
-	      }
-        .children rect.parent,
 
+        .navigation:hover {
+            fill: grey;
+        }
+
+        .children rect.parent,
         .children rect.child {
-	          opacity: 1;
-	      }
-	      .children rect.parent {
+            opacity: 1;
+        }
+
+        .children rect.parent {
             fill-opacity: 0;
-	      }
+        }
+
         .parent-text {
             font-weight: 700;
         }
@@ -42,6 +46,7 @@
         rect {
             cursor: pointer;
         }
+
         rect.parent {
             pointer-events: none;
         }

@@ -133,7 +133,8 @@ export default class SunBurst extends PureComponent {
             .append('div')
             .attr('class', 'tooltip')
             .style('position', 'absolute')
-            .style('z-index', 10);
+            .style('z-index', 10)
+            .style('display', 'none');
 
         const group = el
             .attr('width', width)

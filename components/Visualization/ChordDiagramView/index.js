@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
-import { Button, Dropdown } from 'semantic-ui-react';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 import ChordDiagram from '../ChordDiagram';
+
+import { SelectInput } from '../../Input';
+import { PrimaryButton } from '../../Action';
 
 import styles from './styles.scss';
 
@@ -22,17 +24,26 @@ export default class ChorDiagramView extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = { colorScheme: undefined };
+        this.state = {
+            colorScheme: undefined,
+            selectedColorScheme: undefined,
+        };
         this.colors = categoricalColorNames()
-            .map(name => ({ text: name, value: name }));
+            .map(color => ({
+                id: color,
+                title: color,
+            }));
     }
 
     componentWillReceiveProps(newProps) {
-        this.setState({ colorScheme: newProps.colorScheme });
+        this.setState({
+            colorScheme: newProps.colorScheme,
+        });
     }
 
-    handleSelection = (e, data) => {
-        const colors = getCategoryColorScheme(data.value);
+    handleSelection = (data) => {
+        const colors = getCategoryColorScheme(data);
+
         this.setState({
             colorScheme: colors,
         });
@@ -52,26 +63,30 @@ export default class ChorDiagramView extends PureComponent {
         } = this.props;
         return (
             <div
-                styleName="chorddiagram-view"
+                styleName="chord-diagram-view"
                 className={className}
             >
-                <div styleName="buttons">
-                    <Button primary onClick={this.handleSave}>
-                        Save
-                    </Button>
-                    <Button primary onClick={this.handleReset}>
-                        Reset
-                    </Button>
-                    <Dropdown
-                        options={this.colors}
-                        openOnFocus
-                        selection
-                        placeholder="ColorScheme"
-                        onChange={this.handleSelection}
-                    />
+                <div styleName="action">
+                    <div styleName="action-selects">
+                        <SelectInput
+                            clearable={false}
+                            keySelector={d => d.title}
+                            labelSelector={d => d.title}
+                            onChange={this.handleSelection}
+                            options={this.colors}
+                            showHintAndError={false}
+                            styleName="select-input"
+                            value={this.state.selectedColorScheme}
+                        />
+                    </div>
+                    <div styleName="action-buttons">
+                        <PrimaryButton onClick={this.handleSave}>
+                            Save
+                        </PrimaryButton>
+                    </div>
                 </div>
                 <ChordDiagram
-                    styleName="chorddiagram"
+                    styleName="chord-diagram"
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.colorScheme}

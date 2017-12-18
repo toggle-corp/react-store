@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
-import { Button, Dropdown } from 'semantic-ui-react';
 import { range } from 'd3-array';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 import SunBurst from '../SunBurst';
 import ColorPallete from '../ColorPallete';
+
+import { SelectInput } from '../../Input';
+import { PrimaryButton } from '../../Action';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -25,17 +27,21 @@ export default class SunBurstView extends PureComponent {
 
     constructor(props) {
         super(props);
+
         this.state = {
             colorScheme: undefined,
             effectiveColorScheme: undefined,
+            selectedColorScheme: undefined,
+            selectedNoOfCategories: undefined,
         };
+
         this.categories = [];
         this.colors = categoricalColorNames()
-            .map(name => (
+            .map(color => (
                 {
-                    text: name,
-                    value: name,
-                    image: <ColorPallete colorScheme={getCategoryColorScheme(name)} />,
+                    title: color,
+                    id: name,
+                    image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
                 }));
     }
 
@@ -46,19 +52,22 @@ export default class SunBurstView extends PureComponent {
         });
     }
 
-    handleSelection = (e, data) => {
-        const colors = getCategoryColorScheme(data.value);
+    handleSelection = (data) => {
+        const colors = getCategoryColorScheme(data);
         this.categories = range(1, colors.length + 1)
-            .map(item => ({ text: item, value: item }));
+            .map(item => ({ title: item, key: item }));
+
         this.setState({
+            selectedColorScheme: data,
             colorScheme: colors,
             effectiveColorScheme: colors,
         });
     }
 
-    handleNoOfCategories = (e, data) => {
+    handleNoOfCategories = (data) => {
         this.setState({
-            effectiveColorScheme: this.state.colorScheme.slice(0, data.value),
+            selectedNoOfCategories: data,
+            effectiveColorScheme: this.state.colorScheme.slice(0, data),
         });
     }
 
@@ -67,7 +76,7 @@ export default class SunBurstView extends PureComponent {
     }
 
     handleReset = () => {
-        this.render();
+        this.chart.wrappedComponent.renderChart();
     }
 
     render() {
@@ -81,28 +90,37 @@ export default class SunBurstView extends PureComponent {
                 styleName="sunburst-view"
                 className={className}
             >
-                <div styleName="buttons">
-                    <div>
-                        <Button primary onClick={this.handleSave}>
-                            Save
-                        </Button>
-                        <Button primary onClick={this.handleReset}>
-                            Reset
-                        </Button>
-                        <Dropdown
-                            options={this.colors}
-                            openOnFocus
-                            selection
-                            placeholder="ColorScheme"
+                <div styleName="action">
+                    <div styleName="action-selects">
+                        <SelectInput
+                            clearable={false}
+                            keySelector={d => d.title}
+                            labelSelector={d => d.image}
                             onChange={this.handleSelection}
+                            options={this.colors}
+                            showHintAndError={false}
+                            styleName="select-input"
+                            value={this.state.selectedColorScheme}
                         />
-                        <Dropdown
-                            options={this.categories}
-                            openOnFocus
-                            selection
-                            placeholder="No of Data Classes"
+                        <SelectInput
+                            clearable={false}
+                            keySelector={d => d.key}
+                            labelSelector={d => d.title}
                             onChange={this.handleNoOfCategories}
+                            options={this.categories}
+                            placeholder="No of Data Classes"
+                            showHintAndError={false}
+                            styleName="select-input"
+                            value={this.state.selectedNoOfCategories}
                         />
+                    </div>
+                    <div styleName="action-buttons">
+                        <PrimaryButton onClick={this.handleSave}>
+                            Save
+                        </PrimaryButton>
+                        <PrimaryButton onClick={this.handleReset}>
+                            Reset
+                        </PrimaryButton>
                     </div>
                 </div>
                 <SunBurst

@@ -1,29 +1,17 @@
-.collapsibletree-view {
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/visualizations';
+
+.collapsible-tree-view {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
 
-    .buttons {
-        height: 56px;
-        .button {
-            margin: 2px;
-            border: 0;
-            outline: 0;
-            font-family: inherit;
-            font-size: inherit;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 3px;
-            background-color: #008080;
-            color: #fff;
-            box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.5);
-
-            &:hover {
-                background-color: darken(#008080, 10%);
-            }
-        }
+    .action {
+        @extend %action;
     }
 
-    .collapsibletree {
-        height: calc(100% - 56px);
+    .collapsible-tree {
+        flex-grow: 1;
     }
 }

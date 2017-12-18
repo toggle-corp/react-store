@@ -124,6 +124,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .append('div')
             .attr('class', 'tooltip')
             .style('position', 'absolute')
+            .style('display', 'none')
             .style('z-index', 10);
 
         width = width - left - right;
