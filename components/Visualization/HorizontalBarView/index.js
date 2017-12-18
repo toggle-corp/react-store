@@ -1,9 +1,12 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
-import { Button, Dropdown } from 'semantic-ui-react';
 import { singleColors } from '../../../utils/ColorScheme';
 import HorizontalBar from '../HorizontalBar';
+
+import { SelectInput } from '../../Input';
+import { PrimaryButton } from '../../Action';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -21,18 +24,27 @@ export default class HorizontalBarView extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = { barColor: undefined };
-        this.colors = singleColors
-            .map(name => ({ text: name, value: name }));
+        this.state = {
+            barColor: undefined,
+            selectedBarColor: undefined,
+        };
+        this.colors = singleColors.map(color => ({
+            id: color,
+            title: color,
+        }));
     }
 
     componentWillReceiveProps(newProps) {
-        this.setState({ barColor: newProps.barColor });
+        this.setState({
+            barColor: newProps.barColor,
+            selectedBarColor: newProps.barColor,
+        });
     }
 
-    handleSelection = (e, data) => {
+    handleSelection = (data) => {
         this.setState({
-            barColor: data.value,
+            barColor: data,
+            selectedBarColor: data,
         });
     }
 
@@ -48,26 +60,30 @@ export default class HorizontalBarView extends PureComponent {
 
         return (
             <div
-                styleName="horizontalbar-view"
+                styleName="horizontal-bar-view"
                 className={className}
             >
-                <div styleName="buttons">
-                    <Button primary onClick={this.handleSave}>
-                        Save
-                    </Button>
-                    <Button primary onClick={this.handleReset}>
-                        Reset
-                    </Button>
-                    <Dropdown
-                        options={this.colors}
-                        openOnFocus
-                        selection
-                        placeholder="ColorScheme"
-                        onChange={this.handleSelection}
-                    />
+                <div styleName="action">
+                    <div styleName="action-selects">
+                        <SelectInput
+                            clearable={false}
+                            keySelector={d => d.title}
+                            labelSelector={d => d.title}
+                            onChange={this.handleSelection}
+                            options={this.colors}
+                            showHintAndError={false}
+                            styleName="select-input"
+                            value={this.state.selectedBarColor}
+                        />
+                    </div>
+                    <div styleName="action-buttons">
+                        <PrimaryButton onClick={this.handleSave}>
+                            Save
+                        </PrimaryButton>
+                    </div>
                 </div>
                 <HorizontalBar
-                    styleName="horizontalbar"
+                    styleName="horizontal-bar"
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     barColor={this.state.barColor}
