@@ -77,10 +77,22 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
     componentDidMount() {
         this.renderChart();
+        this.updateData(this.props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data !== this.props) {
+            this.updateData(nextProps);
+        }
     }
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    updateData(props) {
+        console.warn('updating');
+        this.data = JSON.parse(JSON.stringify(props.data));
     }
 
     save = () => {
@@ -91,7 +103,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
     renderChart() {
         const {
-            data,
             boundingClientRect,
             idAccessor,
             groupAccessor,
@@ -101,6 +112,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             useVoronoi,
             margins,
         } = this.props;
+        const { data } = this;
 
         if (!boundingClientRect.width) {
             return;
