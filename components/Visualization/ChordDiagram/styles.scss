@@ -1,10 +1,12 @@
 :global .chord-diagram-container {
+    flex-grow: 1;
+
     .tooltip {
         position: absolute;
+        box-shadow: 0 1px 10px -3px rgba(0, 0, 0, .3);
         background-color: #fff;
-        color: #616161;
-        box-shadow: 0 1px 10px -3px rgba(0, 0, 0, 0.3);
         padding: 6px 12px;
+        color: #616161;
 
         .name {
             display: block;
