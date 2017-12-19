@@ -97,19 +97,3 @@ export function createValidation(...parameters) {
     }
     return { fn, args };
 }
-
-/* USAGE
-createValidation('email', 'password', (email, password) => {
-  if (password.length > email.length) {
-      return {
-          ok: false,
-          formErrors: ['Form has combined validation error.'],
-          formFieldErrors: {
-              email: 'Email must be longer than password',
-              password: 'Password must be shorter than email',
-          },
-      };
-  }
-  return { ok: true };
-});
-*/

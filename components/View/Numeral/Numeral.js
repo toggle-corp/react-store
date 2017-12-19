@@ -110,7 +110,7 @@ export default class Numeral extends React.PureComponent {
         if (normal) {
             const val = formattedNormalize(number);
             number = val.number;
-            normalizedSuffix = val.normalizedSuffix;
+            normalizedSuffix = val.normalizeSuffix;
         }
 
         // Convert number to fixed precision
