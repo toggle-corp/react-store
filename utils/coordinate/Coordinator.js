@@ -43,8 +43,8 @@ export default class Coordinator {
     add = (id, nativeActor) => {
         const oldActor = this.getActorById(id);
         if (oldActor) {
-            console.warn(`Uploder with id '${id}' already registered.`);
-            return;
+            // console.warn(`Uploder with id '${id}' already registered.`);
+            return false;
         }
 
         // create upload wrapper
@@ -52,18 +52,21 @@ export default class Coordinator {
 
         // add upload wrapper to list
         this.queuedActors.push(actor);
+        return true;
     }
 
     remove = (id) => {
         const indexInActive = this.getActiveActorIndexById(id);
         if (indexInActive >= 0) {
+            console.log(id, 'active');
             const actor = this.activeActors[indexInActive];
             actor.nativeActor.close();
             this.activeActors.splice(indexInActive, 1);
         }
         const indexInQueued = this.getQueuedActorIndexById(id);
         if (indexInQueued >= 0) {
-            this.activeActors.splice(indexInQueued, 1);
+            console.log(id, 'queue');
+            this.queuedActors.splice(indexInQueued, 1);
         }
     }
 
@@ -77,7 +80,7 @@ export default class Coordinator {
             return;
         } else if (this.queuedActors.length <= 0 && this.activeActors.length <= 0) {
             // session has completed
-            // console.log('Session has completed');
+            console.log('Session has completed');
             this.inSession = false;
             if (this.postSession) {
                 this.postSession();
@@ -111,14 +114,15 @@ export default class Coordinator {
         // remove from activeActors
         const actorIndex = this.getActiveActorIndexById(id);
         if (actorIndex < 0) {
-            console.warn('Id doesnt exist');
-            return;
+            // console.warn('Id doesnt exist');
+            return false;
         }
         this.activeActors.splice(actorIndex, 1);
 
         // console.log('Actor complete');
         // recalculate active actor list
         this.updateActiveActors();
+        return true;
     }
 
     start = () => {
@@ -145,5 +149,5 @@ export default class Coordinator {
         }
     }
 
-    hasActiveQueue = () => this.queuedActors.length > 0;
+    hasQueuedActors = () => this.queuedActors.length > 0;
 }

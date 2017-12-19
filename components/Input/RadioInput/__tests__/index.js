@@ -23,6 +23,7 @@ describe('RadioInput', () => {
         <RadioInput
             name="RadioInput"
             options={options}
+            value="2"
             selected="1"
         />,
     );
@@ -38,15 +39,40 @@ describe('RadioInput', () => {
             name="RadioInput"
             options={options}
             selected="3"
+            onChange={() => console.log('Clicked')}
         />,
     );
 
     it('switches options properly', () => {
         wrapper.find('input').at(0).simulate('click');
         expect(wrapper.state('selectedOption')).toEqual({ key: '1', label: 'Syria Conflict' });
+        expect(wrapper.instance().getValue()).toEqual('1');
         wrapper.find('input').at(1).simulate('click');
         expect(wrapper.state('selectedOption')).toEqual({ key: '2', label: 'Antigua and Barbuda Global Monitoring' });
+        expect(wrapper.instance().getValue()).toEqual('2');
         wrapper.find('input').at(2).simulate('click');
         expect(wrapper.state('selectedOption')).toEqual({ key: '3', label: 'French Polynesia Global Monitoring' });
+        expect(wrapper.instance().getValue()).toEqual('3');
+
+        wrapper.setProps({
+            options: [
+                {
+                    key: '1',
+                    label: 'French Polynesia Global Monitoring',
+                },
+            ],
+            value: '1',
+        });
+        expect(wrapper.instance().getValue()).toEqual('1');
+
+        wrapper.setProps({
+            options: [
+                {
+                    key: '4',
+                    label: 'Test',
+                },
+            ],
+        });
+        expect(wrapper.state('selectedOption')).toBe(undefined);
     });
 });
