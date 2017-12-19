@@ -1,0 +1,8 @@
+:global .correlationmatrix-container {
+    flex-grow: 1;
+
+    .correlation-matrix {
+        width: 100%;
+        height: 100%;
+    }
+}

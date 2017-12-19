@@ -1,0 +1,17 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/visualizations';
+
+.force-directed-graph-view {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    .action {
+        @extend %action;
+    }
+
+    .force-directed-graph {
+        flex-grow: 1;
+    }
+}

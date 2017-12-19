@@ -1,0 +1,25 @@
+@import 'base';
+
+%action {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid $color-separator;
+    padding: $spacing-small $spacing-medium-alt;
+
+    .action-selects {
+        display: flex;
+
+        .select-input {
+            margin-right: $spacing-extra-small;
+        }
+    }
+
+    .action-buttons {
+        button {
+            margin-left: $spacing-extra-small;
+        }
+    }
+}
+

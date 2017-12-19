@@ -1,0 +1,17 @@
+:global .collapsible-tree-container {
+    flex-grow: 1;
+
+    .collapsible-tree {
+        width: 100%;
+        height: 100%;
+
+        .node circle {
+            stroke: #039be5;
+            stroke-width: 2px;
+        }
+
+        .link {
+            stroke-width: 2px;
+        }
+    }
+}
