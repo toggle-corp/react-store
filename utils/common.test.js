@@ -10,7 +10,6 @@ import {
     isObjectEmpty,
     bound,
     normalize,
-    extractDate,
     getDifferenceInDays,
     addSeparator,
     formattedNormalize,

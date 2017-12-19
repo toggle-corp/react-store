@@ -2,33 +2,6 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
-export const listToMap = (list = [], keySelector, modifier) => (
-    list.reduce(
-        (acc, elem) => {
-            const key = keySelector(elem);
-            acc[key] = modifier ? modifier(elem, key) : elem;
-            return acc;
-        },
-        {},
-    )
-);
-
-export const groupList = (list = [], keySelector, modifier) => (
-    list.reduce(
-        (acc, elem) => {
-            const key = keySelector(elem);
-            const e = modifier ? modifier(elem, key) : elem;
-            if (acc[key]) {
-                acc[key].push(e);
-            } else {
-                acc[key] = [e];
-            }
-            return acc;
-        },
-        {},
-    )
-);
-
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
     ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
@@ -199,6 +172,36 @@ export const getNumDaysInMonth = date => (
         ).getDate()
     ) : 32
 );
+
+export const listToMap = (list = [], keySelector, modifier) => (
+    list.reduce(
+        (acc, elem) => {
+            const key = keySelector(elem);
+            if (isTruthy(key)) {
+                acc[key] = modifier ? modifier(elem, key) : elem;
+            }
+            return acc;
+        },
+        {},
+    )
+);
+
+export const groupList = (list = [], keySelector, modifier) => (
+    list.reduce(
+        (acc, elem) => {
+            const key = keySelector(elem);
+            const e = modifier ? modifier(elem, key) : elem;
+            if (acc[key]) {
+                acc[key].push(e);
+            } else {
+                acc[key] = [e];
+            }
+            return acc;
+        },
+        {},
+    )
+);
+
 
 /*
  * Convert camel case to kebab case
