@@ -27,5 +27,9 @@ update.extend(
         object,
     ),
 );
+update.extend(
+    '$autoPush',
+    (value, object) => (object || []).concat(value.length ? value : []),
+);
 
 export default update;
