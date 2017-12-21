@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import {
     area,
+    line as d3Line,
     // curveMonotoneX,
 } from 'd3-shape';
 import { axisLeft, axisBottom } from 'd3-axis';
@@ -34,6 +35,7 @@ const propTypes = {
     yTickFormat: PropTypes.func,
     tooltipRender: PropTypes.func.isRequired,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+    showArea: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -47,6 +49,7 @@ const defaultProps = {
     },
     xTickFormat: d => d,
     yTickFormat: d => d,
+    showArea: false,
 };
 
 @Responsive
@@ -80,17 +83,17 @@ export default class TimeSeries extends React.PureComponent {
     onMouseEnter = (overLayLine, overLayCircle) => {
         this.tooltipDiv.show();
         overLayCircle
-            .style('display', 'inline-block');
+            .style('opacity', 1);
         overLayLine
-            .style('display', 'inline-block');
+            .style('opacity', 1);
     }
 
     onMouseLeave = (overLayLine, overLayCircle) => {
         this.tooltipDiv.hide();
         overLayCircle
-            .style('display', 'none');
+            .style('opacity', 0);
         overLayLine
-            .style('display', 'none');
+            .style('opacity', 0);
     }
 
     onMouseMove = (overLay, overLayLine, overLayCircle) => {
@@ -147,7 +150,7 @@ export default class TimeSeries extends React.PureComponent {
     }
 
     renderBarChart(height, width) {
-        const { data, xKey, yKey, margins, xTickFormat, yTickFormat } = this.props;
+        const { data, xKey, yKey, margins, xTickFormat, yTickFormat, showArea } = this.props;
         const { top, left } = margins;
 
         this.scaleX.domain(extent(data.map(d => d[xKey])));
@@ -155,6 +158,10 @@ export default class TimeSeries extends React.PureComponent {
 
         const svg = select(this.svg);
         svg.select('*').remove();
+
+        if (data.length === 0) {
+            return;
+        }
 
         const xAxis = axisBottom(this.scaleX)
             // .tickSizeInner(-height)
@@ -167,11 +174,19 @@ export default class TimeSeries extends React.PureComponent {
             .tickSizeOuter(0)
             .tickFormat(yTickFormat);
 
-        const line = area()
-            // .curve(curveMonotoneX)
-            .x(d => this.scaleX(d[xKey]))
-            .y1(d => this.scaleY(d[yKey]))
-            .y0(height);
+        let line;
+        if (showArea) {
+            line = area()
+                // .curve(curveMonotoneX)
+                .x(d => this.scaleX(d[xKey] || 0))
+                .y1(d => this.scaleY(d[yKey] || 0))
+                .y0(height);
+        } else {
+            line = d3Line()
+                // .curve(curveMonotoneX)
+                .x(d => this.scaleX(d[xKey] || 0))
+                .y(d => this.scaleY(d[yKey] || 0));
+        }
 
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
@@ -186,7 +201,7 @@ export default class TimeSeries extends React.PureComponent {
             .call(yAxis);
 
         root.append('g')
-            .attr('class', 'time-area')
+            .attr('class', showArea ? 'time-area' : 'time-path')
             .append('path')
             .data([data])
             .attr('d', line);

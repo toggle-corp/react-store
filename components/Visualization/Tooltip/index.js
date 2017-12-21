@@ -86,7 +86,7 @@ export default class Tooltip extends React.PureComponent {
                     break;
                 default: // default is top
                     xOffset = -(tipShape.width * 0.5);
-                    yOffset = -(tipShape.width - padding);
+                    yOffset = -(tipShape.height + padding);
             }
 
             this.getd3Tooltip()

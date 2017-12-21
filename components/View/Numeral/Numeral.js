@@ -79,6 +79,47 @@ export default class Numeral extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static renderText(props) {
+        const {
+            normal,
+            precision,
+            prefix,
+            separator,
+            showSeparator,
+            showSign,
+            suffix,
+            value,
+            invalidText,
+        } = { ...defaultProps, ...props };
+
+        if (isFalsy(value)) {
+            return invalidText;
+        }
+
+        // Only use absolute part if showSign is true (sign are added later)
+        let number = isTruthy(showSign) ? Math.abs(value) : value;
+
+        // Get normalize-suffix and reduce the number
+        let normalizedSuffix;
+        if (normal) {
+            const val = formattedNormalize(number);
+            number = val.number;
+            normalizedSuffix = val.normalizeSuffix;
+        }
+
+        // Convert number to fixed precision
+        if (isTruthy(precision)) {
+            number = number.toFixed(precision);
+        }
+
+        // Convert number to add separator
+        if (showSeparator) {
+            number = addSeparator(number, separator);
+        }
+
+        return `${prefix || ''}${number}${normalizedSuffix || ''}${suffix || ''}`;
+    }
+
     render() {
         const {
             className,

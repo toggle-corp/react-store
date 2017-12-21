@@ -1,5 +1,8 @@
 @import '../../../stylesheets/base';
 
+$timeseries-primary-color: #008080;;
+$timeseries-color-overlay: #99cccc;
+
 .time-series {
     display: flex;
     flex-direction: column;
@@ -27,8 +30,15 @@
 
             .time-area {
                 path {
-                    fill: blue;
-                    stroke: blue;
+                    fill: $timeseries-primary-color;
+                    stroke: $timeseries-primary-color;
+                }
+            }
+
+            .time-path {
+                path {
+                    fill: transparent;
+                    stroke: $timeseries-primary-color;
                 }
             }
 
@@ -37,11 +47,16 @@
                 pointer-events: all;
             }
 
-            .overlay-line,
+            .overlay-line {
+              fill: $timeseries-color-overlay;
+              stroke: $timeseries-color-overlay;
+              opacity: 0;
+            }
+
             .overlay-circle {
-                display: none;
-                fill: red;
-                stroke: red;
+              fill: $timeseries-primary-color;
+              stroke: white;
+              opacity: 0;
             }
         }
     }
