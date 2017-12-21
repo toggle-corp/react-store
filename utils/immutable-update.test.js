@@ -101,3 +101,22 @@ test('should apply bulk action', () => {
     };
     expect(update(before, settings)).toEqual(after);
 });
+
+test('should apply auto push', () => {
+    const before = {
+        b: ['shyam'],
+    };
+    const after = {
+        a: ['hari'],
+        b: ['shyam', 'sundar'],
+    };
+    const settings = {
+        a: {
+            $autoPush: ['hari'],
+        },
+        b: {
+            $autoPush: ['sundar'],
+        },
+    };
+    expect(update(before, settings)).toEqual(after);
+});
