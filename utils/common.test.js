@@ -16,6 +16,8 @@ import {
     leftPad,
     camelToDash,
     camelToNormal,
+    getContrastYIQ,
+    getColorOnBgColor,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -223,4 +225,17 @@ test('camel case to normal', () => {
     expect(camelToNormal('HariIsGOOD')).toEqual('hari is g o o d');
     expect(camelToNormal('hari')).toEqual('hari');
     expect(camelToNormal('Hari')).toEqual('hari');
+});
+
+test('get contrast YIQ', () => {
+    expect(getContrastYIQ('#000000')).toBeCloseTo(0);
+    expect(getContrastYIQ('#ffff00')).toBeCloseTo(0.886);
+    expect(getContrastYIQ('#3498db')).toBeCloseTo(0.508);
+});
+
+test('get text color on bg color', () => {
+    expect(getColorOnBgColor('#000000')).toEqual('#ffffff');
+    expect(getColorOnBgColor('#ffff00')).toEqual('#212121');
+    expect(getColorOnBgColor('#ffff00', '#ffff00')).toEqual('#ffff00');
+    expect(getColorOnBgColor('#000000', '#ffff00', '#f00f00')).toEqual('#f00f00');
 });
