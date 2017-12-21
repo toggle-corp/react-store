@@ -65,5 +65,9 @@ update.extend(
     '$autoPush',
     (value, object) => (object || []).concat(value.length ? value : []),
 );
+update.extend(
+    '$autoUnshift',
+    (value, object) => (value.length ? value : []).concat(object || []),
+);
 
 export default update;
