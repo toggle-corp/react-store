@@ -120,6 +120,25 @@ test('should apply auto push', () => {
     expect(update(before, settings)).toEqual(after);
 });
 
+test('should apply auto unshift', () => {
+    const before = {
+        b: ['shyam'],
+    };
+    const after = {
+        a: ['hari'],
+        b: ['sundar', 'is', 'shyam'],
+    };
+    const settings = {
+        a: {
+            $autoUnshift: ['hari'],
+        },
+        b: {
+            $autoUnshift: ['sundar', 'is'],
+        },
+    };
+    expect(update(before, settings)).toEqual(after);
+});
+
 test('should sort array', () => {
     const before = {
         b: ['ram', 'hari', 'kiran'],
