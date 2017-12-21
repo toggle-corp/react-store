@@ -259,11 +259,16 @@ export const reverseRoute = (route, params) => {
     return paths.join('/');
 };
 
-export const getContrastYIQ = (hexcolor) => {
-    const r = parseInt(hexcolor.substr(1, 2), 16);
-    const g = parseInt(hexcolor.substr(3, 2), 16);
-    const b = parseInt(hexcolor.substr(5, 2), 16);
+const getContrastYIQ = (hexColor) => {
+    const r = parseInt(hexColor.substr(1, 2), 16);
+    const g = parseInt(hexColor.substr(3, 2), 16);
+    const b = parseInt(hexColor.substr(5, 2), 16);
     const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
-    return (yiq >= 128) ? '#212121' : '#fff';
+    return yiq >= 128;
+};
+
+export const getTextOnColor = (hexColor, colorOnLight = '#212121', colorOnDark = '#fff') => {
+    const isBgLight = getContrastYIQ(hexColor);
+    return isBgLight ? colorOnLight : colorOnDark;
 };
