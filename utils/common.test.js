@@ -18,6 +18,9 @@ import {
     camelToNormal,
     getContrastYIQ,
     getColorOnBgColor,
+    getHashFromString,
+    getHexFromCode,
+    getHexFromString,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -238,4 +241,19 @@ test('get text color on bg color', () => {
     expect(getColorOnBgColor('#ffff00')).toEqual('#212121');
     expect(getColorOnBgColor('#ffff00', '#ffff00')).toEqual('#ffff00');
     expect(getColorOnBgColor('#000000', '#ffff00', '#f00f00')).toEqual('#f00f00');
+});
+
+test('get hash of a string', () => {
+    expect(getHashFromString('testing')).toEqual(2872521232);
+    expect(getHashFromString('testing123')).toEqual(-1943301598);
+});
+
+test('get hex of a hash', () => {
+    expect(getHexFromCode(2872521232)).toEqual('#373210');
+    expect(getHexFromCode(-1943301598)).toEqual('#2B9222');
+});
+
+test('get hex of a string', () => {
+    expect(getHexFromString('testing')).toEqual('#373210');
+    expect(getHexFromString('testing123')).toEqual('#2B9222');
 });
