@@ -21,7 +21,6 @@ test('should create auto object', () => {
     expect(update(before, settings)).toEqual(after);
 });
 
-
 test('should create auto array', () => {
     const before = {
         a: ['hari'],
@@ -119,4 +118,75 @@ test('should apply auto push', () => {
         },
     };
     expect(update(before, settings)).toEqual(after);
+});
+
+test('should sort array', () => {
+    const before = {
+        b: ['ram', 'hari', 'kiran'],
+    };
+    const after = {
+        b: ['kiran', 'hari', 'ram'],
+    };
+    const settings = {
+        b: {
+            $sort: (a, b) => b.length - a.length,
+        },
+    };
+    expect(update(before, settings)).toEqual(after);
+});
+
+test('should get unique elements in array', () => {
+    const before = {
+        b: ['ram', 'hari', 'kiran', 'ram', 'ram', 'kiran'],
+    };
+    const after = {
+        b: ['ram', 'hari', 'kiran'],
+    };
+    const settings = {
+        b: {
+            $unique: a => a,
+        },
+    };
+    expect(update(before, settings)).toEqual(after);
+});
+
+test('should get unique element in array, no change in array', () => {
+    const before = {
+        b: ['shyam', 'hari', 'kiran'],
+    };
+    const settings = {
+        b: {
+            $unique: a => a,
+        },
+    };
+    const after = update(before, settings);
+    expect(after.b).toEqual(before.b);
+});
+
+test('should filter array', () => {
+    const before = {
+        b: ['shyam', 'hari', 'kiran'],
+    };
+    const after = {
+        b: ['shyam', 'kiran'],
+    };
+    const settings = {
+        b: {
+            $filter: a => (a.length > 4),
+        },
+    };
+    expect(update(before, settings)).toEqual(after);
+});
+
+test('should filter array, no change in array', () => {
+    const before = {
+        b: ['shyam', 'hari', 'kiran'],
+    };
+    const settings = {
+        b: {
+            $filter: a => (a.length !== 1),
+        },
+    };
+    const after = update(before, settings);
+    expect(after.b).toEqual(before.b);
 });
