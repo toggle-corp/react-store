@@ -12,6 +12,7 @@ const propTypeData = PropTypes.arrayOf(
         PropTypes.shape({
             dummy: PropTypes.string,
         }),
+        PropTypes.array,
     ]),
 );
 
