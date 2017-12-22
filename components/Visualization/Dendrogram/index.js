@@ -1,3 +1,4 @@
+
 import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
@@ -180,7 +181,7 @@ export default class Dendrogram extends React.PureComponent {
                 ref={(el) => { this.container = el; }}
             >
                 <svg
-                    className="dendrogram-svg"
+                    className="dendrogram"
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

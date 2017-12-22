@@ -1,12 +1,14 @@
+@import '../../../stylesheets/base';
+
 :global .chord-diagram-container {
     flex-grow: 1;
 
     .tooltip {
+        @include shadow-medium;
         position: absolute;
-        box-shadow: 0 1px 10px -3px rgba(0, 0, 0, .3);
-        background-color: #fff;
-        padding: 6px 12px;
-        color: #616161;
+        background-color: $color-foreground;
+        padding: $spacing-small $spacing-medium-alt;
+        color: $color-text;
 
         .name {
             display: block;
