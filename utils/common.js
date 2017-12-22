@@ -293,3 +293,12 @@ export const getHexFromCode = (code) => {
 export const getHexFromString = string => (
     getHexFromCode(getHashFromString(string))
 );
+
+export const getStandardFilename = (title, type, date = undefined) => {
+    const dateToUse = date || new Date();
+    const y = leftPad(dateToUse.getFullYear(), 4);
+    const m = leftPad(dateToUse.getMonth() + 1, 2);
+    const d = leftPad(dateToUse.getDate(), 2);
+
+    return `${y}${m}${d} ${title} ${type}`;
+};
