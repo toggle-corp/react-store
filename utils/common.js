@@ -272,3 +272,24 @@ export const getColorOnBgColor = (hexColor, colorOnLight = '#212121', colorOnDar
     const isBgLight = getContrastYIQ(hexColor) > 0.5;
     return isBgLight ? colorOnLight : colorOnDark;
 };
+
+export const getHashFromString = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i += 1) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash); // eslint-disable-line
+    }
+    return hash;
+};
+
+export const getHexFromCode = (code) => {
+    const c = (code & 0x00FFFFFF)    // eslint-disable-line
+        .toString(16)
+        .toUpperCase();
+
+    const rgb = '00000'.substring(0, 6 - c.length) + c;
+    return `#${rgb}`;
+};
+
+export const getHexFromString = string => (
+    getHexFromCode(getHashFromString(string))
+);
