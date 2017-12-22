@@ -1,3 +1,5 @@
+@import '../../../stylesheets/base';
+
 :global .treemap-container {
     .treemap {
         width: 100%;
@@ -9,7 +11,7 @@
         }
 
         .navigation:hover {
-            fill: grey;
+            fill: $color-accent;
         }
 
         .children rect.parent,
