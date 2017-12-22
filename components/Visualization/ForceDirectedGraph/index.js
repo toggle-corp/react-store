@@ -91,7 +91,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
     }
 
     updateData(props) {
-        console.warn('updating');
         this.data = JSON.parse(JSON.stringify(props.data));
     }
 

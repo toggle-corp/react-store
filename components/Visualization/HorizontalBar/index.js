@@ -181,7 +181,6 @@ export default class HorizontalBar extends React.PureComponent {
             .attr('height', y.bandwidth())
             .attr('width', d => x(valueAccessor(d)))
             .attr('fill', barColor);
-        console.log(barColor);
     }
 
     render() {
