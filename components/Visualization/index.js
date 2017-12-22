@@ -21,3 +21,4 @@ export { default as RadialDendrogramView } from './RadialDendrogramView';
 export { default as SunBurstView } from './SunBurstView';
 export { default as TimeSeries } from './TimeSeries';
 export { default as TreeMapView } from './TreeMapView';
+export { default as EventDropsView } from './EventDropsView';
