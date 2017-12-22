@@ -21,6 +21,7 @@ import {
     getHashFromString,
     getHexFromCode,
     getHexFromString,
+    getStandardFilename,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -256,4 +257,9 @@ test('get hex of a hash', () => {
 test('get hex of a string', () => {
     expect(getHexFromString('testing')).toEqual('#373210');
     expect(getHexFromString('testing123')).toEqual('#2B9222');
+});
+
+test('get standard filename', () => {
+    expect(getStandardFilename('Entries', 'General', new Date(2016, 1, 15)))
+        .toEqual('20160215 Entries General');
 });
