@@ -27,6 +27,11 @@
         &.active {
             cursor: default;
             color: $color-accent;
+
+            &.background-highlight {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+            }
         }
 
         &:not(.active):hover {
