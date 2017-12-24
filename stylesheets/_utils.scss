@@ -10,6 +10,9 @@
     box-shadow: 0 3px 15px -5px $color-shadow-normal;
 }
 
+@mixin transition-slow() {
+    transition: .4s all ease-in-out;
+}
 
 @mixin transition-medium() {
     transition: .2s all ease-in-out;
