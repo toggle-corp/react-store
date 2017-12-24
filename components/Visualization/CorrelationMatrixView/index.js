@@ -1,7 +1,13 @@
 import React, { PureComponent } from 'react';
 import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
-import { sequentialColorNames, getSequentialColorScheme } from '../../../utils/ColorScheme';
+import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
+import {
+    divergingColorNames,
+    sequentialColorNames,
+    getDivergingColorScheme,
+    getSequentialColorScheme,
+} from '../../../utils/ColorScheme';
 import CorrelationMatrix from '../CorrelationMatrix';
 
 import { SelectInput } from '../../Input';
@@ -10,6 +16,10 @@ import { PrimaryButton } from '../../Action';
 import styles from './styles.scss';
 
 const propTypes = {
+    data: PropTypes.shape({
+        labels: PropTypes.arrayOf(PropTypes.string),
+        values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    }).isRequired,
     className: PropTypes.string,
 };
 
@@ -26,11 +36,14 @@ export default class CorrelationMatrixView extends PureComponent {
         super(props);
 
         this.state = {
-            colorScheme: undefined,
+            colorScheme: [].concat(...this.props.data.values)
+                .some(v => v < 0) ?
+                interpolateRdBu : interpolateGnBu,
             selectedColorScheme: undefined,
         };
 
         this.colors = sequentialColorNames()
+            .concat(divergingColorNames())
             .map(color => ({
                 id: color,
                 title: color,
@@ -45,7 +58,7 @@ export default class CorrelationMatrixView extends PureComponent {
     }
 
     handleSelection = (data) => {
-        const colors = getSequentialColorScheme(data);
+        const colors = getSequentialColorScheme(data) || getDivergingColorScheme(data);
         this.setState({
             colorScheme: colors,
             selectedColorScheme: data,
@@ -61,6 +74,7 @@ export default class CorrelationMatrixView extends PureComponent {
             className,
             ...otherProps
         } = this.props;
+
         return (
             <div
                 styleName="correlation-matrix-view"

@@ -296,6 +296,16 @@ export const getHexFromString = string => (
     getHexFromCode(getHashFromString(string))
 );
 
+export const getHexFromRgb = (rgb) => {
+    const values = rgb.split('(')[1].split(')')[0].split(',');
+    const out = values.map((v) => {
+        const hex = parseInt(v, 10).toString(16);
+        return (hex.length === 1) ? `0${hex}` : hex;
+    }).join('');
+    return `#${out}`;
+};
+
+
 export const getStandardFilename = (title, type, date = undefined) => {
     const dateToUse = date || new Date();
     const y = leftPad(dateToUse.getFullYear(), 4);
