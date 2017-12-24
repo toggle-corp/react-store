@@ -22,6 +22,7 @@ import {
     getHexFromCode,
     getHexFromString,
     getStandardFilename,
+    getElementAround,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -262,4 +263,10 @@ test('get hex of a string', () => {
 test('get standard filename', () => {
     expect(getStandardFilename('Entries', 'General', new Date(2016, 1, 15)))
         .toEqual('20160215 Entries General');
+});
+
+test('get element around', () => {
+    expect(getElementAround([1, 2, 4, 3], 0)).toBe(2);
+    expect(getElementAround([1, 2, 4, 3], 3)).toBe(4);
+    expect(getElementAround([1, 2, 4, 3], 1)).toBe(4);
 });
