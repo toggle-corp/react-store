@@ -1,0 +1,106 @@
+@import '../../../stylesheets/base';
+
+.toast {
+    @include transition-slow;
+
+    position: fixed;
+    top: $height-navbar;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    z-index: 11111;
+    background-color: $color-foreground;
+    width: 480px;
+    height: auto;
+    overflow: hidden;
+    pointer-events: none;
+
+    .container {
+        .header {
+            display: flex;
+            align-items: flex-start;
+            padding: $spacing-medium $spacing-large;
+
+            .heading {
+                flex-grow: 1;
+            }
+
+            button {
+                flex-shrink: 0;
+                padding: 0;
+                color: $color-label;
+                font-size: $font-size-small;
+            }
+        }
+
+        .main-content {
+            display: flex;
+            padding: $spacing-large $spacing-medium;
+
+            .icon {
+                flex-shrink: 0;
+                align-self: flex-start;
+                padding: 0 $spacing-medium;
+                font-size: $font-size-extra-large;
+            }
+
+            .message {
+                flex-grow: 1;
+                align-self: center;
+                padding: 0 $spacing-medium;
+            }
+
+            .action-buttons {
+                flex-shrink: 0;
+                align-self: flex-end;
+            }
+        }
+    }
+
+    &.shown {
+        @include shadow-large;
+        top: $height-navbar + $spacing-large;
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &.success {
+        .container {
+            .main-content {
+                .icon {
+                    color: $color-success;
+                }
+            }
+        }
+    }
+
+    &.info {
+        .container {
+            .main-content {
+                .icon {
+                    color: $color-accent;
+                }
+            }
+        }
+    }
+
+    &.warning {
+        .container {
+            .main-content {
+                .icon {
+                    color: $color-warning;
+                }
+            }
+        }
+    }
+
+    &.error {
+        .container {
+            .main-content {
+                .icon {
+                    color: $color-danger;
+                }
+            }
+        }
+    }
+}
