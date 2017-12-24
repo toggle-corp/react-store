@@ -15,6 +15,13 @@ export const NOTIFICATION = {
     SUCCESS: 'success',
 };
 
+const iconMap = {
+    [NOTIFICATION.INFO]: iconNames.info,
+    [NOTIFICATION.ERROR]: iconNames.error,
+    [NOTIFICATION.WARNING]: iconNames.warning,
+    [NOTIFICATION.SUCCESS]: iconNames.check,
+};
+
 const propTypes = {
     notification: PropTypes.shape({
         type: PropTypes.string,
@@ -44,47 +51,28 @@ export default class Toast extends React.Component {
         super(props);
 
         const { notification } = props;
-        const keys = Object.keys(notification);
+        const shown = Object.keys(notification).length !== 0;
 
         this.state = {
-            shown: keys.length !== 0,
+            shown,
             notification,
         };
+    }
 
-        const {
-            INFO,
-            ERROR,
-            WARNING,
-            SUCCESS,
-        } = NOTIFICATION;
-
-        const iconMap = {
-            [INFO]: iconNames.info,
-            [ERROR]: iconNames.error,
-            [WARNING]: iconNames.warning,
-            [SUCCESS]: iconNames.check,
-        };
-
-        this.iconMap = iconMap;
-
+    componentDidMount() {
+        const { notification } = this.state;
         if (notification.duration !== Infinity) {
             this.timeout = setTimeout(this.handleTimeout, notification.duration);
         }
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            notification: nextNotification,
-        } = nextProps;
-
-        const {
-            notification: currentNotification,
-        } = this.props;
+        const { notification: nextNotification } = nextProps;
+        const { notification: currentNotification } = this.props;
 
         if (nextNotification !== currentNotification) {
-            const keys = Object.keys(nextNotification);
-
-            if (keys.length !== 0) {
+            const isNotificationEmpty = Object.keys(nextNotification).length === 0;
+            if (!isNotificationEmpty) {
                 this.setState({
                     shown: true,
                     notification: nextNotification,
@@ -100,103 +88,83 @@ export default class Toast extends React.Component {
         }
     }
 
-    getStyleName = () => {
-        const styleNames = [];
-        styleNames.push('toast');
+    componentWillUnmount() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+        }
+    }
 
+    getStyleName = () => {
         const {
             shown,
             notification,
         } = this.state;
 
+        const styleNames = [];
+        styleNames.push('toast');
         if (shown) {
             styleNames.push('shown');
         }
-
         if (notification) {
             styleNames.push(notification.type);
         }
-
         return styleNames.join(' ');
     }
 
     getIconName = () => {
-        const {
-            notification: { type },
-        } = this.state;
-
-        return this.iconMap[type];
+        const { notification: { type } } = this.state;
+        return iconMap[type];
     }
 
     handleContainerClose = () => {
         // no-op
     }
 
-    handleTimeout = () => {
-        const {
-            onClose,
-        } = this.props;
-
-        this.setState({
-            shown: false,
-        });
-
+    closeNotification = () => {
+        const { onClose } = this.props;
+        this.setState({ shown: false });
         onClose();
+    }
+
+    handleTimeout = () => {
+        this.closeNotification();
     }
 
     handleDissmissButtonClick = () => {
-        const {
-            onClose,
-        } = this.props;
-
-        this.setState({
-            shown: false,
-        });
-
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-
-        onClose();
+        this.closeNotification();
     }
 
     render() {
-        const show = true;
-        const containerId = 'toast';
-
-        const {
-            notification,
-        } = this.state;
+        const { notification } = this.state;
 
         return (
             <FloatingContainer
                 styleName={this.getStyleName()}
-                containerId={containerId}
+                containerId="toast"
                 onClose={this.handleContainerClose}
                 ref={(el) => { this.container = el; }}
-                show={show}
+                show
             >
                 {
                     notification && (
                         <div styleName="container">
-                            {
-                                <header styleName="header">
-                                    <h4
-                                        styleName="heading"
-                                    >
-                                        { notification.title }
-                                    </h4>
-                                    {
-                                        notification.dismissable && (
-                                            <TransparentButton
-                                                onClick={this.handleDissmissButtonClick}
-                                            >
-                                                <span className={iconNames.close} />
-                                            </TransparentButton>
-                                        )
-                                    }
-                                </header>
-                            }
+                            <header styleName="header">
+                                <h4 styleName="heading">
+                                    { notification.title }
+                                </h4>
+                                {
+                                    notification.dismissable && (
+                                        <TransparentButton
+                                            onClick={this.handleDissmissButtonClick}
+                                        >
+                                            <span className={iconNames.close} />
+                                        </TransparentButton>
+                                    )
+                                }
+                            </header>
                             <div styleName="main-content">
                                 <span
                                     styleName="icon"
