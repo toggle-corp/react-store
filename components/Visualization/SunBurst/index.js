@@ -8,8 +8,10 @@ import { scaleLinear, schemeCategory20c, scaleSqrt, scaleOrdinal } from 'd3-scal
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import Responsive from '../Responsive';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getStandardFilename } from '../../../utils/common';
+
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -78,7 +80,7 @@ export default class SunBurst extends PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `sunburst-${Date.now()}.svg`);
+        svgsaver.asSvg(svg.node(), getStandardFilename('sunburst', 'svg', new Date()));
     }
 
     renderChart = () => {

@@ -8,8 +8,9 @@ import { rgb } from 'd3-color';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import Responsive from '../Responsive';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getStandardFilename } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -77,7 +78,7 @@ export default class ChordDiagram extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `chorddiagram-${Date.now()}.svg`);
+        svgsaver.asSvg(svg.node(), getStandardFilename('chorddiagram', 'svg', new Date()));
     }
 
     renderChart() {

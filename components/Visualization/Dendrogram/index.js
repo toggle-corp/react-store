@@ -7,8 +7,9 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { scaleOrdinal } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import Responsive from '../Responsive';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getStandardFilename } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -72,8 +73,9 @@ export default class Dendrogram extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `dendrogram-${Date.now()}.svg`);
+        svgsaver.asSvg(svg.node(), getStandardFilename('dendrogram', 'svg', new Date()));
     }
+
     renderChart() {
         const {
             data,
