@@ -190,20 +190,14 @@ export default class BarChart extends React.PureComponent {
         }
 
         const xAxis = axisBottom(this.scaleX)
-            .tickFormat(xTickFormat);
-
-        if (xGrid) {
-            xAxis.tickSizeInner(-height)
-                .tickSizeOuter(0);
-        }
+            .tickFormat(xTickFormat)
+            .tickSizeInner(xGrid ? -height : 0)
+            .tickSizeOuter(0);
 
         const yAxis = axisLeft(this.scaleY)
-            .tickFormat(yTickFormat);
-
-        if (yGrid) {
-            yAxis.tickSizeInner(-width)
-                .tickSizeOuter(0);
-        }
+            .tickFormat(yTickFormat)
+            .tickSizeInner(yGrid ? -width : 0)
+            .tickSizeOuter(0);
 
         if (yTicks) {
             yAxis.ticks(yTicks);

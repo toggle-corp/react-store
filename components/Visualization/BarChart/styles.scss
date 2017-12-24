@@ -1,5 +1,7 @@
 @import '../../../stylesheets/base';
 
+$color-bar-hovered: #f39c12 !default;
+
 .bar-chart {
     display: flex;
     flex-direction: column;
@@ -17,6 +19,10 @@
 
             .bar {
                 fill: $color-accent;
+
+                &:hover {
+                    fill: $color-bar-hovered;
+                }
             }
 
             .bar-selected {

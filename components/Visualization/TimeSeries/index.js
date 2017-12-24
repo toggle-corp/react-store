@@ -121,12 +121,12 @@ export default class TimeSeries extends React.PureComponent {
             overLayCircle
                 .transition()
                 .duration(30)
-                .attr('cx', xPoint)
-                .attr('cy', yPoint);
+                .attr('cx', xPoint || 0)
+                .attr('cy', yPoint || 0);
             overLayLine
                 .transition()
                 .duration(30)
-                .attr('x', xPoint);
+                .attr('x', xPoint || 0);
         } else {
             this.onMouseLeave(overLayLine, overLayCircle);
         }
