@@ -8,6 +8,7 @@ import { select } from 'd3-selection';
 import { max, min } from 'd3-array';
 
 import { Responsive } from '../../General';
+import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
 
@@ -68,6 +69,10 @@ const propTypes = {
     xGrid: PropTypes.bool,
     yGrid: PropTypes.bool,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+    xTickFormat: PropTypes.func,
+    yTickFormat: PropTypes.func,
+    tooltipRender: PropTypes.func.isRequired,
+    yTicks: PropTypes.number,
 };
 
 const defaultProps = {
@@ -84,6 +89,9 @@ const defaultProps = {
     updateFromProps: true,
     xGrid: true,
     yGrid: true,
+    xTickFormat: d => d,
+    yTickFormat: d => d,
+    yTicks: undefined,
 };
 
 @Responsive
@@ -122,6 +130,19 @@ export default class BarChart extends React.PureComponent {
         this.updateRender();
     }
 
+    onMouseOver = (d) => {
+        this.tooltipDiv.setTooltip(this.props.tooltipRender(d));
+        this.tooltipDiv.show();
+    }
+
+    onMouseMove = () => {
+        this.tooltipDiv.move();
+    }
+
+    onMouseOut = () => {
+        this.tooltipDiv.hide();
+    }
+
     setData = (newData) => {
         // TODO: Is there better way ?
         // Added to support sorted data from table
@@ -149,7 +170,7 @@ export default class BarChart extends React.PureComponent {
 
     renderBarChart() {
         const renderData = this.state.data;
-        const { margins, xGrid, yGrid } = this.props;
+        const { margins, xGrid, yGrid, xTickFormat, yTickFormat, yTicks } = this.props;
         const { top, bottom, left, right } = margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
@@ -161,34 +182,37 @@ export default class BarChart extends React.PureComponent {
         this.scaleX.range([0, width]);
         this.scaleY.range([height, 0]);
 
-        // const maxScaleY = this.scaleY.domain().map();
-        console.warn(this.scaleY.domain());
-
         const svg = select(this.svg);
         svg.select('*').remove();
 
-        const xAxis = axisBottom(this.scaleX);
-        if (xGrid) {
-            xAxis.tickSizeInner(-height)
-                .tickSizeOuter(0);
+        if (renderData.length === 0) {
+            return;
         }
 
-        const yAxis = axisLeft(this.scaleY);
-        if (yGrid) {
-            yAxis.tickSizeInner(-width)
-                .tickSizeOuter(0);
+        const xAxis = axisBottom(this.scaleX)
+            .tickFormat(xTickFormat)
+            .tickSizeInner(xGrid ? -height : 0)
+            .tickSizeOuter(0);
+
+        const yAxis = axisLeft(this.scaleY)
+            .tickFormat(yTickFormat)
+            .tickSizeInner(yGrid ? -width : 0)
+            .tickSizeOuter(0);
+
+        if (yTicks) {
+            yAxis.ticks(yTicks);
         }
 
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
 
         const xAxisSvg = root.append('g')
-            .attr('class', 'axis axis--x')
+            .attr('class', `axis axis--x ${xGrid ? 'show' : 'hide'}`)
             .attr('transform', `translate(0, ${height})`)
             .call(xAxis);
 
         root.append('g')
-            .attr('class', 'axis')
+            .attr('class', `axis ${yGrid ? 'show' : 'hide'}`)
             .call(yAxis);
 
         if (nuOfRow > this.props.maxNuOfRow) {
@@ -217,7 +241,10 @@ export default class BarChart extends React.PureComponent {
             .attr('height', d => (
                 (d[this.props.yKey] > 0 ? this.scaleY(0) - this.scaleY(d[this.props.yKey]) :
                     this.scaleY(d[this.props.yKey]) - this.scaleY(0)) || 0
-            ));
+            ))
+            .on('mouseenter', this.onMouseOver)
+            .on('mousemove', this.onMouseMove)
+            .on('mouseleave', this.onMouseOut);
     }
 
     render() {
@@ -236,6 +263,9 @@ export default class BarChart extends React.PureComponent {
                     <svg
                         className="svg"
                         ref={(svg) => { this.svg = svg; }}
+                    />
+                    <Tooltip
+                        ref={(div) => { this.tooltipDiv = div; }}
                     />
                 </div>
             </div>

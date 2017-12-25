@@ -1,20 +1,28 @@
 @import '../../../stylesheets/base';
 
+$color-bar-hovered: #f39c12 !default;
+
 .bar-chart {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     background-color: $color-foreground;
-    width: 100%;
-    height: 100%;
-    $height-header: 48px;
 
     .content {
-        height: calc(100% - #{$height-header});
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
 
         :global svg {
+            flex-grow: 1;
             width: 100%;
-            height: 100%;
 
             .bar {
                 fill: $color-accent;
+
+                &:hover {
+                    fill: $color-bar-hovered;
+                }
             }
 
             .bar-selected {
@@ -22,13 +30,23 @@
             }
 
             .axis {
-                line,
-                path {
-                    stroke: $color-background-header-alt;
-                }
 
                 text {
                     fill: $color-text;
+                }
+
+                &.show {
+                    line,
+                    path {
+                        stroke: $color-background-header-alt;
+                    }
+                }
+
+                &.hide {
+                    line,
+                    path {
+                        stroke: transparent;
+                    }
                 }
             }
         }

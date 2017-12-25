@@ -79,6 +79,55 @@ export default class Numeral extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getNormalizedNumber({ value, showSign, normal, precision, showSeparator, separator }) {
+        // Only use absolute part if showSign is true (sign are added later)
+        let number = isTruthy(showSign) ? Math.abs(value) : value;
+
+        // Get normalize-suffix and reduce the number
+        let normalizedSuffix;
+        if (normal) {
+            const val = formattedNormalize(number);
+            number = val.number;
+            normalizedSuffix = val.normalizeSuffix;
+        }
+
+        // Convert number to fixed precision
+        if (isTruthy(precision)) {
+            number = number.toFixed(precision);
+        }
+
+        // Convert number to add separator
+        if (showSeparator) {
+            number = addSeparator(number, separator);
+        }
+
+        return { number, normalizedSuffix };
+    }
+
+    static renderText(props) {
+        const {
+            normal,
+            precision,
+            prefix,
+            separator,
+            showSeparator,
+            showSign,
+            suffix,
+            value,
+            invalidText,
+        } = { ...defaultProps, ...props };
+
+        if (isFalsy(value)) {
+            return invalidText;
+        }
+
+        const { number, normalizedSuffix } = Numeral.getNormalizedNumber({
+            value, showSign, normal, precision, showSeparator, separator,
+        });
+
+        return `${prefix || ''}${number}${normalizedSuffix || ''}${suffix || ''}`;
+    }
+
     render() {
         const {
             className,
@@ -102,26 +151,9 @@ export default class Numeral extends React.PureComponent {
             );
         }
 
-        // Only use absolute part if showSign is true (sign are added later)
-        let number = isTruthy(showSign) ? Math.abs(value) : value;
-
-        // Get normalize-suffix and reduce the number
-        let normalizedSuffix;
-        if (normal) {
-            const val = formattedNormalize(number);
-            number = val.number;
-            normalizedSuffix = val.normalizeSuffix;
-        }
-
-        // Convert number to fixed precision
-        if (isTruthy(precision)) {
-            number = number.toFixed(precision);
-        }
-
-        // Convert number to add separator
-        if (showSeparator) {
-            number = addSeparator(number, separator);
-        }
+        const { number, normalizedSuffix } = Numeral.getNormalizedNumber({
+            value, showSign, normal, precision, showSeparator, separator,
+        });
 
         return (
             <span
