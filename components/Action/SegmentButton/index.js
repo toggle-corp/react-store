@@ -8,6 +8,7 @@ import { randomString } from '../../../utils/common';
 // TODO: @adityakhatri47, Rename property 'onPress' to 'onClick' for consistency
 const propTypes = {
     className: PropTypes.string,
+    backgroundHighlight: PropTypes.bool,
     data: PropTypes.arrayOf(
         PropTypes.shape({
             label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -20,6 +21,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    backgroundHighlight: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -50,6 +52,21 @@ export default class SegmentButton extends React.PureComponent {
         }
     }
 
+    getStyleNameWithStatus = (buttonValue, styleValue) => {
+        const style = [styleValue];
+        const { selectedValue } = this.state;
+        const { backgroundHighlight } = this.props;
+
+        if (backgroundHighlight) {
+            style.push('background-highlight');
+        }
+
+        if (selectedValue === buttonValue) {
+            style.push('active');
+        }
+        return style.join(' ');
+    };
+
     handleOptionChange = (changeEvent) => {
         const { value } = changeEvent.target;
         this.props.onPress(value);
@@ -73,8 +90,8 @@ export default class SegmentButton extends React.PureComponent {
                         <label
                             htmlFor={this.buttonIdentifiers[i]}
                             key={button.value}
-                            className={`button ${selectedValue === button.value ? 'active' : ''}`}
-                            styleName={`segment-label ${selectedValue === button.value ? 'active' : ''}`}
+                            className={this.getStyleNameWithStatus(button.value, 'button')}
+                            styleName={this.getStyleNameWithStatus(button.value, 'segment-label')}
                         >
                             <input
                                 checked={selectedValue === button.value}
