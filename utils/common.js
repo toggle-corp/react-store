@@ -66,9 +66,11 @@ export const isObjectEmpty = (obj) => {
     return true;
 };
 
-export const bound = (value, max, min) => (
-    Math.max(min, Math.min(max, value))
-);
+export const bound = (value, a, b) => {
+    const min = Math.min(a, b);
+    const max = Math.max(a, b);
+    return Math.max(min, Math.min(max, value));
+};
 
 export const normalize = (value, max, min) => (
     (value - min) / (max - min)
@@ -301,4 +303,21 @@ export const getStandardFilename = (title, type, date = undefined) => {
     const d = leftPad(dateToUse.getDate(), 2);
 
     return `${y}${m}${d} ${title} ${type}`;
+};
+
+export const getElementAround = (list, currentIndex) => {
+    if (currentIndex + 1 < list.length) {
+        return list[currentIndex + 1];
+    } else if (currentIndex - 1 >= 0) {
+        return list[currentIndex - 1];
+    }
+    return null;
+};
+
+export const getLinkedListNode = (linkedList, n, selector) => {
+    let newList = linkedList;
+    for (let i = 0; i < n; i += 1) {
+        newList = selector(newList, i);
+    }
+    return newList;
 };

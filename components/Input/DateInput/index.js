@@ -466,7 +466,7 @@ export default class DateInput extends React.PureComponent {
                             disabled={disabled}
                             onClick={this.clear}
                             styleName={!this.isFilled() && 'hidden'}
-                            tabIndex="0"
+                            tabIndex="-1"
                             type="button"
                         >
                             <span className={iconNames.closeRound} />
@@ -476,7 +476,7 @@ export default class DateInput extends React.PureComponent {
                             disabled={disabled}
                             onClick={this.setToday}
                             styleName={isToday && 'active'}
-                            tabIndex="0"
+                            tabIndex="-1"
                             type="button"
                         >
                             <span className={iconNames.clock} />
@@ -485,7 +485,7 @@ export default class DateInput extends React.PureComponent {
                             className="show-picker-button"
                             disabled={disabled}
                             onClick={this.toggleDatePicker}
-                            tabIndex="0"
+                            tabIndex="-1"
                             type="button"
                         >
                             <span className={iconNames.calendar} />

@@ -512,6 +512,9 @@ export default class SelectInput extends React.PureComponent {
         const placeholder = this.getPlaceholder();
         const styleName = this.getStyleName();
 
+        const hideClearButton = multiple
+            ? this.state.selectedOptions.length <= 0
+            : !this.state.selectedOption;
         return (
             <div
                 className={`${styleName} ${className}`}
@@ -548,7 +551,7 @@ export default class SelectInput extends React.PureComponent {
                         className="actions"
                     >
                         {
-                            clearable && !disabled && (
+                            clearable && !disabled && !hideClearButton && (
                                 <button
                                     className="clear-button"
                                     onClick={this.handleClearButtonClick}
