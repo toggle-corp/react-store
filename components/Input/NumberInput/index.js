@@ -67,6 +67,8 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 
     value: PropTypes.number,
+
+    separator: PropTypes.string,
 };
 
 const defaultProps = {
@@ -83,6 +85,7 @@ const defaultProps = {
     showLabel: true,
     showHintAndError: true,
     value: undefined,
+    separator: ',',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -108,7 +111,6 @@ export default class NumberInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             const { realValue, displayValue } = this.calculateNewValues(nextProps.value);
-            console.warn(realValue, displayValue);
             this.setState({
                 value: displayValue,
                 realValue,
@@ -193,7 +195,7 @@ export default class NumberInput extends React.PureComponent {
 
         // get string with only number
         const numberSanitizedPart = this.changeToNumber(numberPart);
-        const numberWithCommaPart = addSeparator(numberSanitizedPart);
+        const numberWithCommaPart = addSeparator(numberSanitizedPart, this.props.separator);
 
         // get value to display
         const displayValue = this.concatNumber(signPart, numberWithCommaPart);
