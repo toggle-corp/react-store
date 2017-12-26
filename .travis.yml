@@ -1,0 +1,38 @@
+sudo: required
+
+language: node_js
+
+node_js:
+    - stable
+
+services:
+    - docker
+
+before_install:
+    - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
+    - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    - sudo apt-get update -qq
+    - sudo apt-get install -y -qq yarn
+
+before_script:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
+
+script:
+    - yarn test --coverage
+
+after_success:
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+
+cache:
+  yarn: true
+
+notifications:
+  slack:
+    secure: I0DonD7lfnbBEmjVaDgnuX4TWRxhjotPn3EBMjBuMWbktrxAsB4fA/tMRD5B9JBMCkwhHL3S9lQxzi6eQutzHlFzGI0SZhpAMWA7H1FBoBxsbJdkOQ0em7VDbUcglAaomc5+V1IMSvnHE5HFEVuaCWpEKSI4XtZWX3S+5QNR9FkM4tDyIcWQRcoLplki0rVAm2G0pmmMkMMegExQbHoyk6Gc5eC462CEZc/JBGtBjKOuDIzaKd/vhhAUTHkGtkIzTYQveC91oFqJuvMIPdzyCS+zMPbzPrIBDcIFSJElsbwll2HgMqmS+xEJ7eNaegiCwqzeQRucxuDdjrzOUyRi/ZN3NfK1OVa4wBEcdhd0oNjZZJ+Q7/sDZchoKtxnKZ7sUeqrZoSMTXXLNyODqwqUuAQ3nPkUDcDagFJY9VNbCAxYNipq28kNIiAYu28jbvFFVHBhu9sDsepIC9aMjj6LSyPT3dVO3sFf+x5yO20E9U7CRqRPHOrw+o49qQN1nc7m80UOcOhixcXzKIXo7Ybmmh8h7917copwWyPkUdYTgFjMJpb4ncB4wuJUmE4Axc+liH7+2xkJpeqMgAHzY8wpbebwkjHFj7H40AGb7VO/YXHsS8viWWqW5mrcZE8eJ1QPGAkLeO/VQMLLoKtyLU5S7JUPzQ1VBqikUnY0lwRLEqo=
+
+env:
+  global:
+    secure: eRWF2ui+viRPPzZFqNzBouieWFuuQKMntl5Gv03LPcwSH9PGmSg66psXTj7G8lUcf5PPcgrvXN2x+EcF8fsRCKPCowdhpNXqX4XihhGQDiYkUUOTEzqajIFhjstm1Fg1oDJp+ugADnuExxSyB27WticS/lDk6uRfDD9DHhSu3s7xnqo4yVGnDGlzJyc1tVBM3lWnLEuLqq6Tfo2HNm1V/P9XDLjrMvWlz75ufK5TKlkGeHgtHSaIfwLQIBbxTLC548GSu56FtGJ6fKX9X7bTmZUGNqlqyrF+I52BgmOiQl8O/T/Sdf/8CkqPHggWKidOXB8A/cqTuW0njQOSoc2WlSAD6+FLCBQD+ewrPrB8QRv6eBOfarBAoX77Cm+C39bGT1ogyBujwsDiFwGrh3Xz1y0weeD91JdrEfvgn8OgQ/Dgcem9++uq3kLIwWKoFwt8zjgLBbxkdUiXFge5hgTGrjSEg/HYnJ9kqGimifYKDY1cFIjYahT7AotUKP59nJCYIG7YxFjTSup11NAxURsq3AhVCHj/UjTSEnoGSFxUM/6e3m/Ujj1D3EvdSC2RQ6ciBDEmvRttmNXFBA4i+FUjoHLDGM8Jc0cVo5Od+qJgkEAKj9K/eUECzCbBLSr7N1xTc9Mp1p4UAntOvMmqR9IfavVeXjJschcy1vO3k8P4BSU=
