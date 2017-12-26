@@ -19,3 +19,4 @@ export { default as SelectInput } from './SelectInput';
 export { default as TabularSelectInput } from './TabularSelectInput';
 export { default as TextArea } from './TextArea';
 export { default as TextInput } from './TextInput';
+export { default as NumberInput } from './NumberInput';
