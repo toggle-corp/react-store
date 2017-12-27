@@ -22,8 +22,8 @@ const defaultProps = {
     className: '',
     onLayoutChange: undefined,
     viewOnly: false,
-    snapX: 24,
-    snapY: 24,
+    snapX: 16,
+    snapY: 16,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -90,6 +90,7 @@ export default class GridLayout extends React.PureComponent {
                 key={key}
                 title={item.title}
                 data={gridData}
+                className="grid-item"
                 onDragStart={this.handleItemDragStart}
                 onResizeStart={this.handleItemResizeStart}
                 onMouseDown={this.handleItemMouseDown}
