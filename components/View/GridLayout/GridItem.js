@@ -140,11 +140,13 @@ export default class GridItem extends React.PureComponent {
             >
                 <header
                     styleName="header"
+                    className="header"
                 >
                     <h3
                         role="presentation"
                         ref={(el) => { this.dragHandle = el; }}
                         styleName="heading"
+                        className="heading"
                         onMouseDown={this.handleDragHandleMouseDown}
                         onMouseUp={this.handleDragHandleMouseUp}
                     >
@@ -154,6 +156,7 @@ export default class GridItem extends React.PureComponent {
                 </header>
                 <div
                     styleName="content"
+                    className="content"
                 >
                     { children }
                 </div>
