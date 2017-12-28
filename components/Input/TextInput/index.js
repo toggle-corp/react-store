@@ -90,20 +90,22 @@ export default class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const value = this.props.initialValue || this.props.value || '';
-
+        this.realValue = this.props.initialValue || this.props.value;
         this.state = {
             isFocused: false,
-            value,
+            value: this.realValue,
         };
 
         this.inputId = randomString();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.value,
-        });
+        if (this.realValue !== nextProps.value) {
+            this.realValue = nextProps.value;
+            this.setState({
+                value: this.realValue,
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -112,7 +114,7 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.state.value;
+    getValue = () => this.realValue;
 
     getStyleName() {
         const styleNames = [];
@@ -150,38 +152,27 @@ export default class TextInput extends React.PureComponent {
 
     handleChange = (event) => {
         const { value } = event.target;
-        this.setState({ value });
+        this.realValue = value;
+        this.setState({ value: this.realValue });
 
         const { onChange } = this.props;
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(value), 100);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), 100);
         }
     }
 
     handleFocus = () => {
-        const {
-            onFocus,
-        } = this.props;
-
-        this.setState({
-            isFocused: true,
-        });
-
+        const { onFocus } = this.props;
+        this.setState({ isFocused: true });
         if (onFocus) {
             onFocus();
         }
     }
 
     handleBlur = () => {
-        const {
-            onBlur,
-        } = this.props;
-
-        this.setState({
-            isFocused: false,
-        });
-
+        const { onBlur } = this.props;
+        this.setState({ isFocused: false });
         if (onBlur) {
             onBlur();
         }
@@ -205,10 +196,7 @@ export default class TextInput extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const {
-            value,
-        } = this.state;
-
+        const { value = '' } = this.state;
         const styleName = this.getStyleName();
 
         return (

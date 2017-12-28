@@ -99,9 +99,10 @@ export default class NumberInput extends React.PureComponent {
         const { realValue, displayValue } = this.calculateNewValues(
             props.value || props.initialValue,
         );
+        this.realValue = realValue;
+
         this.state = {
             isFocused: false,
-            realValue,
             value: displayValue,
         };
 
@@ -109,12 +110,10 @@ export default class NumberInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        if (this.realValue !== nextProps.value) {
             const { realValue, displayValue } = this.calculateNewValues(nextProps.value);
-            this.setState({
-                value: displayValue,
-                realValue,
-            });
+            this.realValue = realValue;
+            this.setState({ value: displayValue });
         }
     }
 
@@ -124,7 +123,7 @@ export default class NumberInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.state.realValue;
+    getValue = () => this.realValue;
 
     getStyleName() {
         const styleNames = [];
@@ -216,14 +215,14 @@ export default class NumberInput extends React.PureComponent {
         const { value } = event.target;
 
         const { realValue, displayValue } = this.calculateNewValues(value);
+        this.realValue = realValue;
         this.setState({
             value: displayValue,
-            realValue,
         });
 
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(realValue), 100);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), 400);
         }
     }
 
