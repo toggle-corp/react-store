@@ -5,8 +5,9 @@ import { select, event } from 'd3-selection';
 import { scaleOrdinal, schemeCategory20 } from 'd3-scale';
 import eventDrops from 'event-drops';
 import SvgSaver from 'svgsaver';
-import Responsive from '../Responsive';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getStandardFilename } from '../../../utils/common';
 
 const propTypes = {
     data: PropTypes.arrayOf(
@@ -59,8 +60,9 @@ export default class EventDrops extends PureComponent {
     save = () => {
         const svg = select(this.container);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `events-${Date.now()}.svg`);
+        svgsaver.asSvg(svg.node(), getStandardFilename('events', 'svg', new Date()));
     }
+
     renderChart = () => {
         const {
             data,

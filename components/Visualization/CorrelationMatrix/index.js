@@ -8,8 +8,9 @@ import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import Responsive from '../Responsive';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getStandardFilename, getColorOnBgColor, getHexFromRgb } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -73,7 +74,7 @@ export default class CorrelationMatrix extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `correlationmatrix-${Date.now()}.svg`);
+        svgsaver.asSvg(svg.node(), getStandardFilename('correlationmatrix', 'svg', new Date()));
     }
     renderChart() {
         const {
@@ -175,6 +176,10 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('height', y.bandwidth())
             .style('stroke-width', 0);
 
+        row.selectAll('.cell')
+            .data((d, i) => dataValues[i])
+            .style('fill', colorMap);
+
         if (showLabels) {
             cell.append('text')
                 .attr('dy', '.32em')
@@ -183,12 +188,12 @@ export default class CorrelationMatrix extends React.PureComponent {
                 .attr('text-anchor', 'middle')
                 .style('visibility', 'hidden')
                 .style('fill', d => (d >= maxValue / 2 ? 'white' : 'black'))
-                .text(d => format('.2n')(d));
+                .text(d => format('.2n')(d))
+                .style('fill', (d) => {
+                    const colorBg = getHexFromRgb(colorMap(d));
+                    return getColorOnBgColor(colorBg);
+                });
         }
-
-        row.selectAll('.cell')
-            .data((d, i) => dataValues[i])
-            .style('fill', colorMap);
 
         const labels = group.append('g')
             .attr('class', 'labels');
