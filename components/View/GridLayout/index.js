@@ -2,10 +2,10 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import update from '../../../utils/immutable-update';
+
 import GridItem from './GridItem';
-import {
-    checkCollision,
-} from './utils';
+import { checkCollision } from './utils';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -34,8 +34,10 @@ export default class GridLayout extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.validateItems(props.items);
+
         this.state = {
-            items: this.validateItems(props.items),
+            items: this.realItems,
             validLayout: undefined,
         };
     }
@@ -46,11 +48,9 @@ export default class GridLayout extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.items !== this.state.items) {
-            const validatedItems = this.validateItems(nextProps.items);
-            this.setState({
-                items: validatedItems,
-            });
+        // NOTE: this is a hack
+        if (nextProps.items.length !== this.props.items.length) {
+            this.validateItems(nextProps.items);
         }
     }
 
@@ -76,32 +76,50 @@ export default class GridLayout extends React.PureComponent {
             viewOnly,
         } = this.props;
 
-        const key = item.key;
-
-        // XXX: This is dangerous
-        const gridData = {
-            key,
-            layout: item.layout,
-        };
-
         return (
             <GridItem
-                key={key}
-                title={item.title}
-                data={gridData}
+                key={item.key}
+                data={item}
+                modifier={modifier}
                 className="grid-item"
                 onDragStart={this.handleItemDragStart}
                 onResizeStart={this.handleItemResizeStart}
                 onMouseDown={this.handleItemMouseDown}
-                headerRightComponent={item.headerRightComponent}
                 viewOnly={viewOnly}
-            >
-                { modifier(item) }
-            </GridItem>
+            />
         );
     }
 
-    // XXX: reuse this
+    validateItems = (items) => {
+        let newItems = items;
+
+        if (items.length > 1) {
+            const settingsFoo = {};
+            for (let i = 0; i < newItems.length; i += 1) {
+                // newItems[i].layout = this.snap(newItems[i].layout);
+                settingsFoo[i] = { layout: { $apply: this.snap } };
+            }
+            newItems = update(newItems, settingsFoo);
+
+            let maxHeight = Math.max(...newItems.map(this.heightOfItem));
+
+            const settingsBar = {};
+            for (let i = newItems.length - 1; i >= 1; i -= 1) {
+                if (checkCollision(newItems, i)) {
+                    // newItems[i].layout.top = maxHeight;
+                    settingsBar[i] = { layout: { top: { $set: maxHeight } } };
+                    maxHeight += newItems[i].layout.height;
+                }
+            }
+            newItems = update(newItems, settingsBar);
+        }
+
+        if (this.props.onLayoutChange) {
+            this.props.onLayoutChange(newItems);
+        }
+        return newItems;
+    }
+
     snapX = val => (
         Math.round(val / this.props.snapX) * this.props.snapX
     )
@@ -131,16 +149,11 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        // XXX: Unncessary copy
-        const newItems = [...this.state.items];
-        const itemIndex = newItems.findIndex(
+        const itemIndex = this.props.items.findIndex(
             d => d.key === key,
         );
-        this.setState({
-            validLayout: {
-                ...newItems[itemIndex].layout,
-            },
-        });
+        const { layout } = this.props.items[itemIndex];
+        this.setState({ validLayout: layout });
     }
 
     handleItemResizeStart = (key, e) => {
@@ -152,16 +165,11 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        // XXX: unncessary copy
-        const newItems = [...this.state.items];
-        const itemIndex = newItems.findIndex(
+        const itemIndex = this.props.items.findIndex(
             d => d.key === key,
         );
-        this.setState({
-            validLayout: {
-                ...newItems[itemIndex].layout,
-            },
-        });
+        const { layout } = this.props.items[itemIndex];
+        this.setState({ validLayout: layout });
     }
 
     handleMouseMove = (e) => {
@@ -169,137 +177,123 @@ export default class GridLayout extends React.PureComponent {
             return;
         }
 
-        if (this.dragTargetKey || this.resizeTargetKey) {
-            const newItems = [...this.state.items];
-            let validLayout = this.state.validLayout;
-
-            const dx = e.screenX - this.lastScreenX;
-            const dy = e.screenY - this.lastScreenY;
-
-            // XXX: Mutation Alert
-            if (this.dragTargetKey) {
-                const itemIndex = newItems.findIndex(
-                    d => d.key === this.dragTargetKey,
-                );
-                newItems[itemIndex].layout.left = Math.max(
-                    0,
-                    newItems[itemIndex].layout.left + dx,
-                );
-                newItems[itemIndex].layout.top = Math.max(
-                    0,
-                    newItems[itemIndex].layout.top + dy,
-                );
-
-                if (!checkCollision(newItems, itemIndex)) {
-                    validLayout = this.snap({
-                        ...newItems[itemIndex].layout,
-                    });
-                }
-            }
-
-            if (this.resizeTargetKey) {
-                const itemIndex = newItems.findIndex(
-                    d => d.key === this.resizeTargetKey,
-                );
-                newItems[itemIndex].layout.width += dx;
-                newItems[itemIndex].layout.height += dy;
-
-                if (!checkCollision(newItems, itemIndex)) {
-                    validLayout = this.constrainSize(this.snap({
-                        ...newItems[itemIndex].layout,
-                    }), newItems[itemIndex].minSize);
-                }
-            }
-
-            this.setState({
-                items: newItems,
-                validLayout,
-            });
-
-            this.lastScreenX = e.screenX;
-            this.lastScreenY = e.screenY;
-        }
-    }
-
-    handleMouseUp = () => {
-        if (this.props.viewOnly) {
+        if (!this.dragTargetKey && !this.resizeTargetKey) {
             return;
         }
 
-        // XXX: mutation alert
-        if (this.dragTargetKey || this.resizeTargetKey) {
-            const newItems = [...this.state.items];
+        console.log(this.dragTargetKey, this.resizeTargetKey);
+        const dx = e.screenX - this.lastScreenX;
+        const dy = e.screenY - this.lastScreenY;
 
-            if (this.dragTargetKey) {
-                const index = newItems.findIndex(
-                    d => d.key === this.dragTargetKey,
+        let newItems = this.props.items;
+        let { validLayout } = this.state;
+
+        if (this.dragTargetKey) {
+            const itemIndex = newItems.findIndex(
+                d => d.key === this.dragTargetKey,
+            );
+            const settings = {
+                [itemIndex]: {
+                    layout: {
+                        left: { $apply: v => Math.max(0, v + dx) },
+                        top: { $apply: v => Math.max(0, v + dy) },
+                    },
+                },
+            };
+            newItems = update(newItems, settings);
+
+
+            if (!checkCollision(newItems, itemIndex)) {
+                validLayout = this.snap({
+                    ...newItems[itemIndex].layout,
+                });
+            }
+        } else if (this.resizeTargetKey) {
+            const itemIndex = newItems.findIndex(
+                d => d.key === this.resizeTargetKey,
+            );
+            const settings = {
+                [itemIndex]: {
+                    layout: {
+                        width: { $apply: v => v + dx },
+                        height: { $apply: v => v + dy },
+                    },
+                },
+            };
+            newItems = update(newItems, settings);
+
+            if (!checkCollision(newItems, itemIndex)) {
+                validLayout = this.constrainSize(
+                    this.snap({
+                        ...newItems[itemIndex].layout,
+                    }),
+                    newItems[itemIndex].minSize,
                 );
-                newItems[index].layout = {
-                    ...this.state.validLayout,
-                };
-            } else if (this.resizeTargetKey) {
-                const index = newItems.findIndex(
-                    d => d.key === this.resizeTargetKey,
-                );
-                newItems[index].layout = {
-                    ...this.state.validLayout,
-                };
-            }
-
-            if (this.props.onLayoutChange) {
-                this.props.onLayoutChange(newItems);
-            }
-
-            this.setState({
-                items: newItems,
-                validLayout: undefined,
-            });
-        }
-
-        this.dragTargetKey = undefined;
-        this.resizeTargetKey = undefined;
-    }
-
-    validateItems = (items) => {
-        // XXX: mutation alert
-        const newItems = [...items];
-        if (items.length > 1) {
-            let maxHeight = Math.max(...newItems.map(
-                item => item.layout.height + item.layout.top,
-            ));
-
-            for (let i = 0; i < newItems.length; i += 1) {
-                newItems[i].layout = this.snap(newItems[i].layout);
-            }
-
-            for (let i = newItems.length - 1; i >= 1; i -= 1) {
-                if (checkCollision(newItems, i)) {
-                    newItems[i].layout.top = maxHeight;
-                    maxHeight += newItems[i].layout.height;
-                }
             }
         }
 
         if (this.props.onLayoutChange) {
             this.props.onLayoutChange(newItems);
         }
-        return newItems;
+
+        this.setState({ validLayout });
+
+        this.lastScreenX = e.screenX;
+        this.lastScreenY = e.screenY;
     }
+
+    handleMouseUp = () => {
+        if (this.props.viewOnly) {
+            return;
+        }
+        if (!this.dragTargetKey && !this.resizeTargetKey) {
+            return;
+        }
+
+        let newItems = this.props.items;
+
+        if (this.dragTargetKey) {
+            const index = newItems.findIndex(
+                d => d.key === this.dragTargetKey,
+            );
+            const settings = {
+                [index]: {
+                    layout: { $set: this.state.validLayout },
+                },
+            };
+            newItems = update(newItems, settings);
+            this.dragTargetKey = undefined;
+        } else if (this.resizeTargetKey) {
+            const index = newItems.findIndex(
+                d => d.key === this.resizeTargetKey,
+            );
+            const settings = {
+                [index]: {
+                    layout: { $set: this.state.validLayout },
+                },
+            };
+            newItems = update(newItems, settings);
+            this.resizeTargetKey = undefined;
+        }
+
+        if (this.props.onLayoutChange) {
+            this.props.onLayoutChange(newItems);
+        }
+
+        this.setState({ validLayout: undefined });
+    }
+
+    heightOfItem = item => item.layout.height + item.layout.top;
 
     render() {
         const {
             className,
             snapX,
             snapY,
+            items,
         } = this.props;
 
-        const {
-            items,
-            validLayout,
-        } = this.state;
-
-        // XXX: reverse mutation
-        const ghostLayout = validLayout && { ...validLayout };
+        const { validLayout } = this.state;
 
         return (
             <div
@@ -307,15 +301,11 @@ export default class GridLayout extends React.PureComponent {
                 className={className}
                 style={{ backgroundSize: `${snapX}px ${snapY}px` }}
             >
-                {
-                    items.map(item => (
-                        this.getGridItem(item)
-                    ))
-                }
+                { items.map(item => this.getGridItem(item)) }
                 { validLayout && (
                     <div
                         styleName="ghost-item"
-                        style={ghostLayout}
+                        style={{ ...validLayout }}
                     />
                 )}
             </div>
