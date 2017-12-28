@@ -46,13 +46,10 @@ export default class GridLayout extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.items.length !== this.state.items.length) {
+        if (nextProps.items !== this.state.items) {
+            const validatedItems = this.validateItems(nextProps.items);
             this.setState({
-                items: this.validateItems(nextProps.items),
-            });
-        } else {
-            this.setState({
-                items: nextProps.items,
+                items: validatedItems,
             });
         }
     }
@@ -80,6 +77,8 @@ export default class GridLayout extends React.PureComponent {
         } = this.props;
 
         const key = item.key;
+
+        // XXX: This is dangerous
         const gridData = {
             key,
             layout: item.layout,
@@ -102,21 +101,19 @@ export default class GridLayout extends React.PureComponent {
         );
     }
 
+    // XXX: reuse this
     snapX = val => (
         Math.round(val / this.props.snapX) * this.props.snapX
     )
-
     snapY = val => (
         Math.round(val / this.props.snapY) * this.props.snapY
     )
-
     snap = layout => ({
         left: this.snapX(layout.left),
         top: this.snapY(layout.top),
         width: this.snapX(layout.width),
         height: this.snapY(layout.height),
     })
-
     constrainSize = (layout, minSize) => (
         minSize ? ({
             ...layout,
@@ -134,6 +131,7 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
+        // XXX: Unncessary copy
         const newItems = [...this.state.items];
         const itemIndex = newItems.findIndex(
             d => d.key === key,
@@ -154,6 +152,7 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
+        // XXX: unncessary copy
         const newItems = [...this.state.items];
         const itemIndex = newItems.findIndex(
             d => d.key === key,
@@ -177,6 +176,7 @@ export default class GridLayout extends React.PureComponent {
             const dx = e.screenX - this.lastScreenX;
             const dy = e.screenY - this.lastScreenY;
 
+            // XXX: Mutation Alert
             if (this.dragTargetKey) {
                 const itemIndex = newItems.findIndex(
                     d => d.key === this.dragTargetKey,
@@ -226,6 +226,7 @@ export default class GridLayout extends React.PureComponent {
             return;
         }
 
+        // XXX: mutation alert
         if (this.dragTargetKey || this.resizeTargetKey) {
             const newItems = [...this.state.items];
 
@@ -260,6 +261,7 @@ export default class GridLayout extends React.PureComponent {
     }
 
     validateItems = (items) => {
+        // XXX: mutation alert
         const newItems = [...items];
         if (items.length > 1) {
             let maxHeight = Math.max(...newItems.map(
@@ -296,6 +298,7 @@ export default class GridLayout extends React.PureComponent {
             validLayout,
         } = this.state;
 
+        // XXX: reverse mutation
         const ghostLayout = validLayout && { ...validLayout };
 
         return (

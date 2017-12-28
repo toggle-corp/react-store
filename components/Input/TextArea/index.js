@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
-import {
-    randomString,
-} from '../../../utils/common';
+import { randomString } from '../../../utils/common';
 
 
 const propTypes = {
@@ -90,20 +88,22 @@ export default class TextArea extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const value = this.props.initialValue || this.props.value || '';
+        this.realValue = this.props.initialValue || this.props.value;
 
         this.state = {
             isFocused: false,
-            value,
+            value: this.realValue,
         };
-
         this.inputId = randomString();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.value,
-        });
+        if (this.realValue !== nextProps.value) {
+            this.realValue = nextProps.value;
+            this.setState({
+                value: this.realValue,
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -112,7 +112,7 @@ export default class TextArea extends React.PureComponent {
         }
     }
 
-    getValue = () => this.state.value;
+    getValue = () => this.realValue;
 
     getStyleName() {
         const styleNames = [];
@@ -150,12 +150,13 @@ export default class TextArea extends React.PureComponent {
 
     handleChange = (event) => {
         const { value } = event.target;
-        this.setState({ value });
+        this.realValue = value;
+        this.setState({ value: this.realValue });
 
         const { onChange } = this.props;
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(value), 100);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), 100);
         }
     }
 
@@ -204,9 +205,7 @@ export default class TextArea extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const {
-            value,
-        } = this.state;
+        const { value = '' } = this.state;
 
         const styleName = this.getStyleName();
 
