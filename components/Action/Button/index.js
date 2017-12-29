@@ -23,7 +23,7 @@ const propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
-    ]).isRequired,
+    ]),
 
     /**
      * if disabled is true, the action is blocked
@@ -47,6 +47,7 @@ const defaultProps = {
     disabled: false,
     iconName: undefined,
     onClick: () => {}, // no-op
+    children: undefined,
 };
 
 /**
