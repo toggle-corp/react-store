@@ -109,7 +109,8 @@ export default class BarChart extends React.PureComponent {
             data,
         };
 
-        this.scaleX = scaleBand().padding(this.props.barPadding);
+        this.scaleX = scaleBand()
+            .padding(this.props.barPadding);
         this.scaleY = scaleLinear();
     }
 
@@ -135,8 +136,14 @@ export default class BarChart extends React.PureComponent {
         this.tooltipDiv.show();
     }
 
-    onMouseMove = () => {
-        this.tooltipDiv.move();
+    onMouseMove = (d) => {
+        const { xKey, yKey } = this.props;
+        const { x, y } = this.barChart.node().getBoundingClientRect();
+
+        const xPoint = this.scaleX(d[xKey]) + (this.scaleX.bandwidth() * 0.5);
+        const yPoint = d[yKey] > 0 ? this.scaleY(d[yKey]) : this.scaleY(0);
+
+        this.tooltipDiv.move(xPoint + x, y + yPoint, 'top', 10, 30);
     }
 
     onMouseOut = () => {
@@ -170,7 +177,7 @@ export default class BarChart extends React.PureComponent {
 
     renderBarChart() {
         const renderData = this.state.data;
-        const { margins, xGrid, yGrid, xTickFormat, yTickFormat, yTicks } = this.props;
+        const { margins, xGrid, yGrid, xTickFormat, yTickFormat, yTicks, xKey, yKey } = this.props;
         const { top, bottom, left, right } = margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
@@ -225,22 +232,24 @@ export default class BarChart extends React.PureComponent {
                 .style('font-size', '9px');
         }
 
-        root.append('g')
+        this.barChart = root.append('g');
+
+        this.barChart
             .selectAll('.bar')
             .data(renderData)
             .enter()
             .append('rect')
             .attr('class', d => (
-                d[this.props.xKey] === this.props.highlightBarX ? 'bar bar-selected' : 'bar'
+                d[xKey] === this.props.highlightBarX ? 'bar bar-selected' : 'bar'
             ))
-            .attr('x', d => this.scaleX(d[this.props.xKey]))
+            .attr('x', d => this.scaleX(d[xKey]))
             .attr('y', d => (
-                d[this.props.yKey] > 0 ? this.scaleY(d[this.props.yKey]) : this.scaleY(0)
+                d[yKey] > 0 ? this.scaleY(d[yKey]) : this.scaleY(0)
             ))
             .attr('width', this.scaleX.bandwidth())
             .attr('height', d => (
-                (d[this.props.yKey] > 0 ? this.scaleY(0) - this.scaleY(d[this.props.yKey]) :
-                    this.scaleY(d[this.props.yKey]) - this.scaleY(0)) || 0
+                (d[yKey] > 0 ? this.scaleY(0) - this.scaleY(d[yKey]) :
+                    this.scaleY(d[yKey]) - this.scaleY(0)) || 0.01
             ))
             .on('mouseenter', this.onMouseOver)
             .on('mousemove', this.onMouseMove)

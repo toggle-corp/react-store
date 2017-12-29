@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$color-bar-hovered: #f39c12 !default;
+$color-bar-hovered: $color-primary !default;
 
 .bar-chart {
     display: flex;
