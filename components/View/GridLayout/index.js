@@ -35,9 +35,8 @@ export default class GridLayout extends React.PureComponent {
         super(props);
 
         this.validateItems(props.items);
-
         this.state = {
-            items: this.realItems,
+            items: this.validateItems(props.items),
             validLayout: undefined,
         };
     }
@@ -49,8 +48,14 @@ export default class GridLayout extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         // NOTE: this is a hack
-        if (nextProps.items.length !== this.props.items.length) {
-            this.validateItems(nextProps.items);
+        if (nextProps.items.length !== this.state.items.length) {
+            this.setState({
+                items: this.validateItems(nextProps.items),
+            });
+        } else {
+            this.setState({
+                items: nextProps.items,
+            });
         }
     }
 
@@ -149,10 +154,10 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        const itemIndex = this.props.items.findIndex(
+        const itemIndex = this.state.items.findIndex(
             d => d.key === key,
         );
-        const { layout } = this.props.items[itemIndex];
+        const { layout } = this.state.items[itemIndex];
         this.setState({ validLayout: layout });
     }
 
@@ -165,10 +170,10 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        const itemIndex = this.props.items.findIndex(
+        const itemIndex = this.state.items.findIndex(
             d => d.key === key,
         );
-        const { layout } = this.props.items[itemIndex];
+        const { layout } = this.state.items[itemIndex];
         this.setState({ validLayout: layout });
     }
 
@@ -181,11 +186,10 @@ export default class GridLayout extends React.PureComponent {
             return;
         }
 
-        console.log(this.dragTargetKey, this.resizeTargetKey);
         const dx = e.screenX - this.lastScreenX;
         const dy = e.screenY - this.lastScreenY;
 
-        let newItems = this.props.items;
+        let newItems = this.state.items;
         let { validLayout } = this.state;
 
         if (this.dragTargetKey) {
@@ -232,11 +236,7 @@ export default class GridLayout extends React.PureComponent {
             }
         }
 
-        if (this.props.onLayoutChange) {
-            this.props.onLayoutChange(newItems);
-        }
-
-        this.setState({ validLayout });
+        this.setState({ validLayout, items: newItems });
 
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
@@ -250,7 +250,7 @@ export default class GridLayout extends React.PureComponent {
             return;
         }
 
-        let newItems = this.props.items;
+        let newItems = this.state.items;
 
         if (this.dragTargetKey) {
             const index = newItems.findIndex(
@@ -276,11 +276,11 @@ export default class GridLayout extends React.PureComponent {
             this.resizeTargetKey = undefined;
         }
 
+        this.setState({ validLayout: undefined, items: newItems });
+
         if (this.props.onLayoutChange) {
             this.props.onLayoutChange(newItems);
         }
-
-        this.setState({ validLayout: undefined });
     }
 
     heightOfItem = item => item.layout.height + item.layout.top;
@@ -290,8 +290,11 @@ export default class GridLayout extends React.PureComponent {
             className,
             snapX,
             snapY,
-            items,
         } = this.props;
+
+        const {
+            items,
+        } = this.state;
 
         const { validLayout } = this.state;
 
