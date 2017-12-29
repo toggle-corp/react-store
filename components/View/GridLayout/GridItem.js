@@ -7,9 +7,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    children: PropTypes.node,
-    title: PropTypes.string,
-    headerRightComponent: PropTypes.node,
+    modifier: PropTypes.func.isRequired,
     onDragStart: PropTypes.func.isRequired,
     onResizeStart: PropTypes.func.isRequired,
     viewOnly: PropTypes.bool,
@@ -17,9 +15,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    children: undefined,
-    headerRightComponent: undefined,
-    title: '',
     viewOnly: false,
 };
 
@@ -121,22 +116,20 @@ export default class GridItem extends React.PureComponent {
     render() {
         const {
             className,
-            children,
-            title,
-            headerRightComponent,
+            modifier,
             data,
         } = this.props;
-
-        const layout = {
-            ...data.layout,
-        };
+        const {
+            title,
+            headerRightComponent,
+        } = data;
 
         return (
             <div
                 ref={(el) => { this.container = el; }}
                 styleName={this.getStyleName()}
                 className={className}
-                style={layout}
+                style={{ ...data.layout }}
             >
                 <header
                     styleName="header"
@@ -158,7 +151,7 @@ export default class GridItem extends React.PureComponent {
                     styleName="content"
                     className="content"
                 >
-                    { children }
+                    { modifier(data) }
                 </div>
                 <span
                     ref={(el) => { this.resizeHandle = el; }}
