@@ -5,14 +5,16 @@ import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
 import Responsive from '../../General/Responsive';
+import update from '../../../utils/immutable-update';
 import styles from './styles.scss';
-import { getColorOnBgColor, unique } from '../../../utils/common';
+import { getColorOnBgColor } from '../../../utils/common';
 
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    value: PropTypes.array, // eslint-disable-line
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
@@ -34,6 +36,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    value: [],
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
@@ -57,27 +60,74 @@ export default class OrgChart extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.selected = [];
+        const { value = [] } = props;
+        this.state = {
+            selected: value,
+        };
     }
 
     componentDidMount() {
         this.renderChart();
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (this.props.value !== nextProps.value) {
+            const { value = [] } = nextProps;
+            this.setState({ selected: value });
+        }
+    }
+
     componentDidUpdate() {
         this.renderChart();
     }
 
+    addOrRemoveSelection = (item) => {
+        const isSelected = this.isSelected(item.data);
+        if (isSelected) {
+            this.removeSelection(item);
+        } else {
+            this.addSelection(item);
+        }
+    };
+
     addSelection = (item) => {
-        this.selected = [
-            ...this.selected,
-            {
-                name: this.props.labelAccessor(item.data),
-                id: this.props.idAccessor(item.data),
-            },
-        ];
-        this.props.onSelection(unique(this.selected, this.props.idAccessor));
+        const newSelection = {
+            name: this.props.labelAccessor(item.data),
+            id: this.props.idAccessor(item.data),
+        };
+
+        const settings = {
+            $bulk: [
+                { $push: [newSelection] },
+                { $unique: selection => selection.id },
+            ],
+        };
+        const selected = update(this.state.selected, settings);
+
+        this.setState({ selected });
+        this.props.onSelection(selected);
     }
+
+    removeSelection = (item) => {
+        const index = this.findIndexInSelectedList(item.data);
+
+        const settings = {
+            $splice: [[index, 1]],
+        };
+        const selected = update(this.state.selected, settings);
+
+        this.setState({ selected });
+        this.props.onSelection(selected);
+    }
+
+    findIndexInSelectedList = item => this.state.selected.findIndex(
+        e => e.id === this.props.idAccessor(item),
+    );
+
+    isSelected = (item) => {
+        const indexInSelection = this.findIndexInSelectedList(item);
+        return indexInSelection !== -1;
+    };
 
     renderChart = () => {
         const {
@@ -147,11 +197,16 @@ export default class OrgChart extends React.PureComponent {
             .attr('class', d => `node ${d.children ? 'node--internal' : 'node-leaf'}`)
             .attr('transform', d => `translate(${d.x}, ${d.y + (rectSize / 2)})`);
 
+        const colorExtractor = (item) => {
+            const isSelected = this.isSelected(item.data);
+            return isSelected ? selectColor : fillColor;
+        };
+
         nodes
             .append('rect')
             .attr('rx', 6)
             .attr('ry', 6)
-            .style('fill', fillColor)
+            .style('fill', colorExtractor)
             .style('stroke', '#666')
             .style('cursor', 'pointer')
             .style('stroke-width', '1.5px');
@@ -180,18 +235,10 @@ export default class OrgChart extends React.PureComponent {
             });
 
         if (!disabled) {
-            const that = this;
             nodes
                 .selectAll('rect')
-                .on('click', function handleClick(item) {
-                    const element = select(this);
-                    element.classed('selected', !element.classed('selected'));
-                    const isSelected = element.classed('selected');
-                    console.log(isSelected);
-                    element.style('fill', isSelected ? selectColor : fillColor);
-                    if (isSelected) {
-                        that.addSelection(item);
-                    }
+                .on('click', (item) => {
+                    this.addOrRemoveSelection(item);
                 });
         }
     }
