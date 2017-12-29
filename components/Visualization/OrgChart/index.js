@@ -6,6 +6,7 @@ import { hierarchy, tree } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
+import { getColorOnBgColor, unique } from '../../../utils/common';
 
 const propTypes = {
     boundingClientRect: PropTypes.shape({
@@ -15,7 +16,13 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    childAccessor: PropTypes.func,
+    labelAccessor: PropTypes.func,
+    idAccessor: PropTypes.func,
+    onSelection: PropTypes.func,
+    disabled: PropTypes.bool,
     fillColor: PropTypes.string,
+    selectColor: PropTypes.string,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -27,7 +34,13 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    fillColor: '#58C9B9',
+    childAccessor: d => d.children,
+    labelAccessor: d => d.name,
+    idAccessor: d => d.id,
+    onSelection: () => [],
+    disabled: false,
+    fillColor: '#ffffff',
+    selectColor: '#58C9B9',
     margins: {
         top: 0,
         right: 0,
@@ -42,6 +55,11 @@ export default class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        this.selected = [];
+    }
+
     componentDidMount() {
         this.renderChart();
     }
@@ -50,11 +68,26 @@ export default class OrgChart extends React.PureComponent {
         this.renderChart();
     }
 
+    addSelection = (item) => {
+        this.selected = [
+            ...this.selected,
+            {
+                name: this.props.labelAccessor(item.data),
+                id: this.props.idAccessor(item.data),
+            },
+        ];
+        this.props.onSelection(unique(this.selected, this.props.idAccessor));
+    }
+
     renderChart = () => {
         const {
             boundingClientRect,
             data,
+            childAccessor,
+            labelAccessor,
+            disabled,
             fillColor,
+            selectColor,
             margins,
         } = this.props;
 
@@ -72,11 +105,12 @@ export default class OrgChart extends React.PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-        const rectH = 30;
+        const rectSize = 30;
         const rectPadding = 20;
 
         const svg = select(this.svg);
-        svg.selectAll('*').remove();
+        svg.selectAll('*')
+            .remove();
 
         const group = svg
             .attr('width', width + left + right)
@@ -88,12 +122,12 @@ export default class OrgChart extends React.PureComponent {
             .size([width, height - 100])
             .separation((a, b) => (a.parent === b.parent ? 1 : 1));
 
-        const root = hierarchy(data);
+        const root = hierarchy(data, childAccessor);
         const treeData = treemap(root);
 
         const link = linkVertical()
             .x(d => d.x)
-            .y(d => d.y + ((rectH / 2) - (rectPadding)));
+            .y(d => d.y + ((rectSize / 2) - (rectPadding)));
 
         group
             .selectAll('.link')
@@ -111,7 +145,7 @@ export default class OrgChart extends React.PureComponent {
             .enter()
             .append('g')
             .attr('class', d => `node ${d.children ? 'node--internal' : 'node-leaf'}`)
-            .attr('transform', d => `translate(${d.x}, ${d.y + (rectH / 2)})`);
+            .attr('transform', d => `translate(${d.x}, ${d.y + (rectSize / 2)})`);
 
         nodes
             .append('rect')
@@ -127,7 +161,8 @@ export default class OrgChart extends React.PureComponent {
             .attr('dy', '.35em')
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
-            .text(d => d.data.name);
+            .text(d => labelAccessor(d.data))
+            .style('fill', getColorOnBgColor(fillColor));
 
         nodes
             .selectAll('rect')
@@ -143,8 +178,23 @@ export default class OrgChart extends React.PureComponent {
             .attr('y', function position() {
                 return this.parentNode.getBBox().y - (rectPadding / 2);
             });
-    }
 
+        if (!disabled) {
+            const that = this;
+            nodes
+                .selectAll('rect')
+                .on('click', function handleClick(item) {
+                    const element = select(this);
+                    element.classed('selected', !element.classed('selected'));
+                    const isSelected = element.classed('selected');
+                    console.log(isSelected);
+                    element.style('fill', isSelected ? selectColor : fillColor);
+                    if (isSelected) {
+                        that.addSelection(item);
+                    }
+                });
+        }
+    }
     render() {
         return (
             <div

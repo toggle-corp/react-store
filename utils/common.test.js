@@ -24,6 +24,7 @@ import {
     getHexFromRgb,
     getStandardFilename,
     getElementAround,
+    unique,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -281,4 +282,16 @@ test('get element around', () => {
     expect(getElementAround([1, 2, 4, 3], 0)).toBe(2);
     expect(getElementAround([1, 2, 4, 3], 3)).toBe(4);
     expect(getElementAround([1, 2, 4, 3], 1)).toBe(4);
+});
+
+test('should get unique elements in array', () => {
+    const before = ['Apple', 'Ball', 'Cat', 'Dog', 'Ball', 'Elephant', 'Fish', 'Apple'];
+    const after = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
+    const beforeObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }, { id: 1, name: 'Apple' }];
+    const afterObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }];
+    const uniqueArray = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
+    expect(unique(before, d => d)).toEqual(after);
+    expect(unique([], d => d)).toEqual([]);
+    expect(unique(beforeObjectArray, d => d.id)).toEqual(afterObjectArray);
+    expect(unique(uniqueArray, d => d)).toEqual(uniqueArray);
 });
