@@ -331,3 +331,20 @@ export const getLinkedListNode = (linkedList, n, selector) => {
     }
     return newList;
 };
+
+export const unique = (object, value) => {
+    const memory = {};
+    const newArr = [];
+    object.forEach((o) => {
+        const id = value(o);
+        if (!memory[id]) {
+            memory[id] = true;
+            newArr.push(o);
+        }
+    });
+    // for efficiency
+    if (newArr.length === object.length) {
+        return object;
+    }
+    return newArr;
+};
