@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -30,22 +29,6 @@ const propTypes = {
     /**
      * Whether the input should be disabled
      */
-    disabled: PropTypes.bool,
-
-    /**
-     * String to show in case of error
-     */
-    error: PropTypes.string,
-
-    /**
-     * Hint text
-     */
-    hint: PropTypes.string,
-
-    /**
-     * Input label
-     */
-    label: PropTypes.string,
 
     onChange: PropTypes.func,
 
@@ -53,9 +36,6 @@ const propTypes = {
      * Placeholder for the input
      */
     placeholder: PropTypes.string,
-
-    showLabel: PropTypes.bool,
-    showHintAndError: PropTypes.bool,
 
     value: PropTypes.shape({
         type: PropTypes.string,
@@ -72,19 +52,11 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    disabled: false,
-    error: '',
-    hint: '',
-    label: '',
     onChange: undefined,
     placeholder: 'Select an option',
-    showHintAndError: false,
-    showLabel: false,
     value: undefined,
 };
 
-
-@CSSModules(styles, { allowMultiple: true })
 export default class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -207,6 +179,21 @@ export default class DateFilter extends React.PureComponent {
         this.closeModal();
     }
 
+    getStyleName = () => {
+        const {
+            className,
+            value,
+        } = this.props;
+
+        const styleNames = [...className.split(' '), styles['select-input']];
+
+        if (value && value.type === 'custom') {
+            styleNames.push(styles.monospace);
+        }
+
+        return styleNames.join(' ');
+    }
+
     handleChange = (valueType) => {
         if (this.props.onChange) {
             if (!valueType) {
@@ -236,16 +223,12 @@ export default class DateFilter extends React.PureComponent {
 
     render() {
         const {
-            className,
-            disabled,
-            error,
-            hint,
-            label,
             placeholder,
-            showHintAndError,
-            showLabel,
             value,
+            onChange, // eslint-disable-line no-unused-vars
+            ...otherProps
         } = this.props;
+
 
         const {
             modalShown,
@@ -265,58 +248,51 @@ export default class DateFilter extends React.PureComponent {
             options.push({ key: 'custom-range', label: customLabel });
         }
 
-        return (
-            <div
-                className={className}
+        return ([
+            <SelectInput
+                key="select-input"
+                onChange={this.handleChange}
+                options={options}
+                placeholder={placeholder}
+                className={this.getStyleName(value)}
+                value={value && (value.type === 'custom' ? 'custom-range' : value.type)}
+                {...otherProps}
+            />,
+            <Modal
+                key="modal"
+                closeOnEscape
+                onClose={this.closeModal}
+                show={modalShown}
+                className={styles.modal}
             >
-                <SelectInput
-                    disabled={disabled}
-                    error={error}
-                    hint={hint}
-                    label={label}
-                    onChange={this.handleChange}
-                    options={options}
-                    placeholder={placeholder}
-                    showHintAndError={showHintAndError}
-                    showLabel={showLabel}
-                    styleName={`select-input ${(value && value.type === 'custom') ? 'monospace' : ''}`}
-                    value={value && (value.type === 'custom' ? 'custom-range' : value.type)}
+                <ModalHeader
+                    title="Select date range"
                 />
-                <Modal
-                    closeOnEscape
-                    onClose={this.closeModal}
-                    show={modalShown}
-                    styleName="modal"
-                >
-                    <ModalHeader
-                        title="Select date range"
+                <ModalBody>
+                    <DateInput
+                        label="Start date"
+                        onChange={timestamp => this.setState({ startDate: timestamp })}
+                        value={startDate}
                     />
-                    <ModalBody>
-                        <DateInput
-                            label="Start date"
-                            onChange={timestamp => this.setState({ startDate: timestamp })}
-                            value={startDate}
-                        />
-                        <DateInput
-                            label="End date"
-                            onChange={timestamp => this.setState({ endDate: timestamp })}
-                            value={endDate}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <DangerButton
-                            onClick={this.closeModal}
-                        >
-                            Close
-                        </DangerButton>
-                        <PrimaryButton
-                            onClick={this.setCustomDate}
-                        >
-                            Apply
-                        </PrimaryButton>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
+                    <DateInput
+                        label="End date"
+                        onChange={timestamp => this.setState({ endDate: timestamp })}
+                        value={endDate}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <DangerButton
+                        onClick={this.closeModal}
+                    >
+                        Close
+                    </DangerButton>
+                    <PrimaryButton
+                        onClick={this.setCustomDate}
+                    >
+                        Apply
+                    </PrimaryButton>
+                </ModalFooter>
+            </Modal>,
+        ]);
     }
 }
