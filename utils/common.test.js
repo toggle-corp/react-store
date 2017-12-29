@@ -21,6 +21,7 @@ import {
     getHashFromString,
     getHexFromCode,
     getHexFromString,
+    getHexFromRgb,
     getStandardFilename,
     getElementAround,
 } from './common';
@@ -258,6 +259,17 @@ test('get hex of a hash', () => {
 test('get hex of a string', () => {
     expect(getHexFromString('testing')).toEqual('#373210');
     expect(getHexFromString('testing123')).toEqual('#2B9222');
+});
+
+test('get hex from rgb', () => {
+    expect(getHexFromRgb('rgb(255,255,255)')).toEqual('#ffffff');
+    expect(getHexFromRgb('rgb(188,143,143)')).toEqual('#bc8f8f');
+    expect(getHexFromRgb('rgb(205,133,63)')).toEqual('#cd853f');
+    expect(getHexFromRgb('rgb(255,0,0)')).toEqual('#ff0000');
+    expect(getHexFromRgb('rgb(255,0,255)')).toEqual('#ff00ff');
+    expect(getHexFromRgb('rgb(0,255,255)')).toEqual('#00ffff');
+    expect(getHexFromRgb('rgb(0,0,255)')).toEqual('#0000ff');
+    expect(getHexFromRgb('rgb(0,0,0)')).toEqual('#000000');
 });
 
 test('get standard filename', () => {
