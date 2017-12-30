@@ -12,7 +12,7 @@ const propTypes = {
      */
     className: PropTypes.string,
 
-    initialValue: PropTypes.bool,
+    value: PropTypes.bool,
 
     /**
      * A callback for when the input changes its content
@@ -27,7 +27,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    initialValue: false,
+    value: false,
     onChange: undefined,
 };
 
@@ -40,14 +40,14 @@ export default class Checkbox extends React.PureComponent {
         super(props);
 
         this.state = {
-            checked: this.props.initialValue,
+            checked: this.props.value,
         };
 
         this.inputId = randomString();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ checked: nextProps.initialValue });
+        this.setState({ checked: nextProps.value });
     }
 
     handleInputChange = (e) => {
@@ -65,7 +65,7 @@ export default class Checkbox extends React.PureComponent {
         const {
             label,
             onChange, // eslint-disable-line
-            initialValue, // eslint-disable-line
+            value, // eslint-disable-line
             className,
             ...otherProps
         } = this.props;
