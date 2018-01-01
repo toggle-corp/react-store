@@ -37,6 +37,10 @@ import {
 } from 'd3-scale-chromatic';
 
 import {
+    interpolateViridis,
+    interpolateInferno,
+    interpolateMagma,
+    interpolatePlasma,
     schemeCategory10,
     schemeCategory20,
     schemeCategory20b,
@@ -71,12 +75,12 @@ const divergingColors = {
 };
 
 const sequentialColors = {
-    blues: interpolateBlues,
-    greens: interpolateGreens,
-    greys: interpolateGreys,
-    oranges: interpolateOranges,
-    purples: interpolatePurples,
-    reds: interpolateReds,
+    Blues: interpolateBlues,
+    Greens: interpolateGreens,
+    Greys: interpolateGreys,
+    Oranges: interpolateOranges,
+    Purples: interpolatePurples,
+    Reds: interpolateReds,
     BuGn: interpolateBuGn,
     BuPu: interpolateBuPu,
     GnBu: interpolateGnBu,
@@ -88,7 +92,11 @@ const sequentialColors = {
     YlGnBu: interpolateYlGnBu,
     YlGn: interpolateYlGn,
     YlOrBr: interpolateYlOrBr,
-    YlOrR: interpolateYlOrRd,
+    YlOrRd: interpolateYlOrRd,
+    Viridis: interpolateViridis,
+    Inferno: interpolateInferno,
+    Magma: interpolateMagma,
+    Plasma: interpolatePlasma,
 };
 
 export const singleColors = [

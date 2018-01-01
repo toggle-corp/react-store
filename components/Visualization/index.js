@@ -22,3 +22,4 @@ export { default as SunBurstView } from './SunBurstView';
 export { default as TimeSeries } from './TimeSeries';
 export { default as TreeMapView } from './TreeMapView';
 export { default as OrgChart } from './OrgChart';
+export { default as SummaryTilesView } from './SummaryTilesView';
