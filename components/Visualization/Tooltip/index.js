@@ -62,7 +62,7 @@ export default class Tooltip extends React.PureComponent {
             .style('opacity', 0);
     }
 
-    move = (x, y, orentation, padding = 10, duration = 30) => {
+    move = ({ x, y, orentation, padding = 10, duration = 0 } = {}) => {
         // move the tooltip to mouse position
         const node = this.getd3Tooltip().node();
 

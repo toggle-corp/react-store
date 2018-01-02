@@ -116,7 +116,13 @@ export default class TimeSeries extends React.PureComponent {
             const yPoint = this.scaleY(d[yKey]);
 
             this.tooltipDiv.setTooltip(tooltipRender(d));
-            this.tooltipDiv.move(xPoint + x, y + yPoint, 'right', 10, 30);
+            this.tooltipDiv.move({
+                x: xPoint + x,
+                y: y + yPoint,
+                orentation: 'right',
+                padding: 10,
+                duration: 30,
+            });
 
             overLayCircle
                 .transition()

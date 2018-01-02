@@ -143,7 +143,13 @@ export default class BarChart extends React.PureComponent {
         const xPoint = this.scaleX(d[xKey]) + (this.scaleX.bandwidth() * 0.5);
         const yPoint = d[yKey] > 0 ? this.scaleY(d[yKey]) : this.scaleY(0);
 
-        this.tooltipDiv.move(xPoint + x, y + yPoint, 'top', 10, 30);
+        this.tooltipDiv.move({
+            x: xPoint + x,
+            y: y + yPoint,
+            orentation: 'top',
+            paddint: 10,
+            duration: 30,
+        });
     }
 
     onMouseOut = () => {
