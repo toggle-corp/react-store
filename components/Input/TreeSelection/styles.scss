@@ -1,0 +1,34 @@
+@import '../../../stylesheets/base';
+
+:global {
+    .tree-node {
+        > .parent-node {
+            display: flex;
+            align-items: center;
+            padding: $spacing-small;
+
+            .drag-handle {
+                cursor: move;
+                padding: 6px;
+            }
+
+            .checkbox {
+                background-color: transparent;
+                color: $color-accent;
+                font-size: $font-size-medium-alt;
+
+                &.unchecked {
+                    color: $color-text;
+                }
+            }
+
+            .node-title {
+                background-color: transparent;
+            }
+        }
+
+        > .tree-selection {
+            margin-left: $spacing-medium;
+        }
+    }
+}
