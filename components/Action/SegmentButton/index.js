@@ -15,12 +15,16 @@ const propTypes = {
             value: PropTypes.string,
         }).isRequired,
     ).isRequired,
-    onPress: PropTypes.func.isRequired,
+    // Restrain from using onPress
+    onPress: PropTypes.func,
+    onChange: PropTypes.func,
     selected: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    onChange: undefined,
+    onPress: undefined,
     backgroundHighlight: false,
 };
 
@@ -69,7 +73,12 @@ export default class SegmentButton extends React.PureComponent {
 
     handleOptionChange = (changeEvent) => {
         const { value } = changeEvent.target;
-        this.props.onPress(value);
+        if (this.props.onChange) {
+            this.props.onChange(value);
+        }
+        if (this.props.onPress) {
+            this.props.onPress(value);
+        }
         this.setState({ selectedValue: value });
     };
 
