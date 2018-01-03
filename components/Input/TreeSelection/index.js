@@ -16,18 +16,19 @@ import { iconNames } from '../../../constants';
 
 
 const propTypes = {
-    draggable: PropTypes.bool,
+    className: PropTypes.string,
     value: PropTypes.arrayOf(PropTypes.shape({
         key: PropTypes.string,
         title: PropTypes.string,
-        selected: PropTypes.bool,
+        selected: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
         nodes: PropTypes.arrayOf(PropTypes.object), // Children nodes
+        draggable: PropTypes.bool,
     })),
     onChange: PropTypes.func,
 };
 
 const defaultProps = {
-    draggable: true,
+    className: '',
     onChange: undefined,
     value: [],
 };
@@ -35,6 +36,43 @@ const defaultProps = {
 const DragHandle = SortableHandle(() => (
     <span className={`${iconNames.hamburger} drag-handle`} />
 ));
+
+
+// Get cumulative selected state from a list of nodes
+function getSelectedState(nodes) {
+    let selected = true;
+
+    // If any one child is in fuzzy state, we are in fuzzy state
+    if (nodes.find(n => n.selected === 'fuzzy')) {
+        selected = 'fuzzy';
+    } else {
+        const selectedChildren = nodes.filter(n => n.selected);
+
+        // If no children is selected, we are not selected
+        // and if selected children is less than actual children in
+        // number then we are in fuzzy state
+        if (selectedChildren.length === 0) {
+            selected = false;
+        } else if (selectedChildren.length !== nodes.length) {
+            selected = 'fuzzy';
+        }
+    }
+
+    return selected;
+}
+
+
+// Update selected state of a node based on its
+// children recursively
+function updateNodeState(node) {
+    const nodes = node.nodes && node.nodes.map(n => updateNodeState(n));
+
+    return {
+        ...node,
+        nodes,
+        selected: nodes ? getSelectedState(nodes) : node.selected,
+    };
+}
 
 
 @CSSModules(styles, { allowMultiple: true })
@@ -47,13 +85,13 @@ export default class TreeSelection extends React.PureComponent {
 
         this.state = {
             expanded: {},
-            value: props.value,
+            value: this.createValue(props.value),
         };
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.value !== this.state.value) {
-            this.setState({ value: nextProps.value });
+            this.setState({ value: this.createValue(nextProps.value) });
         }
     }
 
@@ -76,6 +114,8 @@ export default class TreeSelection extends React.PureComponent {
         nodes: node.nodes && node.nodes.map(n => this.setNodeSelection(n, selected)),
         selected,
     })
+
+    createValue = value => value.map(v => updateNodeState(v))
 
     // Toggle expand state of a node
     handleToggleExpand = (key) => {
@@ -104,26 +144,7 @@ export default class TreeSelection extends React.PureComponent {
     handleChildrenChange = (key, nodes) => {
         const value = [...this.state.value];
         const index = value.findIndex(v => v.key === key);
-
-        let selected = true;
-
-        // If any one child is in fuzzy state, we are in fuzzy state
-        if (nodes.find(n => n.selected === 'fuzzy')) {
-            selected = 'fuzzy';
-        } else {
-            const selectedChildren = nodes.filter(n => n.selected);
-
-            // If no children is selected, we are not selected
-            // and if selected children is less than actual children in
-            // number then we are in fuzzy state
-            if (selectedChildren.length === 0) {
-                selected = false;
-            } else if (selectedChildren.length !== nodes.length) {
-                selected = 'fuzzy';
-            }
-        }
-
-        // Otherwise we are selected, so leave true as default
+        const selected = getSelectedState(nodes);
 
         // Create new nodeValue and replace
         const nodeValue = {
@@ -172,7 +193,7 @@ export default class TreeSelection extends React.PureComponent {
     renderNode = node => (
         <div className="tree-node">
             <div className="parent-node">
-                {this.props.draggable && <DragHandle />}
+                {node.draggable && <DragHandle />}
                 <TransparentButton
                     className={`${this.getCheckBoxStyle(node.selected)} checkbox`}
                     type="button"
@@ -211,17 +232,20 @@ export default class TreeSelection extends React.PureComponent {
     );
 
     render() {
+        const { className } = this.props;
         const { value } = this.state;
 
         return (
-            <div className="tree-selection">
-                <this.SortableTree
-                    items={value}
-                    onSortEnd={this.handleSortEnd}
-                    lockAxis="y"
-                    lockToContainerEdges
-                    useDragHandle
-                />
+            <div className={`${className} tree-selection`}>
+                {value && (
+                    <this.SortableTree
+                        items={value}
+                        onSortEnd={this.handleSortEnd}
+                        lockAxis="y"
+                        lockToContainerEdges
+                        useDragHandle
+                    />
+                )}
             </div>
         );
     }
