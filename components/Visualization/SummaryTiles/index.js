@@ -111,11 +111,6 @@ export default class SummaryTiles extends React.PureComponent {
             .xLabel(xLabel)
             .yLabel(yLabel);
 
-        const reversedColorScheme = ['Viridis', 'Inferno', 'Magma'];
-
-        if (reversedColorScheme.includes(colorScheme)) {
-            tiles = tiles.reverseColorScale();
-        }
         if (reverseColorScheme) {
             tiles = tiles.reverseColorScale();
         }
