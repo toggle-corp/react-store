@@ -25,6 +25,7 @@ import {
     getStandardFilename,
     getElementAround,
     unique,
+    isValidHexColor,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -294,4 +295,16 @@ test('should get unique elements in array', () => {
     expect(unique([], d => d)).toEqual([]);
     expect(unique(beforeObjectArray, d => d.id)).toEqual(afterObjectArray);
     expect(unique(uniqueArray, d => d)).toEqual(uniqueArray);
+});
+
+test('should return true for valid hex colors', () => {
+    expect(isValidHexColor('#000000')).toBe(true);
+    expect(isValidHexColor('#000')).toBe(true);
+    expect(isValidHexColor('#ffffff')).toBe(true);
+    expect(isValidHexColor('#AABBCC')).toBe(true);
+    expect(isValidHexColor('#11AAFF')).toBe(true);
+    expect(isValidHexColor('#afasdfa')).toBe(false);
+    expect(isValidHexColor('#11212121212')).toBe(false);
+    expect(isValidHexColor('#hello')).toBe(false);
+    expect(isValidHexColor('')).toBe(false);
 });

@@ -4,11 +4,25 @@ import { select } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
+import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import update from '../../../utils/immutable-update';
 import styles from './styles.scss';
-import { getColorOnBgColor } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
+/**
+ * boundingClientRect: the width and height of the container.
+ * value: the selected values (nodes).
+ * data: the hierarchical data to be visualized.
+ * childrenAccessor: the accessor function to return array of data representing the children.
+ * labelAccessor: returns the individual label from a unit data.
+ * onSelection: handle selection of nodes.
+ * disabled: if true no click events on nodes.
+ * fillColor: default color for nodes.
+ * selectColor: nodes color when selected
+ * className: additional class name for styling.
+ * margins: the margin object with properties for the four sides(clockwise from top).
+ */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -79,6 +93,12 @@ export default class OrgChart extends React.PureComponent {
 
     componentDidUpdate() {
         this.renderChart();
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('orgchart', 'graph')}.svg`);
     }
 
     addOrRemoveSelection = (item) => {
@@ -242,6 +262,7 @@ export default class OrgChart extends React.PureComponent {
                 });
         }
     }
+
     render() {
         return (
             <div

@@ -26,7 +26,6 @@ export default class ChorDiagramView extends PureComponent {
         super(props);
         this.state = {
             colorScheme: undefined,
-            selectedColorScheme: undefined,
         };
         this.colors = categoricalColorNames()
             .map(color => ({
@@ -76,7 +75,7 @@ export default class ChorDiagramView extends PureComponent {
                             options={this.colors}
                             showHintAndError={false}
                             styleName="select-input"
-                            value={this.state.selectedColorScheme}
+                            value={this.state.colorScheme}
                         />
                     </div>
                     <div styleName="action-buttons">

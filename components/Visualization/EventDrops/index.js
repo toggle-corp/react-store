@@ -60,7 +60,7 @@ export default class EventDrops extends PureComponent {
     save = () => {
         const svg = select(this.container);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('events', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('events', 'graph')}.svg`);
     }
 
     renderChart = () => {
