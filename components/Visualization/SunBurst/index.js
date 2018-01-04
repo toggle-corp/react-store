@@ -10,12 +10,12 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename } from '../../../utils/common';
-
+import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
+ * childrenAccessor: the accessor function to return array of data representing the children.
  * labelAccessor: returns the individual label from a unit data.
  * valueAccessor: return the value for the unit data.
  * colorScheme: array of hex color values.
@@ -32,6 +32,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -47,6 +48,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    childrenAccessor: d => d.children,
     colorScheme: schemeCategory20c,
     showLabels: true,
     showTooltip: true,
@@ -80,13 +82,14 @@ export default class SunBurst extends PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('sunburst', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('sunburst', 'graph')}.svg`);
     }
 
     renderChart = () => {
         const {
             boundingClientRect,
             data,
+            childrenAccessor,
             labelAccessor,
             valueAccessor,
             colorScheme,
@@ -182,7 +185,7 @@ export default class SunBurst extends PureComponent {
         }
         const partitions = partition();
 
-        const root = hierarchy(data)
+        const root = hierarchy(data, childrenAccessor)
             .sum(d => valueAccessor(d));
 
         const slices = group
@@ -261,7 +264,11 @@ export default class SunBurst extends PureComponent {
                 .attr('transform', d => placeTextLabel(d))
                 .attr('pointer-events', 'none')
                 .attr('text-anchor', 'middle')
-                .text(d => labelAccessor(d.data));
+                .text(d => labelAccessor(d.data))
+                .style('fill', (d) => {
+                    const colorBg = color(labelAccessor(d.children ? d.data : d.parent.data));
+                    return getColorOnBgColor(colorBg);
+                });
 
             labels
                 .filter(function filtrate(d) {

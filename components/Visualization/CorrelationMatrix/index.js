@@ -10,7 +10,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor, getHexFromRgb } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isValidHexColor } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -74,7 +74,7 @@ export default class CorrelationMatrix extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('correlationmatrix', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('correlationmatrix', 'graph')}.svg`);
     }
     renderChart() {
         const {
@@ -190,7 +190,8 @@ export default class CorrelationMatrix extends React.PureComponent {
                 .style('fill', d => (d >= maxValue / 2 ? 'white' : 'black'))
                 .text(d => format('.2n')(d))
                 .style('fill', (d) => {
-                    const colorBg = getHexFromRgb(colorMap(d));
+                    const color = colorMap(d);
+                    const colorBg = isValidHexColor(color) ? color : getHexFromRgb(color);
                     return getColorOnBgColor(colorBg);
                 });
         }

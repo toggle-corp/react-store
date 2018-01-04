@@ -348,3 +348,8 @@ export const unique = (object, value) => {
     }
     return newArr;
 };
+
+export const isValidHexColor = (value) => {
+    const colorHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+    return colorHex.test(value);
+};

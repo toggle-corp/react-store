@@ -50,13 +50,6 @@ export default class CorrelationMatrixView extends PureComponent {
             }));
     }
 
-    componentWillReceiveProps(newProps) {
-        this.setState({
-            colorScheme: newProps.colorScheme,
-            selectedColorScheme: newProps.colorScheme,
-        });
-    }
-
     handleSelection = (data) => {
         const colors = getSequentialColorScheme(data) || getDivergingColorScheme(data);
         this.setState({

@@ -13,6 +13,7 @@ import { getStandardFilename } from '../../../utils/common';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
+ * childrenAccessor: the accessor function to return array of data representing the children.
  * labelAccessor: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
@@ -26,6 +27,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
@@ -38,6 +40,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    childrenAccessor: d => d.children,
     data: [],
     colorScheme: schemePaired,
     className: '',
@@ -70,13 +73,14 @@ export default class RadialDendrogram extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('radialdendrogram', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('radialdendrogram', 'graph')}.svg`);
     }
 
     renderChart() {
         const {
             data,
             boundingClientRect,
+            childrenAccessor,
             labelAccessor,
             colorScheme,
             margins,
@@ -125,7 +129,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .size([360, radius - leafTextWidth])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
-        const root = hierarchy(data);
+        const root = hierarchy(data, childrenAccessor);
         trees(root);
 
         function project(x, y) {

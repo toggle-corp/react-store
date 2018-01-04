@@ -98,7 +98,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('forceddirectedgraph', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
     }
 
     renderChart() {

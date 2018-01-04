@@ -73,7 +73,7 @@ export default class HorizontalBar extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('horizontalbar', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('horizontalbar', 'graph')}.svg`);
     }
 
     renderChart() {

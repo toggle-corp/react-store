@@ -14,6 +14,7 @@ import { getStandardFilename } from '../../../utils/common';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
+ * childrenAccessor: the accessor function to return array of data representing the children.
  * labelAccessor: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
@@ -27,6 +28,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
@@ -40,6 +42,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    childrenAccessor: d => d.children,
     colorScheme: schemePaired,
     className: '',
     margins: {
@@ -68,12 +71,13 @@ export default class CollapsibleTree extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('collapsible-tree', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('collapsible-tree', 'graph')}.svg`);
     }
 
     renderChart = () => {
         const {
             data,
+            childrenAccessor,
             boundingClientRect,
             labelAccessor,
             colorScheme,
@@ -129,7 +133,7 @@ export default class CollapsibleTree extends React.PureComponent {
         const trees = tree()
             .size([height, width - 160]);
 
-        const root = hierarchy(data, d => d.children);
+        const root = hierarchy(data, childrenAccessor);
         root.x0 = height / 2;
         root.y0 = 0;
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
@@ -14,6 +13,7 @@ import { getStandardFilename } from '../../../utils/common';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
+ * childrenAccessor: the accessor function to return array of data representing the children.
  * labelAccessor: accesses the individual label from a unit data.
  * valueAccessor: accesses the value of the unit data.
  * colorScheme: the color scheme for links that connect the nodes.
@@ -28,6 +28,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -41,6 +42,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    childrenAccessor: d => d.children,
     valueAccessor: () => 1,
     colorScheme: schemePaired,
     className: '',
@@ -73,13 +75,14 @@ export default class Dendrogram extends React.PureComponent {
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), getStandardFilename('dendrogram', 'svg', new Date()));
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('dendrogram', 'graph')}.svg`);
     }
 
     renderChart() {
         const {
             data,
             boundingClientRect,
+            childrenAccessor,
             labelAccessor,
             valueAccessor,
             colorScheme,
@@ -131,7 +134,7 @@ export default class Dendrogram extends React.PureComponent {
         const tree = cluster()
             .size([height, width - leafTextWidth]);
 
-        const root = hierarchy(data)
+        const root = hierarchy(data, childrenAccessor)
             .sum(valueAccessor);
 
         tree(root);
