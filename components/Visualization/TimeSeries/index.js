@@ -33,6 +33,7 @@ const propTypes = {
     yKey: PropTypes.string.isRequired,
     xTickFormat: PropTypes.func,
     yTickFormat: PropTypes.func,
+    xTicks: PropTypes.number,
     tooltipRender: PropTypes.func.isRequired,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
     showArea: PropTypes.bool,
@@ -49,6 +50,7 @@ const defaultProps = {
     },
     xTickFormat: d => d,
     yTickFormat: d => d,
+    xTicks: 4,
     showArea: false,
 };
 
@@ -138,6 +140,16 @@ export default class TimeSeries extends React.PureComponent {
         }
     }
 
+    getXTickValues = ([min, max]) => {
+        const { xTicks } = this.props;
+        const interval = Math.floor((max - min) / xTicks);
+        const values = [max];
+        for (let i = min; i < max; i += interval) {
+            values.push(i);
+        }
+        return values;
+    }
+
     updateRender() {
         const { right, top, left, bottom } = this.props.margins;
         const { height, width } = this.props.boundingClientRect;
@@ -169,11 +181,15 @@ export default class TimeSeries extends React.PureComponent {
             return;
         }
 
+        // const xTickValues = this.scaleX.ticks(2).concat(this.scaleX.domain());
+        const xTickValues = this.getXTickValues(this.scaleX.domain());
+
         const xAxis = axisBottom(this.scaleX)
             // .tickSizeInner(-height)
             // .tickSizeOuter(0)
             .tickFormat(xTickFormat)
-            .ticks(5);
+            // .ticks(5)
+            .tickValues(xTickValues);
 
         const yAxis = axisLeft(this.scaleY)
             .tickSizeInner(-width)
