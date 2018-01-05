@@ -112,32 +112,33 @@ export default class TimeSeries extends React.PureComponent {
             d = d0 || d1;
         }
 
-        if (d) {
-            const { x, y } = overLay.node().getBoundingClientRect();
-            const xPoint = this.scaleX(d[xKey]);
-            const yPoint = this.scaleY(d[yKey]);
-
-            this.tooltipDiv.setTooltip(tooltipRender(d));
-            this.tooltipDiv.move({
-                x: xPoint + x,
-                y: y + yPoint,
-                orentation: 'right',
-                padding: 10,
-                duration: 30,
-            });
-
-            overLayCircle
-                .transition()
-                .duration(30)
-                .attr('cx', xPoint || 0)
-                .attr('cy', yPoint || 0);
-            overLayLine
-                .transition()
-                .duration(30)
-                .attr('x', xPoint || 0);
-        } else {
+        if (!d) {
             this.onMouseLeave(overLayLine, overLayCircle);
+            return;
         }
+
+        const { x, y } = overLay.node().getBoundingClientRect();
+        const xPoint = this.scaleX(d[xKey] || 0);
+        const yPoint = this.scaleY(d[yKey] || 0);
+
+        this.tooltipDiv.setTooltip(tooltipRender(d));
+        this.tooltipDiv.move({
+            x: xPoint + x,
+            y: y + yPoint,
+            orentation: 'right',
+            padding: 10,
+            duration: 30,
+        });
+
+        overLayCircle
+            .transition()
+            .duration(30)
+            .attr('cx', xPoint || 0)
+            .attr('cy', yPoint || 0);
+        overLayLine
+            .transition()
+            .duration(30)
+            .attr('x', xPoint || 0);
     }
 
     getXTickValues = ([min, max]) => {
