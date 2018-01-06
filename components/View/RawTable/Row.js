@@ -70,21 +70,17 @@ export default class Row extends React.PureComponent {
         super(props);
 
         const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
 
         this.state = {
             className,
-            styleName,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
 
         this.setState({
             className,
-            styleName,
         });
     }
 
@@ -98,40 +94,22 @@ export default class Row extends React.PureComponent {
 
         // default className for global override
         classNames.push('row');
+        classNames.push(styles.row);
 
         // className provided by parent (through styleName)
         classNames.push(className);
 
         if (hoverable) {
             classNames.push('hoverable');
+            classNames.push(styles.hoverable);
         }
 
         if (highlighted) {
             classNames.push('highlighted');
+            classNames.push(styles.highlighted);
         }
 
         return classNames.join(' ');
-    }
-
-    getStyleName = (props) => {
-        const styleNames = [];
-        const {
-            hoverable,
-            highlighted,
-        } = props;
-
-        // default className for global override
-        styleNames.push('row');
-
-        if (hoverable) {
-            styleNames.push('hoverable');
-        }
-
-        if (highlighted) {
-            styleNames.push('highlighted');
-        }
-
-        return styleNames.join(' ');
     }
 
     getCell = (header) => {
@@ -176,8 +154,6 @@ export default class Row extends React.PureComponent {
     }
 
     render() {
-        // console.log('Rendering Row');
-
         const {
             headers,
         } = this.props;
@@ -185,7 +161,6 @@ export default class Row extends React.PureComponent {
         return (
             <tr
                 className={this.state.className}
-                styleName={this.state.styleName}
             >
                 {
                     headers.map(header => (
