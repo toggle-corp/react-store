@@ -104,12 +104,14 @@ export default class DateFilter extends React.PureComponent {
         switch (type) {
             case 'today': {
                 const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 startDate = today.getTime();
                 endDate = today.getTime();
                 break;
             }
             case 'yesterday': {
                 const yesterday = new Date();
+                yesterday.setHours(0, 0, 0, 0);
                 yesterday.setDate(yesterday.getDate() - 1);
                 startDate = yesterday.getTime();
                 endDate = yesterday.getTime();
@@ -117,38 +119,46 @@ export default class DateFilter extends React.PureComponent {
             }
             case 'current-week': {
                 const min = new Date();
+                min.setHours(0, 0, 0, 0);
                 min.setDate(min.getDate() - min.getDay());
                 startDate = min.getTime();
 
                 const max = min;
+                max.setHours(0, 0, 0, 0);
                 max.setDate(min.getDate() + 7);
                 endDate = max.getTime();
                 break;
             }
             case 'last-7-days': {
                 const min = new Date();
+                min.setHours(0, 0, 0, 0);
                 min.setDate(min.getDate() - 7);
                 startDate = min.getTime();
 
                 const max = new Date();
+                max.setHours(0, 0, 0, 0);
                 endDate = max.getTime();
                 break;
             }
             case 'current-month': {
                 const min = new Date();
+                min.setHours(0, 0, 0, 0);
                 min.setDate(1);
                 startDate = min.getTime();
 
                 const max = new Date();
+                max.setHours(0, 0, 0, 0);
                 endDate = max.getTime();
                 break;
             }
             case 'last-30-days': {
                 const min = new Date();
+                min.setHours(0, 0, 0, 0);
                 min.setDate(min.getDate() - 30);
                 startDate = min.getTime();
 
                 const max = new Date();
+                max.setHours(0, 0, 0, 0);
                 endDate = max.getTime();
                 break;
             }

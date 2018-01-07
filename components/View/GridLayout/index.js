@@ -34,9 +34,8 @@ export default class GridLayout extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.validateItems(props.items);
         this.state = {
-            items: this.validateItems(props.items),
+            items: props.items,
             validLayout: undefined,
         };
     }
@@ -47,16 +46,9 @@ export default class GridLayout extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        // NOTE: this is a hack
-        if (nextProps.items.length !== this.state.items.length) {
-            this.setState({
-                items: this.validateItems(nextProps.items),
-            });
-        } else {
-            this.setState({
-                items: nextProps.items,
-            });
-        }
+        this.setState({
+            items: nextProps.items,
+        });
     }
 
     componentWillUnmount() {
@@ -93,36 +85,6 @@ export default class GridLayout extends React.PureComponent {
                 viewOnly={viewOnly}
             />
         );
-    }
-
-    validateItems = (items) => {
-        let newItems = items;
-
-        if (items.length > 1) {
-            const settingsFoo = {};
-            for (let i = 0; i < newItems.length; i += 1) {
-                // newItems[i].layout = this.snap(newItems[i].layout);
-                settingsFoo[i] = { layout: { $apply: this.snap } };
-            }
-            newItems = update(newItems, settingsFoo);
-
-            let maxHeight = Math.max(...newItems.map(this.heightOfItem));
-
-            const settingsBar = {};
-            for (let i = newItems.length - 1; i >= 1; i -= 1) {
-                if (checkCollision(newItems, i)) {
-                    // newItems[i].layout.top = maxHeight;
-                    settingsBar[i] = { layout: { top: { $set: maxHeight } } };
-                    maxHeight += newItems[i].layout.height;
-                }
-            }
-            newItems = update(newItems, settingsBar);
-        }
-
-        if (this.props.onLayoutChange) {
-            this.props.onLayoutChange(newItems);
-        }
-        return newItems;
     }
 
     snapX = val => (
