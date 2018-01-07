@@ -614,7 +614,7 @@ export default class SelectInput extends React.PureComponent {
                     selectedOptionKeys={selectedOptionKeys}
                     show={areOptionsShown}
                     multiple={multiple}
-                    offsetBottom={showHintAndError ? 24 : 0}
+                    offsetBottom={showHintAndError ? 11 : 0}
                     identifier={this.props.optionsIdentifier}
                 />
             </div>

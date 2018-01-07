@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -34,7 +33,6 @@ const defaultProps = {
     children: '-',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Cell extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -43,21 +41,17 @@ export default class Cell extends React.PureComponent {
         super(props);
 
         const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
 
         this.state = {
             className,
-            styleName,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
 
         this.setState({
             className,
-            styleName,
         });
     }
 
@@ -70,51 +64,28 @@ export default class Cell extends React.PureComponent {
             columnHighlighted,
         } = props;
 
-        // default className for global override
         classNames.push('cell');
+        classNames.push(styles.cell);
 
         // className provided by parent (through styleName)
         classNames.push(className);
 
         if (hoverable) {
             classNames.push('hoverable');
+            classNames.push(styles.hoverable);
         }
 
         if (highlighted) {
             classNames.push('highlighted');
+            classNames.push(styles.highlighted);
         }
 
         if (columnHighlighted) {
             classNames.push('column-highlighted');
+            classNames.push(styles['column-highlighted']);
         }
 
         return classNames.join(' ');
-    }
-
-    getStyleName = (props) => {
-        const styleNames = [];
-        const {
-            hoverable,
-            highlighted,
-            columnHighlighted,
-        } = props;
-
-        // default className for global override
-        styleNames.push('cell');
-
-        if (hoverable) {
-            styleNames.push('hoverable');
-        }
-
-        if (highlighted) {
-            styleNames.push('highlighted');
-        }
-
-        if (columnHighlighted) {
-            styleNames.push('column-highlighted');
-        }
-
-        return styleNames.join(' ');
     }
 
     handleClick = (e) => {
@@ -129,14 +100,11 @@ export default class Cell extends React.PureComponent {
     }
 
     render() {
-        // console.log('Rendering Cell');
-
         return (
             <td
                 className={this.state.className}
                 role="gridcell"
                 onClick={this.handleClick}
-                styleName={this.state.styleName}
             >
                 { this.props.children }
             </td>
