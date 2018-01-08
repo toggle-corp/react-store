@@ -353,3 +353,11 @@ export const isValidHexColor = (value) => {
     const colorHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
     return colorHex.test(value);
 };
+
+export const splitInWhitespace = (string = '') => (
+    string.match(/\S+/g) || []
+);
+
+export const trimWhitespace = (string = '') => (
+    splitInWhitespace(string).join(' ')
+);
