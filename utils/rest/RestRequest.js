@@ -4,12 +4,7 @@
 
 import { isTruthy } from '../common';
 
-const defaultSuccessFn = () => { console.warn('No success callback defined'); };
-const defaultFailureFn = () => { console.warn('No failure callback defined'); };
-const defaultFatalFn = () => { console.warn('No fatal callback defined'); };
-const defaultAbortFn = () => { console.warn('No abort callback defined'); };
-const defaultPreLoadFn = () => { /* console.warn('No preload callback defined'); */ };
-const defaultPostLoadFn = () => { /* console.warn('No postload callback defined'); */ };
+const noop = () => {};
 
 /* Class for xhr requests with retry built in */
 export default class RestRequest {
@@ -40,21 +35,44 @@ export default class RestRequest {
     }
 
     constructor(
-        url, params,
-        success = defaultSuccessFn, failure = defaultFailureFn, fatal = defaultFatalFn,
-        abort = defaultAbortFn, preLoad = defaultPreLoadFn, postLoad = defaultPostLoadFn,
+        url, params, success, failure, fatal, abort, preLoad, postLoad,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
         delay = 0,
     ) {
+        const createWarningFn = text => () => {
+            const parameters = typeof params === 'function' ? params() : params;
+            console.warn(`${text} ${url}`, parameters);
+        };
+
+        const successFn = success || createWarningFn('No success callback defined');
+        const failureFn = failure || createWarningFn('No failure callback defined');
+        const fatalFn = fatal || createWarningFn('No fatal callback defined');
+        const abortFn = abort || createWarningFn('No abort callback defined');
+        const preLoadFn = preLoad || noop;
+        const postLoadFn = postLoad || noop;
+
         this.url = url;
         this.params = params;
-        this.success = (...attrs) => { postLoad(); success(...attrs); };
-        this.failure = (...attrs) => { postLoad(); failure(...attrs); };
-        this.fatal = (...attrs) => { postLoad(); fatal(...attrs); };
-        // NOTE: There is no postLoad in abort, as load was interrupted
-        this.abort = abort;
-        this.preLoad = preLoad;
-        this.postLoad = postLoad;
+
+        this.success = (...attrs) => {
+            postLoadFn();
+            successFn(...attrs);
+        };
+        this.failure = (...attrs) => {
+            postLoadFn();
+            failureFn(...attrs);
+        };
+        this.fatal = (...attrs) => {
+            postLoadFn();
+            fatalFn(...attrs);
+        };
+
+        // NOTE: postLoad in not called on abort,
+        // as load was interrupted
+        this.abort = abortFn;
+        this.preLoad = preLoadFn;
+        this.postLoad = postLoadFn;
+
         this.retryTime = retryTime;
         this.maxRetryTime = maxRetryTime;
         this.decay = decay;
