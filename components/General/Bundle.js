@@ -29,11 +29,26 @@ class Bundle extends React.Component {
     render() {
         const {
             // prevent load from entering component
-            load, // eslint-disable-line
+            load, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
         const { Component } = this.state;
-        return Component ? <Component {...otherProps} /> : null;
+        return Component ? (
+            <Component {...otherProps} />
+        ) : (
+            <div
+                style={{
+                    height: '100%',
+                    fontSize: '2em',
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                Loading...
+            </div>
+        );
     }
 }
 
