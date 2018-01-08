@@ -104,16 +104,22 @@ export default class Uploader {
         // callback
         this.preLoad();
 
+        this.xhr.open('POST', this.uploadUrl);
+
         const formData = new FormData();
         formData.append('file', this.file);
         formData.append('title', this.file.name);
 
-        this.xhr.open('POST', this.uploadUrl);
-
         const parameters = typeof this.params === 'function' ? this.params() : this.params;
+
         const headerKeys = Object.keys(parameters.headers);
         headerKeys.forEach((key) => {
             this.xhr.setRequestHeader(key, parameters.headers[key]);
+        });
+
+        const bodyKeys = Object.keys(parameters.body);
+        bodyKeys.forEach((key) => {
+            formData.append(key, parameters.body[key]);
         });
 
         this.xhr.send(formData);
