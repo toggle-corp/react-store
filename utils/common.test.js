@@ -26,6 +26,8 @@ import {
     getElementAround,
     unique,
     isValidHexColor,
+    splitInWhitespace,
+    trimWhitespace,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -307,4 +309,27 @@ test('should return true for valid hex colors', () => {
     expect(isValidHexColor('#11212121212')).toBe(false);
     expect(isValidHexColor('#hello')).toBe(false);
     expect(isValidHexColor('')).toBe(false);
+});
+
+test('split from whitespaces', () => {
+    expect(splitInWhitespace('')).toEqual([]);
+    expect(splitInWhitespace('hari')).toEqual(['hari']);
+    expect(splitInWhitespace('hari is')).toEqual(['hari', 'is']);
+    expect(splitInWhitespace(' hari is ')).toEqual(['hari', 'is']);
+    expect(splitInWhitespace('  hari  is good     ')).toEqual(['hari', 'is', 'good']);
+    // eslint-disable-next-line no-tabs
+    expect(splitInWhitespace('hari	is good')).toEqual(['hari', 'is', 'good']);
+    expect(splitInWhitespace('hari\t is\ngood boy  ')).toEqual(['hari', 'is', 'good', 'boy']);
+});
+
+
+test('trim out whitespaces', () => {
+    expect(trimWhitespace('')).toEqual('');
+    expect(trimWhitespace('hari')).toEqual('hari');
+    expect(trimWhitespace('hari is')).toEqual('hari is');
+    expect(trimWhitespace(' hari is ')).toEqual('hari is');
+    expect(trimWhitespace('  hari  is good     ')).toEqual('hari is good');
+    // eslint-disable-next-line no-tabs
+    expect(trimWhitespace('hari	is good')).toEqual('hari is good');
+    expect(trimWhitespace('hari\t is\ngood boy  ')).toEqual('hari is good boy');
 });

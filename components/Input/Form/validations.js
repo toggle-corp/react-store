@@ -5,11 +5,12 @@
 import {
     isFalsy,
     isInteger,
+    splitInWhitespace,
 } from '../../../utils/common';
 
 // VALIDATION RULES
 export const requiredCondition = {
-    truth: value => !isFalsy(value) && value !== '',
+    truth: value => !isFalsy(value) && splitInWhitespace(value).length > 0,
     message: 'Field must not be empty',
 };
 
