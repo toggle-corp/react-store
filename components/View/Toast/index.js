@@ -159,6 +159,7 @@ export default class Toast extends React.Component {
                                     notification.dismissable && (
                                         <TransparentButton
                                             onClick={this.handleDissmissButtonClick}
+                                            styleName="close-button"
                                         >
                                             <span className={iconNames.close} />
                                         </TransparentButton>

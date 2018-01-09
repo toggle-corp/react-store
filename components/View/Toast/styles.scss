@@ -4,9 +4,9 @@
     @include transition-slow;
 
     position: fixed;
-    top: $height-navbar;
+    bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, 100%);
     opacity: 0;
     z-index: 11111;
     background-color: $color-foreground;
@@ -16,6 +16,8 @@
     pointer-events: none;
 
     .container {
+        position: relative;
+
         .header {
             display: flex;
             align-items: flex-start;
@@ -25,11 +27,14 @@
                 flex-grow: 1;
             }
 
-            button {
+            .close-button {
+                position: absolute;
+                top: $spacing-extra-small-alt;
+                right: $spacing-small-alt;
                 flex-shrink: 0;
                 padding: 0;
                 color: $color-label;
-                font-size: $font-size-small;
+                font-size: $font-size-medium-alt;
             }
         }
 
@@ -59,12 +64,14 @@
 
     &.shown {
         @include shadow-large;
-        top: $height-navbar + $spacing-large;
+        transform: translate(-50%, 0%);
         opacity: 1;
         pointer-events: all;
     }
 
     &.success {
+        border: $width-separator-thin solid $color-success;
+
         .container {
             .main-content {
                 .icon {
@@ -75,16 +82,20 @@
     }
 
     &.info {
+        border: $width-separator-thin solid $color-info;
+
         .container {
             .main-content {
                 .icon {
-                    color: $color-accent;
+                    color: $color-info;
                 }
             }
         }
     }
 
     &.warning {
+        box-shadow: 0 0 $spacing-small $color-warning;
+
         .container {
             .main-content {
                 .icon {
@@ -95,6 +106,8 @@
     }
 
     &.error {
+        border: $width-separator-thin solid $color-danger;
+
         .container {
             .main-content {
                 .icon {
