@@ -119,7 +119,18 @@ export const getDifferenceInDays = (a, b) => {
 // TODO: write test
 export const getDateDifferenceHumanReadable = (a, b) => {
     const daysDiff = getDifferenceInDays(a, b);
-    return `${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
+    const days = `${Math.abs(daysDiff)} day${daysDiff === 1 ? '' : 's'}`;
+
+    if (daysDiff === 0) {
+        return 'Today';
+    } else if (daysDiff < 0) {
+        if (daysDiff === -1) {
+            return 'Yesterday';
+        }
+        return `${days} ago`;
+    }
+
+    return `After ${days}`;
 };
 
 export const addSeparator = (num, separator = ',') => {
