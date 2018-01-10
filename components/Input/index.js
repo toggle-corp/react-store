@@ -15,6 +15,7 @@ export { default as MultiCheckbox } from './MultiCheckbox';
 export { default as MultiCheckboxCollection } from './MultiCheckboxCollection';
 export { default as NonFieldErrors } from './NonFieldErrors';
 export { default as RadioInput } from './RadioInput';
+export { default as RangeFilter } from './RangeFilter';
 export { default as SelectInput } from './SelectInput';
 export { default as TabularSelectInput } from './TabularSelectInput';
 export { default as TextArea } from './TextArea';
