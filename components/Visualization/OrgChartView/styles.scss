@@ -1,0 +1,17 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/visualizations';
+
+.orgchart-view {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    .action {
+        @extend %action;
+    }
+
+    .orgchart {
+        flex-grow: 1;
+    }
+}

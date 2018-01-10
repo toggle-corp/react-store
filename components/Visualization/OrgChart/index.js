@@ -237,7 +237,7 @@ export default class OrgChart extends React.PureComponent {
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
             .text(d => labelAccessor(d.data))
-            .style('fill', getColorOnBgColor(fillColor));
+            .style('fill', d => getColorOnBgColor(colorExtractor(d)));
 
         nodes
             .selectAll('rect')
