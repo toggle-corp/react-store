@@ -20,7 +20,7 @@ const propTypes = {
     className: PropTypes.string,
     /**
      * string to show, if value is unexpected
-     * Default: ?
+     * Default: -
      */
     invalidText: PropTypes.string,
     /**
@@ -59,7 +59,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    invalidText: '?',
+    invalidText: '-',
     normal: false,
     precision: 2,
     prefix: undefined,

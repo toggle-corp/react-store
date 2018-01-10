@@ -33,6 +33,7 @@ const propTypes = {
     yKey: PropTypes.string.isRequired,
     xTickFormat: PropTypes.func,
     yTickFormat: PropTypes.func,
+    xTicks: PropTypes.number,
     tooltipRender: PropTypes.func.isRequired,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
     showArea: PropTypes.bool,
@@ -49,6 +50,7 @@ const defaultProps = {
     },
     xTickFormat: d => d,
     yTickFormat: d => d,
+    xTicks: 4,
     showArea: false,
 };
 
@@ -110,32 +112,43 @@ export default class TimeSeries extends React.PureComponent {
             d = d0 || d1;
         }
 
-        if (d) {
-            const { x, y } = overLay.node().getBoundingClientRect();
-            const xPoint = this.scaleX(d[xKey]);
-            const yPoint = this.scaleY(d[yKey]);
-
-            this.tooltipDiv.setTooltip(tooltipRender(d));
-            this.tooltipDiv.move({
-                x: xPoint + x,
-                y: y + yPoint,
-                orentation: 'right',
-                padding: 10,
-                duration: 30,
-            });
-
-            overLayCircle
-                .transition()
-                .duration(30)
-                .attr('cx', xPoint || 0)
-                .attr('cy', yPoint || 0);
-            overLayLine
-                .transition()
-                .duration(30)
-                .attr('x', xPoint || 0);
-        } else {
+        if (!d) {
             this.onMouseLeave(overLayLine, overLayCircle);
+            return;
         }
+
+        const { x, y } = overLay.node().getBoundingClientRect();
+        const xPoint = this.scaleX(d[xKey] || 0);
+        const yPoint = this.scaleY(d[yKey] || 0);
+
+        this.tooltipDiv.setTooltip(tooltipRender(d));
+        this.tooltipDiv.move({
+            x: xPoint + x,
+            y: y + yPoint,
+            orentation: 'right',
+            padding: 10,
+            duration: 30,
+        });
+
+        overLayCircle
+            .transition()
+            .duration(30)
+            .attr('cx', xPoint || 0)
+            .attr('cy', yPoint || 0);
+        overLayLine
+            .transition()
+            .duration(30)
+            .attr('x', xPoint || 0);
+    }
+
+    getXTickValues = ([min, max]) => {
+        const { xTicks } = this.props;
+        const interval = Math.floor((max - min) / xTicks);
+        const values = [max];
+        for (let i = min; i < max; i += interval) {
+            values.push(i);
+        }
+        return values;
     }
 
     updateRender() {
@@ -169,11 +182,15 @@ export default class TimeSeries extends React.PureComponent {
             return;
         }
 
+        // const xTickValues = this.scaleX.ticks(2).concat(this.scaleX.domain());
+        const xTickValues = this.getXTickValues(this.scaleX.domain());
+
         const xAxis = axisBottom(this.scaleX)
             // .tickSizeInner(-height)
             // .tickSizeOuter(0)
             .tickFormat(xTickFormat)
-            .ticks(5);
+            // .ticks(5)
+            .tickValues(xTickValues);
 
         const yAxis = axisLeft(this.scaleY)
             .tickSizeInner(-width)
