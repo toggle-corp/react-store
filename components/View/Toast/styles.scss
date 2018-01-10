@@ -1,5 +1,9 @@
 @import '../../../stylesheets/base';
 
+$spacing-extra-small-alt: 3px !default;
+$spacing-small-alt: 8px !default;
+$color-info: #4bf !default;
+
 .toast {
     @include transition-slow;
 
