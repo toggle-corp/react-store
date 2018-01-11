@@ -106,6 +106,8 @@ export default class DateFilter extends React.PureComponent {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 startDate = today.getTime();
+
+                today.setDate(today.getDate() + 1);
                 endDate = today.getTime();
                 break;
             }
@@ -114,6 +116,8 @@ export default class DateFilter extends React.PureComponent {
                 yesterday.setHours(0, 0, 0, 0);
                 yesterday.setDate(yesterday.getDate() - 1);
                 startDate = yesterday.getTime();
+
+                yesterday.setDate(yesterday.getDate() + 1);
                 endDate = yesterday.getTime();
                 break;
             }
@@ -125,7 +129,7 @@ export default class DateFilter extends React.PureComponent {
 
                 const max = min;
                 max.setHours(0, 0, 0, 0);
-                max.setDate(min.getDate() + 7);
+                max.setDate(min.getDate() + 8);
                 endDate = max.getTime();
                 break;
             }
@@ -137,6 +141,7 @@ export default class DateFilter extends React.PureComponent {
 
                 const max = new Date();
                 max.setHours(0, 0, 0, 0);
+                max.setDate(max.getDate() + 1);
                 endDate = max.getTime();
                 break;
             }
@@ -148,6 +153,7 @@ export default class DateFilter extends React.PureComponent {
 
                 const max = new Date();
                 max.setHours(0, 0, 0, 0);
+                max.setDate(max.getDate() + 1);
                 endDate = max.getTime();
                 break;
             }
@@ -159,6 +165,7 @@ export default class DateFilter extends React.PureComponent {
 
                 const max = new Date();
                 max.setHours(0, 0, 0, 0);
+                max.setDate(max.getDate() + 1);
                 endDate = max.getTime();
                 break;
             }
@@ -231,6 +238,16 @@ export default class DateFilter extends React.PureComponent {
         this.setState({ modalShown: false });
     }
 
+    handleStartDateChange = (startDate) => {
+        this.setState({ startDate });
+    }
+
+    handleEndDateChange = (timestamp) => {
+        const endDate = new Date(timestamp);
+        endDate.setDate(endDate.getDate() + 1);
+        this.setState({ endDate: endDate.getTime() });
+    }
+
     render() {
         const {
             placeholder,
@@ -250,9 +267,16 @@ export default class DateFilter extends React.PureComponent {
             ...DateFilter.defaultOptions,
         ];
 
+        let endDateToDisplay;
+        if (endDate) {
+            endDateToDisplay = new Date(endDate);
+            endDateToDisplay.setDate(endDateToDisplay.getDate() - 1);
+            endDateToDisplay = endDateToDisplay.getTime();
+        }
+
         if (startDate && endDate) {
             const startStr = FormattedDate.format(new Date(startDate), 'dd-MM-yyyy');
-            const endStr = FormattedDate.format(new Date(endDate), 'dd-MM-yyyy');
+            const endStr = FormattedDate.format(new Date(endDateToDisplay), 'dd-MM-yyyy');
             const customLabel = `${startStr} to ${endStr}`;
 
             options.push({ key: 'custom-range', label: customLabel });
@@ -281,13 +305,13 @@ export default class DateFilter extends React.PureComponent {
                 <ModalBody>
                     <DateInput
                         label="Start date"
-                        onChange={timestamp => this.setState({ startDate: timestamp })}
+                        onChange={this.handleStartDateChange}
                         value={startDate}
                     />
                     <DateInput
                         label="End date"
-                        onChange={timestamp => this.setState({ endDate: timestamp })}
-                        value={endDate}
+                        onChange={this.handleEndDateChange}
+                        value={endDateToDisplay}
                     />
                 </ModalBody>
                 <ModalFooter>

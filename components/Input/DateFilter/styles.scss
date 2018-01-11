@@ -11,3 +11,7 @@
 .modal {
     width: 400px;
 }
+
+:global #datepicker-container {
+    z-index: 1000;
+}
