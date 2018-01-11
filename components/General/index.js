@@ -8,3 +8,4 @@ export {
 } from './PrivateRoute';
 export { default as Bundle } from './Bundle';
 export { default as Responsive } from './Responsive';
+export { default as withTracker } from './withTracker';
