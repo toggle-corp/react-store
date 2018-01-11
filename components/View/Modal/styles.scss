@@ -7,10 +7,23 @@ $width-modal-small: 420px !default;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    animation: fade-in-from-top .3s ease-in-out forwards;
+    box-shadow: 0 $spacing-small $spacing-extra-large rgba(0, 0, 0, .5);
     background-color: $color-foreground;
-    width: 420px;
+    width: $width-modal-medium;
     max-height: 96vh;
+}
+
+@keyframes fade-in-from-top {
+    from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
 }
 
 %modal-basic {
@@ -18,12 +31,6 @@ $width-modal-small: 420px !default;
     flex-direction: column;
     margin: auto;
     background-color: $color-foreground;
-}
-
-.modal-content {
-    @extend %modal-basic;
-    width: $width-modal-medium;
-    max-height: 96vh;
 }
 
 .alert-content,

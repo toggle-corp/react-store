@@ -185,6 +185,7 @@ export const renderOptions = (p) => {
     const {
         keySelector,
         renderEmpty: EmptyComponent,
+        optionsClassName,
     } = parent.props;
 
     const Option = parent.renderOption;
@@ -194,7 +195,7 @@ export const renderOptions = (p) => {
             onBlur={parent.handleOptionContainerBlur}
             onInvalidate={parent.handleOptionContainerInvalidate}
             parent={parent.container}
-            className={`options ${styles.options}`}
+            className={`options ${styles.options} ${optionsClassName}`}
         >
             {
                 displayOptions.map(option => (

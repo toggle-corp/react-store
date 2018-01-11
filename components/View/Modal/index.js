@@ -25,7 +25,7 @@ export default class Modal extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.syncViewWithRoot(props.show);
+        this.syncViewWithBody(props.show);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -33,7 +33,7 @@ export default class Modal extends React.PureComponent {
         const { show: oldShow } = this.props;
 
         if (newShow !== oldShow) {
-            this.syncViewWithRoot(newShow);
+            this.syncViewWithBody(newShow);
         }
     }
 
@@ -43,16 +43,20 @@ export default class Modal extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    syncViewWithRoot = (show) => {
-        const rootElement = document.getElementById('root');
+    syncViewWithBody = (show) => {
+        const shownClassName = 'modal-shown';
+        const classNames = document.body.className.split(' ');
 
         if (show) {
-            rootElement.style.filter = 'brightness(30%) grayscale(90%)';
-            rootElement.style.pointerEvents = 'none';
+            classNames.push(shownClassName);
         } else {
-            rootElement.style.filter = 'initial';
-            rootElement.style.pointerEvents = 'initial';
+            const index = classNames.findIndex(d => d === shownClassName);
+            if (index !== -1) {
+                classNames.splice(index, 1);
+            }
         }
+
+        document.body.className = classNames.join(' ');
     }
 
     render() {
