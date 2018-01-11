@@ -33,7 +33,7 @@ export const isInteger = value => (
 
 
 export const isFalsyOrEmptyOrZero = val => (
-    isFalsy(val) || val.length === 0 || val === 0
+    isFalsy(val) || val.length === 0 || val === 0 || val === '0'
 );
 
 // added by @frozenhelium

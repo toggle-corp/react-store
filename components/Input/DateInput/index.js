@@ -109,10 +109,6 @@ export default class DateInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            dayUnit: undefined,
-            monthUnit: undefined,
-            yearUnit: undefined,
-
             datePickerVisible: false,
             ...this.decodeTimestamp(this.props.value || this.props.initialValue),
         };
@@ -123,9 +119,10 @@ export default class DateInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
-            this.setState({
-                ...this.decodeTimestamp(nextProps.value),
-            });
+            const newState = this.decodeTimestamp(nextProps.value);
+            if (newState.date !== this.state.date) {
+                this.setState(newState);
+            }
         }
     }
 
@@ -198,7 +195,8 @@ export default class DateInput extends React.PureComponent {
         const state = stateOverride || this.state;
         return !isFalsyOrEmptyOrZero(state.day) &&
             !isFalsyOrEmptyOrZero(state.month) &&
-            !isFalsyOrEmptyOrZero(state.year);
+            !isFalsyOrEmptyOrZero(state.year) &&
+            state.year >= 1000;
     }
 
     clear = () => {
@@ -353,7 +351,7 @@ export default class DateInput extends React.PureComponent {
         // Map for properties to use in date unit
         const map = {
             d: {
-                unit: this.state.dayUnit,
+                unit: this.dayUnit,
                 unitKey: 'dayUnit',
                 placeholder: 'dd',
                 max: getNumDaysInMonth(this.state.date),
@@ -362,7 +360,7 @@ export default class DateInput extends React.PureComponent {
                 value: this.state.day,
             },
             m: {
-                unit: this.state.monthUnit,
+                unit: this.monthUnit,
                 unitKey: 'monthUnit',
                 placeholder: 'mm',
                 max: 12,
@@ -371,7 +369,7 @@ export default class DateInput extends React.PureComponent {
                 value: this.state.month,
             },
             y: {
-                unit: this.state.yearUnit,
+                unit: this.yearUnit,
                 unitKey: 'yearUnit',
                 placeholder: 'yyyy',
                 length: 4,
@@ -401,9 +399,7 @@ export default class DateInput extends React.PureComponent {
 
                                 placeholder={map[match].placeholder}
                                 ref={(unit) => {
-                                    const state = {};
-                                    state[map[match].unitKey] = unit;
-                                    this.setState(state);
+                                    this[map[match].unitKey] = unit;
                                 }}
                                 styleName={map[match].key}
                                 value={isTruthy(map[match].value) ? String(map[match].value) : null}
