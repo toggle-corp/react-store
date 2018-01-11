@@ -1,0 +1,9 @@
+@import '../../../stylesheets/base';
+
+.floating-container {
+    @include shadow-medium;
+    position: absolute;
+    z-index: 11;
+    border: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+}

@@ -1,0 +1,130 @@
+@import '../../../../stylesheets/base';
+
+%default-input-style {
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.single-select-input {
+    .label {
+        width: 100%;
+        text-transform: uppercase;
+        color: $color-label;
+        font-size: $font-size-extra-small;
+    }
+
+    .input-wrapper {
+        position: relative;
+
+        .input {
+            @extend %default-input-style;
+            border-bottom: $width-separator-medium solid $color-separator-alt;
+            padding: $spacing-extra-small 0;
+            width: 100%;
+            color: $color-text;
+
+            &::placeholder {
+                color: $color-placeholder;
+            }
+
+            &:hover {
+                border-bottom-color: $color-separator-hover;
+            }
+
+            &:focus {
+                border-bottom: $width-separator-normal solid $color-accent;
+            }
+        }
+
+        .actions {
+            position: absolute;
+            top: 50%;
+            right: $spacing-small;
+            transform: translateY(-50%);
+
+            .clear-button {
+                @extend %default-input-style;
+                display: none;
+                margin: 0;
+                cursor: pointer;
+                padding: 0 $spacing-small;
+                color: $color-placeholder;
+                font-size: $font-size-small;
+
+                &:hover {
+                    color: $color-danger;
+                }
+            }
+
+            .dropdown-icon {
+                transform: none;
+                transition: .2s transform ease-in-out;
+            }
+        }
+
+        &:hover {
+            .actions {
+                .clear-button {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    &.options-shown {
+        .label {
+            color: $color-accent;
+        }
+
+        .input-wrapper {
+            .actions {
+                .dropdown-icon {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    &.error {
+        .input-wrapper {
+            .input {
+                border-bottom-color: $color-danger;
+            }
+        }
+
+        .label {
+            color: $color-danger;
+        }
+    }
+}
+
+.options {
+    padding: $spacing-small 0;
+
+    .option {
+        @extend %default-input-style;
+        display: block;
+        cursor: pointer;
+        padding: $spacing-small $spacing-small-alt;
+        width: 100%;
+        text-align: left;
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+
+        &.active {
+            background-color: $color-accent;
+            color: $color-text-on-accent;
+        }
+    }
+
+    .empty {
+        padding: $spacing-small-alt $spacing-small;
+        text-align: center;
+        color: $color-watermark;
+    }
+}

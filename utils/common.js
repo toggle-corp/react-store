@@ -372,3 +372,59 @@ export const splitInWhitespace = (string = '') => (
 export const trimWhitespace = (string = '') => (
     splitInWhitespace(string).join(' ')
 );
+
+
+export const calcFloatingRect = (
+    boundingRect,
+    parentRect,
+    contentRect,
+    offset = {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+) => {
+    const newContentRect = {
+        top: (parentRect.top + parentRect.height) - offset.top,
+        left: parentRect.left,
+        width: parentRect.width,
+    };
+
+    const containerOffset = parentRect.top + parentRect.height + contentRect.height;
+
+    // TODO: consider the case where height doesn't fit on either side (top or bottom)
+    // TODO: consider horizontal direction too
+    if (boundingRect.height < containerOffset) {
+        newContentRect.top = (parentRect.top + boundingRect.top)
+            - (contentRect.height + offset.bottom);
+    }
+
+    return newContentRect;
+};
+
+export const calcFloatingRectInMainWindow = (parentRect, contentRect, offset) => {
+    const boundingRect = {
+        top: window.scrollY,
+        left: window.scrollX,
+        width: window.innerWidth,
+        height: window.innerHeight,
+    };
+
+    return calcFloatingRect(boundingRect, parentRect, contentRect, offset);
+};
+
+export const calcFloatingPositionInMainWindow = (parentRect, contentRect, offset) => {
+    const floatingRect = calcFloatingRectInMainWindow(parentRect, contentRect, offset);
+
+    return {
+        top: `${floatingRect.top}px`,
+        left: `${floatingRect.left}px`,
+        width: `${floatingRect.width}px`,
+    };
+};
+
+// rates the string for content
+export const getRatingForContentInString = (content, str) => (
+    content.toLowerCase().indexOf(str.toLowerCase())
+);
