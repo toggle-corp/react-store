@@ -78,8 +78,6 @@ export default class Toast extends React.Component {
                     notification: nextNotification,
                 });
 
-                console.log(nextNotification);
-
                 if (nextNotification.duration !== Infinity) {
                     if (this.timeout) {
                         clearTimeout(this.timeout);
@@ -151,6 +149,7 @@ export default class Toast extends React.Component {
                                     {
                                         notification.dismissable && (
                                             <TransparentButton
+                                                styleName="close-button"
                                                 onClick={this.handleDissmissButtonClick}
                                             >
                                                 <span className={iconNames.close} />
