@@ -50,29 +50,6 @@ export default class Alert extends React.PureComponent {
         });
     }
 
-    getContent = () => ([
-        <ModalHeader
-            key="header"
-            title={this.props.title}
-        />,
-        <ModalBody
-            key="body"
-        >
-            { this.props.children }
-        </ModalBody>,
-        <ModalFooter
-            key="footer"
-        >
-            <PrimaryButton
-                styleName="ok-button"
-                className="ok-button"
-                onClick={this.handleOkButtonClick}
-            >
-                Ok
-            </PrimaryButton>
-        </ModalFooter>,
-    ])
-
     handleOkButtonClick = () => {
         this.setState({
             show: false,
@@ -87,17 +64,29 @@ export default class Alert extends React.PureComponent {
     }
 
     render() {
+        const {
+            className,
+            children,
+            title,
+        } = this.props;
+
         return (
             <Modal
                 show={this.state.show}
-                className={`${this.props.className} modal-wrapper`}
+                className={`${className} alert ${styles.alert}`}
             >
-                <div
-                    className="alert-content"
-                    styleName="alert-content"
-                >
-                    { this.getContent() }
-                </div>
+                <ModalHeader title={title} />
+                <ModalBody>
+                    { children }
+                </ModalBody>
+                <ModalFooter>
+                    <PrimaryButton
+                        className={`ok-button ${styles['ok-button']}`}
+                        onClick={this.handleOkButtonClick}
+                    >
+                        Ok
+                    </PrimaryButton>
+                </ModalFooter>
             </Modal>
         );
     }

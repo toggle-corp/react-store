@@ -33,8 +33,8 @@ $width-modal-small: 420px !default;
     background-color: $color-foreground;
 }
 
-.alert-content,
-.confirm-content {
+.alert,
+.confirm {
     @extend %modal-basic;
     width: $width-modal-small;
 
