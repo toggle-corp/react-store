@@ -387,17 +387,22 @@ export const calcFloatingRect = (
 ) => {
     const newContentRect = {
         top: (parentRect.top + parentRect.height) - offset.top,
-        left: parentRect.left,
+        left: parentRect.left - offset.left,
         width: parentRect.width,
     };
 
-    const containerOffset = parentRect.top + parentRect.height + contentRect.height;
+    const containerOffsetY = parentRect.top + parentRect.height + contentRect.height;
+    const containerOffsetX = parentRect.left + parentRect.width + contentRect.width;
 
     // TODO: consider the case where height doesn't fit on either side (top or bottom)
-    // TODO: consider horizontal direction too
-    if (boundingRect.height < containerOffset) {
+    if (boundingRect.height < containerOffsetY) {
         newContentRect.top = (parentRect.top + boundingRect.top)
             - (contentRect.height + offset.bottom);
+    }
+
+    if (boundingRect.width < containerOffsetX) {
+        newContentRect.left = (boundingRect.left + parentRect.left + parentRect.width)
+            - (contentRect.width + offset.right);
     }
 
     return newContentRect;

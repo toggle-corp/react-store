@@ -3,10 +3,14 @@
 
 $width-modal-small: 420px !default;
 
-:global .modal-wrapper {
-    display: flex;
-    align-items: center;
-    height: 100vh;
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: $color-foreground;
+    width: 420px;
+    max-height: 96vh;
 }
 
 %modal-basic {

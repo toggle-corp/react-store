@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FloatingContainer } from '../../View';
+import {
+    calcFloatingPositionInMainWindow,
+} from '../../../utils/common';
 import styles from './styles.scss';
 
 import { iconNames } from '../../../constants';
@@ -47,76 +50,63 @@ export default class DropdownMenu extends React.PureComponent {
         super(props);
 
         this.state = {
-            show: false,
+            showDropdown: false,
         };
+
+        this.boundingClientRect = {};
     }
 
-    componentDidMount() {
-        window.addEventListener('resize', this.calculateDimension);
+    componentDidUpdate() {
+        if (this.state.showDropdown) {
+            window.addEventListener('click', this.handleClick);
+        } else {
+            window.removeEventListener('click', this.handleClick);
+        }
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.calculateDimension);
+        window.removeEventListener('click', this.handleClick);
     }
 
-    handleDropdownClick = () => {
+    handleDropdownClick = (e) => {
+        e.stopPropagation();
+
         if (this.container) {
-            this.containerClientRect = this.container.getBoundingClientRect();
+            this.boundingClientRect = this.container.getBoundingClientRect();
         }
 
-        this.setState({ show: !this.state.show });
+        this.setState({ showDropdown: !this.state.showDropdown });
     };
 
-    handleDynamicStyling = (optionContainer) => {
-        let parentClientRect;
-
-        if (this.container) {
-            parentClientRect = this.container.getBoundingClientRect();
-        } else if (this.containerClientRect) {
-            parentClientRect = this.containerClientRect;
-        } else {
-            return null;
-        }
-
-        const offsetTop = 0;
-        const offsetBottom = 0;
-
-        const MIN_WIDTH = 192;
-        const width = Math.max(MIN_WIDTH, parentClientRect.width);
-        const xOffset = MIN_WIDTH > parentClientRect.width ? MIN_WIDTH - parentClientRect.width : 0;
-
-        const newStyle = {
-            top: `${parentClientRect.top + (parentClientRect.height - offsetBottom)}px`,
-            left: `${parentClientRect.left - xOffset}px`,
-            width: `${width}px`,
-        };
-
-        const optionRect = optionContainer.getBoundingClientRect();
-
-        const pageOffset = window.innerHeight;
-        const containerOffset = parentClientRect.top + optionRect.height + parentClientRect.height;
-
-        if (pageOffset < containerOffset) {
-            newStyle.top = `${(parentClientRect.top + window.scrollY) - optionRect.height - offsetTop}px`;
-        }
-
-        return newStyle;
-    }
-
     handleContainerClose = () => {
-        this.setState({ show: false });
+        this.setState({ showDropdown: false });
     }
 
     handleDropdownContainerBlur = () => {
-        this.setState({ show: false });
+        this.setState({ showDropdown: false });
     }
 
-    handleDropdownContainerClick = () => {
-        this.setState({ show: false });
+    handleClick = () => {
+        if (this.state.showDropdown) {
+            this.setState({ showDropdown: false });
+        }
+    }
+
+    handleDropdownContainerInvalidate = (dropdownContainer) => {
+        const containerRect = dropdownContainer.getBoundingClientRect();
+        let parentRect = this.boundingClientRect;
+        if (this.container) {
+            parentRect = this.container.getBoundingClientRect();
+        }
+
+        const optionsContainerPosition = (
+            calcFloatingPositionInMainWindow(parentRect, containerRect)
+        );
+        return optionsContainerPosition;
     }
 
     render() {
-        const { show } = this.state;
+        const { showDropdown } = this.state;
         const {
             title,
             iconName,
@@ -144,24 +134,24 @@ export default class DropdownMenu extends React.PureComponent {
                         !hideDropdownIcon && (
                             <i
                                 className={iconNames.chevronDown}
-                                styleName={show ? 'rotated dropdown-icon' : 'dropdown-icon'}
+                                styleName={showDropdown ? 'rotated dropdown-icon' : 'dropdown-icon'}
                             />
                         )
                     }
                 </button>
-                <FloatingContainer
-                    ref={(el) => { this.dropdownContainer = el; }}
-                    containerId="dropdown-container"
-                    onClose={this.handleContainerClose}
-                    onDynamicStyleOverride={this.handleDynamicStyling}
-                    show={show}
-                    styleName="dropdown-container"
-                    onBlur={this.handleDropdownContainerBlur}
-                    onClick={this.handleDropdownContainerClick}
-                    parentContainer={this.container}
-                >
-                    { this.props.children }
-                </FloatingContainer>
+                {
+                    showDropdown && (
+                        <FloatingContainer
+                            ref={(el) => { this.dropdownContainer = el; }}
+                            styleName="dropdown-container"
+                            onBlur={this.handleDropdownContainerBlur}
+                            parent={this.container}
+                            onInvalidate={this.handleDropdownContainerInvalidate}
+                        >
+                            { this.props.children }
+                        </FloatingContainer>
+                    )
+                }
             </div>
         );
     }

@@ -14,7 +14,7 @@ export const selectInputCommonPropTypes = {
     keySelector: PropTypes.func,
     label: PropTypes.string,
     labelSelector: PropTypes.func,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.object),
     placeholder: PropTypes.string,
     showHintAndError: PropTypes.bool,
@@ -31,11 +31,12 @@ export const selectInputCommonDefaultProps = {
     keySelector: d => d.key,
     label: '',
     labelSelector: d => d.label,
+    onChange: undefined,
     optionModifier: undefined,
     options: [],
+    renderEmpty: () => 'No option available',
     showHintAndError: false,
     showLabel: true,
-    renderEmpty: () => 'No option available',
 };
 
 // Single select input

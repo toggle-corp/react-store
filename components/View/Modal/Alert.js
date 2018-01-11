@@ -13,49 +13,21 @@ import {
     PrimaryButton,
 } from '../../Action';
 
-import FloatingContainer from '../FloatingContainer';
+import Modal from './';
 
 const propTypes = {
-    /**
-     * child elements
-     */
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
         PropTypes.element,
     ]).isRequired,
-
-    /**
-     * required for style override
-     */
     className: PropTypes.string,
-
-    /**
-     * Should modal close on escape?
-     */
-    closeOnEscape: PropTypes.bool,
-
-    /**
-     * Should modal close on outside click?
-     */
-    closeOnBlur: PropTypes.bool,
-
-    /**
-     * A callback when the modal is closed
-     */
     onClose: PropTypes.func.isRequired,
-
     title: PropTypes.string,
-
-    /**
-     * show modal ?
-     */
     show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    closeOnEscape: false,
-    closeOnBlur: false,
     title: 'Alert',
 };
 
@@ -116,12 +88,8 @@ export default class Alert extends React.PureComponent {
 
     render() {
         return (
-            <FloatingContainer
+            <Modal
                 show={this.state.show}
-                onClose={this.handleClose}
-                containerId="modal-container"
-                closeOnEscape={this.props.closeOnEscape}
-                closeOnBlur={this.props.closeOnBlur}
                 className={`${this.props.className} modal-wrapper`}
             >
                 <div
@@ -130,7 +98,7 @@ export default class Alert extends React.PureComponent {
                 >
                     { this.getContent() }
                 </div>
-            </FloatingContainer>
+            </Modal>
         );
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FloatingContainer2 } from '../../View';
+import { FloatingContainer } from '../../View';
 
 import {
     calcFloatingPositionInMainWindow,
@@ -169,7 +169,7 @@ export const renderOptions = (p) => {
     const Option = parent.renderOption;
 
     return (
-        <FloatingContainer2
+        <FloatingContainer
             onBlur={parent.handleOptionContainerBlur}
             onInvalidate={parent.handleOptionContainerInvalidate}
             parent={parent.container}
@@ -190,6 +190,6 @@ export const renderOptions = (p) => {
                     </div>
                 )
             }
-        </FloatingContainer2>
+        </FloatingContainer>
     );
 };

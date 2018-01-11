@@ -5,7 +5,6 @@
 export { default as Alert } from './Modal/Alert';
 export { default as Confirm } from './Modal/Confirm';
 export { default as FloatingContainer } from './FloatingContainer';
-export { default as FloatingContainer2 } from './FloatingContainer2';
 export {
     default as FormattedDate,
 } from './FormattedDate';

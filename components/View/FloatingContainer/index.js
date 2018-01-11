@@ -1,7 +1,6 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import Float from '../Float';
 
 import styles from './styles.scss';
 
@@ -14,258 +13,106 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
     ]).isRequired,
 
-    /**
-     * required for styling (styleName )
-     */
     className: PropTypes.string,
 
-    /**
-     * Should it be closed when clicked outside the container?
-     */
-    closeOnBlur: PropTypes.bool,
-
-    /**
-     * Should container close on Escape keypress?
-     */
-    closeOnEscape: PropTypes.bool,
-
-    /**
-     * Should container close on Tab keypress?
-     */
-    closeOnTab: PropTypes.bool,
-
-    /**
-     * Unique id for the container
-     */
-    containerId: PropTypes.string.isRequired,
-
-    /**
-     * Callback for dynamic style
-     */
-    onDynamicStyleOverride: PropTypes.func,
-
-    /**
-     * A callback for when mouse is clicked outside container
-     */
     onBlur: PropTypes.func,
 
-    /**
-     * A callback when the container is closed
-     */
-    onClose: PropTypes.func.isRequired,
+    onMouseDown: PropTypes.func,
 
     /**
-     * A callback when the container is clicked
+     * container for which clicks are ignored for blur
      */
-    onClick: PropTypes.func,
+    parent: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
-    /**
-     * Optional parent container to consider while focusing out
-     */
-    parentContainer: PropTypes.object, // eslint-disable-line
-
-    /**
-     * show modal ?
-     */
-    show: PropTypes.bool.isRequired,
-
-    /**
-     * styles
-     */
-    styleOverride: PropTypes.shape({
-        left: PropTypes.string,
-        top: PropTypes.string,
-    }),
+    onInvalidate: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    closeOnBlur: false,
-    closeOnEscape: false,
-    closeOnTab: false,
     onBlur: undefined,
-    onClick: undefined,
-    onDynamicStyleOverride: undefined,
-    parentContainer: undefined,
-    styleOverride: {},
+    onMouseDown: undefined,
+    parent: undefined,
+    onInvalidate: () => {},
 };
 
 export default class FloatingContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-        window.addEventListener('scroll', this.handleScroll);
-    }
+    componentWillMount() {
+        const {
+            onBlur,
+        } = this.props;
 
-    componentDidUpdate() {
-        this.invalidateStyles();
+        if (onBlur) {
+            window.addEventListener('mousedown', this.handleMouseDown);
+        }
     }
 
     componentWillUnmount() {
-        if (this.container) {
-            this.removeContainer();
-        }
-
-        window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('scroll', this.handleScroll);
-    }
-
-    getContent = () => (
-        <div
-            className={this.props.className}
-            styleName="floating-container-wrap"
-        >
-            { this.props.children }
-        </div>
-    )
-
-    getContainer = () => {
-        const {
-            containerId,
-            styleOverride,
-            onClick,
-            onBlur,
-            closeOnBlur,
-            closeOnTab,
-            closeOnEscape,
-        } = this.props;
-
-        this.container = document.getElementById(containerId);
-
-        // Create the container if it doesn't exist
-        if (!this.container) {
-            this.container = document.createElement('div');
-
-            // Style the container
-            this.container.id = containerId;
-            this.container.style.position = 'absolute';
-
-            // Add new container to DOM
-            document.body.appendChild(this.container);
-
-            // Add event listeners
-            if (closeOnEscape || closeOnTab) {
-                document.addEventListener('keydown', this.handleKeyPress);
-            }
-
-            if (onClick || closeOnBlur || onBlur) {
-                window.addEventListener('mousedown', this.handleMouseDown);
-            }
-
-            if (onClick) {
-                window.addEventListener('click', this.handleMouseClick);
-            }
-
-            // append style provided by parent
-            if (styleOverride) {
-                Object.assign(this.container.style, styleOverride);
-            }
-        }
-
-        return this.container;
-    }
-
-    invalidateStyles() {
-        const { onDynamicStyleOverride } = this.props;
-
-        if (onDynamicStyleOverride && this.container) {
-            const dynamicStyles = onDynamicStyleOverride(this.container);
-
-            if (dynamicStyles) {
-                Object.assign(this.container.style, dynamicStyles);
-            }
-        }
-    }
-
-    isFocused = () => (this.state.showOptions)
-
-    removeContainer = () => {
-        // remove listeners
-        document.removeEventListener('keydown', this.handleKeyPress);
         window.removeEventListener('mousedown', this.handleMouseDown);
-        window.removeEventListener('click', this.handleMouseClick);
-
-        // remove container element from DOM
-        this.container.remove();
     }
 
-    close = () => {
-        this.removeContainer();
+    invalidate() {
+        const { onInvalidate } = this.props;
 
-        // call callback
-        this.props.onClose();
-    }
+        if (this.container) {
+            const containerStyles = onInvalidate(this.container);
 
-    handleKeyPress = (e) => {
-        if (this.props.closeOnEscape && e.code === 'Escape') {
-            this.close();
-        }
-
-        if (this.props.closeOnTab && e.code === 'Tab') {
-            this.close();
-        }
-    }
-
-    handleMouseClick = (e) => {
-        const {
-            onClick,
-        } = this.props;
-
-        if (onClick) {
-            if (e.target === this.container
-                || this.container.contains(e.target)
-            ) {
-                onClick();
+            if (containerStyles) {
+                Object.assign(this.container.style, containerStyles);
             }
         }
+    }
+
+    handleContainerInvalidate = () => {
+        this.invalidate();
     }
 
     handleMouseDown = (e) => {
         const {
-            onClick,
             onBlur,
-            closeOnBlur,
-            parentContainer,
+            onMouseDown,
+            parent,
         } = this.props;
 
-        if (onClick || onBlur || closeOnBlur) {
-            if (e.target !== this.container
-                && !this.container.contains(e.target)
-                && (
-                    !parentContainer ||
-                    !parentContainer.contains(e.target)
-                )
-            ) {
-                if (onBlur) {
-                    onBlur();
-                }
-                if (closeOnBlur) {
-                    this.close();
-                }
-            }
+        if (!(onBlur || onMouseDown)) {
+            return;
         }
-    }
 
-    handleResize = () => {
-        this.invalidateStyles();
-    }
+        const isTargetOrContainsTarget = this.container && (
+            this.container === e.target || this.container.contains(e.target)
+        );
+        const isTargetParentOrContainedInParent = parent && (
+            parent === e.target || parent.contains(e.target)
+        );
 
-    handleScroll = () => {
-        this.invalidateStyles();
+        if (!(isTargetOrContainsTarget || isTargetParentOrContainedInParent)) {
+            if (onBlur) {
+                onBlur();
+            }
+        } else if (onMouseDown) {
+            onMouseDown();
+        }
     }
 
     render() {
-        if (!this.props.show) {
-            if (this.container) {
-                this.removeContainer();
-            }
-            return null;
-        }
-        return ReactDOM.createPortal(
-            CSSModules(this.getContent, styles)(),
-            this.getContainer(),
+        const {
+            className,
+            children,
+        } = this.props;
+
+        return (
+            <Float
+                onInvalidate={this.handleContainerInvalidate}
+            >
+                <div
+                    className={`${className} ${styles['floating-container']}`}
+                    ref={(el) => { this.container = el; }}
+                >
+                    { children }
+                </div>
+            </Float>
         );
     }
 }

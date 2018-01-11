@@ -15,7 +15,7 @@ import {
     isFalsy,
     isFalsyOrEmptyOrZero,
     isTruthy,
-    randomString,
+    calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
 
 import { iconNames } from '../../../constants';
@@ -114,7 +114,6 @@ export default class DateInput extends React.PureComponent {
         };
 
         this.boundingClientRect = {};
-        this.inputId = randomString();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -321,6 +320,25 @@ export default class DateInput extends React.PureComponent {
         }
     }
 
+    handleDatePickerInvalidate = (datePickerContainer) => {
+        const containerRect = datePickerContainer.getBoundingClientRect();
+        let parentRect = this.boundingClientRect;
+        if (this.container) {
+            parentRect = this.container.getBoundingClientRect();
+        }
+
+        const optionsContainerPosition = (
+            calcFloatingPositionInMainWindow(parentRect, containerRect)
+        );
+        return optionsContainerPosition;
+    }
+
+    handleDatePickerBlur = () => {
+        this.setState({
+            datePickerVisible: false,
+        });
+    }
+
     // Parse format and generate an object of information
     parseFormat() {
         const { format } = this.props;
@@ -435,6 +453,7 @@ export default class DateInput extends React.PureComponent {
         const isToday =
             (this.state.date && this.state.date.toDateString()) === (new Date()).toDateString();
         const styleName = this.getStyleName();
+        const showDatePicker = this.state.datePickerVisible && !this.state.disabled;
 
         return (
             <div
@@ -520,20 +539,20 @@ export default class DateInput extends React.PureComponent {
                         ),
                     ]
                 }
-                <FloatingContainer
-                    closeOnBlur
-                    containerId="datepicker-container"
-                    onClose={this.handleDatePickerClosed}
-                    onDynamicStyleOverride={this.handleDynamicStyleOverride}
-                    parentContainer={this.container}
-                    ref={(el) => { this.pickerContainer = el; }}
-                    show={this.state.datePickerVisible && !this.state.disabled}
-                >
-                    <DatePicker
-                        date={this.state.date && this.state.date.getTime()}
-                        onDatePick={this.handleDatePick}
-                    />
-                </FloatingContainer>
+                {
+                    showDatePicker && (
+                        <FloatingContainer
+                            parent={this.container}
+                            onBlur={this.handleDatePickerBlur}
+                            onInvalidate={this.handleDatePickerInvalidate}
+                        >
+                            <DatePicker
+                                date={this.state.date && this.state.date.getTime()}
+                                onDatePick={this.handleDatePick}
+                            />
+                        </FloatingContainer>
+                    )
+                }
             </div>
         );
     }
