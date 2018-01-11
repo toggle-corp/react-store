@@ -327,8 +327,13 @@ export default class DateInput extends React.PureComponent {
             parentRect = this.container.getBoundingClientRect();
         }
 
+        const offset = { top: 2, right: 0, bottom: 0, left: 0 };
+        if (this.props.showHintAndError) {
+            offset.top = 12;
+        }
+
         const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect)
+            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
         );
         return optionsContainerPosition;
     }
@@ -462,12 +467,12 @@ export default class DateInput extends React.PureComponent {
                 ref={(el) => { this.container = el; }}
             >
                 {showLabel && (
-                    <label
-                        htmlFor={this.inputId}
+                    <div
                         styleName="label"
+                        className="label"
                     >
                         {label}
-                    </label>
+                    </div>
                 )}
                 <div
                     className="date-input"

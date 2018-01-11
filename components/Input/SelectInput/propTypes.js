@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 
+export const emptyList = [];
+
 export const keyPropType = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
 ]);
 
 export const selectInputCommonPropTypes = {
+    hideClearButton: PropTypes.bool,
     className: PropTypes.string,
     clearable: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -23,6 +26,7 @@ export const selectInputCommonPropTypes = {
 };
 
 export const selectInputCommonDefaultProps = {
+    hideClearButton: false,
     className: '',
     clearable: true,
     disabled: false,
@@ -33,9 +37,9 @@ export const selectInputCommonDefaultProps = {
     labelSelector: d => d.label,
     onChange: undefined,
     optionModifier: undefined,
-    options: [],
+    options: emptyList,
     renderEmpty: () => 'No option available',
-    showHintAndError: false,
+    showHintAndError: true,
     showLabel: true,
 };
 
@@ -57,11 +61,13 @@ export const singleSelectInputDefaultProps = {
 // Multi select input
 
 export const multiSelectInputPropTypes = {
+    hideSelectAllButton: PropTypes.bool,
     value: PropTypes.arrayOf(keyPropType),
 };
 
 export const multiSelectInputDefaultProps = {
     ...selectInputCommonDefaultProps,
+    hideSelectAllButton: false,
     placeholder: 'Select option(s)',
-    value: [],
+    value: emptyList,
 };

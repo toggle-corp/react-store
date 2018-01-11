@@ -52,7 +52,7 @@
                 cursor: pointer;
                 padding: 0 $spacing-small;
                 color: $color-placeholder;
-                font-size: $font-size-small;
+                font-size: $font-size-medium;
 
                 &:hover {
                     color: $color-danger;
@@ -140,6 +140,8 @@
 
 .options {
     padding: $spacing-small 0;
+    max-height: 200px;
+    overflow-y: auto;
 
     .option {
         @extend %default-input-style;

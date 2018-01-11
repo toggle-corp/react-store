@@ -4,6 +4,7 @@ import { iconNames } from '../../../../constants';
 
 import styles from './styles.scss';
 import {
+    emptyList,
     multiSelectInputPropTypes,
     multiSelectInputDefaultProps,
 } from '../propTypes';
@@ -18,6 +19,7 @@ import {
     handleInputValueChange,
     getOptionsContainerPosition,
     handleInputClick,
+    renderClearButton,
 } from '../utils';
 
 export default class MultiSelectInput extends React.PureComponent {
@@ -93,6 +95,22 @@ export default class MultiSelectInput extends React.PureComponent {
         onChange(newValue);
     }
 
+    handleSelectAllButtonClick = () => {
+        const {
+            options,
+            keySelector,
+            onChange,
+        } = this.props;
+
+        const newValue = options.map(d => keySelector(d));
+        onChange(newValue);
+    }
+
+    handleClearButtonClick = () => {
+        const { onChange } = this.props;
+        onChange(emptyList);
+    }
+
     renderInput = () => {
         const { disabled } = this.props;
         const {
@@ -114,25 +132,52 @@ export default class MultiSelectInput extends React.PureComponent {
         );
     }
 
+    renderSelectAllButton = () => {
+        const {
+            value,
+            options,
+            disabled,
+            hideSelectAllButton,
+        } = this.props;
+        const showSelectAllButton = !(
+            hideSelectAllButton || disabled || value.length === options.length
+        );
+
+        if (!showSelectAllButton) {
+            return null;
+        }
+
+        return (
+            <button
+                className={`select-all-button ${styles['select-all-button']}`}
+                onClick={this.handleSelectAllButtonClick}
+                title="Select all options"
+                disabled={this.props.disabled}
+                type="button"
+            >
+                <span className={iconNames.checkAll} />
+            </button>
+        );
+    }
+
     renderActions = () => {
-        const { disabled } = this.props;
-        const showClearButton = true;
+        const {
+            disabled,
+            value,
+            hideClearButton,
+        } = this.props;
+        const showClearButton = !(hideClearButton || disabled || value.length === 0);
+        const ClearButton = renderClearButton;
+        const SelectAllButton = this.renderSelectAllButton;
 
         return (
             <div className={`actions ${styles.actions}`}>
-                {
-                    showClearButton && (
-                        <button
-                            className={`clear-button ${styles['clear-button']}`}
-                            onClick={this.handleClearButtonClick}
-                            title="Clear selected option"
-                            disabled={disabled}
-                            type="button"
-                        >
-                            <span className={iconNames.close} />
-                        </button>
-                    )
-                }
+                <SelectAllButton />
+                <ClearButton
+                    show={showClearButton}
+                    styles={styles}
+                    parent={this}
+                />
                 <span className={`dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`} />
             </div>
         );

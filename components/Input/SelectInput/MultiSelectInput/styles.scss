@@ -45,17 +45,29 @@
             right: $spacing-small;
             transform: translateY(-50%);
 
-            .clear-button {
+            %action-button {
                 @extend %default-input-style;
                 display: none;
                 margin: 0;
                 cursor: pointer;
                 padding: 0 $spacing-small;
                 color: $color-placeholder;
-                font-size: $font-size-small;
+                font-size: $font-size-medium;
+            }
+
+            .clear-button {
+                @extend %action-button;
 
                 &:hover {
                     color: $color-danger;
+                }
+            }
+
+            .select-all-button {
+                @extend %action-button;
+
+                &:hover {
+                    color: $color-info;
                 }
             }
 
@@ -67,7 +79,8 @@
 
         &:hover {
             .actions {
-                .clear-button {
+                .clear-button,
+                .select-all-button {
                     display: inline-block;
                 }
             }
@@ -148,6 +161,8 @@
 
 .options {
     padding: $spacing-small 0;
+    max-height: 200px;
+    overflow-y: auto;
 
     .option {
         @extend %default-input-style;

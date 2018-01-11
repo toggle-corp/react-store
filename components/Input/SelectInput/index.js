@@ -17,6 +17,7 @@ import {
     handleInputValueChange,
     handleInputClick,
     getOptionsContainerPosition,
+    renderClearButton,
 } from './utils';
 
 export default class SelectInput extends React.PureComponent {
@@ -96,6 +97,17 @@ export default class SelectInput extends React.PureComponent {
         }
     }
 
+    handleClearButtonClick = () => {
+        const {
+            onChange,
+            value,
+        } = this.props;
+
+        if (value) {
+            onChange();
+        }
+    }
+
     renderInput = () => {
         const {
             disabled,
@@ -118,24 +130,21 @@ export default class SelectInput extends React.PureComponent {
     }
 
     renderActions = () => {
-        const { disabled } = this.props;
-        const showClearButton = true;
+        const {
+            disabled,
+            value,
+            hideClearButton,
+        } = this.props;
+        const showClearButton = value && !(hideClearButton || disabled);
+        const ClearButton = renderClearButton;
 
         return (
             <div className={`actions ${styles.actions}`}>
-                {
-                    showClearButton && (
-                        <button
-                            className={`clear-button ${styles['clear-button']}`}
-                            onClick={this.handleClearButtonClick}
-                            title="Clear selected option"
-                            disabled={disabled}
-                            type="button"
-                        >
-                            <span className={iconNames.close} />
-                        </button>
-                    )
-                }
+                <ClearButton
+                    show={showClearButton}
+                    styles={styles}
+                    parent={this}
+                />
                 <span className={`dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`} />
             </div>
         );

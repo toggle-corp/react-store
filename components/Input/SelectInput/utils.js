@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { FloatingContainer } from '../../View';
+import { iconNames } from '../../../constants';
 
 import {
     calcFloatingPositionInMainWindow,
@@ -108,8 +110,13 @@ export const getOptionsContainerPosition = (parent, optionsContainer) => {
         parentRect = parent.container.getBoundingClientRect();
     }
 
+    const offset = { top: 2, bottom: 0, left: 0, right: 0 };
+    if (parent.props.showHintAndError) {
+        offset.top = 12;
+    }
+
     const optionsContainerPosition = (
-        calcFloatingPositionInMainWindow(parentRect, containerRect)
+        calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
     );
     return optionsContainerPosition;
 };
@@ -119,6 +126,20 @@ export const renderLabel = p => (
         <div className={`label ${p.styles.label}`}>
             { p.label }
         </div>
+    ) : null
+);
+
+export const renderClearButton = p => (
+    p.show ? (
+        <button
+            className={`clear-button ${p.styles['clear-button']}`}
+            onClick={p.parent.handleClearButtonClick}
+            title="Clear selected option(s)"
+            disabled={p.parent.props.disabled}
+            type="button"
+        >
+            <span className={iconNames.close} />
+        </button>
     ) : null
 );
 
