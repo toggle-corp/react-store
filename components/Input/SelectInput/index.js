@@ -35,9 +35,16 @@ export default class SelectInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            inputValue: this.getActiveOptionLabel(nextProps),
-        });
+        const {
+            value: oldValue,
+            options: oldOptions,
+        } = this.props;
+
+        if (nextProps.value !== oldValue || nextProps.options !== oldOptions) {
+            this.setState({
+                inputValue: this.getActiveOptionLabel(nextProps),
+            });
+        }
     }
 
     getValue = () => this.props.value

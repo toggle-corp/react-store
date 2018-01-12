@@ -38,9 +38,16 @@ export default class MultiSelectInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            placeholder: this.getInputPlaceholder(nextProps),
-        });
+        const {
+            value: oldValue,
+            placeholder: oldPlaceholder,
+        } = this.props;
+
+        if (nextProps.value !== oldValue || nextProps.placeholder !== oldPlaceholder) {
+            this.setState({
+                placeholder: this.getInputPlaceholder(nextProps),
+            });
+        }
     }
 
     getValue = () => this.props.value
