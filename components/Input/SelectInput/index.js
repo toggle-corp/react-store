@@ -28,7 +28,6 @@ export default class SelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            isFocused: false,
             inputValue: this.getActiveOptionLabel(props),
             displayOptions: props.options,
         };
@@ -68,19 +67,9 @@ export default class SelectInput extends React.PureComponent {
     )
 
     handleOptionContainerBlur = () => {
-        const {
-            keySelector,
-            labelSelector,
-            options,
-            value,
-        } = this.props;
+        const { options } = this.props;
 
-        let inputValue;
-        if (value) {
-            inputValue = labelSelector(options.find(d => keySelector(d) === value));
-        } else {
-            inputValue = '';
-        }
+        const inputValue = this.getActiveOptionLabel(this.props);
 
         this.setState({
             showOptions: false,
@@ -96,9 +85,11 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         this.setState({
+            inputValue: this.getActiveOptionLabel(this.props),
             showOptions: false,
         });
 
+        // Don't call onChange if value is not changed
         if (key !== value) {
             onChange(key);
         }
@@ -111,7 +102,7 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         if (value) {
-            onChange();
+            onChange(undefined);
         }
     }
 
@@ -124,12 +115,12 @@ export default class SelectInput extends React.PureComponent {
 
         return (
             <input
+                ref={(el) => { this.input = el; }}
                 className={`input ${styles.input}`}
                 disabled={disabled}
                 onChange={this.handleInputChange}
                 onClick={() => { handleInputClick(this); }}
                 placeholder={placeholder}
-                ref={(el) => { this.input = el; }}
                 type="text"
                 value={inputValue}
             />
@@ -142,8 +133,8 @@ export default class SelectInput extends React.PureComponent {
             value,
             hideClearButton,
         } = this.props;
-        const showClearButton = value && !(hideClearButton || disabled);
         const ClearButton = renderClearButton;
+        const showClearButton = value && !(hideClearButton || disabled);
 
         return (
             <div className={`actions ${styles.actions}`}>
@@ -152,7 +143,11 @@ export default class SelectInput extends React.PureComponent {
                     styles={styles}
                     parent={this}
                 />
-                <span className={`dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`} />
+                <span
+                    className={
+                        `dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`
+                    }
+                />
             </div>
         );
     }

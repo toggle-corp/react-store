@@ -30,7 +30,6 @@ export default class MultiSelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            isFocused: false,
             inputValue: '',
             placeholder: this.getInputPlaceholder(props),
             displayOptions: props.options,

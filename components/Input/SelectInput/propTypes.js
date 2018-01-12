@@ -10,7 +10,6 @@ export const keyPropType = PropTypes.oneOfType([
 export const selectInputCommonPropTypes = {
     hideClearButton: PropTypes.bool,
     className: PropTypes.string,
-    clearable: PropTypes.bool,
     disabled: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
@@ -29,7 +28,6 @@ export const selectInputCommonPropTypes = {
 export const selectInputCommonDefaultProps = {
     hideClearButton: false,
     className: '',
-    clearable: true,
     disabled: false,
     error: undefined,
     hint: undefined,

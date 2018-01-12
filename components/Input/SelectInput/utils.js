@@ -4,6 +4,7 @@ import { FloatingContainer } from '../../View';
 import { iconNames } from '../../../constants';
 
 import {
+    caseInsensitiveSubmatch,
     calcFloatingPositionInMainWindow,
     getRatingForContentInString,
 } from '../../../utils/common';
@@ -72,9 +73,10 @@ export const handleInputValueChange = (parent, value) => {
         labelSelector,
     } = parent.props;
 
-    const displayOptions = options.filter(option => (
-        labelSelector(option).toLowerCase().includes(value.toLowerCase())
-    ));
+
+    const displayOptions = options.filter(option =>
+        caseInsensitiveSubmatch(labelSelector(option), value),
+    );
 
     displayOptions.sort((a, b) => (
         getRatingForContentInString(value, labelSelector(a))
@@ -99,6 +101,7 @@ export const handleInputClick = (parent) => {
     }
 
     parent.setState({
+        displayOptions: parent.props.options,
         showOptions: true,
     });
 };

@@ -429,6 +429,7 @@ export const calcFloatingPositionInMainWindow = (parentRect, contentRect, offset
     };
 };
 
+// FIXME: handle undefined conditions
 // rates the string for content
 export const getRatingForContentInString = (content, str) => (
     content.toLowerCase().indexOf(str.toLowerCase())
