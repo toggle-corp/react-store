@@ -1,34 +1,37 @@
 import React from 'react';
 
-import { iconNames } from '../../../constants';
+import { iconNames } from '../../../../constants';
 
 import styles from './styles.scss';
 import {
-    singleSelectInputPropTypes,
-    singleSelectInputDefaultProps,
-} from './propTypes';
+    emptyList,
+    multiSelectInputPropTypes,
+    multiSelectInputDefaultProps,
+} from '../propTypes';
+
 import {
     getClassName,
     getOptionClassName,
     renderLabel,
-    renderHintAndError,
     renderOptions,
+    renderHintAndError,
     isOptionActive,
     handleInputValueChange,
-    handleInputClick,
     getOptionsContainerPosition,
+    handleInputClick,
     renderClearButton,
-} from './utils';
+} from '../utils';
 
-export default class SelectInput extends React.PureComponent {
-    static propTypes = singleSelectInputPropTypes;
-    static defaultProps = singleSelectInputDefaultProps;
+export default class MultiSelectInput extends React.PureComponent {
+    static propTypes = multiSelectInputPropTypes;
+    static defaultProps = multiSelectInputDefaultProps;
 
     constructor(props) {
         super(props);
 
         this.state = {
-            inputValue: this.getActiveOptionLabel(props),
+            inputValue: '',
+            placeholder: this.getInputPlaceholder(props),
             displayOptions: props.options,
         };
     }
@@ -36,28 +39,29 @@ export default class SelectInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const {
             value: oldValue,
-            options: oldOptions,
+            placeholder: oldPlaceholder,
         } = this.props;
 
-        if (nextProps.value !== oldValue || nextProps.options !== oldOptions) {
+        if (nextProps.value !== oldValue || nextProps.placeholder !== oldPlaceholder) {
             this.setState({
-                inputValue: this.getActiveOptionLabel(nextProps),
+                placeholder: this.getInputPlaceholder(nextProps),
             });
         }
     }
 
     getValue = () => this.props.value
 
-    getActiveOptionLabel = (props) => {
+    getInputPlaceholder = (props) => {
         const {
             value,
-            labelSelector,
-            keySelector,
-            options,
+            placeholder,
         } = props;
 
-        const activeOption = options.find(d => keySelector(d) === value);
-        return (activeOption && labelSelector(activeOption)) || '';
+        if (value.length > 0) {
+            return `${value.length} selected`;
+        }
+
+        return placeholder;
     }
 
     handleInputChange = (e) => { handleInputValueChange(this, e.target.value); }
@@ -67,14 +71,15 @@ export default class SelectInput extends React.PureComponent {
     )
 
     handleOptionContainerBlur = () => {
-        const { options } = this.props;
-
-        const inputValue = this.getActiveOptionLabel(this.props);
+        const {
+            options,
+        } = this.props;
 
         this.setState({
             showOptions: false,
             displayOptions: options,
-            inputValue,
+            inputValue: '',
+            placeholder: this.getInputPlaceholder(this.props),
         });
     }
 
@@ -84,46 +89,80 @@ export default class SelectInput extends React.PureComponent {
             onChange,
         } = this.props;
 
-        this.setState({
-            inputValue: this.getActiveOptionLabel(this.props),
-            showOptions: false,
-        });
+        const newValue = [...value];
+        const optionIndex = newValue.findIndex(d => d === key);
 
-        // Don't call onChange if value is not changed
-        if (key !== value) {
-            onChange(key);
+        if (optionIndex === -1) {
+            newValue.push(key);
+        } else {
+            newValue.splice(optionIndex, 1);
         }
+
+        onChange(newValue);
+    }
+
+    handleSelectAllButtonClick = () => {
+        const {
+            options,
+            keySelector,
+            onChange,
+        } = this.props;
+
+        const newValue = options.map(d => keySelector(d));
+        onChange(newValue);
     }
 
     handleClearButtonClick = () => {
-        const {
-            onChange,
-            value,
-        } = this.props;
-
-        if (value) {
-            onChange(undefined);
-        }
+        const { onChange } = this.props;
+        onChange(emptyList);
     }
 
     renderInput = () => {
+        const { disabled } = this.props;
         const {
-            disabled,
+            inputValue,
             placeholder,
-        } = this.props;
-        const { inputValue } = this.state;
+        } = this.state;
 
         return (
             <input
-                ref={(el) => { this.input = el; }}
                 className={`input ${styles.input}`}
                 disabled={disabled}
                 onChange={this.handleInputChange}
                 onClick={() => { handleInputClick(this); }}
                 placeholder={placeholder}
+                ref={(el) => { this.input = el; }}
                 type="text"
                 value={inputValue}
             />
+        );
+    }
+
+    renderSelectAllButton = () => {
+        const {
+            value,
+            options,
+            disabled,
+            hideSelectAllButton,
+        } = this.props;
+        const showSelectAllButton = !(
+            hideSelectAllButton || disabled || value.length === options.length
+        );
+
+        if (!showSelectAllButton) {
+            return null;
+        }
+
+        return (
+            <button
+                className={`select-all-button ${styles['select-all-button']}`}
+                onClick={this.handleSelectAllButtonClick}
+                title="Select all options"
+                disabled={this.props.disabled}
+                type="button"
+            >
+                <span className={iconNames.checkAll} />
+            </button>
         );
     }
 
@@ -133,23 +172,34 @@ export default class SelectInput extends React.PureComponent {
             value,
             hideClearButton,
         } = this.props;
+        const showClearButton = !(hideClearButton || disabled || value.length === 0);
         const ClearButton = renderClearButton;
-        const showClearButton = value && !(hideClearButton || disabled);
+        const SelectAllButton = this.renderSelectAllButton;
 
         return (
             <div className={`actions ${styles.actions}`}>
+                <SelectAllButton />
                 <ClearButton
                     show={showClearButton}
                     styles={styles}
                     parent={this}
                 />
-                <span
-                    className={
-                        `dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`
-                    }
-                />
+                <span className={`dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`} />
             </div>
         );
+    }
+
+    renderCheckbox = (p) => {
+        const { active } = p;
+        const classNames = ['checkbox', styles.checkbox];
+
+        if (active) {
+            classNames.push(iconNames.checkbox);
+        } else {
+            classNames.push(iconNames.checkboxOutlineBlank);
+        }
+
+        return <span className={classNames.join(' ')} />;
     }
 
     renderOption = (p) => {
@@ -160,19 +210,22 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
         const { option } = p;
         const key = keySelector(option);
+        const active = isOptionActive(key, value);
+        const Checkbox = this.renderCheckbox;
 
         return (
             <button
-                className={getOptionClassName(styles, isOptionActive(key, [value]))}
+                className={getOptionClassName(styles, active)}
                 onClick={() => { this.handleOptionClick(key); }}
             >
+                <Checkbox active={active} />
                 { labelSelector(option) }
             </button>
         );
     }
 
     render() {
-        const className = getClassName(styles, 'single-select-input', this.state, this.props);
+        const className = getClassName(styles, 'multi-select-input', this.state, this.props);
         const Label = renderLabel;
         const Input = this.renderInput;
         const Actions = this.renderActions;
@@ -204,5 +257,3 @@ export default class SelectInput extends React.PureComponent {
         );
     }
 }
-
-export { default as MultiSelectInput } from './MultiSelectInput';

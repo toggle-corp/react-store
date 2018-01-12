@@ -47,6 +47,7 @@ const iconNames = {
     user: 'ion-android-contact',
     warning: 'ion-alert-circled',
     wrench: 'ion-wrench',
+    checkAll: 'ion-android-done-all',
 };
 
 export default iconNames;

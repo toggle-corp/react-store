@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '../../../../stylesheets/base';
 
 %default-input-style {
     outline: none;
@@ -8,7 +8,7 @@
     font-size: inherit;
 }
 
-.single-select-input {
+.multi-select-input {
     .label {
         width: 100%;
         text-transform: uppercase;
@@ -45,7 +45,7 @@
             right: $spacing-small;
             transform: translateY(-50%);
 
-            .clear-button {
+            %action-button {
                 @extend %default-input-style;
                 display: none;
                 margin: 0;
@@ -53,9 +53,21 @@
                 padding: 0 $spacing-small;
                 color: $color-placeholder;
                 font-size: $font-size-medium;
+            }
+
+            .clear-button {
+                @extend %action-button;
 
                 &:hover {
                     color: $color-danger;
+                }
+            }
+
+            .select-all-button {
+                @extend %action-button;
+
+                &:hover {
+                    color: $color-info;
                 }
             }
 
@@ -67,7 +79,8 @@
 
         &:hover {
             .actions {
-                .clear-button {
+                .clear-button,
+                .select-all-button {
                     display: inline-block;
                 }
             }
@@ -97,6 +110,14 @@
 
         .label {
             color: $color-danger;
+        }
+    }
+
+    &.filled {
+        .input-wrapper {
+            .input::placeholder {
+                color: $color-text;
+            }
         }
     }
 
@@ -152,13 +173,13 @@
         width: 100%;
         text-align: left;
 
-        &:hover {
-            background-color: $color-background-hover;
+        .checkbox {
+            margin-right: $spacing-small;
+            color: $color-accent;
         }
 
-        &.active {
-            background-color: $color-accent;
-            color: $color-text-on-accent;
+        &:hover {
+            background-color: $color-background-hover;
         }
     }
 

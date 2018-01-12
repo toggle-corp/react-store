@@ -1,8 +1,6 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import {
     ModalHeader,
     ModalBody,
@@ -14,53 +12,25 @@ import {
     PrimaryButton,
 } from '../../Action';
 
-import FloatingContainer from '../FloatingContainer';
+import Modal from './';
+import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * child elements
-     */
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
         PropTypes.element,
     ]).isRequired,
-
-    /**
-     * required for style override
-     */
     className: PropTypes.string,
-
-    /**
-     * Should modal close on escape?
-     */
-    closeOnEscape: PropTypes.bool,
-
-    /**
-     * Should modal close on outside click?
-     */
-    closeOnBlur: PropTypes.bool,
-
-    /**
-     * A callback when the modal is closed
-     */
     onClose: PropTypes.func.isRequired,
-
     title: PropTypes.string,
-
-    /**
-     * show modal ?
-     */
     show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    closeOnEscape: false,
-    closeOnBlur: false,
     title: 'Confirm',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Confirm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -80,33 +50,6 @@ export default class Confirm extends React.PureComponent {
     }
 
     getContent = () => ([
-        <ModalHeader
-            key="header"
-            title={this.props.title}
-        />,
-        <ModalBody
-            key="body"
-        >
-            { this.props.children }
-        </ModalBody>,
-        <ModalFooter
-            key="footer"
-        >
-            <Button
-                styleName="cancel-button"
-                className="cancel-button"
-                onClick={this.handleCancelButtonClick}
-            >
-               Cancel
-            </Button>
-            <PrimaryButton
-                styleName="ok-button"
-                className="ok-button"
-                onClick={this.handleOkButtonClick}
-            >
-                Ok
-            </PrimaryButton>
-        </ModalFooter>,
     ])
 
     handleOkButtonClick = () => {
@@ -133,22 +76,36 @@ export default class Confirm extends React.PureComponent {
     }
 
     render() {
+        const {
+            className,
+            children,
+            title,
+        } = this.props;
+
         return (
-            <FloatingContainer
+            <Modal
                 show={this.state.show}
-                onClose={this.handleClose}
-                containerId="modal-container"
-                closeOnEscape={this.props.closeOnEscape}
-                closeOnBlur={this.props.closeOnBlur}
-                className={`${this.props.className} modal-wrapper`}
+                className={`${className} confirm ${styles.confirm}`}
             >
-                <div
-                    className="confirm-content"
-                    styleName="confirm-content"
-                >
-                    { this.getContent() }
-                </div>
-            </FloatingContainer>
+                <ModalHeader title={title} />
+                <ModalBody>
+                    { children }
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        className={`cancel-button ${styles['cancel-button']}`}
+                        onClick={this.handleCancelButtonClick}
+                    >
+                        Cancel
+                    </Button>
+                    <PrimaryButton
+                        className={`ok-button ${styles['ok-button']}`}
+                        onClick={this.handleOkButtonClick}
+                    >
+                        Ok
+                    </PrimaryButton>
+                </ModalFooter>
+            </Modal>
         );
     }
 }

@@ -13,49 +13,21 @@ import {
     PrimaryButton,
 } from '../../Action';
 
-import FloatingContainer from '../FloatingContainer';
+import Modal from './';
 
 const propTypes = {
-    /**
-     * child elements
-     */
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
         PropTypes.element,
     ]).isRequired,
-
-    /**
-     * required for style override
-     */
     className: PropTypes.string,
-
-    /**
-     * Should modal close on escape?
-     */
-    closeOnEscape: PropTypes.bool,
-
-    /**
-     * Should modal close on outside click?
-     */
-    closeOnBlur: PropTypes.bool,
-
-    /**
-     * A callback when the modal is closed
-     */
     onClose: PropTypes.func.isRequired,
-
     title: PropTypes.string,
-
-    /**
-     * show modal ?
-     */
     show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    closeOnEscape: false,
-    closeOnBlur: false,
     title: 'Alert',
 };
 
@@ -78,29 +50,6 @@ export default class Alert extends React.PureComponent {
         });
     }
 
-    getContent = () => ([
-        <ModalHeader
-            key="header"
-            title={this.props.title}
-        />,
-        <ModalBody
-            key="body"
-        >
-            { this.props.children }
-        </ModalBody>,
-        <ModalFooter
-            key="footer"
-        >
-            <PrimaryButton
-                styleName="ok-button"
-                className="ok-button"
-                onClick={this.handleOkButtonClick}
-            >
-                Ok
-            </PrimaryButton>
-        </ModalFooter>,
-    ])
-
     handleOkButtonClick = () => {
         this.setState({
             show: false,
@@ -115,22 +64,30 @@ export default class Alert extends React.PureComponent {
     }
 
     render() {
+        const {
+            className,
+            children,
+            title,
+        } = this.props;
+
         return (
-            <FloatingContainer
+            <Modal
                 show={this.state.show}
-                onClose={this.handleClose}
-                containerId="modal-container"
-                closeOnEscape={this.props.closeOnEscape}
-                closeOnBlur={this.props.closeOnBlur}
-                className={`${this.props.className} modal-wrapper`}
+                className={`${className} alert ${styles.alert}`}
             >
-                <div
-                    className="alert-content"
-                    styleName="alert-content"
-                >
-                    { this.getContent() }
-                </div>
-            </FloatingContainer>
+                <ModalHeader title={title} />
+                <ModalBody>
+                    { children }
+                </ModalBody>
+                <ModalFooter>
+                    <PrimaryButton
+                        className={`ok-button ${styles['ok-button']}`}
+                        onClick={this.handleOkButtonClick}
+                    >
+                        Ok
+                    </PrimaryButton>
+                </ModalFooter>
+            </Modal>
         );
     }
 }

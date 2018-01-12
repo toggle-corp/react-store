@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FloatingContainer } from '../../View';
+import Portal from '../Portal';
 import { TransparentButton } from '../../Action';
 import { iconNames } from '../../../constants';
 
@@ -116,10 +116,6 @@ export default class Toast extends React.Component {
         return iconMap[type];
     }
 
-    handleContainerClose = () => {
-        // no-op
-    }
-
     closeNotification = () => {
         const { onClose } = this.props;
         this.setState({ shown: false });
@@ -141,47 +137,43 @@ export default class Toast extends React.Component {
         const { notification } = this.state;
 
         return (
-            <FloatingContainer
-                styleName={this.getStyleName()}
-                containerId="toast"
-                onClose={this.handleContainerClose}
-                ref={(el) => { this.container = el; }}
-                show
-            >
-                {
-                    notification && (
-                        <div styleName="container">
-                            <header styleName="header">
-                                <h4 styleName="heading">
-                                    { notification.title }
-                                </h4>
-                                {
-                                    notification.dismissable && (
-                                        <TransparentButton
-                                            onClick={this.handleDissmissButtonClick}
-                                            styleName="close-button"
-                                        >
-                                            <span className={iconNames.close} />
-                                        </TransparentButton>
-                                    )
-                                }
-                            </header>
-                            <div styleName="main-content">
-                                <span
-                                    styleName="icon"
-                                    className={this.getIconName()}
-                                />
-                                <div styleName="message">
-                                    { notification.message }
-                                </div>
-                                <div styleName="action-buttons">
-                                    { notification.actionButtons }
+            <Portal>
+                <div styleName={this.getStyleName()}>
+                    {
+                        notification && (
+                            <div styleName="container">
+                                <header styleName="header">
+                                    <h4 styleName="heading">
+                                        { notification.title }
+                                    </h4>
+                                    {
+                                        notification.dismissable && (
+                                            <TransparentButton
+                                                styleName="close-button"
+                                                onClick={this.handleDissmissButtonClick}
+                                            >
+                                                <span className={iconNames.close} />
+                                            </TransparentButton>
+                                        )
+                                    }
+                                </header>
+                                <div styleName="main-content">
+                                    <span
+                                        styleName="icon"
+                                        className={this.getIconName()}
+                                    />
+                                    <div styleName="message">
+                                        { notification.message }
+                                    </div>
+                                    <div styleName="action-buttons">
+                                        { notification.actionButtons }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )
-                }
-            </FloatingContainer>
+                        )
+                    }
+                </div>
+            </Portal>
         );
     }
 }

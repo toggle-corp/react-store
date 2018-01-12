@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
-
-.floating-container-wrap {
-    width: 100%;
-    height: 100%;
+.floating-container {
+    @include shadow-medium;
+    position: absolute;
+    z-index: 11;
+    border: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
 }

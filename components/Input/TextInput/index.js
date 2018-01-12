@@ -206,13 +206,12 @@ export default class TextInput extends React.PureComponent {
             >
                 {
                     showLabel && (
-                        <label
+                        <div
                             className="label"
-                            htmlFor={this.inputId}
                             styleName="label"
                         >
                             {label}
-                        </label>
+                        </div>
                     )
                 }
                 <input

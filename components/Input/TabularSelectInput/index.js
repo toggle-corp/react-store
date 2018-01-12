@@ -6,7 +6,7 @@ import {
     TransparentButton,
 } from '../../Action';
 import {
-    SelectInput,
+    MultiSelectInput,
 } from '../../Input';
 
 import {
@@ -253,7 +253,7 @@ export default class TabularSelectInput extends React.PureComponent {
                 className={`${className} tabular-select-input`}
                 styleName="tabular-select-input"
             >
-                <SelectInput
+                <MultiSelectInput
                     styleName="select"
                     value={selectedOptionsKeys}
                     options={validOptions}
@@ -261,7 +261,6 @@ export default class TabularSelectInput extends React.PureComponent {
                     labelSelector={labelSelector}
                     optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
-                    multiple
                 />
                 <div styleName="table-container">
                     <Table

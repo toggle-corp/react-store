@@ -2,48 +2,20 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FloatingContainer from '../FloatingContainer';
+import Portal from '../Portal';
 import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * child elements
-     */
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
         PropTypes.element,
     ]).isRequired,
-
-    /**
-     * required for style override
-     */
     className: PropTypes.string,
-
-    /**
-     * Should modal close on escape?
-     */
-    closeOnEscape: PropTypes.bool,
-
-    /**
-     * Should modal close on outside click?
-     */
-    closeOnBlur: PropTypes.bool,
-
-    /**
-     * A callback when the modal is closed
-     */
-    onClose: PropTypes.func.isRequired,
-
-    /**
-     * show modal ?
-     */
     show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    closeOnEscape: false,
-    closeOnBlur: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -51,23 +23,55 @@ export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        this.syncViewWithBody(props.show);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { show: newShow } = nextProps;
+        const { show: oldShow } = this.props;
+
+        if (newShow !== oldShow) {
+            this.syncViewWithBody(newShow);
+        }
+    }
+
+    getClassName = () => {
+        const { className } = this.props;
+        const classNames = [className, 'modal', styles.modal];
+        return classNames.join(' ');
+    }
+
+    syncViewWithBody = (show) => {
+        const shownClassName = 'modal-shown';
+        const classNames = document.body.className.split(' ');
+
+        if (show) {
+            classNames.push(shownClassName);
+        } else {
+            const index = classNames.findIndex(d => d === shownClassName);
+            if (index !== -1) {
+                classNames.splice(index, 1);
+            }
+        }
+
+        document.body.className = classNames.join(' ');
+    }
+
     render() {
+        const { show } = this.props;
+
+        if (!show) {
+            return null;
+        }
+
         return (
-            <FloatingContainer
-                show={this.props.show}
-                onClose={this.props.onClose}
-                containerId="modal-container"
-                closeOnEscape={this.props.closeOnEscape}
-                closeOnBlur={this.props.closeOnBlur}
-                className={`${this.props.className} modal-wrapper`}
-            >
-                <div
-                    className="modal-content"
-                    styleName="modal-content"
-                >
+            <Portal>
+                <div className={this.getClassName()}>
                     { this.props.children }
                 </div>
-            </FloatingContainer>
+            </Portal>
         );
     }
 }

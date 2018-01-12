@@ -10,8 +10,9 @@ import {
 
 // VALIDATION RULES
 export const requiredCondition = {
-    truth: value => !isFalsy(value) && (
-        !(typeof value === 'string') || splitInWhitespace(value).length > 0
+    truth: value => !isFalsy(value) && !(
+        ((typeof value === 'string') && (splitInWhitespace(value).length <= 0)) ||
+        (Array.isArray(value) && (value.length <= 0))
     ),
     message: 'Field must not be empty',
 };

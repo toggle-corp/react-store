@@ -3,10 +3,28 @@
 
 $width-modal-small: 420px !default;
 
-:global .modal-wrapper {
-    display: flex;
-    align-items: center;
-    height: 100vh;
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fade-in-from-top .3s ease;
+    box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-normal;
+    background-color: $color-foreground;
+    width: $width-modal-medium;
+    max-height: 96vh;
+}
+
+@keyframes fade-in-from-top {
+    from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
 }
 
 %modal-basic {
@@ -16,14 +34,8 @@ $width-modal-small: 420px !default;
     background-color: $color-foreground;
 }
 
-.modal-content {
-    @extend %modal-basic;
-    width: $width-modal-medium;
-    max-height: 96vh;
-}
-
-.alert-content,
-.confirm-content {
+.alert,
+.confirm {
     @extend %modal-basic;
     width: $width-modal-small;
 
