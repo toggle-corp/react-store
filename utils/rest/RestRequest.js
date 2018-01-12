@@ -37,6 +37,7 @@ export default class RestRequest {
     constructor(
         url, params, success, failure, fatal, abort, preLoad, postLoad,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
+        pollTime = -1, maxPollAttempts = -1,
         delay = 0,
     ) {
         const createWarningFn = text => () => {
@@ -74,17 +75,28 @@ export default class RestRequest {
         this.postLoad = postLoadFn;
 
         this.retryTime = retryTime;
-        this.maxRetryTime = maxRetryTime;
         this.decay = decay;
+        this.maxRetryTime = maxRetryTime;
         this.maxRetryAttempts = maxRetryAttempts;
+
+        this.pollTime = pollTime;
+        this.maxPollAttempts = maxPollAttempts;
+
         this.delay = delay;
 
         if (maxRetryAttempts > 0 && this.retryTime <= 0 && this.decay <= 0) {
-            throw new Error('RestRequest is not configured properly.');
+            throw new Error('RestRequest is not configured properly for retry.');
+        }
+        if (maxPollAttempts > 0 && this.pollTime <= 0) {
+            throw new Error('RestRequest is not configured properly for poll.');
         }
 
         this.retryCount = 1;
         this.retryId = null;
+
+        this.pollCount = 1;
+        this.pollId = null;
+
         this.aborted = false;
     }
 
@@ -121,6 +133,21 @@ export default class RestRequest {
         }
         this.retryId = setTimeout(this.internalStart, time);
         this.retryCount += 1;
+        return true;
+    }
+
+    /* Call this.start again */
+    poll = () => {
+        if (this.maxPollAttempts <= 0) {
+            return false;
+        }
+        if (this.pollCount > this.maxPollAttempts) {
+            console.warn(`Max no. of polls exceeded ${this.url}`, this.parameters);
+            return false;
+        }
+        console.warn('Polling');
+        this.pollId = setTimeout(this.internalStart, this.pollTime);
+        this.pollCount += 1;
         return true;
     }
 
@@ -182,6 +209,8 @@ export default class RestRequest {
         console.log(`Recieving ${this.url}`, responseBody);
         if (response.ok) {
             this.success(responseBody);
+            // NOTE: poll will stop eventually
+            this.poll();
             return;
         }
 
@@ -202,6 +231,8 @@ export default class RestRequest {
     /* Stop any retry action */
     stop = () => {
         clearTimeout(this.retryId);
+        clearTimeout(this.pollId);
+        this.pollCount = 1;
         this.retryCount = 1;
         this.aborted = true;
         // NOTE: fetch is not really aborted, just ignored
