@@ -8,6 +8,7 @@ $width-modal-small: 420px !default;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    animation: fade-in-from-top .3s ease;
     box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-normal;
     background-color: $color-foreground;
     width: $width-modal-medium;
