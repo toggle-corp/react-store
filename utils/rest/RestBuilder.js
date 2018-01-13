@@ -48,10 +48,17 @@ export default class RestBuilder {
 
     pollTime(val) {
         this.pollTimeVal = val;
+        return this;
     }
 
     maxPollAttempts(val) {
         this.maxPollAttemptsVal = val;
+        return this;
+    }
+
+    shouldPoll(fn) {
+        this.shouldPollFn = fn;
+        return this;
     }
 
     retryTime(val) {
@@ -95,6 +102,7 @@ export default class RestBuilder {
             this.maxRetryAttemptsVal,
             this.pollTimeVal,
             this.maxPollAttemptsVal,
+            this.shouldPollFn,
             this.delayVal,
         );
     }

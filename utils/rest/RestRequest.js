@@ -37,7 +37,7 @@ export default class RestRequest {
     constructor(
         url, params, success, failure, fatal, abort, preLoad, postLoad,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
-        pollTime = -1, maxPollAttempts = -1,
+        pollTime = -1, maxPollAttempts = -1, shouldPoll,
         delay = 0,
     ) {
         const createWarningFn = text => () => {
@@ -81,13 +81,14 @@ export default class RestRequest {
 
         this.pollTime = pollTime;
         this.maxPollAttempts = maxPollAttempts;
+        this.shouldPoll = shouldPoll;
 
         this.delay = delay;
 
         if (maxRetryAttempts > 0 && this.retryTime <= 0 && this.decay <= 0) {
             throw new Error('RestRequest is not configured properly for retry.');
         }
-        if (maxPollAttempts > 0 && this.pollTime <= 0) {
+        if (maxPollAttempts > 0 && (this.pollTime <= 0 || !shouldPoll)) {
             throw new Error('RestRequest is not configured properly for poll.');
         }
 
@@ -208,9 +209,13 @@ export default class RestRequest {
         // DEBUG:
         console.log(`Recieving ${this.url}`, responseBody);
         if (response.ok) {
-            this.success(responseBody);
-            // NOTE: poll will stop eventually
-            this.poll();
+            // NOTE: clear out old retryCount
+            this.retryCount = 1;
+            if (this.shouldPoll(responseBody)) {
+                this.poll();
+            } else {
+                this.success(responseBody);
+            }
             return;
         }
 
