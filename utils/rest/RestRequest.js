@@ -211,7 +211,7 @@ export default class RestRequest {
         if (response.ok) {
             // NOTE: clear out old retryCount
             this.retryCount = 1;
-            if (this.shouldPoll(responseBody)) {
+            if (this.shouldPoll && this.shouldPoll(responseBody)) {
                 this.poll();
             } else {
                 this.success(responseBody);
