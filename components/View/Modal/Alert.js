@@ -70,11 +70,14 @@ export default class Alert extends React.PureComponent {
             title,
         } = this.props;
 
+        const { show } = this.state;
+
+        if (!show) {
+            return null;
+        }
+
         return (
-            <Modal
-                show={this.state.show}
-                className={`${className} alert ${styles.alert}`}
-            >
+            <Modal className={`${className} alert ${styles.alert}`}>
                 <ModalHeader title={title} />
                 <ModalBody>
                     { children }

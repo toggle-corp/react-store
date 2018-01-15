@@ -82,11 +82,14 @@ export default class Confirm extends React.PureComponent {
             title,
         } = this.props;
 
+        const { show } = this.state;
+
+        if (!show) {
+            return null;
+        }
+
         return (
-            <Modal
-                show={this.state.show}
-                className={`${className} confirm ${styles.confirm}`}
-            >
+            <Modal className={`${className} confirm ${styles.confirm}`}>
                 <ModalHeader title={title} />
                 <ModalBody>
                     { children }
