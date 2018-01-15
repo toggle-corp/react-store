@@ -79,6 +79,10 @@ const propTypes = {
      */
     headers: TableHeaderPropTypes.isRequired,
 
+    expandRowId: propTypeKey,
+
+    expandedRowModifier: PropTypes.func,
+
     /**
      * A function that returns key from the row data
      */
@@ -110,6 +114,8 @@ const defaultProps = {
     onBodyClick: undefined,
     onDataSort: undefined,
     emptyComponent: undefined,
+    expandRowId: undefined,
+    expandedRowModifier: undefined,
 };
 
 // TODO: move to common
@@ -308,6 +314,8 @@ export default class Table extends React.PureComponent {
             onBodyClick,
             onDataSort,
             emptyComponent,
+            expandRowId,
+            expandedRowModifier,
         } = this.props;
 
         const {
@@ -331,6 +339,8 @@ export default class Table extends React.PureComponent {
                 onBodyClick={onBodyClick}
                 onDataSort={onDataSort}
                 emptyComponent={emptyComponent}
+                expandRowId={expandRowId}
+                expandedRowModifier={expandedRowModifier}
             />
         );
     }

@@ -34,6 +34,10 @@ const propTypes = {
 
     headerModifier: PropTypes.func,
 
+    expandRowId: propTypeKey,
+
+    expandedRowModifier: PropTypes.func,
+
     /**
      * keyExtractor is used to get a unique key associated with rowData
      */
@@ -67,6 +71,9 @@ const defaultProps = {
     highlightRowKey: undefined,
 
     onDataSort: undefined,
+
+    expandRowId: undefined,
+    expandedRowModifier: undefined,
 };
 
 const isArrayEqual = (array1, array2) => (
@@ -135,6 +142,8 @@ export default class RawTable extends React.PureComponent {
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
+            expandRowId,
+            expandedRowModifier,
         } = this.props;
 
         return (
@@ -150,12 +159,14 @@ export default class RawTable extends React.PureComponent {
                 <Body
                     data={data}
                     dataModifier={dataModifier}
+                    expandedRowModifier={expandedRowModifier}
                     headers={headers}
                     keyExtractor={keyExtractor}
                     onClick={onBodyClick}
                     highlightCellKey={highlightCellKey}
                     highlightRowKey={highlightRowKey}
                     highlightColumnKey={highlightColumnKey}
+                    expandRowId={expandRowId}
                 />
             </table>
         );
