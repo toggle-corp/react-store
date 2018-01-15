@@ -11,6 +11,11 @@ import {
 
 import styles from './styles.scss';
 
+const propTypeKey = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+]);
+
 const propTypes = {
     areCellsHoverable: PropTypes.bool,
 
@@ -29,6 +34,10 @@ const propTypes = {
 
     dataModifier: PropTypes.func,
 
+    expandRowId: propTypeKey,
+
+    expandedRowModifier: PropTypes.func,
+
     headers: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string,
@@ -36,13 +45,13 @@ const propTypes = {
     ).isRequired,
 
     highlightCellKey: PropTypes.shape({
-        columnKey: PropTypes.string,
-        rowKey: PropTypes.string,
+        columnKey: propTypeKey,
+        rowKey: propTypeKey,
     }),
 
-    highlightRowKey: PropTypes.string,
+    highlightRowKey: propTypeKey,
 
-    highlightColumnKey: PropTypes.string,
+    highlightColumnKey: propTypeKey,
 
     /**
      * keyExtractor is used to get a unique key associated with rowData
@@ -63,6 +72,8 @@ const defaultProps = {
     highlighted: false,
     hoverable: false,
     onClick: undefined,
+    expandRowId: undefined,
+    expandedRowModifier: undefined,
 };
 
 
@@ -125,6 +136,8 @@ export default class Body extends React.PureComponent {
             highlightCellKey,
             highlightColumnKey,
             highlightRowKey,
+            expandRowId,
+            expandedRowModifier,
         } = this.props;
 
         let cellKey;
@@ -132,7 +145,7 @@ export default class Body extends React.PureComponent {
             cellKey = highlightCellKey.columnKey;
         }
 
-        return (
+        return ([
             <Row
                 areCellsHoverable={areCellsHoverable}
                 dataModifier={dataModifier}
@@ -145,8 +158,18 @@ export default class Body extends React.PureComponent {
                 onClick={this.handleRowClick}
                 rowData={rowData}
                 uniqueKey={key}
-            />
-        );
+            />,
+            expandRowId === key ? (
+                <tr
+                    className={`${styles.row} expanded-row row`}
+                    key={`${key}-expanded`}
+                >
+                    <td colSpan={headers.length} >
+                        {expandedRowModifier(rowData)}
+                    </td>
+                </tr>
+            ) : null,
+        ]);
     }
 
     handleRowClick = (rowKey, cellKey, e) => {

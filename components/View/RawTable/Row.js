@@ -10,6 +10,11 @@ import {
 
 import styles from './styles.scss';
 
+const propTypeKey = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+]);
+
 const propTypes = {
     areCellsHoverable: PropTypes.bool,
 
@@ -23,16 +28,8 @@ const propTypes = {
         }),
     ).isRequired,
 
-    highlightCellKey: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
-
-    highlightColumnKey: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
-
+    highlightCellKey: propTypeKey,
+    highlightColumnKey: propTypeKey,
     highlighted: PropTypes.bool,
 
     hoverable: PropTypes.bool,
