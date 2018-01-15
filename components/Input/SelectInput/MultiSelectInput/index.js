@@ -20,6 +20,7 @@ import {
     getOptionsContainerPosition,
     handleInputClick,
     renderClearButton,
+    filterAndSortOptions,
 } from '../utils';
 
 export default class MultiSelectInput extends React.PureComponent {
@@ -36,16 +37,57 @@ export default class MultiSelectInput extends React.PureComponent {
         };
     }
 
+    componentWillMount() {
+        const result = this.validateValue(this.props);
+        if (!result.valid) {
+            this.props.onChange(result.value);
+        }
+    }
+
+    componentDidMount() {
+        if (this.container) {
+            this.boundingClientRect = this.container.getBoundingClientRect();
+        } else {
+            setTimeout(() => {
+                this.boundingClientRect = this.container.getBoundingClientRect();
+            }, 0);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         const {
             value: oldValue,
             placeholder: oldPlaceholder,
+            options: oldOptions,
         } = this.props;
 
-        if (nextProps.value !== oldValue || nextProps.placeholder !== oldPlaceholder) {
+        const areValuesEqual = nextProps.value === oldValue;
+        const arePlaceholdersEqual = nextProps.placeholder === oldPlaceholder;
+        const areOptionsEqual = nextProps.options === oldOptions;
+
+        if (!(areValuesEqual && arePlaceholdersEqual)) {
             this.setState({
                 placeholder: this.getInputPlaceholder(nextProps),
             });
+        }
+
+        if (!areOptionsEqual) {
+            const {
+                labelSelector,
+                options,
+            } = nextProps;
+
+            const { inputValue } = this.state;
+            const displayOptions = filterAndSortOptions(options, inputValue, labelSelector);
+            this.setState({ displayOptions });
+        }
+
+        if (!(areValuesEqual && areOptionsEqual)) {
+            const result = this.validateValue(nextProps);
+
+            if (!result.valid) {
+                nextProps.onChange(result.value);
+            }
         }
     }
 
@@ -62,6 +104,28 @@ export default class MultiSelectInput extends React.PureComponent {
         }
 
         return placeholder;
+    }
+
+    validateValue = (prop) => {
+        const {
+            value,
+            options,
+            keySelector,
+        } = prop;
+
+        let valid = true;
+        const validValues = [];
+
+        value.forEach((v) => {
+            const val = options.find(d => keySelector(d) === v);
+            if (val) {
+                validValues.push(val);
+            } else {
+                valid = false;
+            }
+        });
+
+        return { valid, value: validValues };
     }
 
     handleInputChange = (e) => { handleInputValueChange(this, e.target.value); }
