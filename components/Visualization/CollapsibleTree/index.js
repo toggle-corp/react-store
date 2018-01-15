@@ -10,6 +10,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -38,6 +39,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,7 +53,9 @@ const defaultProps = {
         bottom: 100,
         left: 100,
     },
+    loading: false,
 };
+
 /**
  * CollapsibleTree is a tree diagram showing the hierarchical structure of the data.
  */
@@ -268,10 +272,13 @@ export default class CollapsibleTree extends React.PureComponent {
     }
 
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`collapsible-tree-container ${this.props.className}`}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="collapsible-tree"
                     ref={(elem) => { this.svg = elem; }}

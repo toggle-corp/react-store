@@ -11,6 +11,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -46,6 +47,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -65,6 +67,7 @@ const defaultProps = {
     useVoronoi: true,
     className: '',
     colorScheme: schemePaired,
+    loading: false,
 };
 /**
  * Represents the  network of nodes in force layout with many-body force.
@@ -135,7 +138,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
         const tooltip = select(this.container)
             .append('div')
             .attr('class', 'tooltip')
-            .style('position', 'absolute')
             .style('display', 'none')
             .style('z-index', 10);
 
@@ -314,11 +316,14 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .links(data.links);
     }
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`force-directed-graph-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="force-directed-graph"
                     ref={(elem) => { this.svg = elem; }}

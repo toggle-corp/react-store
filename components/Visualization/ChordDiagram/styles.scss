@@ -1,11 +1,12 @@
 @import '../../../stylesheets/base';
 
 :global .chord-diagram-container {
+    position: relative;
     flex-grow: 1;
 
     .tooltip {
         @include shadow-medium;
-        position: absolute;
+        position: fixed;
         background-color: $color-foreground;
         padding: $spacing-small $spacing-medium-alt;
         color: $color-text;

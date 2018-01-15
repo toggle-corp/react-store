@@ -11,6 +11,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -40,6 +41,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -54,6 +56,7 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
+    loading: false,
 };
 
 /**
@@ -113,7 +116,6 @@ export default class ChordDiagram extends React.PureComponent {
         const tooltip = select(this.container)
             .append('div')
             .attr('class', 'tooltip')
-            .style('position', 'absolute')
             .style('z-index', 10)
             .style('display', 'none');
 
@@ -236,11 +238,14 @@ export default class ChordDiagram extends React.PureComponent {
     }
 
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`chord-diagram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="chord-diagram"
                     ref={(elem) => { this.svg = elem; }}

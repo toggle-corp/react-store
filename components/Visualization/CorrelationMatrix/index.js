@@ -11,6 +11,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isValidHexColor } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -39,6 +40,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,6 +53,7 @@ const defaultProps = {
         bottom: 0,
         left: 100,
     },
+    loading: false,
 };
 
 /*
@@ -279,11 +282,14 @@ export default class CorrelationMatrix extends React.PureComponent {
     }
 
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`correlationmatrix-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="correlation-matrix"
                     ref={(elem) => { this.svg = elem; }}

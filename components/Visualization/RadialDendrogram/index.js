@@ -9,6 +9,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -37,6 +38,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -50,6 +52,7 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
+    loading: false,
 };
 
 /**
@@ -175,12 +178,16 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)
             .text(d => labelAccessor(d.data));
     }
+
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`radialdendrogram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="radialdendrogram"
                     ref={(elem) => { this.svg = elem; }}

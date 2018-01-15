@@ -1,6 +1,8 @@
 @import '../../../stylesheets/base';
 
 :global .treemap-container {
+    position: relative;
+
     .treemap {
         width: 100%;
         height: 100%;

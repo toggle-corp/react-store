@@ -1,6 +1,7 @@
 @import '../../../stylesheets/base';
 
 :global .collapsible-tree-container {
+    position: relative;
     flex-grow: 1;
 
     .collapsible-tree {

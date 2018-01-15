@@ -9,6 +9,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename } from '../../../utils/common';
+import { LoadingAnimation } from '../../View';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -39,6 +40,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -52,6 +54,7 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
+    loading: false,
 };
 
 /**
@@ -179,12 +182,16 @@ export default class Dendrogram extends React.PureComponent {
             .style('text-anchor', d => (d.children ? 'end' : 'start'))
             .text(d => labelAccessor(d.data));
     }
+
     render() {
+        const { loading } = this.props;
+
         return (
             <div
                 className={`dendrogram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
+                { loading && <LoadingAnimation /> }
                 <svg
                     className="dendrogram"
                     ref={(elem) => { this.svg = elem; }}
