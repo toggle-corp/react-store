@@ -88,7 +88,7 @@ export default class RestRequest {
         if (maxRetryAttempts > 0 && this.retryTime <= 0 && this.decay <= 0) {
             throw new Error('RestRequest is not configured properly for retry.');
         }
-        if (maxPollAttempts > 0 && (this.pollTime <= 0 || !shouldPoll)) {
+        if (maxPollAttempts > 0 && (this.pollTime <= 0 || !this.shouldPoll)) {
             throw new Error('RestRequest is not configured properly for poll.');
         }
 
@@ -146,7 +146,6 @@ export default class RestRequest {
             console.warn(`Max no. of polls exceeded ${this.url}`, this.parameters);
             return false;
         }
-        console.warn('Polling');
         this.pollId = setTimeout(this.internalStart, this.pollTime);
         this.pollCount += 1;
         return true;
@@ -162,11 +161,13 @@ export default class RestRequest {
      * Else, calls fatal callback
      */
     internalStart = async () => {
-        this.aborted = false;
-
         // Parameters can be a key-value pair or a function that returns a key-value pair
         this.parameters = typeof this.params === 'function' ? this.params() : this.params;
 
+        if (this.aborted) {
+            this.abort();
+            return;
+        }
         // Call function before fetch
         this.preLoad();
 
@@ -196,7 +197,15 @@ export default class RestRequest {
         let responseBody;
         try {
             responseBody = await response.json();
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
         } catch (ex) {
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             // NOTE: Unless the response is supposed to be NO CONTENT, we
             // have got parsing error.
             // For example, this can happend in REST DELETE request.
