@@ -292,41 +292,40 @@ export default class DateFilter extends React.PureComponent {
                 value={value && (value.type === 'custom' ? 'custom-range' : value.type)}
                 {...otherProps}
             />,
-            <Modal
-                key="modal"
-                closeOnEscape
-                onClose={this.closeModal}
-                show={modalShown}
-                className={styles.modal}
-            >
-                <ModalHeader
-                    title="Select date range"
-                />
-                <ModalBody>
-                    <DateInput
-                        label="Start date"
-                        onChange={this.handleStartDateChange}
-                        value={startDate}
-                    />
-                    <DateInput
-                        label="End date"
-                        onChange={this.handleEndDateChange}
-                        value={endDateToDisplay}
-                    />
-                </ModalBody>
-                <ModalFooter>
-                    <DangerButton
-                        onClick={this.closeModal}
-                    >
-                        Close
-                    </DangerButton>
-                    <PrimaryButton
-                        onClick={this.setCustomDate}
-                    >
-                        Apply
-                    </PrimaryButton>
-                </ModalFooter>
-            </Modal>,
+            modalShown && (
+                <Modal
+                    key="modal"
+                    closeOnEscape
+                    onClose={this.closeModal}
+                    className={styles.modal}
+                >
+                    <ModalHeader title="Select date range" />
+                    <ModalBody>
+                        <DateInput
+                            label="Start date"
+                            onChange={this.handleStartDateChange}
+                            value={startDate}
+                        />
+                        <DateInput
+                            label="End date"
+                            onChange={this.handleEndDateChange}
+                            value={endDateToDisplay}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton
+                            onClick={this.closeModal}
+                        >
+                            Close
+                        </DangerButton>
+                        <PrimaryButton
+                            onClick={this.setCustomDate}
+                        >
+                            Apply
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Modal>
+            ),
         ]);
     }
 }
