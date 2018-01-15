@@ -11,7 +11,6 @@ const propTypes = {
         PropTypes.element,
     ]).isRequired,
     className: PropTypes.string,
-    show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -25,16 +24,11 @@ export default class Modal extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.syncViewWithBody(props.show);
+        this.syncViewWithBody(true);
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { show: newShow } = nextProps;
-        const { show: oldShow } = this.props;
-
-        if (newShow !== oldShow) {
-            this.syncViewWithBody(newShow);
-        }
+    componentWillUnmount() {
+        this.syncViewWithBody(false);
     }
 
     getClassName = () => {
@@ -60,12 +54,6 @@ export default class Modal extends React.PureComponent {
     }
 
     render() {
-        const { show } = this.props;
-
-        if (!show) {
-            return null;
-        }
-
         return (
             <Portal>
                 <div className={this.getClassName()}>
