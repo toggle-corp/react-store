@@ -145,30 +145,7 @@ export default class Body extends React.PureComponent {
             cellKey = highlightCellKey.columnKey;
         }
 
-        if (expandRowId === key) {
-            return ([
-                <Row
-                    areCellsHoverable={areCellsHoverable}
-                    dataModifier={dataModifier}
-                    headers={headers}
-                    highlightCellKey={cellKey}
-                    highlightColumnKey={highlightColumnKey}
-                    highlighted={isEqualAndTruthy(key, highlightRowKey)}
-                    hoverable={areRowsHoverable}
-                    key={key}
-                    onClick={this.handleRowClick}
-                    rowData={rowData}
-                    uniqueKey={key}
-                />,
-                <tr className={`${styles.row} expanded-row row`} key={`${key}-expanded`}>
-                    <td colSpan={headers.length} >
-                        {expandedRowModifier(rowData)}
-                    </td>
-                </tr>,
-            ]);
-        }
-
-        return (
+        return ([
             <Row
                 areCellsHoverable={areCellsHoverable}
                 dataModifier={dataModifier}
@@ -177,13 +154,22 @@ export default class Body extends React.PureComponent {
                 highlightColumnKey={highlightColumnKey}
                 highlighted={isEqualAndTruthy(key, highlightRowKey)}
                 hoverable={areRowsHoverable}
-                expandRowId={expandRowId}
                 key={key}
                 onClick={this.handleRowClick}
                 rowData={rowData}
                 uniqueKey={key}
-            />
-        );
+            />,
+            expandRowId === key ? (
+                <tr
+                    className={`${styles.row} expanded-row row`}
+                    key={`${key}-expanded`}
+                >
+                    <td colSpan={headers.length} >
+                        {expandedRowModifier(rowData)}
+                    </td>
+                </tr>
+            ) : null,
+        ]);
     }
 
     handleRowClick = (rowKey, cellKey, e) => {
