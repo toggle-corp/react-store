@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -39,6 +38,22 @@ const propTypes = {
      * action to invoke when the button is clicked
      */
     onClick: PropTypes.func,
+
+
+    /**
+     * show small horizontal padding
+     */
+    smallHorizontalPadding: PropTypes.bool,
+
+    /**
+     * show small vertical padding
+     */
+    smallVerticalPadding: PropTypes.bool,
+
+    /**
+     * show small vertical padding
+     */
+    transparent: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -48,43 +63,33 @@ const defaultProps = {
     iconName: undefined,
     onClick: () => {}, // no-op
     children: undefined,
+    smallHorizontalPadding: false,
+    smallVerticalPadding: false,
+    transparent: false,
 };
 
 /**
  * Basic button component
  */
-@CSSModules(styles, { allowMultiple: true })
 export default class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-
-        this.state = {
-            className,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-
-        this.setState = ({
-            className,
-        });
-    }
 
     getClassName = (props) => {
         const {
             buttonType,
             className,
+            iconName,
+            children,
+            smallHorizontalPadding,
+            smallVerticalPadding,
+            transparent,
         } = props;
 
         const classNames = [];
 
         classNames.push('button');
+        classNames.push(styles.button);
 
         if (className) {
             classNames.push(className);
@@ -92,37 +97,82 @@ export default class Button extends React.PureComponent {
 
         if (buttonType) {
             classNames.push(buttonType);
+            classNames.push(styles[buttonType]);
+        }
+
+        if (iconName && children) {
+            classNames.push('with-icon-and-children');
+            classNames.push(styles['with-icon-and-children']);
+        }
+
+        if (smallHorizontalPadding) {
+            classNames.push(styles['small-horizontal-padding']);
+        }
+
+        if (smallVerticalPadding) {
+            classNames.push(styles['small-vertical-padding']);
+        }
+
+        if (transparent) {
+            classNames.push('transparent');
+            classNames.push(styles.transparent);
         }
 
         return classNames.join(' ');
     }
 
+    getIconClassName = (props) => {
+        const { iconName } = props;
+
+        const classNames = [];
+        classNames.push('icon');
+        classNames.push(styles.icon);
+
+        classNames.push(iconName);
+
+        return classNames.join(' ');
+    }
+
+    renderIcon = (props) => {
+        const { iconName } = props;
+        if (!iconName) {
+            return null;
+        }
+        const iconClassName = this.getIconClassName(props);
+
+        return (
+            <i className={iconClassName} />
+        );
+    }
+
     render() {
         const {
-            buttonType,
             iconName,
             children,
             disabled,
             onClick,
+
+            buttonType, // eslint-disable-line no-unused-vars
+            className: captureClassName, // eslint-disable-line no-unused-vars
+            smallHorizontalPadding, // eslint-disable-line no-unused-vars
+            smallVerticalPadding, // eslint-disable-line no-unused-vars
+            transparent, // eslint-disable-line no-unused-vars
+
             ...otherProps
         } = this.props;
-        const { className } = this.state;
+
+        const className = this.getClassName(this.props);
+
+        const Icon = this.renderIcon;
 
         return (
             <button
                 className={className}
-                styleName={`button ${buttonType}`}
                 disabled={disabled}
                 onClick={onClick}
                 {...otherProps}
             >
-                {
-                    iconName &&
-                    <i
-                        className={`${iconName} icon`}
-                        styleName="icon-button"
-                    />
-                }
+                <Icon iconName={iconName} />
                 { children }
             </button>
         );
@@ -150,25 +200,25 @@ export const WarningButton = props => (
 );
 
 export const TransparentButton = props => (
-    <Button buttonType="transparent" {...props} />
+    <Button transparent {...props} />
 );
 
 export const TransparentPrimaryButton = props => (
-    <Button buttonType="button-primary transparent" {...props} />
+    <Button buttonType="button-primary" transparent {...props} />
 );
 
 export const TransparentAccentButton = props => (
-    <Button buttonType="button-accent transparent" {...props} />
+    <Button buttonType="button-accent" transparent {...props} />
 );
 
 export const TransparentSuccessButton = props => (
-    <Button buttonType="button-success transparent" {...props} />
+    <Button buttonType="button-success" transparent {...props} />
 );
 
 export const TransparentDangerButton = props => (
-    <Button buttonType="button-danger transparent" {...props} />
+    <Button buttonType="button-danger" transparent {...props} />
 );
 
 export const TransparentWarningButton = props => (
-    <Button buttonType="button-warning transparent" {...props} />
+    <Button buttonType="button-warning" transparent {...props} />
 );

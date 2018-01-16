@@ -11,6 +11,7 @@
     .table-container {
         flex-grow: 1;
         overflow-y: auto;
+        background-color: $color-background-row-alt;
     }
 
     :global {
@@ -19,10 +20,6 @@
                 .delete-action-included {
                     width: 64px;
                 }
-            }
-
-            .delete-button {
-                color: $color-danger;
             }
         }
     }

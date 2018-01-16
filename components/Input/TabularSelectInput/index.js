@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
+    TransparentDangerButton,
     TransparentButton,
 } from '../../Action';
 import {
@@ -125,12 +126,12 @@ export default class TabularSelectInput extends React.PureComponent {
             key: 'delete-action-included',
             label: 'Remove',
             modifier: row => (
-                <TransparentButton
+                <TransparentDangerButton
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
-                >
-                    <span className={iconNames.close} />
-                </TransparentButton>
+                    iconName={iconNames.close}
+                    smallVerticalPadding
+                />
             ),
         });
 
@@ -160,12 +161,12 @@ export default class TabularSelectInput extends React.PureComponent {
             key: 'delete-action-included',
             label: 'Remove',
             modifier: row => (
-                <TransparentButton
+                <TransparentDangerButton
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
-                >
-                    <span className={iconNames.close} />
-                </TransparentButton>
+                    iconName={iconNames.delete}
+                    smallVerticalPadding
+                />
             ),
         });
 
