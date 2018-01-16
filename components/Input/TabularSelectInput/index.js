@@ -4,7 +4,6 @@ import React from 'react';
 
 import {
     TransparentDangerButton,
-    TransparentButton,
 } from '../../Action';
 import {
     MultiSelectInput,
