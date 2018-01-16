@@ -48,6 +48,7 @@ const iconNames = {
     warning: 'ion-alert-circled',
     wrench: 'ion-wrench',
     checkAll: 'ion-android-done-all',
+    dragHandle: 'ion-android-more-vertical',
 };
 
 export default iconNames;
