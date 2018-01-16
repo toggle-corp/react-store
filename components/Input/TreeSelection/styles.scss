@@ -2,6 +2,8 @@
 
 :global {
     .tree-node {
+        background-color: $color-foreground;
+
         > .parent-node {
             display: flex;
             align-items: center;
@@ -9,11 +11,12 @@
 
             .drag-handle {
                 cursor: move;
-                padding: 6px;
+                padding: $spacing-extra-small;
             }
 
             .checkbox {
                 background-color: transparent;
+                padding: $spacing-extra-small;
                 color: $color-accent;
                 font-size: $font-size-medium-alt;
 
@@ -24,11 +27,24 @@
 
             .node-title {
                 background-color: transparent;
+                padding: $spacing-extra-small;
+                text-transform: none;
+            }
+
+            .expand-arrow {
+                padding: $spacing-extra-small;
+                font-size: $font-size-medium;
             }
         }
 
         > .tree-selection {
             margin-left: $spacing-medium;
+        }
+    }
+
+    body {
+        >.tree-node {
+            @include shadow-small;
         }
     }
 }

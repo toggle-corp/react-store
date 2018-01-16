@@ -244,6 +244,7 @@ export default class TreeSelection extends React.PureComponent {
                         lockAxis="y"
                         lockToContainerEdges
                         useDragHandle
+                        lockOffset="0%"
                     />
                 )}
             </div>
