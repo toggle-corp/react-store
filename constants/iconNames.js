@@ -49,6 +49,10 @@ const iconNames = {
     wrench: 'ion-wrench',
     checkAll: 'ion-android-done-all',
     dragHandle: 'ion-android-more-vertical',
+
+    sort: 'fa fa-sort',
+    sortAscending: 'fa fa-sort-asc',
+    sortDescending: 'fa fa-sort-desc',
 };
 
 export default iconNames;

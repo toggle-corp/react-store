@@ -1,0 +1,25 @@
+@import '../../../stylesheets/base';
+
+.table-header {
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-medium;
+    text-align: left;
+    user-select: none;
+
+    &.sortable {
+        cursor: pointer;
+
+        .icon {
+            margin-right: $spacing-small;
+        }
+
+        &.active {
+            color: $color-accent;
+        }
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+    }
+}

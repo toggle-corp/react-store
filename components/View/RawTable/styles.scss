@@ -3,37 +3,27 @@
 .raw-table {
     width: 100%;
     border-spacing: 0;
-}
+    border-collapse: collapse;
 
-.headers {
-    .header {
-        background-color: $color-background-header;
-        padding: $spacing-small $spacing-medium;
-        text-transform: uppercase;
-        font-size: $font-size-small;
-        font-weight: $font-weight-normal;
-    }
-}
+    .headers {
+        .header {
+            top: 0;
+            position: sticky;
+            background-color: $color-background-header;
+            text-transform: uppercase;
+            font-size: $font-size-small;
+            font-weight: $font-weight-normal;
+            padding: 0;
 
-.body {
-
-    .row {
-        background-color: $color-background-row;
-
-        &.hoverable {
-            &:hover {
-                background-color: $color-background-hover;
-                color: $color-text;
+            &:not(:last-child) {
+                border-right: $width-separator-thin solid $color-separator;
             }
         }
+    }
 
-        &.highlighted {
-            background-color: $color-accent;
-            color: $color-text-on-accent;
-        }
-
-        .cell {
-            padding: $spacing-small $spacing-medium;
+    .body {
+        .row {
+            background-color: $color-background-row;
 
             &.hoverable {
                 &:hover {
@@ -42,15 +32,36 @@
                 }
             }
 
-            &.highlighted,
-            &.column-highlighted {
+            &.highlighted {
                 background-color: $color-accent;
                 color: $color-text-on-accent;
             }
-        }
 
-        &:nth-child(odd) {
-            background-color: $color-background-row-alt;
+            .cell {
+                padding: $spacing-extra-small-alt $spacing-medium;
+
+                &.hoverable {
+                    &:hover {
+                        background-color: $color-background-hover;
+                        color: $color-text;
+                    }
+                }
+
+                &.highlighted,
+                &.column-highlighted {
+                    background-color: $color-accent;
+                    color: $color-text-on-accent;
+                }
+
+                &:not(:last-child) {
+                    border-right: $width-separator-thin solid $color-separator;
+                }
+            }
+
+            &:nth-child(odd) {
+                background-color: $color-background-row-alt;
+            }
         }
     }
 }
+
