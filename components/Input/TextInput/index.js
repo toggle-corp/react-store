@@ -63,7 +63,10 @@ const propTypes = {
 
     showHintAndError: PropTypes.bool,
 
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 };
 
 const defaultProps = {

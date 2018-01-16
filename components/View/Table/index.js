@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import RawTable from '../RawTable';
-import ColumnHeader from './ColumnHeader';
+import TableHeader from '../TableHeader';
 import styles from './styles.scss';
 
 import {
@@ -286,18 +286,10 @@ export default class Table extends React.PureComponent {
 
     headerModifier = (header) => {
         const { activeSort } = this.state;
-        let active = false;
-        let sortOrder = '';
-
-        if (activeSort.key === header.key) {
-            active = true;
-            sortOrder = activeSort.order;
-        }
-
+        const sortOrder = activeSort.key === header.key ? activeSort.order : '';
         return (
-            <ColumnHeader
+            <TableHeader
                 label={header.label}
-                active={active}
                 sortOrder={sortOrder}
                 sortable={header.sortable}
             />
@@ -332,7 +324,6 @@ export default class Table extends React.PureComponent {
                 headers={headers}
                 keyExtractor={keyExtractor}
                 onHeaderClick={this.handleHeaderClick}
-                styleName="table"
                 highlightCellKey={highlightCellKey}
                 highlightRowKey={highlightRowKey}
                 highlightColumnKey={highlightColumnKey}

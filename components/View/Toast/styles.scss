@@ -7,7 +7,7 @@ $color-info: #4bf !default;
 .toast {
     @include transition-slow;
     position: fixed;
-    bottom: 0;
+    bottom: 2%;
     left: 50%;
     transform: translate(-50%, 100%);
     opacity: 0;

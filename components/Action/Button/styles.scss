@@ -12,6 +12,22 @@
     font-size: $font-size-normal-alt;
     font-weight: $font-weight-normal;
 
+    &.with-icon-and-children {
+        .icon {
+            margin-right: $spacing-small;
+        }
+    }
+
+    &.small-horizontal-padding {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    &.small-vertical-padding {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
     &:hover {
         background-color: $color-background-button-hover;
     }
