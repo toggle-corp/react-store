@@ -34,7 +34,7 @@ const defaultProps = {
 };
 
 const DragHandle = SortableHandle(() => (
-    <span className={`${iconNames.hamburger} drag-handle`} />
+    <span className={`${iconNames.dragHandle} drag-handle`} />
 ));
 
 
@@ -199,26 +199,25 @@ export default class TreeSelection extends React.PureComponent {
                     type="button"
                     onClick={() => this.handleCheckBox(node.key)}
                 />
-                <TransparentButton
-                    className="node-title"
-                    type="button"
-                    onClick={() => this.handleCheckBox(node.key)}
-                >
-                    { node.title }
-                </TransparentButton>
-
-                {node.nodes && (
+                {node.nodes ? (
                     <TransparentButton
+                        className="node-title"
                         type="button"
-                        className={
-                            `expand-arrow
-                            ${this.state.expanded[node.key]
-                                ? iconNames.chevronUp
-                                : iconNames.chevronDown
-                            }`
-                        }
                         onClick={() => this.handleToggleExpand(node.key)}
-                    />
+                    >
+                        { node.title }
+                        <span
+                            className={
+                                `expand-arrow
+                                ${this.state.expanded[node.key]
+                                    ? iconNames.chevronUp
+                                    : iconNames.chevronDown
+                                }`
+                            }
+                        />
+                    </TransparentButton>
+                ) : (
+                    <span className="node-title">{node.title}</span>
                 )}
             </div>
 
@@ -244,6 +243,7 @@ export default class TreeSelection extends React.PureComponent {
                         lockAxis="y"
                         lockToContainerEdges
                         useDragHandle
+                        lockOffset="0%"
                     />
                 )}
             </div>
