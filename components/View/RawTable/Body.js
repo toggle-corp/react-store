@@ -165,7 +165,9 @@ export default class Body extends React.PureComponent {
                     key={`${key}-expanded`}
                 >
                     <td colSpan={headers.length} >
-                        {expandedRowModifier(rowData)}
+                        {expandedRowModifier &&
+                            expandedRowModifier(rowData)
+                        }
                     </td>
                 </tr>
             ) : null,
