@@ -67,6 +67,19 @@ export const getOptionClassName = (styles, isActive) => {
     return classNames.join(' ');
 };
 
+export const filterAndSortOptions = (options, value, labelSelector) => {
+    const newOptions = options.filter(option =>
+        caseInsensitiveSubmatch(labelSelector(option), value),
+    );
+
+    newOptions.sort((a, b) => (
+        getRatingForContentInString(value, labelSelector(a))
+        - getRatingForContentInString(value, labelSelector(b))
+    ));
+
+    return newOptions;
+};
+
 export const handleInputValueChange = (parent, value) => {
     const {
         options,
@@ -74,14 +87,7 @@ export const handleInputValueChange = (parent, value) => {
     } = parent.props;
 
 
-    const displayOptions = options.filter(option =>
-        caseInsensitiveSubmatch(labelSelector(option), value),
-    );
-
-    displayOptions.sort((a, b) => (
-        getRatingForContentInString(value, labelSelector(a))
-        - getRatingForContentInString(value, labelSelector(b))
-    ));
+    const displayOptions = filterAndSortOptions(options, value, labelSelector);
 
     parent.setState({
         displayOptions,

@@ -33,6 +33,16 @@ export default class SelectInput extends React.PureComponent {
         };
     }
 
+    componentDidMount() {
+        if (this.container) {
+            this.boundingClientRect = this.container.getBoundingClientRect();
+        } else {
+            setTimeout(() => {
+                this.boundingClientRect = this.container.getBoundingClientRect();
+            }, 0);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         const {
             value: oldValue,
