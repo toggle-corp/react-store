@@ -2,9 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    TransparentDangerButton,
-} from '../../Action';
+import { TransparentDangerButton } from '../../Action';
 import {
     MultiSelectInput,
 } from '../../Input';
