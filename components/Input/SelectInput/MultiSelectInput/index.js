@@ -23,6 +23,10 @@ import {
     filterAndSortOptions,
 } from '../utils';
 
+import {
+    listToMap,
+} from '../../../../utils/common';
+
 export default class MultiSelectInput extends React.PureComponent {
     static propTypes = multiSelectInputPropTypes;
     static defaultProps = multiSelectInputDefaultProps;
@@ -116,8 +120,14 @@ export default class MultiSelectInput extends React.PureComponent {
         let valid = true;
         const validValues = [];
 
+        const optionsMap = listToMap(
+            options,
+            keySelector,
+            () => true,
+        );
+
         value.forEach((v) => {
-            const val = options.find(d => keySelector(d) === v);
+            const val = optionsMap[v];
             if (val) {
                 validValues.push(val);
             } else {
