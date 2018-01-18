@@ -23,3 +23,4 @@ export { default as TimeSeries } from './TimeSeries';
 export { default as TreeMapView } from './TreeMapView';
 export { default as OrgChart } from './OrgChart';
 export { default as OrgChartView } from './OrgChartView';
+export { default as GeoReferencedMap } from './GeoReferencedMap';
