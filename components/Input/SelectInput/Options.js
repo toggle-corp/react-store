@@ -4,6 +4,10 @@ import { FloatingContainer } from '../../View';
 import styles from './options.scss';
 
 import {
+    listToMap,
+} from '../../../utils/common';
+
+import {
     selectInputOptionsPropTypes,
     selectInputOptionsDefaultProps,
 } from './propTypes';
@@ -32,6 +36,13 @@ export default class Options extends React.PureComponent {
             return null;
         }
 
+        // NOTE: using map for faster access
+        const activeMap = listToMap(
+            value,
+            optionKey => optionKey,
+            () => true,
+        );
+
         return (
             <FloatingContainer
                 onBlur={onBlur}
@@ -43,6 +54,7 @@ export default class Options extends React.PureComponent {
                     options.map((option) => {
                         const key = keySelector(option);
                         const label = labelSelector(option);
+                        const active = !!activeMap[key];
 
                         return (
                             <Option
@@ -50,7 +62,7 @@ export default class Options extends React.PureComponent {
                                 optionKey={key}
                                 optionLabel={label}
                                 onClick={onOptionClick}
-                                value={value}
+                                active={active}
                             />
                         );
                     })

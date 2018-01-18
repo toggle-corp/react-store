@@ -53,6 +53,7 @@ export const getClassName = (styles, base, state, p) => {
     return classNames.join(' ');
 };
 
+// FIXME: this may not be used
 export const isOptionActive = (key, values) => values.indexOf(key) !== -1;
 
 export const getOptionClassName = (styles, isActive, isMultiSelect) => {
