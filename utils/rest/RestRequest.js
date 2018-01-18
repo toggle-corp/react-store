@@ -48,6 +48,16 @@ export default class RestRequest {
             }
         };
 
+        if (!success) {
+            createWarningFn('No success callback defined')();
+        }
+        if (!failure) {
+            createWarningFn('No failure callback defined')();
+        }
+        if (!fatal) {
+            createWarningFn('No fatal callback defined')();
+        }
+
         const successFn = success || createWarningFn('No success callback defined');
         const failureFn = failure || createWarningFn('No failure callback defined');
         const fatalFn = fatal || createWarningFn('No fatal callback defined');
