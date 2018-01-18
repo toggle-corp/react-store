@@ -2,6 +2,8 @@ import React from 'react';
 
 import { iconNames } from '../../../../constants';
 
+import Option from './Option';
+import Options from '../Options';
 import styles from './styles.scss';
 import {
     emptyList,
@@ -11,11 +13,8 @@ import {
 
 import {
     getClassName,
-    getOptionClassName,
     renderLabel,
-    renderOptions,
     renderHintAndError,
-    isOptionActive,
     handleInputValueChange,
     getOptionsContainerPosition,
     handleInputClick,
@@ -263,48 +262,26 @@ export default class MultiSelectInput extends React.PureComponent {
         );
     }
 
-    renderCheckbox = (p) => {
-        const { active } = p;
-        const classNames = ['checkbox', styles.checkbox];
-
-        if (active) {
-            classNames.push(iconNames.checkbox);
-        } else {
-            classNames.push(iconNames.checkboxOutlineBlank);
-        }
-
-        return <span className={classNames.join(' ')} />;
-    }
-
-    renderOption = (p) => {
-        const {
-            labelSelector,
-            keySelector,
-            value,
-        } = this.props;
-        const { option } = p;
-        const key = keySelector(option);
-        const active = isOptionActive(key, value);
-        const Checkbox = this.renderCheckbox;
-
-        return (
-            <button
-                className={getOptionClassName(styles, active)}
-                onClick={() => { this.handleOptionClick(key); }}
-            >
-                <Checkbox active={active} />
-                { labelSelector(option) }
-            </button>
-        );
-    }
 
     render() {
         const className = getClassName(styles, 'multi-select-input', this.state, this.props);
         const Label = renderLabel;
         const Input = this.renderInput;
         const Actions = this.renderActions;
-        const Options = renderOptions;
         const HintAndError = renderHintAndError;
+
+        const {
+            labelSelector,
+            keySelector,
+            renderEmpty,
+            optionsClassName,
+            value,
+        } = this.props;
+
+        const {
+            displayOptions,
+            showOptions,
+        } = this.state;
 
         return (
             <div
@@ -324,8 +301,18 @@ export default class MultiSelectInput extends React.PureComponent {
                     {...this.props}
                 />
                 <Options
-                    parent={this}
-                    styles={styles}
+                    labelSelector={labelSelector}
+                    keySelector={keySelector}
+                    renderEmpty={renderEmpty}
+                    optionsClassName={optionsClassName}
+                    options={displayOptions}
+                    show={showOptions}
+                    renderOption={Option}
+                    onOptionClick={this.handleOptionClick}
+                    onBlur={this.handleOptionContainerBlur}
+                    onInvalidate={this.handleOptionContainerInvalidate}
+                    parentContainer={this.container}
+                    value={value}
                 />
             </div>
         );

@@ -1,0 +1,47 @@
+@import '../../../stylesheets/base';
+
+%default-input-style {
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.options {
+    padding: $spacing-small 0;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .option {
+        @extend %default-input-style;
+        display: block;
+        cursor: pointer;
+        padding: $spacing-small $spacing-small-alt;
+        width: 100%;
+        text-align: left;
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+
+        .checkbox {
+            margin-right: $spacing-small;
+            color: $color-accent;
+        }
+
+        &:not(.multi) {
+            &.active {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+            }
+        }
+    }
+
+    .empty {
+        padding: $spacing-small-alt $spacing-small;
+        text-align: center;
+        color: $color-watermark;
+    }
+}

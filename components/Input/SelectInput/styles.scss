@@ -137,34 +137,3 @@
         }
     }
 }
-
-.options {
-    padding: $spacing-small 0;
-    max-height: 200px;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    .option {
-        @extend %default-input-style;
-        display: block;
-        cursor: pointer;
-        padding: $spacing-small $spacing-small-alt;
-        width: 100%;
-        text-align: left;
-
-        &:hover {
-            background-color: $color-background-hover;
-        }
-
-        &.active {
-            background-color: $color-accent;
-            color: $color-text-on-accent;
-        }
-    }
-
-    .empty {
-        padding: $spacing-small-alt $spacing-small;
-        text-align: center;
-        color: $color-watermark;
-    }
-}
