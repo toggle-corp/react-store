@@ -86,6 +86,7 @@ export default class Alert extends React.PureComponent {
                     <PrimaryButton
                         className={`ok-button ${styles['ok-button']}`}
                         onClick={this.handleOkButtonClick}
+                        autoFocus
                     >
                         Ok
                     </PrimaryButton>
