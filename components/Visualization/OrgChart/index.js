@@ -31,7 +31,7 @@ const propTypes = {
     value: PropTypes.array, // eslint-disable-line
     data: PropTypes.shape({
         name: PropTypes.string,
-    }).isRequired,
+    }),
     childAccessor: PropTypes.func,
     labelAccessor: PropTypes.func,
     idAccessor: PropTypes.func,
@@ -51,6 +51,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     value: [],
+    data: {},
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
