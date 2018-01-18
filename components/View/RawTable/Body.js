@@ -159,7 +159,7 @@ export default class Body extends React.PureComponent {
                 rowData={rowData}
                 uniqueKey={key}
             />,
-            expandRowId === key ? (
+            (expandRowId && expandRowId === key) ? (
                 <tr
                     className={`${styles.row} expanded-row row`}
                     key={`${key}-expanded`}

@@ -40,9 +40,12 @@ export default class RestRequest {
         pollTime = -1, maxPollAttempts = -1, shouldPoll,
         delay = 0,
     ) {
-        const createWarningFn = text => () => {
+        const createWarningFn = text => (response) => {
             const parameters = typeof params === 'function' ? params() : params;
             console.warn(`${text} ${url}`, parameters);
+            if (response) {
+                console.log(response);
+            }
         };
 
         const successFn = success || createWarningFn('No success callback defined');
