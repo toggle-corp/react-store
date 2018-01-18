@@ -98,6 +98,7 @@ export default class Confirm extends React.PureComponent {
                     <Button
                         className={`cancel-button ${styles['cancel-button']}`}
                         onClick={this.handleCancelButtonClick}
+                        autoFocus
                     >
                         Cancel
                     </Button>

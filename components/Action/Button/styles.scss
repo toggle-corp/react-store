@@ -44,6 +44,11 @@
         &.transparent {
             color: $color-label;
         }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-label;
+            outline-offset: -$spacing-small;
+        }
     }
 
     &.button-accent {
@@ -52,6 +57,11 @@
 
         &.transparent {
             color: $color-accent;
+        }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-text-on-accent;
+            outline-offset: -$spacing-small;
         }
     }
 
@@ -62,6 +72,11 @@
         &.transparent {
             color: $color-primary;
         }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-text-on-primary;
+            outline-offset: -$spacing-small;
+        }
     }
 
     &.button-danger {
@@ -70,6 +85,11 @@
 
         &.transparent {
             color: $color-danger;
+        }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-text-on-primary;
+            outline-offset: -$spacing-small;
         }
     }
 
@@ -80,6 +100,11 @@
         &.transparent {
             color: $color-success;
         }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-text-on-primary;
+            outline-offset: -$spacing-small;
+        }
     }
 
     &.button-warning {
@@ -88,6 +113,11 @@
 
         &.transparent {
             color: $color-warning;
+        }
+
+        &:focus {
+            outline: $width-separator-thin dotted $color-text-on-primary;
+            outline-offset: -$spacing-small;
         }
     }
 
