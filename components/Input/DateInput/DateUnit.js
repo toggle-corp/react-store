@@ -30,6 +30,11 @@ const propTypes = {
     max: PropTypes.number,
 
     /**
+     * Minimum limiting value
+     */
+    min: PropTypes.number,
+
+    /**
      * Next date unit to auto focus
      * when user finishes typing in this unit
      */
@@ -67,6 +72,7 @@ const defaultProps = {
     className: '',
     disabled: false,
     max: undefined,
+    min: 1,
     nextUnit: undefined,
     onBlur: undefined,
     onChange: undefined,
@@ -83,10 +89,13 @@ export default class DateUnit extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        // XXX: don't use this.input.value directly or set it directly
+        // XXX: put currentValue in state
         this.currentValue = props.value;
     }
 
     componentWillReceiveProps(newProps) {
+        // XXX: valide min
         // Always max validate whenever props change
         this.maxValidate(newProps.max);
         if (+this.currentValue !== +newProps.value) {
@@ -133,6 +142,7 @@ export default class DateUnit extends React.PureComponent {
             this.input.value = currentValue.substring(currentLength - length);
         }
 
+        // XXX: maybe validate and onChagne on blur or something
         this.maxValidate(max);
 
         if (this.props.onChange) {
@@ -188,6 +198,8 @@ export default class DateUnit extends React.PureComponent {
             disabled,
             placeholder,
             length,
+            min,
+            max,
         } = this.props;
 
         const focused = document.activeElement === this.input;
@@ -207,7 +219,8 @@ export default class DateUnit extends React.PureComponent {
             <input
                 className={className}
                 disabled={disabled}
-                min="1"
+                min={isTruthy(min) ? String(min) : undefined}
+                max={isTruthy(max) ? String(max) : undefined}
 
                 onBlur={this.handleBlur}
                 onChange={this.handleInputChange}
