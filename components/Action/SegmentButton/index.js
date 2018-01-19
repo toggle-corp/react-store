@@ -2,6 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { ListView } from '../../View/List';
 import styles from './styles.scss';
 import { randomString } from '../../../utils/common';
 
@@ -43,84 +44,96 @@ export default class SegmentButton extends React.PureComponent {
         this.buttonGroupName = `buttonGroup-${randomStr}`;
         this.buttonIdentifiers = data.map((val, i) => `input-${i}-${randomStr}`);
 
-        this.state = {
-            selectedValue: selected,
-        };
+        this.state = { selectedValue: selected };
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.selected !== nextProps.selected) {
-            this.setState({
-                selectedValue: nextProps.selected,
-            });
+            this.setState({ selectedValue: nextProps.selected });
         }
     }
 
-    getStyleNameWithStatus = (buttonValue, styleValue) => {
-        const style = [styleValue];
+    getStyleNameWithStatus = (value) => {
+        const style = [
+            'button',
+            styles['segment-label'],
+            value,
+            styles[value],
+        ];
         const { selectedValue } = this.state;
         const { backgroundHighlight } = this.props;
 
         if (backgroundHighlight) {
             style.push('background-highlight');
+            style.push(styles['background-highlight']);
         }
 
-        if (selectedValue === buttonValue) {
+        if (selectedValue === value) {
             style.push('active');
+            style.push(styles.active);
         }
         return style.join(' ');
     };
 
     handleOptionChange = (changeEvent) => {
         const { value } = changeEvent.target;
-        if (this.props.onChange) {
-            this.props.onChange(value);
+        const { onChange, onPress } = this.props;
+        if (onChange) {
+            onChange(value);
         }
-        if (this.props.onPress) {
-            this.props.onPress(value);
+        if (onPress) {
+            onPress(value);
         }
         this.setState({ selectedValue: value });
     };
+
+    keyExtractor = button => button.value;
+
+    renderSegment = (key, button, i) => {
+        const {
+            value,
+            label,
+        } = button;
+        const { selectedValue } = this.state;
+
+        const buttonIdentifier = this.buttonIdentifiers[i];
+
+        return (
+            <label
+                htmlFor={buttonIdentifier}
+                key={key}
+                className={this.getStyleNameWithStatus(value)}
+            >
+                <input
+                    className="input"
+                    type="radio"
+                    id={buttonIdentifier}
+                    name={this.buttonGroupName}
+                    onChange={this.handleOptionChange}
+                    value={value}
+                    checked={selectedValue === value}
+                />
+                <p className={`label ${styles['segment-name']}`}>
+                    {label}
+                </p>
+            </label>
+        );
+    }
 
     render() {
         const {
             className,
             data,
         } = this.props;
-        const { selectedValue } = this.state;
 
         return (
-            <div
+            <ListView
                 className={`segment-button ${className}`}
                 styleName="segment-container"
-            >
-                {
-                    data.map((button, i) => (
-                        <label
-                            htmlFor={this.buttonIdentifiers[i]}
-                            key={button.value}
-                            className={this.getStyleNameWithStatus(button.value, 'button')}
-                            styleName={this.getStyleNameWithStatus(button.value, 'segment-label')}
-                        >
-                            <input
-                                checked={selectedValue === button.value}
-                                className="input"
-                                id={this.buttonIdentifiers[i]}
-                                name={this.buttonGroupName}
-                                onChange={this.handleOptionChange}
-                                type="radio"
-                                value={button.value}
-                            />
-                            <p
-                                className="label"
-                                styleName="segment-name"
-                            >
-                                {button.label}
-                            </p>
-                        </label>
-                    ))
-                }
-            </div>
+                data={data}
+                modifier={this.renderSegment}
+                keyExtractor={this.keyExtractor}
+            />
         );
     }
 }
