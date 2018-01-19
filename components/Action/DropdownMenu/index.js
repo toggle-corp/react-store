@@ -30,7 +30,9 @@ const propTypes = {
 
     hideDropdownIcon: PropTypes.bool,
 
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
+
+    dropdownClassName: PropTypes.string,
 };
 
 const defaultProps = {
@@ -38,6 +40,8 @@ const defaultProps = {
     iconName: undefined,
     marginTop: 0,
     hideDropdownIcon: false,
+    title: '',
+    dropdownClassName: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -112,6 +116,7 @@ export default class DropdownMenu extends React.PureComponent {
             title,
             iconName,
             hideDropdownIcon,
+            dropdownClassName,
         } = this.props;
 
         return (
@@ -150,6 +155,7 @@ export default class DropdownMenu extends React.PureComponent {
                     showDropdown && (
                         <FloatingContainer
                             ref={(el) => { this.dropdownContainer = el; }}
+                            className={dropdownClassName}
                             styleName="dropdown-container"
                             onBlur={this.handleDropdownContainerBlur}
                             parent={this.container}
