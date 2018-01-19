@@ -11,8 +11,6 @@ export { default as FileUpload } from './FileUpload';
 export { default as Form } from './Form';
 export * from './Form/validations';
 export { default as HiddenInput } from './HiddenInput';
-export { default as MultiCheckbox } from './MultiCheckbox';
-export { default as MultiCheckboxCollection } from './MultiCheckboxCollection';
 export { default as NonFieldErrors } from './NonFieldErrors';
 export { default as RadioInput } from './RadioInput';
 export { default as RangeFilter } from './RangeFilter';
