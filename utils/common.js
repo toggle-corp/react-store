@@ -392,7 +392,10 @@ export const calcFloatingRect = (
     };
 
     const containerOffsetY = parentRect.top + parentRect.height + contentRect.height;
-    const containerOffsetX = parentRect.left + contentRect.width;
+    const containerOffsetX = parentRect.left + Math.min(
+        contentRect.width,
+        parentRect.width,
+    );
 
     // TODO: consider the case where height doesn't fit on either side (top or bottom)
     if (boundingRect.height < containerOffsetY) {

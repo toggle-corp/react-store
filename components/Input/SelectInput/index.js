@@ -2,6 +2,8 @@ import React from 'react';
 
 import { iconNames } from '../../../constants';
 
+import Option from './Option';
+import Options from './Options';
 import styles from './styles.scss';
 import {
     singleSelectInputPropTypes,
@@ -9,11 +11,8 @@ import {
 } from './propTypes';
 import {
     getClassName,
-    getOptionClassName,
     renderLabel,
     renderHintAndError,
-    renderOptions,
-    isOptionActive,
     handleInputValueChange,
     handleInputClick,
     getOptionsContainerPosition,
@@ -162,32 +161,26 @@ export default class SelectInput extends React.PureComponent {
         );
     }
 
-    renderOption = (p) => {
-        const {
-            labelSelector,
-            keySelector,
-            value,
-        } = this.props;
-        const { option } = p;
-        const key = keySelector(option);
-
-        return (
-            <button
-                className={getOptionClassName(styles, isOptionActive(key, [value]))}
-                onClick={() => { this.handleOptionClick(key); }}
-            >
-                { labelSelector(option) }
-            </button>
-        );
-    }
-
     render() {
         const className = getClassName(styles, 'single-select-input', this.state, this.props);
         const Label = renderLabel;
         const Input = this.renderInput;
         const Actions = this.renderActions;
-        const Options = renderOptions;
         const HintAndError = renderHintAndError;
+
+        const {
+            keySelector,
+            labelSelector,
+            renderEmpty,
+            optionsClassName,
+            value,
+        } = this.props;
+
+        const {
+            displayOptions,
+            showOptions,
+        } = this.state;
+
 
         return (
             <div
@@ -207,8 +200,18 @@ export default class SelectInput extends React.PureComponent {
                     {...this.props}
                 />
                 <Options
-                    parent={this}
-                    styles={styles}
+                    labelSelector={labelSelector}
+                    keySelector={keySelector}
+                    renderEmpty={renderEmpty}
+                    optionsClassName={optionsClassName}
+                    options={displayOptions}
+                    show={showOptions}
+                    renderOption={Option}
+                    onOptionClick={this.handleOptionClick}
+                    onBlur={this.handleOptionContainerBlur}
+                    onInvalidate={this.handleOptionContainerInvalidate}
+                    parentContainer={this.container}
+                    value={value}
                 />
             </div>
         );

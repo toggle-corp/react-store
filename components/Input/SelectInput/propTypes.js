@@ -2,10 +2,60 @@ import PropTypes from 'prop-types';
 
 export const emptyList = [];
 
-export const keyPropType = PropTypes.oneOfType([
+export const numberOrStringPropType = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
 ]);
+
+export const keyPropType = numberOrStringPropType;
+
+
+export const selectInputOptionCommonPropTypes = {
+    optionKey: keyPropType.isRequired,
+    optionLabel: numberOrStringPropType.isRequired,
+    onClick: PropTypes.func.isRequired,
+};
+
+export const selectInputOptionCommonDefaultProps = {
+};
+
+export const singleSelectInputOptionPropTypes = {
+    ...selectInputOptionCommonPropTypes,
+    value: keyPropType,
+};
+export const singleSelectInputOptionDefaultProps = {
+    ...selectInputOptionCommonDefaultProps,
+    value: undefined,
+};
+
+export const multiSelectInputOptionPropTypes = {
+    ...selectInputOptionCommonPropTypes,
+    value: PropTypes.arrayOf(keyPropType),
+};
+export const multiSelectInputOptionDefaultProps = {
+    ...selectInputOptionCommonDefaultProps,
+    value: emptyList,
+};
+
+export const selectInputOptionsPropTypes = {
+    labelSelector: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
+    renderEmpty: PropTypes.func.isRequired,
+    optionsClassName: PropTypes.string,
+    options: PropTypes.array,
+    show: PropTypes.bool,
+    renderOption: PropTypes.func.isRequired,
+    onOptionClick: PropTypes.func.isRequired,
+    onBlur: PropTypes.func.isRequired,
+    onInvalidate: PropTypes.func.isRequired,
+    parentContainer: PropTypes.object,
+};
+
+export const selectInputOptionsDefaultProps = {
+    optionsClassName: '',
+    parentContainer: undefined,
+    show: false,
+};
 
 export const selectInputCommonPropTypes = {
     hideClearButton: PropTypes.bool,

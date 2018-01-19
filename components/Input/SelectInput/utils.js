@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { FloatingContainer } from '../../View';
 import { iconNames } from '../../../constants';
 
 import {
@@ -54,14 +53,20 @@ export const getClassName = (styles, base, state, p) => {
     return classNames.join(' ');
 };
 
+// FIXME: this may not be used
 export const isOptionActive = (key, values) => values.indexOf(key) !== -1;
 
-export const getOptionClassName = (styles, isActive) => {
+export const getOptionClassName = (styles, isActive, isMultiSelect) => {
     const classNames = ['option', styles.option];
 
     if (isActive) {
         classNames.push('active');
         classNames.push(styles.active);
+    }
+
+    if (isMultiSelect) {
+        classNames.push('multi');
+        classNames.push(styles.multi);
     }
 
     return classNames.join(' ');
@@ -176,51 +181,3 @@ export const renderHintAndError = (p) => {
     return content;
 };
 
-export const renderOptions = (p) => {
-    const {
-        parent,
-        styles,
-    } = p;
-
-    const {
-        showOptions,
-        displayOptions,
-    } = parent.state;
-
-    if (!showOptions) {
-        return null;
-    }
-
-    const {
-        keySelector,
-        renderEmpty: EmptyComponent,
-        optionsClassName,
-    } = parent.props;
-
-    const Option = parent.renderOption;
-
-    return (
-        <FloatingContainer
-            onBlur={parent.handleOptionContainerBlur}
-            onInvalidate={parent.handleOptionContainerInvalidate}
-            parent={parent.container}
-            className={`options ${styles.options} ${optionsClassName}`}
-        >
-            {
-                displayOptions.map(option => (
-                    <Option
-                        key={keySelector(option)}
-                        option={option}
-                    />
-                ))
-            }
-            {
-                displayOptions.length === 0 && (
-                    <div className={`empty ${styles.empty}`}>
-                        <EmptyComponent />
-                    </div>
-                )
-            }
-        </FloatingContainer>
-    );
-};

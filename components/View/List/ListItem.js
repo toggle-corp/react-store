@@ -44,7 +44,7 @@ export default class List extends React.PureComponent {
     componentDidMount() {
         const { scrollIntoView } = this.props;
 
-        if (this.container && scrollIntoView) {
+        if (this.container && this.container.scrollIntoViewIfNeeded && scrollIntoView) {
             this.container.scrollIntoViewIfNeeded(false);
         }
     }
@@ -59,7 +59,7 @@ export default class List extends React.PureComponent {
     componentDidUpdate() {
         const { scrollIntoView } = this.props;
 
-        if (this.container && scrollIntoView) {
+        if (this.container && this.container.scrollIntoViewIfNeeded && scrollIntoView) {
             this.container.scrollIntoViewIfNeeded(false);
         }
     }
