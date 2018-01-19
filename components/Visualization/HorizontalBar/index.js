@@ -8,7 +8,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename } from '../../../utils/common';
+import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 
 
 /**
@@ -87,9 +87,10 @@ export default class HorizontalBar extends React.PureComponent {
             margins,
         } = this.props;
 
-        if (!boundingClientRect.width) {
+        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
+
         let { width, height } = boundingClientRect;
         const {
             top,

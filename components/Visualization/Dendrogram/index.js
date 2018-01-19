@@ -8,7 +8,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename } from '../../../utils/common';
+import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import { LoadingAnimation } from '../../View';
 
 /**
@@ -95,6 +95,9 @@ export default class Dendrogram extends React.PureComponent {
         if (!boundingClientRect.width) {
             return;
         }
+        if (!data || data.length === 0 || isObjectEmpty(data)) {
+            return;
+        }
         let { width, height } = boundingClientRect;
         const {
             top,
@@ -165,7 +168,7 @@ export default class Dendrogram extends React.PureComponent {
             .style('fill', topicColors)
             .attr('r', (d) => {
                 if (d.value) {
-                    return Math.sqrt(d.value);
+                    return Math.cbrt(d.value);
                 }
                 return 3;
             });
