@@ -67,6 +67,8 @@ const propTypes = {
         PropTypes.string,
         PropTypes.number,
     ]),
+
+    selectOnFocus: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -83,6 +85,7 @@ const defaultProps = {
     showLabel: true,
     showHintAndError: true,
     value: '',
+    selectOnFocus: false,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -165,9 +168,14 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
-    handleFocus = () => {
-        const { onFocus } = this.props;
+    handleFocus = (event) => {
+        const { selectOnFocus, onFocus } = this.props;
+        if (selectOnFocus) {
+            event.target.select();
+        }
+
         this.setState({ isFocused: true });
+
         if (onFocus) {
             onFocus();
         }
