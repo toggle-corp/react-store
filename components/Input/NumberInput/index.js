@@ -93,11 +93,63 @@ export default class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static changeToNumber = (val = '') => {
+        const newVal = val.replace(/[^0-9]/g, '');
+        return newVal;
+    };
+
+    static concatNumber = (sign, value) => {
+        let op = '';
+        if (isTruthy(sign)) {
+            op += sign;
+        }
+        if (isTruthy(value)) {
+            op += value;
+        }
+        return op;
+    }
+
+    static calculateNewValues = (v, separator) => {
+        if (isFalsy(v)) {
+            return {};
+        }
+        // TODO: Value provided is most likely to be number
+        // when it is provided from props, change it to string first
+        const value = String(v);
+
+        let signPart;
+        let numberPart = value;
+
+        // extract sign
+        if (value[0] === '-' || value[0] === '+') {
+            signPart = value[0];
+            numberPart = value.substr(1);
+        }
+
+        // get string with only number
+        const numberSanitizedPart = NumberInput.changeToNumber(numberPart);
+        const numberWithCommaPart = addSeparator(numberSanitizedPart, separator);
+
+        // get value to display
+        const displayValue = NumberInput.concatNumber(signPart, numberWithCommaPart);
+
+        // get value to return outside
+        let realValue = NumberInput.concatNumber(signPart, numberSanitizedPart);
+        if (realValue === '+' || realValue === '-' || realValue === '') {
+            realValue = undefined;
+        } else {
+            realValue = +realValue;
+        }
+
+        return { realValue, displayValue };
+    }
+
     constructor(props) {
         super(props);
 
-        const { realValue, displayValue } = this.calculateNewValues(
+        const { realValue, displayValue } = NumberInput.calculateNewValues(
             props.value || props.initialValue,
+            props.separator,
         );
         this.realValue = realValue;
 
@@ -111,7 +163,10 @@ export default class NumberInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.realValue !== nextProps.value) {
-            const { realValue, displayValue } = this.calculateNewValues(nextProps.value);
+            const { realValue, displayValue } = NumberInput.calculateNewValues(
+                nextProps.value,
+                nextProps.separator,
+            );
             this.realValue = realValue;
             this.setState({ value: displayValue });
         }
@@ -159,66 +214,16 @@ export default class NumberInput extends React.PureComponent {
         return styleNames.join(' ');
     }
 
-    changeToNumber = (val = '') => {
-        const newVal = val.replace(/[^0-9]/g, '');
-        return newVal;
-    };
-
-    concatNumber = (sign, value) => {
-        let op = '';
-        if (isTruthy(sign)) {
-            op += sign;
-        }
-        if (isTruthy(value)) {
-            op += value;
-        }
-        return op;
-    }
-
-    calculateNewValues = (v) => {
-        if (isFalsy(v)) {
-            return {};
-        }
-        // TODO: Value provided is most likely to be number
-        // when it is provided from props, change it to string first
-        const value = String(v);
-
-        let signPart;
-        let numberPart = value;
-
-        // extract sign
-        if (value[0] === '-' || value[0] === '+') {
-            signPart = value[0];
-            numberPart = value.substr(1);
-        }
-
-        // get string with only number
-        const numberSanitizedPart = this.changeToNumber(numberPart);
-        const numberWithCommaPart = addSeparator(numberSanitizedPart, this.props.separator);
-
-        // get value to display
-        const displayValue = this.concatNumber(signPart, numberWithCommaPart);
-
-        // get value to return outside
-        let realValue = this.concatNumber(signPart, numberSanitizedPart);
-        if (realValue === '+' || realValue === '-' || realValue === '') {
-            realValue = undefined;
-        } else {
-            realValue = +realValue;
-        }
-
-        return { realValue, displayValue };
-    }
-
     handleChange = (event) => {
-        const { onChange } = this.props;
+        const { onChange, separator } = this.props;
         const { value } = event.target;
 
-        const { realValue, displayValue } = this.calculateNewValues(value);
+        const { realValue, displayValue } = NumberInput.calculateNewValues(
+            value,
+            separator,
+        );
         this.realValue = realValue;
-        this.setState({
-            value: displayValue,
-        });
+        this.setState({ value: displayValue });
 
         if (onChange) {
             clearTimeout(this.changeTimeout);
