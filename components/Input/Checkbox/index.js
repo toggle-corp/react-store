@@ -17,7 +17,7 @@ const propTypes = {
     /**
      * A callback for when the input changes its content
      */
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
 
     /**
      * label for the checkbox
@@ -28,7 +28,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     value: false,
-    onChange: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -39,47 +38,33 @@ export default class Checkbox extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            checked: this.props.value,
-        };
-
         this.inputId = randomString();
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ checked: nextProps.value });
-    }
-
     handleInputChange = (e) => {
-        const checked = e.target.checked;
-
-        this.setState({ checked });
-
-        if (this.props.onChange && checked !== this.state.checked) {
-            this.props.onChange(checked);
-        }
+        const value = e.target.checked;
+        this.props.onChange(value);
     }
 
     render() {
-        const { checked } = this.state;
         const {
             label,
-            onChange, // eslint-disable-line
-            value, // eslint-disable-line
             className,
+            value,
+            onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
         return (
             <label
                 htmlFor={this.inputId}
-                styleName={`checkbox ${checked ? 'checked' : ''}`}
+                styleName={`checkbox ${value ? 'checked' : ''}`}
                 className={className}
             >
                 <span
                     styleName="checkmark"
                     className={`${
-                        checked ? (
+                        value ? (
                             iconNames.checkbox
                         ) : (
                             iconNames.checkboxOutlineBlank
@@ -91,7 +76,7 @@ export default class Checkbox extends React.PureComponent {
                     styleName="input"
                     className="input"
                     type="checkbox"
-                    checked={checked}
+                    checked={value}
                     id={this.inputId}
                     {...otherProps}
                 />
