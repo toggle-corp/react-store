@@ -39,7 +39,6 @@ export default class DropdownBody extends React.PureComponent {
         this.mountComponent();
     }
 
-    // TODO: change componentDidUpdate to componentWillReceiveProps
     componentDidUpdate() {
         this.mountComponent();
     }
@@ -93,14 +92,15 @@ export default class DropdownBody extends React.PureComponent {
     }
 
     updateComponent = () => {
-        ReactDOM.render(
-            CSSModules(
-                this.renderBodyContent,
-                styles,
-                { allowMultiple: true },
-            )(),
-            this.container,
-        );
+        const BodyContent = this.renderBodyContent;
+        // XXX: Maybe use className and bypass CSSModules
+        const BodyContentWithCss = CSSModules(
+            BodyContent,
+            styles,
+            { allowMultiple: true },
+        )();
+
+        ReactDOM.render(BodyContentWithCss, this.container);
     }
 
     close = () => {

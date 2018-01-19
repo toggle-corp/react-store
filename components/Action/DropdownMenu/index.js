@@ -30,15 +30,14 @@ const propTypes = {
 
     hideDropdownIcon: PropTypes.bool,
 
-    title: PropTypes.string,
+    title: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    iconName: '',
+    iconName: undefined,
     marginTop: 0,
     hideDropdownIcon: false,
-    title: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -74,6 +73,8 @@ export default class DropdownMenu extends React.PureComponent {
         if (this.container) {
             this.boundingClientRect = this.container.getBoundingClientRect();
         }
+
+        // XXX: maybe need to have a setTimeout of 0ms
 
         this.setState({ showDropdown: !this.state.showDropdown });
     };
@@ -124,17 +125,23 @@ export default class DropdownMenu extends React.PureComponent {
                     styleName="dropdown-header"
                 >
                     <div>
-                        <i
-                            className={iconName}
-                            styleName="item-icon"
-                        />
+                        { iconName &&
+                            <i
+                                className={iconName}
+                                styleName="item-icon"
+                            />
+                        }
                         {title}
                     </div>
                     {
                         !hideDropdownIcon && (
                             <i
                                 className={iconNames.chevronDown}
-                                styleName={showDropdown ? 'rotated dropdown-icon' : 'dropdown-icon'}
+                                styleName={
+                                    showDropdown ?
+                                        'rotated dropdown-icon' :
+                                        'dropdown-icon'
+                                }
                             />
                         )
                     }
