@@ -45,9 +45,9 @@ export default function (WrappedComponent) {
             let parentBoundingClientRect = {};
 
             if (this.container) {
-                const { parentNode, getBoundingClientRect } = this.container;
+                boundingClientRect = this.container.getBoundingClientRect();
 
-                boundingClientRect = getBoundingClientRect();
+                const { parentNode } = this.container;
                 if (parentNode) {
                     parentBoundingClientRect = parentNode.getBoundingClientRect();
                 }
