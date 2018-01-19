@@ -4,6 +4,7 @@ import React from 'react';
 
 import update from '../../../utils/immutable-update';
 
+import { List } from '../List';
 import GridItem from './GridItem';
 import { checkCollision } from './utils';
 import styles from './styles.scss';
@@ -46,9 +47,8 @@ export default class GridLayout extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            items: nextProps.items,
-        });
+        // XXX; check if changed
+        this.setState({ items: nextProps.items });
     }
 
     componentWillUnmount() {
@@ -65,26 +65,6 @@ export default class GridLayout extends React.PureComponent {
         }
 
         return styleNames.join(' ');
-    }
-
-    getGridItem = (item) => {
-        const {
-            modifier,
-            viewOnly,
-        } = this.props;
-
-        return (
-            <GridItem
-                key={item.key}
-                data={item}
-                modifier={modifier}
-                className="grid-item"
-                onDragStart={this.handleItemDragStart}
-                onResizeStart={this.handleItemResizeStart}
-                onMouseDown={this.handleItemMouseDown}
-                viewOnly={viewOnly}
-            />
-        );
     }
 
     snapX = val => (
@@ -116,10 +96,8 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        const itemIndex = this.state.items.findIndex(
-            d => d.key === key,
-        );
-        const { layout } = this.state.items[itemIndex];
+        const item = this.state.items.find(d => d.key === key);
+        const { layout } = item;
         this.setState({ validLayout: layout });
     }
 
@@ -132,10 +110,8 @@ export default class GridLayout extends React.PureComponent {
         this.lastScreenX = e.screenX;
         this.lastScreenY = e.screenY;
 
-        const itemIndex = this.state.items.findIndex(
-            d => d.key === key,
-        );
-        const { layout } = this.state.items[itemIndex];
+        const item = this.state.items.find(d => d.key === key);
+        const { layout } = item;
         this.setState({ validLayout: layout });
     }
 
@@ -143,7 +119,6 @@ export default class GridLayout extends React.PureComponent {
         if (this.props.viewOnly) {
             return;
         }
-
         if (!this.dragTargetKey && !this.resizeTargetKey) {
             return;
         }
@@ -247,6 +222,26 @@ export default class GridLayout extends React.PureComponent {
 
     heightOfItem = item => item.layout.height + item.layout.top;
 
+    renderGridItem = (key, item) => {
+        const {
+            modifier,
+            viewOnly,
+        } = this.props;
+
+        return (
+            <GridItem
+                key={key}
+                data={item}
+                modifier={modifier}
+                className="grid-item"
+                onDragStart={this.handleItemDragStart}
+                onResizeStart={this.handleItemResizeStart}
+                onMouseDown={this.handleItemMouseDown}
+                viewOnly={viewOnly}
+            />
+        );
+    }
+
     render() {
         const {
             className,
@@ -258,6 +253,7 @@ export default class GridLayout extends React.PureComponent {
             items,
         } = this.state;
 
+        // XXX: maybe make validLayout copy
         const { validLayout } = this.state;
 
         return (
@@ -266,7 +262,11 @@ export default class GridLayout extends React.PureComponent {
                 className={className}
                 style={{ backgroundSize: `${snapX}px ${snapY}px` }}
             >
-                { items.map(item => this.getGridItem(item)) }
+                <List
+                    data={items}
+                    key={item => item.key}
+                    modifier={this.renderGridItem}
+                />
                 { validLayout && (
                     <div
                         styleName="ghost-item"
