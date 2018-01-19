@@ -27,27 +27,7 @@ export default function (WrappedComponent) {
 
         componentDidMount() {
             window.addEventListener('resize', this.handleWindowResize);
-            setTimeout(() => {
-                let boundingClientRect = {};
-                let parentBoundingClientRect = {};
-
-                if (this.container) {
-                    boundingClientRect = this.container.getBoundingClientRect();
-
-                    if (this.container.parentNode) {
-                        parentBoundingClientRect = (
-                            this.container.parentNode.getBoundingClientRect()
-                        );
-                    }
-                }
-
-                this.setState({
-                    boundingClientRect,
-                    parentBoundingClientRect,
-                });
-
-                this.onResize();
-            }, 0);
+            setTimeout(this.handleMount, 0);
         }
 
         componentWillUnmount() {
@@ -60,29 +40,46 @@ export default function (WrappedComponent) {
             }
         }
 
-        handleWindowResize = () => {
-            const previousClientRect = this.state.boundingClientRect;
-
+        initializeRects = (callback) => {
             let boundingClientRect = {};
             let parentBoundingClientRect = {};
 
             if (this.container) {
-                boundingClientRect = this.container.getBoundingClientRect();
+                const { parentNode, getBoundingClientRect } = this.container;
 
-                if (this.container.parentNode) {
-                    parentBoundingClientRect = this.container.parentNode.getBoundingClientRect();
+                boundingClientRect = getBoundingClientRect();
+                if (parentNode) {
+                    parentBoundingClientRect = parentNode.getBoundingClientRect();
                 }
             }
 
-            this.setState({
-                boundingClientRect,
-                parentBoundingClientRect,
-            });
+            this.setState(
+                {
+                    boundingClientRect,
+                    parentBoundingClientRect,
+                },
+                (boundingClientRectangle, parentBoundingClientRectangle) => {
+                    callback(boundingClientRectangle, parentBoundingClientRectangle);
+                },
+            );
+        }
 
-            if (previousClientRect.width !== boundingClientRect.width ||
-                previousClientRect.height !== boundingClientRect.height) {
+        handleMount = () => {
+            const afterRectInit = () => {
                 this.onResize();
-            }
+            };
+            this.initializeRects(afterRectInit);
+        };
+
+        handleWindowResize = () => {
+            const previousClientRect = this.state.boundingClientRect;
+            const afterRectInit = (boundingClientRect) => {
+                if (previousClientRect.width !== boundingClientRect.width ||
+                    previousClientRect.height !== boundingClientRect.height) {
+                    this.onResize();
+                }
+            };
+            this.initializeRects(afterRectInit);
         }
 
         render() {
