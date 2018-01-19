@@ -8,47 +8,57 @@ const propTypes = {
 class Bundle extends React.Component {
     static propTypes = propTypes;
 
+    static loadingStyle = {
+        height: '100%',
+        fontSize: '2em',
+        color: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
+
     constructor(props) {
         super(props);
         this.state = { Component: null };
     }
 
     componentWillMount() {
-        this.setState({
-            Component: null,
-        });
-
-        this.props.load()
-            .then((Component) => {
-                this.setState({
-                    Component: Component.default ? Component.default : Component,
-                });
-            });
+        this.mounted = true;
+        this.props.load().then(this.handleLoad);
     }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
+    handleLoad = (Component) => {
+        if (!this.mounted) {
+            console.warn('Bundle was unmounted before loading Component');
+            return;
+        }
+        this.setState({
+            Component: Component.default ? Component.default : Component,
+        });
+    }
+
+    renderLoading = () => (
+        <div style={Bundle.loadingStyle}>
+            Loading...
+        </div>
+    )
 
     render() {
         const {
-            // prevent load from entering component
             load, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
         const { Component } = this.state;
-        return Component ? (
-            <Component {...otherProps} />
-        ) : (
-            <div
-                style={{
-                    height: '100%',
-                    fontSize: '2em',
-                    color: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                Loading...
-            </div>
-        );
+        const Loading = this.renderLoading;
+
+        if (!Component) {
+            return <Loading />;
+        }
+        return <Component {...otherProps} />;
     }
 }
 
