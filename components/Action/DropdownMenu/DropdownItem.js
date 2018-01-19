@@ -8,13 +8,12 @@ import styles from './styles.scss';
  */
 const propTypes = {
     iconName: PropTypes.string,
-    onClick: PropTypes.func,
+    onClick: PropTypes.func.isRequired,
     title: PropTypes.string,
 };
 
 const defaultProps = {
-    iconName: '',
-    onClick: () => {},
+    iconName: undefined,
     title: '',
 };
 
@@ -24,25 +23,30 @@ export default class DropdownItem extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { title, iconName, onClick } = this.props;
+        const {
+            title,
+            iconName,
+            onClick,
+        } = this.props;
 
         return (
             <button
                 onClick={onClick}
                 styleName="dropdown-item"
             >
-                { iconName !== '' &&
+                { iconName &&
                     <i
                         styleName="icon"
                         className={iconName}
                     />
                 }
-                { iconName === '' &&
-                    <i
-                        styleName="icon"
-                    />
+                {/* XXX: why is this duplicated */}
+                { iconName &&
+                    <i styleName="icon" />
                 }
-                <span styleName="label">{title}</span>
+                <span styleName="label">
+                    {title}
+                </span>
             </button>
         );
     }

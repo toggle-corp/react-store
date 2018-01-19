@@ -40,10 +40,7 @@ export default class FloatingContainer extends React.PureComponent {
     static defaultProps = defaultProps;
 
     componentWillMount() {
-        const {
-            onBlur,
-        } = this.props;
-
+        const { onBlur } = this.props;
         if (onBlur) {
             window.addEventListener('mousedown', this.handleMouseDown);
         }
@@ -103,9 +100,7 @@ export default class FloatingContainer extends React.PureComponent {
         } = this.props;
 
         return (
-            <Float
-                onInvalidate={this.handleContainerInvalidate}
-            >
+            <Float onInvalidate={this.handleContainerInvalidate}>
                 <div
                     className={`${className} ${styles['floating-container']}`}
                     ref={(el) => { this.container = el; }}

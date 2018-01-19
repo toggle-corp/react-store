@@ -378,6 +378,7 @@ export default class DateInput extends React.PureComponent {
                 unitKey: 'dayUnit',
                 placeholder: 'dd',
                 max: getNumDaysInMonth(this.state.date),
+                min: 1,
                 length: 2,
                 key: 'day',
                 value: this.state.day,
@@ -387,6 +388,7 @@ export default class DateInput extends React.PureComponent {
                 unitKey: 'monthUnit',
                 placeholder: 'mm',
                 max: 12,
+                min: 1,
                 length: 2,
                 key: 'month',
                 value: this.state.month,
@@ -395,6 +397,7 @@ export default class DateInput extends React.PureComponent {
                 unit: this.yearUnit,
                 unitKey: 'yearUnit',
                 placeholder: 'yyyy',
+                min: 1990,
                 length: 4,
                 key: 'year',
                 value: this.state.year,
@@ -411,6 +414,7 @@ export default class DateInput extends React.PureComponent {
 
                                 key={match}
                                 length={map[match].length}
+                                min={map[match].min}
                                 max={map[match].max}
                                 nextUnit={map[matches[i + 2]] && map[matches[i + 2]].unit}
 

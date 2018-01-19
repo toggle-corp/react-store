@@ -98,7 +98,7 @@ export default class FileUploader extends React.PureComponent {
         const xhr = new XMLHttpRequest();
 
         xhr.upload.onprogress = (e) => {
-            console.log('Upload Progress');
+            // console.log('Upload Progress');
             if (e.lengthComputable) {
                 const progress = Math.round((e.loaded * 100) / e.total);
                 this.setState({ status: UPLOADING, progress });
@@ -106,17 +106,17 @@ export default class FileUploader extends React.PureComponent {
         };
 
         xhr.onabort = () => {
-            console.log('Abort');
+            // console.log('Abort');
             this.setState({ status: READY, progress: 0 });
         };
 
         xhr.onerror = () => {
-            console.log('Error');
+            // console.log('Error');
             this.setState({ status: FAIL, progress: 0 });
         };
 
         xhr.onload = () => {
-            console.log('Load');
+            // console.log('Load');
             if (Math.floor(xhr.status / 100) === 2) {
                 this.setState({ status: COMPLETE, progress: 100 });
             } else {
@@ -134,7 +134,6 @@ export default class FileUploader extends React.PureComponent {
     }
 
     render() {
-        console.log('Rendering FileUploader');
         const { status } = this.state;
         return (
             <div>
@@ -146,9 +145,7 @@ export default class FileUploader extends React.PureComponent {
                 {
                     status === READY &&
                     <div>
-                        <TransparentPrimaryButton
-                            onClick={this.onStart}
-                        >
+                        <TransparentPrimaryButton onClick={this.onStart}>
                             Start
                         </TransparentPrimaryButton>
                         <p>
@@ -159,9 +156,7 @@ export default class FileUploader extends React.PureComponent {
                 {
                     status === FAIL &&
                     <div>
-                        <TransparentPrimaryButton
-                            onClick={this.onStart}
-                        >
+                        <TransparentPrimaryButton onClick={this.onStart}>
                             Retry
                         </TransparentPrimaryButton>
                         <p>
@@ -171,9 +166,7 @@ export default class FileUploader extends React.PureComponent {
                 }
                 { status === UPLOADING &&
                     <div>
-                        <TransparentDangerButton
-                            onClick={this.onAbort}
-                        >
+                        <TransparentDangerButton onClick={this.onAbort}>
                             Cancel
                         </TransparentDangerButton>
                         <progress

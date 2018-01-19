@@ -3,13 +3,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { TransparentDangerButton } from '../../Action';
-import {
-    MultiSelectInput,
-} from '../../Input';
+import { MultiSelectInput } from '../../Input';
+import { Table } from '../../View';
 
-import {
-    Table,
-} from '../../View';
+import { listToMap } from '../../../utils/common';
 
 import { iconNames } from '../../../constants';
 
@@ -107,6 +104,32 @@ export default class TabularSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getValidOptions = (options, keySelector, blackList) => {
+        const blackListMap = listToMap(
+            blackList,
+            d => d,
+            () => true,
+        );
+
+        const validOptions = options.filter(
+            option => !blackListMap[keySelector(option)],
+        );
+        return validOptions;
+    }
+
+    static getSelectedOptions = (options, keySelector, values) => {
+        const valuesMap = listToMap(
+            values,
+            d => d,
+            () => true,
+        );
+
+        const selectedOptions = options.filter(
+            option => valuesMap[keySelector(option)],
+        );
+        return selectedOptions;
+    }
+
     constructor(props) {
         super(props);
 
@@ -117,24 +140,8 @@ export default class TabularSelectInput extends React.PureComponent {
             tableHeaders,
         } = this.props;
 
-        const tableHeadersWithRemove = [...tableHeaders];
-
-        tableHeadersWithRemove.push({
-            key: 'delete-action-included',
-            label: 'Remove',
-            modifier: row => (
-                <TransparentDangerButton
-                    className="delete-button"
-                    onClick={() => this.handleRemoveButtonClick(row)}
-                    iconName={iconNames.close}
-                    smallVerticalPadding
-                />
-            ),
-        });
-
-        const validOptions = options.filter(option => (
-            blackList.findIndex(d => (d === keySelector(option))) === -1
-        ));
+        const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
+        const validOptions = TabularSelectInput.getValidOptions(options, keySelector, blackList);
 
         this.state = {
             validOptions,
@@ -145,16 +152,30 @@ export default class TabularSelectInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            options,
-            blackList,
-            keySelector,
-            tableHeaders,
-        } = nextProps;
+        if (nextProps.tableHeaders !== this.props.tableHeaders) {
+            const { tableHeaders } = nextProps;
+            const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
+            this.setState({ tableHeadersWithRemove });
+        }
 
-        const tableHeadersWithRemove = [...tableHeaders];
+        if (
+            nextProps.blackList !== this.props.blackList ||
+            nextProps.options !== this.props.options
+        ) {
+            const validOptions = TabularSelectInput.getValidOptions(
+                nextProps.options,
+                nextProps.keySelector,
+                nextProps.blackList,
+            );
+            this.setState({ validOptions });
+        }
+    }
 
-        tableHeadersWithRemove.push({
+    getValue = () => this.state.selectedOptionsKeys;
+
+    createTableHeaders = tableHeaders => ([
+        ...tableHeaders,
+        {
             key: 'delete-action-included',
             label: 'Remove',
             modifier: row => (
@@ -165,24 +186,8 @@ export default class TabularSelectInput extends React.PureComponent {
                     smallVerticalPadding
                 />
             ),
-        });
-
-        if (nextProps !== this.props) {
-            const validOptions = options.filter(option => (
-                blackList.findIndex(d => (d === keySelector(option))) === -1
-            ));
-
-            this.setState({
-                tableHeadersWithRemove,
-                validOptions,
-            });
-        }
-    }
-
-    getValue = () => {
-        const { selectedOptionsKeys } = this.state;
-        return selectedOptionsKeys;
-    }
+        },
+    ])
 
     handleSelectInputChange = (values) => {
         const {
@@ -191,19 +196,24 @@ export default class TabularSelectInput extends React.PureComponent {
             onChange,
         } = this.props;
 
-        const selectedOptions = options.filter(option => (
-            values.findIndex(d => (d === keySelector(option))) !== -1
-        ));
+        const selectedOptions = TabularSelectInput.getSelectedOptions(
+            options,
+            keySelector,
+            values,
+        );
         const selectedOptionsKeys = selectedOptions.map(d => keySelector(d));
 
-        this.setState({
-            selectedOptions,
-            selectedOptionsKeys,
-        });
-
-        if (onChange) {
-            onChange(selectedOptionsKeys);
-        }
+        this.setState(
+            {
+                selectedOptions,
+                selectedOptionsKeys,
+            },
+            () => {
+                if (onChange) {
+                    onChange(selectedOptionsKeys);
+                }
+            },
+        );
     }
 
     handleRemoveButtonClick = (row) => {
@@ -213,22 +223,27 @@ export default class TabularSelectInput extends React.PureComponent {
         } = this.props;
         const { selectedOptions } = this.state;
 
+        // Remove from selectedOptions
         const removedElementKey = keySelector(row);
         const index = selectedOptions.findIndex(
-            d => keySelector(d) === removedElementKey);
-
+            d => keySelector(d) === removedElementKey,
+        );
         const selectedOptionsNew = [...selectedOptions];
         selectedOptionsNew.splice(index, 1);
+
         const selectedOptionsKeys = selectedOptionsNew.map(d => keySelector(d));
 
-        this.setState({
-            selectedOptions: selectedOptionsNew,
-            selectedOptionsKeys,
-        });
-
-        if (onChange) {
-            onChange(selectedOptionsKeys);
-        }
+        this.setState(
+            {
+                selectedOptions: selectedOptionsNew,
+                selectedOptionsKeys,
+            },
+            () => {
+                if (onChange) {
+                    onChange(selectedOptionsKeys);
+                }
+            },
+        );
     }
 
     render() {

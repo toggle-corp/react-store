@@ -34,10 +34,7 @@ export default class Float extends React.PureComponent {
     }
 
     invalidate = () => {
-        const {
-            onInvalidate,
-        } = this.props;
-
+        const { onInvalidate } = this.props;
         onInvalidate();
     }
 
@@ -50,9 +47,7 @@ export default class Float extends React.PureComponent {
     }
 
     render() {
-        const {
-            children,
-        } = this.props;
+        const { children } = this.props;
 
         return (
             <Portal>

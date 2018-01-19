@@ -30,7 +30,7 @@ const propTypes = {
      * Whether the input should be disabled
      */
 
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
 
     /**
      * Placeholder for the input
@@ -52,7 +52,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    onChange: undefined,
     placeholder: 'Select an option',
     value: undefined,
 };
@@ -60,6 +59,7 @@ const defaultProps = {
 export default class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
     static defaultOptions = [
         { key: 'today', label: 'Today' },
         { key: 'yesterday', label: 'Yesterday' },
@@ -70,37 +70,22 @@ export default class DateFilter extends React.PureComponent {
         { key: 'custom', label: 'Custom range' },
     ];
 
-    constructor(props) {
-        super(props);
+    static getStyleName = (className, value) => {
+        const styleNames = [
+            ...className.split(' '),
+            styles['select-input'],
+        ];
 
-        this.state = {
-            modalShown: false,
-            startDate: undefined,
-            endDate: undefined,
-        };
-
-        if (props.value && props.value.type === 'custom') {
-            this.state = {
-                ...this.state,
-                startDate: props.value.startDate,
-                endDate: props.value.endDate,
-            };
+        if (value && value.type === 'custom') {
+            styleNames.push(styles.monospace);
         }
+
+        return styleNames.join(' ');
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value && nextProps.value.type === 'custom') {
-            this.setState({
-                startDate: nextProps.value.startDate,
-                endDate: nextProps.value.endDate,
-            });
-        }
-    }
-
-    getRangeValues = (type) => {
-        let startDate = this.state.startDate;
-        let endDate = this.state.endDate;
-
+    static getRangeValues = (type, startDaet, endDaet) => {
+        let startDate = startDaet;
+        let endDate = endDaet;
         switch (type) {
             case 'today': {
                 const today = new Date();
@@ -179,6 +164,39 @@ export default class DateFilter extends React.PureComponent {
         };
     }
 
+    static dateToStr = date => FormattedDate.format(new Date(date), 'dd-MM-yyyy');
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            modalShown: false,
+            startDate: undefined,
+            endDate: undefined,
+        };
+
+        const { value } = props;
+        if (value && value.type === 'custom') {
+            this.state = {
+                ...this.state,
+                startDate: value.startDate,
+                endDate: value.endDate,
+            };
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (
+            (this.props.value !== nextProps.value) &&
+            (nextProps.value && nextProps.value.type === 'custom')
+        ) {
+            this.setState({
+                startDate: nextProps.value.startDate,
+                endDate: nextProps.value.endDate,
+            });
+        }
+    }
+
     getValue = () => (this.props.value)
 
     setCustomDate = () => {
@@ -196,42 +214,29 @@ export default class DateFilter extends React.PureComponent {
         this.closeModal();
     }
 
-    getStyleName = () => {
-        const {
-            className,
-            value,
-        } = this.props;
-
-        const styleNames = [...className.split(' '), styles['select-input']];
-
-        if (value && value.type === 'custom') {
-            styleNames.push(styles.monospace);
+    handleChange = (valueType) => {
+        const { onChange } = this.props;
+        if (!onChange) {
+            return;
         }
 
-        return styleNames.join(' ');
-    }
-
-    handleChange = (valueType) => {
-        if (this.props.onChange) {
-            if (!valueType) {
-                this.props.onChange(valueType);
-            } else if (valueType === 'custom-range') {
-                this.setCustomDate();
-            } else if (valueType === 'custom') {
-                this.showModal();
-            } else {
-                this.props.onChange({
-                    type: valueType,
-                    ...this.getRangeValues(valueType),
-                });
-            }
+        if (!valueType) {
+            onChange(valueType);
+        } else if (valueType === 'custom-range') {
+            this.setCustomDate();
+        } else if (valueType === 'custom') {
+            this.showModal();
+        } else {
+            const { startDate, endDate } = this.state;
+            onChange({
+                type: valueType,
+                ...DateFilter.getRangeValues(valueType, startDate, endDate),
+            });
         }
     }
 
     showModal = () => {
-        this.setState({
-            modalShown: true,
-        });
+        this.setState({ modalShown: true });
     }
 
     closeModal = () => {
@@ -251,6 +256,7 @@ export default class DateFilter extends React.PureComponent {
     render() {
         const {
             placeholder,
+            className,
             value,
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps
@@ -263,9 +269,8 @@ export default class DateFilter extends React.PureComponent {
             endDate,
         } = this.state;
 
-        const options = [
-            ...DateFilter.defaultOptions,
-        ];
+        // XXX: put options in state
+        let options = DateFilter.defaultOptions;
 
         let endDateToDisplay;
         if (endDate) {
@@ -275,21 +280,26 @@ export default class DateFilter extends React.PureComponent {
         }
 
         if (startDate && endDate) {
-            const startStr = FormattedDate.format(new Date(startDate), 'dd-MM-yyyy');
-            const endStr = FormattedDate.format(new Date(endDateToDisplay), 'dd-MM-yyyy');
+            const startStr = DateFilter.dateToStr(startDate);
+            const endStr = DateFilter.dateToStr(endDateToDisplay);
             const customLabel = `${startStr} to ${endStr}`;
-
-            options.push({ key: 'custom-range', label: customLabel });
+            options = [
+                ...options,
+                { key: 'custom-range', label: customLabel },
+            ];
         }
 
+        const selectInputValue = value && (
+            value.type === 'custom' ? 'custom-range' : value.type
+        );
         return ([
             <SelectInput
                 key="select-input"
                 onChange={this.handleChange}
                 options={options}
                 placeholder={placeholder}
-                className={this.getStyleName(value)}
-                value={value && (value.type === 'custom' ? 'custom-range' : value.type)}
+                className={DateFilter.getStyleName(className, value)}
+                value={selectInputValue}
                 {...otherProps}
             />,
             modalShown && (
@@ -315,6 +325,7 @@ export default class DateFilter extends React.PureComponent {
                     <ModalFooter>
                         <DangerButton
                             onClick={this.closeModal}
+                            autoFocus
                         >
                             Close
                         </DangerButton>

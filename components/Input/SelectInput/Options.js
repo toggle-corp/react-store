@@ -4,6 +4,7 @@ import { FloatingContainer } from '../../View';
 import styles from './options.scss';
 
 import {
+    isTruthy,
     listToMap,
 } from '../../../utils/common';
 
@@ -35,10 +36,11 @@ export default class Options extends React.PureComponent {
         if (!show) {
             return null;
         }
-
+        // For MultiSelect, value must be changed to an array
+        const isOptionsForSelectInput = isTruthy(value) && !Array.isArray(value);
         // NOTE: using map for faster access
         const activeMap = listToMap(
-            value,
+            isOptionsForSelectInput ? [value] : value,
             optionKey => optionKey,
             () => true,
         );

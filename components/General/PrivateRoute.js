@@ -35,28 +35,28 @@ export default class PrivateRoute extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    shouldRedirect = (authenticated, invertBehavior) => (
+    static defaultLocation = { pathname: '/' };
+
+    static shouldRedirect = (authenticated, invertBehavior) => (
         (!invertBehavior && !authenticated) || (invertBehavior && authenticated)
     )
 
-    renderFn = (props) => {
+    renderComponent= (props) => {
         const {
-            component: Component,
-            redirectLink,
-
             authenticated,
+            component: Component,
             invertBehavior,
+            redirectLink,
         } = this.props;
 
-        if (this.shouldRedirect(authenticated, invertBehavior)) {
-            return (
-                <Redirect
-                    to={{
-                        pathname: redirectLink,
-                        from: props.location || { pathname: '/' },
-                    }}
-                />
-            );
+        // NOTE: props contain params to be sent to child only
+
+        if (PrivateRoute.shouldRedirect(authenticated, invertBehavior)) {
+            const params = {
+                pathname: redirectLink,
+                from: props.location || PrivateRoute.defaultLocation,
+            };
+            return <Redirect to={params} />;
         }
 
         return <Component {...props} />;
@@ -78,7 +78,7 @@ export default class PrivateRoute extends React.PureComponent {
         return (
             <Route
                 {...otherProps}
-                render={this.renderFn}
+                render={this.renderComponent}
             />
         );
     }

@@ -23,11 +23,23 @@ export default class SelectInput extends React.PureComponent {
     static propTypes = singleSelectInputPropTypes;
     static defaultProps = singleSelectInputDefaultProps;
 
+    static getActiveOptionLabel = (props) => {
+        const {
+            value,
+            labelSelector,
+            keySelector,
+            options,
+        } = props;
+
+        const activeOption = options.find(d => keySelector(d) === value);
+        return activeOption ? labelSelector(activeOption) : '';
+    }
+
     constructor(props) {
         super(props);
 
         this.state = {
-            inputValue: this.getActiveOptionLabel(props),
+            inputValue: SelectInput.getActiveOptionLabel(props),
             displayOptions: props.options,
         };
     }
@@ -49,25 +61,15 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         if (nextProps.value !== oldValue || nextProps.options !== oldOptions) {
+            // NOTE: filter will be cleared
             this.setState({
-                inputValue: this.getActiveOptionLabel(nextProps),
+                inputValue: SelectInput.getActiveOptionLabel(nextProps),
+                displayOptions: nextProps.options,
             });
         }
     }
 
     getValue = () => this.props.value
-
-    getActiveOptionLabel = (props) => {
-        const {
-            value,
-            labelSelector,
-            keySelector,
-            options,
-        } = props;
-
-        const activeOption = options.find(d => keySelector(d) === value);
-        return (activeOption && labelSelector(activeOption)) || '';
-    }
 
     handleInputChange = (e) => { handleInputValueChange(this, e.target.value); }
 
@@ -78,13 +80,14 @@ export default class SelectInput extends React.PureComponent {
     handleOptionContainerBlur = () => {
         const { options } = this.props;
 
-        const inputValue = this.getActiveOptionLabel(this.props);
+        const inputValue = SelectInput.getActiveOptionLabel(this.props);
 
         this.setState({
             showOptions: false,
             displayOptions: options,
             inputValue,
         });
+        // XXX: why set these on blur?
     }
 
     handleOptionClick = (key) => {
@@ -94,7 +97,7 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         this.setState({
-            inputValue: this.getActiveOptionLabel(this.props),
+            inputValue: SelectInput.getActiveOptionLabel(this.props),
             showOptions: false,
         });
 

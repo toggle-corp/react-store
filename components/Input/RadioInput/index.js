@@ -2,6 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { ListView } from '../../View';
 import Option from './Option';
 import styles from './styles.scss';
 
@@ -45,14 +46,21 @@ export default class RadioInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    // XXX: use isTruthy
+    static getSelectedOption = (options, value) => (
+        value && options.find(d => d.key === value)
+    )
+
+    static optionKeyExtractor = option => option.key;
+
     constructor(props) {
         super(props);
 
-        const selectedOption = this.props.value &&
-            this.props.options.find(d => d.key === this.props.value);
-        this.state = {
-            selectedOption,
-        };
+        const selectedOption = RadioInput.getSelectedOption(
+            this.props.options,
+            this.props.value,
+        );
+        this.state = { selectedOption };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -60,11 +68,11 @@ export default class RadioInput extends React.PureComponent {
             this.props.value !== nextProps.value ||
             this.props.options !== nextProps.options
         ) {
-            const selectedOption = nextProps.value &&
-                nextProps.options.find(d => d.key === nextProps.value);
-            this.setState({
-                selectedOption,
-            });
+            const selectedOption = RadioInput.getSelectedOption(
+                nextProps.options,
+                nextProps.value,
+            );
+            this.setState({ selectedOption });
         }
     }
 
@@ -73,39 +81,37 @@ export default class RadioInput extends React.PureComponent {
     handleOptionClick = (key) => {
         const option = this.props.options.find(d => d.key === key);
 
-        this.setState({
-            selectedOption: option,
-        });
-
-        if (this.props.onChange) {
-            this.props.onChange(option.key);
-        }
+        this.setState(
+            { selectedOption: option },
+            () => {
+                if (this.props.onChange) {
+                    this.props.onChange(key);
+                }
+            },
+        );
     }
 
-    render() {
-        const {
-            className,
-            name,
-        } = this.props;
-        const { selectedOption } = this.state;
 
+    renderOption = (key, option) => (
+        <Option
+            key={key}
+            name={this.props.name}
+            label={option.label}
+            checked={this.state.selectedOption && key === this.state.selectedOption.key}
+            onClick={() => this.handleOptionClick(key)}
+        />
+    )
+
+    render() {
+        const { className } = this.props;
         return (
-            <div
+            <ListView
                 className={`radio-input ${className}`}
                 styleName="radio-input"
-            >
-                {
-                    this.props.options.map(option => (
-                        <Option
-                            key={option.key}
-                            label={option.label}
-                            name={name}
-                            checked={selectedOption && option.key === selectedOption.key}
-                            onClick={() => this.handleOptionClick(option.key)}
-                        />
-                    ))
-                }
-            </div>
+                data={this.props.options}
+                keyExtractor={RadioInput.optionKeyExtractor}
+                modifier={this.renderOption}
+            />
         );
     }
 }

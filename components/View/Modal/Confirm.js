@@ -43,12 +43,14 @@ export default class Confirm extends React.PureComponent {
         };
     }
 
+    // XXX: show remove?
     componentWillReceiveProps(nextProps) {
         this.setState({
             show: nextProps.show,
         });
     }
 
+    // XXX: is this used?
     getContent = () => ([
     ])
 

@@ -5,16 +5,6 @@
     width: $width-icon-large-alt;
 }
 
-:global {
-    .ion-chevron-down {
-        transition: .2s all ease-in-out;
-    }
-
-    #dropdown-container {
-        z-index: 111;
-    }
-}
-
 .rotated {
     transform: rotate(180deg);
 }
@@ -22,7 +12,6 @@
 .dropdown-container {
     @include shadow-small;
     background-color: $color-foreground;
-    min-width: 192px;
 }
 
 .dropdown-menu {

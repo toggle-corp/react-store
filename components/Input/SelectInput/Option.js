@@ -8,7 +8,6 @@ import {
 
 import {
     getOptionClassName,
-    isOptionActive,
 } from './utils';
 
 export default class Options extends React.PureComponent {
@@ -26,14 +25,13 @@ export default class Options extends React.PureComponent {
 
     render() {
         const {
-            optionKey,
             optionLabel,
-            value,
+            active,
         } = this.props;
 
         return (
             <button
-                className={getOptionClassName(styles, isOptionActive(optionKey, [value]))}
+                className={getOptionClassName(styles, active)}
                 onClick={this.handleClick}
             >
                 { optionLabel }
