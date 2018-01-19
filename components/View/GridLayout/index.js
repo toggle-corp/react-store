@@ -4,7 +4,7 @@ import React from 'react';
 
 import update from '../../../utils/immutable-update';
 
-import { List } from '../List';
+import List from '../List';
 import GridItem from './GridItem';
 import { checkCollision } from './utils';
 import styles from './styles.scss';
@@ -31,6 +31,8 @@ const defaultProps = {
 export default class GridLayout extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static itemKeyExtractor = item => item.key;
 
     constructor(props) {
         super(props);
@@ -264,7 +266,7 @@ export default class GridLayout extends React.PureComponent {
             >
                 <List
                     data={items}
-                    key={item => item.key}
+                    keyExtractor={GridLayout.itemKeyExtractor}
                     modifier={this.renderGridItem}
                 />
                 { validLayout && (

@@ -182,7 +182,7 @@ export default class TabularSelectInput extends React.PureComponent {
                 <TransparentDangerButton
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
-                    iconName={iconNames.close}
+                    iconName={iconNames.delete}
                     smallVerticalPadding
                 />
             ),

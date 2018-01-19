@@ -80,7 +80,7 @@ export default class SelectInput extends React.PureComponent {
     handleOptionContainerBlur = () => {
         const { options } = this.props;
 
-        const inputValue = this.getActiveOptionLabel(this.props);
+        const inputValue = SelectInput.getActiveOptionLabel(this.props);
 
         this.setState({
             showOptions: false,
@@ -97,7 +97,7 @@ export default class SelectInput extends React.PureComponent {
         } = this.props;
 
         this.setState({
-            inputValue: this.getActiveOptionLabel(this.props),
+            inputValue: SelectInput.getActiveOptionLabel(this.props),
             showOptions: false,
         });
 
