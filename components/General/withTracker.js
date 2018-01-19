@@ -6,6 +6,15 @@ import PropTypes from 'prop-types';
 import ReactGA from 'react-ga';
 import React, { Component } from 'react';
 
+const trackPage = (page, options) => {
+    if (window.ga && window.ga.create) {
+        ReactGA.set({
+            page,
+            ...options,
+        });
+        ReactGA.pageview(page);
+    }
+};
 
 const propTypes = {
     location: PropTypes.shape({
@@ -14,22 +23,13 @@ const propTypes = {
 };
 
 export default function withTracker(WrappedComponent, options = {}) {
-    const trackPage = (page) => {
-        if (window.ga && window.ga.create) {
-            ReactGA.set({
-                page,
-                ...options,
-            });
-            ReactGA.pageview(page);
-        }
-    };
-
+    // XXX: Maybe make pure component
     const HOC = class extends Component {
         static propTypes = propTypes;
 
         componentDidMount() {
             const page = this.props.location.pathname;
-            trackPage(page);
+            trackPage(page, options);
         }
 
         componentWillReceiveProps(nextProps) {
@@ -37,7 +37,7 @@ export default function withTracker(WrappedComponent, options = {}) {
             const nextPage = nextProps.location.pathname;
 
             if (currentPage !== nextPage) {
-                trackPage(nextPage);
+                trackPage(nextPage, options);
             }
         }
 
