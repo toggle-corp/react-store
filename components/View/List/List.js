@@ -33,7 +33,7 @@ export default class List extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getListItem = (datum, i) => {
+    renderListItem = (datum, i) => {
         const {
             data,
             keyExtractor,
@@ -61,7 +61,7 @@ export default class List extends React.Component {
         const { data } = this.props;
 
         return data.map(
-            (datum, i) => this.getListItem(datum, i),
+            (datum, i) => this.renderListItem(datum, i),
         );
     }
 }

@@ -107,9 +107,7 @@ export default class FileInput extends React.PureComponent {
                                         src={preview}
                                     />
                                 ) : (
-                                    <p
-                                        className="no-preview-text"
-                                    >
+                                    <p className="no-preview-text">
                                         No preview available
                                     </p>
                                 )
@@ -133,9 +131,7 @@ export default class FileInput extends React.PureComponent {
                 />
                 {
                     showStatus && (
-                        <p
-                            styleName="status"
-                        >
+                        <p styleName="status">
                             { files.length > 0 ? files[0].name : 'No file choosen' }
                         </p>
                     )

@@ -16,10 +16,7 @@ export default class Portal extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            children,
-        } = this.props;
-
+        const { children } = this.props;
         return (
             ReactDOM.createPortal(
                 children,

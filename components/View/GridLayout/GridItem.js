@@ -124,6 +124,7 @@ export default class GridItem extends React.PureComponent {
             headerRightComponent,
         } = data;
 
+        // XXX: maybe copy data.layout
         return (
             <div
                 ref={(el) => { this.container = el; }}
