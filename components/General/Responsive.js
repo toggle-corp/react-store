@@ -27,7 +27,7 @@ export default function (WrappedComponent) {
 
         componentDidMount() {
             window.addEventListener('resize', this.handleWindowResize);
-            setTimeout(this.handleMount, 0);
+            setTimeout(this.handleMount, 300);
         }
 
         componentWillUnmount() {
@@ -46,10 +46,8 @@ export default function (WrappedComponent) {
 
             if (this.container) {
                 boundingClientRect = this.container.getBoundingClientRect();
-
-                const { parentNode } = this.container;
-                if (parentNode) {
-                    parentBoundingClientRect = parentNode.getBoundingClientRect();
+                if (this.container.parentNode) {
+                    parentBoundingClientRect = this.container.parentNode.getBoundingClientRect();
                 }
             }
 
@@ -58,9 +56,7 @@ export default function (WrappedComponent) {
                     boundingClientRect,
                     parentBoundingClientRect,
                 },
-                (boundingClientRectangle, parentBoundingClientRectangle) => {
-                    callback(boundingClientRectangle, parentBoundingClientRectangle);
-                },
+                () => callback(boundingClientRect, parentBoundingClientRect),
             );
         }
 
@@ -74,8 +70,11 @@ export default function (WrappedComponent) {
         handleWindowResize = () => {
             const previousClientRect = this.state.boundingClientRect;
             const afterRectInit = (boundingClientRect) => {
-                if (previousClientRect.width !== boundingClientRect.width ||
-                    previousClientRect.height !== boundingClientRect.height) {
+                if (
+                    !previousClientRect ||
+                    previousClientRect.width !== boundingClientRect.width ||
+                    previousClientRect.height !== boundingClientRect.height
+                ) {
                     this.onResize();
                 }
             };
