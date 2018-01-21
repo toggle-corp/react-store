@@ -26,11 +26,7 @@ const propTypes = {
      */
     className: PropTypes.string,
 
-    /**
-     * Whether the input should be disabled
-     */
-
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
 
     /**
      * Placeholder for the input
@@ -54,6 +50,7 @@ const defaultProps = {
     className: '',
     placeholder: 'Select an option',
     value: undefined,
+    onChange: undefined,
 };
 
 export default class DateFilter extends React.PureComponent {
@@ -205,11 +202,13 @@ export default class DateFilter extends React.PureComponent {
             endDate,
         } = this.state;
 
-        this.props.onChange({
-            type: 'custom',
-            startDate,
-            endDate,
-        });
+        if (this.props.onChange) {
+            this.props.onChange({
+                type: 'custom',
+                startDate,
+                endDate,
+            });
+        }
 
         this.closeModal();
     }
