@@ -69,6 +69,10 @@ const propTypes = {
     value: PropTypes.number,
 
     separator: PropTypes.string,
+
+    selectOnFocus: PropTypes.bool,
+
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -86,6 +90,8 @@ const defaultProps = {
     showHintAndError: true,
     value: undefined,
     separator: ',',
+    selectOnFocus: false,
+    changeDelay: 400,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -215,7 +221,7 @@ export default class NumberInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        const { onChange, separator } = this.props;
+        const { separator } = this.props;
         const { value } = event.target;
 
         const { realValue, displayValue } = NumberInput.calculateNewValues(
@@ -225,14 +231,19 @@ export default class NumberInput extends React.PureComponent {
         this.realValue = realValue;
         this.setState({ value: displayValue });
 
+        const { onChange, changeDelay } = this.props;
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(this.realValue), 400);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), changeDelay);
         }
     }
 
     handleFocus = () => {
-        const { onFocus } = this.props;
+        const { selectOnFocus, onFocus } = this.props;
+        if (selectOnFocus) {
+            event.target.select();
+        }
+
         this.setState({ isFocused: true });
         if (onFocus) {
             onFocus();
@@ -255,6 +266,8 @@ export default class NumberInput extends React.PureComponent {
             onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
             onFocus, // eslint-disable-line
+            selectOnFocus, // eslint-disable-line
+            changeDelay, // eslint-disable-line
             className,
 
             error,

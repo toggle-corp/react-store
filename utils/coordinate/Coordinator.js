@@ -60,7 +60,7 @@ export default class Coordinator {
         if (indexInActive >= 0) {
             console.log(id, 'active');
             const actor = this.activeActors[indexInActive];
-            actor.nativeActor.close();
+            actor.nativeActor.stop();
             this.activeActors.splice(indexInActive, 1);
         }
         const indexInQueued = this.getQueuedActorIndexById(id);
@@ -133,7 +133,7 @@ export default class Coordinator {
         this.updateActiveActors();
     }
 
-    close = () => {
+    stop = () => {
         // console.warn('Session closing');
         const oldActiveActors = this.activeActors;
 
@@ -141,8 +141,8 @@ export default class Coordinator {
         this.activeActors = [];
         this.queuedActors = [];
 
-        // close current
-        oldActiveActors.forEach(actor => actor.nativeActor.close());
+        // stop current
+        oldActiveActors.forEach(actor => actor.nativeActor.stop());
 
         if (this.postSession) {
             this.postSession();
