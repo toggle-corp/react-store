@@ -15,7 +15,7 @@ const getActorForCoordinator = (coordinator, id, completeAfter) => {
                 coordinator.notifyComplete(id);
             }
         },
-        close: () => {
+        stop: () => {
             // console.log('stopped');
             clearTimeout(timeout);
         },
@@ -40,7 +40,7 @@ test('Preload and Postload', () => {
     coordinator.notifyComplete('g');
     expect(store.status).toBe('stopped');
 
-    coordinator.close();
+    coordinator.stop();
 });
 
 test('Test add, start, remove, hasQueuedActors, and accessors for Coordinator', () => {
@@ -117,26 +117,26 @@ test('hasQueuedActors must be false if it has no active queue', () => {
     expect(coordinator.hasQueuedActors()).toBeFalsy();
 });
 
-test('Close coordinator before starting', () => {
+test('Stop coordinator before starting', () => {
     const coordinator = new Coordinator(undefined, undefined, 2);
     coordinator.add('a', getActorForCoordinator(coordinator, 'a', -1));
     coordinator.add('b', getActorForCoordinator(coordinator, 'b', -1));
     coordinator.add('c', getActorForCoordinator(coordinator, 'c', -1));
 
-    coordinator.close();
+    coordinator.stop();
     expect(coordinator.getActorById('a')).toBe(undefined);
     expect(coordinator.getActorById('b')).toBe(undefined);
     expect(coordinator.getActorById('c')).toBe(undefined);
 });
 
-test('Close coordinator after starting', () => {
+test('Stop coordinator after starting', () => {
     const coordinator = new Coordinator(undefined, undefined, 2);
     coordinator.add('a', getActorForCoordinator(coordinator, 'a', 0));
     coordinator.add('b', getActorForCoordinator(coordinator, 'b', 0));
     coordinator.add('c', getActorForCoordinator(coordinator, 'c', -1));
     coordinator.start();
 
-    coordinator.close();
+    coordinator.stop();
 
     expect(coordinator.getActorById('a')).toBe(undefined);
     expect(coordinator.getActorById('b')).toBe(undefined);

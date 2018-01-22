@@ -125,7 +125,7 @@ export default class Uploader {
         this.xhr.send(formData);
     }
 
-    close = () => {
+    stop = () => {
         if (this.uploading) {
             this.xhr.abort();
         }

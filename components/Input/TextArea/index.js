@@ -62,6 +62,10 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 
     value: PropTypes.string,
+
+    selectOnFocus: PropTypes.bool,
+
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -78,6 +82,8 @@ const defaultProps = {
     showLabel: true,
     showHintAndError: true,
     value: '',
+    selectOnFocus: false,
+    changeDelay: 200,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -153,17 +159,18 @@ export default class TextArea extends React.PureComponent {
         this.realValue = value;
         this.setState({ value: this.realValue });
 
-        const { onChange } = this.props;
+        const { onChange, changeDelay } = this.props;
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(this.realValue), 100);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), changeDelay);
         }
     }
 
     handleFocus = () => {
-        const {
-            onFocus,
-        } = this.props;
+        const { selectOnFocus, onFocus } = this.props;
+        if (selectOnFocus) {
+            event.target.select();
+        }
 
         this.setState({
             isFocused: true,
@@ -195,6 +202,8 @@ export default class TextArea extends React.PureComponent {
             onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
             onFocus, // eslint-disable-line
+            selectOnFocus, // eslint-disable-line
+            changeDelay, // eslint-disable-line
             className,
 
             error,

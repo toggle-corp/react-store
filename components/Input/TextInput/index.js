@@ -69,6 +69,8 @@ const propTypes = {
     ]),
 
     selectOnFocus: PropTypes.bool,
+
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -86,6 +88,7 @@ const defaultProps = {
     showHintAndError: true,
     value: '',
     selectOnFocus: false,
+    changeDelay: 200,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -161,10 +164,10 @@ export default class TextInput extends React.PureComponent {
         this.realValue = value;
         this.setState({ value: this.realValue });
 
-        const { onChange } = this.props;
+        const { onChange, changeDelay } = this.props;
         if (onChange) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(this.realValue), 100);
+            this.changeTimeout = setTimeout(() => onChange(this.realValue), changeDelay);
         }
     }
 
@@ -196,8 +199,9 @@ export default class TextInput extends React.PureComponent {
             value: propValue, // eslint-disable-line
             onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
-            onFocus, // eslint-disable-line
+
             selectOnFocus, // eslint-disable-line
+            changeDelay, // eslint-disable-line
             className,
 
             error,
