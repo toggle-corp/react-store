@@ -1,0 +1,38 @@
+@import '../../../stylesheets/base';
+
+$width-resizable-separator: 6px;
+
+.resizable-h {
+    .left {
+        position: relative;
+        padding: 0;
+
+        .separator {
+            position: absolute;
+            top: 0;
+            right: -$width-resizable-separator;
+            z-index: 1111;
+            border-left: $width-separator-medium solid transparent;
+            cursor: col-resize;
+            width: $width-resizable-separator;
+            height: 100%;
+
+            &:hover {
+                border-left-color: $color-accent;
+            }
+        }
+    }
+
+    .right {
+        padding: 0;
+    }
+
+    &.resizing {
+        user-select: none;
+
+        .separator {
+            border-left-color: $color-accent;
+            cursor: col-resize;
+        }
+    }
+}
