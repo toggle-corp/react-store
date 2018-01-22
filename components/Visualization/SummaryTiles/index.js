@@ -3,7 +3,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import { select } from 'd3-selection';
 import SvgSaver from 'svgsaver';
-import { summaryTiles } from 'd3-summary-tiles';
+import summaryTiles from './summary-tiles.js';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename } from '../../../utils/common';
