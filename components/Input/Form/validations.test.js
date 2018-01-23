@@ -110,6 +110,11 @@ test('email condition', () => {
 test('url condition', () => {
     expect(urlCondition.truth('')).toBe(true);
     expect(urlCondition.truth('')).toBe(true);
+
+    expect(urlCondition.truth('https://www.w3.org/Protocols/HTTP/1.1/rfc2616.pdf')).toBe(true);
+    expect(urlCondition.truth('http://www.pdf995.com/samples/pdf.pdf')).toBe(true);
+    expect(urlCondition.truth('https://raaya_karas.carbonmade.com/')).toBe(true);
+
     expect(urlCondition.truth('http://foo.com/blah_blah')).toBe(true);
     expect(urlCondition.truth('http://foo.com/blah_blah/')).toBe(true);
     expect(urlCondition.truth('http://foo.com/blah_blah_(wikipedia)')).toBe(true);
@@ -128,7 +133,6 @@ test('url condition', () => {
     expect(urlCondition.truth('http://a.b-c.de')).toBe(true);
     expect(urlCondition.truth('http://223.255.255.254')).toBe(true);
 
-    /*
     expect(urlCondition.truth('http://userid:password@example.com:8080')).toBe(true);
     expect(urlCondition.truth('http://userid:password@example.com:8080/')).toBe(true);
     expect(urlCondition.truth('http://userid@example.com')).toBe(true);
@@ -138,7 +142,6 @@ test('url condition', () => {
     expect(urlCondition.truth('http://userid:password@example.com')).toBe(true);
     expect(urlCondition.truth('http://userid:password@example.com/')).toBe(true);
     expect(urlCondition.truth('ftp://foo.bar/baz')).toBe(true);
-    */
 
     expect(urlCondition.truth('http://')).toBe(false);
     expect(urlCondition.truth('http://.')).toBe(false);
@@ -166,15 +169,13 @@ test('url condition', () => {
     expect(urlCondition.truth('http://3628126748')).toBe(false);
     expect(urlCondition.truth('http://10.1.1.1')).toBe(false);
     expect(urlCondition.truth('http://10.1.1.254')).toBe(false);
-    /*
-        expect(urlCondition.truth('http://foo.bar?q=Spaces should be encoded')).toBe(false);
-        expect(urlCondition.truth('http://foo.bar/foo(bar)bazquux')).toBe(false);
-        expect(urlCondition.truth('http://a.b--c.de/')).toBe(false);
-        expect(urlCondition.truth('http://a.b-.co')).toBe(false);
-        expect(urlCondition.truth('http://1.1.1.1.1')).toBe(false);
-        expect(urlCondition.truth('http://123.123.123')).toBe(false);
-        expect(urlCondition.truth('http://.www.foo.bar/')).toBe(false);
-        expect(urlCondition.truth('http://www.foo.bar./')).toBe(false);
-        expect(urlCondition.truth('http://.www.foo.bar./')).toBe(false);
-    */
+    expect(urlCondition.truth('http://foo.bar?q=Spaces should be encoded')).toBe(false);
+    // expect(urlCondition.truth('http://foo.bar/foo(bar)bazquux')).toBe(false);
+    // expect(urlCondition.truth('http://a.b--c.de/')).toBe(false);
+    expect(urlCondition.truth('http://a.b-.co')).toBe(false);
+    expect(urlCondition.truth('http://1.1.1.1.1')).toBe(false);
+    expect(urlCondition.truth('http://123.123.123')).toBe(false);
+    expect(urlCondition.truth('http://.www.foo.bar/')).toBe(false);
+    // expect(urlCondition.truth('http://www.foo.bar./')).toBe(false);
+    expect(urlCondition.truth('http://.www.foo.bar./')).toBe(false);
 });
