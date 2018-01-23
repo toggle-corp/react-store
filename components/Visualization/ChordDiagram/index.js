@@ -10,7 +10,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
 import { LoadingAnimation } from '../../View';
 
 /**
@@ -95,10 +95,12 @@ export default class ChordDiagram extends React.PureComponent {
             margins,
         } = this.props;
 
-        if (!boundingClientRect.width) {
+        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
+
         let { width, height } = boundingClientRect;
+
         const {
             top,
             right,

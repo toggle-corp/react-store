@@ -11,7 +11,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor, getHexFromRgb } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isObjectEmpty } from '../../../utils/common';
 import { LoadingAnimation } from '../../View';
 
 /**
@@ -101,6 +101,11 @@ export default class TreeMap extends React.PureComponent {
         if (!boundingClientRect.width) {
             return;
         }
+
+        if (!data || data.length === 0 || isObjectEmpty(data)) {
+            return;
+        }
+
         let { width, height } = boundingClientRect;
         const {
             top,

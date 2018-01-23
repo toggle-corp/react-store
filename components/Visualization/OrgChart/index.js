@@ -8,7 +8,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import update from '../../../utils/immutable-update';
 import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -163,6 +163,10 @@ export default class OrgChart extends React.PureComponent {
         } = this.props;
 
         if (!boundingClientRect.width) {
+            return;
+        }
+
+        if (!data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
 

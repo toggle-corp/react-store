@@ -10,7 +10,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isValidHexColor } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isValidHexColor, isObjectEmpty } from '../../../utils/common';
 import { LoadingAnimation } from '../../View';
 
 /**
@@ -79,6 +79,7 @@ export default class CorrelationMatrix extends React.PureComponent {
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('correlationmatrix', 'graph')}.svg`);
     }
+
     renderChart() {
         const {
             boundingClientRect,
@@ -88,9 +89,10 @@ export default class CorrelationMatrix extends React.PureComponent {
             margins,
         } = this.props;
 
-        if (!boundingClientRect.width) {
+        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
+
         let { width, height } = boundingClientRect;
 
         const dataLabels = data.labels;
