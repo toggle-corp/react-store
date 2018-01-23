@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { TransparentDangerButton } from '../../Action';
+import { DangerButton } from '../../Action';
 import { MultiSelectInput } from '../../Input';
 import { Table } from '../../View';
 
@@ -179,7 +179,7 @@ export default class TabularSelectInput extends React.PureComponent {
             key: 'delete-action-included',
             label: 'Remove',
             modifier: row => (
-                <TransparentDangerButton
+                <DangerButton
                     className="delete-button"
                     onClick={() => this.handleRemoveButtonClick(row)}
                     iconName={iconNames.delete}
