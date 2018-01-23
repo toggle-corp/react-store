@@ -199,7 +199,7 @@ export default class TextInput extends React.PureComponent {
             value: propValue, // eslint-disable-line
             onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
-
+            onFocus, // eslint-disable-line
             selectOnFocus, // eslint-disable-line
             changeDelay, // eslint-disable-line
             className,
