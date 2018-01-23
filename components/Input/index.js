@@ -23,3 +23,4 @@ export { default as TextArea } from './TextArea';
 export { default as TextInput } from './TextInput';
 export { default as NumberInput } from './NumberInput';
 export { default as TreeSelection } from './TreeSelection';
+export { default as ColorInput } from './ColorInput';

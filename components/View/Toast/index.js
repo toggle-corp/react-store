@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Portal from '../Portal';
-import { TransparentButton } from '../../Action';
+import { Button } from '../../Action';
 import { iconNames } from '../../../constants';
 
 import styles from './styles.scss';
@@ -148,12 +148,13 @@ export default class Toast extends React.Component {
                                     </h4>
                                     {
                                         notification.dismissable && (
-                                            <TransparentButton
+                                            <Button
                                                 styleName="close-button"
                                                 onClick={this.handleDissmissButtonClick}
+                                                transparent
                                             >
                                                 <span className={iconNames.close} />
-                                            </TransparentButton>
+                                            </Button>
                                         )
                                     }
                                 </header>

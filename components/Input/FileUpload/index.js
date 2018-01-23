@@ -4,8 +4,8 @@ import React from 'react';
 
 import styles from './styles.scss';
 import {
-    TransparentPrimaryButton,
-    TransparentDangerButton,
+    PrimaryButton,
+    DangerButton,
 } from '../../Action';
 
 const propTypes = {
@@ -145,9 +145,12 @@ export default class FileUploader extends React.PureComponent {
                 {
                     status === READY &&
                     <div>
-                        <TransparentPrimaryButton onClick={this.onStart}>
+                        <PrimaryButton
+                            onClick={this.onStart}
+                            transparent
+                        >
                             Start
-                        </TransparentPrimaryButton>
+                        </PrimaryButton>
                         <p>
                             { this.props.file.name }
                         </p>
@@ -156,9 +159,12 @@ export default class FileUploader extends React.PureComponent {
                 {
                     status === FAIL &&
                     <div>
-                        <TransparentPrimaryButton onClick={this.onStart}>
+                        <PrimaryButton
+                            onClick={this.onStart}
+                            transparent
+                        >
                             Retry
-                        </TransparentPrimaryButton>
+                        </PrimaryButton>
                         <p>
                             Error uploading file
                         </p>
@@ -166,9 +172,12 @@ export default class FileUploader extends React.PureComponent {
                 }
                 { status === UPLOADING &&
                     <div>
-                        <TransparentDangerButton onClick={this.onAbort}>
+                        <DangerButton
+                            onClick={this.onAbort}
+                            transparent
+                        >
                             Cancel
-                        </TransparentDangerButton>
+                        </DangerButton>
                         <progress
                             value={this.state.progress}
                             max={100}

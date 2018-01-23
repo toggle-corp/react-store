@@ -9,7 +9,7 @@ import {
     arrayMove,
 } from 'react-sortable-hoc';
 
-import { TransparentButton } from '../../Action';
+import { Button } from '../../Action';
 
 import styles from './styles.scss';
 import { iconNames } from '../../../constants';
@@ -194,16 +194,18 @@ export default class TreeSelection extends React.PureComponent {
         <div className="tree-node">
             <div className="parent-node">
                 {node.draggable && <DragHandle />}
-                <TransparentButton
+                <Button
                     className={`${this.getCheckBoxStyle(node.selected)} checkbox`}
                     type="button"
                     onClick={() => this.handleCheckBox(node.key)}
+                    transparent
                 />
                 {node.nodes ? (
-                    <TransparentButton
+                    <Button
                         className="node-title"
                         type="button"
                         onClick={() => this.handleToggleExpand(node.key)}
+                        transparent
                     >
                         { node.title }
                         <span
@@ -215,7 +217,7 @@ export default class TreeSelection extends React.PureComponent {
                                 }`
                             }
                         />
-                    </TransparentButton>
+                    </Button>
                 ) : (
                     <span className="node-title">{node.title}</span>
                 )}
