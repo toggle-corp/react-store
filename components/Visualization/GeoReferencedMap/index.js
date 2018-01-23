@@ -21,6 +21,7 @@ const propTypes = {
         title: PropTypes.string,
         date: PropTypes.string,
     })),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -29,6 +30,7 @@ const defaultProps = {
     geoLocations: [],
     geoPoints: [],
     geoJsonBounds: undefined,
+    loading: false,
 };
 
 export default class GeoRefrencedMap extends React.PureComponent {
@@ -173,6 +175,7 @@ export default class GeoRefrencedMap extends React.PureComponent {
     render() {
         const {
             className,
+            loading,
         } = this.props;
 
         return (
@@ -181,9 +184,11 @@ export default class GeoRefrencedMap extends React.PureComponent {
                 ref={(el) => { this.mapContainer = el; }}
                 style={{ position: 'relative' }}
             >
-                {!this.state.map && (
-                    <LoadingAnimation />
-                )}
+                {
+                    (!this.state.map || loading) && (
+                        <LoadingAnimation />
+                    )
+                }
             </div>
         );
     }
