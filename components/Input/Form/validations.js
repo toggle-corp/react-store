@@ -7,6 +7,7 @@ import {
     isInteger,
     splitInWhitespace,
 } from '../../../utils/common';
+import urlRegex from './regexForWeburl';
 
 // VALIDATION RULES
 export const requiredCondition = {
@@ -75,7 +76,7 @@ export const emailCondition = {
 export const urlCondition = {
     truth: (value) => {
         // NOTE: NOT valid for unicode
-        const re = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
+        const re = urlRegex;
         // NOTE: valid if falsy value as well
         return isFalsy(value) || value === '' || re.test(value);
     },
