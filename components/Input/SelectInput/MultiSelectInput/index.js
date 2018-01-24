@@ -100,9 +100,17 @@ export default class MultiSelectInput extends React.PureComponent {
         const {
             value,
             placeholder,
+            labelSelector,
+            keySelector,
+            options,
         } = props;
 
-        if (value.length > 0) {
+        // NOTE: if there is only one value selected, show its label instead
+        if (value.length === 1) {
+            const key = value[0];
+            const option = options.find(o => keySelector(o) === key);
+            return labelSelector(option);
+        } else if (value.length > 0) {
             return `${value.length} selected`;
         }
 
