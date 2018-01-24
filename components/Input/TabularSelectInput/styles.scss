@@ -10,8 +10,8 @@
 
     .table-container {
         flex-grow: 1;
-        overflow-y: auto;
         background-color: $color-background-row-alt;
+        overflow-y: auto;
     }
 
     :global {
