@@ -34,6 +34,7 @@ const propTypes = {
     xTickFormat: PropTypes.func,
     yTickFormat: PropTypes.func,
     xTicks: PropTypes.number,
+    yTicks: PropTypes.number,
     tooltipRender: PropTypes.func.isRequired,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
     showArea: PropTypes.bool,
@@ -50,7 +51,8 @@ const defaultProps = {
     },
     xTickFormat: d => d,
     yTickFormat: d => d,
-    xTicks: 4,
+    xTicks: undefined,
+    yTicks: undefined,
     showArea: false,
 };
 
@@ -142,7 +144,7 @@ export default class TimeSeries extends React.PureComponent {
     }
 
     getXTickValues = ([min, max]) => {
-        const { xTicks } = this.props;
+        const { xTicks = this.scaleX.ticks().length } = this.props;
         const interval = Math.floor((max - min) / xTicks);
         const values = [max];
         for (let i = min; i < max; i += interval) {
@@ -169,7 +171,9 @@ export default class TimeSeries extends React.PureComponent {
     }
 
     renderBarChart(height, width) {
-        const { data, xKey, yKey, margins, xTickFormat, yTickFormat, showArea } = this.props;
+        const {
+            data, xKey, yKey, yTicks, margins, xTickFormat, yTickFormat, showArea,
+        } = this.props;
         const { top, left } = margins;
 
         this.scaleX.domain(extent(data.map(d => d[xKey])));
@@ -182,7 +186,6 @@ export default class TimeSeries extends React.PureComponent {
             return;
         }
 
-        // const xTickValues = this.scaleX.ticks(2).concat(this.scaleX.domain());
         const xTickValues = this.getXTickValues(this.scaleX.domain());
 
         const xAxis = axisBottom(this.scaleX)
@@ -196,6 +199,8 @@ export default class TimeSeries extends React.PureComponent {
             .tickSizeInner(-width)
             .tickSizeOuter(0)
             .tickFormat(yTickFormat);
+
+        if (yTicks) { yAxis.ticks(yTicks); }
 
         let line;
         if (showArea) {
