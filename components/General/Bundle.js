@@ -19,12 +19,19 @@ class Bundle extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { Component: null };
+        this.state = {
+            Component: null,
+            failed: false,
+        };
     }
 
     componentWillMount() {
         this.mounted = true;
-        this.props.load().then(this.handleLoad);
+        this.props.load()
+            .then(this.handleLoad)
+            .catch(() => {
+
+            });
     }
 
     componentWillUnmount() {
@@ -41,9 +48,17 @@ class Bundle extends React.Component {
         });
     }
 
-    renderLoading = () => (
+    handleLoadError = () => {
+        if (!this.mounted) {
+            console.warn('Bundle was unmounted before loading Component');
+            return;
+        }
+        this.setState({ failed: true });
+    }
+
+    renderLoading = ({ text }) => (
         <div style={Bundle.loadingStyle}>
-            Loading...
+            {text}
         </div>
     )
 
@@ -52,11 +67,14 @@ class Bundle extends React.Component {
             load, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
-        const { Component } = this.state;
+        const { Component, failed } = this.state;
         const Loading = this.renderLoading;
 
         if (!Component) {
-            return <Loading />;
+            const message = failed ? 'Error while loading page.' : 'Loading...';
+            return (
+                <Loading text={message} />
+            );
         }
         return <Component {...otherProps} />;
     }

@@ -16,11 +16,12 @@ const propTypes = {
         PropTypes.bool,
         PropTypes.object,
         PropTypes.array,
-    ]).isRequired,
+    ]),
 };
 
 const defaultProps = {
     className: '',
+    value: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
