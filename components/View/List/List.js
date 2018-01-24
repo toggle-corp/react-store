@@ -19,7 +19,7 @@ const propTypes = {
     /* data to be iterated and shown as list */
     data: propTypeData,
     /* get key for each component in list */
-    keyExtractor: PropTypes.func.isRequired,
+    keyExtractor: PropTypes.func,
     /* component to be shown as item in list */
     modifier: PropTypes.func,
 };
@@ -27,6 +27,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     modifier: undefined,
+    keyExtractor: undefined,
 };
 
 export default class List extends React.Component {
@@ -40,7 +41,7 @@ export default class List extends React.Component {
             modifier,
         } = this.props;
 
-        const key = keyExtractor(datum, i);
+        const key = (keyExtractor && keyExtractor(datum, i)) || datum;
 
         if (modifier) {
             return modifier(key, datum, i, data);
