@@ -184,6 +184,7 @@ export default class TabularSelectInput extends React.PureComponent {
                     onClick={() => this.handleRemoveButtonClick(row)}
                     iconName={iconNames.delete}
                     smallVerticalPadding
+                    transparent
                 />
             ),
         },
