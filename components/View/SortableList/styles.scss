@@ -1,0 +1,12 @@
+@import '../../../stylesheets/base';
+
+.sortable-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .drag-handle {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+}
