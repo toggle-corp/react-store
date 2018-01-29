@@ -21,13 +21,16 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    value: undefined,
+    value: '',
 };
 
 @CSSModules(styles, { allowMultiple: true })
 export default class HiddenInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    // NOTE: noop
+    onChange = () => {};
 
     getValue = () => this.props.value;
 
@@ -42,7 +45,9 @@ export default class HiddenInput extends React.PureComponent {
                 styleName="hidden-input"
                 className={className}
                 value={value}
+                type="hidden"
                 readOnly
+                onChange={this.onChange}
             />
         );
     }
