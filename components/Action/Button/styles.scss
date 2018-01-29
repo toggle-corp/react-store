@@ -41,13 +41,18 @@
         background-color: $color-background-button-default;
         color: $color-label;
 
-        &.transparent {
-            color: $color-label;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-label;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-label;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-label;
+                outline-offset: 0;
+            }
         }
     }
 
@@ -55,13 +60,18 @@
         background-color: $color-accent;
         color: $color-text-on-accent;
 
-        &.transparent {
-            color: $color-accent;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-text-on-accent;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-accent;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-accent;
+                outline-offset: 0;
+            }
         }
     }
 
@@ -69,13 +79,18 @@
         background-color: $color-primary;
         color: $color-text-on-primary;
 
-        &.transparent {
-            color: $color-primary;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-text-on-primary;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-primary;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-primary;
+                outline-offset: 0;
+            }
         }
     }
 
@@ -83,13 +98,18 @@
         background-color: $color-danger;
         color: $color-text-on-primary;
 
-        &.transparent {
-            color: $color-danger;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-text-on-primary;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-danger;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-danger;
+                outline-offset: 0;
+            }
         }
     }
 
@@ -97,13 +117,18 @@
         background-color: $color-success;
         color: $color-text-on-primary;
 
-        &.transparent {
-            color: $color-success;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-text-on-primary;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-success;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-success;
+                outline-offset: 0;
+            }
         }
     }
 
@@ -111,13 +136,18 @@
         background-color: $color-warning;
         color: $color-text-on-primary;
 
-        &.transparent {
-            color: $color-warning;
-        }
-
         &:focus {
             outline: $width-separator-thin dotted $color-text-on-primary;
             outline-offset: -$spacing-small;
+        }
+
+        &.transparent {
+            color: $color-warning;
+
+            &:focus {
+                outline: $width-separator-thin dotted $color-warning;
+                outline-offset: 0;
+            }
         }
     }
 
