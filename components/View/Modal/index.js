@@ -1,5 +1,5 @@
 import CSSModules from 'react-css-modules';
-import FocusTrap from 'focus-trap-react';
+import FocusTrap from 'react-focus-trap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
