@@ -1,7 +1,8 @@
 @import '../../../stylesheets/base';
 
-$timeseries-primary-color: #008080 !default;
-$timeseries-color-overlay: #9cc !default;
+$timeseries-area-color: rgba(0, 128, 128, .6) !default;
+$timeseries-line-color: #008080 !default;
+$timeseries-color-overlay: $timeseries-line-color !default;
 $timeseries-stroke-overlay: #fff !default;
 
 .time-series {
@@ -17,7 +18,6 @@ $timeseries-stroke-overlay: #fff !default;
         flex-grow: 1;
 
         :global {
-
             .axis {
                 line,
                 path {
@@ -31,15 +31,16 @@ $timeseries-stroke-overlay: #fff !default;
 
             .time-area {
                 path {
-                    stroke: $timeseries-primary-color;
-                    fill: $timeseries-primary-color;
+                    stroke: $timeseries-area-color;
+                    fill: $timeseries-area-color;
                 }
             }
 
             .time-path {
                 path {
-                    stroke: $timeseries-primary-color;
+                    stroke: $timeseries-line-color;
                     fill: transparent;
+                    stroke-width: 1.5px;
                 }
             }
 
@@ -57,7 +58,7 @@ $timeseries-stroke-overlay: #fff !default;
             .overlay-circle {
                 opacity: 0;
                 stroke: $timeseries-stroke-overlay;
-                fill: $timeseries-primary-color;
+                fill: $timeseries-line-color;
             }
         }
     }
