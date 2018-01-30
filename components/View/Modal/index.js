@@ -1,4 +1,5 @@
 import CSSModules from 'react-css-modules';
+import FocusTrap from 'react-focus-trap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -56,9 +57,11 @@ export default class Modal extends React.PureComponent {
     render() {
         return (
             <Portal>
-                <div className={this.getClassName()}>
-                    { this.props.children }
-                </div>
+                <FocusTrap>
+                    <div className={this.getClassName()}>
+                        { this.props.children }
+                    </div>
+                </FocusTrap>
             </Portal>
         );
     }
