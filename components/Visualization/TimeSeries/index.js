@@ -189,7 +189,7 @@ export default class TimeSeries extends React.PureComponent {
         const xTickValues = this.getXTickValues(this.scaleX.domain());
 
         const xAxis = axisBottom(this.scaleX)
-            // .tickSizeInner(-height)
+            .tickSizeInner(-height)
             // .tickSizeOuter(0)
             .tickFormat(xTickFormat)
             // .ticks(5)
@@ -202,19 +202,10 @@ export default class TimeSeries extends React.PureComponent {
 
         if (yTicks) { yAxis.ticks(yTicks); }
 
-        let line;
-        if (showArea) {
-            line = area()
-                // .curve(curveMonotoneX)
-                .x(d => this.scaleX(d[xKey] || 0))
-                .y1(d => this.scaleY(d[yKey] || 0))
-                .y0(height);
-        } else {
-            line = d3Line()
-                // .curve(curveMonotoneX)
-                .x(d => this.scaleX(d[xKey] || 0))
-                .y(d => this.scaleY(d[yKey] || 0));
-        }
+        const line = d3Line()
+            // .curve(curveMonotoneX)
+            .x(d => this.scaleX(d[xKey] || 0))
+            .y(d => this.scaleY(d[yKey] || 0));
 
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
@@ -228,8 +219,22 @@ export default class TimeSeries extends React.PureComponent {
             .attr('class', 'axis axis--y')
             .call(yAxis);
 
+        if (showArea) {
+            const lineArea = area()
+                // .curve(curveMonotoneX)
+                .x(d => this.scaleX(d[xKey] || 0))
+                .y1(d => this.scaleY(d[yKey] || 0))
+                .y0(height);
+
+            root.append('g')
+                .attr('class', 'time-area')
+                .append('path')
+                .data([data])
+                .attr('d', lineArea);
+        }
+
         root.append('g')
-            .attr('class', showArea ? 'time-area' : 'time-path')
+            .attr('class', 'time-path')
             .append('path')
             .data([data])
             .attr('d', line);
