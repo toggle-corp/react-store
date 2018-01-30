@@ -230,7 +230,7 @@ export default class RestRequest {
 
         // DEBUG:
         console.log(`Recieving ${this.url}`, responseBody);
-        const isOkay = response.ok && Math.floor(responseBody.responseCode / 100) === 2;
+        const isOkay = response.ok && Math.floor((responseBody.responseCode || 200) / 100) === 2;
         if (isOkay) {
             // NOTE: clear out old retryCount
             this.retryCount = 1;
