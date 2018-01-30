@@ -22,10 +22,16 @@ export default class ResizableH extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getMousePosition = e => ({
+        x: e.clientX,
+        y: e.clientY,
+    })
+
     constructor(props) {
         super(props);
 
         this.resizing = false;
+        this.lastMousePosition = {};
     }
 
     componentWillMount() {
@@ -50,7 +56,6 @@ export default class ResizableH extends React.PureComponent {
 
         return classNames.join(' ');
     }
-
 
     getSeparatorClassName = () => {
         const { separatorClassName } = this.props;
@@ -85,6 +90,19 @@ export default class ResizableH extends React.PureComponent {
         return classNames.join(' ');
     }
 
+    isSeparatorClicked = (e) => {
+        if (!this.separator) {
+            return false;
+        }
+        const rc = this.separator.getBoundingClientRect();
+        const { x, y } = ResizableH.getMousePosition(e);
+
+        return (
+            x >= rc.left && x <= rc.right &&
+            y >= rc.top && y <= rc.bottom
+        );
+    }
+
     syncResizeClassName = (resizing) => {
         if (this.container) {
             const resizeClassName = styles.resizing;
@@ -104,24 +122,23 @@ export default class ResizableH extends React.PureComponent {
     }
 
     resizeContainers = (dx) => {
-        if (dx !== 0 && this.container && this.leftContainer && this.rightContainer) {
-            const totalWidth = this.container.getBoundingClientRect().width;
-            const leftContainerWidth = this.leftContainer.getBoundingClientRect().width + dx;
+        if (dx !== 0 && this.leftContainer && this.rightContainer) {
+            const leftContainerBoundingClient = this.leftContainer.getBoundingClientRect();
+            const leftContainerWidth = leftContainerBoundingClient.width + dx;
 
             this.leftContainer.style.width = `${leftContainerWidth}px`;
-            this.rightContainer.style.width = `${totalWidth - leftContainerWidth}px`;
+            this.rightContainer.style.width = `calc(100% - ${leftContainerWidth}px)`;
         }
     }
 
     handleMouseDown = (e) => {
-        const el = document.elementFromPoint(e.screenX, e.screenY);
-        if (this.separator && this.separator === el) {
+        const clickOnSeparator = this.isSeparatorClicked(e);
+
+        if (clickOnSeparator) {
+            this.syncResizeClassName(true);
+
             this.resizing = true;
-            this.lastMousePosition = {
-                x: e.screenX,
-                y: e.screenY,
-            };
-            this.syncResizeClassName(this.resizing);
+            this.lastMousePosition = ResizableH.getMousePosition(e);
         } else {
             this.resizing = false;
         }
@@ -129,26 +146,25 @@ export default class ResizableH extends React.PureComponent {
 
     handleMouseUp = (e) => {
         if (this.resizing) {
-            const dx = e.screenX - this.lastMousePosition.x;
+            const mousePosition = ResizableH.getMousePosition(e);
+            const dx = mousePosition.x - this.lastMousePosition.x;
+
             this.resizeContainers(dx);
+            this.syncResizeClassName(false);
+
+            this.lastMousePosition = {};
             this.resizing = false;
-            this.lastMousePosition = {
-                x: e.screenX,
-                y: e.screenY,
-            };
-            this.syncResizeClassName(this.resizing);
         }
     }
 
     handleMouseMove = (e) => {
         if (this.resizing) {
-            const dx = e.screenX - this.lastMousePosition.x;
+            const mousePosition = ResizableH.getMousePosition(e);
+            const dx = mousePosition.x - this.lastMousePosition.x;
+
             this.resizeContainers(dx);
 
-            this.lastMousePosition = {
-                x: e.screenX,
-                y: e.screenY,
-            };
+            this.lastMousePosition = mousePosition;
         }
     }
 
@@ -171,7 +187,9 @@ export default class ResizableH extends React.PureComponent {
                     <div
                         ref={(el) => { this.separator = el; }}
                         className={this.getSeparatorClassName()}
-                    />
+                    >
+                        <div className={styles['separator-rule']} />
+                    </div>
                 </div>
                 <div
                     ref={(el) => { this.rightContainer = el; }}
