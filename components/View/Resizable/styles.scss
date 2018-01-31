@@ -1,0 +1,95 @@
+@import '../../../stylesheets/base';
+
+$width-resizable-separator: 10px;
+
+.resizable-h {
+    .first {
+        position: relative;
+        padding: 0;
+
+        .separator {
+            position: absolute;
+            top: 0;
+            right: -($width-resizable-separator / 2);
+            z-index: 1111;
+            cursor: col-resize;
+            width: $width-resizable-separator;
+            height: 100%;
+
+            .separator-rule {
+                @include transition-medium;
+                margin: auto;
+                background-color: transparent;
+                width: $width-separator-medium;
+                height: 100%;
+            }
+
+            &:hover {
+                .separator-rule {
+                    background-color: $color-accent;
+                }
+            }
+        }
+    }
+
+    .second {
+        padding: 0;
+    }
+
+    &.resizing {
+        cursor: col-resize;
+        user-select: none;
+
+        .separator {
+            .separator-rule {
+                background-color: $color-accent;
+            }
+        }
+    }
+}
+
+.resizable-v {
+    .first {
+        position: relative;
+        padding: 0;
+
+        .separator {
+            position: absolute;
+            bottom: -($width-resizable-separator / 2);
+            left: 0;
+            z-index: 1111;
+            cursor: row-resize;
+            width: 100%;
+            height: $width-resizable-separator;
+
+            .separator-rule {
+                @include transition-medium;
+                margin-top: ($width-resizable-separator - $width-separator-medium) / 2;
+                background-color: transparent;
+                width: 100%;
+                height: $width-separator-medium;
+            }
+
+            &:hover {
+                .separator-rule {
+                    background-color: $color-accent;
+                }
+            }
+        }
+    }
+
+    .second {
+        padding: 0;
+    }
+
+    &.resizing {
+        cursor: row-resize;
+        user-select: none;
+
+        .separator {
+            .separator-rule {
+                background-color: $color-accent;
+            }
+        }
+    }
+}
