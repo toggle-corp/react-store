@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$width-resizable-separator: 6px;
+$width-resizable-separator: 10px;
 
 .resizable-h {
     .left {
@@ -10,15 +10,24 @@ $width-resizable-separator: 6px;
         .separator {
             position: absolute;
             top: 0;
-            right: -$width-resizable-separator;
+            right: -($width-resizable-separator / 2);
             z-index: 1111;
-            border-left: $width-separator-medium solid transparent;
             cursor: col-resize;
             width: $width-resizable-separator;
             height: 100%;
 
+            .separator-rule {
+                @include transition-medium;
+                margin: auto;
+                background-color: transparent;
+                width: $width-separator-medium;
+                height: 100%;
+            }
+
             &:hover {
-                border-left-color: $color-accent;
+                .separator-rule {
+                    background-color: $color-accent;
+                }
             }
         }
     }
@@ -28,11 +37,13 @@ $width-resizable-separator: 6px;
     }
 
     &.resizing {
+        cursor: col-resize;
         user-select: none;
 
         .separator {
-            border-left-color: $color-accent;
-            cursor: col-resize;
+            .separator-rule {
+                background-color: $color-accent;
+            }
         }
     }
 }
