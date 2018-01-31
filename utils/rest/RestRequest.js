@@ -15,7 +15,7 @@ export default class RestRequest {
      */
     static parseUrlParams(stringParams) {
         // TODO: Decode
-        const params = stringParams.split('&');
+        const params = decodeURIComponent(stringParams).split('&');
         const paramsJson = {};
         params.forEach((param) => {
             const split = param.split('=');
