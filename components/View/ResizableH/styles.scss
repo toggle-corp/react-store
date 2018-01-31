@@ -19,9 +19,9 @@ $width-resizable-separator: 10px;
             .separator-rule {
                 @include transition-medium;
                 margin: auto;
+                background-color: transparent;
                 width: $width-separator-medium;
                 height: 100%;
-                background-color: transparent;
             }
 
             &:hover {
@@ -37,8 +37,8 @@ $width-resizable-separator: 10px;
     }
 
     &.resizing {
-        user-select: none;
         cursor: col-resize;
+        user-select: none;
 
         .separator {
             .separator-rule {
