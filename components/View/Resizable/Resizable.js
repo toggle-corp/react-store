@@ -16,6 +16,8 @@ const propTypes = {
     resizableClassName: PropTypes.string.isRequired,
     calculateDifference: PropTypes.func.isRequired,
     resizeContainers: PropTypes.func.isRequired,
+
+    onResize: PropTypes.func,
 };
 
 const defaultProps = {
@@ -23,6 +25,7 @@ const defaultProps = {
     separatorClassName: '',
     firstContainerClassName: '',
     secondContainerClassName: '',
+    onResize: undefined,
 };
 
 export default class Resizable extends React.PureComponent {
@@ -156,6 +159,10 @@ export default class Resizable extends React.PureComponent {
 
             this.lastMousePosition = {};
             this.resizing = false;
+
+            if (this.props.onResize) {
+                this.props.onResize();
+            }
         }
     }
 
