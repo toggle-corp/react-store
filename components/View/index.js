@@ -25,7 +25,7 @@ export {
 } from './Numeral';
 export { default as Pager } from './Pager';
 export { default as RawTable } from './RawTable';
-export { default as ResizableH } from './ResizableH';
+export { ResizableH, ResizableV } from './Resizable';
 export { default as Table } from './Table';
 export { default as TableHeader } from './TableHeader';
 export {
