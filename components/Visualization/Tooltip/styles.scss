@@ -11,4 +11,8 @@ $tooltip-background-color: rgba(0, 0, 0, .75) !default;
     opacity: 0;
     z-index: 10;
     pointer-events: none;
+
+    &.hide {
+        display: none;
+    }
 }
