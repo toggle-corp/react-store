@@ -100,11 +100,11 @@ export default class Tooltip extends React.PureComponent {
     render() {
         const { className } = this.props;
         const { children } = this.state;
-
+        const hide = !children ? 'hide' : '';
         return (
             <div
                 className={className}
-                styleName="tooltip"
+                styleName={`tooltip ${hide}`}
                 ref={(div) => { this.divContainer = div; }}
             >
                 {children}

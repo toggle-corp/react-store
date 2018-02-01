@@ -243,13 +243,15 @@ export default class TimeSeries extends React.PureComponent {
             .attr('class', 'overlay-line')
             .attr('width', 0.1)
             .attr('x', 0)
-            .attr('height', height);
+            .attr('height', height)
+            .style('opacity', 0);
 
         const overLayCircle = root.append('circle')
             .attr('class', 'overlay-circle')
             .attr('cx', 0)
             .attr('cy', 0)
-            .attr('r', 3);
+            .attr('r', 3)
+            .style('opacity', 0);
 
         const overLay = root.append('rect')
             .attr('class', 'overlay')
