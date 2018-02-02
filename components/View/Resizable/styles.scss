@@ -8,26 +8,18 @@ $width-resizable-separator: 10px;
         padding: 0;
 
         .separator {
+            @include transition-medium;
             position: absolute;
             top: 0;
-            right: -($width-resizable-separator / 2);
+            right: 0;
             z-index: 1111;
             cursor: col-resize;
             width: $width-resizable-separator;
             height: 100%;
-
-            .separator-rule {
-                @include transition-medium;
-                margin: auto;
-                background-color: transparent;
-                width: $width-separator-medium;
-                height: 100%;
-            }
+            border-right: $width-separator-medium solid transparent;
 
             &:hover {
-                .separator-rule {
-                    background-color: $color-accent;
-                }
+                border-right-color: $color-accent;
             }
         }
     }
@@ -41,9 +33,7 @@ $width-resizable-separator: 10px;
         user-select: none;
 
         .separator {
-            .separator-rule {
-                background-color: $color-accent;
-            }
+            border-right-color: $color-accent;
         }
     }
 }
@@ -54,26 +44,18 @@ $width-resizable-separator: 10px;
         padding: 0;
 
         .separator {
+            @include transition-medium;
             position: absolute;
-            bottom: -($width-resizable-separator / 2);
+            bottom: 0;
             left: 0;
             z-index: 1111;
             cursor: row-resize;
             width: 100%;
             height: $width-resizable-separator;
-
-            .separator-rule {
-                @include transition-medium;
-                margin-top: ($width-resizable-separator - $width-separator-medium) / 2;
-                background-color: transparent;
-                width: 100%;
-                height: $width-separator-medium;
-            }
+            border-bottom: $width-separator-medium solid transparent;
 
             &:hover {
-                .separator-rule {
-                    background-color: $color-accent;
-                }
+                border-bottom-color: $color-accent;
             }
         }
     }
@@ -87,9 +69,7 @@ $width-resizable-separator: 10px;
         user-select: none;
 
         .separator {
-            .separator-rule {
-                background-color: $color-accent;
-            }
+            border-bottom-color: $color-accent;
         }
     }
 }
