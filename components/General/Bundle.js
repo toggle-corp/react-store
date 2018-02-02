@@ -29,9 +29,7 @@ class Bundle extends React.Component {
         this.mounted = true;
         this.props.load()
             .then(this.handleLoad)
-            .catch(() => {
-
-            });
+            .catch(this.handleLoadError);
     }
 
     componentWillUnmount() {
@@ -48,12 +46,14 @@ class Bundle extends React.Component {
         });
     }
 
-    handleLoadError = () => {
+    handleLoadError = (err) => {
         if (!this.mounted) {
             console.warn('Bundle was unmounted before loading Component');
             return;
         }
         this.setState({ failed: true });
+        console.warn('Failed loading bundle');
+        console.warn(err);
     }
 
     renderLoading = ({ text }) => (

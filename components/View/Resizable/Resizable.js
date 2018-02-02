@@ -196,9 +196,7 @@ export default class Resizable extends React.PureComponent {
                     <div
                         ref={(el) => { this.separator = el; }}
                         className={this.getSeparatorClassName()}
-                    >
-                        <div className={styles['separator-rule']} />
-                    </div>
+                    />
                 </div>
                 <div
                     ref={(el) => { this.secondContainer = el; }}

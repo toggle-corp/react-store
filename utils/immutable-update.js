@@ -69,5 +69,12 @@ update.extend(
     '$autoUnshift',
     (value, object) => (value.length ? value : []).concat(object || []),
 );
+update.extend('$unset', (keysToRemove, original) => {
+    const copy = { ...original };
+    keysToRemove.forEach((key) => {
+        delete copy[key];
+    });
+    return copy;
+});
 
 export default update;
