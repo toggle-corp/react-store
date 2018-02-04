@@ -3,13 +3,25 @@
 $color-text-on-positive: rgba(0, 0, 0, .5);
 $color-text-on-negative: rgba(0, 0, 0, .5);
 
-.colored-numeral {
-    &.gain-positive {
+.gain-positive {
+    &.colored-numeral {
         color: $color-positive;
     }
 
-    &.gain-negative {
+    &.block-numeral {
+        background-color: $color-positive;
+        color: $color-text-on-positive;
+    }
+}
+
+.gain-negative {
+    &.colored-numeral {
         color: $color-negative;
+    }
+
+    &.block-numeral {
+        background-color: $color-negative;
+        color: $color-text-on-negative;
     }
 }
 
@@ -24,14 +36,4 @@ $color-text-on-negative: rgba(0, 0, 0, .5);
     justify-content: center;
     padding: $spacing-medium;
     min-width: 72px;
-
-    &.gain-positive {
-        background-color: $color-positive;
-        color: $color-text-on-positive;
-    }
-
-    &.gain-negative {
-        background-color: $color-negative;
-        color: $color-text-on-negative;
-    }
 }
