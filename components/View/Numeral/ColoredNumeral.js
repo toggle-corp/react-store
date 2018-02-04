@@ -71,7 +71,7 @@ export default class ColoredNumeral extends React.PureComponent {
             ...props
         } = this.props;
 
-        const defaultStyle = inBlock ? 'block-numeral' : '';
+        const defaultStyle = inBlock ? 'block-numeral' : 'colored-numeral';
         const colorClass = modifier(referenceValue, value, referenceLine);
 
         return (
