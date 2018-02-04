@@ -1,23 +1,22 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import Numeral, {
-    BlockNumeral,
     ColoredNumeral,
 } from '../index';
 
 
-describe('BlockNumeral', () => {
+describe('ColoredNumeral with Block', () => {
     const wrapper = shallow(
-        <BlockNumeral label="test" referenceLine={0} value={12} />,
+        <ColoredNumeral label="test" inBlock referenceLine={0} value={12} />,
     );
     it('renders properly when empty', () => {
         expect(wrapper.length).toEqual(1);
     });
 });
 
-describe('BlockNumeral', () => {
+describe('ColoredNumeral with Block', () => {
     const wrapper = shallow(
-        <BlockNumeral referenceLine={0} value={-12} />,
+        <ColoredNumeral inBlock referenceLine={0} value={-12} />,
     );
     it('renders properly when empty', () => {
         expect(wrapper.length).toEqual(1);
