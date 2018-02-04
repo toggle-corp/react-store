@@ -12,6 +12,14 @@ const propTypes = {
     className: PropTypes.string,
 
     /**
+     * The label of the numeral
+     */
+    label: PropTypes.string,
+    /**
+     * show in block
+     */
+    inBlock: PropTypes.string,
+    /**
      * The value of the numeral
      */
     value: PropTypes.number,
@@ -25,13 +33,20 @@ const propTypes = {
      * below referenceLine shows a negative color.
      */
     referenceLine: PropTypes.number,
+    /**
+     * to generate className
+     */
+    modifier: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    label: undefined,
     value: undefined,
     referenceValue: undefined,
     referenceLine: undefined,
+    modifier: undefined,
+    inBlock: false,
 };
 
 /**
@@ -45,19 +60,40 @@ export default class ColoredNumeral extends React.PureComponent {
     render() {
         const {
             className,
+            label,
             referenceLine = 0,
             value,
             referenceValue = value,
+            modifier,
+            inBlock,
             ...props
         } = this.props;
 
-        const styleName = referenceValue - referenceLine >= 0 ? 'gain-positive' : 'gain-negative';
+        const defaultStyle = inBlock ? 'block-numeral' : 'colored-numeral';
+
+        let colorClass = '';
+        let styleName = '';
+
+        if (modifier) {
+            colorClass = modifier(referenceLine, value, referenceValue);
+        } else {
+            styleName = referenceValue - referenceLine >= 0 ? 'gain-positive' : 'gain-negative';
+        }
 
         return (
             <span
-                className={`colored-numeral ${className}`}
-                styleName={`colored-numeral ${styleName}`}
+                className={`${defaultStyle} ${className} ${colorClass}`}
+                styleName={`${defaultStyle} ${styleName}`}
             >
+                {
+                    label && (
+                        <div
+                            className="label"
+                        >
+                            { label }
+                        </div>
+                    )
+                }
                 <Numeral
                     value={value}
                     {...props}
