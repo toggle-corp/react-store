@@ -3,7 +3,8 @@ import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { cluster, hierarchy } from 'd3-hierarchy';
 import { schemePaired } from 'd3-scale-chromatic';
-import { scaleOrdinal } from 'd3-scale';
+import { scalePow, scaleOrdinal } from 'd3-scale';
+import { extent } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
@@ -111,7 +112,6 @@ export default class Dendrogram extends React.PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-
         const colors = scaleOrdinal()
             .range(colorScheme);
 
@@ -145,6 +145,9 @@ export default class Dendrogram extends React.PureComponent {
 
         tree(root);
 
+        const minmax = extent(root.descendants(), d => d.value);
+        const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 20]);
+
         group
             .selectAll('.link')
             .data(root.descendants().slice(1))
@@ -168,18 +171,18 @@ export default class Dendrogram extends React.PureComponent {
             .style('fill', topicColors)
             .attr('r', (d) => {
                 if (d.value) {
-                    return Math.cbrt(d.value);
+                    return scaledValues(d.value);
                 }
-                return 3;
+                return 5;
             });
 
         node.append('text')
             .attr('dy', '.3em')
             .attr('dx', (d) => {
                 if (d.value) {
-                    return d.children ? `-${Math.sqrt(d.value) + 2}` : `${Math.sqrt(d.value) + 2}`;
+                    return d.children ? `-${scaledValues(d.value) + 2}` : `${scaledValues(d.value) + 2}`;
                 }
-                return d.children ? -8 : 8;
+                return d.children ? -5 : 5;
             })
             .style('fill', topicColors)
             .style('text-anchor', d => (d.children ? 'end' : 'start'))
