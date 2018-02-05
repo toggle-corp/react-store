@@ -77,11 +77,72 @@ export default class ChordDiagram extends React.PureComponent {
         this.renderChart();
     }
 
+    getGradId = d => `linkGrad-${d.source.index}-${d.target.index}`;
+
+    addGlowGradients = (svg) => {
+        const defs = svg.append('defs');
+
+        const filter = defs
+            .append('filter')
+            .attr('id', 'glow');
+
+        filter
+            .append('feGaussianBlur')
+            .attr('class', 'blur')
+            .attr('stdDeviation', '4.5')
+            .attr('result', 'coloredBlur');
+
+        const feMerge = filter.append('feMerge');
+        feMerge
+            .append('feMergeNode')
+            .attr('in', 'coloredBlur');
+        feMerge
+            .append('feMergeNode')
+            .attr('in', 'SourceGraphic');
+    }
+
+    addGradients = (svg, innerRadius, chords, colors) => {
+        function start(t, func) {
+            return innerRadius *
+            func(((t.source.endAngle - t.source.startAngle) / 2) +
+            (t.source.startAngle - (Math.PI / 2)));
+        }
+
+        function end(t, func) {
+            return innerRadius *
+            func(((t.target.endAngle - t.target.startAngle) / 2) +
+           (t.target.startAngle - (Math.PI / 2)));
+        }
+        const grads = svg
+            .append('defs')
+            .selectAll('linearGradient')
+            .data(chords)
+            .enter()
+            .append('linearGradient')
+            .attr('id', this.getGradId)
+            .attr('gradientUnits', 'userSpaceOnUse')
+            .attr('x1', t => start(t, Math.cos))
+            .attr('y1', t => start(t, Math.sin))
+            .attr('x2', t => end(t, Math.cos))
+            .attr('y2', t => end(t, Math.sin));
+
+        grads
+            .append('stop')
+            .attr('offset', '0%')
+            .attr('stop-color', t => colors(t.source.index));
+
+        grads
+            .append('stop')
+            .attr('offset', '100%')
+            .attr('stop-color', t => colors(t.target.index));
+    }
+
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('chord-diagram', 'graph')}.svg`);
     }
+
 
     renderChart() {
         const {
@@ -150,9 +211,15 @@ export default class ChordDiagram extends React.PureComponent {
             .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
             .datum(chords(data));
 
+        this.addGlowGradients(svg);
+        this.addGradients(svg, innerRadius, chords(data), color);
+
         function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${labelsData[d.index]}`);
-            return tooltip
+            tooltip.html(`<span class="name">${labelsData[d.index]}</span>`);
+            select(this)
+                .style('filter', 'url(#glow)');
+
+            tooltip
                 .transition()
                 .style('display', 'inline-block');
         }
@@ -163,7 +230,10 @@ export default class ChordDiagram extends React.PureComponent {
                 .style('left', `${event.pageX + 20}px`);
         }
 
+
         function mouseOutArc() {
+            select(this)
+                .style('filter', null);
             return tooltip
                 .transition()
                 .style('display', 'none');
@@ -174,7 +244,6 @@ export default class ChordDiagram extends React.PureComponent {
                 svg
                     .selectAll('.ribbons path')
                     .filter(d => (d.source.index !== i && d.target.index !== i))
-                    .transition()
                     .style('opacity', opacity);
             };
         }
@@ -257,7 +326,7 @@ export default class ChordDiagram extends React.PureComponent {
             .enter()
             .append('path')
             .attr('d', ribbons)
-            .style('fill', d => color(d.source.index))
+            .style('fill', d => `url(#${this.getGradId(d)})`)
             .style('stroke', '#dcdcdc');
     }
 
