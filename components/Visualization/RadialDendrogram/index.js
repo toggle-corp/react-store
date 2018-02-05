@@ -2,8 +2,9 @@ import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { tree, hierarchy } from 'd3-hierarchy';
+import { extent } from 'd3-array';
 import { schemePaired } from 'd3-scale-chromatic';
-import { scaleOrdinal } from 'd3-scale';
+import { scalePow, scaleOrdinal } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
@@ -30,6 +31,7 @@ const propTypes = {
     }),
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
+    valueAccessor: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -44,6 +46,7 @@ const propTypes = {
 const defaultProps = {
     childrenAccessor: d => d.children,
     data: [],
+    valueAccessor: () => 1,
     colorScheme: schemePaired,
     className: '',
     margins: {
@@ -84,6 +87,7 @@ export default class RadialDendrogram extends React.PureComponent {
             data,
             boundingClientRect,
             childrenAccessor,
+            valueAccessor,
             labelAccessor,
             colorScheme,
             margins,
@@ -137,8 +141,12 @@ export default class RadialDendrogram extends React.PureComponent {
             .size([360, radius - leafTextWidth])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
-        const root = hierarchy(data, childrenAccessor);
+        const root = hierarchy(data, childrenAccessor)
+            .sum(valueAccessor);
         trees(root);
+
+        const minmax = extent(root.descendants(), d => d.value);
+        const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 20]);
 
         function project(x, y) {
             const angle = ((x - 90) / 180) * Math.PI;
@@ -172,12 +180,19 @@ export default class RadialDendrogram extends React.PureComponent {
 
         node.append('circle')
             .style('fill', topicColors)
-            .attr('r', 2.5);
+            .attr('r', (d) => {
+                if (d.value) {
+                    return scaledValues(d.value);
+                }
+                return 3;
+            });
 
         node.append('text')
             .attr('dy', '.3em')
             .style('fill', topicColors)
-            .attr('x', d => ((d.x < 180) === (!d.children) ? 6 : -6))
+            .attr('x', d =>
+                ((d.x < 180) === (!d.children) ?
+                    `${scaledValues(d.value)}` : `-${scaledValues(d.value)}`))
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)
