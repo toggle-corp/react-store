@@ -4,7 +4,6 @@ import { select, event } from 'd3-selection';
 import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
-import { rgb } from 'd3-color';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
@@ -194,9 +193,31 @@ export default class ChordDiagram extends React.PureComponent {
             .append('path')
             .attr('class', 'arcs')
             .style('fill', d => color(d.index))
-            .attr('id', (d, i) => `group${i}`)
-            .style('stroke', d => rgb(color(d.index)).darker())
-            .attr('d', arcs);
+            .style('stroke', '#dcdcdc')
+            .attr('d', arcs)
+            .each(function change(d, i) {
+                const firstArcSection = /(^.+?)L/;
+
+                let newArc = firstArcSection.exec(select(this).attr('d'))[1];
+                newArc.replace(/,/g, ' ');
+                if (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (270 * (Math.PI / 180))) {
+                    const startLoc = /M(.*?)A/;
+                    const middleLoc = /A(.*?),0/;
+                    const endLoc = /,1,(.*?)$/;
+
+                    const newStart = newArc.match(endLoc).pop();
+                    const newEnd = newArc.match(startLoc).pop();
+                    const middleSec = newArc.match(middleLoc).pop();
+
+                    newArc = `M${newStart}A${middleSec},0,0,0,${newEnd}`;
+                }
+                chart
+                    .append('path')
+                    .attr('class', 'hiddenArcs')
+                    .attr('id', `arc${i}`)
+                    .attr('d', newArc)
+                    .style('fill', 'none');
+            });
 
         if (showTooltip) {
             groupPath
@@ -208,13 +229,14 @@ export default class ChordDiagram extends React.PureComponent {
         if (showLabels) {
             const groupText = group
                 .append('text')
-                .attr('x', 6)
-                .attr('dy', 15);
+                .attr('pointer-events', 'none')
+                .attr('dy', d => (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (270 * (Math.PI / 180)) ? -10 : 15));
 
             groupText
                 .append('textPath')
-                .attr('xlink:href', (d, i) => `#group${i}`)
-                .attr('pointer-events', 'none')
+                .attr('startOffset', '50%')
+                .style('text-anchor', 'middle')
+                .attr('xlink:href', (d, i) => `#arc${i}`)
                 .text(d => labelsData[d.index])
                 .style('fill', d => getColorOnBgColor(color(d.index)));
 
@@ -236,7 +258,7 @@ export default class ChordDiagram extends React.PureComponent {
             .append('path')
             .attr('d', ribbons)
             .style('fill', d => color(d.source.index))
-            .style('stroke', d => rgb(color(d.source.index)).darker());
+            .style('stroke', '#dcdcdc');
     }
 
     render() {
