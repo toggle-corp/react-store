@@ -72,8 +72,74 @@ export default class HorizontalBar extends React.PureComponent {
 
     save = () => {
         const svg = select(this.svg);
+
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('horizontalbar', 'graph')}.svg`);
+    }
+
+    addShadow = (svg) => {
+        const defs = svg.append('defs');
+
+        const filter = defs
+            .append('filter')
+            .attr('id', 'drop-shadow')
+            .attr('height', '130%');
+
+        filter
+            .append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', 3)
+            .attr('result', 'ambientBlur');
+
+        filter
+            .append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', 2)
+            .attr('result', 'castBlur');
+
+        filter
+            .append('feOffset')
+            .attr('in', 'castBlur')
+            .attr('dx', 3)
+            .attr('dy', 4)
+            .attr('result', 'offsetBlur');
+
+        filter
+            .append('feComposite')
+            .attr('in', 'ambientBlur')
+            .attr('in2', 'offsetBlur')
+            .attr('result', 'compositeShadow');
+
+        filter
+            .append('feComponentTransfer')
+            .append('feFuncA')
+            .attr('type', 'linear')
+            .attr('slope', 0.25);
+
+        const feMerge = filter.append('feMerge');
+        feMerge
+            .append('feMergeNode');
+        feMerge
+            .append('feMergeNode')
+            .attr('in', 'SourceGraphic');
+    }
+
+    addLines = (func, scale, length) => func(scale)
+        .tickSize(-length)
+        .tickPadding(10)
+        .tickFormat('')
+
+    addGrid = (svg, xscale, yscale, height, width) => {
+        svg
+            .append('g')
+            .attr('class', 'grid')
+            .attr('transform', `translate(0, ${height})`)
+            .call(this.addLines(axisBottom, xscale, height));
+
+        svg
+            .append('g')
+            .attr('class', 'grid')
+            .call(this.addLines(axisLeft, yscale, width));
     }
 
     renderChart() {
@@ -139,77 +205,7 @@ export default class HorizontalBar extends React.PureComponent {
             .attr('class', 'y-axis')
             .call(yAxis);
 
-        function addXgrid() {
-            return axisBottom(x)
-                .tickSize(-height)
-                .tickPadding(10)
-                .tickFormat('');
-        }
-
-        function addYgrid() {
-            return axisLeft(y)
-                .tickSize(-width)
-                .tickPadding(10)
-                .tickFormat('');
-        }
-
-        function addGrid() {
-            group
-                .append('g')
-                .attr('class', 'grid')
-                .attr('transform', `translate(0, ${height})`)
-                .call(addXgrid());
-
-            group
-                .append('g')
-                .attr('class', 'grid')
-                .call(addYgrid());
-        }
-
-        const defs = group.append('defs');
-
-        const filter = defs
-            .append('filter')
-            .attr('id', 'drop-shadow')
-            .attr('height', '130%');
-
-        filter
-            .append('feGaussianBlur')
-            .attr('in', 'SourceAlpha')
-            .attr('stdDeviation', 3)
-            .attr('result', 'ambientBlur');
-
-        filter
-            .append('feGaussianBlur')
-            .attr('in', 'SourceAlpha')
-            .attr('stdDeviation', 2)
-            .attr('result', 'castBlur');
-
-        filter
-            .append('feOffset')
-            .attr('in', 'castBlur')
-            .attr('dx', 3)
-            .attr('dy', 4)
-            .attr('result', 'offsetBlur');
-
-        filter
-            .append('feComposite')
-            .attr('in', 'ambientBlur')
-            .attr('in2', 'offsetBlur')
-            .attr('result', 'compositeShadow');
-
-        filter
-            .append('feComponentTransfer')
-            .append('feFuncA')
-            .attr('type', 'linear')
-            .attr('slope', 0.25);
-
-        const feMerge = filter.append('feMerge');
-        feMerge
-            .append('feMergeNode');
-        feMerge
-            .append('feMergeNode')
-            .attr('in', 'SourceGraphic');
+        this.addShadow(group);
 
         function handleMouseOver() {
             select(this)
@@ -222,7 +218,7 @@ export default class HorizontalBar extends React.PureComponent {
         }
 
         if (showGridLines) {
-            addGrid();
+            this.addGrid(group, x, y, height, width);
         }
 
         const groups = group
@@ -251,6 +247,7 @@ export default class HorizontalBar extends React.PureComponent {
             .append('text')
             .attr('x', d => x(valueAccessor(d)) - 3)
             .attr('y', d => y(labelAccessor(d)) + (y.bandwidth() / 2))
+            .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .text(d => valueAccessor(d))
             .style('fill', textColor);
