@@ -31,6 +31,8 @@ const propTypes = {
         ),
     ]).isRequired,
 
+    accept: PropTypes.string,
+
     onChange: PropTypes.func.isRequired,
 };
 
@@ -39,12 +41,28 @@ const defaultProps = {
     previewExtractor: undefined,
     showPreview: false,
     showStatus: true,
+    accept: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
 export default class FileInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static isValidFile = (name, mimeType, acceptString) => {
+        if (!acceptString) {
+            return true;
+        }
+        // NOTE: no validation has been made, please careful
+        const acceptList = acceptString.split(/,\s+/);
+        return acceptList.some((accept) => {
+            if (mimeType === accept) {
+                return true;
+            }
+            const match = /\..*/.exec(name);
+            return !!match && match[0].toLowerCase() === accept.toLowerCase();
+        });
+    }
 
     constructor(props) {
         super(props);
@@ -58,19 +76,28 @@ export default class FileInput extends React.PureComponent {
     }
 
     handleChange = () => {
-        const files = this.fileInput.files;
+        const filesFromInput = Array.from(this.fileInput.files);
+        const files = filesFromInput.filter(
+            file => FileInput.isValidFile(file.name, file.type, this.props.accept),
+        );
+        const invalidFiles = filesFromInput.length - files.length;
+
         if (files.length > 0 && this.props.showPreview) {
-            this.props.previewExtractor(files[0]).then((preview) => {
-                this.setState({ preview });
-            });
+            this.props.previewExtractor(files[0])
+                .then((preview) => {
+                    this.setState({ preview });
+                });
         }
 
-        this.setState({
-            files,
-            preview: undefined,
-        });
-
-        this.props.onChange(files);
+        this.setState(
+            {
+                files,
+                preview: undefined,
+            },
+            () => {
+                this.props.onChange(files, { invalidFiles });
+            },
+        );
     }
 
     render() {
