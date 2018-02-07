@@ -179,7 +179,8 @@ export default class CorrelationMatrix extends React.PureComponent {
         cell.append('rect')
             .attr('width', x.bandwidth())
             .attr('height', y.bandwidth())
-            .style('stroke-width', 0);
+            .attr('stroke', 'white')
+            .attr('stroke-width', 1);
 
         row.selectAll('.cell')
             .data((d, i) => dataValues[i])
@@ -212,21 +213,13 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('class', 'column-labels')
             .attr('transform', (d, i) => `translate( ${x(i)}, 0)`);
 
-        columnLabels
-            .append('line')
-            .style('stroke', 'black')
-            .style('stroke-width', '1px')
-            .attr('x1', x.bandwidth() / 2)
-            .attr('x2', x.bandwidth() / 2)
-            .attr('y1', 0)
-            .attr('y2', -5);
 
         columnLabels
             .append('text')
             .attr('font-size', '.8em')
             .attr('class', 'labels')
-            .attr('text-anchor', 'start')
-            .attr('transform', `translate(${(x.bandwidth() / 2)}, -5)rotate(-60)`)
+            .attr('transform', `translate(${x.bandwidth() / 2}, -5)`)
+            .attr('text-anchor', 'middle')
             .text(d => d);
 
         const rowLabels = labels
@@ -236,15 +229,6 @@ export default class CorrelationMatrix extends React.PureComponent {
             .append('g')
             .attr('class', 'row-labels')
             .attr('transform', (d, i) => `translate(0, ${y(i)})`);
-
-        rowLabels
-            .append('line')
-            .style('stroke', 'black')
-            .style('stroke-width', '1px')
-            .attr('x1', 0)
-            .attr('x2', -5)
-            .attr('y1', y.bandwidth() / 2)
-            .attr('y2', y.bandwidth() / 2);
 
         rowLabels
             .append('text')

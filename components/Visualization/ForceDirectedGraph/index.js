@@ -1,10 +1,11 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
 import { select, event } from 'd3-selection';
-import { scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
 import { forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-force';
 import { drag } from 'd3-drag';
+import { extent } from 'd3-array';
 import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
@@ -157,6 +158,9 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
         const color = scaleOrdinal().range(colorScheme);
 
+        const minmax = extent(data.links, valueAccessor);
+        const scaledValues = scaleLinear().domain(minmax).range([1, 3]);
+
         const voronois = voronoi()
             .x(d => d.x)
             .y(d => d.y)
@@ -233,7 +237,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .data(data.links)
             .enter()
             .append('line')
-            .attr('stroke-width', d => Math.sqrt(valueAccessor(d)));
+            .attr('stroke-width', d => scaledValues(valueAccessor(d)));
 
         const node = group
             .selectAll('.nodes')

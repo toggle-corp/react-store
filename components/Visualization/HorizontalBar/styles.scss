@@ -6,8 +6,7 @@
 
     .horizontalbar {
         .grid line {
-            stroke: $color-links;
-            stroke-opacity: .7;
+            stroke: $color-grid-path;
             shape-rendering: crispEdges;
         }
 
@@ -16,11 +15,19 @@
         }
 
         .x-axis path {
-            stroke: $color-primary;
+            stroke: $color-axis-path;
         }
 
         .y-axis path {
-            stroke: $color-primary;
+            stroke: $color-axis-path;
+        }
+
+        .x-axis .tick line {
+            visibility: hidden;
+        }
+
+        .y-axis .tick line {
+            visibility: hidden;
         }
     }
 

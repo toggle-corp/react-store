@@ -8,7 +8,7 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
 
 /**
@@ -72,8 +72,74 @@ export default class HorizontalBar extends React.PureComponent {
 
     save = () => {
         const svg = select(this.svg);
+
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('horizontalbar', 'graph')}.svg`);
+    }
+
+    addShadow = (svg) => {
+        const defs = svg.append('defs');
+
+        const filter = defs
+            .append('filter')
+            .attr('id', 'drop-shadow')
+            .attr('height', '130%');
+
+        filter
+            .append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', 3)
+            .attr('result', 'ambientBlur');
+
+        filter
+            .append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', 2)
+            .attr('result', 'castBlur');
+
+        filter
+            .append('feOffset')
+            .attr('in', 'castBlur')
+            .attr('dx', 3)
+            .attr('dy', 4)
+            .attr('result', 'offsetBlur');
+
+        filter
+            .append('feComposite')
+            .attr('in', 'ambientBlur')
+            .attr('in2', 'offsetBlur')
+            .attr('result', 'compositeShadow');
+
+        filter
+            .append('feComponentTransfer')
+            .append('feFuncA')
+            .attr('type', 'linear')
+            .attr('slope', 0.25);
+
+        const feMerge = filter.append('feMerge');
+        feMerge
+            .append('feMergeNode');
+        feMerge
+            .append('feMergeNode')
+            .attr('in', 'SourceGraphic');
+    }
+
+    addLines = (func, scale, length) => func(scale)
+        .tickSize(-length)
+        .tickPadding(10)
+        .tickFormat('')
+
+    addGrid = (svg, xscale, yscale, height, width) => {
+        svg
+            .append('g')
+            .attr('class', 'grid')
+            .attr('transform', `translate(0, ${height})`)
+            .call(this.addLines(axisBottom, xscale, height));
+
+        svg
+            .append('g')
+            .attr('class', 'grid')
+            .call(this.addLines(axisLeft, yscale, width));
     }
 
     renderChart() {
@@ -87,7 +153,7 @@ export default class HorizontalBar extends React.PureComponent {
             margins,
         } = this.props;
 
-        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || !data || data.length === 0) {
             return;
         }
 
@@ -123,13 +189,10 @@ export default class HorizontalBar extends React.PureComponent {
             .domain(data.map(d => labelAccessor(d)))
             .padding(0.2);
 
-        const xx = scaleLinear()
-            .range([0, width]);
-        const yy = scaleLinear()
-            .range([height, 0]);
-
         const xAxis = axisBottom(x);
         const yAxis = axisLeft(y);
+
+        const textColor = getColorOnBgColor(barColor);
 
         group
             .append('g')
@@ -142,48 +205,52 @@ export default class HorizontalBar extends React.PureComponent {
             .attr('class', 'y-axis')
             .call(yAxis);
 
-        function addXgrid() {
-            return axisBottom(xx)
-                .ticks(data.length)
-                .tickSize(-height)
-                .tickFormat('');
+        this.addShadow(group);
+
+        function handleMouseOver() {
+            select(this)
+                .style('filter', 'url(#drop-shadow)');
         }
 
-        function addYgrid() {
-            return axisLeft(yy)
-                .ticks(data.length)
-                .tickSize(-width)
-                .tickFormat('');
-        }
-
-        function addGrid() {
-            group
-                .append('g')
-                .attr('class', 'grid')
-                .attr('transform', `translate(0, ${height})`)
-                .call(addXgrid());
-
-            group
-                .append('g')
-                .attr('class', 'grid')
-                .call(addYgrid());
+        function handleMouseOut() {
+            select(this)
+                .style('filter', 'none');
         }
 
         if (showGridLines) {
-            addGrid();
+            this.addGrid(group, x, y, height, width);
         }
 
-        group
+        const groups = group
             .selectAll('.bar')
             .data(data)
             .enter()
+            .append('g')
+            .attr('class', 'bar');
+
+        const bars = groups
             .append('rect')
-            .attr('class', 'bar')
+            .style('cursor', 'pointer')
             .attr('x', 0)
             .attr('y', d => y(labelAccessor(d)))
             .attr('height', y.bandwidth())
-            .attr('width', d => x(valueAccessor(d)))
-            .attr('fill', barColor);
+            .attr('fill', barColor)
+            .on('mouseover', handleMouseOver)
+            .on('mouseout', handleMouseOut);
+
+        bars
+            .transition()
+            .duration(750)
+            .attr('width', d => x(valueAccessor(d)));
+
+        groups
+            .append('text')
+            .attr('x', d => x(valueAccessor(d)) - 3)
+            .attr('y', d => y(labelAccessor(d)) + (y.bandwidth() / 2))
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'end')
+            .text(d => valueAccessor(d))
+            .style('fill', textColor);
     }
 
     render() {
