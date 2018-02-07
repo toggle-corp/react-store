@@ -121,6 +121,7 @@ export default class GeoReferencedMap extends React.PureComponent {
             map.removeLayer('clustered-point-symbol');
             map.removeLayer('unclustered-point-symbol');
             map.removeLayer('unclustered-point-circle');
+            map.removeSource('geojson');
             map.remove();
             this.setState({ map: undefined });
         }
