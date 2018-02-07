@@ -1,8 +1,5 @@
 @import '../../../stylesheets/base';
 
-$color-text-on-positive: rgba(0, 0, 0, .5);
-$color-text-on-negative: rgba(0, 0, 0, .5);
-
 .gain-positive {
     &.colored-numeral {
         color: $color-positive;
@@ -10,7 +7,7 @@ $color-text-on-negative: rgba(0, 0, 0, .5);
 
     &.block-numeral {
         background-color: $color-positive;
-        color: $color-text-on-positive;
+        color: $color-text-on-primary;
     }
 }
 
@@ -21,7 +18,7 @@ $color-text-on-negative: rgba(0, 0, 0, .5);
 
     &.block-numeral {
         background-color: $color-negative;
-        color: $color-text-on-negative;
+        color: $color-text-on-primary;
     }
 }
 
@@ -36,4 +33,10 @@ $color-text-on-negative: rgba(0, 0, 0, .5);
     justify-content: center;
     padding: $spacing-medium;
     min-width: 72px;
+    font-size: $font-size-normal-alt;
+
+    .number {
+        font-size: $font-size-normal-alt;
+        font-weight: $font-weight-bold;
+    }
 }
