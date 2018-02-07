@@ -58,7 +58,8 @@ export default class GeoReferencedMap extends React.PureComponent {
         map.on('load', () => {
             if (this.mounted) {
                 this.setState({ map }, () => {
-                    this.loadGeoJson(this.props.geoLocations, this.props.geoPoints);
+                    this.loadGeoRegions(this.props.geoLocations);
+                    this.loadGeoPoints(this.props.geoPoints);
                 });
             }
         });
@@ -107,9 +108,11 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.geoLocations !== nextProps.geoLocations
-            || this.props.geoPoints !== nextProps.geoPoints) {
-            this.loadGeoJson(nextProps.geoLocations);
+        if (this.props.geoLocations !== nextProps.geoLocations) {
+            this.loadGeoRegions(nextProps.geoLocations);
+        }
+        if (this.props.geoPoints !== nextProps.geoPoints) {
+            this.loadGeoPoints(nextProps.geoPoints);
         }
     }
 
@@ -139,18 +142,8 @@ export default class GeoReferencedMap extends React.PureComponent {
         return '#ae017e';
     }
 
-    addLayers = () => {
+    addPointsLayers = () => {
         const { map } = this.state;
-        map.addLayer({
-            id: 'region-layer',
-            type: 'fill',
-            source: 'geojson',
-            paint: {
-                'fill-outline-color': '#ffffff',
-                'fill-color': '#088',
-                'fill-opacity': 0.5,
-            },
-        });
 
         map.addLayer({
             id: 'points-layer',
@@ -198,7 +191,6 @@ export default class GeoReferencedMap extends React.PureComponent {
             layout: {
                 'icon-allow-overlap': true,
                 'text-allow-overlap': true,
-                'text-field': '{title}',
                 'text-size': 12,
                 'text-offset': [0, 0.6],
                 'text-anchor': 'top',
@@ -223,44 +215,83 @@ export default class GeoReferencedMap extends React.PureComponent {
         });
     }
 
-    loadGeoJson(geoLocations, geoPoints) {
+    addRegionsLayer = () => {
+        const { map } = this.state;
+
+        map.addLayer({
+            id: 'region-layer',
+            type: 'fill',
+            source: 'geojson',
+            paint: {
+                'fill-outline-color': '#ffffff',
+                'fill-color': '#088',
+                'fill-opacity': 0.5,
+            },
+        });
+    }
+
+    loadGeoRegions(geoLocations) {
         const { map } = this.state;
         if (!geoLocations || !map) {
             return;
         }
+
+        const source = map.getSource('geojson');
+        const countriesData = {
+            type: 'FeatureCollection',
+            features: geoLocations.map(selection => (
+                selection.geoJson.features)[0]),
+        };
+        if (source) {
+            source.setData(countriesData);
+            return;
+        }
+
         map.addSource('geojson', {
             type: 'geojson',
-            data: {
-                type: 'FeatureCollection',
-                features: geoLocations.map(selection =>
-                    (selection.geoJson.features)[0]),
-            },
+            data: countriesData,
         });
+
+        this.addRegionsLayer();
+    }
+
+    loadGeoPoints(geoPoints) {
+        const { map } = this.state;
+        if (!geoPoints || !map) {
+            return;
+        }
+
+        const pointsData = {
+            type: 'FeatureCollection',
+            features: geoPoints.map(points => (
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: points.coordinates,
+                    },
+                    properties: {
+                        title: points.title,
+                        icon: 'marker',
+                        color: this.getColorForMarker(points.date),
+                    },
+                }
+            )),
+        };
+
+        const source = map.getSource('points');
+        if (source) {
+            source.setData(pointsData);
+            return;
+        }
         map.addSource('points', {
             type: 'geojson',
-            data: {
-                type: 'FeatureCollection',
-                features: geoPoints.map(points => (
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: points.coordinates,
-                        },
-                        properties: {
-                            title: points.title,
-                            icon: 'marker',
-                            color: this.getColorForMarker(points.date),
-                        },
-                    }
-                )),
-            },
+            data: pointsData,
             cluster: true,
             clusterMaxZoom: 14,
             clusterRadius: 15,
         });
-
-        this.addLayers();
+        this.addPointsLayers();
     }
 
     render() {
