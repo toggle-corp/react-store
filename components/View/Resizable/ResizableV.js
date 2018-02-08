@@ -19,19 +19,24 @@ export default class ResizableV extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getInitialSize = (topContainer) => {
+        if (topContainer) {
+            const topContainerBoundingClient = topContainer.getBoundingClientRect();
+            return topContainerBoundingClient.height;
+        }
+        return 0;
+    }
+
     static calculateDifference = (mousePosition, lastPosition) => ( // PROPS
         mousePosition.y - lastPosition.y
     )
 
-    static resizeContainers = (topContainer, bottomContainer, dy) => { // PROPS
-        if (dy !== 0 && topContainer && bottomContainer) {
-            const topContainerBoundingClient = topContainer.getBoundingClientRect();
-            const topContainerHeight = topContainerBoundingClient.height + dy;
-
+    static resizeContainers = (topContainer, bottomContainer, newHeight) => { // PROPS
+        if (newHeight !== 0 && topContainer && bottomContainer) {
             // eslint-disable-next-line no-param-reassign
-            topContainer.style.height = `${topContainerHeight}px`;
+            topContainer.style.height = `${newHeight}px`;
             // eslint-disable-next-line no-param-reassign
-            bottomContainer.style.height = `calc(100% - ${topContainerHeight}px)`;
+            bottomContainer.style.height = `calc(100% - ${newHeight}px)`;
         }
     }
 
@@ -50,6 +55,7 @@ export default class ResizableV extends React.PureComponent {
                 secondChild={bottomChild}
                 secondContainerClassName={bottomContainerClassName}
                 resizableClassName="resizable-v"
+                getInitialSize={ResizableV.getInitialSize}
                 calculateDifference={ResizableV.calculateDifference}
                 resizeContainers={ResizableV.resizeContainers}
                 {...otherProps}

@@ -14,6 +14,7 @@ const propTypes = {
     separatorClassName: PropTypes.string,
 
     resizableClassName: PropTypes.string.isRequired,
+    getInitialSize: PropTypes.func.isRequired,
     calculateDifference: PropTypes.func.isRequired,
     resizeContainers: PropTypes.func.isRequired,
 
@@ -76,6 +77,9 @@ export default class Resizable extends React.PureComponent {
 
         this.resizing = false;
         this.lastMousePosition = {};
+        this.state = {
+            dragging: false,
+        };
     }
 
     componentWillMount() {
@@ -98,6 +102,14 @@ export default class Resizable extends React.PureComponent {
             styles.separator,
         ];
 
+        return classNames.join(' ');
+    }
+
+    getOverlayClassName = () => {
+        const classNames = [
+            'overlay',
+            styles.overlay,
+        ];
         return classNames.join(' ');
     }
 
@@ -144,6 +156,8 @@ export default class Resizable extends React.PureComponent {
 
             this.resizing = true;
             this.lastMousePosition = Resizable.getMousePosition(e);
+            this.initialSize = this.props.getInitialSize(this.firstContainer);
+            this.setState({ dragging: true });
         } else {
             this.resizing = false;
         }
@@ -154,7 +168,11 @@ export default class Resizable extends React.PureComponent {
             const mousePosition = Resizable.getMousePosition(e);
             const dx = this.props.calculateDifference(mousePosition, this.lastMousePosition);
 
-            this.props.resizeContainers(this.firstContainer, this.secondContainer, dx);
+            this.props.resizeContainers(
+                this.firstContainer,
+                this.secondContainer,
+                this.initialSize + dx,
+            );
             Resizable.syncResizeClassName(this.container, false);
 
             this.lastMousePosition = {};
@@ -163,6 +181,7 @@ export default class Resizable extends React.PureComponent {
             if (this.props.onResize) {
                 this.props.onResize();
             }
+            this.setState({ dragging: false });
         }
     }
 
@@ -171,9 +190,11 @@ export default class Resizable extends React.PureComponent {
             const mousePosition = Resizable.getMousePosition(e);
             const dx = this.props.calculateDifference(mousePosition, this.lastMousePosition);
 
-            this.props.resizeContainers(this.firstContainer, this.secondContainer, dx);
-
-            this.lastMousePosition = mousePosition;
+            this.props.resizeContainers(
+                this.firstContainer,
+                this.secondContainer,
+                this.initialSize + dx,
+            );
         }
     }
 
@@ -182,6 +203,7 @@ export default class Resizable extends React.PureComponent {
             firstChild,
             secondChild,
         } = this.props;
+        const { dragging } = this.state;
 
         return (
             <div
@@ -193,16 +215,18 @@ export default class Resizable extends React.PureComponent {
                     className={this.getFirstContainerClassName()}
                 >
                     { firstChild }
-                    <div
-                        ref={(el) => { this.separator = el; }}
-                        className={this.getSeparatorClassName()}
-                    />
+                    { dragging && <div className={this.getOverlayClassName()} /> }
                 </div>
                 <div
                     ref={(el) => { this.secondContainer = el; }}
                     className={this.getSecondContainerClassName()}
                 >
                     { secondChild }
+                    <div
+                        ref={(el) => { this.separator = el; }}
+                        className={this.getSeparatorClassName()}
+                    />
+                    { dragging && <div className={this.getOverlayClassName()} /> }
                 </div>
             </div>
         );

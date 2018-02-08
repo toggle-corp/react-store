@@ -19,19 +19,24 @@ export default class ResizableH extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getInitialSize = (leftContainer) => {
+        if (leftContainer) {
+            const leftContainerBoundingClient = leftContainer.getBoundingClientRect();
+            return leftContainerBoundingClient.width;
+        }
+        return 0;
+    }
+
     static calculateDifference = (mousePosition, lastPosition) => ( // PROPS
         mousePosition.x - lastPosition.x
     )
 
-    static resizeContainers = (leftContainer, rightContainer, dx) => { // PROPS
-        if (dx !== 0 && leftContainer && rightContainer) {
-            const leftContainerBoundingClient = leftContainer.getBoundingClientRect();
-            const leftContainerWidth = leftContainerBoundingClient.width + dx;
-
+    static resizeContainers = (leftContainer, rightContainer, newWidth) => { // PROPS
+        if (newWidth !== 0 && leftContainer && rightContainer) {
             // eslint-disable-next-line no-param-reassign
-            leftContainer.style.width = `${leftContainerWidth}px`;
+            leftContainer.style.width = `${newWidth}px`;
             // eslint-disable-next-line no-param-reassign
-            rightContainer.style.width = `calc(100% - ${leftContainerWidth}px)`;
+            rightContainer.style.width = `calc(100% - ${newWidth}px)`;
         }
     }
 
@@ -50,6 +55,7 @@ export default class ResizableH extends React.PureComponent {
                 secondChild={rightChild}
                 secondContainerClassName={rightContainerClassName}
                 resizableClassName="resizable-h"
+                getInitialSize={ResizableH.getInitialSize}
                 calculateDifference={ResizableH.calculateDifference}
                 resizeContainers={ResizableH.resizeContainers}
                 {...otherProps}
