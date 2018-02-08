@@ -96,6 +96,27 @@ export const randomString = (length = 8) => {
 };
 
 /**
+ * Format text, extracted from pdfs,
+ * to remove extraneous spaces
+ */
+export const formatPdfText = text => (
+    text
+        // Tab to space
+        .replace(/\t/gi, ' ')
+        // Anything except ascii TODO: support accents and other utf-8
+        // text = text.replace(/[^\x00-\x7F]/g, "");
+        // Single line break to space
+        .replace(/([^\n])[ \t]*\n[ \t]*(?!\n)/gi, '$1 ')
+        // Multiple spaces to single
+        .replace(/ +/gi, ' ')
+        // More than 3 line breaks to just 3 line breaks
+        .replace(/\n\s*\n\s*(\n\s*)+/gi, '\n\n\n')
+        // This weird -? text combo to just -
+        .replace(/-\?/gi, '-')
+        .trim()
+);
+
+/**
 * Extract Date from timestamp
 */
 export const extractDate = (timestamp) => {
