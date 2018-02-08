@@ -14,6 +14,7 @@ const propTypes = {
     separatorClassName: PropTypes.string,
 
     resizableClassName: PropTypes.string.isRequired,
+    getInitialSize: PropTypes.func.isRequired,
     calculateDifference: PropTypes.func.isRequired,
     resizeContainers: PropTypes.func.isRequired,
 
@@ -144,6 +145,7 @@ export default class Resizable extends React.PureComponent {
 
             this.resizing = true;
             this.lastMousePosition = Resizable.getMousePosition(e);
+            this.initialSize = this.props.getInitialSize(this.firstContainer);
         } else {
             this.resizing = false;
         }
@@ -154,7 +156,11 @@ export default class Resizable extends React.PureComponent {
             const mousePosition = Resizable.getMousePosition(e);
             const dx = this.props.calculateDifference(mousePosition, this.lastMousePosition);
 
-            this.props.resizeContainers(this.firstContainer, this.secondContainer, dx);
+            this.props.resizeContainers(
+                this.firstContainer,
+                this.secondContainer,
+                this.initialSize + dx,
+            );
             Resizable.syncResizeClassName(this.container, false);
 
             this.lastMousePosition = {};
@@ -171,9 +177,11 @@ export default class Resizable extends React.PureComponent {
             const mousePosition = Resizable.getMousePosition(e);
             const dx = this.props.calculateDifference(mousePosition, this.lastMousePosition);
 
-            this.props.resizeContainers(this.firstContainer, this.secondContainer, dx);
-
-            this.lastMousePosition = mousePosition;
+            this.props.resizeContainers(
+                this.firstContainer,
+                this.secondContainer,
+                this.initialSize + dx,
+            );
         }
     }
 
