@@ -85,11 +85,37 @@ export default class RawTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getSortedHeaders = headers => (
+        [...headers].sort((a, b) => (a.order - b.order))
+    )
+
+    static headerKeyExtractor = header => header.key;
+
+    constructor(props) {
+        super(props);
+
+        const headers = RawTable.getSortedHeaders(this.props.headers);
+        const headersOrder = headers.map(RawTable.headerKeyExtractor);
+        this.state = {
+            headersOrder,
+            headers,
+        };
+    }
+
     componentWillReceiveProps(nextProps) {
         // FIXME: why is data mutated here @frozenhelium?
         if (!isArrayEqual(this.props.data, nextProps.data)) {
             if (this.props.onDataSort) {
                 this.props.onDataSort(nextProps.data);
+            }
+        }
+        if (this.props.headers !== nextProps.headers) {
+            const newHeaders = RawTable.getSortedHeaders(nextProps.headers);
+            const newHeadersOrder = newHeaders.map(RawTable.headerKeyExtractor);
+
+            this.setState({ headers: newHeaders });
+            if (!isArrayEqual(newHeadersOrder, this.state.headersOrder)) {
+                this.setState({ headersOrder: newHeadersOrder });
             }
         }
     }
@@ -114,7 +140,6 @@ export default class RawTable extends React.PureComponent {
         const {
             data,
             dataModifier,
-            headers,
             headerModifier,
             keyExtractor,
             onHeaderClick,
@@ -134,7 +159,7 @@ export default class RawTable extends React.PureComponent {
                 styleName={styleName}
             >
                 <Headers
-                    headers={headers}
+                    headers={this.state.headers}
                     headerModifier={headerModifier}
                     onClick={onHeaderClick}
                 />
@@ -142,7 +167,7 @@ export default class RawTable extends React.PureComponent {
                     data={data}
                     dataModifier={dataModifier}
                     expandedRowModifier={expandedRowModifier}
-                    headers={headers}
+                    headersOrder={this.state.headersOrder}
                     keyExtractor={keyExtractor}
                     onClick={onBodyClick}
                     highlightCellKey={highlightCellKey}

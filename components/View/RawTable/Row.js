@@ -23,7 +23,7 @@ const propTypes = {
 
     dataModifier: PropTypes.func,
 
-    headers: PropTypes.arrayOf(PropTypes.string).isRequired,
+    headersOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
 
     highlightCellKey: propTypeKey,
     highlightColumnKey: propTypeKey,
@@ -129,13 +129,13 @@ export default class Row extends React.PureComponent {
     }
 
     render() {
-        const { headers } = this.props;
+        const { headersOrder } = this.props;
         const className = this.getClassName(this.props);
 
         return (
             <tr className={className}>
                 <List
-                    data={headers}
+                    data={headersOrder}
                     keyExtractor={this.keyExtractor}
                     modifier={this.renderCell}
                 />

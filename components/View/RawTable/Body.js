@@ -2,14 +2,11 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { isEqualAndTruthy } from '../../../utils/common';
+
 import List from '../List';
 import Row from './Row';
 import ExpandedRow from './ExpandedRow';
-
-import {
-    isEqualAndTruthy,
-    isArrayEqual,
-} from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -40,11 +37,7 @@ const propTypes = {
 
     expandedRowModifier: PropTypes.func,
 
-    headers: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string,
-        }),
-    ).isRequired,
+    headersOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
 
     highlightCellKey: PropTypes.shape({
         columnKey: propTypeKey,
@@ -83,32 +76,9 @@ export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const newHeadersOrder = [...this.props.headers]
-            .sort((a, b) => (a.order - b.order))
-            .map(header => header.key);
-
-        this.state = { headersOrder: newHeadersOrder };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.headers !== nextProps.headers) {
-            const newHeadersOrder = [...nextProps.headers]
-                .sort((a, b) => (a.order - b.order))
-                .map(header => header.key);
-            if (!isArrayEqual(newHeadersOrder, this.state.headersOrder)) {
-                this.setState({ headersOrder: newHeadersOrder });
-            }
-        }
-    }
-
     getClassName = (props) => {
         const classNames = [];
-        const {
-            className,
-        } = props;
+        const { className } = props;
 
         // default className for global override
         classNames.push('body');
@@ -143,8 +113,8 @@ export default class Body extends React.PureComponent {
             highlightRowKey,
             expandRowId,
             expandedRowModifier,
+            headersOrder,
         } = this.props;
-        const { headersOrder } = this.state;
 
         let cellKey;
         if (highlightCellKey.rowKey === key) {
@@ -157,7 +127,7 @@ export default class Body extends React.PureComponent {
                 uniqueKey={key}
                 areCellsHoverable={areCellsHoverable}
                 dataModifier={dataModifier}
-                headers={headersOrder}
+                headersOrder={headersOrder}
                 highlightCellKey={cellKey}
                 highlightColumnKey={highlightColumnKey}
                 highlighted={isEqualAndTruthy(key, highlightRowKey)}
