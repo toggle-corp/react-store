@@ -28,6 +28,7 @@ import {
     isValidHexColor,
     splitInWhitespace,
     trimWhitespace,
+    formatPdfText,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -332,4 +333,11 @@ test('trim out whitespaces', () => {
     // eslint-disable-next-line no-tabs
     expect(trimWhitespace('hari	is good')).toEqual('hari is good');
     expect(trimWhitespace('hari\t is\ngood boy  ')).toEqual('hari is good boy');
+});
+
+
+test('format pdf text', () => {
+    const unformatted = 'Hari is a \n \n   \n\n  bad\nboy';
+    const formatted = 'Hari is a \n\n bad boy';
+    expect(formatPdfText(unformatted)).toEqual(formatted);
 });
