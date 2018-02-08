@@ -6,6 +6,10 @@ import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
 
+import {
+    isArrayEqual,
+} from '../../../utils/common';
+
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -76,48 +80,24 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-const isArrayEqual = (array1, array2) => (
-    array1.length === array2.length && array1.every((d, i) => d === array2[i])
-);
-
 @CSSModules(styles, { allowMultiple: true })
 export default class RawTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
-
-        this.state = {
-            className,
-            styleName,
-        };
-    }
-
     componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
-
+        // FIXME: why is data mutated here @frozenhelium?
         if (!isArrayEqual(this.props.data, nextProps.data)) {
             if (this.props.onDataSort) {
                 this.props.onDataSort(nextProps.data);
             }
         }
-
-        this.setState({
-            className,
-            styleName,
-        });
     }
 
     getClassName = (props) => {
+        const { className } = props;
+
         const classNames = [];
-        const {
-            className,
-        } = props;
 
         // default className for global override
         classNames.push('raw-table');
@@ -128,7 +108,7 @@ export default class RawTable extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getStyleName = () => ('raw-table')
+    getStyleName = () => 'raw-table'
 
     render() {
         const {
@@ -146,10 +126,12 @@ export default class RawTable extends React.PureComponent {
             expandedRowModifier,
         } = this.props;
 
+        const className = this.getClassName(this.props);
+        const styleName = this.getStyleName(this.props);
         return (
             <table
-                className={this.state.className}
-                styleName={this.state.styleName}
+                className={className}
+                styleName={styleName}
             >
                 <Headers
                     headers={headers}

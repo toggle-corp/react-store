@@ -9,6 +9,7 @@ import styles from './styles.scss';
 import {
     isEqualAndTruthy,
     isFalsy,
+    isArrayEqual,
 } from '../../../utils/common';
 
 const propTypeKey = PropTypes.oneOfType([
@@ -118,11 +119,6 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-// TODO: move to common
-const isArrayEqual = (array1, array2) => (
-    array1.length === array2.length && array1.every((d, i) => d === array2[i])
-);
-
 @CSSModules(styles, { allowMultiple: true })
 export default class Table extends React.PureComponent {
     static propTypes = propTypes;
@@ -156,36 +152,43 @@ export default class Table extends React.PureComponent {
         };
     }
 
+    // normal, next, new, state
     componentWillReceiveProps(nextProps) {
         const {
             data: nextData,
             headers: nextHeaders,
             defaultSort: nextDefaultSort,
         } = nextProps;
+
         let {
             data: newData,
             headers: newHeaders,
         } = this.props;
+        let { activeSort: newActiveSort } = this.state;
+
         const {
             data: stateData,
+            headers: stateHeaders,
         } = this.state;
 
+        // check if headers has changed
         const headersChanged = !isArrayEqual(nextHeaders, newHeaders);
-        // NOTE: This is necessary
         if (headersChanged) {
             newHeaders = nextHeaders;
         }
 
-        // To be set in state
-        let { activeSort: newActiveSort } = this.state;
-
-        // Determine new active sort
+        // NOTE: should only be called when header has changed
+        // Determine new active sort if there is no active sort
         // Priority: state > nextDefaultSort > first sortable header
         if (isFalsy(newActiveSort.key)) {
             newActiveSort = nextDefaultSort || this.getActiveSort(newHeaders);
         }
 
-        newHeaders = this.getStateHeaders(newHeaders, newActiveSort);
+        if (headersChanged) {
+            newHeaders = this.getStateHeaders(newHeaders, newActiveSort);
+        } else {
+            newHeaders = stateHeaders;
+        }
 
         const dataChanged = !isArrayEqual(nextData, newData);
         if (dataChanged || headersChanged) {
@@ -205,9 +208,10 @@ export default class Table extends React.PureComponent {
     handleHeaderClick = (key) => {
         const clickedHeader = this.state.headers.find(d => d.key === key);
         if (!clickedHeader) {
-            console.error(`Header with key '${key}' not found`);
-        }
-        if (!clickedHeader || !clickedHeader.sortable) {
+            console.error(`Header with key '${key}' not found.`);
+            return;
+        } else if (!clickedHeader.sortable) {
+            console.warn(`Header with key '${key}' is not sortable.`);
             return;
         }
 
@@ -249,11 +253,19 @@ export default class Table extends React.PureComponent {
     };
 
     // add isActiveSort and currentSortOrder in headers
-    getStateHeaders = (headers, activeSort) => headers.map(header => ({
-        ...header,
-        isActiveSort: isEqualAndTruthy(header.key, activeSort.key),
-        currentSortOrder: isEqualAndTruthy(header.key, activeSort.key) ? activeSort.order : '',
-    }));
+    getStateHeaders = (headers, activeSort) => headers.map((header) => {
+        const isActiveSort = isEqualAndTruthy(header.key, activeSort.key);
+        const currentSortOrder = isEqualAndTruthy(header.key, activeSort.key) ? activeSort.order : '';
+
+        if (header.isActiveSort === isActiveSort && header.currentSortOrder === currentSortOrder) {
+            return header;
+        }
+        return {
+            ...header,
+            isActiveSort,
+            currentSortOrder,
+        };
+    });
 
     getSortedData = (headers, data, activeSort) => {
         if (isFalsy(activeSort) || !activeSort.key) {

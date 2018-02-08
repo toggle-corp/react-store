@@ -35,28 +35,6 @@ export default class Header extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
-
-        this.state = {
-            className,
-            styleName,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
-
-        this.setState({
-            className,
-            styleName,
-        });
-    }
-
     getClassName = (props) => {
         const classNames = [];
         const {
@@ -120,14 +98,15 @@ export default class Header extends React.PureComponent {
     }
 
     render() {
-        // console.log('Rendering Header');
+        const className = this.getClassName(this.props);
+        const styleName = this.getStyleName(this.props);
 
         return (
             <th
-                className={this.state.className}
+                className={className}
+                styleName={styleName}
                 role="gridcell"
                 onClick={this.handleClick}
-                styleName={this.state.styleName}
             >
                 { this.props.children }
             </th>

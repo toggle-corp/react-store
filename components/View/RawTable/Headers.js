@@ -33,28 +33,6 @@ export default class Headers extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
-
-        this.state = {
-            className,
-            styleName,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
-
-        this.setState({
-            className,
-            styleName,
-        });
-    }
-
     getClassName = (props) => {
         const classNames = [];
         const {
@@ -81,29 +59,6 @@ export default class Headers extends React.Component {
 
     getHeaderKey = header => header.key;
 
-    getHeader = (key, header) => {
-        const {
-            headers,
-            headerModifier,
-        } = this.props;
-
-        let headerContent = header.label;
-
-        if (headerModifier) {
-            headerContent = headerModifier(header, headers);
-        }
-
-        return (
-            <Header
-                key={key}
-                onClick={this.handleHeaderClick}
-                uniqueKey={key}
-            >
-                {headerContent}
-            </Header>
-        );
-    }
-
     handleHeaderClick = (key, e) => {
         const { onClick } = this.props;
         if (onClick) {
@@ -111,21 +66,43 @@ export default class Headers extends React.Component {
         }
     }
 
-    render() {
+    renderHeader = (key, header) => {
         const {
             headers,
+            headerModifier,
         } = this.props;
+
+        const headerContent = headerModifier
+            ? headerModifier(header, headers) // FIXME: could be optimized
+            : header.label;
+
+        return (
+            <Header
+                key={key}
+                uniqueKey={key}
+                onClick={this.handleHeaderClick}
+            >
+                {headerContent}
+            </Header>
+        );
+    }
+
+    render() {
+        const { headers } = this.props;
+
+        const className = this.getClassName(this.props);
+        const styleName = this.getStyleName(this.props);
 
         return (
             <thead
-                className={this.state.className}
-                styleName={this.state.styleName}
+                className={className}
+                styleName={styleName}
             >
                 <tr>
                     <List
                         data={headers}
                         keyExtractor={this.getHeaderKey}
-                        modifier={this.getHeader}
+                        modifier={this.renderHeader}
                     />
                 </tr>
             </thead>
