@@ -76,8 +76,6 @@ export default class RadioInput extends React.PureComponent {
         }
     }
 
-    getValue = () => (this.state.selectedOption.key)
-
     handleOptionClick = (key) => {
         const option = this.props.options.find(d => d.key === key);
 

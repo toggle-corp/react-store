@@ -194,8 +194,6 @@ export default class DateFilter extends React.PureComponent {
         }
     }
 
-    getValue = () => (this.props.value)
-
     setCustomDate = () => {
         const {
             startDate,

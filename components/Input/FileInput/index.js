@@ -53,14 +53,14 @@ export default class FileInput extends React.PureComponent {
         if (!acceptString) {
             return true;
         }
-        // NOTE: no validation has been made, please careful
+        const extensionMatch = /\.\w+$/.exec(name);
+        const mimeMatch = /^.+\//.exec(mimeType);
         const acceptList = acceptString.split(/,\s+/);
         return acceptList.some((accept) => {
-            if (mimeType === accept) {
+            if (mimeType === accept || (!!mimeMatch && `${mimeMatch[0]}*` === accept)) {
                 return true;
             }
-            const match = /\..*/.exec(name);
-            return !!match && match[0].toLowerCase() === accept.toLowerCase();
+            return !!extensionMatch && extensionMatch[0].toLowerCase() === accept.toLowerCase();
         });
     }
 

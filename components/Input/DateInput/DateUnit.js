@@ -103,10 +103,6 @@ export default class DateUnit extends React.PureComponent {
         }
     }
 
-    getValue() {
-        return this.input.value;
-    }
-
     setValue(value) {
         this.input.value = value;
     }

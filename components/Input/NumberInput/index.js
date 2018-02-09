@@ -184,8 +184,6 @@ export default class NumberInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.realValue;
-
     getStyleName() {
         const styleNames = [];
 

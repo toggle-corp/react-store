@@ -171,8 +171,6 @@ export default class TabularSelectInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.state.selectedOptionsKeys;
-
     createTableHeaders = tableHeaders => ([
         ...tableHeaders,
         {

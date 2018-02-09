@@ -123,8 +123,6 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.realValue;
-
     getStyleName() {
         const styleNames = [];
 

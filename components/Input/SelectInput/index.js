@@ -69,8 +69,6 @@ export default class SelectInput extends React.PureComponent {
         }
     }
 
-    getValue = () => this.props.value
-
     handleInputChange = (e) => { handleInputValueChange(this, e.target.value); }
 
     handleOptionContainerInvalidate = optionsContainer => (

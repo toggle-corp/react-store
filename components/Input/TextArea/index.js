@@ -118,8 +118,6 @@ export default class TextArea extends React.PureComponent {
         }
     }
 
-    getValue = () => this.realValue;
-
     getStyleName() {
         const styleNames = [];
 

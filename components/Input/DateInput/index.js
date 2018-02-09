@@ -139,14 +139,6 @@ export default class DateInput extends React.PureComponent {
         });
     }
 
-    // Public method used by Form
-    getValue = () => {
-        if (this.state.date) {
-            return FormattedDate.format(this.state.date, 'yyyy-MM-dd');
-        }
-        return undefined;
-    }
-
     getStyleName() {
         const styleNames = [];
 
@@ -315,8 +307,10 @@ export default class DateInput extends React.PureComponent {
     }
 
     triggerChange = () => {
+        const { date } = this.state;
         if (this.props.onChange) {
-            this.props.onChange(this.getValue());
+            const value = date ? FormattedDate.format(date, 'yyyy-MM-dd') : undefined;
+            this.props.onChange(value);
         }
     }
 
