@@ -2,6 +2,13 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+const urlPattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
     ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
@@ -20,6 +27,9 @@ export const getNumbers = (start, end) => {
 export const getRandomFromList = (items = []) => (
     items[Math.floor(Math.random() * items.length)]
 );
+
+export const isUrlValid = url => url && urlPattern.test(url);
+export const getValidUrl = url => urlPattern.exec(url);
 
 export const isFalsy = val => (
     val === undefined || val === null || Number.isNaN(val) || val === false
