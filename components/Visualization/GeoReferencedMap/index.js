@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 
 import mapboxgl from 'mapbox-gl';
 
-import {
-    LoadingAnimation,
-} from '../../View';
+import LoadingAnimation from '../../View/LoadingAnimation';
 import { getDifferenceInDays } from '../../../utils/common';
 
 const propTypes = {

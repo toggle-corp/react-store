@@ -2,13 +2,11 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { isArrayEqual } from '../../../utils/common';
+
 import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
-
-import {
-    isArrayEqual,
-} from '../../../utils/common';
 
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,

@@ -2,9 +2,9 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Portal from '../Portal';
-import { Button } from '../../Action';
 import { iconNames } from '../../../constants';
+import Button from '../../Action/Button';
+import Portal from '../Portal';
 
 import styles from './styles.scss';
 

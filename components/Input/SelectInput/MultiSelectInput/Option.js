@@ -8,9 +8,7 @@ import {
     multiSelectInputOptionDefaultProps,
 } from '../propTypes';
 
-import {
-    getOptionClassName,
-} from '../utils';
+import { getOptionClassName } from '../utils';
 
 export default class Option extends React.PureComponent {
     static propTypes = multiSelectInputOptionPropTypes;

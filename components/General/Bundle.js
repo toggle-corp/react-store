@@ -3,10 +3,18 @@ import PropTypes from 'prop-types';
 
 const propTypes = {
     load: PropTypes.func.isRequired,
+    errorText: PropTypes.string,
+    loadingText: PropTypes.string,
+};
+const defaultProps = {
+    errorText: 'Error while loading page.',
+    loadingText: 'Loading...',
 };
 
+// NOTE: Intentionally opted out of PureComponent
 class Bundle extends React.Component {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static loadingStyle = {
         height: '100%',
@@ -20,7 +28,7 @@ class Bundle extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            Component: null,
+            BundledComponent: null,
             failed: false,
         };
     }
@@ -36,24 +44,21 @@ class Bundle extends React.Component {
         this.mounted = false;
     }
 
-    handleLoad = (Component) => {
+    handleLoad = (BundledComponent) => {
         if (!this.mounted) {
-            console.warn('Bundle was unmounted before loading Component');
+            console.error('Bundle unmounted while loading Component.');
             return;
         }
-        this.setState({
-            Component: Component.default ? Component.default : Component,
-        });
+        this.setState({ BundledComponent: BundledComponent.default || BundledComponent });
     }
 
     handleLoadError = (err) => {
         if (!this.mounted) {
-            console.warn('Bundle was unmounted before loading Component');
+            console.error('Bundle unmounted while loading Component.');
             return;
         }
         this.setState({ failed: true });
-        console.warn('Failed loading bundle');
-        console.warn(err);
+        console.error('Bundle load failed.', err);
     }
 
     renderLoading = ({ text }) => (
@@ -65,18 +70,19 @@ class Bundle extends React.Component {
     render() {
         const {
             load, // eslint-disable-line no-unused-vars
+            errorText,
+            loadingText,
             ...otherProps
         } = this.props;
-        const { Component, failed } = this.state;
+        const { BundledComponent, failed } = this.state;
         const Loading = this.renderLoading;
 
-        if (!Component) {
-            const message = failed ? 'Error while loading page.' : 'Loading...';
-            return (
-                <Loading text={message} />
-            );
+        if (!BundledComponent) {
+            const message = failed ? errorText : loadingText;
+            return <Loading text={message} />;
         }
-        return <Component {...otherProps} />;
+
+        return <BundledComponent {...otherProps} />;
     }
 }
 

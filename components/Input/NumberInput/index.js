@@ -2,7 +2,6 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import {
     randomString,
     isTruthy,
@@ -10,6 +9,7 @@ import {
     addSeparator,
 } from '../../../utils/common';
 
+import styles from './styles.scss';
 
 const propTypes = {
     /**

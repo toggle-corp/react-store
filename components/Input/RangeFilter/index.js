@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { SelectInput } from '..';
+import SelectInput from '../SelectInput';
 
 const propTypes = {
     className: PropTypes.string,

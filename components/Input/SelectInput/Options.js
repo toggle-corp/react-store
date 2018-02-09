@@ -1,7 +1,5 @@
 import React from 'react';
-import { FloatingContainer } from '../../View';
-
-import styles from './options.scss';
+import FloatingContainer from '../../View/FloatingContainer';
 
 import {
     isTruthy,
@@ -12,6 +10,9 @@ import {
     selectInputOptionsPropTypes,
     selectInputOptionsDefaultProps,
 } from './propTypes';
+
+import styles from './options.scss';
+
 
 export default class Options extends React.PureComponent {
     static propTypes = selectInputOptionsPropTypes;

@@ -1,21 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    SelectInput,
-    DateInput,
-} from '..';
-import {
-    PrimaryButton,
-    DangerButton,
-} from '../../Action';
-import {
-    FormattedDate,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from '../../View';
+import SelectInput from '../SelectInput';
+import DateInput from '../DateInput';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
+import DangerButton from '../../Action/Button/DangerButton';
+import FormattedDate from '../../View/FormattedDate';
+import Modal from '../../View/Modal';
+import ModalHeader from '../../View/Modal/Header';
+import ModalBody from '../../View/Modal/Body';
+import ModalFooter from '../../View/Modal/Footer';
 
 import styles from './styles.scss';
 

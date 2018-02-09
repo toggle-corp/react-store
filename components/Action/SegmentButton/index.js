@@ -2,9 +2,10 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { ListView } from '../../View/List';
-import styles from './styles.scss';
 import { randomString } from '../../../utils/common';
+import ListView from '../../View/List/ListView';
+
+import styles from './styles.scss';
 
 // TODO: @adityakhatri47, Rename property 'onPress' to 'onClick' for consistency
 const propTypes = {

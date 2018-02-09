@@ -10,7 +10,7 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
-import { LoadingAnimation } from '../../View';
+import LoadingAnimation from '../../View/LoadingAnimation';
 
 /**
  * boundingClientRect: the width and height of the container.

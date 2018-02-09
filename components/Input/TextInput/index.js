@@ -2,10 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { randomString } from '../../../utils/common';
 import styles from './styles.scss';
-import {
-    randomString,
-} from '../../../utils/common';
 
 
 const propTypes = {

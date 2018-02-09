@@ -7,7 +7,7 @@ import { axisLeft, axisBottom } from 'd3-axis';
 import { select } from 'd3-selection';
 import { max, min } from 'd3-array';
 
-import { Responsive } from '../../General';
+import Responsive from '../../General/Responsive';
 import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';

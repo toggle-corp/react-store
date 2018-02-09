@@ -10,9 +10,8 @@ import {
     curveCardinal,
 } from 'd3-shape';
 
-import { Responsive } from '../../General';
+import Responsive from '../../General/Responsive';
 import Tooltip from '../Tooltip';
-
 
 import styles from './styles.scss';
 

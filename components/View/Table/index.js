@@ -2,15 +2,15 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import RawTable from '../RawTable';
-import TableHeader from '../TableHeader';
-import styles from './styles.scss';
-
 import {
     isEqualAndTruthy,
     isFalsy,
     isArrayEqual,
 } from '../../../utils/common';
+import RawTable from '../RawTable';
+import TableHeader from '../TableHeader';
+
+import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,

@@ -4,6 +4,7 @@ import React from 'react';
 
 import { randomString } from '../../../utils/common';
 import { iconNames } from '../../../constants';
+
 import styles from './styles.scss';
 
 const propTypes = {

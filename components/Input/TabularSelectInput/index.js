@@ -2,13 +2,12 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { DangerButton } from '../../Action';
-import { MultiSelectInput } from '../../Input';
-import { Table } from '../../View';
-
 import { listToMap } from '../../../utils/common';
-
 import { iconNames } from '../../../constants';
+
+import DangerButton from '../../Action/Button/DangerButton';
+import MultiSelectInput from '../../Input/SelectInput/MultiSelectInput';
+import Table from '../../View/Table';
 
 import styles from './styles.scss';
 

@@ -2,13 +2,11 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FloatingContainer } from '../../View';
-import {
-    calcFloatingPositionInMainWindow,
-} from '../../../utils/common';
-import styles from './styles.scss';
-
 import { iconNames } from '../../../constants';
+import { calcFloatingPositionInMainWindow } from '../../../utils/common';
+import FloatingContainer from '../../View/FloatingContainer';
+
+import styles from './styles.scss';
 
 /**
  * Iconleft is the name of ionicon in left of title button
@@ -169,7 +167,3 @@ export default class DropdownMenu extends React.PureComponent {
         );
     }
 }
-
-export { default as DropdownItem } from './DropdownItem';
-export { default as Group } from './Group';
-export { default as GroupTitle } from './GroupTitle';

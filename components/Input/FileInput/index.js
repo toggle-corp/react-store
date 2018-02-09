@@ -2,8 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import { randomString } from '../../../utils/common';
+import styles from './styles.scss';
 
 const propTypes = {
     /**
@@ -167,22 +167,3 @@ export default class FileInput extends React.PureComponent {
         );
     }
 }
-
-// Separator the preview implementation
-export const ImageInput = props => (
-    <FileInput
-        previewExtractor={file => (
-            new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    resolve(e.target.result);
-                };
-                reader.readAsDataURL(file);
-            })
-        )}
-        accept="image/*"
-        {...props}
-    >
-        Select an image
-    </FileInput>
-);

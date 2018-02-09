@@ -10,8 +10,8 @@ import {
 } from '../../../utils/ColorScheme';
 import CorrelationMatrix from '../CorrelationMatrix';
 
-import { SelectInput } from '../../Input';
-import { PrimaryButton } from '../../Action';
+import SelectInput from '../../Input/SelectInput';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
 
 import styles from './styles.scss';
 
