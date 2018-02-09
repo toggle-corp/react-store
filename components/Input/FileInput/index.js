@@ -50,13 +50,16 @@ export default class FileInput extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static isValidFile = (name, mimeType, acceptString) => {
+        // if there is no accept string, anything is valid
         if (!acceptString) {
             return true;
         }
         const extensionMatch = /\.\w+$/.exec(name);
         const mimeMatch = /^.+\//.exec(mimeType);
+
         const acceptList = acceptString.split(/,\s+/);
         return acceptList.some((accept) => {
+            // check mimeType such as image/png or image/*
             if (mimeType === accept || (!!mimeMatch && `${mimeMatch[0]}*` === accept)) {
                 return true;
             }
