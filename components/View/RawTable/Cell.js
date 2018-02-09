@@ -37,24 +37,6 @@ export default class Cell extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-
-        this.state = {
-            className,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-
-        this.setState({
-            className,
-        });
-    }
-
     getClassName = (props) => {
         const classNames = [];
         const {
@@ -100,9 +82,11 @@ export default class Cell extends React.PureComponent {
     }
 
     render() {
+        const className = this.getClassName(this.props);
+
         return (
             <td
-                className={this.state.className}
+                className={className}
                 role="gridcell"
                 onClick={this.handleClick}
             >

@@ -6,6 +6,10 @@ import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
 
+import {
+    isArrayEqual,
+} from '../../../utils/common';
+
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -76,48 +80,50 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-const isArrayEqual = (array1, array2) => (
-    array1.length === array2.length && array1.every((d, i) => d === array2[i])
-);
-
 @CSSModules(styles, { allowMultiple: true })
 export default class RawTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getSortedHeaders = headers => (
+        [...headers].sort((a, b) => (a.order - b.order))
+    )
+
+    static headerKeyExtractor = header => header.key;
+
     constructor(props) {
         super(props);
 
-        const className = this.getClassName(props);
-        const styleName = this.getStyleName(props);
-
+        const headers = RawTable.getSortedHeaders(this.props.headers);
+        const headersOrder = headers.map(RawTable.headerKeyExtractor);
         this.state = {
-            className,
-            styleName,
+            headersOrder,
+            headers,
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-        const styleName = this.getStyleName(nextProps);
-
+        // FIXME: why is data mutated here @frozenhelium?
         if (!isArrayEqual(this.props.data, nextProps.data)) {
             if (this.props.onDataSort) {
                 this.props.onDataSort(nextProps.data);
             }
         }
+        if (this.props.headers !== nextProps.headers) {
+            const newHeaders = RawTable.getSortedHeaders(nextProps.headers);
+            const newHeadersOrder = newHeaders.map(RawTable.headerKeyExtractor);
 
-        this.setState({
-            className,
-            styleName,
-        });
+            this.setState({ headers: newHeaders });
+            if (!isArrayEqual(newHeadersOrder, this.state.headersOrder)) {
+                this.setState({ headersOrder: newHeadersOrder });
+            }
+        }
     }
 
     getClassName = (props) => {
+        const { className } = props;
+
         const classNames = [];
-        const {
-            className,
-        } = props;
 
         // default className for global override
         classNames.push('raw-table');
@@ -128,13 +134,12 @@ export default class RawTable extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getStyleName = () => ('raw-table')
+    getStyleName = () => 'raw-table'
 
     render() {
         const {
             data,
             dataModifier,
-            headers,
             headerModifier,
             keyExtractor,
             onHeaderClick,
@@ -146,13 +151,15 @@ export default class RawTable extends React.PureComponent {
             expandedRowModifier,
         } = this.props;
 
+        const className = this.getClassName(this.props);
+        const styleName = this.getStyleName(this.props);
         return (
             <table
-                className={this.state.className}
-                styleName={this.state.styleName}
+                className={className}
+                styleName={styleName}
             >
                 <Headers
-                    headers={headers}
+                    headers={this.state.headers}
                     headerModifier={headerModifier}
                     onClick={onHeaderClick}
                 />
@@ -160,7 +167,7 @@ export default class RawTable extends React.PureComponent {
                     data={data}
                     dataModifier={dataModifier}
                     expandedRowModifier={expandedRowModifier}
-                    headers={headers}
+                    headersOrder={this.state.headersOrder}
                     keyExtractor={keyExtractor}
                     onClick={onBodyClick}
                     highlightCellKey={highlightCellKey}

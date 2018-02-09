@@ -2,6 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import List from '../List';
 import Cell from './Cell';
 
 import {
@@ -22,11 +23,7 @@ const propTypes = {
 
     dataModifier: PropTypes.func,
 
-    headers: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string,
-        }),
-    ).isRequired,
+    headersOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
 
     highlightCellKey: propTypeKey,
     highlightColumnKey: propTypeKey,
@@ -63,24 +60,6 @@ export default class Row extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const className = this.getClassName(props);
-
-        this.state = {
-            className,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const className = this.getClassName(nextProps);
-
-        this.setState({
-            className,
-        });
-    }
-
     getClassName = (props) => {
         const classNames = [];
         const {
@@ -109,36 +88,6 @@ export default class Row extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getCell = (header) => {
-        const {
-            areCellsHoverable,
-            dataModifier,
-            highlightCellKey,
-            highlightColumnKey,
-            rowData,
-        } = this.props;
-
-        let data = rowData[header.key];
-
-        if (dataModifier) {
-            data = dataModifier(rowData, header.key);
-        }
-
-        // Un-necessary cell re-render because of dataModifier
-        return (
-            <Cell
-                key={header.key}
-                uniqueKey={header.key}
-                onClick={this.handleCellClick}
-                hoverable={areCellsHoverable}
-                highlighted={isEqualAndTruthy(header.key, highlightCellKey)}
-                columnHighlighted={isEqualAndTruthy(header.key, highlightColumnKey)}
-            >
-                { data }
-            </Cell>
-        );
-    }
-
     handleCellClick = (key, e) => {
         const {
             onClick,
@@ -150,20 +99,46 @@ export default class Row extends React.PureComponent {
         }
     }
 
-    render() {
+    keyExtractor = header => header;
+
+    renderCell = (key) => {
         const {
-            headers,
+            areCellsHoverable,
+            dataModifier,
+            highlightCellKey,
+            highlightColumnKey,
+            rowData,
         } = this.props;
 
+        const data = dataModifier
+            ? dataModifier(rowData, key) // FIXME: can be optimized
+            : rowData[key];
+
         return (
-            <tr
-                className={this.state.className}
+            <Cell
+                key={key}
+                uniqueKey={key}
+                onClick={this.handleCellClick}
+                hoverable={areCellsHoverable}
+                highlighted={isEqualAndTruthy(key, highlightCellKey)}
+                columnHighlighted={isEqualAndTruthy(key, highlightColumnKey)}
             >
-                {
-                    headers.map(header => (
-                        this.getCell(header)
-                    ))
-                }
+                { data }
+            </Cell>
+        );
+    }
+
+    render() {
+        const { headersOrder } = this.props;
+        const className = this.getClassName(this.props);
+
+        return (
+            <tr className={className}>
+                <List
+                    data={headersOrder}
+                    keyExtractor={this.keyExtractor}
+                    modifier={this.renderCell}
+                />
             </tr>
         );
     }

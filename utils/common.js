@@ -458,3 +458,23 @@ export const calcFloatingPositionInMainWindow = (parentRect, contentRect, offset
 export const getRatingForContentInString = (content, str) => (
     content.toLowerCase().indexOf(str.toLowerCase())
 );
+
+export const findDifferenceInObject = (o, n) => {
+    const allKeys = new Set([
+        ...Object.keys(o),
+        ...Object.keys(n),
+    ]);
+
+    const changes = [];
+    allKeys.forEach((key) => {
+        if (o[key] !== n[key]) {
+            changes.push({ key, old: o[key], new: n[key] });
+        }
+    });
+    return changes;
+};
+
+// NOTE: also assumes mutated data
+export const isArrayEqual = (array1, array2) => (
+    array1.length === array2.length && array1.every((d, i) => d === array2[i])
+);

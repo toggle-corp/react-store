@@ -65,9 +65,7 @@ export default class TableHeader extends React.PureComponent {
     }
 
     render() {
-        const {
-            label,
-        } = this.props;
+        const { label } = this.props;
 
         const divClassName = this.getClassName(this.props);
         const iconClassName = this.getIconClassName(this.props);
