@@ -496,6 +496,11 @@ const comparision = (extractor, func) => (x, y, direction = 1) => {
 export const compareBoolean = comparision(x => x, () => null);
 export const compareString = comparision(x => x, (a, b) => a.localeCompare(b));
 export const compareNumber = comparision(x => x, (a, b) => (a - b));
+export const compareDate = comparision(x => x, (a, b) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getTime() - dateB.getTime();
+});
 
 export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
 export const compareLength = comparision(x => x.length, (a, b) => (a - b));
