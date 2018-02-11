@@ -1,7 +1,6 @@
 import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import {
     SortableContainer,
     SortableElement,
@@ -9,11 +8,10 @@ import {
     arrayMove,
 } from 'react-sortable-hoc';
 
-import { Button } from '../../Action';
+import { iconNames } from '../../../constants';
+import Button from '../../Action/Button';
 
 import styles from './styles.scss';
-import { iconNames } from '../../../constants';
-
 
 const propTypes = {
     className: PropTypes.string,

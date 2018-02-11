@@ -6,28 +6,26 @@ import PropTypes from 'prop-types';
 import ReactGA from 'react-ga';
 import React, { Component } from 'react';
 
-const trackPage = (page, options) => {
+const trackPage = (page, gaOptions) => {
     if (window.ga && window.ga.create) {
         ReactGA.set({
             page,
-            ...options,
+            ...gaOptions,
         });
         ReactGA.pageview(page);
     }
 };
 
-const propTypes = {
-    location: PropTypes.shape({
-        pathname: PropTypes.string,
-    }).isRequired,
-};
-
 export default function withTracker(WrappedComponent, options = {}) {
-    // XXX: Maybe make pure component
-    const HOC = class extends Component {
+    const propTypes = {
+        location: PropTypes.shape({
+            pathname: PropTypes.string,
+        }).isRequired,
+    };
+    return class extends Component {
         static propTypes = propTypes;
 
-        componentDidMount() {
+        componentWillMount() {
             const page = this.props.location.pathname;
             trackPage(page, options);
         }
@@ -45,6 +43,4 @@ export default function withTracker(WrappedComponent, options = {}) {
             return <WrappedComponent {...this.props} />;
         }
     };
-
-    return HOC;
 }

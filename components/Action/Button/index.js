@@ -3,8 +3,6 @@ import React from 'react';
 
 import styles from './styles.scss';
 
-// FIXME: remove Transparent*Button
-
 const propTypes = {
     /**
      * buttonType is used to categorize a button:
@@ -180,53 +178,3 @@ export default class Button extends React.PureComponent {
         );
     }
 }
-
-export const PrimaryButton = props => (
-    <Button buttonType="button-primary" {...props} />
-);
-
-export const AccentButton = props => (
-    <Button buttonType="button-accent" {...props} />
-);
-
-export const SuccessButton = props => (
-    <Button buttonType="button-success" {...props} />
-);
-
-export const DangerButton = props => (
-    <Button buttonType="button-danger" {...props} />
-);
-
-export const WarningButton = props => (
-    <Button buttonType="button-warning" {...props} />
-);
-
-export const TransparentButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button transparent {...props} />;
-};
-
-export const TransparentPrimaryButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button buttonType="button-primary" transparent {...props} />;
-};
-
-export const TransparentAccentButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button buttonType="button-accent" transparent {...props} />;
-};
-
-export const TransparentSuccessButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button buttonType="button-success" transparent {...props} />;
-};
-
-export const TransparentDangerButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button buttonType="button-danger" transparent {...props} />;
-};
-
-export const TransparentWarningButton = (props) => {
-    console.warn('Deprecated: Prefer using attribute \'transparent\' for TransparentButton');
-    return <Button buttonType="button-warning" transparent {...props} />;
-};

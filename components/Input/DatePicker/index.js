@@ -5,7 +5,6 @@ import React from 'react';
 import DaysHeader from './DaysHeader';
 import styles from './styles.scss';
 
-
 const propTypes = {
     date: PropTypes.oneOfType([
         PropTypes.string,

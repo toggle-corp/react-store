@@ -32,8 +32,6 @@ export default class HiddenInput extends React.PureComponent {
     // NOTE: noop
     onChange = () => {};
 
-    getValue = () => this.props.value;
-
     render() {
         const {
             className,

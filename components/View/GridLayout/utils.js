@@ -1,4 +1,4 @@
-export const dummy = 0;
+// eslint-disable-next-line import/prefer-default-export
 export const checkCollision = (items, index) => {
     const rect1 = items[index].layout;
     for (let i = 0; i < items.length; i += 1) {

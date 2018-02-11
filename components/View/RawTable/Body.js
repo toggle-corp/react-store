@@ -5,9 +5,9 @@ import React from 'react';
 import { isEqualAndTruthy } from '../../../utils/common';
 
 import List from '../List';
+
 import Row from './Row';
 import ExpandedRow from './ExpandedRow';
-
 import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([

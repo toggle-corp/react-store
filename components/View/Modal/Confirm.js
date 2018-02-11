@@ -1,18 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from '../../View';
+import Button from '../../Action/Button';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
 
-import {
-    Button,
-    PrimaryButton,
-} from '../../Action';
+import ModalHeader from './Header';
+import ModalBody from './Body';
+import ModalFooter from './Footer';
 
-import Modal from './';
+import Modal from './index';
 import styles from './styles.scss';
 
 const propTypes = {

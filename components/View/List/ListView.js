@@ -2,7 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from './List';
+import List from './index';
 import styles from './styles.scss';
 
 const propTypeData = PropTypes.arrayOf(

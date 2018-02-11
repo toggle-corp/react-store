@@ -2,14 +2,7 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DatePicker from '../DatePicker';
-import DateUnit from './DateUnit';
-import {
-    FloatingContainer,
-    FormattedDate,
-} from '../../View';
-import styles from './styles.scss';
-
+import { iconNames } from '../../../constants';
 import {
     getNumDaysInMonth,
     isFalsy,
@@ -18,8 +11,12 @@ import {
     calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
 
-import { iconNames } from '../../../constants';
+import DatePicker from '../DatePicker';
+import FloatingContainer from '../../View/FloatingContainer';
+import FormattedDate from '../../View/FormattedDate';
 
+import DateUnit from './DateUnit';
+import styles from './styles.scss';
 
 const propTypes = {
     /**
@@ -137,14 +134,6 @@ export default class DateInput extends React.PureComponent {
         this.setState(this.decodeTimestamp(timestamp), () => {
             this.triggerChange();
         });
-    }
-
-    // Public method used by Form
-    getValue = () => {
-        if (this.state.date) {
-            return FormattedDate.format(this.state.date, 'yyyy-MM-dd');
-        }
-        return undefined;
     }
 
     getStyleName() {
@@ -315,8 +304,10 @@ export default class DateInput extends React.PureComponent {
     }
 
     triggerChange = () => {
+        const { date } = this.state;
         if (this.props.onChange) {
-            this.props.onChange(this.getValue());
+            const value = date ? FormattedDate.format(date, 'yyyy-MM-dd') : undefined;
+            this.props.onChange(value);
         }
     }
 

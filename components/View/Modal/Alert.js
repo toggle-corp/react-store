@@ -2,18 +2,14 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import PrimaryButton from '../../Action/Button/PrimaryButton';
+
+import ModalHeader from './Header';
+import ModalBody from './Body';
+import ModalFooter from './Footer';
+
+import Modal from './index';
 import styles from './styles.scss';
-import {
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from '../../View';
-
-import {
-    PrimaryButton,
-} from '../../Action';
-
-import Modal from './';
 
 const propTypes = {
     children: PropTypes.oneOfType([

@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SketchPicker } from 'react-color';
 
-import styles from './styles.scss';
-import {
-    FloatingContainer,
-} from '../../View';
 import {
     randomString,
     calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
+import FloatingContainer from '../../View/FloatingContainer';
+
+import styles from './styles.scss';
 
 const propTypes = {
     /**

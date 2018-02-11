@@ -10,14 +10,13 @@ export default class FormHelper {
     constructor() {
         // List of reference names
         this.elements = [];
+        this.value = {};
 
         // Contains validation objects containing a validator and error message
         this.validations = {};
         this.validation = undefined;
 
         // Internal store for references
-        this.references = {};
-        this.referenceCollector = {};
         this.changeFnCollector = {};
     }
 
@@ -26,6 +25,10 @@ export default class FormHelper {
     /* Set name of elements to be validated */
     setElements(elements) {
         this.elements = elements;
+    }
+
+    setValue(value) {
+        this.value = value;
     }
 
     /* Set each element with a validation function */
@@ -78,55 +81,28 @@ export default class FormHelper {
             // success
             const values = {};
             this.elements.forEach((name) => {
-                const element = this.getRef(name);
                 // skipping in final output
-                if (!element) {
-                    console.warn(`Element '${name}' not found.`);
-                } else {
-                    values[name] = this.getRefValue(name);
-                }
+                values[name] = this.getValue(name);
             });
             this.successCallback(values, { formErrors, formFieldErrors });
         }
     }
 
-    /* Get a reference update fn for element 'name' */
-    updateRef = (name) => {
-        if (this.referenceCollector[name]) {
-            return this.referenceCollector[name];
-        }
-        const referenceFn = (ref) => {
-            this.references[name] = ref;
-        };
-        this.referenceCollector[name] = referenceFn;
-        return referenceFn;
-    }
+    getValue = name => (
+        this.value ? this.value[name] : undefined
+    )
 
     /* Create a update fn for element 'name' */
-    updateChangeFn = (name) => {
+    getChangeFn = (name) => {
         if (this.changeFnCollector[name]) {
             return this.changeFnCollector[name];
         }
+
         const changeFn = (value) => {
             this.onChange(name, value);
         };
         this.changeFnCollector[name] = changeFn;
         return changeFn;
-    }
-
-    /* PRIVATE: Access reference of element 'name' */
-    getRef = name => (
-        this.references[name]
-    )
-
-    /* PRIVATE: Access value of element 'name' */
-    getRefValue = (name) => {
-        const element = this.getRef(name);
-        if (!element) {
-            console.warn(`Element '${name}' not found.`);
-            return undefined;
-        }
-        return element.getValue();
     }
 
     /* PRIVATE: Check if value is valid for all elements */
@@ -136,14 +112,7 @@ export default class FormHelper {
 
         let { hasError, formFieldErrors } = this.elements.reduce(
             (acc, name) => {
-                const element = this.getRef(name);
-                // skipping validation
-                if (!element) {
-                    console.warn(`Element '${name}' not found.`);
-                    validityMap[name] = true;
-                    return acc;
-                }
-                const value = this.getRefValue(name);
+                const value = this.getValue(name);
                 const res = this.isValid(name, value);
                 validityMap[name] = res.ok;
                 // If response is ok, send accumulator as is
@@ -168,7 +137,7 @@ export default class FormHelper {
             // Checks for every rule until one of them is invalid
             const validity = args.every(arg => validityMap[arg]);
             if (validity) {
-                const superArgs = args.map(name => this.getRefValue(name));
+                const superArgs = args.map(name => this.getValue(name));
                 const res = fn(...superArgs);
                 if (!res.ok) {
                     formErrors = res.formErrors;

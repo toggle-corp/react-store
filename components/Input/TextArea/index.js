@@ -2,9 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import { randomString } from '../../../utils/common';
-
+import styles from './styles.scss';
 
 const propTypes = {
     /**
@@ -117,8 +116,6 @@ export default class TextArea extends React.PureComponent {
             clearTimeout(this.changeTimeout);
         }
     }
-
-    getValue = () => this.realValue;
 
     getStyleName() {
         const styleNames = [];

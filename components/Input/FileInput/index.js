@@ -2,8 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
 import { randomString } from '../../../utils/common';
+import styles from './styles.scss';
 
 const propTypes = {
     /**
@@ -53,14 +53,14 @@ export default class FileInput extends React.PureComponent {
         if (!acceptString) {
             return true;
         }
-        // NOTE: no validation has been made, please careful
+        const extensionMatch = /\.\w+$/.exec(name);
+        const mimeMatch = /^.+\//.exec(mimeType);
         const acceptList = acceptString.split(/,\s+/);
         return acceptList.some((accept) => {
-            if (mimeType === accept) {
+            if (mimeType === accept || (!!mimeMatch && `${mimeMatch[0]}*` === accept)) {
                 return true;
             }
-            const match = /\..*/.exec(name);
-            return !!match && match[0].toLowerCase() === accept.toLowerCase();
+            return !!extensionMatch && extensionMatch[0].toLowerCase() === accept.toLowerCase();
         });
     }
 
@@ -167,22 +167,3 @@ export default class FileInput extends React.PureComponent {
         );
     }
 }
-
-// Separator the preview implementation
-export const ImageInput = props => (
-    <FileInput
-        previewExtractor={file => (
-            new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    resolve(e.target.result);
-                };
-                reader.readAsDataURL(file);
-            })
-        )}
-        accept="image/*"
-        {...props}
-    >
-        Select an image
-    </FileInput>
-);

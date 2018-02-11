@@ -83,10 +83,3 @@ export default class PrivateRoute extends React.PureComponent {
         );
     }
 }
-
-/*
- * ExclusivelyPublicRoute has inverted behavior to PrivateRoute
- * When user is authenticated, this route is inaccessible
- * And the user is redirect to 'redirectLink'
- */
-export const ExclusivelyPublicRoute = props => <PrivateRoute invertBehavior {...props} />;

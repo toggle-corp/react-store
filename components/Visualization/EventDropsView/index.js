@@ -3,8 +3,8 @@ import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 import EventDrops from '../EventDrops';
-import { SelectInput } from '../../Input';
-import { PrimaryButton } from '../../Action';
+import SelectInput from '../../Input/SelectInput';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
 
 import styles from './styles.scss';
 

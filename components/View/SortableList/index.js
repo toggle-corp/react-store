@@ -7,11 +7,10 @@ import {
     SortableHandle,
     arrayMove,
 } from 'react-sortable-hoc';
-import {
-    iconNames,
-} from '../../../constants';
 
-import { ListView } from '../List';
+import { iconNames } from '../../../constants';
+import ListView from '../List/ListView';
+
 import styles from './styles.scss';
 
 const propTypeData = PropTypes.arrayOf(

@@ -5,6 +5,7 @@ import React from 'react';
 import update from '../../../utils/immutable-update';
 
 import List from '../List';
+
 import GridItem from './GridItem';
 import { checkCollision } from './utils';
 import styles from './styles.scss';

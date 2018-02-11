@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Resizable from './Resizable';
+import Resizable from './index';
 
 const propTypes = {
     topChild: PropTypes.node.isRequired,

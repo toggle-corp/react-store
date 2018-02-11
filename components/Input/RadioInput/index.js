@@ -2,7 +2,8 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { ListView } from '../../View';
+import ListView from '../../View/List/ListView';
+
 import Option from './Option';
 import styles from './styles.scss';
 
@@ -75,8 +76,6 @@ export default class RadioInput extends React.PureComponent {
             this.setState({ selectedOption });
         }
     }
-
-    getValue = () => (this.state.selectedOption.key)
 
     handleOptionClick = (key) => {
         const option = this.props.options.find(d => d.key === key);

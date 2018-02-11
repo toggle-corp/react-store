@@ -4,8 +4,8 @@ import { PropTypes } from 'prop-types';
 import { singleColors } from '../../../utils/ColorScheme';
 import OrgChart from '../OrgChart';
 
-import { SelectInput } from '../../Input';
-import { PrimaryButton } from '../../Action';
+import SelectInput from '../../Input/SelectInput';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
 
 import styles from './styles.scss';
 

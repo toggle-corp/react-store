@@ -2,13 +2,10 @@ import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { isEqualAndTruthy } from '../../../utils/common';
 import List from '../List';
+
 import Cell from './Cell';
-
-import {
-    isEqualAndTruthy,
-} from '../../../utils/common';
-
 import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([
