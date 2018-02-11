@@ -478,3 +478,25 @@ export const findDifferenceInObject = (o, n) => {
 export const isArrayEqual = (array1, array2) => (
     array1.length === array2.length && array1.every((d, i) => d === array2[i])
 );
+
+const comparision = (extractor, func) => (x, y, direction = 1) => {
+    const a = extractor(x);
+    const b = extractor(y);
+    if (a === b) {
+        return 0;
+    } else if (isFalsy(a)) {
+        return -1;
+    } else if (isFalsy(b)) {
+        return 1;
+    }
+    return direction * func(a, b);
+};
+
+// NOTE: func is never called for boolean
+export const compareBoolean = comparision(x => x, () => null);
+export const compareString = comparision(x => x, (a, b) => a.localeCompare(b));
+export const compareNumber = comparision(x => x, (a, b) => (a - b));
+
+export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
+export const compareLength = comparision(x => x.length, (a, b) => (a - b));
+export const compareStringByWordCount = comparision(x => x.split(/\s+/).length, (a, b) => a - b);
