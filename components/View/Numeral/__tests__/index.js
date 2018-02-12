@@ -1,9 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Numeral, {
-    ColoredNumeral,
-} from '../index';
-
+import Numeral from '../index';
+import ColoredNumeral from '../ColoredNumeral';
 
 describe('ColoredNumeral with Block', () => {
     const wrapper = shallow(
