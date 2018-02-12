@@ -9,16 +9,12 @@ import FormHelper from './FormHelper';
 
 const attachInputs = (store, helper, elements) => (
     elements.reduce(
-        (acc, element) => {
-            acc[element] = {
-                ref: helper.updateRef(element),
-                onChange: helper.updateChangeFn(element),
-                getValue: () => store.values[element],
-            };
-            // ref is called automatically in reality
-            acc[element].ref(acc[element]);
-            return acc;
-        },
+        (acc, element) => ({
+            ...acc,
+            [element]: {
+                onChange: helper.getChangeFn(element),
+            },
+        }),
         {},
     )
 );
@@ -77,6 +73,7 @@ test('', () => {
     };
 
     const helper = new FormHelper();
+    helper.setValue(state.values);
     helper.setElements(elements);
     helper.setValidations(validations);
     helper.setValidation(validation);
@@ -88,6 +85,7 @@ test('', () => {
 
     const inputs = attachInputs(state, helper, elements);
     inputs.id.onChange(12);
+    helper.setValue(state.values);
 
     // Set value in field id
     expect(state.values.id).toEqual(12);
@@ -96,7 +94,9 @@ test('', () => {
     expect(state.formFieldErrors.name).not.toBe(undefined);
     // Clear error on field name
     inputs.name.onChange('hari prasad');
+    helper.setValue(state.values);
     inputs.description.onChange('short err');
+    helper.setValue(state.values);
     helper.onSubmit();
     // error because description is shorter than name
     expect(state.formErrors).not.toBe(undefined);
@@ -105,9 +105,11 @@ test('', () => {
 
     // clear error for description and overall error
     inputs.description.onChange('a lot longer error');
+    helper.setValue(state.values);
     expect(state.formFieldErrors.description).toBe(undefined);
     expect(state.formErrors).toBe(undefined);
     // clear error for name
     inputs.name.onChange('haris');
+    helper.setValue(state.values);
     expect(state.formFieldErrors.name).toBe(undefined);
 });
