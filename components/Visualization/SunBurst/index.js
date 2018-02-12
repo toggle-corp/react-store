@@ -124,7 +124,7 @@ export default class SunBurst extends PureComponent {
 
         const x = scaleLinear()
             .range([0, 2 * Math.PI]);
-        const y = scaleSqrt()
+        const y = scaleLinear()
             .range([0, radius]);
         const color = scaleOrdinal()
             .range(colorScheme);
@@ -254,6 +254,7 @@ export default class SunBurst extends PureComponent {
             .append('path')
             .attr('class', 'arcs')
             .attr('d', arch)
+            .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
             .style('fill', d => color(labelAccessor(d.children ? d.data : d.parent.data)))
             .on('click', handleClick);
