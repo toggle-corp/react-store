@@ -24,6 +24,12 @@
 
 .numeral {
     font-family: $font-family-monospace;
+    font-weight: $font-weight-bold;
+
+    .number {
+        font-size: $font-size-normal-alt;
+        font-weight: $font-weight-bold;
+    }
 }
 
 .block-numeral {
