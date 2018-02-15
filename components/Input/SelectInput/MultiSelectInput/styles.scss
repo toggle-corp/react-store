@@ -24,6 +24,9 @@
             border-bottom: $width-separator-medium solid $color-separator-alt;
             padding: $spacing-extra-small 0;
             width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             color: $color-text;
 
             &::placeholder {
