@@ -1,152 +1,39 @@
 @import '../../../stylesheets/base';
+@import '../../../stylesheets/input-label';
 
-.date-input-wrapper {
+.date-input {
     .label {
-        width: 100%;
-        text-transform: uppercase;
-        color: $color-label;
-        font-size: $font-size-extra-small;
+        @extend %input-label;
     }
 
-    .date-input {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        border-bottom: $width-separator-medium solid $color-separator-alt;
+    .input {
+        border-bottom: $width-separator-medium solid $color-separator;
 
-        .inputs {
-            padding: $spacing-extra-small 0;
-
-            input {
-                outline: 0;
-                border: 0;
-                background-color: transparent;
-                padding: 0;
-                text-align: left;
-                color: $color-text;
-                font-family: $font-family-monospace;
-                font-size: inherit;
-
-                &:disabled {
-                    color: $color-text-disabled;
-                }
-
-                &::placeholder {
-                    color: $color-text-disabled;
-                }
-
-                &.day {
-                    width: calc(2ch + 16px);
-                }
-
-                &.month {
-                    width: calc(2ch + 16px);
-                }
-
-                &.year {
-                    width: calc(4ch + 16px);
-                }
-            }
-
-            .separator {
-                padding: 0 $spacing-small;
-                color: $color-text;
-                user-select: none;
-
-                &.disabled {
-                    color: $color-text-disabled;
-                }
-            }
+        .date-unit {
+            font-family: $font-family-monospace;
+            background-color: transparent;
+            border: 0;
+            outline: 0;
+            font-size: inherit;
+            text-align: right;
         }
 
-        .actions {
-            display: flex;
-            padding: 0 $spacing-small;
+        .day-unit {
+            width: 4ch;
+        }
 
-            button {
-                outline: 0;
-                border: 0;
-                background-color: transparent;
-                cursor: pointer;
+        .month-unit {
+            width: 4ch;
+        }
 
-                &.active {
-                    color: $color-accent;
-                }
-
-                &.hidden {
-                    visibility: hidden;
-                }
-            }
+        .year-unit {
+            width: 6ch;
         }
     }
 
-    &:hover {
-        .date-input {
-            border-bottom-color: $color-separator-hover;
+    &.invalid {
+        .input {
+            border-bottom-color: $color-warning;
         }
-    }
-
-    &.date-picker-shown,
-    &.focused {
-        .label {
-            color: $color-accent;
-        }
-
-        .date-input {
-            border-bottom-color: $color-accent;
-        }
-    }
-
-    &.error {
-        .date-input {
-            border-bottom-color: $color-danger;
-        }
-
-        .label {
-            color: $color-danger;
-        }
-
-    }
-
-    &.required {
-        .label {
-            font-weight: $font-weight-medium;
-
-            &::after {
-                content: '*';
-            }
-        }
-    }
-
-    &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
-        .date-input {
-            border-bottom-color: $color-separator;
-            color: $color-text-disabled;
-        }
-    }
-
-    %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
-    }
-
-    .hint {
-        @extend %base;
-        color: $color-label;
-    }
-
-    .error {
-        @extend %base;
-        color: $color-danger;
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
     }
 }
-
