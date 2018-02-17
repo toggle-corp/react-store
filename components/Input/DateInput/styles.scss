@@ -7,33 +7,119 @@
     }
 
     .input {
-        border-bottom: $width-separator-medium solid $color-separator;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-        .date-unit {
-            font-family: $font-family-monospace;
-            background-color: transparent;
-            border: 0;
-            outline: 0;
-            font-size: inherit;
-            text-align: right;
+        .date-units {
+            .date-unit {
+                font-family: $font-family-monospace;
+                background-color: transparent;
+                border: 0;
+                outline: 0;
+                font-size: inherit;
+                text-align: right;
+                padding: $spacing-extra-small 0;
+                color: $color-text;
+            }
+
+            .day-unit {
+                width: 4ch;
+            }
+
+            .month-unit {
+                width: 4ch;
+            }
+
+            .year-unit {
+                width: 6ch;
+            }
         }
 
-        .day-unit {
-            width: 4ch;
+        .action-buttons {
+            @include transition-medium;
+            display: inline;
+            opacity: 0;
+
+            .button {
+                border: 0;
+                outline: 0;
+                padding: $spacing-extra-small $spacing-small;
+                background-color: transparent;
+                cursor: pointer;
+                color: $color-label;
+
+                &:hover {
+                    color: $color-text;
+
+                    &.clear {
+                        color: $color-danger;
+                    }
+                }
+            }
         }
 
-        .month-unit {
-            width: 4ch;
+        &:hover {
+            .action-buttons {
+                opacity: 1;
+            }
+        }
+    }
+
+    &:hover {
+        .input {
+            border-bottom-color: $color-separator-hover;
+        }
+    }
+
+    &.focus {
+        .label {
+            color: $color-accent;
         }
 
-        .year-unit {
-            width: 6ch;
+        .input {
+            border-bottom: $width-separator-normal solid $color-accent;
         }
     }
 
     &.invalid {
+        .label {
+            color: $color-warning;
+        }
+
         .input {
             border-bottom-color: $color-warning;
         }
+    }
+
+    &.error {
+        .label {
+            color: $color-danger;
+        }
+
+        .input {
+            border-bottom-color: $color-danger;
+        }
+    }
+
+    %hint-and-error {
+        margin: $spacing-extra-small 0 0;
+        font-size: $font-size-extra-small;
+    }
+
+    .hint {
+        @extend %hint-and-error;
+        color: $color-label;
+    }
+
+    .error {
+        @extend %hint-and-error;
+        color: $color-danger;
+    }
+
+    .empty {
+        @extend %hint-and-error;
+        visibility: hidden;
     }
 }
