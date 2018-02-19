@@ -101,6 +101,15 @@ export default class Form extends React.PureComponent {
         if (this.props.value !== nextProps.value) {
             this.form.setValue(nextProps.value);
         }
+        if (this.props.elements !== nextProps.elements) {
+            this.form.setElements(nextProps.elements);
+        }
+        if (this.props.validations !== nextProps.validations) {
+            this.form.setValidations(nextProps.validations);
+        }
+        if (this.props.validation !== nextProps.validation) {
+            this.form.setValidations(nextProps.validation);
+        }
     }
 
     onSubmit = (e) => {
@@ -136,6 +145,7 @@ export default class Form extends React.PureComponent {
                 className={className}
                 onSubmit={this.onSubmit}
                 styleName="form"
+                noValidate
             >
                 { mapChildrenRecursive(
                     children,
