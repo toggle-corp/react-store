@@ -7,21 +7,21 @@
     }
 
     .input {
-        border-bottom: $width-separator-medium solid $color-separator-alt;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
 
         .date-units {
             .date-unit {
-                font-family: $font-family-monospace;
-                background-color: transparent;
-                border: 0;
                 outline: 0;
-                font-size: inherit;
-                text-align: right;
+                border: 0;
+                background-color: transparent;
                 padding: $spacing-extra-small 0;
+                text-align: right;
                 color: $color-text;
+                font-family: $font-family-monospace;
+                font-size: inherit;
             }
 
             .day-unit {
@@ -43,11 +43,11 @@
             opacity: 0;
 
             .button {
-                border: 0;
                 outline: 0;
-                padding: $spacing-extra-small $spacing-small;
+                border: 0;
                 background-color: transparent;
                 cursor: pointer;
+                padding: $spacing-extra-small $spacing-small;
                 color: $color-label;
 
                 &:hover {
