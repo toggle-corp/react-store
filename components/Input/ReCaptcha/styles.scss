@@ -3,20 +3,23 @@
 .recaptcha {
     display: flex;
     flex-direction: column;
-    align-items: center;
     padding: $spacing-small;
 
     .g-recaptcha {
         display: inline-block;
         margin: 0;
-        border: $width-separator-thin solid transparent;
+        border: $width-separator-medium solid transparent;
         background-color: transparent;
         color: $color-text;
         font-family: inherit;
         font-size: inherit;
 
+        &>div {
+            margin: 0 auto;
+        }
+
         &.error {
-            border: $width-separator-thin solid $color-danger;
+            border-bottom: $width-separator-medium solid $color-danger;
         }
     }
 
@@ -33,5 +36,10 @@
     .error {
         @extend %base;
         color: $color-danger;
+    }
+
+    .empty {
+        @extend %base;
+        visibility: hidden;
     }
 }

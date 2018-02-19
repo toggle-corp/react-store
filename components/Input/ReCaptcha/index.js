@@ -6,7 +6,6 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     siteKey: PropTypes.string.isRequired,
-    reset: PropTypes.bool,
 
     onloadCallback: PropTypes.func,
     onChange: PropTypes.func,
@@ -44,37 +43,32 @@ export default class ReCaptcha extends Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static isReady = () => (window.grecaptcha !== undefined)
+
     constructor(props) {
         super(props);
 
-        this.state = {
-            ready: this.isReady(),
-        };
-
-        if (!this.state.ready) {
-            this.readyCheck = setInterval(this.updateReadyState, 1000);
-        }
+        const ready = ReCaptcha.isReady();
+        this.state = { ready };
     }
 
-    componentDidMount() {
-        if (this.state.ready) {
-            this.renderGrecaptcha();
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.state.ready && !prevState.ready) {
-            this.renderGrecaptcha();
-        } else if (this.props.reset && !prevProps.reset) {
-            this.reset();
-        }
+    componentWillMount() {
+        this.pollForReadyState();
     }
 
     componentWillUnmount() {
-        clearInterval(this.readyCheck);
+        clearTimeout(this.readyCheck);
     }
 
-    onChange = (token) => {
+    pollForReadyState = () => {
+        if (ReCaptcha.isReady()) {
+            this.setState({ ready: true }, this.renderGrecaptcha);
+        } else {
+            this.setTimeout(this.pollForReadyState, 1000);
+        }
+    };
+
+    handleChange = (token) => {
         const { onChange } = this.props;
         if (onChange) {
             onChange(token);
@@ -82,31 +76,21 @@ export default class ReCaptcha extends Component {
     }
 
     expiredCallback = () => {
+        // Clear old values
+        this.handleChange('');
+
         const { expiredCallback } = this.props;
         if (expiredCallback) {
             expiredCallback();
-        } else {
-            this.onChange('');
         }
     }
-
-    isReady = () => (window.grecaptcha !== undefined)
 
     reset = () => {
-        const { ready } = this.state;
-        if (ready && this.widget !== null) {
+        if (ReCaptcha.isReady() && this.widget !== null) {
             window.grecaptcha.reset(this.widget);
-            this.onChange('');
         }
-    }
-
-    updateReadyState = () => {
-        if (this.isReady()) {
-            this.setState({
-                ready: true,
-            });
-            clearInterval(this.readyCheck);
-        }
+        // Clear old values
+        this.handleChange('');
     }
 
     renderGrecaptcha = () => {
@@ -118,7 +102,7 @@ export default class ReCaptcha extends Component {
 
         this.widget = window.grecaptcha.render(this.recaptchaDom, {
             sitekey: siteKey,
-            callback: this.onChange,
+            callback: this.handleChange,
             theme,
             type,
             size,
@@ -151,16 +135,27 @@ export default class ReCaptcha extends Component {
                     ref={(recaptchaDom) => { this.recaptchaDom = recaptchaDom; }}
                     className={reCaptchaStyle}
                 >
-                    { !ready && 'Loading....' }
+                    { !ready && 'Loading...' }
                 </div>
                 {
-                    (showHintAndError && error) && (
-                        <p
-                            className={styles.error}
-                        >
-                            {error}
-                        </p>
-                    )
+                    (showHintAndError) && [
+                        error && (
+                            <p
+                                className={styles.error}
+                                key="error"
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && (
+                            <p
+                                className={`${styles.empty} ${styles.error}`}
+                                key="empty"
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
                 }
             </div>
         );
