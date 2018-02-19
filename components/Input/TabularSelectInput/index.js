@@ -166,7 +166,15 @@ export default class TabularSelectInput extends React.PureComponent {
                 nextProps.keySelector,
                 nextProps.blackList,
             );
-            this.setState({ validOptions });
+            const selectedOptions = TabularSelectInput.getSelectedOptions(
+                validOptions,
+                this.props.keySelector,
+                this.state.selectedOptionsKeys,
+            );
+            this.setState({
+                validOptions,
+                selectedOptions,
+            });
         }
     }
 
