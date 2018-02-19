@@ -103,32 +103,6 @@ export default class TabularSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getValidOptions = (options, keySelector, blackList) => {
-        const blackListMap = listToMap(
-            blackList,
-            d => d,
-            () => true,
-        );
-
-        const validOptions = options.filter(
-            option => !blackListMap[keySelector(option)],
-        );
-        return validOptions;
-    }
-
-    static getSelectedOptions = (options, keySelector, values) => {
-        const valuesMap = listToMap(
-            values,
-            d => d,
-            () => true,
-        );
-
-        const selectedOptions = options.filter(
-            option => valuesMap[keySelector(option)],
-        );
-        return selectedOptions;
-    }
-
     constructor(props) {
         super(props);
 
@@ -140,7 +114,7 @@ export default class TabularSelectInput extends React.PureComponent {
         } = this.props;
 
         const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
-        const validOptions = TabularSelectInput.getValidOptions(options, keySelector, blackList);
+        const validOptions = this.getValidOptions(options, keySelector, blackList);
 
         this.state = {
             validOptions,
@@ -161,12 +135,12 @@ export default class TabularSelectInput extends React.PureComponent {
             nextProps.blackList !== this.props.blackList ||
             nextProps.options !== this.props.options
         ) {
-            const validOptions = TabularSelectInput.getValidOptions(
+            const validOptions = this.getValidOptions(
                 nextProps.options,
                 nextProps.keySelector,
                 nextProps.blackList,
             );
-            const selectedOptions = TabularSelectInput.getSelectedOptions(
+            const selectedOptions = this.getSelectedOptions(
                 validOptions,
                 this.props.keySelector,
                 this.state.selectedOptionsKeys,
@@ -176,6 +150,32 @@ export default class TabularSelectInput extends React.PureComponent {
                 selectedOptions,
             });
         }
+    }
+
+    getValidOptions = (options, keySelector, blackList) => {
+        const blackListMap = listToMap(
+            blackList,
+            d => d,
+            () => true,
+        );
+
+        const validOptions = options.filter(
+            option => !blackListMap[keySelector(option)],
+        );
+        return validOptions;
+    }
+
+    getSelectedOptions = (options, keySelector, values) => {
+        const valuesMap = listToMap(
+            values,
+            d => d,
+            () => true,
+        );
+
+        const selectedOptions = options.filter(
+            option => valuesMap[keySelector(option)],
+        );
+        return selectedOptions;
     }
 
     createTableHeaders = tableHeaders => ([
@@ -202,7 +202,7 @@ export default class TabularSelectInput extends React.PureComponent {
             onChange,
         } = this.props;
 
-        const selectedOptions = TabularSelectInput.getSelectedOptions(
+        const selectedOptions = this.getSelectedOptions(
             options,
             keySelector,
             values,
