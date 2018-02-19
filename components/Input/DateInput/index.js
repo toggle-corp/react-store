@@ -12,6 +12,8 @@ const propTypes = {
     showLabel: PropTypes.bool,
     label: PropTypes.string,
     disabled: PropTypes.bool,
+    hint: PropTypes.string,
+    error: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
@@ -22,6 +24,8 @@ const propTypes = {
 const defaultProps = {
     showLabel: true,
     label: '',
+    hint: '',
+    error: '',
     disabled: false,
     value: undefined,
     onChange: undefined,
@@ -58,6 +62,9 @@ export default class DateInput extends React.PureComponent {
             dayValue: d,
             monthValue: m,
             yearValue: y,
+            isDayInputFocused: false,
+            isMonthInputFocused: false,
+            isYearInputFocused: false,
         };
 
         this.boundingClientRect = {};
@@ -80,8 +87,23 @@ export default class DateInput extends React.PureComponent {
     getClassName = () => {
         const classNames = [];
 
-        const { error } = this.props;
-        const { isInvalid } = this.state;
+        const {
+            error,
+            disabled,
+        } = this.props;
+
+        const {
+            isInvalid,
+            isDayInputFocused,
+            isMonthInputFocused,
+            isYearInputFocused,
+            showDatePicker,
+        } = this.state;
+
+        const isFocused = isDayInputFocused
+            || isMonthInputFocused
+            || isYearInputFocused
+            || showDatePicker;
 
         classNames.push('date-input');
         classNames.push(styles['date-input']);
@@ -94,6 +116,16 @@ export default class DateInput extends React.PureComponent {
         if (error) {
             classNames.push('error');
             classNames.push(styles.error);
+        }
+
+        if (isFocused) {
+            classNames.push('focused');
+            classNames.push(styles.focused);
+        }
+
+        if (disabled) {
+            classNames.push('disabled');
+            classNames.push(styles.disabled);
         }
 
         return classNames.join(' ');
@@ -166,6 +198,13 @@ export default class DateInput extends React.PureComponent {
             this.setState({ isInvalid: true });
         }
     }
+
+    handleDayInputFocus = () => { this.setState({ isDayInputFocused: true }); }
+    handleDayInputBlur = () => { this.setState({ isDayInputFocused: false }); }
+    handleMonthInputFocus = () => { this.setState({ isMonthInputFocused: true }); }
+    handleMonthInputBlur = () => { this.setState({ isMonthInputFocused: false }); }
+    handleYearInputFocus = () => { this.setState({ isYearInputFocused: true }); }
+    handleYearInputBlur = () => { this.setState({ isYearInputFocused: false }); }
 
     handleDayChange = (e) => {
         this.setState(
@@ -289,6 +328,8 @@ export default class DateInput extends React.PureComponent {
         max,
         onChange,
         value = '',
+        onFocus,
+        onBlur,
     }) => {
         const {
             disabled,
@@ -311,6 +352,8 @@ export default class DateInput extends React.PureComponent {
                 type="number"
                 onChange={onChange}
                 value={value}
+                onFocus={onFocus}
+                onBlur={onBlur}
             />
         );
     };
@@ -327,6 +370,8 @@ export default class DateInput extends React.PureComponent {
                 unitClassName="day-unit"
                 value={dayValue}
                 onChange={this.handleDayChange}
+                onFocus={this.handleDayInputFocus}
+                onBlur={this.handleDayInputBlur}
             />
         );
     };
@@ -343,6 +388,8 @@ export default class DateInput extends React.PureComponent {
                 unitClassName="month-unit"
                 value={monthValue}
                 onChange={this.handleMonthChange}
+                onFocus={this.handleMonthInputFocus}
+                onBlur={this.handleMonthInputBlur}
             />
         );
     };
@@ -359,6 +406,8 @@ export default class DateInput extends React.PureComponent {
                 min={minYear}
                 value={yearValue}
                 onChange={this.handleYearChange}
+                onFocus={this.handleYearInputFocus}
+                onBlur={this.handleYearInputBlur}
             />
         );
     };
