@@ -117,6 +117,37 @@ export default class ReCaptcha extends Component {
         }
     }
 
+    renderError = () => {
+        const {
+            showHintAndError,
+            error,
+        } = this.props;
+
+        if (!showHintAndError) {
+            return null;
+        }
+
+        if (error) {
+            return (
+                <p
+                    className={styles.error}
+                    key="error"
+                >
+                    {error}
+                </p>
+            );
+        }
+
+        return (
+            <p
+                className={`${styles.empty} ${styles.error}`}
+                key="empty"
+            >
+                -
+            </p>
+        );
+    }
+
     render() {
         const {
             className,
@@ -124,10 +155,12 @@ export default class ReCaptcha extends Component {
             error,
         } = this.props;
 
+        const Error = this.renderError;
+
         const { ready } = this.state;
 
         const containerStyle = `${styles.recaptcha} ${className}`;
-        const reCaptchaStyle = `${styles['g-recaptcha']} ${(showHintAndError && error) ? styles.error : ''}`;
+        const reCaptchaStyle = `${styles['g-recaptcha']} ${(showHintAndError && error) ? styles.errored : ''}`;
 
         return (
             <div className={containerStyle}>
@@ -137,26 +170,7 @@ export default class ReCaptcha extends Component {
                 >
                     { !ready && 'Loading...' }
                 </div>
-                {
-                    (showHintAndError) && [
-                        error && (
-                            <p
-                                className={styles.error}
-                                key="error"
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && (
-                            <p
-                                className={`${styles.empty} ${styles.error}`}
-                                key="empty"
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <Error />
             </div>
         );
     }

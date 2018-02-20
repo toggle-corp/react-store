@@ -1,25 +1,13 @@
 @import '../../../stylesheets/base';
 
 .recaptcha {
-    display: flex;
-    flex-direction: column;
-    padding: $spacing-small;
+    padding: $spacing-small 0;
 
     .g-recaptcha {
-        display: inline-block;
-        margin: 0;
         border: $width-separator-medium solid transparent;
-        background-color: transparent;
-        color: $color-text;
-        font-family: inherit;
-        font-size: inherit;
 
-        &>div {
-            margin: 0 auto;
-        }
-
-        &.error {
-            border-bottom: $width-separator-medium solid $color-danger;
+        &.errored {
+            border-color: $color-danger;
         }
     }
 
