@@ -44,9 +44,12 @@ export default class Cell extends React.PureComponent {
             highlighted,
             className,
             columnHighlighted,
+            uniqueKey,
         } = props;
 
+        classNames.push(uniqueKey);
         classNames.push('cell');
+
         classNames.push(styles.cell);
 
         // className provided by parent (through styleName)
