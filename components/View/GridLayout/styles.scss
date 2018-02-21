@@ -1,5 +1,9 @@
 @import '../../../stylesheets/base';
 
+$height-grid-item-header: 18px;
+$width-resize-handle: 10px;
+$height-resize-handle: 10px;
+
 .grid-layout {
     position: relative;
     width: 100%;
@@ -8,45 +12,24 @@
 
     &:not(.view-only) {
         background-image: linear-gradient(to right, $color-separator 1px, transparent 1px), linear-gradient(to bottom, $color-separator 1px, transparent 1px);
-
-        .grid-item {
-            border: $width-separator-thin solid $color-separator;
-            background-color: $color-foreground;
-
-            .header {
-                border-bottom: $width-separator-medium solid $color-separator;
-            }
-        }
     }
 
     .grid-item {
         @include transition-medium;
-        display: flex;
         position: absolute;
-        flex-direction: column;
 
         .header {
             display: flex;
-            flex-shrink: 0;
             justify-content: space-between;
+            height: $height-grid-item-header;
 
             .heading {
-                flex-basis: 100%;
-                background-color: transparent;
-                padding: $spacing-small $spacing-medium;
                 font-size: $font-size-small;
             }
         }
 
         .content {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-
-            >* {
-                flex-grow: 1;
-                overflow-y: auto;
-            }
+            height: calc(100% - #{$height-grid-item-header});
         }
 
         &:not(.view-only) {
@@ -64,8 +47,8 @@
                 border-right: $width-separator-medium solid $color-separator-alt;
                 border-bottom: $width-separator-medium solid $color-separator-alt;
                 cursor: se-resize;
-                width: 10px;
-                height: 10px;
+                width: $width-resize-handle;
+                height: $height-resize-handle;
             }
 
             &.dragging {
