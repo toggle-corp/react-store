@@ -35,11 +35,13 @@ const propTypes = {
 
     dragIconPosition: PropTypes.string,
 
+    dragHandleModifier: PropTypes.func,
+
     onChange: PropTypes.func,
 
     modifier: PropTypes.func.isRequired,
 
-    keyExtractor: PropTypes.func.isRequired,
+    keyExtractor: PropTypes.func,
 
     useDragHandle: PropTypes.bool,
 
@@ -55,6 +57,8 @@ const defaultProps = {
     onChange: undefined,
     useDragHandle: true,
     sortableItemClass: '',
+    keyExtractor: undefined,
+    dragHandleModifier: undefined,
 };
 
 @CSSModules(styles, { allowMultiple: true })
@@ -84,12 +88,12 @@ export default class SortableList extends React.Component {
         >
             {this.props.useDragHandle && (
                 this.props.dragIconPosition === 'left' &&
-                <this.DragHandle />
+                <this.DragHandle dataKey={key} data={data} dataIndex={index} />
             )}
             {this.props.modifier(key, data, index)}
             {this.props.useDragHandle && (
                 this.props.dragIconPosition === 'right' &&
-                <this.DragHandle />
+                <this.DragHandle dataKey={key} data={data} dataIndex={index} />
             )}
         </div>
     ))
@@ -104,9 +108,14 @@ export default class SortableList extends React.Component {
         />
     ))
 
-    DragHandle = SortableHandle(() => (
-        <span className={`${this.props.dragIcon} ${styles['drag-handle']} drag-handle`} />
-    ));
+    DragHandle = SortableHandle(({ dataKey, data, dataIndex }) => {
+        if (this.props.dragHandleModifier) {
+            return (this.props.dragHandleModifier(dataKey, data, dataIndex));
+        }
+        return (
+            <span className={`${this.props.dragIcon} ${styles['drag-handle']} drag-handle`} />
+        );
+    });
 
     render() {
         const {
