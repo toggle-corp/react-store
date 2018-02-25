@@ -4,7 +4,10 @@
     border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-medium;
+    overflow: hidden;
     text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     user-select: none;
 
     &.sortable {

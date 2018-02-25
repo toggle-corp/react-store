@@ -2,18 +2,18 @@
 
 .raw-table {
     width: 100%;
-    border-spacing: 0;
     border-collapse: collapse;
+    border-spacing: 0;
 
     .headers {
         .header {
-            top: 0;
             position: sticky;
+            top: 0;
             background-color: $color-background-header;
+            padding: 0;
             text-transform: uppercase;
             font-size: $font-size-small;
             font-weight: $font-weight-normal;
-            padding: 0;
 
             &:not(:last-child) {
                 border-right: $width-separator-thin solid $color-separator;
