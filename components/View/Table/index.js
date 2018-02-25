@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -10,7 +9,7 @@ import {
 import RawTable from '../RawTable';
 import TableHeader from '../TableHeader';
 
-import styles from './styles.scss';
+// import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
@@ -119,7 +118,6 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Table extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
