@@ -197,13 +197,14 @@ export const leftPad = (number, length, pad = '0') => {
 };
 
 // TODO: write test
+export const getNumDaysInMonthX = (year, month) => (
+    (year && month) ? new Date(year, month, 0).getDate() : 32
+);
+
+// TODO: write test
 export const getNumDaysInMonth = date => (
     date ? (
-        new Date(
-            date.getFullYear(),
-            date.getMonth() + 1,
-            0,
-        ).getDate()
+        getNumDaysInMonthX(date.getFullYear(), date.getMonth() + 1)
     ) : 32
 );
 
@@ -490,6 +491,19 @@ const comparision = (extractor, func) => (x, y, direction = 1) => {
         return 1;
     }
     return direction * func(a, b);
+};
+
+export const isDateValid = (date) => {
+    if (Object.prototype.toString.call(date) === '[object Date]') {
+        // it is a date
+        if (isNaN(date.getTime())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
 };
 
 // NOTE: func is never called for boolean

@@ -1,314 +1,264 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '../../../constants';
-import {
-    getNumDaysInMonth,
-    isFalsy,
-    isFalsyOrEmptyOrZero,
-    isTruthy,
-    calcFloatingPositionInMainWindow,
-} from '../../../utils/common';
-
-import DatePicker from '../DatePicker';
 import FloatingContainer from '../../View/FloatingContainer';
-import FormattedDate from '../../View/FormattedDate';
+import DatePicker from '../DatePicker';
+import { iconNames } from '../../../constants';
 
-import DateUnit from './DateUnit';
+import {
+    calcFloatingPositionInMainWindow,
+    getNumDaysInMonthX,
+    isDateValid,
+} from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * required for style override
-     */
-    className: PropTypes.string,
-
-    /**
-     * If disabled, action is blocked
-     */
-    disabled: PropTypes.bool,
-
-    /**
-     * String to show in case of error
-     */
-    error: PropTypes.string,
-
-    /**
-     * Format of date input
-     * E.g.: 'd-m-y', 'y-m-d', 'm/d/y'
-     * Case insensitive
-     * Must contain one of y, m, d and no more
-     * Must have single separator, which can be any character
-     */
-    format: PropTypes.string,
-
-    /**
-     * Hint text
-     */
-    hint: PropTypes.string,
-
-    /**
-     * Initial timestamp value for the input
-     */
-    initialValue: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-    ]),
-
-    /**
-     * Input label
-     */
-    label: PropTypes.string,
-
-    /**
-     * Event triggered when input value changes
-     */
-    onChange: PropTypes.func,
-
-    /**
-     * Is a required element for form
-     */
-    required: PropTypes.bool,
-
     showLabel: PropTypes.bool,
-
-    showHintAndError: PropTypes.bool,
-
+    label: PropTypes.string,
+    disabled: PropTypes.bool,
+    hint: PropTypes.string,
+    error: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
     ]),
+    onChange: PropTypes.func,
+    showHintAndError: PropTypes.bool,
 };
-
 const defaultProps = {
-    className: '',
-    disabled: false,
-    error: '',
-    format: 'd/m/y',
-    hint: '',
-    initialValue: undefined,
-    label: '',
-    onChange: undefined,
-    required: false,
     showLabel: true,
-    showHintAndError: true,
+    label: '',
+    hint: '',
+    error: '',
+    disabled: false,
     value: undefined,
+    onChange: undefined,
+    showHintAndError: true,
 };
 
+const MIN_YEAR = 1990;
 
-@CSSModules(styles, { allowMultiple: true })
 export default class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getDateFromValues = ({
+        dayValue,
+        monthValue,
+        yearValue,
+    }) => {
+        if (!dayValue || !monthValue || !yearValue) {
+            return undefined;
+        }
+
+        if (yearValue < MIN_YEAR) {
+            return undefined;
+        }
+
+        if (monthValue < 1 || monthValue > 12) {
+            return undefined;
+        }
+
+        const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
+        if (dayValue < 1 || dayValue > maxNumberOfDays) {
+            return undefined;
+        }
+
+        const date = new Date(
+            yearValue,
+            monthValue - 1,
+            dayValue,
+        );
+
+        if (isDateValid(date)) {
+            return date;
+        }
+
+        return undefined;
+    }
+
     constructor(props) {
         super(props);
 
+        const { value } = this.props;
+        const { d, m, y } = this.processValue(value);
+
         this.state = {
-            datePickerVisible: false,
-            ...this.decodeTimestamp(this.props.value || this.props.initialValue),
+            showDatePicker: false,
+            dayValue: d,
+            monthValue: m,
+            yearValue: y,
+            isDayInputFocused: false,
+            isMonthInputFocused: false,
+            isYearInputFocused: false,
         };
 
         this.boundingClientRect = {};
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
-            const newState = this.decodeTimestamp(nextProps.value);
-            if (newState.date !== this.state.date) {
-                this.setState(newState);
-            }
+        const { value: newValue } = nextProps;
+        const { value: oldValue } = this.props;
+
+        if (newValue !== oldValue) {
+            const { d, m, y } = this.processValue(newValue);
+            this.setState(
+                {
+                    dayValue: d,
+                    monthValue: m,
+                    yearValue: y,
+                },
+                this.validate,
+            );
         }
     }
 
-    // Set date to today
-    setToday = () => {
-        const date = new Date();
-        date.setHours(0, 0, 0, 0);
-        this.setValue(date);
-    }
-
-    // Set value by timestamp
-    setValue = (timestamp) => {
-        this.setState(this.decodeTimestamp(timestamp), () => {
-            this.triggerChange();
-        });
-    }
-
-    getStyleName() {
-        const styleNames = [];
+    getClassName = () => {
+        const classNames = [];
 
         const {
-            disabled,
             error,
-            required,
+            disabled,
         } = this.props;
 
         const {
-            focused,
-            datePickerVisible,
+            isInvalid,
+            isDayInputFocused,
+            isMonthInputFocused,
+            isYearInputFocused,
+            showDatePicker,
         } = this.state;
 
-        styleNames.push('date-input-wrapper');
+        const isFocused = isDayInputFocused
+            || isMonthInputFocused
+            || isYearInputFocused
+            || showDatePicker;
 
-        if (disabled) {
-            styleNames.push('disabled');
-        }
+        classNames.push('date-input');
+        classNames.push(styles['date-input']);
 
-        if (focused) {
-            styleNames.push('focused');
-        }
-
-        if (datePickerVisible) {
-            styleNames.push('date-picker-shown');
+        if (isInvalid) {
+            classNames.push('invalid');
+            classNames.push(styles.invalid);
         }
 
         if (error) {
-            styleNames.push('error');
+            classNames.push('error');
+            classNames.push(styles.error);
         }
 
-        if (required) {
-            styleNames.push('required');
+        if (isFocused) {
+            classNames.push('focused');
+            classNames.push(styles.focused);
         }
 
-        return styleNames.join(' ');
+        if (disabled) {
+            classNames.push('disabled');
+            classNames.push(styles.disabled);
+        }
+
+        return classNames.join(' ');
     }
 
-    // Public method used by Form
-    isFocused = () => this.state.focused;
+    processValue = (value) => {
+        const { onChange } = this.props;
 
-    // Check if the state has all date input filled
-    isFilled = (stateOverride = undefined) => {
-        const state = stateOverride || this.state;
-        return !isFalsyOrEmptyOrZero(state.day) &&
-            !isFalsyOrEmptyOrZero(state.month) &&
-            !isFalsyOrEmptyOrZero(state.year) &&
-            state.year >= 1000;
-    }
+        if (value) {
+            const date = new Date(value);
+            if (isDateValid(date)) {
+                const d = date.getDate();
+                const m = date.getMonth();
+                const y = date.getFullYear();
 
-    clear = () => {
-        this.setValue(undefined);
-    }
-
-    // Decode a timestamp and return an object
-    // containing:
-    // day, month, year and actual date object
-    decodeTimestamp = (timestamp) => {
-        if (isFalsy(timestamp)) {
-            return {
-                date: undefined,
-                day: undefined,
-                month: undefined,
-                year: undefined,
-            };
-        }
-
-        const date = new Date(timestamp);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-
-        return { date, day, month, year };
-    }
-
-    // Handle event fired whenever one of the date inputs change
-    // Key can be day, month or year
-    handleChangeValue = (key, val) => {
-        const newState = { ...this.state };
-        newState[key] = val;
-
-        if (!this.isFilled(newState)) {
-            newState.date = undefined;
-            this.setState(newState);
-            return;
-        }
-
-        let date;
-
-        // Start with current date
-        // Or a new one if there is no current date
-        if (!this.state.date) {
-            date = new Date();
-        } else {
-            date = new Date(this.state.date.getTime());
-        }
-
-        // Then set first day of current month and year
-        date.setDate(1);
-        date.setMonth(newState.month - 1);
-        date.setFullYear(newState.year);
-
-        // For day we want to limit it to number of days
-        // in current month.
-
-        if (newState.day) {
-            const max = getNumDaysInMonth(date);
-            if (newState.day > max) {
-                newState.day = max;
+                return {
+                    d,
+                    m: m + 1,
+                    y,
+                };
             }
-            date.setDate(newState.day);
+            // If date is invalid, send back undefined
+            onChange(undefined);
         }
 
-        newState.date = date;
-        this.setState(newState, () => {
-            this.triggerChange();
-        });
-    }
-
-    // Handle close event of date picker floating container
-    handleDatePickerClosed = () => {
-        // Hide date picker and unfocus the input
-        this.setState({
-            focused: false,
-            datePickerVisible: false,
-        });
-    }
-
-    // Handle pick event of date picker
-    handleDatePick = (timestamp) => {
-        this.setValue(timestamp);
-    }
-
-    // Handle dynamic style override of date picker
-    // floating container
-    handleDynamicStyleOverride = (pickerContainer) => {
-        const pickerRect = pickerContainer.getBoundingClientRect();
-        const cr = (this.container && this.container.getBoundingClientRect())
-            || this.boundingClientRect;
-
-        const pageOffset = window.innerHeight;
-        const containerOffset = cr.top + pickerRect.height + cr.height;
-
-        const newStyle = {
-            left: `${cr.right - 250}px`,
-            top: `${((cr.top + window.scrollY) + cr.height) - 16}px`,
-            width: '250px',
+        return {
+            d: undefined,
+            m: undefined,
+            y: undefined,
         };
+    }
 
-        if (pageOffset < containerOffset) {
-            newStyle.top = `${(cr.top + window.scrollY) - pickerRect.height}px`;
+    validate = () => {
+        const { onChange } = this.props;
+        const date = DateInput.getDateFromValues(this.state);
+
+        if (date) {
+            onChange(date.toISOString());
+            this.setState({ isInvalid: false });
+        } else {
+            this.setState({ isInvalid: true });
         }
-
-        return newStyle;
     }
 
-    // Handle focus event of date unit inputs
-    handleUnitFocus = () => {
-        this.setState({ focused: true });
+    handleDayInputFocus = () => { this.setState({ isDayInputFocused: true }); }
+    handleDayInputBlur = () => { this.setState({ isDayInputFocused: false }); }
+    handleMonthInputFocus = () => { this.setState({ isMonthInputFocused: true }); }
+    handleMonthInputBlur = () => { this.setState({ isMonthInputFocused: false }); }
+    handleYearInputFocus = () => { this.setState({ isYearInputFocused: true }); }
+    handleYearInputBlur = () => { this.setState({ isYearInputFocused: false }); }
+
+    handleDayChange = (e) => {
+        this.setState(
+            { dayValue: e.target.value },
+            this.validate,
+        );
     }
 
-    // Handle blur event of date unit inputs
-    handleUnitBlur = () => {
-        this.setState({ focused: false });
+    handleMonthChange = (e) => {
+        this.setState(
+            { monthValue: e.target.value },
+            this.validate,
+        );
     }
 
-    triggerChange = () => {
-        const { date } = this.state;
-        if (this.props.onChange) {
-            const value = date ? FormattedDate.format(date, 'yyyy-MM-dd') : undefined;
-            this.props.onChange(value);
+    handleYearChange = (e) => {
+        this.setState(
+            { yearValue: e.target.value },
+            this.validate,
+        );
+    }
+
+    handleClearButtonClick = () => {
+        const { onChange } = this.props;
+
+        // FIXME: possibly redundant
+        this.setState({
+            dayValue: undefined,
+            monthValue: undefined,
+            yearValue: undefined,
+        });
+
+        onChange(undefined);
+    }
+
+    handleTodayButtonClick = () => {
+        const { onChange } = this.props;
+        const today = new Date();
+
+        // FIXME: possibly redundant
+        this.setState({
+            dayValue: today.getDate(),
+            monthValue: today.getMonth() - 1,
+            yearValue: today.getFullYear(),
+        });
+
+        onChange(today.toISOString());
+    }
+
+    handleCalendarButtonClick = () => {
+        if (this.container) {
+            this.boundingClientRect = this.container.getBoundingClientRect();
         }
+        this.setState({ showDatePicker: true });
     }
 
     handleDatePickerInvalidate = (datePickerContainer) => {
@@ -318,8 +268,9 @@ export default class DateInput extends React.PureComponent {
             parentRect = this.container.getBoundingClientRect();
         }
 
-        const offset = { top: 2, right: 0, bottom: 0, left: 0 };
-        if (this.props.showHintAndError) {
+        const offset = { top: 0, right: 0, bottom: 0, left: 0 };
+        const { showHintAndError } = this.props;
+        if (showHintAndError) {
             offset.top = 12;
         }
 
@@ -330,229 +281,317 @@ export default class DateInput extends React.PureComponent {
     }
 
     handleDatePickerBlur = () => {
-        this.setState({
-            datePickerVisible: false,
-        });
+        this.setState({ showDatePicker: false });
     }
 
-    // Parse format and generate an object of information
-    parseFormat() {
-        const { format } = this.props;
+    handleDatePickerDatePick = (timestamp) => {
+        const { onChange } = this.props;
+        const newDate = new Date(timestamp);
 
-        const regex = /^(d|m|y)(.)(d|m|y)(.)(d|m|y)$/i;
-        const matches = format.match(regex);
+        const {
+            dayValue,
+            monthValue,
+            yearValue,
+        } = this.state;
+        const currentDate = DateInput.getDateFromValues({
+            dayValue,
+            monthValue,
+            yearValue,
+        });
 
-        if (!matches) {
-            const error = `Invalid format given to DateInput: ${format}`;
-            throw error;
+        this.setState(
+            { showDatePicker: false },
+            () => {
+                const eitherDateIsDefined = !!newDate || !!currentDate;
+                const isNewDateUndefined = !newDate;
+                const isCurrentDateUndefined = !currentDate;
+                if (
+                    eitherDateIsDefined && (
+                        isNewDateUndefined ||
+                        isCurrentDateUndefined ||
+                        newDate.getTime() !== currentDate.getTime()
+                    )
+                ) {
+                    onChange(newDate.toISOString());
+                }
+            },
+        );
+    }
+
+    renderLabel = () => {
+        const {
+            showLabel,
+            label,
+        } = this.props;
+
+        if (!showLabel) {
+            return null;
         }
 
-        return matches.slice(1, 6);
-    }
-
-    // Toggle date picker
-    toggleDatePicker = () => {
-        this.boundingClientRect = this.container.getBoundingClientRect();
-        this.setState({
-            datePickerVisible: !this.state.datePickerVisible,
-        });
-    }
-
-    // Render date unit inputs according to format provided
-    renderDateUnits() {
-        const matches = this.parseFormat();
-
-        // Map for properties to use in date unit
-        const map = {
-            d: {
-                unit: this.dayUnit,
-                unitKey: 'dayUnit',
-                placeholder: 'dd',
-                max: getNumDaysInMonth(this.state.date),
-                min: 1,
-                length: 2,
-                key: 'day',
-                value: this.state.day,
-            },
-            m: {
-                unit: this.monthUnit,
-                unitKey: 'monthUnit',
-                placeholder: 'mm',
-                max: 12,
-                min: 1,
-                length: 2,
-                key: 'month',
-                value: this.state.month,
-            },
-            y: {
-                unit: this.yearUnit,
-                unitKey: 'yearUnit',
-                placeholder: 'yyyy',
-                min: 1990,
-                length: 4,
-                key: 'year',
-                value: this.state.year,
-            },
-        };
+        const classNames = [
+            'label',
+            styles.label,
+        ];
 
         return (
-            <div styleName="inputs">
-                {
-                    matches.map((match, i) => (
-                        (['d', 'm', 'y'].indexOf(match) !== -1 && (
-                            <DateUnit
-                                disabled={this.props.disabled}
-
-                                key={match}
-                                length={map[match].length}
-                                min={map[match].min}
-                                max={map[match].max}
-                                nextUnit={map[matches[i + 2]] && map[matches[i + 2]].unit}
-
-                                onChange={(value) => {
-                                    this.handleChangeValue(map[match].key, value);
-                                }}
-                                onFocus={this.handleUnitFocus}
-                                onBlur={this.handleUnitBlur}
-
-                                placeholder={map[match].placeholder}
-                                ref={(unit) => {
-                                    this[map[match].unitKey] = unit;
-                                }}
-                                styleName={map[match].key}
-                                value={isTruthy(map[match].value) ? String(map[match].value) : null}
-                            />
-                        )) ||
-                        this.renderSeparator(match, i)
-                    ))
-                }
+            <div className={classNames.join(' ')}>
+                { label }
             </div>
         );
     }
 
-    renderSeparator = (symbol, index) => (
-        <span
-            key={`${symbol}-${index}`}
-            styleName={`separator ${this.props.disabled ? 'disabled' : ''}`}
-        >
-            {symbol}
-        </span>
-    );
-
-    render() {
+    renderDateUnit = ({
+        unitClassName,
+        placeholder,
+        min = 1,
+        max,
+        onChange,
+        value = '',
+        onFocus,
+        onBlur,
+    }) => {
         const {
-            className,
             disabled,
-            error,
-            hint,
-            label,
-            showLabel,
-            showHintAndError,
         } = this.props;
 
-        const isToday =
-            (this.state.date && this.state.date.toDateString()) === (new Date()).toDateString();
-        const styleName = this.getStyleName();
-        const showDatePicker = this.state.datePickerVisible && !this.state.disabled;
+        const classNames = [
+            unitClassName,
+            styles[unitClassName],
+            'date-unit',
+            styles['date-unit'],
+        ];
+
+        return (
+            <input
+                disabled={disabled}
+                min={min}
+                max={max}
+                placeholder={placeholder}
+                className={classNames.join(' ')}
+                type="number"
+                onChange={onChange}
+                value={value}
+                onFocus={onFocus}
+                onBlur={onBlur}
+            />
+        );
+    };
+
+    renderDayUnit = () => {
+        const DateUnit = this.renderDateUnit;
+        const {
+            yearValue,
+            monthValue,
+            dayValue,
+        } = this.state;
+        const maxDay = getNumDaysInMonthX(yearValue, monthValue);
+
+        return (
+            <DateUnit
+                max={maxDay}
+                placeholder="dd"
+                unitClassName="day-unit"
+                value={dayValue}
+                onChange={this.handleDayChange}
+                onFocus={this.handleDayInputFocus}
+                onBlur={this.handleDayInputBlur}
+            />
+        );
+    };
+
+    renderMonthUnit = () => {
+        const DateUnit = this.renderDateUnit;
+        const maxMonth = 12;
+        const { monthValue } = this.state;
+
+        return (
+            <DateUnit
+                max={maxMonth}
+                placeholder="mm"
+                unitClassName="month-unit"
+                value={monthValue}
+                onChange={this.handleMonthChange}
+                onFocus={this.handleMonthInputFocus}
+                onBlur={this.handleMonthInputBlur}
+            />
+        );
+    };
+
+    renderYearUnit = () => {
+        const DateUnit = this.renderDateUnit;
+        const minYear = MIN_YEAR;
+        const { yearValue } = this.state;
+
+        return (
+            <DateUnit
+                placeholder="yyyy"
+                unitClassName="year-unit"
+                min={minYear}
+                value={yearValue}
+                onChange={this.handleYearChange}
+                onFocus={this.handleYearInputFocus}
+                onBlur={this.handleYearInputBlur}
+            />
+        );
+    };
+
+    renderActionButtons = () => {
+        const { disabled } = this.props;
+
+        if (disabled) {
+            return null;
+        }
+
+        const classNames = [
+            'action-buttons',
+            styles['action-buttons'],
+        ];
+
+        const clearButtonClassName = [
+            'button',
+            styles.button,
+            'clear',
+            styles.clear,
+        ].join(' ');
 
         return (
             <div
-                className={`${className} ${styleName}`}
-                styleName={styleName}
-                ref={(el) => { this.container = el; }}
+                className={classNames.join(' ')}
             >
-                {showLabel && (
-                    <div
-                        styleName="label"
-                        className="label"
-                    >
-                        {label}
-                    </div>
-                )}
-                <div
-                    className="date-input"
-                    styleName="date-input"
+                <button
+                    className={clearButtonClassName}
+                    type="button"
+                    onClick={this.handleClearButtonClick}
                 >
-                    { this.renderDateUnits() }
+                    <span className={iconNames.closeRound} />
+                </button>
+                <button
+                    onClick={this.handleTodayButtonClick}
+                    className={styles.button}
+                    type="button"
+                >
+                    <span className={iconNames.clock} />
+                </button>
+                <button
+                    onClick={this.handleCalendarButtonClick}
+                    className={styles.button}
+                    type="button"
+                >
+                    <span className={iconNames.calendar} />
+                </button>
+            </div>
+        );
+    }
 
-                    <div styleName="actions">
-                        <button
-                            className="clear-button"
-                            disabled={disabled}
-                            onClick={this.clear}
-                            styleName={!this.isFilled() && 'hidden'}
-                            tabIndex="-1"
-                            type="button"
-                        >
-                            <span className={iconNames.closeRound} />
-                        </button>
-                        <button
-                            className="today-button"
-                            disabled={disabled}
-                            onClick={this.setToday}
-                            styleName={isToday && 'active'}
-                            tabIndex="-1"
-                            type="button"
-                        >
-                            <span className={iconNames.clock} />
-                        </button>
-                        <button
-                            className="show-picker-button"
-                            disabled={disabled}
-                            onClick={this.toggleDatePicker}
-                            tabIndex="-1"
-                            type="button"
-                        >
-                            <span className={iconNames.calendar} />
-                        </button>
-                    </div>
+    renderInput = () => {
+        const classNames = [];
+        classNames.push('input');
+        classNames.push(styles.input);
+
+        const DayUnit = this.renderDayUnit;
+        const MonthUnit = this.renderMonthUnit;
+        const YearUnit = this.renderYearUnit;
+        const ActionButtons = this.renderActionButtons;
+
+        return (
+            <div className={classNames.join(' ')} >
+                <div className={styles['date-units']}>
+                    <DayUnit />
+                    <MonthUnit />
+                    <YearUnit />
                 </div>
+                <ActionButtons />
+            </div>
+        );
+    }
 
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className="hint"
-                                styleName="hint"
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                styleName="error"
-                                className="error"
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                styleName="empty"
-                                className="error empty"
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
-                {
-                    showDatePicker && (
-                        <FloatingContainer
-                            parent={this.container}
-                            onBlur={this.handleDatePickerBlur}
-                            onInvalidate={this.handleDatePickerInvalidate}
-                        >
-                            <DatePicker
-                                date={this.state.date && this.state.date.getTime()}
-                                onDatePick={this.handleDatePick}
-                            />
-                        </FloatingContainer>
-                    )
-                }
+    renderDatePicker = () => {
+        const { showDatePicker } = this.state;
+
+        if (!showDatePicker) {
+            return null;
+        }
+
+        const date = DateInput.getDateFromValues(this.state);
+
+        return (
+            <FloatingContainer
+                parent={this.container}
+                onBlur={this.handleDatePickerBlur}
+                onInvalidate={this.handleDatePickerInvalidate}
+            >
+                <DatePicker
+                    date={date && date.getTime()}
+                    onDatePick={this.handleDatePickerDatePick}
+                />
+            </FloatingContainer>
+        );
+    }
+
+    renderHintAndError = () => {
+        const {
+            showHintAndError,
+            hint,
+            error,
+        } = this.props;
+
+        if (!showHintAndError) {
+            return null;
+        }
+
+        if (error) {
+            const classNames = [
+                'error',
+                styles.error,
+            ];
+
+            return (
+                <p className={classNames.join(' ')}>
+                    {error}
+                </p>
+            );
+        }
+
+        if (hint) {
+            const classNames = [
+                'hint',
+                styles.hint,
+            ];
+            return (
+                <p className={classNames.join(' ')}>
+                    {hint}
+                </p>
+            );
+        }
+
+        const classNames = [
+            'empty',
+            styles.empty,
+        ];
+        return (
+            <p className={classNames.join(' ')}>
+                -
+            </p>
+        );
+    }
+
+    render() {
+        const className = this.getClassName();
+
+        const Label = this.renderLabel;
+        const Input = this.renderInput;
+        const FloatingDatePicker = this.renderDatePicker;
+        const HintAndError = this.renderHintAndError;
+
+        return (
+            <div
+                ref={(el) => { this.container = el; }}
+                className={className}
+            >
+                <Label />
+                <Input />
+                <HintAndError />
+                <FloatingDatePicker />
             </div>
         );
     }
