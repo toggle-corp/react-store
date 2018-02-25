@@ -5,7 +5,11 @@ import FloatingContainer from '../../View/FloatingContainer';
 import DatePicker from '../DatePicker';
 import { iconNames } from '../../../constants';
 
-import { calcFloatingPositionInMainWindow } from '../../../utils/common';
+import {
+    calcFloatingPositionInMainWindow,
+    getNumDaysInMonthX,
+    isDateValid,
+} from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -34,22 +38,44 @@ const defaultProps = {
 
 const MIN_YEAR = 1990;
 
-const isDateValid = (date) => {
-    if (Object.prototype.toString.call(date) === '[object Date]') {
-        // it is a date
-        if (isNaN(date.getTime())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
-};
-
 export default class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static getDateFromValues = ({
+        dayValue,
+        monthValue,
+        yearValue,
+    }) => {
+        if (!dayValue || !monthValue || !yearValue) {
+            return undefined;
+        }
+
+        if (yearValue < MIN_YEAR) {
+            return undefined;
+        }
+
+        if (monthValue < 1 || monthValue > 12) {
+            return undefined;
+        }
+
+        const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
+        if (dayValue < 1 || dayValue > maxNumberOfDays) {
+            return undefined;
+        }
+
+        const date = new Date(
+            yearValue,
+            monthValue - 1,
+            dayValue,
+        );
+
+        if (isDateValid(date)) {
+            return date;
+        }
+
+        return undefined;
+    }
 
     constructor(props) {
         super(props);
@@ -76,11 +102,14 @@ export default class DateInput extends React.PureComponent {
 
         if (newValue !== oldValue) {
             const { d, m, y } = this.processValue(newValue);
-            this.setState({
-                dayValue: d,
-                monthValue: m,
-                yearValue: y,
-            }, () => this.validate());
+            this.setState(
+                {
+                    dayValue: d,
+                    monthValue: m,
+                    yearValue: y,
+                },
+                this.validate,
+            );
         }
     }
 
@@ -131,53 +160,24 @@ export default class DateInput extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getDateFromValues = ({
-        dayValue,
-        monthValue,
-        yearValue,
-    }) => {
-        if (!dayValue || !monthValue || !yearValue) {
-            return undefined;
-        }
-
-        if (yearValue < MIN_YEAR) {
-            return undefined;
-        }
-
-        if (monthValue < 1 || monthValue > 12) {
-            return undefined;
-        }
-
-        if (dayValue < 1 || dayValue > 31) {
-            return undefined;
-        }
-
-        const date = new Date(
-            yearValue,
-            monthValue - 1,
-            dayValue,
-        );
-
-        if (isDateValid(date)) {
-            return date;
-        }
-
-        return undefined;
-    }
-
     processValue = (value) => {
-        if (value) {
-            // TODO: handle for invalid date
-            const date = new Date(value);
-            const d = date.getDate();
-            const m = date.getMonth();
-            const y = date.getFullYear();
+        const { onChange } = this.props;
 
-            return {
-                d,
-                m: m + 1,
-                y,
-            };
+        if (value) {
+            const date = new Date(value);
+            if (isDateValid(date)) {
+                const d = date.getDate();
+                const m = date.getMonth();
+                const y = date.getFullYear();
+
+                return {
+                    d,
+                    m: m + 1,
+                    y,
+                };
+            }
+            // If date is invalid, send back undefined
+            onChange(undefined);
         }
 
         return {
@@ -189,7 +189,7 @@ export default class DateInput extends React.PureComponent {
 
     validate = () => {
         const { onChange } = this.props;
-        const date = this.getDateFromValues(this.state);
+        const date = DateInput.getDateFromValues(this.state);
 
         if (date) {
             onChange(date.toISOString());
@@ -209,27 +209,28 @@ export default class DateInput extends React.PureComponent {
     handleDayChange = (e) => {
         this.setState(
             { dayValue: e.target.value },
-            () => this.validate(),
+            this.validate,
         );
     }
 
     handleMonthChange = (e) => {
         this.setState(
             { monthValue: e.target.value },
-            () => this.validate(),
+            this.validate,
         );
     }
 
     handleYearChange = (e) => {
         this.setState(
             { yearValue: e.target.value },
-            () => this.validate(),
+            this.validate,
         );
     }
 
     handleClearButtonClick = () => {
         const { onChange } = this.props;
 
+        // FIXME: possibly redundant
         this.setState({
             dayValue: undefined,
             monthValue: undefined,
@@ -243,6 +244,7 @@ export default class DateInput extends React.PureComponent {
         const { onChange } = this.props;
         const today = new Date();
 
+        // FIXME: possibly redundant
         this.setState({
             dayValue: today.getDate(),
             monthValue: today.getMonth() - 1,
@@ -267,7 +269,8 @@ export default class DateInput extends React.PureComponent {
         }
 
         const offset = { top: 0, right: 0, bottom: 0, left: 0 };
-        if (this.props.showHintAndError) {
+        const { showHintAndError } = this.props;
+        if (showHintAndError) {
             offset.top = 12;
         }
 
@@ -284,17 +287,35 @@ export default class DateInput extends React.PureComponent {
     handleDatePickerDatePick = (timestamp) => {
         const { onChange } = this.props;
         const newDate = new Date(timestamp);
-        const currentDate = this.getDateFromValues({
-            dayValue: newDate.getDate(),
-            monthValue: newDate.getMonth() - 1,
-            yearValue: newDate.getFullYear(),
+
+        const {
+            dayValue,
+            monthValue,
+            yearValue,
+        } = this.state;
+        const currentDate = DateInput.getDateFromValues({
+            dayValue,
+            monthValue,
+            yearValue,
         });
 
-        if (newDate !== currentDate) {
-            onChange(newDate.toISOString());
-        }
-
-        this.setState({ showDatePicker: false });
+        this.setState(
+            { showDatePicker: false },
+            () => {
+                const eitherDateIsDefined = !!newDate || !!currentDate;
+                const isNewDateUndefined = !newDate;
+                const isCurrentDateUndefined = !currentDate;
+                if (
+                    eitherDateIsDefined && (
+                        isNewDateUndefined ||
+                        isCurrentDateUndefined ||
+                        newDate.getTime() !== currentDate.getTime()
+                    )
+                ) {
+                    onChange(newDate.toISOString());
+                }
+            },
+        );
     }
 
     renderLabel = () => {
@@ -313,9 +334,7 @@ export default class DateInput extends React.PureComponent {
         ];
 
         return (
-            <div
-                className={classNames.join(' ')}
-            >
+            <div className={classNames.join(' ')}>
                 { label }
             </div>
         );
@@ -360,8 +379,12 @@ export default class DateInput extends React.PureComponent {
 
     renderDayUnit = () => {
         const DateUnit = this.renderDateUnit;
-        const maxDay = 32;
-        const { dayValue } = this.state;
+        const {
+            yearValue,
+            monthValue,
+            dayValue,
+        } = this.state;
+        const maxDay = getNumDaysInMonthX(yearValue, monthValue);
 
         return (
             <DateUnit
@@ -413,9 +436,7 @@ export default class DateInput extends React.PureComponent {
     };
 
     renderActionButtons = () => {
-        const {
-            disabled,
-        } = this.props;
+        const { disabled } = this.props;
 
         if (disabled) {
             return null;
@@ -491,7 +512,7 @@ export default class DateInput extends React.PureComponent {
             return null;
         }
 
-        const date = this.getDateFromValues(this.state);
+        const date = DateInput.getDateFromValues(this.state);
 
         return (
             <FloatingContainer
