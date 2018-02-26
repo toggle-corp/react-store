@@ -3,6 +3,7 @@
 .fixed-tabs {
     display: flex;
     overflow: hidden;
+    background-color: $color-foreground;
 
     .tab {
         flex-shrink: 0;
@@ -15,6 +16,7 @@
         color: $color-label;
         font-family: inherit;
         font-size: inherit;
+        text-transform: uppercase;
 
         &.active {
             border-bottom-color: $color-accent;

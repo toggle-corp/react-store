@@ -20,7 +20,7 @@ const defaultProps = {
     containerClassName: '',
 };
 
-export default class MultiContentView extends React.Component {
+export default class MultiContentView extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -97,7 +97,6 @@ export default class MultiContentView extends React.Component {
         if (!view.mount && !isActive) {
             return null;
         }
-
         return (
             <Container
                 key={data}

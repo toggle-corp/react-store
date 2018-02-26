@@ -20,7 +20,7 @@ const defaultProps = {
     onClick: () => {},
 };
 
-export default class ScrollTabs extends React.Component {
+export default class ScrollTabs extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -56,6 +56,10 @@ export default class ScrollTabs extends React.Component {
     }
 
     renderTab = (key, data) => {
+        if (!data) {
+            return null;
+        }
+
         const {
             active,
             tabs,
