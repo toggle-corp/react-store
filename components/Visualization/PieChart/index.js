@@ -42,13 +42,6 @@ export default class PieChart extends Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = {
-        colors: [],
-        pies: [],
-        radius: 0,
-        outerRadius: 0,
-    };
-
     componentDidMount() {
         this.drawChart();
     }
@@ -72,7 +65,12 @@ export default class PieChart extends Component {
 
     addPaths = (element, options) => {
         const { labelAccessor } = this.props;
-        const { outerRadius, colors, pies, arcs } = options;
+        const {
+            outerRadius,
+            colors,
+            pies,
+            arcs,
+        } = options;
 
         const that = this;
         element
@@ -96,7 +94,13 @@ export default class PieChart extends Component {
 
     addLabels = (element, options) => {
         const { valueAccessor, labelAccessor } = this.props;
-        const { radius, pies, textArcs, period } = options;
+        const {
+            radius,
+            pies,
+            textArcs,
+            period,
+        } = options;
+
         element
             .selectAll('text')
             .data(pies)
@@ -119,7 +123,15 @@ export default class PieChart extends Component {
 
     addLines = (element, options) => {
         const { labelAccessor } = this.props;
-        const { radius, outerRadius, colors, pies, arcs, textArcs, period } = options;
+        const {
+            radius,
+            outerRadius,
+            colors,
+            pies,
+            arcs,
+            textArcs,
+            period,
+        } = options;
 
         element
             .selectAll('polyline')
