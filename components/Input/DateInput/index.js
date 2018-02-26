@@ -3,6 +3,7 @@ import React from 'react';
 
 import FloatingContainer from '../../View/FloatingContainer';
 import DatePicker from '../DatePicker';
+import FormattedDate from '../../View/FormattedDate/FormattedDate';
 import { iconNames } from '../../../constants';
 
 import {
@@ -192,7 +193,9 @@ export default class DateInput extends React.PureComponent {
         const date = DateInput.getDateFromValues(this.state);
 
         if (date) {
-            onChange(date.toISOString());
+            // DateInput value should be of format yyyy-MM-dd
+            const value = FormattedDate.format(date, 'yyyy-MM-dd');
+            onChange(value);
             this.setState({ isInvalid: false });
         } else {
             this.setState({ isInvalid: true });
