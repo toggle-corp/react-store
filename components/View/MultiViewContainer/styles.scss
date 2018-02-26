@@ -1,0 +1,9 @@
+@import '../../../stylesheets/base';
+
+.container {
+    display: none;
+
+    &.active {
+        display: initial;
+    }
+}
