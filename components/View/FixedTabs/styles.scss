@@ -1,0 +1,32 @@
+@import '../../../stylesheets/base';
+
+.fixed-tabs {
+    display: flex;
+    overflow: hidden;
+    background-color: $color-foreground;
+
+    .tab {
+        flex-shrink: 0;
+        outline: 0;
+        border: 0;
+        border-bottom: $width-separator-medium solid $color-separator;
+        background-color: transparent;
+        cursor: pointer;
+        padding: $spacing-small $spacing-medium;
+        color: $color-label;
+        font-family: inherit;
+        font-size: inherit;
+        text-transform: uppercase;
+
+        &.active {
+            border-bottom-color: $color-accent;
+            color: $color-text;
+        }
+    }
+
+    .void {
+        flex-grow: 1;
+        align-self: stretch;
+        border-bottom: $width-separator-medium solid $color-separator;
+    }
+}
