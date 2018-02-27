@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -28,7 +27,6 @@ const defaultProps = {
  * 2. provide window for tooltip.
  * 3. orientation: left, right, top, bottom
  */
-@CSSModules(styles, { allowMultiple: true })
 export default class Tooltip extends React.PureComponent {
     static defaultProps = defaultProps;
     static propTypes = propTypes;

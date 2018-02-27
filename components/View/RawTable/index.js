@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -78,7 +77,6 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class RawTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -125,7 +123,7 @@ export default class RawTable extends React.PureComponent {
 
         // default className for global override
         classNames.push('raw-table');
-        className.push(styles['raw-table']);
+        classNames.push(styles['raw-table']);
 
         // className provided by parent (through className)
         classNames.push(className);

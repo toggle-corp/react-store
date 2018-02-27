@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -95,7 +94,6 @@ const defaultProps = {
 };
 
 @Responsive
-@CSSModules(styles)
 export default class BarChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

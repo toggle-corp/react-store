@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -55,7 +54,6 @@ const defaultProps = {
 /**
  * Numeral component for formatted numbers with conditional coloring
  */
-@CSSModules(styles, { allowMultiple: true })
 export default class ColoredNumeral extends React.PureComponent {
     static defaultProps = defaultProps;
     static propTypes = propTypes;

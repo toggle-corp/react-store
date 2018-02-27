@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
 import {
@@ -27,7 +26,6 @@ const defaultProps = {
     className: '',
 };
 
-@CSSModules(styles)
 export default class CorrelationMatrixView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

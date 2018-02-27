@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { cluster, hierarchy } from 'd3-hierarchy';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -63,7 +62,6 @@ const defaultProps = {
  * clustering.
  */
 @Responsive
-@CSSModules(styles)
 export default class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

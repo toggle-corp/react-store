@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -85,7 +84,6 @@ const defaultProps = {
     changeDelay: 200,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class TextArea extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

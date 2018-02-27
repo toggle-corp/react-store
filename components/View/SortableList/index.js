@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
@@ -61,7 +60,6 @@ const defaultProps = {
     dragHandleModifier: undefined,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class SortableList extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

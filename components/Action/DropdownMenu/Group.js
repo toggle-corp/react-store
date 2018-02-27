@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -15,7 +14,6 @@ const propTypes = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Group extends React.PureComponent {
     static propTypes = propTypes;
 

@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { singleColors } from '../../../utils/ColorScheme';
 import OrgChart from '../OrgChart';
@@ -17,7 +16,6 @@ const defaultProps = {
     className: '',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class OrgChartView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

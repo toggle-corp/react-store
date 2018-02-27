@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -17,7 +16,6 @@ const defaultProps = {
     title: '',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class DropdownItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

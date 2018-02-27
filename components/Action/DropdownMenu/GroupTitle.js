@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -8,7 +7,6 @@ const propTypes = {
     title: PropTypes.string.isRequired,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class GroupTitle extends React.PureComponent {
     static propTypes = propTypes;
 

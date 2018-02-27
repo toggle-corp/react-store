@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -42,7 +41,6 @@ const propTypes = {
 const defaultProps = {
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Toast extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

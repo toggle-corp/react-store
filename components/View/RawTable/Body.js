@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -71,7 +70,6 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

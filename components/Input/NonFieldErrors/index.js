@@ -2,7 +2,6 @@
  * @author frozenhelium <fren.ankit@gmail.com>
  */
 
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -20,7 +19,6 @@ const defaultProps = {
     errors: [],
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class NonFieldErrors extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

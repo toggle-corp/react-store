@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -28,7 +27,6 @@ const defaultProps = {
     snapY: 16,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class GridLayout extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

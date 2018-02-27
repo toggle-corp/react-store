@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,7 +29,6 @@ const defaultProps = {
     closeDropdown: false,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class DropdownBody extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -93,8 +91,6 @@ export default class DropdownBody extends React.PureComponent {
 
     updateComponent = () => {
         const BodyContent = this.renderBodyContent;
-        // XXX: Maybe use className and bypass CSSModules
-        const BodyContentWithCss = CSSModules(
             BodyContent,
             styles,
             { allowMultiple: true },

@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -94,7 +93,6 @@ const defaultProps = {
     changeDelay: 400,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 import TreeMap from '../TreeMap';
@@ -19,7 +18,6 @@ const defaultProps = {
     colorScheme: undefined,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class TreeMapView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

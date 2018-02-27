@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { SketchPicker } from 'react-color';
@@ -56,7 +55,6 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class ColorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

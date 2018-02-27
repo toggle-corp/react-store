@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -24,7 +23,6 @@ const defaultProps = {
     value: '',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class HiddenInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

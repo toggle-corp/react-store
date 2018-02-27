@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -30,7 +29,6 @@ const defaultProps = {
     backgroundHighlight: false,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class SegmentButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
