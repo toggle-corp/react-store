@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -27,7 +26,6 @@ const defaultProps = {
     scrollIntoView: false,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class List extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -87,8 +85,7 @@ export default class List extends React.PureComponent {
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                className={`list-item ${className}`}
-                styleName="list-item"
+                className={`list-item ${className} ${styles['list-item']}`}
             >
                 { children }
             </div>

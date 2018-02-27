@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     /**
-     * for styling by styleName
+     * for styling by className
      */
     className: PropTypes.string,
 
@@ -31,7 +30,6 @@ const defaultProps = {
     value: false,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Checkbox extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -56,35 +54,40 @@ export default class Checkbox extends React.PureComponent {
             ...otherProps
         } = this.props;
 
+        const classNames = [
+            styles.checkbox,
+            value ? styles.checked : '',
+            className,
+        ];
+        const spanClassNames = [
+            styles.checkmark,
+            'checkmark',
+            value ? iconNames.checkbox : iconNames.checkboxOutlineBlank,
+        ];
+        const inputClassNames = [
+            'input',
+            styles.input,
+        ];
+        const labelClassNames = [
+            'label',
+            styles.label,
+        ];
+
         return (
             <label
                 htmlFor={this.inputId}
-                styleName={`checkbox ${value ? 'checked' : ''}`}
-                className={className}
+                className={classNames.join(' ')}
             >
-                <span
-                    styleName="checkmark"
-                    className={`${
-                        value ? (
-                            iconNames.checkbox
-                        ) : (
-                            iconNames.checkboxOutlineBlank
-                        )
-                    } checkmark`}
-                />
+                <span className={spanClassNames.join(' ')} />
                 <input
                     onChange={this.handleInputChange}
-                    styleName="input"
-                    className="input"
+                    className={inputClassNames.join(' ')}
                     type="checkbox"
                     checked={value}
                     id={this.inputId}
                     {...otherProps}
                 />
-                <span
-                    styleName="label"
-                    className="label"
-                >
+                <span className={labelClassNames.join(' ')}>
                     { label }
                 </span>
             </label>

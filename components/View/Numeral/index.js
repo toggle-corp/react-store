@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './styles.scss';
@@ -71,7 +70,6 @@ const defaultProps = {
 /**
  * Numeral component for formatted numbers
  */
-@CSSModules(styles, { allowMultiple: true })
 export default class Numeral extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -153,47 +151,34 @@ export default class Numeral extends React.PureComponent {
         });
 
         return (
-            <span
-                className={`numeral ${className}`}
-                styleName="numeral"
-            >
+            <span className={`numeral ${className} ${styles.numeral}`}>
                 {
                     isTruthy(prefix) && (
-                        <span
-                            className="prefix"
-                        >
+                        <span className="prefix">
                             {prefix}
                         </span>
                     )
                 }
                 {
                     isTruthy(showSign) && value !== 0 && (
-                        <span
-                            className="sign"
-                        >
+                        <span className="sign">
                             {value > 0 ? '+' : '-'}
                         </span>
                     )
                 }
-                <span
-                    className="number"
-                >
+                <span className="number">
                     {number}
                 </span>
                 {
                     isTruthy(normalizedSuffix) && (
-                        <span
-                            className="normalized-suffix"
-                        >
+                        <span className="normalized-suffix">
                             {normalizedSuffix}
                         </span>
                     )
                 }
                 {
                     isTruthy(suffix) && (
-                        <span
-                            className="suffix"
-                        >
+                        <span className="suffix">
                             {suffix}
                         </span>
                     )

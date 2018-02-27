@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
@@ -9,9 +8,12 @@ import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
+
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -69,7 +71,6 @@ const defaultProps = {
  * in hierarchy.
  * */
 @Responsive
-@CSSModules(styles)
 export default class SunBurst extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

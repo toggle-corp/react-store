@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -22,7 +21,6 @@ const defaultProps = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -33,11 +31,13 @@ export default class Body extends React.PureComponent {
             className,
         } = this.props;
 
+        const classNames = [
+            'modal-body',
+            styles.body,
+            className,
+        ];
         return (
-            <div
-                styleName="body"
-                className={`modal-body ${className}`}
-            >
+            <div className={classNames.join(' ')}>
                 { children }
             </div>
         );

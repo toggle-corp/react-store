@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
@@ -11,6 +10,8 @@ import {
 import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
 
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 
 const propTypes = {
@@ -73,7 +74,6 @@ function updateNodeState(node) {
 }
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class TreeSelection extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

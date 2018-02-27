@@ -1,7 +1,6 @@
 /**
  * @author tnagorra <weathermist@gmail.com>
  */
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -65,7 +64,6 @@ const mapChildrenRecursive = (children, condition, propertyFn) => {
 /*
  * Form Component for field validations
  */
-@CSSModules(styles)
 export default class Form extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -142,9 +140,8 @@ export default class Form extends React.PureComponent {
 
         return (
             <form
-                className={className}
+                className={`${className} ${styles.form}`}
                 onSubmit={this.onSubmit}
-                styleName="form"
                 noValidate
             >
                 { mapChildrenRecursive(

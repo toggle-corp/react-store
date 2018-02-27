@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
 import {
@@ -27,7 +26,6 @@ const defaultProps = {
     className: '',
 };
 
-@CSSModules(styles)
 export default class CorrelationMatrixView extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -69,12 +67,9 @@ export default class CorrelationMatrixView extends PureComponent {
         } = this.props;
 
         return (
-            <div
-                styleName="correlation-matrix-view"
-                className={className}
-            >
-                <div styleName="action">
-                    <div styleName="action-selects">
+            <div className={`${styles['correlation-matrix-view']} ${className}`}>
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -82,18 +77,18 @@ export default class CorrelationMatrixView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedColorScheme}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
                     </div>
                 </div>
                 <CorrelationMatrix
-                    styleName="correlation-matrix"
+                    className={styles['correlation-matrix']}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.colorScheme}

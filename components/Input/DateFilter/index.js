@@ -61,17 +61,17 @@ export default class DateFilter extends React.PureComponent {
         { key: 'custom', label: 'Custom range' },
     ];
 
-    static getStyleName = (className, value) => {
-        const styleNames = [
+    static getClassName = (className, value) => {
+        const classNames = [
             ...className.split(' '),
             styles['select-input'],
         ];
 
         if (value && value.type === 'custom') {
-            styleNames.push(styles.monospace);
+            classNames.push(styles.monospace);
         }
 
-        return styleNames.join(' ');
+        return classNames.join(' ');
     }
 
     static getRangeValues = (type, startDaet, endDaet) => {
@@ -289,7 +289,7 @@ export default class DateFilter extends React.PureComponent {
                 onChange={this.handleChange}
                 options={options}
                 placeholder={placeholder}
-                className={DateFilter.getStyleName(className, value)}
+                className={DateFilter.getClassName(className, value)}
                 value={selectInputValue}
                 {...otherProps}
             />,

@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import FocusTrap from 'react-focus-trap';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,7 +17,6 @@ const defaultProps = {
     className: '',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

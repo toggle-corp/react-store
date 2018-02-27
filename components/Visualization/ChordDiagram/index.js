@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select, event } from 'd3-selection';
 import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
@@ -8,9 +7,12 @@ import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
+
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -64,7 +66,6 @@ const defaultProps = {
  * connecting the data.
  */
 @Responsive
-@CSSModules(styles)
 export default class ChordDiagram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

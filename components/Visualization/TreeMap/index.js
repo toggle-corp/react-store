@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemeSet3 } from 'd3-scale-chromatic';
@@ -10,9 +9,12 @@ import { range } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
+
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -67,7 +69,6 @@ const defaultProps = {
  * TreeMap shows hierarchical data  as nested rectangles.
  */
 @Responsive
-@CSSModules(styles)
 export default class TreeMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

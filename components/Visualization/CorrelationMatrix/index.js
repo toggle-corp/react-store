@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { scaleLinear, scaleBand, scaleSequential } from 'd3-scale';
 import { interpolateGnBu } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
@@ -9,9 +8,18 @@ import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
-import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isValidHexColor, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    getColorOnBgColor,
+    getHexFromRgb,
+    isValidHexColor,
+    isObjectEmpty,
+} from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
+
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -61,7 +69,6 @@ const defaultProps = {
  * in the grid.
  * */
 @Responsive
-@CSSModules(styles)
 export default class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

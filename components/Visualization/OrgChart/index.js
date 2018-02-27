@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
@@ -7,8 +6,11 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import update from '../../../utils/immutable-update';
-import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
+
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -68,7 +70,6 @@ const defaultProps = {
 };
 
 @Responsive
-@CSSModules(styles)
 export default class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

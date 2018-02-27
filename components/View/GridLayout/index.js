@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -28,7 +27,6 @@ const defaultProps = {
     snapY: 16,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class GridLayout extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -59,15 +57,14 @@ export default class GridLayout extends React.PureComponent {
         window.removeEventListener('mouseup', this.handleMouseUp);
     }
 
-    getStyleName = () => {
-        const styleNames = [];
-        styleNames.push('grid-layout');
+    getClassName = () => {
+        const classNames = [];
+        classNames.push(styles['grid-layout']);
 
         if (this.props.viewOnly) {
-            styleNames.push('view-only');
+            classNames.push(styles['view-only']);
         }
-
-        return styleNames.join(' ');
+        return classNames.join(' ');
     }
 
     snapX = val => (
@@ -261,8 +258,7 @@ export default class GridLayout extends React.PureComponent {
 
         return (
             <div
-                styleName={this.getStyleName()}
-                className={className}
+                className={`${className} ${this.getClassName()}`}
                 style={{ backgroundSize: `${snapX}px ${snapY}px` }}
             >
                 <List
@@ -272,7 +268,7 @@ export default class GridLayout extends React.PureComponent {
                 />
                 { validLayout && (
                     <div
-                        styleName="ghost-item"
+                        className={styles['ghost-item']}
                         style={{ ...validLayout }}
                     />
                 )}

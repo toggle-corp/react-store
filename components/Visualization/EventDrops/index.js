@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import CSSModules from 'react-css-modules';
 import { PropTypes } from 'prop-types';
 import { select, event } from 'd3-selection';
 import { scaleOrdinal, schemeCategory20 } from 'd3-scale';
@@ -44,7 +43,6 @@ const defaultProps = {
     },
 };
 @Responsive
-@CSSModules(styles)
 export default class EventDrops extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

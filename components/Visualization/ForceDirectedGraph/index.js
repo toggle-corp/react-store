@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select, event } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -10,10 +9,12 @@ import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
 
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the object containing array of nodes and links.
@@ -75,7 +76,6 @@ const defaultProps = {
  */
 
 @Responsive
-@CSSModules(styles)
 export default class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -52,7 +52,7 @@ export default class Cell extends React.PureComponent {
 
         classNames.push(styles.cell);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         if (hoverable) {

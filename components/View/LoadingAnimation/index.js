@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -14,7 +13,6 @@ const defaultProps = {
     className: '',
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class LoadingAnimation extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -25,14 +23,8 @@ export default class LoadingAnimation extends React.PureComponent {
         } = this.props;
 
         return (
-            <div
-                styleName="loading-animation"
-                className={className}
-            >
-                <span
-                    className={iconNames.loading}
-                    styleName="icon"
-                />
+            <div className={`${styles['loading-animation']} ${className}`}>
+                <span className={`${iconNames.loading} ${styles.icon}`} />
             </div>
         );
     }

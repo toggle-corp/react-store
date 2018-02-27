@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -30,7 +29,6 @@ const defaultProps = {
     backgroundHighlight: false,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class SegmentButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -54,7 +52,7 @@ export default class SegmentButton extends React.PureComponent {
         }
     }
 
-    getStyleNameWithStatus = (value) => {
+    getClassNameWithStatus = (value) => {
         const style = [
             'button',
             styles['segment-label'],
@@ -103,7 +101,7 @@ export default class SegmentButton extends React.PureComponent {
             <label
                 htmlFor={buttonIdentifier}
                 key={key}
-                className={this.getStyleNameWithStatus(value)}
+                className={this.getClassNameWithStatus(value)}
             >
                 <input
                     className="input"
@@ -129,8 +127,7 @@ export default class SegmentButton extends React.PureComponent {
 
         return (
             <ListView
-                className={`segment-button ${className}`}
-                styleName="segment-container"
+                className={`segment-button ${className} ${styles['segment-container']}`}
                 data={data}
                 modifier={this.renderSegment}
                 keyExtractor={this.keyExtractor}

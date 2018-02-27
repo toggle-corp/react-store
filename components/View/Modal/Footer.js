@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -21,7 +20,6 @@ const defaultProps = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Footer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -32,11 +30,13 @@ export default class Footer extends React.PureComponent {
             className,
         } = this.props;
 
+        const classNames = [
+            'modal-footer',
+            className,
+            styles.footer,
+        ];
         return (
-            <footer
-                className={`modal-footer ${className}`}
-                styleName="footer"
-            >
+            <footer className={classNames.join(' ')}>
                 { children }
             </footer>
         );

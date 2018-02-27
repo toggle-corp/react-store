@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -60,7 +59,6 @@ class Side {
     }
 }
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Pager extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -188,14 +186,8 @@ export default class Pager extends React.PureComponent {
         const numPages = Math.ceil(itemsCount / maxItemsPerPage);
 
         return (
-            <div
-                className={`pager ${className}`}
-                styleName="pager"
-            >
-                <div
-                    className="page-list"
-                    styleName="page-list"
-                >
+            <div className={`pager ${className} ${styles.pager}`}>
+                <div className={`page-list ${styles['page-list']}`}>
                     {
                         numPages > 0 &&
                         this.pagination(totalCapacity, activePage, numPages)

@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -58,7 +57,6 @@ const defaultProps = {
 };
 
 @Responsive
-@CSSModules(styles)
 export default class SparkLine extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -150,13 +148,8 @@ export default class SparkLine extends React.PureComponent {
         const { className } = this.props;
 
         return (
-            <div
-                className={className}
-                styleName="spark-lines"
-            >
-                <svg
-                    ref={(svg) => { this.svg = svg; }}
-                />
+            <div className={`${className} ${styles['spark-lines']}`} >
+                <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
             </div>
         );

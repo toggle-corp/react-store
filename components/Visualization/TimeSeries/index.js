@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 
 import { scaleLinear } from 'd3-scale';
@@ -57,7 +56,6 @@ const defaultProps = {
 };
 
 @Responsive
-@CSSModules(styles, { allowMultiple: true })
 export default class TimeSeries extends React.PureComponent {
     static defaultProps = defaultProps;
     static propTypes = propTypes;
@@ -269,16 +267,9 @@ export default class TimeSeries extends React.PureComponent {
         const { className } = this.props;
 
         return (
-            <div
-                className={className}
-                styleName="time-series"
-            >
-                <svg
-                    ref={(svg) => { this.svg = svg; }}
-                />
-                <Tooltip
-                    ref={(div) => { this.tooltipDiv = div; }}
-                />
+            <div className={`${className} ${styles['time-series']}`} >
+                <svg ref={(svg) => { this.svg = svg; }} />
+                <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
             </div>
         );
     }

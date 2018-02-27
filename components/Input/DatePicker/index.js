@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -19,7 +18,6 @@ const defaultProps = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class DatePicker extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -47,6 +45,22 @@ export default class DatePicker extends React.PureComponent {
                 current: (nextProps.date && new Date(nextProps.date)) || this.state.current,
             });
         }
+    }
+
+    getClassName = (selectedId, todayId, key) => {
+        const classNames = [
+            'day',
+            styles.day,
+        ];
+        if (selectedId === key) {
+            classNames.push('selected');
+            classNames.push(styles.selected);
+        }
+        if (todayId === key) {
+            classNames.push('today');
+            classNames.push(styles.today);
+        }
+        return classNames.join(' ');
     }
 
     previous = () => {
@@ -78,7 +92,7 @@ export default class DatePicker extends React.PureComponent {
         const monthName = DatePicker.monthNames[currentMonth];
 
         return (
-            <div styleName="month-title">
+            <div className={styles['month-title']}>
                 {monthName}
             </div>
         );
@@ -139,31 +153,18 @@ export default class DatePicker extends React.PureComponent {
         }
 
         return (
-            <div
-                className="weeks"
-                styleName="weeks"
-            >
+            <div className={`${styles.weeks} weeks`}>
                 {
                     weeks.map(week => (
                         <div
-                            className="week"
                             key={week.week}
-                            styleName="week"
+                            className={`${styles.week} week`}
                         >
                             {
                                 week.days.map(day => (
                                     <div
-                                        className={`
-                                            day
-                                            ${selectedId === day.key ? 'selected' : ''}
-                                            ${todayId === day.key ? 'today' : ''}
-                                        `}
                                         key={day.key}
-                                        styleName={`
-                                            day
-                                            ${selectedId === day.key ? 'selected' : ''}
-                                            ${todayId === day.key ? 'today' : ''}
-                                        `}
+                                        className={this.getClassName(selectedId, todayId, day.key)}
                                     >
                                         <button
                                             className="day-button"
@@ -184,14 +185,8 @@ export default class DatePicker extends React.PureComponent {
 
     render() {
         return (
-            <div
-                className="date-picker-wrapper"
-                styleName="date-picker-wrapper"
-            >
-                <div
-                    className="date-picker-header"
-                    styleName="date-picker-header"
-                >
+            <div className={`${styles['date-picker-wrapper']} date-picker-wrapper`}>
+                <div className={`${styles['date-picker-header']} date-picker-header`}>
                     <button
                         className="previous-button"
                         onClick={this.previous}
@@ -208,9 +203,7 @@ export default class DatePicker extends React.PureComponent {
                         &gt;
                     </button>
                 </div>
-                <DaysHeader
-                    styleName="days-header"
-                />
+                <DaysHeader className={styles['days-header']} />
                 { this.renderWeeks() }
             </div>
         );

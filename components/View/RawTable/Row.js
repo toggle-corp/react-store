@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -52,7 +51,6 @@ const defaultProps = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Row extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -69,7 +67,7 @@ export default class Row extends React.PureComponent {
         classNames.push('row');
         classNames.push(styles.row);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         if (hoverable) {

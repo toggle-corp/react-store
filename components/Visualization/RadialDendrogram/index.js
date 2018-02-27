@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { tree, hierarchy } from 'd3-hierarchy';
 import { extent } from 'd3-array';
@@ -8,10 +7,12 @@ import { scalePow, scaleOrdinal } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import styles from './styles.scss';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
 
+// FIXME: don't use globals
+// eslint-disable-next-line no-unused-vars
+import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
@@ -63,7 +64,6 @@ const defaultProps = {
  * clustering. The clusters are arranged in circle.
  */
 @Responsive
-@CSSModules(styles)
 export default class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

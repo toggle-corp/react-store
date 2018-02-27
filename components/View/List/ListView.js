@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -30,7 +29,7 @@ const defaultProps = {
     emptyComponent: 'Nothing here',
 };
 
-@CSSModules(styles, { allowMultiple: true })
+// eslint-disable-next-line react/prefer-stateless-function
 export default class ListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

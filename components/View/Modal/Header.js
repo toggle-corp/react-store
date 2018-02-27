@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -24,7 +23,6 @@ const defaultProps = {
 };
 
 
-@CSSModules(styles, { allowMultiple: true })
 export default class Header extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -36,15 +34,18 @@ export default class Header extends React.PureComponent {
             title,
         } = this.props;
 
+        const classNames = [
+            'modal-header',
+            className,
+            styles.header,
+        ];
+        const headerClassNames = [
+            'heading',
+            styles.heading,
+        ];
         return (
-            <header
-                className={`modal-header ${className}`}
-                styleName="header"
-            >
-                <h2
-                    className="heading"
-                    styleName="heading"
-                >
+            <header className={classNames.join(' ')}>
+                <h2 className={headerClassNames.join(' ')}>
                     { title }
                 </h2>
                 { rightComponent }

@@ -1,4 +1,3 @@
-import CSSModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -89,7 +88,6 @@ const defaultProps = {
     changeDelay: 200,
 };
 
-@CSSModules(styles, { allowMultiple: true })
 export default class TextInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -121,38 +119,35 @@ export default class TextInput extends React.PureComponent {
         }
     }
 
-    getStyleName() {
-        const styleNames = [];
-
+    getClassName() {
         const {
             disabled,
             error,
             required,
         } = this.props;
 
-        const {
-            isFocused,
-        } = this.state;
+        const { isFocused } = this.state;
 
-        styleNames.push('text-input');
-
+        const classNames = [];
+        classNames.push('text-input');
+        classNames.push(styles['text-input']);
         if (disabled) {
-            styleNames.push('disabled');
+            classNames.push('disabled');
+            classNames.push(styles.disabled);
         }
-
         if (isFocused) {
-            styleNames.push('focused');
+            classNames.push('focused');
+            classNames.push(styles.focused);
         }
-
         if (error) {
-            styleNames.push('error');
+            classNames.push('error');
+            classNames.push(styles.error);
         }
-
         if (required) {
-            styleNames.push('required');
+            classNames.push('required');
+            classNames.push(styles.required);
         }
-
-        return styleNames.join(' ');
+        return classNames.join(' ');
     }
 
     handleChange = (event) => {
@@ -209,30 +204,23 @@ export default class TextInput extends React.PureComponent {
         } = this.props;
 
         const { value = '' } = this.state;
-        const styleName = this.getStyleName();
+        const classNames = this.getClassName();
 
         return (
-            <div
-                className={`${styleName} ${className}`}
-                styleName={styleName}
-            >
+            <div className={`${classNames} ${className}`}>
                 {
                     showLabel && (
-                        <div
-                            className="label"
-                            styleName="label"
-                        >
+                        <div className={`${styles.label} label`}>
                             {label}
                         </div>
                     )
                 }
                 <input
-                    className="input"
+                    className={`${styles.input} input`}
                     id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
-                    styleName="input"
                     value={value}
                     {...otherProps}
                 />
@@ -241,8 +229,7 @@ export default class TextInput extends React.PureComponent {
                         !error && hint && (
                             <p
                                 key="hint"
-                                className="hint"
-                                styleName="hint"
+                                className={`${styles.hint} hint`}
                             >
                                 {hint}
                             </p>
@@ -250,8 +237,7 @@ export default class TextInput extends React.PureComponent {
                         error && !hint && (
                             <p
                                 key="error"
-                                styleName="error"
-                                className="error"
+                                className={`${styles.error} error`}
                             >
                                 {error}
                             </p>
@@ -259,8 +245,7 @@ export default class TextInput extends React.PureComponent {
                         !error && !hint && (
                             <p
                                 key="empty"
-                                styleName="empty"
-                                className="error empty"
+                                className={`${styles.empty} error empty`}
                             >
                                 -
                             </p>
