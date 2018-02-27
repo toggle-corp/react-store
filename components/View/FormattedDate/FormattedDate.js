@@ -90,10 +90,7 @@ export default class FormattedDate extends React.PureComponent {
         const formattedDate = date ? FormattedDate.format(new Date(date), mode) : '-';
 
         return (
-            <span
-                className="formatted-date"
-                styleName="formatted-date-value"
-            >
+            <span className={`formatted-date ${styles['formatted-date-value']}`}>
                 { formattedDate }
             </span>
         );

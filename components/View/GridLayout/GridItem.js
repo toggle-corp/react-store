@@ -132,15 +132,11 @@ export default class GridItem extends React.PureComponent {
                 className={className}
                 style={{ ...data.layout }}
             >
-                <header
-                    styleName="header"
-                    className="header"
-                >
+                <header className={`header ${styles.header}`}>
                     <h3
                         role="presentation"
                         ref={(el) => { this.dragHandle = el; }}
-                        styleName="heading"
-                        className="heading"
+                        className={`heading ${styles.heading}`}
                         onMouseDown={this.handleDragHandleMouseDown}
                         onMouseUp={this.handleDragHandleMouseUp}
                     >
@@ -148,10 +144,7 @@ export default class GridItem extends React.PureComponent {
                     </h3>
                     { headerRightComponent }
                 </header>
-                <div
-                    styleName="content"
-                    className="content"
-                >
+                <div className={`content ${styles.content}`}>
                     { modifier(data) }
                 </div>
                 <span
@@ -159,7 +152,7 @@ export default class GridItem extends React.PureComponent {
                     role="presentation"
                     onMouseDown={this.handleResizeHandleMouseDown}
                     onMouseUp={this.handleResizeHandleMouseUp}
-                    styleName="resize-handle"
+                    className={styles['resize-handle']}
                 />
             </div>
         );

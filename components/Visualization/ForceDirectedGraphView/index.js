@@ -64,12 +64,9 @@ export default class ForcedDirectedGraphView extends PureComponent {
             ...otherProps
         } = this.props;
         return (
-            <div
-                styleName="force-directed-graph-view"
-                className={className}
-            >
-                <div styleName="action">
-                    <div styleName="action-selects">
+            <div className={`${styles['force-directed-graph-view']} ${className}`}>
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -77,18 +74,18 @@ export default class ForcedDirectedGraphView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedColorScheme}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
                     </div>
                 </div>
                 <ForceDirectedGraph
-                    styleName="force-directed-graph"
+                    className={styles['force-directed-graph']}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.colorScheme}

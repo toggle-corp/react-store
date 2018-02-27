@@ -184,9 +184,7 @@ export default class NumberInput extends React.PureComponent {
         }
     }
 
-    getStyleName() {
-        const styleNames = [];
-
+    getClassName() {
         const {
             disabled,
             error,
@@ -197,25 +195,32 @@ export default class NumberInput extends React.PureComponent {
             isFocused,
         } = this.state;
 
-        styleNames.push('text-input');
+        const classNames = [];
+
+        classNames.push('text-input');
+        classNames.push(styles['text-input']);
 
         if (disabled) {
-            styleNames.push('disabled');
+            classNames.push(styles.disabled);
+            classNames.push('disabled');
         }
 
         if (isFocused) {
-            styleNames.push('focused');
+            classNames.push(styles.focused);
+            classNames.push('focused');
         }
 
         if (error) {
-            styleNames.push('error');
+            classNames.push(styles.error);
+            classNames.push('error');
         }
 
         if (required) {
-            styleNames.push('required');
+            classNames.push(styles.required);
+            classNames.push('required');
         }
 
-        return styleNames.join(' ');
+        return classNames.join(' ');
     }
 
     handleChange = (event) => {
@@ -278,31 +283,26 @@ export default class NumberInput extends React.PureComponent {
 
         const { value = '' } = this.state;
 
-        const styleName = this.getStyleName();
+        const classNames = this.getClassName();
 
         return (
-            <div
-                className={`${styleName} ${className}`}
-                styleName={styleName}
-            >
+            <div className={`${classNames} ${className}`}>
                 {
                     showLabel && (
                         <label
-                            className="label"
+                            className={`${styles.label} label`}
                             htmlFor={this.inputId}
-                            styleName="label"
                         >
                             {label}
                         </label>
                     )
                 }
                 <input
-                    className="input"
+                    className={`${styles.input} input`}
                     id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
-                    styleName="input"
                     value={value}
                     {...otherProps}
                 />
@@ -311,8 +311,7 @@ export default class NumberInput extends React.PureComponent {
                         !error && hint && (
                             <p
                                 key="hint"
-                                className="hint"
-                                styleName="hint"
+                                className={`${styles.hint} hint`}
                             >
                                 {hint}
                             </p>
@@ -320,8 +319,7 @@ export default class NumberInput extends React.PureComponent {
                         error && !hint && (
                             <p
                                 key="error"
-                                styleName="error"
-                                className="error"
+                                className={`${styles.error} error`}
                             >
                                 {error}
                             </p>
@@ -329,8 +327,7 @@ export default class NumberInput extends React.PureComponent {
                         !error && !hint && (
                             <p
                                 key="empty"
-                                styleName="empty"
-                                className="error empty"
+                                className={`${styles.empty} empty error`}
                             >
                                 -
                             </p>

@@ -124,34 +124,26 @@ export default class ColorInput extends React.PureComponent {
             hint,
         } = this.props;
 
-        const {
-            showColorPicker,
-        } = this.state;
+        const { showColorPicker } = this.state;
 
         return (
             <div
-                styleName="color-input"
-                className={className}
+                className={`${styles['color-input']} ${className}`}
                 ref={(el) => { this.container = el; }}
             >
                 {
                     showLabel && (
-                        <div
-                            className="label"
-                            styleName="label"
-                        >
+                        <div className={`${styles.label} label`} >
                             {label}
                         </div>
                     )
                 }
                 <button
-                    styleName="color-box"
-                    className="color-box"
+                    className={`${styles['color-box']} color-box`}
                     onClick={() => this.handleColorBoxClick()}
                 >
                     <span
-                        styleName="color"
-                        className="color"
+                        className={`${styles.color} color`}
                         style={{ backgroundColor: value }}
                     />
                 </button>
@@ -160,8 +152,7 @@ export default class ColorInput extends React.PureComponent {
                         !error && hint && (
                             <p
                                 key="hint"
-                                className="hint"
-                                styleName="hint"
+                                className={`${styles.hint} hint`}
                             >
                                 {hint}
                             </p>
@@ -169,8 +160,7 @@ export default class ColorInput extends React.PureComponent {
                         error && !hint && (
                             <p
                                 key="error"
-                                styleName="error"
-                                className="error"
+                                className={`${styles.error} error`}
                             >
                                 {error}
                             </p>
@@ -178,8 +168,7 @@ export default class ColorInput extends React.PureComponent {
                         !error && !hint && (
                             <p
                                 key="empty"
-                                styleName="empty"
-                                className="error empty"
+                                className={`${styles.empty} error empty`}
                             >
                                 -
                             </p>

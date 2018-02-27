@@ -35,8 +35,7 @@ export default class NonFieldErrors extends React.PureComponent {
         if (errors && errors.length > 0) {
             errorComponents = errors.map(error => (
                 <div
-                    styleName="error"
-                    className="error"
+                    className={`${styles.error} error`}
                     key={error}
                 >
                     { error }
@@ -44,17 +43,14 @@ export default class NonFieldErrors extends React.PureComponent {
             ));
         } else {
             errorComponents = (
-                <div styleName="error empty">
+                <div className={`${styles.error} ${styles.empty}`}>
                     -
                 </div>
             );
         }
 
         return (
-            <div
-                className={className}
-                styleName="non-field-errors"
-            >
+            <div className={`${styles['non-field-errors']} ${className}`}>
                 { errorComponents }
             </div>
         );

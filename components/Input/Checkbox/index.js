@@ -56,35 +56,40 @@ export default class Checkbox extends React.PureComponent {
             ...otherProps
         } = this.props;
 
+        const classNames = [
+            styles.checkbox,
+            value ? styles.checked : '',
+            className,
+        ];
+        const spanClassNames = [
+            styles.checkmark,
+            'checkmark',
+            value ? iconNames.checkbox : iconNames.checkboxOutlineBlank,
+        ];
+        const inputClassNames = [
+            'input',
+            styles.input,
+        ];
+        const labelClassNames = [
+            'label',
+            styles.label,
+        ];
+
         return (
             <label
                 htmlFor={this.inputId}
-                styleName={`checkbox ${value ? 'checked' : ''}`}
-                className={className}
+                className={classNames.join(' ')}
             >
-                <span
-                    styleName="checkmark"
-                    className={`${
-                        value ? (
-                            iconNames.checkbox
-                        ) : (
-                            iconNames.checkboxOutlineBlank
-                        )
-                    } checkmark`}
-                />
+                <span className={spanClassNames.join(' ')} />
                 <input
                     onChange={this.handleInputChange}
-                    styleName="input"
-                    className="input"
+                    className={inputClassNames.join(' ')}
                     type="checkbox"
                     checked={value}
                     id={this.inputId}
                     {...otherProps}
                 />
-                <span
-                    styleName="label"
-                    className="label"
-                >
+                <span className={labelClassNames.join(' ')}>
                     { label }
                 </span>
             </label>

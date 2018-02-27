@@ -268,12 +268,9 @@ export default class TabularSelectInput extends React.PureComponent {
         } = this.state;
 
         return (
-            <div
-                className={`${className} tabular-select-input`}
-                styleName="tabular-select-input"
-            >
+            <div className={`${className} tabular-select-input ${styles['tabular-select-input']}`} >
                 <MultiSelectInput
-                    styleName="select"
+                    className={styles.select}
                     value={selectedOptionsKeys}
                     options={validOptions}
                     keySelector={keySelector}
@@ -281,7 +278,7 @@ export default class TabularSelectInput extends React.PureComponent {
                     optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
                 />
-                <div styleName="table-container">
+                <div className={styles['table-container']}>
                     <Table
                         data={selectedOptions}
                         headers={tableHeadersWithRemove}

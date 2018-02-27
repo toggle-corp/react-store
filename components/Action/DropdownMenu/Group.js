@@ -21,7 +21,7 @@ export default class Group extends React.PureComponent {
 
     render() {
         return (
-            <div styleName="group">
+            <div className={styles.group}>
                 {this.props.children}
             </div>
         );

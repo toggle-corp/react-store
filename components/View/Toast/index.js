@@ -94,21 +94,21 @@ export default class Toast extends React.Component {
         }
     }
 
-    getStyleName = () => {
+    getClassName = () => {
         const {
             shown,
             notification,
         } = this.state;
 
-        const styleNames = [];
-        styleNames.push('toast');
+        const classNames = [];
+        classNames.push(styles.toast);
         if (shown) {
-            styleNames.push('shown');
+            classNames.push(styles.shown);
         }
         if (notification) {
-            styleNames.push(notification.type);
+            classNames.push(styles[notification.type]);
         }
-        return styleNames.join(' ');
+        return classNames.join(' ');
     }
 
     getIconName = () => {
@@ -138,18 +138,18 @@ export default class Toast extends React.Component {
 
         return (
             <Portal>
-                <div styleName={this.getStyleName()}>
+                <div className={this.getClassName()}>
                     {
                         notification && (
-                            <div styleName="container">
-                                <header styleName="header">
-                                    <h4 styleName="heading">
+                            <div className={styles.container}>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
                                         { notification.title }
                                     </h4>
                                     {
                                         notification.dismissable && (
                                             <Button
-                                                styleName="close-button"
+                                                className={styles['close-button']}
                                                 onClick={this.handleDissmissButtonClick}
                                                 transparent
                                             >
@@ -158,15 +158,12 @@ export default class Toast extends React.Component {
                                         )
                                     }
                                 </header>
-                                <div styleName="main-content">
-                                    <span
-                                        styleName="icon"
-                                        className={this.getIconName()}
-                                    />
-                                    <div styleName="message">
+                                <div className={styles['main-content']}>
+                                    <span className={`${styles.icon} ${this.getIconName()}`} />
+                                    <div className={styles.message}>
                                         { notification.message }
                                     </div>
-                                    <div styleName="action-buttons">
+                                    <div className={styles['action-buttons']}>
                                         { notification.actionButtons }
                                     </div>
                                 </div>

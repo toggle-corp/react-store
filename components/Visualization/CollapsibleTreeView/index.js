@@ -63,11 +63,10 @@ export default class CollapsibleTreeView extends PureComponent {
         } = this.props;
         return (
             <div
-                styleName="collapsible-tree-view"
-                className={className}
+                className={`${styles['collapsible-tree-view']} ${className}`}
             >
-                <div styleName="action">
-                    <div styleName="action-selects">
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -75,18 +74,18 @@ export default class CollapsibleTreeView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedColorScheme}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
                     </div>
                 </div>
                 <CollapsibleTree
-                    styleName="collapsible-tree"
+                    className={styles['collapsible-tree']}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.colorScheme}

@@ -76,10 +76,7 @@ export default class ColoredNumeral extends React.PureComponent {
         const colorClass = modifier(referenceValue, value, referenceLine);
 
         return (
-            <span
-                className={`${defaultStyle} ${className} ${colorClass}`}
-                styleName={defaultStyle}
-            >
+            <span className={`${defaultStyle} ${className} ${colorClass} ${styles[defaultStyle]}`}>
                 {
                     label && (
                         <div

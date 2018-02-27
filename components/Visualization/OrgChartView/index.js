@@ -72,12 +72,9 @@ export default class OrgChartView extends PureComponent {
         } = this.props;
 
         return (
-            <div
-                styleName="orgchart-view"
-                className={className}
-            >
-                <div styleName="action">
-                    <div styleName="action-selects">
+            <div className={`${styles['orgchart-view']} ${className}`}>
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearlable={false}
                             keySelector={d => d.title}
@@ -85,7 +82,7 @@ export default class OrgChartView extends PureComponent {
                             onChange={this.fillColor}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.fillColor}
                         />
                         <SelectInput
@@ -95,18 +92,18 @@ export default class OrgChartView extends PureComponent {
                             onChange={this.selectColor}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectColor}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
                     </div>
                 </div>
                 <OrgChart
-                    styleName="orgchart"
+                    className={styles.orgchart}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     selectColor={this.state.selectColor}

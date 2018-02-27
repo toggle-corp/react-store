@@ -78,9 +78,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         } = this.props;
 
         return (
-            <div
-                className={className}
-            >
+            <div className={className}>
                 <SelectInput
                     onChange={this.handleStartValueChange}
                     value={this.startValue}

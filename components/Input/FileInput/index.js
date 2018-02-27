@@ -119,16 +119,10 @@ export default class FileInput extends React.PureComponent {
         const { files, preview } = this.state;
 
         return (
-            <div
-                styleName="file-input-wrapper"
-                className={`file-input ${className}`}
-            >
+            <div className={`file-input ${className} ${styles['file-input-wrapper']}`} >
                 {
                     showPreview && (
-                        <div
-                            className="image-input-preview"
-                            styleName="preview"
-                        >
+                        <div className={`${styles.preview} image-input-preview`}>
                             {
                                 preview ? (
                                     <img
@@ -161,7 +155,7 @@ export default class FileInput extends React.PureComponent {
                 />
                 {
                     showStatus && (
-                        <p styleName="status">
+                        <p className={styles.status}>
                             { files.length > 0 ? files[0].name : 'No file choosen' }
                         </p>
                     )

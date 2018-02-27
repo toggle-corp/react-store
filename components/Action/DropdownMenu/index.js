@@ -115,24 +115,21 @@ export default class DropdownMenu extends React.PureComponent {
             iconName,
             hideDropdownIcon,
             dropdownClassName,
+            className,
         } = this.props;
 
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                className={this.props.className}
-                styleName="dropdown-menu"
+                className={`${styles['dropdown-menu']} ${className}`}
             >
                 <button
                     onClick={this.handleDropdownClick}
-                    styleName="dropdown-header"
+                    className={styles['dropdown-header']}
                 >
                     <div>
                         { iconName &&
-                            <i
-                                className={iconName}
-                                styleName="item-icon"
-                            />
+                            <i className={`${iconName} ${styles['item-icon']}`} />
                         }
                         {title}
                     </div>
@@ -153,8 +150,7 @@ export default class DropdownMenu extends React.PureComponent {
                     showDropdown && (
                         <FloatingContainer
                             ref={(el) => { this.dropdownContainer = el; }}
-                            className={dropdownClassName}
-                            styleName="dropdown-container"
+                            className={`${styles['dropdown-container']} ${dropdownClassName}`}
                             onBlur={this.handleDropdownContainerBlur}
                             parent={this.container}
                             onInvalidate={this.handleDropdownContainerInvalidate}

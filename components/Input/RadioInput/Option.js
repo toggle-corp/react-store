@@ -41,28 +41,17 @@ export default class Option extends React.PureComponent {
         return (
             <label
                 htmlFor={this.inputId}
-                styleName={`option ${checked ? 'checked' : ''}`}
-                className={`radio-option ${className}`}
+                className={`${styles.option} ${checked ? styles.checked : ''} radio-option ${className}`}
             >
                 <input
-                    className="input"
+                    className={`${styles.input} input`}
                     defaultChecked={checked}
                     id={this.inputId}
-                    styleName="input"
                     type="radio"
                     {...otherProps}
                 />
-                <span
-                    styleName="radio"
-                    className={`
-                        radio
-                        ${checked ? iconNames.radioOn : iconNames.radioOff}
-                    `}
-                />
-                <span
-                    className="label"
-                    styleName="label"
-                >
+                <span className={`${styles.radio} radio ${checked ? iconNames.radioOn : iconNames.radioOff}`} />
+                <span className={`${styles.label} label`}>
                     { label }
                 </span>
             </label>

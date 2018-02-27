@@ -152,7 +152,7 @@ export default class SparkLine extends React.PureComponent {
         return (
             <div
                 className={className}
-                styleName="spark-lines"
+                className={styles['spark-lines']}
             >
                 <svg
                     ref={(svg) => { this.svg = svg; }}

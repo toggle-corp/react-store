@@ -272,7 +272,7 @@ export default class GridLayout extends React.PureComponent {
                 />
                 { validLayout && (
                     <div
-                        styleName="ghost-item"
+                        className={styles['ghost-item']}
                         style={{ ...validLayout }}
                     />
                 )}

@@ -153,47 +153,34 @@ export default class Numeral extends React.PureComponent {
         });
 
         return (
-            <span
-                className={`numeral ${className}`}
-                styleName="numeral"
-            >
+            <span className={`numeral ${className} ${styles.numeral}`}>
                 {
                     isTruthy(prefix) && (
-                        <span
-                            className="prefix"
-                        >
+                        <span className="prefix">
                             {prefix}
                         </span>
                     )
                 }
                 {
                     isTruthy(showSign) && value !== 0 && (
-                        <span
-                            className="sign"
-                        >
+                        <span className="sign">
                             {value > 0 ? '+' : '-'}
                         </span>
                     )
                 }
-                <span
-                    className="number"
-                >
+                <span className="number">
                     {number}
                 </span>
                 {
                     isTruthy(normalizedSuffix) && (
-                        <span
-                            className="normalized-suffix"
-                        >
+                        <span className="normalized-suffix">
                             {normalizedSuffix}
                         </span>
                     )
                 }
                 {
                     isTruthy(suffix) && (
-                        <span
-                            className="suffix"
-                        >
+                        <span className="suffix">
                             {suffix}
                         </span>
                     )

@@ -32,19 +32,19 @@ export default class DropdownItem extends React.PureComponent {
         return (
             <button
                 onClick={onClick}
-                styleName="dropdown-item"
+                className={styles['dropdown-item']}
             >
                 { iconName &&
                     <i
-                        styleName="icon"
+                        className={styles['icon']}
                         className={iconName}
                     />
                 }
                 {/* XXX: why is this duplicated */}
                 { iconName &&
-                    <i styleName="icon" />
+                    <i className={styles['icon']} />
                 }
-                <span styleName="label">
+                <span className={styles['label']}>
                     {title}
                 </span>
             </button>

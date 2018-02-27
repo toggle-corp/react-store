@@ -33,11 +33,13 @@ export default class Body extends React.PureComponent {
             className,
         } = this.props;
 
+        const classNames = [
+            'modal-body',
+            styles.body,
+            className,
+        ];
         return (
-            <div
-                styleName="body"
-                className={`modal-body ${className}`}
-            >
+            <div className={classNames.join(' ')}>
                 { children }
             </div>
         );

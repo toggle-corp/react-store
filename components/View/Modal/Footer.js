@@ -32,11 +32,13 @@ export default class Footer extends React.PureComponent {
             className,
         } = this.props;
 
+        const classNames = [
+            'modal-footer',
+            className,
+            styles.footer,
+        ];
         return (
-            <footer
-                className={`modal-footer ${className}`}
-                styleName="footer"
-            >
+            <footer className={classNames.join(' ')}>
                 { children }
             </footer>
         );

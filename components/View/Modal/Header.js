@@ -36,15 +36,18 @@ export default class Header extends React.PureComponent {
             title,
         } = this.props;
 
+        const classNames = [
+            'modal-header',
+            className,
+            styles.header,
+        ];
+        const headerClassNames = [
+            'heading',
+            styles.heading,
+        ];
         return (
-            <header
-                className={`modal-header ${className}`}
-                styleName="header"
-            >
-                <h2
-                    className="heading"
-                    styleName="heading"
-                >
+            <header className={classNames.join(' ')}>
+                <h2 className={headerClassNames.join(' ')}>
                     { title }
                 </h2>
                 { rightComponent }

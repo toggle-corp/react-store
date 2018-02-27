@@ -142,9 +142,8 @@ export default class Form extends React.PureComponent {
 
         return (
             <form
-                className={className}
+                className={`${className} ${styles.form}`}
                 onSubmit={this.onSubmit}
-                styleName="form"
                 noValidate
             >
                 { mapChildrenRecursive(

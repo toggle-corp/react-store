@@ -90,7 +90,6 @@ export default class RadioInput extends React.PureComponent {
         );
     }
 
-
     renderOption = (key, option) => (
         <Option
             key={key}
@@ -105,8 +104,7 @@ export default class RadioInput extends React.PureComponent {
         const { className } = this.props;
         return (
             <ListView
-                className={`radio-input ${className}`}
-                styleName="radio-input"
+                className={`radio-input ${className} ${styles['radio-input']}`}
                 data={this.props.options}
                 keyExtractor={RadioInput.optionKeyExtractor}
                 modifier={this.renderOption}

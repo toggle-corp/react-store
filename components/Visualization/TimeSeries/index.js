@@ -271,7 +271,7 @@ export default class TimeSeries extends React.PureComponent {
         return (
             <div
                 className={className}
-                styleName="time-series"
+                className={styles['time-series']}
             >
                 <svg
                     ref={(svg) => { this.svg = svg; }}

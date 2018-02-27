@@ -86,12 +86,9 @@ export default class SunBurstView extends PureComponent {
         } = this.props;
 
         return (
-            <div
-                styleName="sunburst-view"
-                className={className}
-            >
-                <div styleName="action">
-                    <div styleName="action-selects">
+            <div className={`${styles['sunburst-view']} ${className}`}>
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -99,7 +96,7 @@ export default class SunBurstView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedColorScheme}
                         />
                         <SelectInput
@@ -110,11 +107,11 @@ export default class SunBurstView extends PureComponent {
                             options={this.categories}
                             placeholder="No of Data Classes"
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedNoOfCategories}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
@@ -124,7 +121,7 @@ export default class SunBurstView extends PureComponent {
                     </div>
                 </div>
                 <SunBurst
-                    styleName="sunburst"
+                    className={styles.sunburst}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.effectiveColorScheme}

@@ -65,12 +65,9 @@ export default class TreeMapView extends PureComponent {
             ...otherProps
         } = this.props;
         return (
-            <div
-                styleName="treemap-view"
-                className={className}
-            >
-                <div styleName="action">
-                    <div styleName="action-selects">
+            <div className={`${styles['treemap-view']} ${className}`}>
+                <div className={styles.action}>
+                    <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -78,11 +75,11 @@ export default class TreeMapView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            styleName="select-input"
+                            className={styles['select-input']}
                             value={this.state.selectedColorScheme}
                         />
                     </div>
-                    <div styleName="action-buttons">
+                    <div className={styles['action-buttons']}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
@@ -92,7 +89,7 @@ export default class TreeMapView extends PureComponent {
                     </div>
                 </div>
                 <TreeMap
-                    styleName="treemap"
+                    className={styles.treemap}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     colorScheme={this.state.colorScheme}
