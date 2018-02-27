@@ -1,0 +1,42 @@
+@import '../../../../stylesheets/base';
+
+
+.year-picker {
+    @include shadow-medium;
+
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+
+    button {
+        flex-shrink: 0;
+        outline: none;
+        border: 0;
+        background-color: transparent;
+        cursor: pointer;
+        padding: 4px;
+        height: 100%;
+
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    .years {
+        display: inline-flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+
+        .year {
+            flex-basis: 33.33%;
+            height: auto;
+
+            &.selected {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+            }
+        }
+    }
+}

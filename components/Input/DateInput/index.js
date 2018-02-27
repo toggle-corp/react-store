@@ -524,8 +524,8 @@ export default class DateInput extends React.PureComponent {
                 onInvalidate={this.handleDatePickerInvalidate}
             >
                 <DatePicker
-                    date={date && date.getTime()}
-                    onDatePick={this.handleDatePickerDatePick}
+                    value={date && date.getTime()}
+                    onChange={this.handleDatePickerDatePick}
                 />
             </FloatingContainer>
         );

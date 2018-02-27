@@ -1,0 +1,56 @@
+@import '../../../../stylesheets/base';
+
+.month-picker {
+    @include shadow-medium;
+
+    display: flex;
+    flex-wrap: wrap;
+    z-index: 1;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+
+    .header {
+        display: flex;
+        flex-basis: 100%;
+        align-items: center;
+        justify-content: center;
+
+        button {
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 4px;
+            height: 100%;
+
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+        }
+    }
+
+    .months {
+        display: flex;
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        width: 100%;
+
+        .month {
+            flex-basis: 25%;
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 4px;
+
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+
+            &.selected {
+                background-color: $color-accent;
+                color: $color-text-on-accent;
+            }
+        }
+    }
+}
