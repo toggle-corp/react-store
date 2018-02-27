@@ -46,16 +46,19 @@ export default class Header extends React.PureComponent {
 
         // default className for global override
         classNames.push('header');
+        classNames.push(styles.header);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         if (hoverable) {
             classNames.push('hoverable');
+            classNames.push(styles.hoverable);
         }
 
         if (highlighted) {
             classNames.push('highlighted');
+            classNames.push(styles.highlighted);
         }
 
         if (uniqueKey) {
@@ -63,27 +66,6 @@ export default class Header extends React.PureComponent {
         }
 
         return classNames.join(' ');
-    }
-
-    getStyleName = (props) => {
-        const styleNames = [];
-        const {
-            hoverable,
-            highlighted,
-        } = props;
-
-        // default className for global override
-        styleNames.push('header');
-
-        if (hoverable) {
-            styleNames.push('hoverable');
-        }
-
-        if (highlighted) {
-            styleNames.push('highlighted');
-        }
-
-        return styleNames.join(' ');
     }
 
     handleClick = (e) => {
@@ -99,12 +81,10 @@ export default class Header extends React.PureComponent {
 
     render() {
         const className = this.getClassName(this.props);
-        const styleName = this.getStyleName(this.props);
 
         return (
             <th
                 className={className}
-                styleName={styleName}
                 role="gridcell"
                 onClick={this.handleClick}
             >

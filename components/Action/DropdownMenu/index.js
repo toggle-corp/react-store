@@ -135,14 +135,7 @@ export default class DropdownMenu extends React.PureComponent {
                     </div>
                     {
                         !hideDropdownIcon && (
-                            <i
-                                className={iconNames.chevronDown}
-                                styleName={
-                                    showDropdown ?
-                                        'rotated dropdown-icon' :
-                                        'dropdown-icon'
-                                }
-                            />
+                            <i className={`${iconNames.chevronDown} ${showDropdown ? styles['rotated dropdown-icon'] : styles['dropdown-icon']}`} />
                         )
                     }
                 </button>

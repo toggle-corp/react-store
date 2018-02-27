@@ -111,7 +111,7 @@ export default class DropdownBody extends React.PureComponent {
     }
 
     renderBodyContent = () => (
-        <div styleName={`dropdown-list ${this.props.show ? 'shown' : ''}`} >
+        <div className={`${styles['dropdown-list']} ${this.props.show ? styles.shown : ''}`} >
             { this.props.children }
         </div>
     )

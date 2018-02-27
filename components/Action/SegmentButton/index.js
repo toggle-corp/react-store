@@ -54,7 +54,7 @@ export default class SegmentButton extends React.PureComponent {
         }
     }
 
-    getStyleNameWithStatus = (value) => {
+    getClassNameWithStatus = (value) => {
         const style = [
             'button',
             styles['segment-label'],
@@ -103,7 +103,7 @@ export default class SegmentButton extends React.PureComponent {
             <label
                 htmlFor={buttonIdentifier}
                 key={key}
-                className={this.getStyleNameWithStatus(value)}
+                className={this.getClassNameWithStatus(value)}
             >
                 <input
                     className="input"

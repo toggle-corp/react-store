@@ -82,14 +82,13 @@ export default class Body extends React.PureComponent {
 
         // default className for global override
         classNames.push('body');
+        classNames.push(styles.body);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         return classNames.join(' ');
     }
-
-    getStyleName = () => ('body')
 
     getRowKey = (rowData) => {
         const { keyExtractor } = this.props;
@@ -157,13 +156,9 @@ export default class Body extends React.PureComponent {
         const { data } = this.props;
 
         const className = this.getClassName(this.props);
-        const styleName = this.getStyleName(this.props);
 
         return (
-            <tbody
-                className={className}
-                styleName={styleName}
-            >
+            <tbody className={className}>
                 <List
                     data={data}
                     keyExtractor={this.getRowKey}

@@ -41,20 +41,12 @@ export default class Headers extends React.Component {
 
         // default className for global override
         classNames.push('headers');
+        classNames.push(styles.headers);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         return classNames.join(' ');
-    }
-
-    getStyleName = () => {
-        const styleNames = [];
-
-        // default className for global override
-        styleNames.push('headers');
-
-        return styleNames.join(' ');
     }
 
     getHeaderKey = header => header.key;
@@ -91,13 +83,8 @@ export default class Headers extends React.Component {
         const { headers } = this.props;
 
         const className = this.getClassName(this.props);
-        const styleName = this.getStyleName(this.props);
-
         return (
-            <thead
-                className={className}
-                styleName={styleName}
-            >
+            <thead className={className}>
                 <tr>
                     <List
                         data={headers}

@@ -13,7 +13,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     /**
-     * for styling by styleName
+     * for styling by className
      */
     className: PropTypes.string,
 

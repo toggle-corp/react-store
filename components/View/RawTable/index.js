@@ -125,14 +125,13 @@ export default class RawTable extends React.PureComponent {
 
         // default className for global override
         classNames.push('raw-table');
+        className.push(styles['raw-table']);
 
-        // className provided by parent (through styleName)
+        // className provided by parent (through className)
         classNames.push(className);
 
         return classNames.join(' ');
     }
-
-    getStyleName = () => 'raw-table'
 
     render() {
         const {
@@ -150,11 +149,9 @@ export default class RawTable extends React.PureComponent {
         } = this.props;
 
         const className = this.getClassName(this.props);
-        const styleName = this.getStyleName(this.props);
         return (
             <table
                 className={className}
-                styleName={styleName}
             >
                 <Headers
                     headers={this.state.headers}
