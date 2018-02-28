@@ -61,8 +61,6 @@ const propTypes = {
             label: PropTypes.string,
         }),
     ),
-
-    optionsIdentifier: PropTypes.string,
 };
 
 const defaultProps = {
@@ -73,7 +71,6 @@ const defaultProps = {
     hint: '',
     onChange: undefined,
     showHintAndError: true,
-    optionsIdentifier: undefined,
     options: [],
     value: [],
     label: '',
@@ -99,6 +96,20 @@ export default class SelectInputWithList extends React.PureComponent {
         this.state = {
             objectValues,
         };
+    }
+
+    componentWillReceiveProps(newProps) {
+        const {
+            value: newValue,
+            options,
+        } = newProps;
+
+        const { value: oldValue } = this.props;
+
+        if (newValue !== oldValue) {
+            const objectValues = this.getObjectFromValue(options, newValue);
+            this.setState({ objectValues });
+        }
     }
 
     getObjectFromValue = (options, value) => (
@@ -202,12 +213,12 @@ export default class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
+            className, //eslint-disable-line
             options,
             value,
             keySelector,
             labelSelector,
             label,
-            optionsIdentifier,
             error,
             hint,
             showHintAndError,
@@ -227,11 +238,11 @@ export default class SelectInputWithList extends React.PureComponent {
                     options={options}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
-                    optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
                     className={`${styles.input} input`}
                     disabled={disabled}
                     error={error}
+                    showHintAndError={false}
                     {...otherProps}
                 />
                 <ListView

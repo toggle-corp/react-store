@@ -58,6 +58,17 @@ const propTypes = {
 
     onChange: PropTypes.func,
 
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.arrayOf(
+            PropTypes.string,
+        ),
+        PropTypes.arrayOf(
+            PropTypes.number,
+        ),
+    ]),
+
     /**
      * Value selector function
      * should return value from provided row data
@@ -95,6 +106,7 @@ const defaultProps = {
     optionsIdentifier: undefined,
     options: [],
     blackList: [],
+    value: [],
 };
 
 export default class TabularSelectInput extends React.PureComponent {
@@ -109,16 +121,19 @@ export default class TabularSelectInput extends React.PureComponent {
             blackList,
             keySelector,
             tableHeaders,
+            value,
         } = this.props;
 
         const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
         const validOptions = this.getValidOptions(options, keySelector, blackList);
+        const selectedOptions = this.getSelectedOptions(validOptions, keySelector, value);
+        const selectedOptionsKeys = selectedOptions.map(d => keySelector(d));
 
         this.state = {
             validOptions,
             tableHeadersWithRemove,
-            selectedOptions: [],
-            selectedOptionsKeys: [],
+            selectedOptions,
+            selectedOptionsKeys,
         };
     }
 
