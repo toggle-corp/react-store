@@ -5,7 +5,11 @@ import DayPicker from './DayPicker';
 import MonthPicker from './MonthPicker';
 import YearPicker from './YearPicker';
 
+import styles from './styles.scss';
+
+
 const propTypes = {
+    className: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -14,6 +18,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     value: undefined,
     onChange: undefined,
 };
@@ -45,6 +50,18 @@ export default class DatePicker extends React.PureComponent {
         }
     }
 
+    getClassName = () => {
+        const { className } = this.props;
+
+        const classNames = [
+            className,
+            styles['date-picker'],
+            'date-picker',
+        ];
+
+        return classNames.join(' ');
+    }
+
     setMonthPicker = () => {
         this.setState({ picker: 'month' });
     }
@@ -61,7 +78,7 @@ export default class DatePicker extends React.PureComponent {
         });
     }
 
-    render() {
+    renderPicker = () => {
         const {
             value,
             onChange,
@@ -73,38 +90,54 @@ export default class DatePicker extends React.PureComponent {
             picker,
         } = this.state;
 
-        if (picker === 'day') {
-            return (
-                <DayPicker
-                    year={year}
-                    month={month}
-                    value={value}
-                    onChange={onChange}
-                    onMonthClick={this.setMonthPicker}
-                    onYearMonthChange={this.handleYearMonthChange}
-                />
-            );
-        } else if (picker === 'month') {
-            return (
-                <MonthPicker
-                    year={year}
-                    month={month}
-                    value={value}
-                    onYearClick={this.setYearPicker}
-                    onYearMonthChange={this.handleYearMonthChange}
-                />
-            );
-        } else if (picker === 'year') {
-            return (
-                <YearPicker
-                    year={year}
-                    month={month}
-                    value={value}
-                    onYearMonthChange={this.handleYearMonthChange}
-                />
-            );
-        }
 
-        return null;
+        switch (picker) {
+            case 'day':
+                return (
+                    <DayPicker
+                        className={styles.picker}
+                        year={year}
+                        month={month}
+                        value={value}
+                        onChange={onChange}
+                        onMonthClick={this.setMonthPicker}
+                        onYearMonthChange={this.handleYearMonthChange}
+                    />
+                );
+            case 'month':
+                return (
+                    <MonthPicker
+                        className={styles.picker}
+                        year={year}
+                        month={month}
+                        value={value}
+                        onYearClick={this.setYearPicker}
+                        onYearMonthChange={this.handleYearMonthChange}
+                    />
+                );
+            case 'year':
+                return (
+                    <YearPicker
+                        className={styles.picker}
+                        year={year}
+                        month={month}
+                        value={value}
+                        onYearMonthChange={this.handleYearMonthChange}
+                    />
+                );
+            default:
+                return null;
+        }
+    }
+
+    render() {
+        const className = this.getClassName();
+        const Picker = this.renderPicker;
+
+        return (
+            <div className={className}>
+                <Picker />
+            </div>
+        );
     }
 }

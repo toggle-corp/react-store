@@ -2,7 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './styles.scss';
 
+import Button from '../../../Action/Button';
+import iconNames from '../../../../constants/iconNames';
+
 const propTypes = {
+    className: PropTypes.string,
     year: PropTypes.number.isRequired,
     month: PropTypes.number.isRequired,
     value: PropTypes.oneOfType([
@@ -13,10 +17,13 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     value: undefined,
     onYearMonthChange: undefined,
 };
 
+
+const YEARS_PER_PAGE = 12;
 
 export default class YearPicker extends React.PureComponent {
     static propTypes = propTypes;
@@ -25,7 +32,7 @@ export default class YearPicker extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            startYear: Math.round(this.props.year / 9) * 9,
+            startYear: Math.round(this.props.year / YEARS_PER_PAGE) * YEARS_PER_PAGE,
         };
     }
 
@@ -33,7 +40,7 @@ export default class YearPicker extends React.PureComponent {
         const { value } = this.props;
         const classNames = [styles.year];
 
-        const selected = value ? new Date(value).getYear() : -1;
+        const selected = value ? new Date(value).getFullYear() : -1;
         if (selected === year) {
             classNames.push(styles.selected);
         }
@@ -48,40 +55,61 @@ export default class YearPicker extends React.PureComponent {
     }
 
     handlePrevious = () => {
-        this.setState({ startYear: this.state.startYear - 9 });
+        this.setState({ startYear: this.state.startYear - YEARS_PER_PAGE });
     }
 
     handleNext = () => {
-        this.setState({ startYear: this.state.startYear + 9 });
+        this.setState({ startYear: this.state.startYear + YEARS_PER_PAGE });
     }
 
     render() {
         const { startYear } = this.state;
+        const { className } = this.props;
 
         const years = [];
-        for (let i = 0; i < 9; i += 1) {
+        for (let i = 0; i < YEARS_PER_PAGE; i += 1) {
             years.push(startYear + i);
         }
+        const endYear = (startYear + YEARS_PER_PAGE) - 1;
 
         return (
-            <div className={styles['year-picker']}>
-                <button onClick={this.handlePrevious}>
-                    &lt;
-                </button>
+            <div className={`${className} ${styles['year-picker']}`}>
+                <header className={styles.header}>
+                    <Button
+                        className={styles.left}
+                        onClick={this.handlePrevious}
+                        type="button"
+                        transparent
+                        iconName={iconNames.chevronLeft}
+                    />
+                    <Button
+                        className={styles.title}
+                        type="button"
+                        transparent
+                    >
+                        { startYear } - { endYear }
+                    </Button>
+                    <Button
+                        className={styles.right}
+                        onClick={this.handleNext}
+                        type="button"
+                        transparent
+                        iconName={iconNames.chevronRight}
+                    />
+                </header>
                 <div className={styles.years}>
                     {years.map(year => (
-                        <button
+                        <Button
                             key={year}
                             className={this.getYearClassName(year)}
                             onClick={() => this.handleYearChange(year)}
+                            type="button"
+                            transparent
                         >
                             { year }
-                        </button>
+                        </Button>
                     ))}
                 </div>
-                <button onClick={this.handleNext}>
-                    &gt;
-                </button>
             </div>
         );
     }

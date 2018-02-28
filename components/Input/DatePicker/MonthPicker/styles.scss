@@ -1,55 +1,57 @@
 @import '../../../../stylesheets/base';
 
 .month-picker {
-    @include shadow-medium;
-
     display: flex;
-    flex-wrap: wrap;
-    z-index: 1;
-    background-color: $color-foreground;
-    padding: $spacing-small;
+    flex-direction: column;
+    height: 100%;
 
     .header {
         display: flex;
-        flex-basis: 100%;
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
+        background-color: $color-background-header;
 
         button {
-            outline: none;
-            border: 0;
-            background-color: transparent;
-            cursor: pointer;
-            padding: 4px;
-            height: 100%;
+            border-radius: 0;
+            padding: $spacing-small $spacing-small-alt;
 
-            color: inherit;
-            font-family: inherit;
-            font-size: inherit;
+            &:hover {
+                background-color: $color-background-hover;
+            }
+        }
+
+        .left,
+       .right, {
+            flex-shrink: 0;
+        }
+
+        .year {
+            flex-grow: 1;
         }
     }
 
     .months {
         display: flex;
-        flex-basis: 100%;
+        flex-grow: 1;
         flex-wrap: wrap;
-        width: 100%;
+        align-items: stretch;
+        padding: $spacing-extra-small;
+        overflow: auto;
 
         .month {
-            flex-basis: 25%;
-            outline: none;
-            border: 0;
-            background-color: transparent;
-            cursor: pointer;
-            padding: 4px;
+            flex-basis: calc(100% / 3);
+            border: $width-separator-thin solid transparent;
+            border-radius: 0;
+            padding: 0;
 
-            color: inherit;
-            font-family: inherit;
-            font-size: inherit;
+            &:hover {
+                background-color: $color-background-hover;
+            }
 
             &.selected {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                border-color: $color-accent;
+                color: $color-accent;
             }
         }
     }

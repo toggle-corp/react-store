@@ -1,44 +1,52 @@
 @import '../../../../stylesheets/base';
 
+%button {
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+}
 
 .day-picker {
-    @include shadow-medium;
-
-    display: flex;
-    flex-wrap: wrap;
-    z-index: 1;
-    background-color: $color-foreground;
-    padding: $spacing-small;
-
     .header {
         display: flex;
-        flex-basis: 100%;
-        align-items: center;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        background-color: $color-background-header;
+        width: 100%;
 
         button {
-            outline: none;
-            border: 0;
-            background-color: transparent;
-            cursor: pointer;
-            padding: 4px;
-            height: 100%;
+            border-radius: 0;
+            padding: $spacing-small $spacing-small-alt;
 
-            color: inherit;
-            font-family: inherit;
-            font-size: inherit;
+            &:hover {
+                background-color: $color-background-hover;
+            }
         }
-    }
 
-    .days-header {
-        display: flex;
-        flex-basis: 100%;
-        justify-content: space-between;
+        .left,
+        .right {
+            flex-shrink: 0;
+        }
 
-        > span {
-            flex: 1;
-            padding: 4px;
-            text-align: center;
+        .month {
+            flex-grow: 1;
+            text-transform: none;
+        }
+
+        .days {
+            display: flex;
+            flex-basis: 100%;
+            background-color: $color-background-header-alt;
+            padding: $spacing-extra-small 0;
+
+            > span {
+                flex-grow: 1;
+                text-align: center;
+                font-size: $font-size-small;
+            }
         }
     }
 
@@ -52,29 +60,25 @@
 
             .day {
                 display: table-cell;
-                text-align: right;
 
                 button {
-                    outline: none;
-                    border: 0;
-                    background-color: transparent;
-                    cursor: pointer;
-                    padding: 4px;
+                    border: $width-separator-thin solid transparent;
+                    border-radius: 0;
+                    padding: $spacing-small;
                     width: 100%;
                     height: 100%;
 
-                    color: inherit;
-                    font-family: inherit;
-                    font-size: inherit;
+                    &:hover {
+                        // border-color: $color-separator-alt;
+                        background-color: $color-background-hover;
+                    }
                 }
 
                 &.selected {
-                    background-color: $color-accent;
-                    color: $color-text-on-accent;
-                }
-
-                &.today {
-                    border: 0;
+                    button {
+                        border-color: $color-accent;
+                        color: $color-accent;
+                    }
                 }
             }
         }

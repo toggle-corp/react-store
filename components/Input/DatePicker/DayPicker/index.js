@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Button from '../../../Action/Button';
+import iconNames from '../../../../constants/iconNames';
+
 import DaysHeader from './DaysHeader';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     year: PropTypes.number.isRequired,
     month: PropTypes.number.isRequired,
     value: PropTypes.oneOfType([
@@ -17,6 +21,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     value: undefined,
     onChange: undefined,
     onYearMonthChange: undefined,
@@ -119,7 +124,9 @@ export default class DayPicker extends React.PureComponent {
         const { year, month, onYearMonthChange } = this.props;
         if (onYearMonthChange) {
             const date = new Date(year, month - 2, 1);
-            onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
+            if (date.getFullYear() >= 1990) {
+                onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
+            }
         }
     }
 
@@ -136,12 +143,13 @@ export default class DayPicker extends React.PureComponent {
             key={day.key}
             className={this.getDayClassName(day.key)}
         >
-            <button
+            <Button
                 onClick={() => this.handleDayChange(day.value)}
                 type="button"
+                transparent
             >
                 {day.value}
-            </button>
+            </Button>
         </div>
     )
 
@@ -155,36 +163,47 @@ export default class DayPicker extends React.PureComponent {
     )
 
     render() {
-        const { month, onMonthClick } = this.props;
+        const {
+            className,
+            month,
+            year,
+            onMonthClick,
+        } = this.props;
         const monthName = DayPicker.monthNames[month - 1];
 
+        const classNames = [
+            className,
+            'day-picker',
+            styles.dayPicker,
+        ];
+
         return (
-            <div className={styles['day-picker']}>
-                <div className={styles.header}>
-                    <button
+            <div className={classNames.join(' ')}>
+                <header className={styles.header}>
+                    <Button
+                        className={styles.left}
                         onClick={this.handlePrevious}
                         type="button"
-                    >
-                        &lt;
-                    </button>
-
-                    <button
+                        transparent
+                        iconName={iconNames.chevronLeft}
+                    />
+                    <Button
+                        className={styles.month}
                         onClick={onMonthClick}
                         type="button"
+                        transparent
                     >
-                        {monthName}
-                    </button>
-
-                    <button
+                        { monthName }, { year}
+                    </Button>
+                    <Button
+                        className={styles.right}
                         onClick={this.handleNext}
                         type="button"
-                    >
-                        &gt;
-                    </button>
-                </div>
-
-                <DaysHeader className={styles['days-header']} />
-
+                        transparent
+                        iconName={iconNames.chevronRight}
+                    />
+                    <DaysHeader className={styles.days} />
+                </header>
                 <div className={styles.weeks}>
                     { this.weeks.map(this.renderWeek) }
                 </div>

@@ -2,8 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './styles.scss';
 
+import Button from '../../../Action/Button';
+import iconNames from '../../../../constants/iconNames';
+
 const propTypes = {
+    className: PropTypes.string,
     year: PropTypes.number.isRequired,
+    month: PropTypes.number.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
@@ -13,6 +18,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     value: undefined,
     onYearMonthChange: undefined,
     onYearClick: undefined,
@@ -39,6 +45,20 @@ export default class MonthPicker extends React.PureComponent {
         return classNames.join(' ');
     }
 
+    handlePrevYearClick = () => {
+        const { year, month, onYearMonthChange } = this.props;
+        if (year > 1990 && onYearMonthChange) {
+            onYearMonthChange(year - 1, month);
+        }
+    }
+
+    handleNextYearClick = () => {
+        const { year, month, onYearMonthChange } = this.props;
+        if (onYearMonthChange) {
+            onYearMonthChange(year + 1, month);
+        }
+    }
+
     handleMonthChange = (monthIndex) => {
         const { year, onYearMonthChange } = this.props;
         if (onYearMonthChange) {
@@ -48,27 +68,49 @@ export default class MonthPicker extends React.PureComponent {
 
     render() {
         const {
+            className,
             year,
             onYearClick,
         } = this.props;
 
         return (
-            <div className={styles['month-picker']}>
-                <div className={styles.header}>
-                    <button onClick={onYearClick}>
+            <div className={`${className} ${styles['month-picker']}`}>
+                <header className={styles.header}>
+                    <Button
+                        className={styles.left}
+                        onClick={this.handlePrevYearClick}
+                        type="button"
+                        transparent
+                        iconName={iconNames.chevronLeft}
+                    />
+                    <Button
+                        className={styles.year}
+                        onClick={onYearClick}
+                        type="button"
+                        transparent
+                    >
                         { year }
-                    </button>
-                </div>
+                    </Button>
+                    <Button
+                        className={styles.right}
+                        onClick={this.handleNextYearClick}
+                        type="button"
+                        transparent
+                        iconName={iconNames.chevronRight}
+                    />
+                </header>
 
                 <div className={styles.months}>
                     {MonthPicker.monthNames.map((monthName, monthIndex) => (
-                        <button
+                        <Button
                             key={monthName}
                             className={this.getMonthClassName(monthIndex)}
                             onClick={() => this.handleMonthChange(monthIndex)}
+                            type="button"
+                            transparent
                         >
                             { monthName }
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>

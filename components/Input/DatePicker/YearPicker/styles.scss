@@ -2,40 +2,57 @@
 
 
 .year-picker {
-    @include shadow-medium;
-
     display: flex;
-    align-items: center;
-    z-index: 1;
-    background-color: $color-foreground;
-    padding: $spacing-small;
+    flex-direction: column;
+    height: 100%;
 
-    button {
+    .header {
+        display: flex;
         flex-shrink: 0;
-        outline: none;
-        border: 0;
-        background-color: transparent;
-        cursor: pointer;
-        padding: 4px;
-        height: 100%;
+        align-items: center;
+        justify-content: center;
+        background-color: $color-background-header;
 
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
+        button {
+            border-radius: 0;
+            padding: $spacing-small $spacing-small-alt;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
+        }
+
+        .left,
+       .right, {
+            flex-shrink: 0;
+        }
+
+        .title {
+            flex-grow: 1;
+        }
     }
 
     .years {
-        display: inline-flex;
+        display: flex;
         flex-grow: 1;
         flex-wrap: wrap;
+        align-items: stretch;
+        padding: $spacing-extra-small;
+        overflow: auto;
 
         .year {
-            flex-basis: 33.33%;
-            height: auto;
+            flex-basis: calc(100% / 3);
+            border: $width-separator-thin solid transparent;
+            border-radius: 0;
+            padding: 0;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
 
             &.selected {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                border-color: $color-accent;
+                color: $color-accent;
             }
         }
     }
