@@ -1,0 +1,63 @@
+@import '../../../stylesheets/base';
+
+.select-input-with-list {
+    display: flex;
+    flex-direction: column;
+
+    .input {
+        flex-shrink: 0;
+    }
+
+    .list {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: $color-background-row;
+            padding: $spacing-small;
+
+            .selected-item-label {
+                flex-grow: 1;
+            }
+
+            .remove-button {
+                flex-shrink: 0;
+
+                &.disabled {
+                    color: $color-label;
+                }
+            }
+
+            &:nth-child(even) {
+                background-color: $color-background-row-alt;
+            }
+        }
+    }
+
+    &.error {
+        border-bottom-color: $color-danger;
+    }
+
+    %base {
+        margin: $spacing-extra-small 0 0;
+        font-size: $font-size-extra-small;
+    }
+
+    .hint {
+        @extend %base;
+        color: $color-label;
+    }
+
+    .error {
+        @extend %base;
+        color: $color-danger;
+    }
+
+    .empty {
+        @extend %base;
+        visibility: hidden;
+    }
+}
