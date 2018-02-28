@@ -58,13 +58,45 @@ export default class GridLayout extends React.PureComponent {
     }
 
     getClassName = () => {
-        const classNames = [];
-        classNames.push(styles['grid-layout']);
+        const {
+            className,
+            viewOnly,
+        } = this.props;
 
-        if (this.props.viewOnly) {
+        const classNames = [
+            className,
+            styles['grid-layout'],
+        ];
+
+        if (viewOnly) {
             classNames.push(styles['view-only']);
         }
+
         return classNames.join(' ');
+    }
+
+    getBounds = () => {
+        const { items } = this.state;
+        let maxW = 0;
+        let maxH = 0;
+
+        items.forEach((i) => {
+            const l = i.layout;
+            const w = l.left + l.width;
+            const h = l.top + l.height;
+            if (w > maxW) {
+                maxW = w;
+            }
+
+            if (h > maxH) {
+                maxH = h;
+            }
+        });
+
+        return {
+            width: maxW,
+            height: maxH,
+        };
     }
 
     snapX = val => (
@@ -220,8 +252,6 @@ export default class GridLayout extends React.PureComponent {
         }
     }
 
-    heightOfItem = item => item.layout.height + item.layout.top;
-
     renderGridItem = (key, item) => {
         const {
             modifier,
@@ -242,9 +272,27 @@ export default class GridLayout extends React.PureComponent {
         );
     }
 
+    renderGhostItem = (p) => {
+        const { layout } = p;
+
+        if (!layout) {
+            return null;
+        }
+
+        return (
+            <div
+                className={styles['ghost-item']}
+                style={{
+                    width: layout.width,
+                    height: layout.height,
+                    transform: `translate(${layout.left}px, ${layout.top}px)`,
+                }}
+            />
+        );
+    }
+
     render() {
         const {
-            className,
             snapX,
             snapY,
         } = this.props;
@@ -255,23 +303,28 @@ export default class GridLayout extends React.PureComponent {
 
         // XXX: maybe make validLayout copy
         const { validLayout } = this.state;
+        const className = this.getClassName();
+        const GhostItem = this.renderGhostItem;
+
+        const bounds = this.getBounds();
+        const style = {
+            ...bounds,
+            backgroundSize: `${snapX}px ${snapY}px`,
+        };
 
         return (
             <div
-                className={`${className} ${this.getClassName()}`}
-                style={{ backgroundSize: `${snapX}px ${snapY}px` }}
+                className={className}
+                style={style}
             >
                 <List
                     data={items}
                     keyExtractor={GridLayout.itemKeyExtractor}
                     modifier={this.renderGridItem}
                 />
-                { validLayout && (
-                    <div
-                        className={styles['ghost-item']}
-                        style={{ ...validLayout }}
-                    />
-                )}
+                <GhostItem
+                    layout={validLayout}
+                />
             </div>
         );
     }

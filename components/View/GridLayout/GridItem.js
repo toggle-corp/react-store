@@ -30,10 +30,17 @@ export default class GridItem extends React.PureComponent {
     }
 
     getClassName = () => {
-        const classNames = [];
-        classNames.push(styles['grid-item']);
+        const {
+            viewOnly,
+            className,
+        } = this.props;
 
-        if (this.props.viewOnly) {
+        const classNames = [
+            className,
+            styles['grid-item'],
+        ];
+
+        if (viewOnly) {
             classNames.push(styles['view-only']);
         }
 
@@ -111,46 +118,77 @@ export default class GridItem extends React.PureComponent {
         }
     }
 
-    render() {
-        const {
-            className,
-            modifier,
-            data,
-        } = this.props;
+    renderHeader = () => {
         const {
             title,
             headerRightComponent,
-        } = data;
+        } = this.props.data;
 
-        // XXX: maybe copy data.layout
+        return (
+            <header className="header">
+                <h3
+                    className="heading"
+                    role="presentation"
+                    ref={(el) => { this.dragHandle = el; }}
+                    onMouseDown={this.handleDragHandleMouseDown}
+                    onMouseUp={this.handleDragHandleMouseUp}
+                >
+                    { title }
+                </h3>
+                { headerRightComponent }
+            </header>
+        );
+    }
+
+    renderResizeHandle = () => {
+        const className = [
+            styles['resize-handle'],
+            'resize-handle',
+        ].join(' ');
+
+        return (
+            <span
+                className={className}
+                ref={(el) => { this.resizeHandle = el; }}
+                role="presentation"
+                onMouseDown={this.handleResizeHandleMouseDown}
+                onMouseUp={this.handleResizeHandleMouseUp}
+            />
+        );
+    }
+
+    render() {
+        const {
+            modifier,
+            data,
+        } = this.props;
+
+        const { layout } = data;
+        const className = this.getClassName();
+        const contentClassName = [
+            'content',
+            styles.content,
+        ].join(' ');
+        const style = {
+            width: layout.width,
+            height: layout.height,
+            transform: `translate(${layout.left}px, ${layout.top}px)`,
+        };
+
+        const Header = this.renderHeader;
+        const ResizeHandle = this.renderResizeHandle;
+
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                className={`${className} ${this.getClassName()}`}
-                style={{ ...data.layout }}
+                className={className}
+                style={style}
             >
-                <header className={`header ${styles.header}`}>
-                    <h3
-                        role="presentation"
-                        ref={(el) => { this.dragHandle = el; }}
-                        className={`heading ${styles.heading}`}
-                        onMouseDown={this.handleDragHandleMouseDown}
-                        onMouseUp={this.handleDragHandleMouseUp}
-                    >
-                        { title }
-                    </h3>
-                    { headerRightComponent }
-                </header>
-                <div className={`content ${styles.content}`}>
+                <Header />
+                <div className={contentClassName}>
                     { modifier(data) }
                 </div>
-                <span
-                    ref={(el) => { this.resizeHandle = el; }}
-                    role="presentation"
-                    onMouseDown={this.handleResizeHandleMouseDown}
-                    onMouseUp={this.handleResizeHandleMouseUp}
-                    className={styles['resize-handle']}
-                />
+                <ResizeHandle />
             </div>
         );
     }
