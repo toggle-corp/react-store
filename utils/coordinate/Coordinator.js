@@ -147,9 +147,13 @@ export default class Coordinator {
         // stop current
         oldActiveActors.forEach(actor => actor.nativeActor.stop());
 
-        if (this.postSession) {
-            this.postSession();
-        }
+        /*
+            // NOTE: don't call post session on stop
+            // Make a different callback
+            if (this.postSession) {
+                this.postSession();
+            }
+        */
     }
 
     hasQueuedActors = () => this.queuedActors.length > 0;
