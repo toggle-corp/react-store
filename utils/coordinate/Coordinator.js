@@ -23,6 +23,7 @@ export default class Coordinator {
         // results in multiple postSession calls.
         // To prevent this, memorize the session state
         this.inSession = false;
+        this.totalErrors = 0;
     }
 
     // INTERNAL
@@ -83,8 +84,9 @@ export default class Coordinator {
             console.log('Session has completed');
             this.inSession = false;
             if (this.postSession) {
-                this.postSession();
+                this.postSession(this.totalErrors);
             }
+            this.totalErrors = 0;
             return;
         } else if (this.queuedActors.length <= 0) {
             // no queued actors left, but has active actors
@@ -110,7 +112,8 @@ export default class Coordinator {
     }
 
     // actors notify co-ordinator that it has completed with or without errors
-    notifyComplete = (id) => {
+    notifyComplete = (id, hasError = false) => {
+        this.totalErrors += hasError ? 1 : 0;
         // remove from activeActors
         const actorIndex = this.getActiveActorIndexById(id);
         if (actorIndex < 0) {
