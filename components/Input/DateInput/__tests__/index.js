@@ -10,7 +10,6 @@ describe('DateInput', () => {
             initialValue={initialValue}
             format="d/m/y"
             label="Published at"
-            className={styles['date-input']}
             required
         />,
     );
