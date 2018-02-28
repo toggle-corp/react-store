@@ -56,14 +56,16 @@ export default class ScrollTabs extends React.PureComponent {
     }
 
     renderTab = (key, data) => {
-        if (!data) {
-            return null;
-        }
-
+        console.warn(data);
         const {
             active,
             tabs,
         } = this.props;
+
+        if (!tabs[data]) {
+            return null;
+        }
+
         const isActive = data === active;
         const className = this.getTabClassName(isActive);
         const onClick = () => { this.handleTabClick(data); };
