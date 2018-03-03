@@ -95,21 +95,23 @@ export default class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.realValue = this.props.initialValue || this.props.value;
+        const value = this.props.initialValue || this.props.value;
         this.state = {
             isFocused: false,
-            value: this.realValue,
+            value,
         };
 
         this.inputId = randomString();
+        this.pendingChange = false;
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.realValue !== nextProps.value) {
-            this.realValue = nextProps.value;
-            this.setState({
-                value: this.realValue,
-            });
+        if (this.props.value !== nextProps.value) {
+            if (!this.pendingChange) {
+                this.setState({ value: nextProps.value });
+            } else {
+                console.warn('Not updating, as there is a pending change.');
+            }
         }
     }
 
@@ -151,14 +153,21 @@ export default class TextInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
+        clearTimeout(this.changeTimeout);
+        this.pendingChange = true;
+
         const { value } = event.target;
-        this.realValue = value;
-        this.setState({ value: this.realValue });
+        this.setState({ value });
 
         const { onChange, changeDelay } = this.props;
         if (onChange) {
-            clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(this.realValue), changeDelay);
+            this.changeTimeout = setTimeout(
+                () => {
+                    onChange(value);
+                    this.pendingChange = false;
+                },
+                changeDelay,
+            );
         }
     }
 

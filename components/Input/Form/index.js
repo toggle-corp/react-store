@@ -30,6 +30,7 @@ const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -42,6 +43,7 @@ const defaultProps = {
     value: {},
     error: {},
     disabled: false,
+    changeDelay: 1000, // ms
 };
 
 const mapChildrenRecursive = (children, condition, propertyFn) => {
@@ -99,6 +101,7 @@ export default class Form extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
+            console.warn('Setting value', nextProps.value);
             this.form.setValue(nextProps.value);
         }
         if (this.props.elements !== nextProps.elements) {
@@ -114,7 +117,9 @@ export default class Form extends React.PureComponent {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.form.onSubmit();
+        console.warn('Submitting');
+        this.submit();
+        // Returning false will not submit the form & redirect
         return false;
     }
 
@@ -128,11 +133,19 @@ export default class Form extends React.PureComponent {
         value: this.props.value[props.formname],
         error: this.props.error[props.formname],
         disabled: this.props.disabled,
+        changeDelay: this.props.changeDelay,
     })
 
     /* Submit a form from parent */
     submit = () => {
-        this.form.onSubmit();
+        clearTimeout(this.changeTimeout);
+        this.changeTimeout = setTimeout(
+            () => {
+                console.warn('Submitting now');
+                this.form.onSubmit();
+            },
+            this.props.changeDelay,
+        );
     }
 
     render() {
