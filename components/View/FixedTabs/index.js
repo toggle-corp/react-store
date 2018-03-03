@@ -56,7 +56,6 @@ export default class ScrollTabs extends React.PureComponent {
     }
 
     renderTab = (key, data) => {
-        console.warn(data);
         const {
             active,
             tabs,
