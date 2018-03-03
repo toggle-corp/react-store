@@ -93,12 +93,22 @@ const defaultProps = {
     changeDelay: 400,
 };
 
+const INT_LIMIT = 9007199254740992;
+
 export default class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    // NOTE: no sign part here
     static changeToNumber = (val = '') => {
         const newVal = val.replace(/[^0-9]/g, '');
+        // Limit integer value to MAX_LIMIT
+        if (newVal !== '') {
+            const realValue = +newVal;
+            if (isTruthy(realValue)) {
+                return String(Math.min(INT_LIMIT, realValue));
+            }
+        }
         return newVal;
     };
 
@@ -228,7 +238,7 @@ export default class NumberInput extends React.PureComponent {
         this.pendingChange = true;
 
         const { separator } = this.props;
-        const { val } = event.target;
+        const { value: val } = event.target;
 
         const { value, displayValue } = NumberInput.calculateNewValues(
             val,
@@ -240,8 +250,8 @@ export default class NumberInput extends React.PureComponent {
         if (onChange) {
             this.changeTimeout = setTimeout(
                 () => {
-                    onChange(value);
                     this.pendingChange = false;
+                    onChange(value);
                 },
                 changeDelay,
             );

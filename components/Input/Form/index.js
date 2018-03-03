@@ -43,7 +43,7 @@ const defaultProps = {
     value: {},
     error: {},
     disabled: false,
-    changeDelay: 1000, // ms
+    changeDelay: 200, // ms
 };
 
 const mapChildrenRecursive = (children, condition, propertyFn) => {
@@ -101,7 +101,6 @@ export default class Form extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
-            console.warn('Setting value', nextProps.value);
             this.form.setValue(nextProps.value);
         }
         if (this.props.elements !== nextProps.elements) {
@@ -117,7 +116,6 @@ export default class Form extends React.PureComponent {
 
     onSubmit = (e) => {
         e.preventDefault();
-        console.warn('Submitting');
         this.submit();
         // Returning false will not submit the form & redirect
         return false;
@@ -140,10 +138,7 @@ export default class Form extends React.PureComponent {
     submit = () => {
         clearTimeout(this.changeTimeout);
         this.changeTimeout = setTimeout(
-            () => {
-                console.warn('Submitting now');
-                this.form.onSubmit();
-            },
+            () => { this.form.onSubmit(); },
             this.props.changeDelay,
         );
     }

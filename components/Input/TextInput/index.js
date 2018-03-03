@@ -163,8 +163,8 @@ export default class TextInput extends React.PureComponent {
         if (onChange) {
             this.changeTimeout = setTimeout(
                 () => {
-                    onChange(value);
                     this.pendingChange = false;
+                    onChange(value);
                 },
                 changeDelay,
             );

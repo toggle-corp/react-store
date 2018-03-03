@@ -74,7 +74,6 @@ export default class FormHelper {
      * clears all form errors and form field errors
      */
     onSubmit = () => {
-        console.warn(this.value);
         const { hasError, formErrors, formFieldErrors } = this.checkForErrors();
         if (hasError) {
             this.failureCallback({ formErrors, formFieldErrors });
