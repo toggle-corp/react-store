@@ -86,7 +86,7 @@ export default class Dendrogram extends React.PureComponent {
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
             .append('g')
-            .attr('transform', `translate(80, ${top})`);
+            .attr('transform', `translate(${80 + left}, ${top})`);
     }
 
     save = () => {
@@ -218,7 +218,7 @@ export default class Dendrogram extends React.PureComponent {
     render() {
         const { loading, className } = this.props;
 
-        const containerStyle = `${styles['dendrogram-container']}${className}`;
+        const containerStyle = `${styles['dendrogram-container']} ${className}`;
         const dendroGramStyle = `${styles.dendrogram}`;
         return (
             <div
