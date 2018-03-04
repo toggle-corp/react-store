@@ -1,0 +1,58 @@
+@import '../../../../stylesheets/base';
+
+.month-picker {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .header {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        background-color: $color-background-header;
+
+        button {
+            border-radius: 0;
+            padding: $spacing-small $spacing-small-alt;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
+        }
+
+        .left,
+       .right, {
+            flex-shrink: 0;
+        }
+
+        .year {
+            flex-grow: 1;
+        }
+    }
+
+    .months {
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        align-items: stretch;
+        padding: $spacing-extra-small;
+        overflow: auto;
+
+        .month {
+            flex-basis: calc(100% / 3);
+            border: $width-separator-thin solid transparent;
+            border-radius: 0;
+            padding: 0;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
+
+            &.selected {
+                border-color: $color-accent;
+                color: $color-accent;
+            }
+        }
+    }
+}

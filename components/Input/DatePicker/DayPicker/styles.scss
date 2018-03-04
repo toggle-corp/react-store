@@ -1,0 +1,86 @@
+@import '../../../../stylesheets/base';
+
+%button {
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.day-picker {
+    .header {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: $color-background-header;
+        width: 100%;
+
+        button {
+            border-radius: 0;
+            padding: $spacing-small $spacing-small-alt;
+
+            &:hover {
+                background-color: $color-background-hover;
+            }
+        }
+
+        .left,
+        .right {
+            flex-shrink: 0;
+        }
+
+        .month {
+            flex-grow: 1;
+            text-transform: none;
+        }
+
+        .days {
+            display: flex;
+            flex-basis: 100%;
+            background-color: $color-background-header-alt;
+            padding: $spacing-extra-small 0;
+
+            > span {
+                flex-grow: 1;
+                text-align: center;
+                font-size: $font-size-small;
+            }
+        }
+    }
+
+    .weeks {
+        display: table;
+        flex-basis: 100%;
+        width: 100%;
+
+        .week {
+            display: table-row;
+
+            .day {
+                display: table-cell;
+
+                button {
+                    border: $width-separator-thin solid transparent;
+                    border-radius: 0;
+                    padding: $spacing-small;
+                    width: 100%;
+                    height: 100%;
+
+                    &:hover {
+                        // border-color: $color-separator-alt;
+                        background-color: $color-background-hover;
+                    }
+                }
+
+                &.selected {
+                    button {
+                        border-color: $color-accent;
+                        color: $color-accent;
+                    }
+                }
+            }
+        }
+    }
+}
