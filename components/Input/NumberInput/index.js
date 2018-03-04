@@ -93,12 +93,22 @@ const defaultProps = {
     changeDelay: 400,
 };
 
+const INT_LIMIT = 9007199254740992;
+
 export default class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    // NOTE: no sign part here
     static changeToNumber = (val = '') => {
         const newVal = val.replace(/[^0-9]/g, '');
+        // Limit integer value to MAX_LIMIT
+        if (newVal !== '') {
+            const realValue = +newVal;
+            if (isTruthy(realValue)) {
+                return String(Math.min(INT_LIMIT, realValue));
+            }
+        }
         return newVal;
     };
 
@@ -117,17 +127,16 @@ export default class NumberInput extends React.PureComponent {
         if (isFalsy(v)) {
             return {};
         }
-        // TODO: Value provided is most likely to be number
+        // NOTE: Value provided is most likely to be number
         // when it is provided from props, change it to string first
-        const value = String(v);
+        const stringifiedV = String(v);
 
         let signPart;
-        let numberPart = value;
-
-        // extract sign
-        if (value[0] === '-' || value[0] === '+') {
-            signPart = value[0];
-            numberPart = value.substr(1);
+        let numberPart = stringifiedV;
+        // extract sign if there is a sign
+        if (stringifiedV[0] === '-' || stringifiedV[0] === '+') {
+            signPart = stringifiedV[0];
+            numberPart = stringifiedV.substr(1);
         }
 
         // get string with only number
@@ -138,24 +147,23 @@ export default class NumberInput extends React.PureComponent {
         const displayValue = NumberInput.concatNumber(signPart, numberWithCommaPart);
 
         // get value to return outside
-        let realValue = NumberInput.concatNumber(signPart, numberSanitizedPart);
-        if (realValue === '+' || realValue === '-' || realValue === '') {
-            realValue = undefined;
+        let value = NumberInput.concatNumber(signPart, numberSanitizedPart);
+        if (value === '+' || value === '-' || value === '') {
+            value = undefined;
         } else {
-            realValue = +realValue;
+            value = +value;
         }
 
-        return { realValue, displayValue };
+        return { value, displayValue };
     }
 
     constructor(props) {
         super(props);
 
-        const { realValue, displayValue } = NumberInput.calculateNewValues(
+        const { displayValue } = NumberInput.calculateNewValues(
             props.value || props.initialValue,
             props.separator,
         );
-        this.realValue = realValue;
 
         this.state = {
             isFocused: false,
@@ -163,16 +171,20 @@ export default class NumberInput extends React.PureComponent {
         };
 
         this.inputId = randomString();
+        this.pendingChange = false;
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.realValue !== nextProps.value) {
-            const { realValue, displayValue } = NumberInput.calculateNewValues(
-                nextProps.value,
-                nextProps.separator,
-            );
-            this.realValue = realValue;
-            this.setState({ value: displayValue });
+        if (this.props.value !== nextProps.value) {
+            if (!this.pendingChange) {
+                const { displayValue } = NumberInput.calculateNewValues(
+                    nextProps.value,
+                    nextProps.separator,
+                );
+                this.setState({ value: displayValue });
+            } else {
+                console.warn('Not updating, as there is a pending change.');
+            }
         }
     }
 
@@ -222,20 +234,27 @@ export default class NumberInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        const { separator } = this.props;
-        const { value } = event.target;
+        clearTimeout(this.changeTimeout);
+        this.pendingChange = true;
 
-        const { realValue, displayValue } = NumberInput.calculateNewValues(
-            value,
+        const { separator } = this.props;
+        const { value: val } = event.target;
+
+        const { value, displayValue } = NumberInput.calculateNewValues(
+            val,
             separator,
         );
-        this.realValue = realValue;
         this.setState({ value: displayValue });
 
         const { onChange, changeDelay } = this.props;
         if (onChange) {
-            clearTimeout(this.changeTimeout);
-            this.changeTimeout = setTimeout(() => onChange(this.realValue), changeDelay);
+            this.changeTimeout = setTimeout(
+                () => {
+                    this.pendingChange = false;
+                    onChange(value);
+                },
+                changeDelay,
+            );
         }
     }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import { select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
@@ -57,7 +56,6 @@ const defaultProps = {
  * to values they represent.
  */
 @Responsive
-@CSSModules(styles)
 export default class HorizontalBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

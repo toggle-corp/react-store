@@ -29,6 +29,8 @@ const propTypes = {
     /* object with values */
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    disabled: PropTypes.bool,
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -40,6 +42,8 @@ const defaultProps = {
     validations: {},
     value: {},
     error: {},
+    disabled: false,
+    changeDelay: 200, // ms
 };
 
 const mapChildrenRecursive = (children, condition, propertyFn) => {
@@ -112,11 +116,12 @@ export default class Form extends React.PureComponent {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.form.onSubmit();
+        this.submit();
+        // Returning false will not submit the form & redirect
         return false;
     }
 
-    // TODO: use requiredCondition here
+    // TODO: breaks when formname is number
     getCondition = props => (
         props.formname && props.formname.length > 0
     )
@@ -125,11 +130,17 @@ export default class Form extends React.PureComponent {
         onChange: this.form.getChangeFn(props.formname),
         value: this.props.value[props.formname],
         error: this.props.error[props.formname],
+        disabled: this.props.disabled,
+        changeDelay: this.props.changeDelay,
     })
 
     /* Submit a form from parent */
     submit = () => {
-        this.form.onSubmit();
+        clearTimeout(this.changeTimeout);
+        this.changeTimeout = setTimeout(
+            () => { this.form.onSubmit(); },
+            this.props.changeDelay,
+        );
     }
 
     render() {
