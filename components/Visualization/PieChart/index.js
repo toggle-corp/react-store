@@ -5,8 +5,10 @@ import { select } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
-import { LoadingAnimation } from '../../View';
+
+import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
+
 import styles from './styles.scss';
 
 /**
@@ -78,7 +80,10 @@ export default class PieChart extends Component {
             .data(pies)
             .enter()
             .append('path')
-            .each(d => (d.outerRadius = outerRadius - 10)) // eslint-disable-line
+            .each((d) => {
+                // eslint-disable-next-line no-param-reassign
+                d.outerRadius = outerRadius - 10;
+            })
             .attr('d', arcs)
             .style('fill', d => colors(labelAccessor(d.data)))
             .attr('pointer-events', 'none')
@@ -138,7 +143,10 @@ export default class PieChart extends Component {
             .data(pies)
             .enter()
             .append('polyline')
-            .each(d => (d.outerRadius = outerRadius - 10))  //eslint-disable-line
+            .each((d) => {
+                // eslint-disable-next-line no-param-reassign
+                d.outerRadius = outerRadius - 10;
+            })
             .transition()
             .delay((d, i) => i * period)
             .attr('points', (d) => {
@@ -165,7 +173,8 @@ export default class PieChart extends Component {
             .attrTween('d', (d) => {
                 const i = interpolateNumber(d.startAngle + 0.1, d.endAngle);
                 return function tween(t) {
-                    d.endAngle = i(t); //eslint-disable-line
+                    // eslint-disable-next-line no-param-reassign
+                    d.endAngle = i(t);
                     return arcs(d);
                 };
             })
@@ -181,7 +190,8 @@ export default class PieChart extends Component {
             .attrTween('d', (d) => {
                 const i = interpolateNumber(d.outerRadius, newRadius);
                 return function tween(t) {
-                    d.outerRadius = i(t); //eslint-disable-line
+                    // eslint-disable-next-line no-param-reassign
+                    d.outerRadius = i(t);
                     return arcs(d);
                 };
             })
