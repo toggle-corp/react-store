@@ -82,7 +82,7 @@ export default class DayPicker extends React.PureComponent {
             const days = [];
             if (i === 0) {
                 for (let j = 0; j < firstDay; j += 1) {
-                    days.push({ key: j, value: '' });
+                    days.push({ key: j, value: undefined });
                 }
                 for (let j = firstDay; j < 7; j += 1) {
                     days.push({ key: j + 1, value: (j - firstDay) + 1 });
@@ -143,13 +143,17 @@ export default class DayPicker extends React.PureComponent {
             key={day.key}
             className={this.getDayClassName(day.key)}
         >
-            <Button
-                onClick={() => this.handleDayChange(day.value)}
-                type="button"
-                transparent
-            >
-                {day.value}
-            </Button>
+            {
+                day.value && (
+                    <Button
+                        onClick={() => this.handleDayChange(day.value)}
+                        type="button"
+                        transparent
+                    >
+                        {day.value}
+                    </Button>
+                )
+            }
         </div>
     )
 
