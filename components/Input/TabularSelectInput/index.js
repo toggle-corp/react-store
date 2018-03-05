@@ -58,16 +58,23 @@ const propTypes = {
 
     onChange: PropTypes.func,
 
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.arrayOf(
-            PropTypes.string,
-        ),
-        PropTypes.arrayOf(
-            PropTypes.number,
-        ),
-    ]),
+    value: PropTypes.arrayOf(
+        PropTypes.object,
+    ),
+
+    /**
+     * String to show in case of error
+     */
+    error: PropTypes.string,
+
+    /**
+     * Hint text
+     */
+    hint: PropTypes.string,
+
+    showHintAndError: PropTypes.bool,
+
+    disabled: PropTypes.bool,
 
     /**
      * Value selector function
@@ -75,18 +82,14 @@ const propTypes = {
      */
     labelSelector: PropTypes.func,
 
+    hideRemoveFromListButton: PropTypes.bool,
+
     className: PropTypes.string,
     /**
      * Options to be shown
      */
     options: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.oneOfType([
-                PropTypes.string,
-                PropTypes.number,
-            ]),
-            label: PropTypes.string,
-        }),
+        PropTypes.object,
     ),
 
     optionsIdentifier: PropTypes.string,
@@ -104,9 +107,14 @@ const defaultProps = {
     labelSelector: d => (d || {}).label,
     onChange: undefined,
     optionsIdentifier: undefined,
+    hideRemoveFromListButton: false,
+    error: '',
+    hint: '',
     options: [],
     blackList: [],
     value: [],
+    disabled: false,
+    showHintAndError: true,
 };
 
 export default class TabularSelectInput extends React.PureComponent {
@@ -124,9 +132,9 @@ export default class TabularSelectInput extends React.PureComponent {
             value,
         } = this.props;
 
+        const selectedOptions = this.getSelectedOptions(value, keySelector, blackList);
         const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
         const validOptions = this.getValidOptions(options, keySelector, blackList);
-        const selectedOptions = this.getSelectedOptions(validOptions, keySelector, value);
         const selectedOptionsKeys = selectedOptions.map(d => keySelector(d));
 
         this.state = {
@@ -153,16 +161,55 @@ export default class TabularSelectInput extends React.PureComponent {
                 nextProps.keySelector,
                 nextProps.blackList,
             );
-            const selectedOptions = this.getSelectedOptions(
-                validOptions,
-                this.props.keySelector,
-                this.state.selectedOptionsKeys,
-            );
             this.setState({
                 validOptions,
-                selectedOptions,
             });
         }
+
+        if (nextProps.value !== this.props.value) {
+            const selectedOptions = this.getSelectedOptions(
+                nextProps.value,
+                nextProps.keySelector,
+                this.props.blackList,
+            );
+            const selectedOptionsKeys = selectedOptions.map(d => nextProps.keySelector(d));
+
+            this.setState({
+                selectedOptions,
+                selectedOptionsKeys,
+            });
+        }
+    }
+
+    getClassName = () => {
+        const { className } = this.props;
+        const { error } = this.state;
+
+        const classNames = [
+            className,
+            styles['tabular-select-input'],
+            'tabular-select-input',
+        ];
+
+        if (error) {
+            classNames.push(styles.error);
+            classNames.push('error');
+        }
+
+        return classNames.join(' ');
+    }
+
+    getSelectedOptions = (values, keySelector, blackList) => {
+        const blackListMap = listToMap(
+            blackList,
+            d => d,
+            () => true,
+        );
+
+        const selectedOptions = values.filter(
+            value => !blackListMap[keySelector(value)],
+        );
+        return selectedOptions;
     }
 
     getValidOptions = (options, keySelector, blackList) => {
@@ -178,48 +225,46 @@ export default class TabularSelectInput extends React.PureComponent {
         return validOptions;
     }
 
-    getSelectedOptions = (options, keySelector, values) => {
-        const valuesMap = listToMap(
-            values,
-            d => d,
-            () => true,
-        );
+    createTableHeaders = (tableHeaders) => {
+        const { hideRemoveFromListButton } = this.props;
+        if (hideRemoveFromListButton) {
+            return tableHeaders;
+        }
 
-        const selectedOptions = options.filter(
-            option => valuesMap[keySelector(option)],
-        );
-        return selectedOptions;
+        return ([
+            ...tableHeaders,
+            {
+                key: 'delete-action-included',
+                label: 'Remove',
+                modifier: row => (
+                    <DangerButton
+                        className="delete-button"
+                        onClick={() => this.handleRemoveButtonClick(row)}
+                        iconName={iconNames.delete}
+                        smallVerticalPadding
+                        transparent
+                    />
+                ),
+            },
+        ]);
     }
-
-    createTableHeaders = tableHeaders => ([
-        ...tableHeaders,
-        {
-            key: 'delete-action-included',
-            label: 'Remove',
-            modifier: row => (
-                <DangerButton
-                    className="delete-button"
-                    onClick={() => this.handleRemoveButtonClick(row)}
-                    iconName={iconNames.delete}
-                    smallVerticalPadding
-                    transparent
-                />
-            ),
-        },
-    ])
 
     handleSelectInputChange = (values) => {
         const {
-            options,
             keySelector,
             onChange,
         } = this.props;
+        const {
+            validOptions,
+        } = this.state;
 
-        const selectedOptions = this.getSelectedOptions(
-            options,
-            keySelector,
-            values,
-        );
+        const selectedOptions = [];
+        values.forEach((v) => {
+            const rowIndex = validOptions.findIndex(u => keySelector(u) === v);
+            if (rowIndex !== -1) {
+                selectedOptions.push(validOptions[rowIndex]);
+            }
+        });
         const selectedOptionsKeys = selectedOptions.map(d => keySelector(d));
 
         this.setState(
@@ -229,7 +274,7 @@ export default class TabularSelectInput extends React.PureComponent {
             },
             () => {
                 if (onChange) {
-                    onChange(selectedOptionsKeys);
+                    onChange(selectedOptions);
                 }
             },
         );
@@ -259,7 +304,7 @@ export default class TabularSelectInput extends React.PureComponent {
             },
             () => {
                 if (onChange) {
-                    onChange(selectedOptionsKeys);
+                    onChange(selectedOptionsNew);
                 }
             },
         );
@@ -269,8 +314,12 @@ export default class TabularSelectInput extends React.PureComponent {
         const {
             keySelector,
             labelSelector,
-            className,
             optionsIdentifier,
+            error,
+            hint,
+            showHintAndError,
+            disabled,
+            ...otherProps
         } = this.props;
 
         const {
@@ -281,8 +330,9 @@ export default class TabularSelectInput extends React.PureComponent {
         } = this.state;
 
         return (
-            <div className={`${className} tabular-select-input ${styles['tabular-select-input']}`} >
+            <div className={this.getClassName()} >
                 <MultiSelectInput
+                    {...otherProps}
                     className={styles.select}
                     value={selectedOptionsKeys}
                     options={validOptions}
@@ -290,6 +340,9 @@ export default class TabularSelectInput extends React.PureComponent {
                     labelSelector={labelSelector}
                     optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
+                    disabled={disabled}
+                    error={error}
+                    showHintAndError={false}
                 />
                 <div className={styles['table-container']}>
                     <Table
@@ -298,6 +351,34 @@ export default class TabularSelectInput extends React.PureComponent {
                         keyExtractor={keySelector}
                     />
                 </div>
+                {
+                    showHintAndError && [
+                        !error && hint && (
+                            <p
+                                key="hint"
+                                className={`${styles.hint} hint`}
+                            >
+                                {hint}
+                            </p>
+                        ),
+                        error && !hint && (
+                            <p
+                                key="error"
+                                className={`${styles.error} error`}
+                            >
+                                {error}
+                            </p>
+                        ),
+                        !error && !hint && (
+                            <p
+                                key="empty"
+                                className={`${styles.empty} empty`}
+                            >
+                                -
+                            </p>
+                        ),
+                    ]
+                }
             </div>
         );
     }

@@ -24,4 +24,27 @@
         }
     }
 
+    &.error {
+        border-bottom-color: $color-danger;
+    }
+
+    %base {
+        margin: $spacing-extra-small 0 0;
+        font-size: $font-size-extra-small;
+    }
+
+    .hint {
+        @extend %base;
+        color: $color-label;
+    }
+
+    .error {
+        @extend %base;
+        color: $color-danger;
+    }
+
+    .empty {
+        @extend %base;
+        visibility: hidden;
+    }
 }

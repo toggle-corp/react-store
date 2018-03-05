@@ -46,7 +46,7 @@ const propTypes = {
         PropTypes.number,
     ])),
 
-    showRemoveFromListButton: PropTypes.bool,
+    hideRemoveFromListButton: PropTypes.bool,
 
     className: PropTypes.string,
     /**
@@ -74,7 +74,7 @@ const defaultProps = {
     options: [],
     value: [],
     label: '',
-    showRemoveFromListButton: true,
+    hideRemoveFromListButton: false,
     disabled: false,
 };
 
@@ -178,7 +178,7 @@ export default class SelectInputWithList extends React.PureComponent {
     renderSelectedItem = (key, data) => {
         const {
             disabled,
-            showRemoveFromListButton,
+            hideRemoveFromListButton,
         } = this.props;
         let additionalStyle = '';
         if (disabled) {
@@ -195,7 +195,7 @@ export default class SelectInputWithList extends React.PureComponent {
                 >
                     {this.props.labelSelector(data)}
                 </span>
-                {showRemoveFromListButton &&
+                {!hideRemoveFromListButton &&
                     <DangerButton
                         onClick={() => this.handleListItemRemove(key)}
                         className={`${additionalStyle} ${styles['remove-button']}`}
