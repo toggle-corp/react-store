@@ -66,6 +66,10 @@ export const isObjectEmpty = (obj) => {
     return true;
 };
 
+export const isObject = item => (
+    typeof item === 'object' && !Array.isArray(item) && item !== null
+);
+
 export const bound = (value, a, b) => {
     const min = Math.min(a, b);
     const max = Math.max(a, b);

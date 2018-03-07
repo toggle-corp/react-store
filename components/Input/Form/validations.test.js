@@ -14,168 +14,168 @@ import {
 } from './validations';
 
 test('required condition', () => {
-    expect(requiredCondition.truth('')).toBe(false);
-    expect(requiredCondition.truth(NaN)).toBe(false);
-    expect(requiredCondition.truth(undefined)).toBe(false);
-    expect(requiredCondition.truth(null)).toBe(false);
-    expect(requiredCondition.truth(1)).toBe(true);
-    expect(requiredCondition.truth('hari')).toBe(true);
-    expect(requiredCondition.truth({ some: 'key' })).toBe(true);
+    expect(requiredCondition('').ok).toBe(false);
+    expect(requiredCondition(NaN).ok).toBe(false);
+    expect(requiredCondition(undefined).ok).toBe(false);
+    expect(requiredCondition(null).ok).toBe(false);
+    expect(requiredCondition(1).ok).toBe(true);
+    expect(requiredCondition('hari').ok).toBe(true);
+    expect(requiredCondition({ some: 'key' }).ok).toBe(true);
 });
 
 test('number condition', () => {
-    expect(numberCondition.truth(undefined)).toBe(true);
-    expect(numberCondition.truth(null)).toBe(true);
-    expect(numberCondition.truth('')).toBe(true);
+    expect(numberCondition(undefined).ok).toBe(true);
+    expect(numberCondition(null).ok).toBe(true);
+    expect(numberCondition('').ok).toBe(true);
 
-    expect(numberCondition.truth('hari')).toBe(false);
-    expect(numberCondition.truth('1.23')).toBe(true);
-    expect(numberCondition.truth(1.23)).toBe(true);
-    expect(numberCondition.truth(-1)).toBe(true);
+    expect(numberCondition('hari').ok).toBe(false);
+    expect(numberCondition('1.23').ok).toBe(true);
+    expect(numberCondition(1.23).ok).toBe(true);
+    expect(numberCondition(-1).ok).toBe(true);
 });
 
 test('integer condition', () => {
-    expect(numberCondition.truth(undefined)).toBe(true);
-    expect(numberCondition.truth(null)).toBe(true);
-    expect(numberCondition.truth('')).toBe(true);
+    expect(numberCondition(undefined).ok).toBe(true);
+    expect(numberCondition(null).ok).toBe(true);
+    expect(numberCondition('').ok).toBe(true);
 
-    expect(integerCondition.truth('1.23')).toBe(false);
-    expect(integerCondition.truth(1.23)).toBe(false);
-    expect(integerCondition.truth(-1)).toBe(true);
-    expect(integerCondition.truth('2')).toBe(true);
+    expect(integerCondition('1.23').ok).toBe(false);
+    expect(integerCondition(1.23).ok).toBe(false);
+    expect(integerCondition(-1).ok).toBe(true);
+    expect(integerCondition('2').ok).toBe(true);
 });
 
 test('less than condition', () => {
-    expect(lessThanCondition(1).truth(3)).toBe(false);
-    expect(lessThanCondition(1).truth(1)).toBe(false);
-    expect(lessThanCondition(1).truth(-1)).toBe(true);
+    expect(lessThanCondition(1)(3).ok).toBe(false);
+    expect(lessThanCondition(1)(1).ok).toBe(false);
+    expect(lessThanCondition(1)(-1).ok).toBe(true);
 });
 
 test('greater than condition', () => {
-    expect(greaterThanCondition(1).truth(3)).toBe(true);
-    expect(greaterThanCondition(1).truth(1)).toBe(false);
-    expect(greaterThanCondition(1).truth(-1)).toBe(false);
+    expect(greaterThanCondition(1)(3).ok).toBe(true);
+    expect(greaterThanCondition(1)(1).ok).toBe(false);
+    expect(greaterThanCondition(1)(-1).ok).toBe(false);
 });
 
 test('less than or equal condition', () => {
-    expect(lessThanOrEqualToCondition(1).truth(3)).toBe(false);
-    expect(lessThanOrEqualToCondition(1).truth(1)).toBe(true);
-    expect(lessThanOrEqualToCondition(1).truth(-1)).toBe(true);
+    expect(lessThanOrEqualToCondition(1)(3).ok).toBe(false);
+    expect(lessThanOrEqualToCondition(1)(1).ok).toBe(true);
+    expect(lessThanOrEqualToCondition(1)(-1).ok).toBe(true);
 });
 
 test('greater than or equal condition', () => {
-    expect(greaterThanOrEqualToCondition(1).truth(3)).toBe(true);
-    expect(greaterThanOrEqualToCondition(1).truth(1)).toBe(true);
-    expect(greaterThanOrEqualToCondition(1).truth(-1)).toBe(false);
+    expect(greaterThanOrEqualToCondition(1)(3).ok).toBe(true);
+    expect(greaterThanOrEqualToCondition(1)(1).ok).toBe(true);
+    expect(greaterThanOrEqualToCondition(1)(-1).ok).toBe(false);
 });
 
 test('length less than condition', () => {
-    expect(lengthLessThanCondition(3).truth('abcde')).toBe(false);
-    expect(lengthLessThanCondition(3).truth('abc')).toBe(false);
-    expect(lengthLessThanCondition(3).truth('ab')).toBe(true);
-    expect(lengthLessThanCondition(3).truth('')).toBe(true);
+    expect(lengthLessThanCondition(3)('abcde').ok).toBe(false);
+    expect(lengthLessThanCondition(3)('abc').ok).toBe(false);
+    expect(lengthLessThanCondition(3)('ab').ok).toBe(true);
+    expect(lengthLessThanCondition(3)('').ok).toBe(true);
 });
 
 
 test('length greater than condition', () => {
-    expect(lengthGreaterThanCondition(3).truth('abcde')).toBe(true);
-    expect(lengthGreaterThanCondition(3).truth('abc')).toBe(false);
-    expect(lengthGreaterThanCondition(3).truth('ab')).toBe(false);
+    expect(lengthGreaterThanCondition(3)('abcde').ok).toBe(true);
+    expect(lengthGreaterThanCondition(3)('abc').ok).toBe(false);
+    expect(lengthGreaterThanCondition(3)('ab').ok).toBe(false);
 });
 
 test('length equal to condition', () => {
-    expect(lengthEqualToCondition(3).truth('abc')).toBe(true);
-    expect(lengthEqualToCondition(3).truth('def')).toBe(true);
-    expect(lengthEqualToCondition(3).truth('ab')).toBe(false);
-    expect(lengthEqualToCondition(3).truth('abcde')).toBe(false);
+    expect(lengthEqualToCondition(3)('abc').ok).toBe(true);
+    expect(lengthEqualToCondition(3)('def').ok).toBe(true);
+    expect(lengthEqualToCondition(3)('ab').ok).toBe(false);
+    expect(lengthEqualToCondition(3)('abcde').ok).toBe(false);
 });
 
 test('email condition', () => {
-    expect(emailCondition.truth('')).toBe(true);
-    expect(emailCondition.truth('hari@test.com')).toBe(true);
-    expect(emailCondition.truth('panda')).toBe(false);
-    expect(emailCondition.truth('panda.com')).toBe(false);
-    expect(emailCondition.truth('&*^%$#$%^&*&^%$#@.com')).toBe(false);
-    expect(emailCondition.truth('@eampl.com')).toBe(false);
-    expect(emailCondition.truth('Joe Smith <email@example.com>')).toBe(false);
-    expect(emailCondition.truth('email..email@example.com')).toBe(false);
-    expect(emailCondition.truth('email@example.com (Joe Smith)')).toBe(false);
-    expect(emailCondition.truth('email@example')).toBe(false);
-    expect(emailCondition.truth('email@111.222.333.44444')).toBe(false);
-    expect(emailCondition.truth('email@example..com')).toBe(false);
-    expect(emailCondition.truth('Abc..123@example.com')).toBe(false);
+    expect(emailCondition('').ok).toBe(true);
+    expect(emailCondition('hari@test.com').ok).toBe(true);
+    expect(emailCondition('panda').ok).toBe(false);
+    expect(emailCondition('panda.com').ok).toBe(false);
+    expect(emailCondition('&*^%$#$%^&*&^%$#@.com').ok).toBe(false);
+    expect(emailCondition('@eampl.com').ok).toBe(false);
+    expect(emailCondition('Joe Smith <email@example.com>').ok).toBe(false);
+    expect(emailCondition('email..email@example.com').ok).toBe(false);
+    expect(emailCondition('email@example.com (Joe Smith)').ok).toBe(false);
+    expect(emailCondition('email@example').ok).toBe(false);
+    expect(emailCondition('email@111.222.333.44444').ok).toBe(false);
+    expect(emailCondition('email@example..com').ok).toBe(false);
+    expect(emailCondition('Abc..123@example.com').ok).toBe(false);
 });
 
 
 test('url condition', () => {
-    expect(urlCondition.truth('')).toBe(true);
-    expect(urlCondition.truth('')).toBe(true);
+    expect(urlCondition('').ok).toBe(true);
+    expect(urlCondition('').ok).toBe(true);
 
-    expect(urlCondition.truth('https://www.w3.org/Protocols/HTTP/1.1/rfc2616.pdf')).toBe(true);
-    expect(urlCondition.truth('http://www.pdf995.com/samples/pdf.pdf')).toBe(true);
-    expect(urlCondition.truth('https://raaya_karas.carbonmade.com/')).toBe(true);
+    expect(urlCondition('https://www.w3.org/Protocols/HTTP/1.1/rfc2616.pdf').ok).toBe(true);
+    expect(urlCondition('http://www.pdf995.com/samples/pdf.pdf').ok).toBe(true);
+    expect(urlCondition('https://raaya_karas.carbonmade.com/').ok).toBe(true);
 
-    expect(urlCondition.truth('http://foo.com/blah_blah')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/blah_blah/')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/blah_blah_(wikipedia)')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/blah_blah_(wikipedia)_(again)')).toBe(true);
-    expect(urlCondition.truth('http://www.example.com/wpstyle/?p=364')).toBe(true);
-    expect(urlCondition.truth('https://www.example.com/foo/?bar=baz&inga=42&quux')).toBe(true);
-    expect(urlCondition.truth('http://142.42.1.1/')).toBe(true);
-    expect(urlCondition.truth('http://142.42.1.1:8080/')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/blah_(wikipedia)#cite-1')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/blah_(wikipedia)_blah#cite-1')).toBe(true);
-    expect(urlCondition.truth('http://foo.com/(something)?after=parens')).toBe(true);
-    expect(urlCondition.truth('http://code.google.com/events/#&product=browser')).toBe(true);
-    expect(urlCondition.truth('http://j.mp')).toBe(true);
-    expect(urlCondition.truth('http://foo.bar/?q=Test%20URL-encoded%20stuff')).toBe(true);
-    expect(urlCondition.truth('http://1337.net')).toBe(true);
-    expect(urlCondition.truth('http://a.b-c.de')).toBe(true);
-    expect(urlCondition.truth('http://223.255.255.254')).toBe(true);
+    expect(urlCondition('http://foo.com/blah_blah').ok).toBe(true);
+    expect(urlCondition('http://foo.com/blah_blah/').ok).toBe(true);
+    expect(urlCondition('http://foo.com/blah_blah_(wikipedia)').ok).toBe(true);
+    expect(urlCondition('http://foo.com/blah_blah_(wikipedia)_(again)').ok).toBe(true);
+    expect(urlCondition('http://www.example.com/wpstyle/?p=364').ok).toBe(true);
+    expect(urlCondition('https://www.example.com/foo/?bar=baz&inga=42&quux').ok).toBe(true);
+    expect(urlCondition('http://142.42.1.1/').ok).toBe(true);
+    expect(urlCondition('http://142.42.1.1:8080/').ok).toBe(true);
+    expect(urlCondition('http://foo.com/blah_(wikipedia)#cite-1').ok).toBe(true);
+    expect(urlCondition('http://foo.com/blah_(wikipedia)_blah#cite-1').ok).toBe(true);
+    expect(urlCondition('http://foo.com/(something)?after=parens').ok).toBe(true);
+    expect(urlCondition('http://code.google.com/events/#&product=browser').ok).toBe(true);
+    expect(urlCondition('http://j.mp').ok).toBe(true);
+    expect(urlCondition('http://foo.bar/?q=Test%20URL-encoded%20stuff').ok).toBe(true);
+    expect(urlCondition('http://1337.net').ok).toBe(true);
+    expect(urlCondition('http://a.b-c.de').ok).toBe(true);
+    expect(urlCondition('http://223.255.255.254').ok).toBe(true);
 
-    expect(urlCondition.truth('http://userid:password@example.com:8080')).toBe(true);
-    expect(urlCondition.truth('http://userid:password@example.com:8080/')).toBe(true);
-    expect(urlCondition.truth('http://userid@example.com')).toBe(true);
-    expect(urlCondition.truth('http://userid@example.com/')).toBe(true);
-    expect(urlCondition.truth('http://userid@example.com:8080')).toBe(true);
-    expect(urlCondition.truth('http://userid@example.com:8080/')).toBe(true);
-    expect(urlCondition.truth('http://userid:password@example.com')).toBe(true);
-    expect(urlCondition.truth('http://userid:password@example.com/')).toBe(true);
-    expect(urlCondition.truth('ftp://foo.bar/baz')).toBe(true);
+    expect(urlCondition('http://userid:password@example.com:8080').ok).toBe(true);
+    expect(urlCondition('http://userid:password@example.com:8080/').ok).toBe(true);
+    expect(urlCondition('http://userid@example.com').ok).toBe(true);
+    expect(urlCondition('http://userid@example.com/').ok).toBe(true);
+    expect(urlCondition('http://userid@example.com:8080').ok).toBe(true);
+    expect(urlCondition('http://userid@example.com:8080/').ok).toBe(true);
+    expect(urlCondition('http://userid:password@example.com').ok).toBe(true);
+    expect(urlCondition('http://userid:password@example.com/').ok).toBe(true);
+    expect(urlCondition('ftp://foo.bar/baz').ok).toBe(true);
 
-    expect(urlCondition.truth('http://')).toBe(false);
-    expect(urlCondition.truth('http://.')).toBe(false);
-    expect(urlCondition.truth('http://..')).toBe(false);
-    expect(urlCondition.truth('http://../')).toBe(false);
-    expect(urlCondition.truth('http://?')).toBe(false);
-    expect(urlCondition.truth('http://??')).toBe(false);
-    expect(urlCondition.truth('http://??/')).toBe(false);
-    expect(urlCondition.truth('http://#')).toBe(false);
-    expect(urlCondition.truth('http://##')).toBe(false);
-    expect(urlCondition.truth('http://##/')).toBe(false);
-    expect(urlCondition.truth('//')).toBe(false);
-    expect(urlCondition.truth('//a')).toBe(false);
-    expect(urlCondition.truth('///a')).toBe(false);
-    expect(urlCondition.truth('///')).toBe(false);
-    expect(urlCondition.truth('http:///a')).toBe(false);
-    expect(urlCondition.truth('foo.com')).toBe(false);
-    expect(urlCondition.truth('rdar://1234')).toBe(false);
-    expect(urlCondition.truth('h://test')).toBe(false);
-    expect(urlCondition.truth('http:// shouldfail.com')).toBe(false);
-    expect(urlCondition.truth('://shouldfail')).toBe(false);
-    expect(urlCondition.truth('ftps://foo.bar/')).toBe(false);
-    expect(urlCondition.truth('http://-error-.invalid/')).toBe(false);
-    expect(urlCondition.truth('http://-a.b.co')).toBe(false);
-    expect(urlCondition.truth('http://3628126748')).toBe(false);
-    expect(urlCondition.truth('http://10.1.1.1')).toBe(false);
-    expect(urlCondition.truth('http://10.1.1.254')).toBe(false);
-    expect(urlCondition.truth('http://foo.bar?q=Spaces should be encoded')).toBe(false);
-    // expect(urlCondition.truth('http://foo.bar/foo(bar)bazquux')).toBe(false);
-    // expect(urlCondition.truth('http://a.b--c.de/')).toBe(false);
-    expect(urlCondition.truth('http://a.b-.co')).toBe(false);
-    expect(urlCondition.truth('http://1.1.1.1.1')).toBe(false);
-    expect(urlCondition.truth('http://123.123.123')).toBe(false);
-    expect(urlCondition.truth('http://.www.foo.bar/')).toBe(false);
-    // expect(urlCondition.truth('http://www.foo.bar./')).toBe(false);
-    expect(urlCondition.truth('http://.www.foo.bar./')).toBe(false);
+    expect(urlCondition('http://').ok).toBe(false);
+    expect(urlCondition('http://.').ok).toBe(false);
+    expect(urlCondition('http://..').ok).toBe(false);
+    expect(urlCondition('http://../').ok).toBe(false);
+    expect(urlCondition('http://?').ok).toBe(false);
+    expect(urlCondition('http://??').ok).toBe(false);
+    expect(urlCondition('http://??/').ok).toBe(false);
+    expect(urlCondition('http://#').ok).toBe(false);
+    expect(urlCondition('http://##').ok).toBe(false);
+    expect(urlCondition('http://##/').ok).toBe(false);
+    expect(urlCondition('//').ok).toBe(false);
+    expect(urlCondition('//a').ok).toBe(false);
+    expect(urlCondition('///a').ok).toBe(false);
+    expect(urlCondition('///').ok).toBe(false);
+    expect(urlCondition('http:///a').ok).toBe(false);
+    expect(urlCondition('foo.com').ok).toBe(false);
+    expect(urlCondition('rdar://1234').ok).toBe(false);
+    expect(urlCondition('h://test').ok).toBe(false);
+    expect(urlCondition('http:// shouldfail.com').ok).toBe(false);
+    expect(urlCondition('://shouldfail').ok).toBe(false);
+    expect(urlCondition('ftps://foo.bar/').ok).toBe(false);
+    expect(urlCondition('http://-error-.invalid/').ok).toBe(false);
+    expect(urlCondition('http://-a.b.co').ok).toBe(false);
+    expect(urlCondition('http://3628126748').ok).toBe(false);
+    expect(urlCondition('http://10.1.1.1').ok).toBe(false);
+    expect(urlCondition('http://10.1.1.254').ok).toBe(false);
+    expect(urlCondition('http://foo.bar?q=Spaces should be encoded').ok).toBe(false);
+    // expect(urlCondition('http://foo.bar/foo(bar)bazquux').ok).toBe(false);
+    // expect(urlCondition('http://a.b--c.de/').ok).toBe(false);
+    expect(urlCondition('http://a.b-.co').ok).toBe(false);
+    expect(urlCondition('http://1.1.1.1.1').ok).toBe(false);
+    expect(urlCondition('http://123.123.123').ok).toBe(false);
+    expect(urlCondition('http://.www.foo.bar/').ok).toBe(false);
+    // expect(urlCondition('http://www.foo.bar./').ok).toBe(false);
+    expect(urlCondition('http://.www.foo.bar./').ok).toBe(false);
 });

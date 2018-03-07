@@ -4,12 +4,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { isTruthy } from '../../../utils/common';
+
 import FormHelper from './FormHelper';
+import injectRecursively, { ACTION } from './injection';
 import styles from './styles.scss';
 
 const propTypes = {
-    /* list of elements to be validated */
-    elements: PropTypes.arrayOf(PropTypes.string).isRequired,
     /* children of the form */
     children: PropTypes.node.isRequired, // eslint-disable-line
     /* fn to be called when value of any element change */
@@ -18,55 +19,37 @@ const propTypes = {
     failureCallback: PropTypes.func,
     /* fn to be called when form validation succeds */
     successCallback: PropTypes.func,
-    /* dependency injected global function  to validate interdependent elements
-     * should be created using createValidation helper function
-    */
-    validation: PropTypes.object, // eslint-disable-line
-    /* map of validation function for individual element */
-    validations: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     /* class name for styling */
     className: PropTypes.string,
+    /* schema for validation */
+    schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     /* object with values */
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    /* Error for a part of form */
+    formErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    /* Error for every field of form */
+    fieldErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    /* Disable all elements in form */
     disabled: PropTypes.bool,
+    /* Delay every input component in form */
     changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
-    changeCallback: () => { console.log('No change callback'); },
     className: '',
+    changeCallback: () => { console.log('No change callback'); },
     failureCallback: () => { console.log('No failure callback'); },
     successCallback: () => { console.log('No success callback'); },
-    validation: undefined,
-    validations: {},
-    value: {},
-    error: {},
     disabled: false,
-    changeDelay: 200, // ms
-};
-
-const mapChildrenRecursive = (children, condition, propertyFn) => {
-    const mapFn = (child) => {
-        if (!React.isValidElement(child)) {
-            return child;
-        }
-        const { props } = child;
-        const newProperties = condition(props) ? propertyFn(props) : {};
-        return React.cloneElement(child, {
-            ...props,
-            ...newProperties,
-            children: mapChildrenRecursive(props.children, condition, propertyFn),
-        });
-    };
-    if (React.Children.count(children) <= 1) {
-        return mapFn(children);
-    }
-    return React.Children.map(children, mapFn);
+    changeDelay: 100, // ms
+    schema: {},
+    value: {},
+    formErrors: {},
+    fieldErrors: {},
 };
 
 /*
- * Form Component for field validations
+ * Form Component for field validations and values aggregation
  */
 export default class Form extends React.PureComponent {
     static propTypes = propTypes;
@@ -77,70 +60,92 @@ export default class Form extends React.PureComponent {
 
         const {
             changeCallback,
-            elements,
             failureCallback,
             successCallback,
-            validation,
-            validations,
+            schema,
             value,
+            formErrors,
+            fieldErrors,
         } = this.props;
 
         const form = new FormHelper();
-        form.setElements(elements);
-        form.setValidations(validations);
-        form.setValidation(validation);
-        form.setCallbacks({
+        form.setSchema(schema);
+        form.setCallbacks(
             changeCallback,
             failureCallback,
             successCallback,
-        });
+        );
         form.setValue(value);
-
+        form.setFormErrors(formErrors);
+        form.setFieldErrors(fieldErrors);
         this.form = form;
+
+        this.injectionProperties = [
+            {
+                getAction: childProps => (
+                    isTruthy(childProps.formskip) ? ACTION.skipTree : ACTION.skip
+                ),
+            },
+            {
+                getAction: childProps => (
+                    isTruthy(childProps.formname) ? ACTION.inject : ACTION.skip
+                ),
+                getProperty: childProps => ({
+                    onChange: this.form.getChangeCallback(childProps.formname),
+                    value: this.form.getValue(childProps.formname),
+                    error: this.form.getFieldError(childProps.formname),
+                    disabled: this.props.disabled,
+                    changeDelay: this.props.changeDelay,
+                }),
+            },
+            {
+                getAction: childProps => (
+                    isTruthy(childProps.formerror) ? ACTION.inject : ACTION.skip
+                ),
+                getProperty: childProps => ({
+                    errors: this.form.getFormError(childProps.formerror),
+                }),
+            },
+        ];
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             this.form.setValue(nextProps.value);
         }
-        if (this.props.elements !== nextProps.elements) {
-            this.form.setElements(nextProps.elements);
+        if (this.props.schema !== nextProps.schema) {
+            this.form.setschema(nextProps.schema);
         }
-        if (this.props.validations !== nextProps.validations) {
-            this.form.setValidations(nextProps.validations);
+        if (this.props.formErrors !== nextProps.formErrors) {
+            this.form.setFormErrors(nextProps.formErrors);
         }
-        if (this.props.validation !== nextProps.validation) {
-            this.form.setValidations(nextProps.validation);
+        if (this.props.fieldErrors !== nextProps.fieldErrors) {
+            this.form.setFieldErrors(nextProps.fieldErrors);
         }
     }
 
-    onSubmit = (e) => {
-        e.preventDefault();
-        this.submit();
-        // Returning false will not submit the form & redirect
-        return false;
+    componentWillUnmount() {
+        clearTimeout(this.changeTimeout);
     }
 
-    // TODO: breaks when formname is number
-    getCondition = props => (
-        props.formname && props.formname.length > 0
-    )
+    // Submit using ref
 
-    getPropertyFn = props => ({
-        onChange: this.form.getChangeFn(props.formname),
-        value: this.props.value[props.formname],
-        error: this.props.error[props.formname],
-        disabled: this.props.disabled,
-        changeDelay: this.props.changeDelay,
-    })
-
-    /* Submit a form from parent */
     submit = () => {
+        // Add same delay in submission as well
         clearTimeout(this.changeTimeout);
         this.changeTimeout = setTimeout(
-            () => { this.form.onSubmit(); },
+            () => { this.form.submit(); },
             this.props.changeDelay,
         );
+    }
+
+    // Submit using submit button
+
+    handleSubmitClick = (e) => {
+        e.preventDefault();
+        this.submit();
+        // NOTE: Returning false will not submit the form & redirect
+        return false;
     }
 
     render() {
@@ -152,14 +157,10 @@ export default class Form extends React.PureComponent {
         return (
             <form
                 className={`${className} ${styles.form}`}
-                onSubmit={this.onSubmit}
+                onSubmit={this.handleSubmitClick}
                 noValidate
             >
-                { mapChildrenRecursive(
-                    children,
-                    this.getCondition,
-                    this.getPropertyFn,
-                ) }
+                { injectRecursively(children, this.injectionProperties) }
             </form>
         );
     }

@@ -1,6 +1,96 @@
 /**
  * @author tnagorra <weathermist@gmail.com>
  */
+import update from '../../../utils/immutable-update';
+import { isTruthy, isObject } from '../../../utils/common';
+import {
+    accumulateValues,
+    accumulateFieldErrors,
+    accumulateFormErrors,
+    analyzeFieldErrors,
+    analyzeFormErrors,
+} from './validator';
+
+// Access a hierarchical object without throwing any error
+// formname examples: name, name:shyam
+const access = (value, formname) => {
+    if (!value) {
+        return undefined;
+    }
+    const keys = formname.split(':');
+    let lastValue = value;
+    keys.every((key) => {
+        lastValue = isObject(lastValue) || Array.isArray(lastValue)
+            ? lastValue[key]
+            : undefined;
+        return isTruthy(lastValue);
+    });
+    return lastValue;
+};
+
+// Get back one hierarchy for formnames
+// example: name.firstname becomes name
+const getBack = (formnames) => {
+    const lastIndex = formnames.lastIndexOf(':');
+    return formnames.substring(0, lastIndex);
+};
+
+/*
+// TESTS
+console.warn(getBack('name') === '');
+console.warn(getBack('name:lastname') === 'name');
+console.warn(getBack('object:name:lastname') === 'object:name');
+*/
+
+// Add fields in between and errors at the end for formname
+// example: name:firstname becomes fields:name:fields:firstname:errors
+const formerrorForFormname = (formerror) => {
+    if (formerror === '') {
+        return 'errors';
+    }
+    return `fields:${formerror.replace(/:/g, ':fields:')}:errors`;
+};
+
+/*
+// TEST:
+console.warn(formerrorForFormname('') === 'errors');
+console.warn(formerrorForFormname('name') === 'fields:name:errors');
+console.warn(formerrorForFormname('name:firstname') === 'fields:name:fields:firstname:errors');
+*/
+
+// From list of keys, traverse over schema and get list of type traversed (object/array)
+const getTypeList = (keyList, schema) => {
+    const { fields, member } = schema;
+    if (fields) {
+        // is object
+        const [key, ...newKeyList] = keyList;
+        return ['$auto', ...getTypeList(newKeyList, fields[key])];
+    } else if (member) {
+        // is array
+        const [index, ...newKeyList] = keyList;
+        return ['autoArray', ...getTypeList(newKeyList, member)];
+    }
+    return [];
+};
+
+// Insert $auto or $autoArray, after traversing over the schema
+const createSettings = (value, keyString, schema) => {
+    const keyList = keyString.split(':');
+    const typeList = getTypeList(keyList, schema);
+
+    // Reverse the arrays
+    keyList.reverse();
+    typeList.reverse();
+
+    // Create settings
+    let valueSettings = { $set: value };
+    keyList.forEach((name, i) => {
+        const accessType = typeList[i];
+        valueSettings = { [accessType]: { [name]: valueSettings } };
+    });
+    return valueSettings;
+};
+
 
 /*
  * Helper class to store all the information about a form
@@ -8,165 +98,111 @@
  */
 export default class FormHelper {
     constructor() {
-        // List of reference names
-        this.elements = [];
         this.value = {};
-
-        // Contains validation objects containing a validator and error message
-        this.validations = {};
-        this.validation = undefined;
+        this.schema = {};
+        this.fieldErrors = {};
+        this.formErrors = {};
 
         // Internal store for references
-        this.changeFnCollector = {};
+        this.changeCallbacks = {};
     }
 
-    // Setters
-
-    /* Set name of elements to be validated */
-    setElements(elements) {
-        this.elements = elements;
+    setSchema(schema) {
+        this.schema = schema;
     }
 
     setValue(value) {
         this.value = value;
     }
 
-    /* Set each element with a validation function */
-    setValidations(validations) {
-        this.validations = validations;
+    setFieldErrors(fieldErrors) {
+        this.fieldErrors = fieldErrors;
     }
 
-    /* Set a global validation function to validate interdependent elements */
-    setValidation(validation) {
-        this.validation = validation;
+    setFormErrors(formErrors) {
+        this.formErrors = formErrors;
     }
 
-    /* Set callbacks */
-    setCallbacks({
-        changeCallback, successCallback, failureCallback,
-    }) {
+    setCallbacks(changeCallback, failureCallback, successCallback) {
         this.changeCallback = changeCallback;
-        this.successCallback = successCallback;
         this.failureCallback = failureCallback;
+        this.successCallback = successCallback;
     }
 
-    /* PRIVATE: calls changeCallback with value of current element,
-     * clears form field error of current element
-     * clears form error
-     */
-    onChange = (elementName, value) => {
-        // change value of current element
-        const values = {
-            [elementName]: value,
-        };
-        // clear error for current element
-        const formFieldErrors = {
-            [elementName]: undefined,
-        };
-        const formErrors = [];
+    // Public function
+    submit = () => {
+        const fieldErrors = accumulateFieldErrors(this.value, this.schema);
+        const formErrors = accumulateFormErrors(this.value, this.schema);
+        const hasErrors = analyzeFieldErrors(fieldErrors) || analyzeFormErrors(formErrors);
 
-        this.changeCallback(values, { formFieldErrors, formErrors });
-    }
-
-    /* checks for form errors and form field errors
-     * calls failureCallback with form errors and form field errors
-     * calls successCallback with all element values,
-     * clears all form errors and form field errors
-     */
-    onSubmit = () => {
-        const { hasError, formErrors, formFieldErrors } = this.checkForErrors();
-        if (hasError) {
-            this.failureCallback({ formErrors, formFieldErrors });
+        if (hasErrors) {
+            this.failureCallback(fieldErrors, formErrors);
         } else {
-            // success
-            const values = {};
-            this.elements.forEach((name) => {
-                // skipping in final output
-                values[name] = this.getValue(name);
-            });
-            this.successCallback(values, { formErrors, formFieldErrors });
+            const values = accumulateValues(this.value, this.schema);
+            this.successCallback(values);
         }
-    }
-
-    getValue = name => (
-        this.value ? this.value[name] : undefined
-    )
-
-    /* Create a update fn for element 'name' */
-    getChangeFn = (name) => {
-        if (this.changeFnCollector[name]) {
-            return this.changeFnCollector[name];
-        }
-
-        const changeFn = (value) => {
-            this.onChange(name, value);
-        };
-        this.changeFnCollector[name] = changeFn;
-        return changeFn;
-    }
-
-    /* PRIVATE: Check if value is valid for all elements */
-    checkForErrors = () => {
-        // get errors and errors count from individual validation
-        const validityMap = {};
-
-        let { hasError, formFieldErrors } = this.elements.reduce(
-            (acc, name) => {
-                const value = this.getValue(name);
-                const res = this.isValid(name, value);
-                validityMap[name] = res.ok;
-                // If response is ok, send accumulator as is
-                if (res.ok) {
-                    return acc;
-                }
-                return {
-                    hasError: true,
-                    formFieldErrors: { ...acc.formFieldErrors, [name]: res.message },
-                };
-            },
-            {
-                hasError: false,
-                formFieldErrors: {},
-            },
-        );
-
-        let formErrors = [];
-        if (this.validation) {
-            const { fn, args } = this.validation;
-
-            // Checks for every rule until one of them is invalid
-            const validity = args.every(arg => validityMap[arg]);
-            if (validity) {
-                const superArgs = args.map(name => this.getValue(name));
-                const res = fn(...superArgs);
-                if (!res.ok) {
-                    formErrors = res.formErrors;
-                    formFieldErrors = { ...formFieldErrors, ...res.formFieldErrors };
-                    hasError = true;
-                }
-            }
-        }
-
-        return { formErrors, formFieldErrors, hasError };
-    }
-
-    /* PRIVATE: Check if a value is valid for certain element */
-    isValid = (name, value) => {
-        let returnVal = { ok: true };
-        const validationRules = this.validations[name] || [];
-
-        // Checks for every rule until one of them is invalid,
-        // and set returnVal to specific error
-        validationRules.every((validationRule) => {
-            const valid = validationRule.truth(value);
-            if (!valid) {
-                returnVal = {
-                    ok: false,
-                    message: validationRule.message,
-                };
-            }
-            return valid;
-        });
-        return returnVal;
     };
+
+    // PRIVATE: changeCallback
+    handleChange = (elementName, value) => {
+        // setting value
+        const valueSettings = createSettings(value, elementName, this.schema);
+        const newValue = update(this.value, valueSettings);
+
+        // setting fieldError
+        let newFieldErrors = this.fieldErrors;
+        const fieldErrorsValue = this.getFieldError(elementName);
+        // NOTE: no need to use $auto/$autoArray when there is a value already
+        if (fieldErrorsValue !== undefined) {
+            const names = elementName
+                .split(':')
+                .reverse();
+            let fieldErrorsSettings = { $set: undefined };
+            names.forEach((name) => {
+                fieldErrorsSettings = { [name]: fieldErrorsSettings };
+            });
+            newFieldErrors = update(this.fieldErrors, fieldErrorsSettings);
+        }
+
+        // setting formFieldError
+        let newFormErrors = this.formErrors;
+        const elementNameForFormErrors = getBack(elementName);
+        const formErrorsValue = this.getFormError(elementNameForFormErrors);
+        // NOTE: no need to use $auto/$autoArray when there is a value already
+        if (formErrorsValue !== undefined) {
+            const namesForFormErrors = formerrorForFormname(elementNameForFormErrors)
+                .split(':')
+                .reverse();
+            let formErrorsSettings = { $set: undefined };
+            namesForFormErrors.forEach((name) => {
+                formErrorsSettings = { [name]: formErrorsSettings };
+            });
+            newFormErrors = update(this.formErrors, formErrorsSettings);
+        }
+
+        this.changeCallback(newValue, newFieldErrors, newFormErrors);
+    }
+
+    /* Get a memoized onChange function for given formname */
+    getChangeCallback = (formname) => {
+        if (this.changeCallbacks[formname]) {
+            return this.changeCallbacks[formname];
+        }
+
+        const changeCallback = value => this.handleChange(formname, value);
+        this.changeCallbacks[formname] = changeCallback;
+        return changeCallback;
+    }
+
+    // Get value for given formname
+    getValue = formname => access(this.value, formname)
+
+    // Get field error for given formname
+    getFieldError = formname => access(this.fieldErrors, formname)
+
+    // Get form error for given formname
+    getFormError = (formerror) => {
+        const name = formerrorForFormname(formerror);
+        return access(this.formErrors, name);
+    }
 }

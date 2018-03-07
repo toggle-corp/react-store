@@ -64,7 +64,7 @@ export default class ReCaptcha extends Component {
         if (ReCaptcha.isReady()) {
             this.setState({ ready: true }, this.renderGrecaptcha);
         } else {
-            this.setTimeout(this.pollForReadyState, 1000);
+            this.readyCheck = setTimeout(this.pollForReadyState, 1000);
         }
     };
 
