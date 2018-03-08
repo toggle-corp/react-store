@@ -67,6 +67,7 @@ const getTypeList = (keyList, schema) => {
         return ['$auto', ...getTypeList(newKeyList, fields[key])];
     } else if (member) {
         // is array
+        // eslint-disable-next-line no-unused-vars
         const [index, ...newKeyList] = keyList;
         return ['autoArray', ...getTypeList(newKeyList, member)];
     }

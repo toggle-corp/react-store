@@ -11,7 +11,7 @@ export const ACTION = {
 
 const injectRecursively = (element, injectionProperties) => {
     // Get action to do, and new props for that action
-    const getActionAndNewProps = (props) => {
+    const getActionAndNewProps = (props, formoverrides = []) => {
         let action;
         let newProps;
 
@@ -27,6 +27,11 @@ const injectRecursively = (element, injectionProperties) => {
             return action !== ACTION.skip;
         });
 
+        // Remove all newProps that are not to override
+        formoverrides.forEach((formoverride) => {
+            delete newProps[formoverride];
+        });
+
         // action=skip means injecting with empty object
         return { action, newProps };
     };
@@ -38,10 +43,9 @@ const injectRecursively = (element, injectionProperties) => {
             return e;
         }
 
+        const { props: { formoverrides, ...originalProps } } = e;
         // Calculate new properties if the condition is true
-        const { props } = e;
-        const { action, newProps } = getActionAndNewProps(props);
-
+        const { action, newProps } = getActionAndNewProps(originalProps, formoverrides);
         switch (action) {
             case ACTION.skipTree:
                 return e;
@@ -49,19 +53,19 @@ const injectRecursively = (element, injectionProperties) => {
                 return React.cloneElement(
                     e,
                     {
-                        ...props,
-                        children: injectRecursively(props.children, injectionProperties),
+                        ...originalProps,
+                        children: injectRecursively(originalProps.children, injectionProperties),
                     },
                 );
-            case ACTION.inject:
+            case ACTION.inject: {
                 return React.cloneElement(
                     e,
                     {
-                        ...props,
+                        ...originalProps,
                         ...newProps,
                     },
                 );
-            default:
+            } default:
                 console.error('Unidentified action', action);
                 return e;
         }
