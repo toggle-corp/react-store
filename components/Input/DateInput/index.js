@@ -3,15 +3,17 @@ import React from 'react';
 
 import FloatingContainer from '../../View/FloatingContainer';
 import DatePicker from '../DatePicker';
-import FormattedDate from '../../View/FormattedDate/FormattedDate';
 import { iconNames } from '../../../constants';
 
 import {
     calcFloatingPositionInMainWindow,
     getNumDaysInMonthX,
     isDateValid,
+    encodeDate,
+    decodeDate,
 } from '../../../utils/common';
 import styles from './styles.scss';
+
 
 const propTypes = {
     showLabel: PropTypes.bool,
@@ -165,7 +167,7 @@ export default class DateInput extends React.PureComponent {
         const { onChange } = this.props;
 
         if (value) {
-            const date = new Date(value);
+            const date = decodeDate(value);
             if (isDateValid(date)) {
                 const d = date.getDate();
                 const m = date.getMonth();
@@ -194,7 +196,7 @@ export default class DateInput extends React.PureComponent {
 
         if (date) {
             // DateInput value should be of format yyyy-MM-dd
-            const value = FormattedDate.format(date, 'yyyy-MM-dd');
+            const value = encodeDate(date);
             onChange(value);
             this.setState({ isInvalid: false });
         } else {
@@ -244,17 +246,14 @@ export default class DateInput extends React.PureComponent {
     }
 
     handleTodayButtonClick = () => {
-        const { onChange } = this.props;
         const today = new Date();
 
         // FIXME: possibly redundant
         this.setState({
             dayValue: today.getDate(),
-            monthValue: today.getMonth() - 1,
+            monthValue: today.getMonth() + 1,
             yearValue: today.getFullYear(),
-        });
-
-        onChange(today.toISOString());
+        }, this.validate);
     }
 
     handleCalendarButtonClick = () => {
@@ -288,8 +287,7 @@ export default class DateInput extends React.PureComponent {
     }
 
     handleDatePickerDatePick = (timestamp) => {
-        const { onChange } = this.props;
-        const newDate = new Date(timestamp);
+        const newDate = decodeDate(timestamp);
 
         const {
             dayValue,
@@ -315,7 +313,11 @@ export default class DateInput extends React.PureComponent {
                         newDate.getTime() !== currentDate.getTime()
                     )
                 ) {
-                    onChange(newDate.toISOString());
+                    this.setState({
+                        dayValue: newDate.getDate(),
+                        monthValue: newDate.getMonth() + 1,
+                        yearValue: newDate.getFullYear(),
+                    }, this.validate);
                 }
             },
         );

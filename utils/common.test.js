@@ -29,6 +29,8 @@ import {
     splitInWhitespace,
     trimWhitespace,
     formatPdfText,
+    encodeDate,
+    decodeDate,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -340,4 +342,23 @@ test('format pdf text', () => {
     const unformatted = 'Hari is a \n \n   \n\n  bad\nboy';
     const formatted = 'Hari is a \n\n bad boy';
     expect(formatPdfText(unformatted)).toEqual(formatted);
+});
+
+
+test('encode date to string', () => {
+    const date = new Date(2016, 11, 13);
+    const dateStr = '2016-12-13';
+    expect(encodeDate(date)).toEqual(dateStr);
+});
+
+
+test('decode date from string and timestamp', () => {
+    const date = new Date(2016, 11, 13);
+    const dateStr = '2016-12-13';
+    const dateIso = date.toISOString();
+    const dateTimestamp = date.getTime();
+
+    expect(decodeDate(dateStr)).toEqual(date);
+    expect(decodeDate(dateIso)).toEqual(date);
+    expect(decodeDate(dateTimestamp)).toEqual(date);
 });
