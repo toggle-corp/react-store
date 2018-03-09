@@ -2,6 +2,9 @@
  * @author tnagorra <weathermist@gmail.com>
  */
 
+// TODO: Move FormattedDate.format to utils and remove this import
+import FormattedDate from '../components/View/FormattedDate/FormattedDate';
+
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
     ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
@@ -207,6 +210,28 @@ export const getNumDaysInMonth = date => (
         getNumDaysInMonthX(date.getFullYear(), date.getMonth() + 1)
     ) : 32
 );
+
+export const encodeDate = date => FormattedDate.format(date, 'yyyy-MM-dd');
+
+export const decodeDate = (value) => {
+    // Let's assume that the value is in local time zone
+
+    if (!value) {
+        return undefined;
+    }
+
+    // Check if value is timestamp number or ISO string with time information
+    // In both case, new Date assumes local time zone
+    if (typeof value === 'number' || value.indexOf('T') >= 0) {
+        return new Date(value);
+    }
+
+    // In case of ISO string with no time information, new Date assumes
+    // UTC timezone. So first split it manually, and feed them separately
+    // so they will be processed as local time zone.
+    const splits = value.split('-');
+    return new Date(splits[0], splits[1] - 1, splits[2]);
+};
 
 export const listToMap = (list = [], keySelector, modifier) => (
     list.reduce(
