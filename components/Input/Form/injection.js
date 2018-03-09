@@ -6,7 +6,6 @@ import React from 'react';
 export const ACTION = {
     inject: 'inject',
     skip: 'skip',
-    skipTree: 'skipTree',
 };
 
 const injectRecursively = (element, injectionProperties) => {
@@ -17,6 +16,7 @@ const injectRecursively = (element, injectionProperties) => {
 
         injectionProperties.some((injectionProperty) => {
             action = injectionProperty.getAction(props);
+            // console.error(action);
 
             // get newProps if action is inject
             if (action === ACTION.inject) {
@@ -46,9 +46,8 @@ const injectRecursively = (element, injectionProperties) => {
         const { props: { formoverrides, ...originalProps } } = e;
         // Calculate new properties if the condition is true
         const { action, newProps } = getActionAndNewProps(originalProps, formoverrides);
+
         switch (action) {
-            case ACTION.skipTree:
-                return e;
             case ACTION.skip:
                 return React.cloneElement(
                     e,
@@ -63,6 +62,7 @@ const injectRecursively = (element, injectionProperties) => {
                     {
                         ...originalProps,
                         ...newProps,
+                        // children: injectRecursively(originalProps.children, injectionProperties),
                     },
                 );
             } default:
@@ -71,10 +71,11 @@ const injectRecursively = (element, injectionProperties) => {
         }
     };
 
-    if (React.Children.count(element) <= 1) {
-        return inject(element);
+    // if (React.Children.count(element) <= 1) {
+    if (Array.isArray(element)) {
+        return React.Children.map(element, inject);
     }
-    return React.Children.map(element, inject);
+    return inject(element);
 };
 
 export default injectRecursively;

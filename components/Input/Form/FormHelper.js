@@ -30,16 +30,21 @@ const access = (value, formname) => {
 
 // Get back one hierarchy for formnames
 // example: name.firstname becomes name
-const getBack = (formnames) => {
+const getParent = (formnames) => {
     const lastIndex = formnames.lastIndexOf(':');
     return formnames.substring(0, lastIndex);
 };
 
+const getChild = (formnames) => {
+    const lastIndex = formnames.lastIndexOf(':');
+    return formnames.substring(lastIndex + 1, formnames.length);
+};
+
 /*
 // TESTS
-console.warn(getBack('name') === '');
-console.warn(getBack('name:lastname') === 'name');
-console.warn(getBack('object:name:lastname') === 'object:name');
+console.warn(getParent('name') === '');
+console.warn(getParent('name:lastname') === 'name');
+console.warn(getParent('object:name:lastname') === 'object:name');
 */
 
 // Add fields in between and errors at the end for formname
@@ -69,13 +74,13 @@ const getTypeList = (keyList, schema) => {
         // is array
         // eslint-disable-next-line no-unused-vars
         const [index, ...newKeyList] = keyList;
-        return ['autoArray', ...getTypeList(newKeyList, member)];
+        return ['$autoArray', ...getTypeList(newKeyList, member)];
     }
     return [];
 };
 
 // Insert $auto or $autoArray, after traversing over the schema
-const createSettings = (value, keyString, schema) => {
+const createSettings = (keyString, schema, startSettings) => {
     const keyList = keyString.split(':');
     const typeList = getTypeList(keyList, schema);
 
@@ -84,7 +89,7 @@ const createSettings = (value, keyString, schema) => {
     typeList.reverse();
 
     // Create settings
-    let valueSettings = { $set: value };
+    let valueSettings = startSettings;
     keyList.forEach((name, i) => {
         const accessType = typeList[i];
         valueSettings = { [accessType]: { [name]: valueSettings } };
@@ -106,6 +111,8 @@ export default class FormHelper {
 
         // Internal store for references
         this.changeCallbacks = {};
+        this.pushCallbacks = {};
+        this.popCallbacks = {};
     }
 
     setSchema(schema) {
@@ -147,7 +154,7 @@ export default class FormHelper {
     // PRIVATE: changeCallback
     handleChange = (elementName, value) => {
         // setting value
-        const valueSettings = createSettings(value, elementName, this.schema);
+        const valueSettings = createSettings(elementName, this.schema, { $set: value });
         const newValue = update(this.value, valueSettings);
 
         // setting fieldError
@@ -165,20 +172,121 @@ export default class FormHelper {
             newFieldErrors = update(this.fieldErrors, fieldErrorsSettings);
         }
 
-        // setting formFieldError
         let newFormErrors = this.formErrors;
-        const elementNameForFormErrors = getBack(elementName);
-        const formErrorsValue = this.getFormError(elementNameForFormErrors);
+        let elementNameForFormErrors = getParent(elementName);
+        while (elementNameForFormErrors) {
+            const formErrorsValue = this.getFormError(elementNameForFormErrors);
+            // NOTE: no need to use $auto/$autoArray when there is a value already
+            if (formErrorsValue !== undefined) {
+                const namesForFormErrors = formerrorForFormname(elementNameForFormErrors)
+                    .split(':')
+                    .reverse();
+                let formErrorsSettings = { $set: undefined };
+                namesForFormErrors.forEach((name) => {
+                    formErrorsSettings = { [name]: formErrorsSettings };
+                });
+                newFormErrors = update(this.formErrors, formErrorsSettings);
+            }
+            elementNameForFormErrors = getParent(elementNameForFormErrors);
+        }
+
+        this.changeCallback(newValue, newFieldErrors, newFormErrors);
+    }
+
+    handlePush = (elementName, mode) => {
+        const basicSetting = mode === 'start' ? { $unshift: [undefined] } : { $push: [undefined] };
+        // setting value
+        const valueSettings = createSettings(
+            elementName,
+            this.schema,
+            basicSetting,
+        );
+        const newValue = update(this.value, valueSettings);
+
+
+        // setting fieldError
+        let newFieldErrors = this.fieldErrors;
+        const fieldErrorsValue = this.getFieldError(elementName);
         // NOTE: no need to use $auto/$autoArray when there is a value already
-        if (formErrorsValue !== undefined) {
-            const namesForFormErrors = formerrorForFormname(elementNameForFormErrors)
+        if (fieldErrorsValue !== undefined) {
+            const names = elementName
                 .split(':')
                 .reverse();
-            let formErrorsSettings = { $set: undefined };
-            namesForFormErrors.forEach((name) => {
-                formErrorsSettings = { [name]: formErrorsSettings };
+            let fieldErrorsSettings = basicSetting;
+            names.forEach((name) => {
+                fieldErrorsSettings = { [name]: fieldErrorsSettings };
             });
-            newFormErrors = update(this.formErrors, formErrorsSettings);
+            newFieldErrors = update(this.fieldErrors, fieldErrorsSettings);
+        }
+
+        // setting formFieldError
+        let newFormErrors = this.formErrors;
+        let elementNameForFormErrors = elementName;
+        while (elementNameForFormErrors) {
+            const formErrorsValue = this.getFormError(elementNameForFormErrors);
+            // NOTE: no need to use $auto/$autoArray when there is a value already
+            if (formErrorsValue !== undefined) {
+                const namesForFormErrors = formerrorForFormname(elementNameForFormErrors)
+                    .split(':')
+                    .reverse();
+                let formErrorsSettings = { $set: undefined };
+                namesForFormErrors.forEach((name) => {
+                    formErrorsSettings = { [name]: formErrorsSettings };
+                });
+                newFormErrors = update(this.formErrors, formErrorsSettings);
+            }
+            elementNameForFormErrors = getParent(elementNameForFormErrors);
+        }
+
+        this.changeCallback(newValue, newFieldErrors, newFormErrors);
+    }
+
+    handlePop = (elemName) => {
+        const elementName = getParent(elemName);
+        const index = getChild(elemName);
+
+        const basicSetting = { $splice: [[index, 1]] };
+        // setting value
+        const valueSettings = createSettings(
+            elementName,
+            this.schema,
+            basicSetting,
+        );
+        const newValue = update(this.value, valueSettings);
+
+
+        // setting fieldError
+        let newFieldErrors = this.fieldErrors;
+        const fieldErrorsValue = this.getFieldError(elementName);
+        // NOTE: no need to use $auto/$autoArray when there is a value already
+        if (fieldErrorsValue !== undefined) {
+            const names = elementName
+                .split(':')
+                .reverse();
+            let fieldErrorsSettings = basicSetting;
+            names.forEach((name) => {
+                fieldErrorsSettings = { [name]: fieldErrorsSettings };
+            });
+            newFieldErrors = update(this.fieldErrors, fieldErrorsSettings);
+        }
+
+        // setting formFieldError
+        let newFormErrors = this.formErrors;
+        let elementNameForFormErrors = elementName;
+        while (elementNameForFormErrors) {
+            const formErrorsValue = this.getFormError(elementNameForFormErrors);
+            // NOTE: no need to use $auto/$autoArray when there is a value already
+            if (formErrorsValue !== undefined) {
+                const namesForFormErrors = formerrorForFormname(elementNameForFormErrors)
+                    .split(':')
+                    .reverse();
+                let formErrorsSettings = { $set: undefined };
+                namesForFormErrors.forEach((name) => {
+                    formErrorsSettings = { [name]: formErrorsSettings };
+                });
+                newFormErrors = update(this.formErrors, formErrorsSettings);
+            }
+            elementNameForFormErrors = getParent(elementNameForFormErrors);
         }
 
         this.changeCallback(newValue, newFieldErrors, newFormErrors);
@@ -193,6 +301,30 @@ export default class FormHelper {
         const changeCallback = value => this.handleChange(formname, value);
         this.changeCallbacks[formname] = changeCallback;
         return changeCallback;
+    }
+
+    /* Get a memoized onChange function for given formname */
+    getPushCallback = (formname, formpush) => {
+        // push callback should be unique by formname only
+        if (this.pushCallbacks[formname]) {
+            return this.pushCallbacks[formname];
+        }
+
+        const pushCallback = () => this.handlePush(formname, formpush);
+        this.pushCallbacks[formname] = pushCallback;
+        return pushCallback;
+    }
+
+    /* Get a memoized onChange function for given formname */
+    getPopCallback = (formname) => {
+        // pop callback should be unique by formname only
+        if (this.popCallbacks[formname]) {
+            return this.popCallbacks[formname];
+        }
+
+        const popCallback = () => this.handlePop(formname);
+        this.popCallbacks[formname] = popCallback;
+        return popCallback;
     }
 
     // Get value for given formname

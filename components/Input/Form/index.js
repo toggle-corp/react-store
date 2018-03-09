@@ -81,14 +81,49 @@ export default class Form extends React.PureComponent {
         this.form = form;
 
         this.injectionProperties = [
+            // formskip
             {
                 getAction: childProps => (
-                    isTruthy(childProps.formskip) ? ACTION.skipTree : ACTION.skip
+                    isTruthy(childProps.formskip)
+                        ? ACTION.inject
+                        : ACTION.skip
                 ),
+                getProperty: () => ({
+                    formskip: undefined,
+                }),
             },
+            // formname with formpush
             {
                 getAction: childProps => (
-                    isTruthy(childProps.formname) ? ACTION.inject : ACTION.skip
+                    isTruthy(childProps.formname) && isTruthy(childProps.formpush)
+                        ? ACTION.inject
+                        : ACTION.skip
+                ),
+                getProperty: childProps => ({
+                    onClick: this.form.getPushCallback(childProps.formname, childProps.formpush),
+                    formname: undefined,
+                    formpush: undefined,
+                }),
+            },
+            // formname with formpop
+            {
+                getAction: childProps => (
+                    isTruthy(childProps.formname) && isTruthy(childProps.formpop)
+                        ? ACTION.inject
+                        : ACTION.skip
+                ),
+                getProperty: childProps => ({
+                    onClick: this.form.getPopCallback(childProps.formname),
+                    formname: undefined,
+                    formpop: undefined,
+                }),
+            },
+            // formname
+            {
+                getAction: childProps => (
+                    isTruthy(childProps.formname)
+                        ? ACTION.inject
+                        : ACTION.skip
                 ),
                 getProperty: childProps => ({
                     onChange: this.form.getChangeCallback(childProps.formname),
@@ -96,14 +131,17 @@ export default class Form extends React.PureComponent {
                     error: this.form.getFieldError(childProps.formname),
                     disabled: this.props.disabled,
                     changeDelay: this.props.changeDelay,
+                    formname: undefined,
                 }),
             },
+            // formerror
             {
                 getAction: childProps => (
                     isTruthy(childProps.formerror) ? ACTION.inject : ACTION.skip
                 ),
                 getProperty: childProps => ({
                     errors: this.form.getFormError(childProps.formerror),
+                    formerror: undefined,
                 }),
             },
         ];
@@ -114,7 +152,7 @@ export default class Form extends React.PureComponent {
             this.form.setValue(nextProps.value);
         }
         if (this.props.schema !== nextProps.schema) {
-            this.form.setschema(nextProps.schema);
+            this.form.setSchema(nextProps.schema);
         }
         if (this.props.formErrors !== nextProps.formErrors) {
             this.form.setFormErrors(nextProps.formErrors);
