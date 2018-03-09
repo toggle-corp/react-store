@@ -66,6 +66,9 @@ console.warn(formerrorForFormname('name:firstname') === 'fields:name:fields:firs
 // From list of keys, traverse over schema and get list of type traversed (object/array)
 const getTypeList = (keyList, schema) => {
     const { fields, member } = schema;
+    if (keyList.length <= 0) {
+        return [];
+    }
     if (fields) {
         // is object
         const [key, ...newKeyList] = keyList;
@@ -202,7 +205,6 @@ export default class FormHelper {
             basicSetting,
         );
         const newValue = update(this.value, valueSettings);
-
 
         // setting fieldError
         let newFieldErrors = this.fieldErrors;
