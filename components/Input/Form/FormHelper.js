@@ -65,18 +65,20 @@ console.warn(formerrorForFormname('name:firstname') === 'fields:name:fields:firs
 
 // From list of keys, traverse over schema and get list of type traversed (object/array)
 const getTypeList = (keyList, schema) => {
-    const { fields, member } = schema;
     if (keyList.length <= 0) {
         return [];
     }
+    const { fields, member } = schema;
     if (fields) {
         // is object
         const [key, ...newKeyList] = keyList;
+        // console.warn(key, fields, fields[key]);
         return ['$auto', ...getTypeList(newKeyList, fields[key])];
     } else if (member) {
         // is array
         // eslint-disable-next-line no-unused-vars
         const [index, ...newKeyList] = keyList;
+        // console.warn(index);
         return ['$autoArray', ...getTypeList(newKeyList, member)];
     }
     return [];
