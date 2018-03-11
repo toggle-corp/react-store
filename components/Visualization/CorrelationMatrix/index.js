@@ -16,9 +16,6 @@ import {
     isObjectEmpty,
 } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
-
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 
 /**
@@ -74,11 +71,26 @@ export default class CorrelationMatrix extends React.PureComponent {
     static defaultProps = defaultProps;
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
+    }
+
+    setContext = (width, height, margins) => {
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        return select(this.svg)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .append('g')
+            .attr('transform', `translate(${left},${top})`);
     }
 
     save = () => {
@@ -87,56 +99,51 @@ export default class CorrelationMatrix extends React.PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('correlationmatrix', 'graph')}.svg`);
     }
 
-    renderChart() {
+    redrawChart = () => {
+        const context = select(this.svg);
+        context.selectAll('*').remove();
+        this.drawChart();
+    }
+
+    drawChart = () => {
         const {
-            boundingClientRect,
             data,
+            boundingClientRect,
             colorScheme,
-            showLabels,
             margins,
         } = this.props;
 
-        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
+        if (!boundingClientRect.width) {
             return;
         }
 
+        if (!data || data.length === 0 || isObjectEmpty(data)) {
+            return;
+        }
         let { width, height } = boundingClientRect;
-
-        const dataLabels = data.labels;
-        const dataValues = data.values;
 
         const {
             top,
             right,
             bottom,
             left,
-
         } = margins;
 
-        const noofrows = dataValues.length;
-        const noofcols = dataValues[0].length;
+        const labelsData = data.labels;
+        const valuesData = data.values;
 
         width = width - left - right;
         height = height - top - bottom;
 
         if (width < 0) width = 0;
         if (height < 0) height = 0;
+
         const matrixWidth = (0.8 * width);
-        const widthLegend = width - matrixWidth;
-        const legendRectWidth = widthLegend / 4 || 0;
-
-        const maxValue = max(dataValues, layer => max(layer, d => d));
-        const minValue = min(dataValues, layer => min(layer, d => d));
-
-        const svg = select(this.svg);
-        svg.selectAll('*')
-            .remove();
-
-        const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
-            .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
+        const legendWidth = width - matrixWidth;
+        const maxValue = max(valuesData, layer => max(layer, d => d));
+        const minValue = min(valuesData, layer => min(layer, d => d));
+        const noofrows = valuesData.length;
+        const noofcols = valuesData[0].length;
 
         const x = scaleBand()
             .domain(range(noofcols))
@@ -146,15 +153,25 @@ export default class CorrelationMatrix extends React.PureComponent {
             .domain(range(noofrows))
             .range([0, height]);
 
-        const values = scaleLinear()
-            .domain([height, 0])
-            .range([minValue, maxValue]);
-
-        const colorMap = scaleSequential(colorScheme)
+        const colors = scaleSequential(colorScheme)
             .domain([minValue, maxValue]);
 
-        const row = group.selectAll('.row')
-            .data(dataValues)
+        const group = this.setContext(matrixWidth, height, margins);
+        const labels = group.append('g').attr('class', 'labels');
+        const legend = select(this.svg)
+            .append('g')
+            .attr('transform', `translate(${matrixWidth + left + right}, ${top})`);
+
+        this.addCells(group, valuesData, x, y, colors);
+        this.addLabels(labels, labelsData, x, y);
+        this.addLegend(legend, height, legendWidth, colors, minValue, maxValue);
+    }
+
+
+    addCells = (group, data, x, y, colors) => {
+        const row = group
+            .selectAll('.row')
+            .data(data)
             .enter()
             .append('g')
             .attr('class', 'row')
@@ -174,52 +191,58 @@ export default class CorrelationMatrix extends React.PureComponent {
                 .style('visibility', 'hidden');
         }
 
-        const cell = row.selectAll('.cell')
+        const cell = row
+            .selectAll('.cell')
             .data(d => d)
             .enter()
             .append('g')
             .attr('class', 'cell')
             .attr('transform', (d, i) => `translate(${x(i)}, 0)`)
+            .style('cursor', 'pointer')
             .on('mouseover', handleMouseOver)
             .on('mouseout', handleMouseOut);
 
-        cell.append('rect')
+        cell
+            .append('rect')
             .attr('width', x.bandwidth())
             .attr('height', y.bandwidth())
             .attr('stroke', 'white')
             .attr('stroke-width', 1);
 
-        row.selectAll('.cell')
-            .data((d, i) => dataValues[i])
-            .style('fill', colorMap);
-
+        row
+            .selectAll('.cell')
+            .data((d, i) => data[i])
+            .style('fill', colors);
+        const { showLabels } = this.props;
         if (showLabels) {
-            cell.append('text')
-                .attr('dy', '.32em')
-                .attr('x', x.bandwidth() / 2)
-                .attr('y', y.bandwidth() / 2)
-                .attr('text-anchor', 'middle')
-                .style('visibility', 'hidden')
-                .style('fill', d => (d >= maxValue / 2 ? 'white' : 'black'))
-                .text(d => format('.2n')(d))
-                .style('fill', (d) => {
-                    const color = colorMap(d);
-                    const colorBg = isValidHexColor(color) ? color : getHexFromRgb(color);
-                    return getColorOnBgColor(colorBg);
-                });
+            this.addText(cell, x, y, colors);
         }
+    }
 
-        const labels = group.append('g')
-            .attr('class', 'labels');
+    addText = (group, x, y, colors) => {
+        group
+            .append('text')
+            .attr('dy', '.35em')
+            .attr('x', x.bandwidth() / 2)
+            .attr('y', y.bandwidth() / 2)
+            .attr('text-anchor', 'middle')
+            .style('visibility', 'hidden')
+            .text(d => format('.2n')(d))
+            .style('fill', (d) => {
+                const color = colors(d);
+                const colorBg = isValidHexColor(color) ? color : getHexFromRgb(color);
+                return getColorOnBgColor(colorBg);
+            });
+    }
 
-        const columnLabels = labels
+    addLabels = (group, labels, x, y) => {
+        const columnLabels = group
             .selectAll('.column-labels')
-            .data(dataLabels)
+            .data(labels)
             .enter()
             .append('g')
             .attr('class', 'column-labels')
-            .attr('transform', (d, i) => `translate( ${x(i)}, 0)`);
-
+            .attr('transform', (d, i) => `translate(${x(i)}, 0)`);
 
         columnLabels
             .append('text')
@@ -229,9 +252,9 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('text-anchor', 'middle')
             .text(d => d);
 
-        const rowLabels = labels
+        const rowLabels = group
             .selectAll('.row-labels')
-            .data(dataLabels)
+            .data(labels)
             .enter()
             .append('g')
             .attr('class', 'row-labels')
@@ -245,10 +268,18 @@ export default class CorrelationMatrix extends React.PureComponent {
             .attr('dy', '.32em')
             .attr('text-anchor', 'end')
             .text(d => d);
+    }
 
-        const legend = select(this.svg)
+    addLegend = (group, height, width, colors, minValue, maxValue) => {
+        const rectWidth = width / 4 || 0;
+
+        const values = scaleLinear()
+            .domain([height, 0])
+            .range([minValue, maxValue]);
+
+        const legend = group
             .append('g')
-            .attr('transform', `translate(${matrixWidth + left + right + legendRectWidth}, ${top})`);
+            .attr('transform', `translate(${rectWidth}, 0)`);
 
         legend
             .selectAll('rect')
@@ -257,9 +288,9 @@ export default class CorrelationMatrix extends React.PureComponent {
             .append('rect')
             .attr('y', (d, i) => i)
             .attr('x', 0)
-            .attr('width', legendRectWidth)
+            .attr('width', rectWidth)
             .attr('height', 1)
-            .style('fill', d => colorMap(values(d)));
+            .style('fill', d => colors(values(d)));
 
         const yticks = scaleLinear()
             .range([height, 0])
@@ -270,21 +301,24 @@ export default class CorrelationMatrix extends React.PureComponent {
         legend
             .append('g')
             .attr('class', 'y-axis')
-            .attr('transform', `translate(${legendRectWidth} , 0)`)
+            .attr('transform', `translate(${rectWidth}, 0)`)
             .call(yAxis);
     }
 
     render() {
-        const { loading } = this.props;
+        const { loading, className } = this.props;
+
+        const containerStyle = `${styles['correlationmatrix-container']} ${className}`;
+        const matrixStyle = styles['correlation-matrix'];
 
         return (
             <div
-                className={`correlationmatrix-container ${this.props.className}`}
+                className={containerStyle}
                 ref={(el) => { this.container = el; }}
             >
                 { loading && <LoadingAnimation /> }
                 <svg
-                    className="correlation-matrix"
+                    className={matrixStyle}
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>
