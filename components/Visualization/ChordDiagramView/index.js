@@ -1,19 +1,26 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+
 import ChordDiagram from '../ChordDiagram';
+import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+
+import iconNames from '../../../constants/iconNames';
+import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
     className: '',
+    colorScheme: undefined,
 };
 
 export default class ChorDiagramView extends PureComponent {
@@ -24,23 +31,39 @@ export default class ChorDiagramView extends PureComponent {
         super(props);
         this.state = {
             colorScheme: undefined,
+            fullScreen: false,
         };
+
+        this.selectedColorScheme = undefined;
         this.colors = categoricalColorNames()
             .map(color => ({
                 id: color,
                 title: color,
             }));
     }
-
     componentWillReceiveProps(newProps) {
+        if (newProps.colorScheme !== this.props.colorScheme) {
+            this.setState({
+                colorScheme: newProps.colorScheme,
+            });
+        }
+    }
+
+    setFullScreen = () => {
         this.setState({
-            colorScheme: newProps.colorScheme,
+            fullScreen: true,
+        });
+    }
+
+    removeFullScreen = () => {
+        this.setState({
+            fullScreen: false,
         });
     }
 
     handleSelection = (data) => {
+        this.selectedColorScheme = data;
         const colors = getCategoryColorScheme(data);
-
         this.setState({
             colorScheme: colors,
         });
@@ -50,14 +73,27 @@ export default class ChorDiagramView extends PureComponent {
         this.chart.wrappedComponent.save();
     }
 
-    handleReset = () => {
-        this.chart.wrappedComponent.renderChart();
-    }
     render() {
         const {
             className,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const {
+            handleSelection,
+            handleSave,
+            setFullScreen,
+            removeFullScreen,
+            colors,
+            selectedColorScheme,
+        } = this;
+
         return (
             <div className={`${styles['chord-diagram-view']} ${className}`}>
                 <div className={styles.action}>
@@ -66,25 +102,51 @@ export default class ChorDiagramView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
-                            onChange={this.handleSelection}
-                            options={this.colors}
+                            onChange={handleSelection}
+                            options={colors}
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.colorScheme}
+                            value={selectedColorScheme}
                         />
                     </div>
                     <div className={styles['action-buttons']}>
-                        <PrimaryButton onClick={this.handleSave}>
-                            Save
-                        </PrimaryButton>
+                        <AccentButton
+                            onClick={handleSave}
+                            iconName={iconNames.download}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={setFullScreen}
+                            iconName={iconNames.expand}
+                            transparent
+                        />
                     </div>
                 </div>
-                <ChordDiagram
-                    className={styles['chord-diagram']}
-                    ref={(instance) => { this.chart = instance; }}
-                    {...otherProps}
-                    colorScheme={this.state.colorScheme}
-                />
+                {
+                    fullScreen ? (
+                        <FullScreen>
+                            <DangerButton
+                                className={styles.close}
+                                onClick={removeFullScreen}
+                                iconName={iconNames.close}
+                                transparent
+                            />
+                            <ChordDiagram
+                                className={styles['chord-diagram']}
+                                ref={(instance) => { this.chart = instance; }}
+                                colorScheme={colorScheme}
+                                {...otherProps}
+                            />
+                        </FullScreen>
+                    ) : (
+                        <ChordDiagram
+                            className={styles['chord-diagram']}
+                            ref={(instance) => { this.chart = instance; }}
+                            colorScheme={colorScheme}
+                            {...otherProps}
+                        />
+                    )
+                }
             </div>
         );
     }
