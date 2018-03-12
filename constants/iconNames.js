@@ -50,6 +50,8 @@ const iconNames = {
     wrench: 'ion-wrench',
     checkAll: 'ion-android-done-all',
     dragHandle: 'ion-android-more-vertical',
+    expand: 'ion-arrow-expand',
+    download: 'ion-code-download',
 
     sort: 'fa fa-sort',
     sortAscending: 'fa fa-sort-asc',

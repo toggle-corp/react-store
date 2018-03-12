@@ -9,9 +9,11 @@ import {
 } from '../../../utils/ColorScheme';
 import CorrelationMatrix from '../CorrelationMatrix';
 
+import Modal from '../../View/Modal';
 import SelectInput from '../../Input/SelectInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
-
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+import iconNames from '../../../constants/iconNames';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -19,11 +21,13 @@ const propTypes = {
         labels: PropTypes.arrayOf(PropTypes.string),
         values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     }).isRequired,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    colorScheme: [],
 };
 
 export default class CorrelationMatrixView extends PureComponent {
@@ -38,6 +42,7 @@ export default class CorrelationMatrixView extends PureComponent {
                 .some(v => v < 0) ?
                 interpolateRdBu : interpolateGnBu,
             selectedColorScheme: undefined,
+            fullScreen: false,
         };
 
         this.colors = sequentialColorNames()
@@ -47,6 +52,20 @@ export default class CorrelationMatrixView extends PureComponent {
                 title: color,
             }));
     }
+
+
+    setFullScreen = () => {
+        this.setState({
+            fullScreen: true,
+        });
+    }
+
+    removeFullScreen = () => {
+        this.setState({
+            fullScreen: false,
+        });
+    }
+
 
     handleSelection = (data) => {
         const colors = getSequentialColorScheme(data) || getDivergingColorScheme(data);
@@ -63,8 +82,11 @@ export default class CorrelationMatrixView extends PureComponent {
     render() {
         const {
             className,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        const { fullScreen, colorScheme } = this.state;
 
         return (
             <div className={`${styles['correlation-matrix-view']} ${className}`}>
@@ -82,17 +104,45 @@ export default class CorrelationMatrixView extends PureComponent {
                         />
                     </div>
                     <div className={styles['action-buttons']}>
-                        <PrimaryButton onClick={this.handleSave}>
-                            Save
-                        </PrimaryButton>
+                        <AccentButton
+                            onClick={this.handleSave}
+                            iconName={iconNames.download}
+                            transparent
+                        />
+                        <AccentButton
+                            transparent
+                            iconName={iconNames.expand}
+                            onClick={this.setFullScreen}
+                        />
                     </div>
                 </div>
-                <CorrelationMatrix
-                    className={styles['correlation-matrix']}
-                    ref={(instance) => { this.chart = instance; }}
-                    {...otherProps}
-                    colorScheme={this.state.colorScheme}
-                />
+                {
+                    fullScreen ? (
+                        <Modal
+                            className={styles.modal}
+                        >
+                            <DangerButton
+                                className={styles.close}
+                                onClick={this.removeFullScreen}
+                                iconName={iconNames.close}
+                                transparent
+                            />
+                            <CorrelationMatrix
+                                className={styles['correlation-matrix']}
+                                ref={(instance) => { this.chart = instance; }}
+                                colorScheme={colorScheme}
+                                {...otherProps}
+                            />
+                        </Modal>
+                    ) : (
+                        <CorrelationMatrix
+                            className={styles['correlation-matrix']}
+                            ref={(instance) => { this.chart = instance; }}
+                            colorScheme={colorScheme}
+                            {...otherProps}
+                        />
+                    )
+                }
             </div>
         );
     }

@@ -53,9 +53,9 @@ const defaultProps = {
     showLabels: true,
     className: '',
     margins: {
-        top: 100,
+        top: 50,
         right: 0,
-        bottom: 0,
+        bottom: 10,
         left: 100,
     },
     loading: false,
@@ -156,7 +156,7 @@ export default class CorrelationMatrix extends React.PureComponent {
         const colors = scaleSequential(colorScheme)
             .domain([minValue, maxValue]);
 
-        const group = this.setContext(matrixWidth, height, margins);
+        const group = this.setContext(width, height, margins);
         const labels = group.append('g').attr('class', 'labels');
         const legend = select(this.svg)
             .append('g')
