@@ -4,101 +4,117 @@
 
 import {
     isFalsy,
+    isTruthy,
     isInteger,
     splitInWhitespace,
 } from '../../../utils/common';
 import urlRegex from './regexForWeburl';
 
-// VALIDATION RULES
-export const requiredCondition = {
-    truth: value => !isFalsy(value) && !(
-        ((typeof value === 'string') && (splitInWhitespace(value).length <= 0)) ||
-        (Array.isArray(value) && (value.length <= 0))
-    ),
-    message: 'Field must not be empty',
+
+export const lessThanCondition = n => (value) => {
+    const ok = isFalsy(value) || value < n;
+    return {
+        ok,
+        message: `Value must be less than ${n}`,
+    };
+};
+
+export const greaterThanCondition = n => (value) => {
+    const ok = isFalsy(value) || value > n;
+    return {
+        ok,
+        message: `Value must be greater than ${n}`,
+    };
+};
+
+export const lessThanOrEqualToCondition = n => (value) => {
+    const ok = isFalsy(value) || value <= n;
+    return {
+        ok,
+        message: `Value must be less than or equal to ${n}`,
+    };
+};
+
+export const greaterThanOrEqualToCondition = n => (value) => {
+    const ok = isFalsy(value) || value >= n;
+    return {
+        ok,
+        message: `Value must be greater than or equal to ${n}`,
+    };
 };
 
 
-export const numberCondition = {
-    truth: value => isFalsy(value) || !isFalsy(+value),
-    message: 'Value must be a number',
+export const lengthLessThanCondition = n => (value) => {
+    const ok = isFalsy(value) || value.length < n;
+    return {
+        ok,
+        message: `Length must be less than ${n}`,
+    };
 };
 
-export const integerCondition = {
-    truth: value => isFalsy(value) || isInteger(+value),
-    message: 'Value must be an integer',
+export const lengthGreaterThanCondition = n => (value) => {
+    const ok = isFalsy(value) || value.length > n;
+    return {
+        ok,
+        message: `Length must be greater than ${n}`,
+    };
 };
 
-export const lessThanCondition = n => ({
-    truth: value => isFalsy(value) || value < n,
-    message: `Value must be less than ${n}`,
-});
-
-export const greaterThanCondition = n => ({
-    truth: value => isFalsy(value) || value > n,
-    message: `Value must be greater than ${n}`,
-});
-
-export const lessThanOrEqualToCondition = n => ({
-    truth: value => isFalsy(value) || value <= n,
-    message: `Value must be less than or equal to ${n}`,
-});
-
-export const greaterThanOrEqualToCondition = n => ({
-    truth: value => isFalsy(value) || value >= n,
-    message: `Value must be greater than or equal to ${n}`,
-});
-
-export const lengthLessThanCondition = n => ({
-    truth: value => isFalsy(value) || value.length < n,
-    message: `Length must be less than ${n} characters`,
-});
-
-export const lengthGreaterThanCondition = n => ({
-    truth: value => isFalsy(value) || value.length > n,
-    message: `Length must be greater than ${n} characters`,
-});
-
-export const lengthEqualToCondition = n => ({
-    truth: value => isFalsy(value) || value.length === n,
-    message: `Length must have exactly ${n} characters`,
-});
-
-export const emailCondition = {
-    truth: (value) => {
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        // NOTE: valid if falsy value as well
-        return isFalsy(value) || value === '' || re.test(value);
-    },
-    message: 'Value must be a valid email',
+export const lengthEqualToCondition = n => (value) => {
+    const ok = isFalsy(value) || value.length === n;
+    return {
+        ok,
+        message: `Length must be exactly ${n}`,
+    };
 };
 
-export const urlCondition = {
-    truth: (value) => {
-        // NOTE: NOT valid for unicode
-        const re = urlRegex;
-        // NOTE: valid if falsy value as well
-        return isFalsy(value) || value === '' || re.test(value);
-    },
-    message: 'Value must be a valid URL',
+
+export const requiredCondition = (value) => {
+    const ok = isTruthy(value) && !(
+        (
+            typeof value === 'string' &&
+            splitInWhitespace(value).length <= 0
+        ) || (
+            Array.isArray(value) &&
+            value.length <= 0
+        )
+    );
+    return {
+        ok,
+        message: 'Field must not be empty',
+    };
 };
 
-// Validator
+export const numberCondition = (value) => {
+    const ok = isFalsy(value) || !isFalsy(+value);
+    return {
+        ok,
+        message: 'Value must be a number',
+    };
+};
 
-/* Create a validation function for dependency injection */
-// todo: write test
-export function createValidation(...parameters) {
-    const args = [...parameters];
-    if (args.length <= 0) {
-        console.warn('No arguments supplied');
-        this.validation = undefined;
-        return {};
-    }
-    const fn = args.splice(args.length - 1, 1)[0];
-    if (typeof fn !== 'function') {
-        console.warn('Last argument must be a function');
-        this.validation = undefined;
-        return {};
-    }
-    return { fn, args };
-}
+export const integerCondition = (value) => {
+    const ok = isFalsy(value) || isInteger(+value);
+    return {
+        ok,
+        message: 'Value must be a integer',
+    };
+};
+
+export const emailCondition = (value) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const ok = isFalsy(value) || value === '' || re.test(value);
+    return {
+        ok,
+        message: 'Value must be a valid email',
+    };
+};
+
+export const urlCondition = (value) => {
+    const re = urlRegex;
+    const ok = isFalsy(value) || value === '' || re.test(value);
+    return {
+        ok,
+        message: 'Value must be a valid URL',
+    };
+};

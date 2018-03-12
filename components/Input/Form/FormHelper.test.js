@@ -2,114 +2,103 @@ import {
     requiredCondition,
     integerCondition,
     lengthGreaterThanCondition,
-    createValidation,
 } from './validations';
 
 import FormHelper from './FormHelper';
 
-const attachInputs = (store, helper, elements) => (
-    elements.reduce(
+const attachInputs = (store, helper, schema) => (
+    Object.keys(schema.fields).reduce(
         (acc, element) => ({
             ...acc,
             [element]: {
-                onChange: helper.getChangeFn(element),
+                onChange: helper.getChangeCallback(element),
             },
         }),
         {},
     )
 );
 
-const elements = [
-    'id',
-    'name',
-    'description',
-];
-
-const validations = {
-    id: [
-        requiredCondition,
-        integerCondition,
-    ],
-    name: [
-        requiredCondition,
-    ],
-    description: [
-        lengthGreaterThanCondition(5),
-    ],
+const schema = {
+    fields: {
+        id: [requiredCondition, integerCondition],
+        name: [requiredCondition],
+        description: [lengthGreaterThanCondition(5)],
+    },
+    validation: ({ name, description }) => {
+        const messages = [];
+        if (name && description && name.length > description.length) {
+            messages.push('Name must be shorter than the description');
+        }
+        return messages;
+    },
 };
 
-const validation = createValidation('name', 'description', (name, description) => {
-    if (name && description && name.length > description.length) {
-        return {
-            ok: false,
-            formErrors: ['Form has combined validation error.'],
-            formFieldErrors: {
-                name: 'Name must be shorter',
-                description: 'Description must be longer',
-            },
-        };
-    }
-    return { ok: true };
-});
-
-
-test('', () => {
+test('FormHelper', () => {
     const state = {
         values: {},
-        formErrors: undefined,
+        formErrors: {},
         formFieldErrors: {},
     };
-    const changeCallback = (values, { formFieldErrors }) => {
-        state.formErrors = undefined;
-        state.values = { ...state.values, ...values };
-        state.formFieldErrors = { ...state.formFieldErrors, ...formFieldErrors };
+    const changeCallback = (values, fieldErrors, formErrors) => {
+        state.formErrors = formErrors;
+        state.values = values;
+        state.formFieldErrors = fieldErrors;
     };
     const successCallback = (values) => {
-        state.values = { ...state.values, ...values };
+        state.values = values;
     };
-    const failureCallback = ({ formErrors, formFieldErrors }) => {
+    const failureCallback = (fieldErrors, formErrors) => {
         state.formErrors = formErrors;
-        state.formFieldErrors = { ...state.formFieldErrors, ...formFieldErrors };
+        state.formFieldErrors = fieldErrors;
     };
 
     const helper = new FormHelper();
     helper.setValue(state.values);
-    helper.setElements(elements);
-    helper.setValidations(validations);
-    helper.setValidation(validation);
-    helper.setCallbacks({
+    helper.setSchema(schema);
+    helper.setFieldErrors(state.formFieldErrors);
+    helper.setFormErrors(state.formErrors);
+    helper.setCallbacks(
         changeCallback,
-        successCallback,
         failureCallback,
-    });
+        successCallback,
+    );
 
-    const inputs = attachInputs(state, helper, elements);
+    const inputs = attachInputs(state, helper, schema);
+
     inputs.id.onChange(12);
     helper.setValue(state.values);
-
-    // Set value in field id
+    helper.setFormErrors(state.formErrors);
+    helper.setFieldErrors(state.formFieldErrors);
     expect(state.values.id).toEqual(12);
-    // Error on required field name
-    helper.onSubmit();
+
+    helper.submit(); // Error on required field name
     expect(state.formFieldErrors.name).not.toBe(undefined);
+
     // Clear error on field name
-    inputs.name.onChange('hari prasad');
+    inputs.name.onChange('hari prasad adhikari');
     helper.setValue(state.values);
-    inputs.description.onChange('short err');
+    helper.setFormErrors(state.formErrors);
+    helper.setFieldErrors(state.formFieldErrors);
+
+    inputs.description.onChange('description');
     helper.setValue(state.values);
-    helper.onSubmit();
-    // error because description is shorter than name
-    expect(state.formErrors).not.toBe(undefined);
-    expect(state.formFieldErrors.name).not.toBe(undefined);
-    expect(state.formFieldErrors.description).not.toBe(undefined);
+    helper.setFormErrors(state.formErrors);
+    helper.setFieldErrors(state.formFieldErrors);
+    helper.submit();
+    expect(state.formErrors).not.toBe(undefined); // error as name is shorter
 
     // clear error for description and overall error
-    inputs.description.onChange('a lot longer error');
+    inputs.description.onChange('I am very very long description');
     helper.setValue(state.values);
+    helper.setFormErrors(state.formErrors);
+    helper.setFieldErrors(state.formFieldErrors);
+    expect(state.formErrors.errors).toBe(undefined);
     expect(state.formFieldErrors.description).toBe(undefined);
-    expect(state.formErrors).toBe(undefined);
+
     // clear error for name
-    inputs.name.onChange('haris');
+    inputs.name.onChange('hari prasad');
     helper.setValue(state.values);
+    helper.setFormErrors(state.formErrors);
+    helper.setFieldErrors(state.formFieldErrors);
     expect(state.formFieldErrors.name).toBe(undefined);
 });
