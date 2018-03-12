@@ -1,63 +1,146 @@
-$color-background: #e0e0e0 !default;
-$color-background-header: #ececec !default;
-$color-background-header-alt: #e5e5e5 !default;
-$color-background-alt-row: #f0f0f0 !default;
-$color-background-row: #f0f0f0 !default;
-$color-background-row-alt: #f5f5f5 !default;
-$color-background-disabled: rgba(0, 0, 0, .06) !default;
-$color-foreground: #f8f8f8 !default;
-$color-foreground-alt: #f0f0f0 !default;
-$color-text: rgba(0, 0, 0, .8) !default;
-$color-text-disabled: rgba(0, 0, 0, .3) !default;
-$color-text-tab: rgba(0, 0, 0, .3) !default;
-$color-watermark: rgba(0, 0, 0, .3) !default;
-$color-label: rgba(0, 0, 0, .5) !default;
-$color-placeholder: rgba(0, 0, 0, .3) !default;
+$theme-type-light: 'light' !default;
+$theme-type-dark: 'dark' !default;
 
-$color-hover: rgba(0, 0, 0, .06) !default;
+$theme-type: $theme-type-light !default;
 
-$color-navbar: #fff !default;
-$color-text-on-navbar: rgba(0, 0, 0, .9) !default;
+@function get-color($color-light, $color-dark) {
+    @if ($theme-type == $theme-type-dark) {
+        @return $color-dark;
+    }
 
-$color-primary: #37474f !default;
+    @return $color-light;
+}
+
+$color-text-on-light: rgba(0, 0, 0, .7) !default;
+$color-text-on-dark: rgba(255, 255, 255, .7) !default;
+$color-text: get-color($color-text-on-light, $color-text-on-dark) !default;
+
+$color-text-placeholder-on-light: rgba(0, 0, 0, .4) !default;
+$color-text-placeholder-on-dark: rgba(255, 255, 255, .3) !default;
+$color-text-placeholder: get-color($color-text-placeholder-on-light, $color-text-placeholder-on-dark) !default;
+
+$color-text-disabled-on-light: rgba(0, 0, 0, .3) !default;
+$color-text-disabled-on-dark: rgba(255, 255, 255, .2) !default;
+$color-text-disabled: get-color($color-text-disabled-on-light, $color-text-disabled-on-dark) !default;
+
+$color-text-label-on-light: rgba(0, 0, 0, .5) !default;
+$color-text-label-on-dark: rgba(255, 255, 255, .4) !default;
+$color-text-label: get-color($color-text-label-on-light, $color-text-label-on-dark) !default;
+
+$color-primary-light: #4cb176 !default;
+$color-primary-dark: #4ce49c !default;
+$color-primary: get-color($color-primary-light, $color-primary-dark) !default;
+
+$color-accent-light: #c34176 !default;
+$color-accent-dark: #c34176 !default;
+$color-accent: get-color($color-accent-light, $color-accent-dark) !default;
+
+$color-info-light: #41a1f0 !default;
+$color-info-dark: #41a1f0 !default;
+$color-info: get-color($color-info-light, $color-info-dark) !default;
+
+$color-success-light: #41cf76 !default;
+$color-success-dark: #41cf76 !default;
+$color-success: get-color($color-success-light, $color-success-dark) !default;
+
+$color-warning-light: #e0b652 !default;
+$color-warning-dark: #e0b652 !default;
+$color-warning: get-color($color-warning-light, $color-warning-dark) !default;
+
+$color-danger-light: #d3575e !default;
+$color-danger-dark: #d3575e !default;
+$color-danger: get-color($color-danger-light, $color-danger-dark) !default;
+
+$color-background-light: #e0e0e0 !default;
+$color-background-dark: #000 !default;
+$color-background: get-color($color-background-light, $color-background-dark) !default;
+
+$color-background-light-alt: #f0f0f0 !default;
+$color-background-dark-alt: #313131 !default;
+$color-background-alt: get-color($color-background-light-alt, $color-background-dark-alt) !default;
+
+$color-foreground-light: #fff !default;
+$color-foreground-dark: #414141 !default;
+$color-foreground: get-color($color-foreground-light, $color-foreground-dark) !default;
+
+$color-foreground-light-alt: #f5f5f5 !default;
+$color-foreground-dark-alt: #484848 !default;
+$color-foreground-alt: get-color($color-foreground-light-alt, $color-foreground-dark-alt) !default;
+
+$color-background-header-light: #bbdefb !default;
+$color-background-header-dark: #263238 !default;
+$color-background-header: get-color($color-background-header-light, $color-background-header-dark) !default;
+
+$color-background-header-alt-light: #90caf9 !default;
+$color-background-header-alt-dark: #263844 !default;
+$color-background-header-alt: get-color($color-background-header-alt-light, $color-background-header-alt-dark) !default;
+
+$color-background-hover-on-light: rgba(0, 0, 0, .03) !default;
+$color-background-hover-on-dark: rgba(255, 255, 255, .03) !default;
+$color-background-hover: get-color($color-background-hover-on-light, $color-background-hover-on-dark) !default;
+
+$color-background-disabled-light: rgba(0, 0, 0, .05) !default;
+$color-background-disabled-dark: rgba(255, 255, 255, .05) !default;
+$color-background-disabled: get-color($color-background-disabled-light, $color-background-disabled-dark) !default;
+
+$color-background-hover-light: rgba(0, 0, 0, .05) !default;
+$color-background-hover-dark: rgba(255, 255, 255, .05) !default;
+$color-background-hover: get-color($color-background-hover-light, $color-background-hover-dark) !default;
+
+$color-background-selected: $color-accent !default;
+
+$color-background-row-light: #fafafa !default;
+$color-background-row-dark: #414141 !default;
+$color-background-row: get-color($color-background-row-light, $color-background-row-dark) !default;
+
+$color-background-row-light-alt: #f0f0f0 !default;
+$color-background-row-dark-alt: #484848 !default;
+$color-background-row-alt: get-color($color-background-row-light-alt, $color-background-row-dark-alt) !default;
+
+$color-navbar-light: #fff !default;
+$color-navbar-dark: #414141 !default;
+$color-navbar: get-color($color-navbar-light, $color-navbar-dark) !default;
+
 $color-text-active-tab: $color-primary !default;
-$color-accent: #009688 !default;
 
-$color-danger: #dd2c00 !default;
-$color-text-on-danger: #fff !default;
-$color-success: #4cbf50 !default;
-$color-text-on-success: #fff !default;
-$color-warning: #fb8c00 !default;
-$color-text-on-warning: #fff !default;
+$color-negative: $color-danger !default;
+$color-positive: $color-success !default;
 
-$color-negative: #e74c3c !default;
-$color-positive: #2ecc71 !default;
+$color-separator-on-light: rgba(0, 0, 0, .1) !default;
+$color-separator-on-dark: rgba(255, 255, 255, .08) !default;
+$color-separator: get-color($color-separator-on-light, $color-separator-on-dark) !default;
 
-$color-text-on-primary: rgba(255, 255, 255, .8) !default;
-$color-text-on-accent: rgba(255, 255, 255, .9) !default;
+$color-separator-on-light-alt: rgba(0, 0, 0, .2) !default;
+$color-separator-on-dark-alt: rgba(255, 255, 255, .17) !default;
+$color-separator-alt: get-color($color-separator-on-light-alt, $color-separator-on-dark-alt) !default;
 
-$color-separator: rgba(0, 0, 0, .06) !default;
-$color-separator-alt: rgba(0, 0, 0, .2) !default;
-$color-separator-hover: rgba(0, 0, 0, .3) !default;
+$color-separator-hover-on-light: rgba(0, 0, 0, .3) !default;
+$color-separator-hover-on-dark: rgba(255, 255, 255, .3) !default;
+$color-separator-hover: get-color($color-separator-hover-on-light, $color-separator-hover-on-dark) !default;
 
-$color-shadow-normal: rgba(0, 0, 0, .5) !default;
+$color-shadow-medium: rgba(0, 0, 0, .5) !default;
 $color-shadow-light: rgba(0, 0, 0, .3) !default;
 $color-shadow-dark: rgba(0, 0, 0, .8) !default;
 
-$color-background-hover: #e5e5e5 !default;
-$color-bar-selected: $color-primary;
-
 $color-background-button-default: $color-foreground !default;
-$color-background-button-hover: #fff !default;
 
-$color-background-scrollbar: #ececec !default;
-$color-foreground-scrollbar: #afafaf !default;
+$color-background-scrollbar-light: #eee !default;
+$color-background-scrollbar-dark: #616161 !default;
+$color-background-scrollbar: get-color($color-background-scrollbar-light, $color-background-scrollbar-dark) !default;
 
-$color-background-overlay: rgba(255, 255, 255, .77) !default;
-$color-accented-dark: #000f0d !default;
+$color-foreground-scrollbar-light: #bbb !default;
+$color-foreground-scrollbar-dark: #868686 !default;
+$color-foreground-scrollbar: get-color($color-foreground-scrollbar-light, $color-foreground-scrollbar-dark) !default;
 
-$color-background-modal: rgba(0, 0, 0, .8) !default;
+$color-background-overlay-light: rgba(255, 255, 255, .77) !default;
+$color-background-overlay-dark: rgba(0, 0, 0, .7) !default;
+$color-background-overlay: get-color($color-background-overlay-light, $color-background-overlay-dark) !default;
+
+$color-background-modal-light: rgba(0, 0, 0, .77) !default;
+$color-background-modal-dark: rgba(0, 0, 0, .77) !default;
+$color-background-modal: get-color($color-background-modal-light, $color-background-modal-dark) !default;
+
 // Visualizations
-$color-grid-path: #e8e8e8;
-$color-axis-path: #d3d3d3;
-$color-links: #f0f0f0;
+$color-grid-path: #e8e8e8 !default;
+$color-axis-path: #d3d3d3 !default;
+$color-links: #f0f0f0 !default;

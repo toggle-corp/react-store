@@ -124,7 +124,7 @@ export const getOptionsContainerPosition = (parent, optionsContainer) => {
         parentRect = parent.container.getBoundingClientRect();
     }
 
-    const offset = { top: 2, bottom: 0, left: 0, right: 0 };
+    const offset = { top: 0, bottom: 0, left: 0, right: 0 };
     if (parent.props.showHintAndError) {
         offset.top = 12;
     }

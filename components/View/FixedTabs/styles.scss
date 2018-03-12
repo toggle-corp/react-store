@@ -13,10 +13,10 @@
         background-color: transparent;
         cursor: pointer;
         padding: $spacing-small $spacing-medium;
-        color: $color-label;
+        text-transform: uppercase;
+        color: $color-text-label;
         font-family: inherit;
         font-size: inherit;
-        text-transform: uppercase;
 
         &.active {
             border-bottom-color: $color-accent;

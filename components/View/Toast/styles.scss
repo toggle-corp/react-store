@@ -1,25 +1,23 @@
 @import '../../../stylesheets/base';
 
-$spacing-extra-small-alt: 3px !default;
-$spacing-small-alt: 8px !default;
-$color-info: #4bf !default;
+$width-toast-medium: 480px;
+$z-index-toast: 11111;
 
 .toast {
+    @include background-color($color-foreground);
     @include transition-slow;
     position: fixed;
     bottom: 2%;
     left: 50%;
     transform: translate(-50%, 100%);
     opacity: 0;
-    z-index: 11111;
-    background-color: $color-foreground;
-    width: 480px;
+    z-index: $z-index-toast;
+    width: $width-toast-medium;
     height: auto;
     overflow: hidden;
     pointer-events: none;
 
     .container {
-
         .header {
             display: flex;
             align-items: flex-start;
@@ -35,7 +33,7 @@ $color-info: #4bf !default;
                 right: $spacing-medium;
                 flex-shrink: 0;
                 padding: 0;
-                color: $color-label;
+                color: $color-text-label;
                 font-size: $font-size-medium-alt;
             }
         }

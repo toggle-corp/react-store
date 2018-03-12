@@ -7,13 +7,12 @@
         align-items: center;
         justify-content: center;
         margin: 0;
-        padding: $spacing-medium;
         width: 100%;
         height: 100%;
-        color: $color-label;
+        color: $color-text-disabled;
     }
 }
 
 .list-item {
-    padding: $spacing-small $spacing-medium;
+    padding: $spacing-small $spacing-small-alt;
 }
