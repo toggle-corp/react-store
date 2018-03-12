@@ -93,5 +93,5 @@
 }
 
 @function get-hover-color($color) {
-    @return darken($color, 20%);
+    @return darken($color, 10%);
 }
