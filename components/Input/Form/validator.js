@@ -132,8 +132,11 @@ export const analyzeFieldErrors = (fieldErrors) => {
     if (isFalsy(fieldErrors)) {
         return false;
     }
-
-    return Object.keys(fieldErrors).every((key) => {
+    const keys = Object.keys(fieldErrors);
+    if (keys.length === 0) {
+        return false;
+    }
+    return keys.every((key) => {
         const val = fieldErrors[key];
         if (isObject(val)) {
             return analyzeFieldErrors(val);
