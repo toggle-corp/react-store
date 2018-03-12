@@ -4,11 +4,13 @@
     outline: none;
     border: 0;
     background-color: transparent;
+    color: inherit;
     font-family: inherit;
     font-size: inherit;
 }
 
 .options {
+    @include background-color($color-foreground);
     padding: $spacing-small 0;
     max-height: 200px;
     overflow-y: auto;
@@ -20,13 +22,10 @@
         cursor: pointer;
         padding: $spacing-small $spacing-small-alt;
         width: 100%;
-        overflow: hidden;
         text-align: left;
-        text-overflow: ellipsis;
-        white-space: nowrap;
 
         &:hover {
-            background-color: $color-background-hover;
+            background-color: get-hover-color($color-foreground);
         }
 
         .checkbox {
@@ -36,8 +35,7 @@
 
         &:not(.multi) {
             &.active {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                @include background-color($color-accent);
             }
         }
     }
@@ -45,6 +43,6 @@
     .empty {
         padding: $spacing-small-alt $spacing-small;
         text-align: center;
-        color: $color-watermark;
+        color: get-text-color($color-foreground, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
     }
 }

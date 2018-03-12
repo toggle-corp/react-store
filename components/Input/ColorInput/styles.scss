@@ -1,14 +1,9 @@
 @import '../../../stylesheets/base';
+@import '../../../stylesheets/input-label';
 
 .color-input {
-    margin-right: 10px;
-
     .label {
-        margin-bottom: $spacing-extra-small;
-        width: 100%;
-        text-transform: uppercase;
-        color: $color-label;
-        font-size: $font-size-extra-small;
+        @extend %input-label;
     }
 
     .color-box {
@@ -21,7 +16,7 @@
         .color {
             display: block;
             width: 32px;
-            min-height: $font-size-normal;
+            min-height: $font-size-medium;
         }
 
         &:hover {
@@ -57,7 +52,7 @@
 
     .hint {
         @extend %base;
-        color: $color-label;
+        color: $color-text-label;
     }
 
     .error {

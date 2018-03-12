@@ -4,6 +4,19 @@ import React from 'react';
 import List from './index';
 import styles from './styles.scss';
 
+const defaultEmptyComponent = () => {
+    const classNames = [
+        'empty',
+        styles.empty,
+    ];
+
+    return (
+        <p className={classNames.join(' ')}>
+            Nothing here
+        </p>
+    );
+};
+
 const propTypeData = PropTypes.arrayOf(
     PropTypes.oneOfType([
         PropTypes.number,
@@ -20,13 +33,13 @@ const propTypes = {
     /* data to be iterated and shown as list */
     data: propTypeData,
     /* Component to show when data is empty */
-    emptyComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     data: [],
-    emptyComponent: 'Nothing here',
+    emptyComponent: defaultEmptyComponent,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -38,19 +51,18 @@ export default class ListView extends React.Component {
         const {
             className,
             data,
-            emptyComponent,
+            emptyComponent: EmptyComponent,
 
             ...otherProps
         } = this.props;
+
         return (
             <div
                 className={`${styles['list-view']} list-view ${className}`}
             >
                 {
                     data.length === 0 ? (
-                        <p className={`${styles.empty} empty`} >
-                            { emptyComponent }
-                        </p>
+                        <EmptyComponent />
                     ) : (
                         <List
                             data={data}

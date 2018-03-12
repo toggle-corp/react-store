@@ -55,16 +55,30 @@ export default class DropdownMenu extends React.PureComponent {
         this.boundingClientRect = {};
     }
 
-    componentDidUpdate() {
-        if (this.state.showDropdown) {
-            window.addEventListener('click', this.handleClick);
-        } else {
-            window.removeEventListener('click', this.handleClick);
-        }
+    componentWillMount() {
+        window.addEventListener('click', this.handleWindowClick);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('click', this.handleClick);
+        window.removeEventListener('click', this.handleWindowClick);
+    }
+
+    getClassName = () => {
+        const { className } = this.props;
+        const { showDropdown } = this.state;
+
+        const classNames = [
+            className,
+            'dropdown-menu',
+            styles.dropdownMenu,
+        ];
+
+        if (showDropdown) {
+            classNames.push('active');
+            classNames.push(styles.active);
+        }
+
+        return classNames.join(' ');
     }
 
     handleDropdownClick = (e) => {
@@ -74,20 +88,16 @@ export default class DropdownMenu extends React.PureComponent {
             this.boundingClientRect = this.container.getBoundingClientRect();
         }
 
-        // XXX: maybe need to have a setTimeout of 0ms
+        const { showDropdown: oldShowDropdown } = this.state;
 
-        this.setState({ showDropdown: !this.state.showDropdown });
+        this.setState({ showDropdown: !oldShowDropdown });
     };
-
-    handleContainerClose = () => {
-        this.setState({ showDropdown: false });
-    }
 
     handleDropdownContainerBlur = () => {
         this.setState({ showDropdown: false });
     }
 
-    handleClick = () => {
+    handleWindowClick = () => {
         if (this.state.showDropdown) {
             this.setState({ showDropdown: false });
         }
@@ -106,50 +116,109 @@ export default class DropdownMenu extends React.PureComponent {
         return optionsContainerPosition;
     }
 
-    render() {
-        const { showDropdown } = this.state;
-        const {
-            title,
+    renderLeftIcon = () => {
+        const { iconName } = this.props;
+
+        if (!iconName) {
+            return null;
+        }
+
+        const className = [
             iconName,
-            hideDropdownIcon,
+            'left-icon',
+            styles.leftIcon,
+        ].join(' ');
+
+        return <i className={className} />;
+    }
+
+    renderDropdownIcon = () => {
+        const { hideDropdownIcon } = this.props;
+
+        if (hideDropdownIcon) {
+            return null;
+        }
+
+        const className = [
+            iconNames.chevronDown,
+            'dropdown-icon',
+            styles.dropdownIcon,
+        ].join(' ');
+
+        return <i className={className} />;
+    }
+
+    renderDropdownButton = () => {
+        const { title } = this.props;
+
+        const LeftIcon = this.renderLeftIcon;
+        const DropdownIcon = this.renderDropdownIcon;
+        const className = [
+            'dropdown-button',
+            styles.dropdownButton,
+        ].join(' ');
+        const titleClassName = [
+            'title',
+            styles.title,
+        ].join(' ');
+
+        return (
+            <button
+                onClick={this.handleDropdownClick}
+                className={className}
+            >
+                <LeftIcon />
+                <span className={titleClassName}>
+                    {title}
+                </span>
+                <DropdownIcon />
+            </button>
+        );
+    }
+
+    renderDropdownContainer = () => {
+        const { showDropdown } = this.state;
+
+        if (!showDropdown) {
+            return null;
+        }
+
+        const {
             dropdownClassName,
-            className,
+            children,
         } = this.props;
+
+        const className = [
+            dropdownClassName,
+            'dropdown-container',
+            styles.dropdownContainer,
+        ].join(' ');
+
+        return (
+            <FloatingContainer
+                ref={(el) => { this.dropdownContainer = el; }}
+                className={className}
+                onBlur={this.handleDropdownContainerBlur}
+                parent={this.container}
+                onInvalidate={this.handleDropdownContainerInvalidate}
+            >
+                { children }
+            </FloatingContainer>
+        );
+    }
+
+    render() {
+        const className = this.getClassName();
+        const DropdownButton = this.renderDropdownButton;
+        const DropdownContainer = this.renderDropdownContainer;
 
         return (
             <div
                 ref={(el) => { this.container = el; }}
-                className={`${styles['dropdown-menu']} ${className}`}
+                className={className}
             >
-                <button
-                    onClick={this.handleDropdownClick}
-                    className={styles['dropdown-header']}
-                >
-                    <div>
-                        { iconName &&
-                            <i className={`${iconName} ${styles['item-icon']}`} />
-                        }
-                        {title}
-                    </div>
-                    {
-                        !hideDropdownIcon && (
-                            <i className={`${iconNames.chevronDown} ${showDropdown ? styles['rotated dropdown-icon'] : styles['dropdown-icon']}`} />
-                        )
-                    }
-                </button>
-                {
-                    showDropdown && (
-                        <FloatingContainer
-                            ref={(el) => { this.dropdownContainer = el; }}
-                            className={`${styles['dropdown-container']} ${dropdownClassName}`}
-                            onBlur={this.handleDropdownContainerBlur}
-                            parent={this.container}
-                            onInvalidate={this.handleDropdownContainerInvalidate}
-                        >
-                            { this.props.children }
-                        </FloatingContainer>
-                    )
-                }
+                <DropdownButton />
+                <DropdownContainer />
             </div>
         );
     }

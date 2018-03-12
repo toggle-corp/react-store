@@ -28,13 +28,12 @@
             justify-content: center;
             min-width: $width-icon-extra-large;
             min-height: $width-icon-extra-large;
-            color: $color-label;
+            color: $color-text-label;
             font-weight: $font-weight-bold;
             user-select: none;
 
             :global &.active {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                @include background-color($color-accent);
             }
         }
     }

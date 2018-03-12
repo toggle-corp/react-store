@@ -1,16 +1,110 @@
 @import '../../../stylesheets/base';
 
+$radius-button-border: 2px;
+
+@mixin button-props($base-color) {
+    @include background-color($base-color);
+
+    &:hover {
+        background-color: get-hover-color($base-color);
+    }
+
+    &:focus {
+        @include outline-button($base-color);
+    }
+}
+
+@mixin transparent-button-props ($base-color) {
+    color: $base-color;
+
+    &:focus {
+        @include outline-button($color-foreground);
+    }
+}
+
 .button {
-    @include shadow-medium;
-    outline: none;
     border: 0;
-    border-radius: 3px;
-    cursor: pointer;
-    padding: $spacing-small $spacing-medium;
+    border-radius: $radius-button-border;
+    background-color: transparent;
+    padding: $spacing-small $spacing-small-alt;
     text-transform: uppercase;
     font-family: inherit;
-    font-size: $font-size-normal-alt;
-    font-weight: $font-weight-normal;
+    font-size: $font-size-small;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:not(.transparent) {
+        &:not(:disabled) {
+            @include shadow-button;
+        }
+
+        &.button-default {
+            @include button-props($color-foreground);
+        }
+
+        &.button-accent {
+            @include button-props($color-accent);
+        }
+
+        &.button-primary {
+            @include button-props($color-primary);
+        }
+
+        &.button-danger {
+            @include button-props($color-danger);
+        }
+
+        &.button-success {
+            @include button-props($color-success);
+        }
+
+        &.button-warning {
+            @include button-props($color-warning);
+        }
+
+        &:disabled {
+            background-color: $color-background-disabled;
+            color: $color-text-disabled;
+        }
+    }
+
+    &.transparent {
+        &:focus {
+            border-bottom: 0;
+        }
+
+        &.button-default {
+            @include transparent-button-props($color-text);
+        }
+
+        &.button-accent {
+            @include transparent-button-props($color-accent);
+        }
+
+        &.button-primary {
+            @include transparent-button-props($color-primary);
+        }
+
+        &.button-danger {
+            @include transparent-button-props($color-danger);
+        }
+
+        &.button-success {
+            @include transparent-button-props($color-success);
+        }
+
+        &.button-warning {
+            @include transparent-button-props($color-warning);
+        }
+
+        &:disabled {
+            cursor: default;
+            color: $color-text-disabled;
+        }
+
+    }
 
     &.with-icon-and-children {
         .icon {
@@ -28,129 +122,6 @@
         padding-bottom: 0;
     }
 
-    &:hover {
-        background-color: $color-background-button-hover;
-    }
-
-    &:active {
-        @include shadow-small;
-        transform: translateY(1px);
-    }
-
-    &.button-default {
-        background-color: $color-background-button-default;
-        color: $color-label;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-label;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-label;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-label;
-                outline-offset: 0;
-            }
-        }
-    }
-
-    &.button-accent {
-        background-color: $color-accent;
-        color: $color-text-on-accent;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-text-on-accent;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-accent;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-accent;
-                outline-offset: 0;
-            }
-        }
-    }
-
-    &.button-primary {
-        background-color: $color-primary;
-        color: $color-text-on-primary;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-text-on-primary;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-primary;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-primary;
-                outline-offset: 0;
-            }
-        }
-    }
-
-    &.button-danger {
-        background-color: $color-danger;
-        color: $color-text-on-primary;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-text-on-primary;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-danger;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-danger;
-                outline-offset: 0;
-            }
-        }
-    }
-
-    &.button-success {
-        background-color: $color-success;
-        color: $color-text-on-primary;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-text-on-primary;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-success;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-success;
-                outline-offset: 0;
-            }
-        }
-    }
-
-    &.button-warning {
-        background-color: $color-warning;
-        color: $color-text-on-primary;
-
-        &:focus {
-            outline: $width-separator-thin dotted $color-text-on-primary;
-            outline-offset: -$spacing-small;
-        }
-
-        &.transparent {
-            color: $color-warning;
-
-            &:focus {
-                outline: $width-separator-thin dotted $color-warning;
-                outline-offset: 0;
-            }
-        }
-    }
-
     .icon-button {
         margin-right: $spacing-small;
 
@@ -159,25 +130,4 @@
         }
     }
 
-    &:disabled {
-        box-shadow: none;
-        background-color: $color-background-disabled;
-        cursor: default;
-        color: $color-text-disabled;
-    }
-
-    &.transparent {
-        box-shadow: none;
-        background-color: transparent;
-
-        &:focus {
-            border-bottom: 0;
-            background-color: $color-hover;
-        }
-
-        &:disabled {
-            cursor: default;
-            color: $color-text-disabled;
-        }
-    }
 }

@@ -48,7 +48,7 @@
                 background-color: transparent;
                 cursor: pointer;
                 padding: $spacing-extra-small $spacing-small;
-                color: $color-label;
+                color: $color-text-label;
 
                 &:hover {
                     color: $color-text;
@@ -79,7 +79,7 @@
         }
 
         .input {
-            border-bottom: $width-separator-normal solid $color-accent;
+            border-bottom-color: $color-accent;
         }
     }
 
@@ -110,7 +110,7 @@
 
     .hint {
         @extend %hint-and-error;
-        color: $color-label;
+        color: $color-text-label;
     }
 
     .error {

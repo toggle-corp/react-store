@@ -33,8 +33,7 @@
             }
 
             &.highlighted {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                @include background-color($color-accent);
             }
 
             .cell {
@@ -49,8 +48,7 @@
 
                 &.highlighted,
                 &.column-highlighted {
-                    background-color: $color-accent;
-                    color: $color-text-on-accent;
+                    @include background-color($color-accent);
                 }
 
                 &:not(:last-child) {

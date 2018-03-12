@@ -6,11 +6,11 @@ $width-modal-small: 420px !default;
 .modal {
     display: flex;
     position: absolute;
-    flex-direction: column;
     top: 50%;
     left: 50%;
+    flex-direction: column;
     animation: fade-in-from-top .3s ease forwards;
-    box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-normal;
+    box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
     background-color: $color-foreground;
     width: $width-modal-medium;
     max-height: 96vh;
