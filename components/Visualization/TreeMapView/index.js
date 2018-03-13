@@ -61,6 +61,7 @@ export default class TreeMapView extends PureComponent {
     }
 
     handleSelection = (data) => {
+        this.selectedColorScheme = data;
         const colors = getCategoryColorScheme(data);
         this.setState({
             colorScheme: colors,
