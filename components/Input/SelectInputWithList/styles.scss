@@ -27,7 +27,7 @@
                 flex-shrink: 0;
 
                 &.disabled {
-                    color: $color-label;
+                    color: $color-text-label;
                 }
             }
 
@@ -48,7 +48,7 @@
 
     .hint {
         @extend %base;
-        color: $color-label;
+        color: $color-text-label;
     }
 
     .error {

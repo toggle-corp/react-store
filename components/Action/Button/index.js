@@ -9,7 +9,7 @@ const propTypes = {
      * default, primary, danger, warning, success
      * Generally user doesn't explicitly pass buttonType
      */
-    type: PropTypes.string,
+    buttonType: PropTypes.string,
 
     /**
      * required for style override
@@ -57,7 +57,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    type: 'button-default',
+    buttonType: 'button-default',
     className: '',
     disabled: false,
     iconName: undefined,
@@ -77,7 +77,7 @@ export default class Button extends React.PureComponent {
 
     static getClassName = (props) => {
         const {
-            type,
+            buttonType,
             className,
             iconName,
             children,
@@ -92,9 +92,9 @@ export default class Button extends React.PureComponent {
             styles.button,
         ];
 
-        if (type) {
-            classNames.push(type);
-            classNames.push(styles[type]);
+        if (buttonType) {
+            classNames.push(buttonType);
+            classNames.push(styles[buttonType]);
         }
 
         if (iconName && children) {
@@ -149,7 +149,7 @@ export default class Button extends React.PureComponent {
             disabled,
             onClick,
 
-            type, // eslint-disable-line no-unused-vars
+            buttonType, // eslint-disable-line no-unused-vars
             className: captureClassName, // eslint-disable-line no-unused-vars
             smallHorizontalPadding, // eslint-disable-line no-unused-vars
             smallVerticalPadding, // eslint-disable-line no-unused-vars
