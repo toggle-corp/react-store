@@ -187,7 +187,7 @@ export default class TabularSelectInput extends React.PureComponent {
 
         const classNames = [
             className,
-            styles['tabular-select-input'],
+            styles.tabularSelectInput,
             'tabular-select-input',
         ];
 
@@ -319,6 +319,10 @@ export default class TabularSelectInput extends React.PureComponent {
             hint,
             showHintAndError,
             disabled,
+            onChange, // eslint-disable-line no-unused-vars
+            value, // eslint-disable-line no-unused-vars
+            options, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
@@ -332,7 +336,6 @@ export default class TabularSelectInput extends React.PureComponent {
         return (
             <div className={this.getClassName()} >
                 <MultiSelectInput
-                    {...otherProps}
                     className={styles.select}
                     value={selectedOptionsKeys}
                     options={validOptions}
@@ -343,8 +346,9 @@ export default class TabularSelectInput extends React.PureComponent {
                     disabled={disabled}
                     error={error}
                     showHintAndError={false}
+                    {...otherProps}
                 />
-                <div className={styles['table-container']}>
+                <div className={styles.tableContainer}>
                     <Table
                         data={selectedOptions}
                         headers={tableHeadersWithRemove}

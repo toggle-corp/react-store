@@ -112,8 +112,8 @@ export default class SelectInputWithList extends React.PureComponent {
         }
     }
 
-    getObjectFromValue = (options, value) => (
-        (options || emptyList).filter(d => (
+    getObjectFromValue = (options = emptyList, value) => (
+        options.filter(d => (
             value.indexOf(d.key) !== -1
         ))
     )
@@ -124,7 +124,7 @@ export default class SelectInputWithList extends React.PureComponent {
 
         const classNames = [
             className,
-            styles['select-input-with-list'],
+            styles.selectInputWithList,
             'select-input-with-list',
         ];
 
@@ -187,18 +187,18 @@ export default class SelectInputWithList extends React.PureComponent {
 
         return (
             <div
-                className={styles['selected-item']}
+                className={styles.selectedItem}
                 key={key}
             >
                 <span
-                    className={styles['selected-item-label']}
+                    className={styles.selectedItemLabel}
                 >
                     {this.props.labelSelector(data)}
                 </span>
                 {!hideRemoveFromListButton &&
                     <DangerButton
                         onClick={() => this.handleListItemRemove(key)}
-                        className={`${additionalStyle} ${styles['remove-button']}`}
+                        className={`${additionalStyle} ${styles.removeButton}`}
                         type="button"
                         smallHorizontalPadding
                         smallVerticalPadding
@@ -213,16 +213,17 @@ export default class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
-            className, //eslint-disable-line
-            options,
-            value,
-            keySelector,
-            labelSelector,
-            label,
+            className, // eslint-disable-line no-unused-vars
+            disabled,
             error,
             hint,
+            keySelector,
+            label,
+            labelSelector,
+            onChange, // eslint-disable-line no-unused-vars
+            options,
             showHintAndError,
-            disabled,
+            value,
             ...otherProps
         } = this.props;
 
@@ -233,16 +234,16 @@ export default class SelectInputWithList extends React.PureComponent {
         return (
             <div className={this.getClassName()}>
                 <MultiSelectInput
-                    value={value}
-                    label={label}
-                    options={options}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    onChange={this.handleSelectInputChange}
                     className={`${styles.input} input`}
                     disabled={disabled}
                     error={error}
+                    keySelector={keySelector}
+                    label={label}
+                    labelSelector={labelSelector}
+                    onChange={this.handleSelectInputChange}
+                    options={options}
                     showHintAndError={false}
+                    value={value}
                     {...otherProps}
                 />
                 <ListView
