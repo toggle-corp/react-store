@@ -1,19 +1,22 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
+
+import CorrelationMatrix from '../CorrelationMatrix';
+import FullScreen from '../FullScreen';
+
+import SelectInput from '../../Input/SelectInput';
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+
+import iconNames from '../../../constants/iconNames';
 import {
     divergingColorNames,
     sequentialColorNames,
     getDivergingColorScheme,
     getSequentialColorScheme,
 } from '../../../utils/ColorScheme';
-import CorrelationMatrix from '../CorrelationMatrix';
 
-import Modal from '../../View/Modal';
-import SelectInput from '../../Input/SelectInput';
-import AccentButton from '../../Action/Button/AccentButton';
-import DangerButton from '../../Action/Button/DangerButton';
-import iconNames from '../../../constants/iconNames';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -27,7 +30,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    colorScheme: [],
+    colorScheme: undefined,
 };
 
 export default class CorrelationMatrixView extends PureComponent {
@@ -41,10 +44,10 @@ export default class CorrelationMatrixView extends PureComponent {
             colorScheme: [].concat(...this.props.data.values)
                 .some(v => v < 0) ?
                 interpolateRdBu : interpolateGnBu,
-            selectedColorScheme: undefined,
             fullScreen: false,
         };
 
+        this.selectedColorScheme = undefined;
         this.colors = sequentialColorNames()
             .concat(divergingColorNames())
             .map(color => ({
@@ -69,9 +72,9 @@ export default class CorrelationMatrixView extends PureComponent {
 
     handleSelection = (data) => {
         const colors = getSequentialColorScheme(data) || getDivergingColorScheme(data);
+        this.selectedColorScheme = data;
         this.setState({
             colorScheme: colors,
-            selectedColorScheme: data,
         });
     }
 
@@ -86,7 +89,19 @@ export default class CorrelationMatrixView extends PureComponent {
             ...otherProps
         } = this.props;
 
-        const { fullScreen, colorScheme } = this.state;
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const {
+            handleSelection,
+            handleSave,
+            setFullScreen,
+            removeFullScreen,
+            colors,
+            selectedColorScheme,
+        } = this;
 
         return (
             <div className={`${styles['correlation-matrix-view']} ${className}`}>
@@ -96,34 +111,32 @@ export default class CorrelationMatrixView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
-                            onChange={this.handleSelection}
-                            options={this.colors}
+                            onChange={handleSelection}
+                            options={colors}
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.selectedColorScheme}
+                            value={selectedColorScheme}
                         />
                     </div>
                     <div className={styles['action-buttons']}>
                         <AccentButton
-                            onClick={this.handleSave}
+                            onClick={handleSave}
                             iconName={iconNames.download}
                             transparent
                         />
                         <AccentButton
                             transparent
                             iconName={iconNames.expand}
-                            onClick={this.setFullScreen}
+                            onClick={setFullScreen}
                         />
                     </div>
                 </div>
                 {
                     fullScreen ? (
-                        <Modal
-                            className={styles.modal}
-                        >
+                        <FullScreen>
                             <DangerButton
                                 className={styles.close}
-                                onClick={this.removeFullScreen}
+                                onClick={removeFullScreen}
                                 iconName={iconNames.close}
                                 transparent
                             />
@@ -133,7 +146,7 @@ export default class CorrelationMatrixView extends PureComponent {
                                 colorScheme={colorScheme}
                                 {...otherProps}
                             />
-                        </Modal>
+                        </FullScreen>
                     ) : (
                         <CorrelationMatrix
                             className={styles['correlation-matrix']}
