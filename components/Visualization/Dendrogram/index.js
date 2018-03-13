@@ -67,11 +67,26 @@ export default class Dendrogram extends React.PureComponent {
     static defaultProps = defaultProps;
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
+    }
+
+    setContext = (width, height, margins) => {
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        return select(this.svg)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .append('g')
+            .attr('transform', `translate(${80 + left}, ${top})`);
     }
 
     save = () => {
@@ -80,12 +95,83 @@ export default class Dendrogram extends React.PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('dendrogram', 'graph')}.svg`);
     }
 
-    renderChart() {
+    topicColors = (node, colors) => {
+        const { labelAccessor } = this.props;
+        let color = colors(0);
+        if (node.depth === 0 || node.depth === 1) {
+            color = colors(labelAccessor(node.data));
+        } else {
+            color = this.topicColors(node.parent, colors);
+        }
+        return color;
+    }
+
+    diagonal = d => (
+        `M${d.y},${d.x}C${d.parent.y + 100},${d.x}` +
+        ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`
+    )
+
+    addLines = (element, data, colors) => {
+        element
+            .selectAll('path')
+            .data(data)
+            .enter()
+            .append('path')
+            .attr('d', this.diagonal)
+            .style('stroke', d => this.topicColors(d, colors))
+            .style('stroke-opacity', 0.5)
+            .style('fill', 'none')
+            .style('stroke-width', 1.5);
+    }
+
+    addNodes = (element, data) => (
+        element
+            .selectAll('g')
+            .data(data)
+            .enter()
+            .append('g')
+            .attr('transform', d => `translate(${d.y}, ${d.x})`)
+    )
+
+    addCircles = (selection, colors, scaledValues) => {
+        selection
+            .append('circle')
+            .attr('r', (d) => {
+                if (d.value) {
+                    return scaledValues(d.value);
+                }
+                return 5;
+            })
+            .style('fill', d => this.topicColors(d, colors));
+    }
+
+    addLabels = (selection, colors, scaledValues) => {
+        const { labelAccessor } = this.props;
+        selection
+            .append('text')
+            .attr('dy', '.3em')
+            .attr('dx', (d) => {
+                if (d.value) {
+                    return d.children ? `-${scaledValues(d.value) + 2}` : `${scaledValues(d.value) + 2}`;
+                }
+                return d.children ? -5 : 5;
+            })
+            .style('fill', d => this.topicColors(d, colors))
+            .style('text-anchor', d => (d.children ? 'end' : 'start'))
+            .text(d => labelAccessor(d.data));
+    }
+
+    redrawChart = () => {
+        const context = select(this.svg);
+        context.selectAll('*').remove();
+        this.drawChart();
+    }
+
+    drawChart = () => {
         const {
             data,
             boundingClientRect,
             childrenAccessor,
-            labelAccessor,
             valueAccessor,
             colorScheme,
             margins,
@@ -94,9 +180,11 @@ export default class Dendrogram extends React.PureComponent {
         if (!boundingClientRect.width) {
             return;
         }
+
         if (!data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
+
         let { width, height } = boundingClientRect;
         const {
             top,
@@ -105,99 +193,41 @@ export default class Dendrogram extends React.PureComponent {
             left,
         } = margins;
 
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
-
         width = width - left - right;
         height = height - top - bottom;
-        const colors = scaleOrdinal()
-            .range(colorScheme);
 
-        const leafTextWidth = 200;
-        const rootTextWidth = 80;
-        function topicColors(node) {
-            let color = colors(0);
-            if (node.depth === 0 || node.depth === 1) {
-                color = colors(labelAccessor(node.data));
-            } else {
-                color = topicColors(node.parent);
-            }
-            return color;
-        }
+        const context = this.setContext(width, height, margins);
+        const lines = context.append('g').attr('class', 'lines');
+        const nodes = context.append('g').attr('class', 'nodes');
+        const colors = scaleOrdinal().range(colorScheme);
 
-        function diagonal(d) {
-            return `M${d.y},${d.x}C${d.parent.y + 100},${d.x}` +
-                    ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`;
-        }
-
-        const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
-            .append('g')
-            .attr('transform', `translate(${rootTextWidth}, ${top})`);
         const tree = cluster()
-            .size([height, width - leafTextWidth]);
-
+            .size([height, width - 200]);
         const root = hierarchy(data, childrenAccessor)
             .sum(valueAccessor);
-
-        tree(root);
-
         const minmax = extent(root.descendants(), d => d.value);
         const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 20]);
+        tree(root);
 
-        group
-            .selectAll('.link')
-            .data(root.descendants().slice(1))
-            .enter()
-            .append('path')
-            .attr('class', 'link')
-            .attr('stroke', topicColors)
-            .attr('fill', 'none')
-            .attr('stroke-width', 1.5)
-            .attr('d', diagonal);
-
-        const node = group
-            .selectAll('.node')
-            .data(root.descendants())
-            .enter()
-            .append('g')
-            .attr('class', d => `node ${d.children ? 'node-internal' : 'node-leaf'}`)
-            .attr('transform', d => `translate(${d.y}, ${d.x})`);
-
-        node.append('circle')
-            .style('fill', topicColors)
-            .attr('r', (d) => {
-                if (d.value) {
-                    return scaledValues(d.value);
-                }
-                return 5;
-            });
-
-        node.append('text')
-            .attr('dy', '.3em')
-            .attr('dx', (d) => {
-                if (d.value) {
-                    return d.children ? `-${scaledValues(d.value) + 2}` : `${scaledValues(d.value) + 2}`;
-                }
-                return d.children ? -5 : 5;
-            })
-            .style('fill', topicColors)
-            .style('text-anchor', d => (d.children ? 'end' : 'start'))
-            .text(d => labelAccessor(d.data));
+        this.addLines(lines, root.descendants().slice(1), colors);
+        const points = this.addNodes(nodes, root.descendants());
+        this.addLabels(points, colors, scaledValues);
+        this.addCircles(points, colors, scaledValues);
     }
 
     render() {
-        const { loading } = this.props;
+        const { loading, className } = this.props;
 
+        const containerStyle = `${styles['dendrogram-container']} ${className}`;
+        const dendroGramStyle = `${styles.dendrogram}`;
         return (
             <div
-                className={`dendrogram-container ${this.props.className}`}
+                className={containerStyle}
                 ref={(el) => { this.container = el; }}
             >
                 { loading && <LoadingAnimation /> }
                 <svg
-                    className="dendrogram"
+                    className={dendroGramStyle}
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

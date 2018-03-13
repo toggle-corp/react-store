@@ -3,7 +3,7 @@ import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
-import { scaleLinear, schemeCategory20c, scaleSqrt, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, schemeCategory20c, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
@@ -124,7 +124,7 @@ export default class SunBurst extends PureComponent {
 
         const x = scaleLinear()
             .range([0, 2 * Math.PI]);
-        const y = scaleSqrt()
+        const y = scaleLinear()
             .range([0, radius]);
         const color = scaleOrdinal()
             .range(colorScheme);
@@ -203,11 +203,14 @@ export default class SunBurst extends PureComponent {
             .enter()
             .append('g');
 
-        function filterText(d, length) {
+        function filterText(d, textLength, textWidth) {
             const innerRadius = arch.innerRadius()(d);
             const outerRadius = arch.outerRadius()(d);
-            const r = outerRadius - innerRadius;
-            return (r <= length);
+            const arcWidth = outerRadius - innerRadius;
+            const angle = arch.endAngle()(d) - arch.startAngle()(d);
+            const arcLength = angle * innerRadius;
+
+            return (arcWidth <= textLength || arcLength <= textWidth);
         }
 
         function handleClick(d) {
@@ -241,8 +244,9 @@ export default class SunBurst extends PureComponent {
                             .attr('opacity', 1)
                             .attr('transform', t => placeTextLabel(t))
                             .filter(function filtrate(t) {
-                                const length = this.getComputedTextLength();
-                                return filterText(t, length);
+                                const textLength = this.getComputedTextLength();
+                                const textWidth = select(this).node().getBBox().width;
+                                return filterText(t, textLength, textWidth);
                             })
                             .attr('opacity', 0)
                             .attr('text-anchor', 'middle');
@@ -254,6 +258,7 @@ export default class SunBurst extends PureComponent {
             .append('path')
             .attr('class', 'arcs')
             .attr('d', arch)
+            .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
             .style('fill', d => color(labelAccessor(d.children ? d.data : d.parent.data)))
             .on('click', handleClick);
@@ -280,8 +285,9 @@ export default class SunBurst extends PureComponent {
 
             labels
                 .filter(function filtrate(d) {
-                    const length = this.getComputedTextLength();
-                    return filterText(d, length);
+                    const textLength = this.getComputedTextLength();
+                    const textWidth = select(this).node().getBBox().height;
+                    return filterText(d, textLength, textWidth);
                 })
                 .attr('opacity', 0);
         }

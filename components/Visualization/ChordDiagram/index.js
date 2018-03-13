@@ -9,9 +9,6 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
-
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 
 /**
@@ -71,14 +68,34 @@ export default class ChordDiagram extends React.PureComponent {
     static defaultProps = defaultProps;
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
     }
 
-    getGradId = d => `linkGrad-${d.source.index}-${d.target.index}`;
+    setContext = (width, height, margins, data) => {
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        return select(this.svg)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .append('g')
+            .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
+            .datum(data);
+    }
+
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('chord-diagram', 'graph')}.svg`);
+    }
 
     addGlowGradients = (svg) => {
         const defs = svg.append('defs');
@@ -102,57 +119,143 @@ export default class ChordDiagram extends React.PureComponent {
             .attr('in', 'SourceGraphic');
     }
 
-    addGradients = (svg, innerRadius, chords, colors) => {
-        function start(t, func) {
-            return innerRadius *
-            func(((t.source.endAngle - t.source.startAngle) / 2) +
-            (t.source.startAngle - (Math.PI / 2)));
-        }
+    fade = (opacity) => {
+        const { svg } = this;
+        return function dim(g, i) {
+            select(svg)
+                .selectAll('.ribbons path')
+                .filter(d => (d.source.index !== i && d.target.index !== i))
+                .style('opacity', opacity);
+        };
+    }
 
-        function end(t, func) {
-            return innerRadius *
-            func(((t.target.endAngle - t.target.startAngle) / 2) +
-           (t.target.startAngle - (Math.PI / 2)));
-        }
-        const grads = svg
-            .append('defs')
-            .selectAll('linearGradient')
-            .data(chords)
+    mouseOverArc = (d, element) => {
+        const { labelsData } = this.props;
+
+        select(element)
+            .style('filter', 'url(#glow)');
+
+        return select(this.tooltip)
+            .html(`<span class="name">${labelsData[d.index]}</span>`)
+            .transition()
+            .style('display', 'inline-block');
+    }
+
+    mouseMoveArc = () => (
+        select(this.tooltip)
+            .style('top', `${event.pageY - 30}px`)
+            .style('left', `${event.pageX + 20}px`)
+    )
+
+    mouseOutArc = (element) => {
+        select(element)
+            .style('filter', null);
+
+        return select(this.tooltip)
+            .transition()
+            .style('display', 'none');
+    }
+
+    addPaths = (element, arcs, colors) => {
+        const { showTooltip, showLabels, labelsData } = this.props;
+        const group = element
+            .selectAll('g')
+            .data(d => d.groups)
             .enter()
-            .append('linearGradient')
-            .attr('id', this.getGradId)
-            .attr('gradientUnits', 'userSpaceOnUse')
-            .attr('x1', t => start(t, Math.cos))
-            .attr('y1', t => start(t, Math.sin))
-            .attr('x2', t => end(t, Math.cos))
-            .attr('y2', t => end(t, Math.sin));
+            .append('g')
+            .on('mouseover', this.fade(0.1))
+            .on('mouseout', this.fade(1));
 
-        grads
-            .append('stop')
-            .attr('offset', '0%')
-            .attr('stop-color', t => colors(t.source.index));
+        const paths = group
+            .append('path')
+            .style('fill', d => colors(d.index))
+            .style('stroke', '#dcdcdc')
+            .attr('d', arcs)
+            .each(function change(d, i) {
+                const firstArcSection = /(^.+?)L/;
 
-        grads
-            .append('stop')
-            .attr('offset', '100%')
-            .attr('stop-color', t => colors(t.target.index));
+                let newArc = firstArcSection.exec(select(this).attr('d'))[1];
+                newArc.replace(/,/g, ' ');
+                if (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (180 * (Math.PI / 180))) {
+                    const startLoc = /M(.*?)A/;
+                    const middleLoc = /A(.*?),0/;
+                    const endLoc = /,1,(.*?)$/;
+
+                    const newStart = newArc.match(endLoc).pop();
+                    const newEnd = newArc.match(startLoc).pop();
+                    const middleSec = newArc.match(middleLoc).pop();
+
+                    newArc = `M${newStart}A${middleSec},0,0,0,${newEnd}`;
+                }
+                element
+                    .append('path')
+                    .attr('class', 'hiddenArcs')
+                    .attr('id', `arc${i}`)
+                    .attr('d', newArc)
+                    .style('fill', 'none');
+            });
+
+        if (showTooltip) {
+            const that = this;
+            paths
+                .on('mouseover', function handle(d) {
+                    that.mouseOverArc(d, this);
+                })
+                .on('mousemove', this.mouseMoveArc)
+                .on('mouseout', function handle() {
+                    that.mouseOutArc(this);
+                });
+        }
+        if (showLabels) {
+            this.addLabels(group, labelsData, paths, colors);
+        }
     }
 
-    save = () => {
-        const svg = select(this.svg);
-        const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `${getStandardFilename('chord-diagram', 'graph')}.svg`);
+    addLabels = (selection, labels, paths, colors) => {
+        const group = selection
+            .append('text')
+            .attr('pointer-events', 'none')
+            .attr('dy', d => (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (180 * (Math.PI / 180)) ? -10 : 15));
+
+        group
+            .append('textPath')
+            .attr('startOffset', '50%')
+            .style('text-anchor', 'middle')
+            .attr('xlink:href', (d, i) => `#arc${i}`)
+            .text(d => labels[d.index])
+            .style('fill', d => getColorOnBgColor(colors(d.index)));
+
+        group
+            .filter(function filtrate(d, i) {
+                // eslint-disable-next-line no-underscore-dangle
+                return (((paths._groups[0][i].getTotalLength() / 2) - 30)
+                    < this.getComputedTextLength());
+            })
+            .remove();
     }
 
+    addRibbons = (element, ribbons, colors) => {
+        element
+            .selectAll('path')
+            .data(d => d)
+            .enter()
+            .append('path')
+            .attr('d', ribbons)
+            .style('fill', d => colors(d.source.index))
+            .style('stroke', '#dcdcdc');
+    }
 
-    renderChart() {
+    redrawChart = () => {
+        const context = select(this.svg);
+        context.selectAll('*').remove();
+        this.drawChart();
+    }
+
+    drawChart = () => {
         const {
             data,
             boundingClientRect,
-            labelsData,
             colorScheme,
-            showLabels,
-            showTooltip,
             margins,
         } = this.props;
 
@@ -168,19 +271,6 @@ export default class ChordDiagram extends React.PureComponent {
             bottom,
             left,
         } = margins;
-
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
-
-        const tooltip = select(this.container)
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('z-index', 10)
-            .style('display', 'none');
 
         width = width - left - right;
         height = height - top - bottom;
@@ -203,145 +293,35 @@ export default class ChordDiagram extends React.PureComponent {
         const ribbons = ribbon()
             .radius(innerRadius);
 
-        const color = scaleOrdinal().range(colorScheme);
+        const colors = scaleOrdinal().range(colorScheme);
 
-        const chart = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
-            .append('g')
-            .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
-            .datum(chords(data));
+        const context = this.setContext(width, height, margins, chords(data));
+        const chordsGroup = context.append('g').attr('class', 'chords');
+        const ribbonsGroup = context.append('g').attr('class', 'ribbons');
 
-        this.addGlowGradients(svg);
-        this.addGradients(svg, innerRadius, chords(data), color);
-
-        function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${labelsData[d.index]}</span>`);
-            select(this)
-                .style('filter', 'url(#glow)');
-
-            tooltip
-                .transition()
-                .style('display', 'inline-block');
-        }
-
-        function mouseMoveArc() {
-            return tooltip
-                .style('top', `${event.pageY - 30}px`)
-                .style('left', `${event.pageX + 20}px`);
-        }
-
-
-        function mouseOutArc() {
-            select(this)
-                .style('filter', null);
-            return tooltip
-                .transition()
-                .style('display', 'none');
-        }
-
-        function fade(opacity) {
-            return function dim(g, i) {
-                svg
-                    .selectAll('.ribbons path')
-                    .filter(d => (d.source.index !== i && d.target.index !== i))
-                    .style('opacity', opacity);
-            };
-        }
-
-        const group = chart
-            .append('g')
-            .attr('class', 'groups')
-            .selectAll('g')
-            .data(d => d.groups)
-            .enter()
-            .append('g')
-            .on('mouseover', fade(0.1))
-            .on('mouseout', fade(1));
-
-        const groupPath = group
-            .append('path')
-            .attr('class', 'arcs')
-            .style('fill', d => color(d.index))
-            .style('stroke', '#dcdcdc')
-            .attr('d', arcs)
-            .each(function change(d, i) {
-                const firstArcSection = /(^.+?)L/;
-
-                let newArc = firstArcSection.exec(select(this).attr('d'))[1];
-                newArc.replace(/,/g, ' ');
-                if (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (270 * (Math.PI / 180))) {
-                    const startLoc = /M(.*?)A/;
-                    const middleLoc = /A(.*?),0/;
-                    const endLoc = /,1,(.*?)$/;
-
-                    const newStart = newArc.match(endLoc).pop();
-                    const newEnd = newArc.match(startLoc).pop();
-                    const middleSec = newArc.match(middleLoc).pop();
-
-                    newArc = `M${newStart}A${middleSec},0,0,0,${newEnd}`;
-                }
-                chart
-                    .append('path')
-                    .attr('class', 'hiddenArcs')
-                    .attr('id', `arc${i}`)
-                    .attr('d', newArc)
-                    .style('fill', 'none');
-            });
-
-        if (showTooltip) {
-            groupPath
-                .on('mouseover', mouseOverArc)
-                .on('mousemove', mouseMoveArc)
-                .on('mouseout', mouseOutArc);
-        }
-
-        if (showLabels) {
-            const groupText = group
-                .append('text')
-                .attr('pointer-events', 'none')
-                .attr('dy', d => (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (270 * (Math.PI / 180)) ? -10 : 15));
-
-            groupText
-                .append('textPath')
-                .attr('startOffset', '50%')
-                .style('text-anchor', 'middle')
-                .attr('xlink:href', (d, i) => `#arc${i}`)
-                .text(d => labelsData[d.index])
-                .style('fill', d => getColorOnBgColor(color(d.index)));
-
-            groupText
-                .filter(function filtrate(d, i) {
-                    // eslint-disable-next-line no-underscore-dangle
-                    return (((groupPath._groups[0][i].getTotalLength() / 2) - 30)
-                        < this.getComputedTextLength());
-                })
-                .remove();
-        }
-
-        chart
-            .append('g')
-            .attr('class', 'ribbons')
-            .selectAll('path')
-            .data(d => d)
-            .enter()
-            .append('path')
-            .attr('d', ribbons)
-            .style('fill', d => `url(#${this.getGradId(d)})`)
-            .style('stroke', '#dcdcdc');
+        this.addPaths(chordsGroup, arcs, colors);
+        this.addRibbons(ribbonsGroup, ribbons, colors);
+        this.addGlowGradients(select(this.svg));
     }
 
     render() {
-        const { loading } = this.props;
+        const { loading, className } = this.props;
 
+        const containerStyle = `${styles['chord-diagram-container']} ${className}`;
+        const chordStyle = styles['chord-diagram'];
+        const tooltipStyle = styles.tooltip;
         return (
             <div
-                className={`chord-diagram-container ${this.props.className}`}
+                className={containerStyle}
                 ref={(el) => { this.container = el; }}
             >
                 { loading && <LoadingAnimation /> }
+                <div
+                    className={tooltipStyle}
+                    ref={(el) => { this.tooltip = el; }}
+                />
                 <svg
-                    className="chord-diagram"
+                    className={chordStyle}
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

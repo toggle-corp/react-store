@@ -80,11 +80,17 @@ export default class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: 5,
+        };
+    }
+
     componentDidMount() {
         this.renderChart();
         this.updateData(this.props);
     }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.data !== this.props) {
             this.updateData(nextProps);
@@ -103,6 +109,12 @@ export default class ForceDirectedGraph extends React.PureComponent {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
+    }
+
+    handleChange = (eve) => {
+        this.setState({
+            value: eve.target.value,
+        });
     }
 
     renderChart() {
@@ -150,6 +162,10 @@ export default class ForceDirectedGraph extends React.PureComponent {
 
         const radius = Math.min(width, height) / 2;
 
+        const distance = scaleLinear()
+            .domain([1, 10])
+            .range([1, radius / 2]);
+
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
@@ -181,7 +197,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
         }
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idAccessor(d)).distance(radius / 3))
+            .force('link', forceLink().id(d => idAccessor(d)).distance(distance(this.state.value)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
@@ -331,6 +347,16 @@ export default class ForceDirectedGraph extends React.PureComponent {
                 ref={(el) => { this.container = el; }}
             >
                 { loading && <LoadingAnimation /> }
+                <input
+                    className="input-slider"
+                    id="sliderinput"
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    step="1"
+                />
                 <svg
                     className="force-directed-graph"
                     ref={(elem) => { this.svg = elem; }}
