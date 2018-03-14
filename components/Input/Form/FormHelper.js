@@ -151,7 +151,7 @@ export default class FormHelper {
         if (hasErrors) {
             this.failureCallback(fieldErrors, formErrors);
         } else {
-            const values = accumulateValues(this.value, this.schema);
+            const values = accumulateValues(this.value, this.schema, { noUndefined: true });
             this.successCallback(values);
         }
     };

@@ -1,5 +1,8 @@
 import { isFalsy, isTruthy } from '../../../utils/common';
 
+const emptyObject = {};
+const emptyArray = [];
+
 const isObject = item => (
     typeof item === 'object' && !Array.isArray(item) && item !== null
 );
@@ -12,7 +15,7 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
-export const accumulateValues = (obj, schema) => {
+export const accumulateValues = (obj, schema, settings = { noUndefined: false }) => {
     // if schema is array, return object
     if (Array.isArray(schema)) {
         return obj;
@@ -27,7 +30,10 @@ export const accumulateValues = (obj, schema) => {
             const fieldError = accumulateValues(element, schema.member);
             fieldErrors.push(fieldError);
         });
-        return hasNoValues(fieldErrors) ? undefined : fieldErrors;
+        if (hasNoValues(fieldErrors)) {
+            return settings.noUndefined ? emptyArray : undefined;
+        }
+        return fieldErrors;
     } else if (schema.fields) {
         // schema is for object
         const fieldErrors = {};
@@ -40,7 +46,10 @@ export const accumulateValues = (obj, schema) => {
                 fieldErrors[fieldName] = fieldError;
             }
         });
-        return hasNoKeys(fieldErrors) ? undefined : fieldErrors;
+        if (hasNoKeys(fieldErrors)) {
+            return settings.noUndefined ? emptyObject : undefined;
+        }
+        return fieldErrors;
     }
     return undefined;
 };
