@@ -4,18 +4,11 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
-    /* indicate if it is the active element */
     active: PropTypes.bool,
-
-    /* children inside of ListView */
     children: PropTypes.oneOfType([
         PropTypes.node,
     ]),
-
-    /* class name for overriding style */
     className: PropTypes.string,
-
-    /* if set to true, list is scrolled to the ListItem */
     scrollIntoView: PropTypes.bool,
 };
 
@@ -23,6 +16,7 @@ const defaultProps = {
     active: false,
     children: '',
     className: '',
+    onClick: undefined,
     scrollIntoView: false,
 };
 
@@ -30,65 +24,68 @@ export default class List extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const { className, active } = this.props;
-        this.state = {
-            className: this.getClassName({ className, active }),
-        };
-    }
-
     componentDidMount() {
         const { scrollIntoView } = this.props;
-
-        if (this.container && this.container.scrollIntoViewIfNeeded && scrollIntoView) {
-            this.container.scrollIntoViewIfNeeded(false);
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { className, active } = nextProps;
-        this.setState({
-            className: this.getClassName({ className, active }),
-        });
+        this.scrollIntoView(scrollIntoView);
     }
 
     componentDidUpdate() {
         const { scrollIntoView } = this.props;
-
-        if (this.container && this.container.scrollIntoViewIfNeeded && scrollIntoView) {
-            this.container.scrollIntoViewIfNeeded(false);
-        }
+        this.scrollIntoView(scrollIntoView);
     }
 
-    getClassName = ({ className, active }) => {
-        const classNames = [];
+    getClassName = () => {
+        const {
+            className,
+            active,
+        } = this.props;
 
-        classNames.push('list-item');
-
-        if (className) {
-            classNames.push(className);
-        }
+        const classNames = [
+            className,
+            'list-item',
+            styles['list-item'],
+        ];
 
         if (active) {
             classNames.push('active');
+            classNames.push(styles.active);
         }
 
         return classNames.join(' ');
     }
 
+    scrollIntoView = (scrollIntoView) => {
+        if (!scrollIntoView) {
+            return;
+        }
+
+        if (!this.container) {
+            return;
+        }
+
+        if (!this.container.scrollIntoViewIfNeeded) {
+            return;
+        }
+
+        this.container.scrollIntoViewIfNeeded(false);
+    }
+
     render() {
-        const { children } = this.props;
-        const { className } = this.state;
+        const {
+            children,
+            scrollIntoView, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars
+            ...otherProps
+        } = this.props;
 
         return (
-            <div
+            <button
                 ref={(el) => { this.container = el; }}
-                className={`list-item ${className} ${styles['list-item']}`}
+                className={this.getClassName()}
+                {...otherProps}
             >
                 { children }
-            </div>
+            </button>
         );
     }
 }
