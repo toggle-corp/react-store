@@ -10,7 +10,7 @@ import {
     getOptionClassName,
 } from './utils';
 
-export default class Options extends React.PureComponent {
+export default class Option extends React.PureComponent {
     static propTypes = singleSelectInputOptionPropTypes;
     static defaultProps = singleSelectInputOptionDefaultProps;
 

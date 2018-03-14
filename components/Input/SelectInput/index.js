@@ -172,6 +172,7 @@ export default class SelectInput extends React.PureComponent {
         const {
             keySelector,
             labelSelector,
+            optionLabelSelector,
             renderEmpty,
             optionsClassName,
             value,
@@ -202,6 +203,7 @@ export default class SelectInput extends React.PureComponent {
                 />
                 <Options
                     labelSelector={labelSelector}
+                    optionLabelSelector={optionLabelSelector}
                     keySelector={keySelector}
                     renderEmpty={renderEmpty}
                     optionsClassName={optionsClassName}
