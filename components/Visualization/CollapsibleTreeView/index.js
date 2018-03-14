@@ -66,7 +66,6 @@ export default class CollapsibleTreeView extends PureComponent {
         const colors = getCategoryColorScheme(data);
         this.setState({
             colorScheme: colors,
-            selectedColorScheme: data,
         });
     }
 
