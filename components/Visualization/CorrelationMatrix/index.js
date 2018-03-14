@@ -15,7 +15,6 @@ import {
     isValidHexColor,
     isObjectEmpty,
 } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 import styles from './styles.scss';
 
 /**
@@ -45,7 +44,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -58,7 +56,6 @@ const defaultProps = {
         bottom: 10,
         left: 100,
     },
-    loading: false,
 };
 
 /*
@@ -306,8 +303,7 @@ export default class CorrelationMatrix extends React.PureComponent {
     }
 
     render() {
-        const { loading, className } = this.props;
-
+        const { className } = this.props;
         const containerStyle = `${styles['correlationmatrix-container']} ${className}`;
         const matrixStyle = styles['correlation-matrix'];
 
@@ -316,7 +312,6 @@ export default class CorrelationMatrix extends React.PureComponent {
                 className={containerStyle}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className={matrixStyle}
                     ref={(elem) => { this.svg = elem; }}

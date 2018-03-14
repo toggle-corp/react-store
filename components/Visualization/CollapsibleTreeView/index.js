@@ -7,6 +7,7 @@ import FullScreen from '../FullScreen';
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
 import DangerButton from '../../Action/Button/DangerButton';
+import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
@@ -15,11 +16,13 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    loading: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
     className: '',
+    loading: false,
     colorScheme: undefined,
 };
 
@@ -76,6 +79,7 @@ export default class CollapsibleTreeView extends PureComponent {
     render() {
         const {
             className,
+            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
@@ -95,9 +99,8 @@ export default class CollapsibleTreeView extends PureComponent {
         } = this;
 
         return (
-            <div
-                className={`${styles['collapsible-tree-view']} ${className}`}
-            >
+            <div className={`${styles['collapsible-tree-view']} ${className}`}>
+                { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
                     <div className={styles['action-selects']}>
                         <SelectInput

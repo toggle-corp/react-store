@@ -9,7 +9,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -48,7 +47,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -63,7 +61,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /*
@@ -174,7 +171,7 @@ export default class SunBurst extends PureComponent {
         }
 
         function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${labelAccessor(d.data)}</span><span class="value">${d.value}</span>`);
+            tooltip.html(`<span class="name">${labelAccessor(d.data) || ''}</span><span class="value">${d.value}</span>`);
             return tooltip
                 .transition()
                 .style('display', 'inline-block');
@@ -294,14 +291,11 @@ export default class SunBurst extends PureComponent {
     }
 
     render() {
-        const { loading } = this.props;
-
         return (
             <div
                 className={`sunburst-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className="sunburst"
                     ref={(elem) => { this.svg = elem; }}

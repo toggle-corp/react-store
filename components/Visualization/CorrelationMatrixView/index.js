@@ -8,6 +8,7 @@ import FullScreen from '../FullScreen';
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
 import DangerButton from '../../Action/Button/DangerButton';
+import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
 import {
@@ -26,11 +27,13 @@ const propTypes = {
     }).isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
+    loading: false,
 };
 
 export default class CorrelationMatrixView extends PureComponent {
@@ -85,6 +88,7 @@ export default class CorrelationMatrixView extends PureComponent {
     render() {
         const {
             className,
+            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
@@ -105,6 +109,7 @@ export default class CorrelationMatrixView extends PureComponent {
 
         return (
             <div className={`${styles['correlation-matrix-view']} ${className}`}>
+                { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
                     <div className={styles['action-selects']}>
                         <SelectInput

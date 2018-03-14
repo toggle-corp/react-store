@@ -9,7 +9,7 @@
     .tooltip {
         @include shadow-medium;
         display: none;
-        position: absolute;
+        position: fixed;
         z-index: 10;
         background-color: $color-foreground;
         padding: $spacing-small $spacing-medium-alt;

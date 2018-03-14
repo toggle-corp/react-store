@@ -189,7 +189,7 @@ export default class TreeMap extends React.PureComponent {
         }
 
         function name(d) {
-            return d.parent ? `${name(d.parent)} ${labelAccessor(d.data)}` : '';
+            return d.parent ? `${name(d.parent)}/${labelAccessor(d.data)}` : '';
         }
 
         function rect(shape) {

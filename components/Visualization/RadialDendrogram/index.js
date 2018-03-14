@@ -8,7 +8,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -41,7 +40,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -56,7 +54,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /**
@@ -146,7 +143,7 @@ export default class RadialDendrogram extends React.PureComponent {
         trees(root);
 
         const minmax = extent(root.descendants(), d => d.value);
-        const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 20]);
+        const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 10]);
 
         function project(x, y) {
             const angle = ((x - 90) / 180) * Math.PI;
@@ -200,14 +197,11 @@ export default class RadialDendrogram extends React.PureComponent {
     }
 
     render() {
-        const { loading } = this.props;
-
         return (
             <div
                 className={`radialdendrogram-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className="radialdendrogram"
                     ref={(elem) => { this.svg = elem; }}

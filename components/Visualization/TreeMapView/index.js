@@ -103,8 +103,8 @@ export default class TreeMapView extends PureComponent {
 
         return (
             <div className={`${styles['treemap-view']} ${className}`}>
+                { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
-                    { loading && <LoadingAnimation /> }
                     <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
