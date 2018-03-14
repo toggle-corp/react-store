@@ -52,6 +52,7 @@ const iconNames = {
     dragHandle: 'ion-android-more-vertical',
     expand: 'ion-arrow-expand',
     download: 'ion-code-download',
+    refresh: 'ion-refresh',
 
     sort: 'fa fa-sort',
     sortAscending: 'fa fa-sort-asc',

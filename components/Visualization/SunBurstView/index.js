@@ -1,12 +1,18 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 import { range } from 'd3-array';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+
 import SunBurst from '../SunBurst';
 import ColorPallete from '../ColorPallete';
+import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+
+import iconNames from '../../../constants/iconNames';
+import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -28,6 +34,7 @@ export default class SunBurstView extends PureComponent {
 
         this.state = {
             colorScheme: undefined,
+            fullScreen: false,
             effectiveColorScheme: undefined,
             selectedColorScheme: undefined,
             selectedNoOfCategories: undefined,
@@ -44,9 +51,23 @@ export default class SunBurstView extends PureComponent {
     }
 
     componentWillReceiveProps(newProps) {
+        if (newProps.colorScheme !== this.props.colorScheme) {
+            this.setState({
+                colorScheme: newProps.colorScheme,
+                effectiveColorScheme: newProps.colorScheme,
+            });
+        }
+    }
+
+    setFullScreen = () => {
         this.setState({
-            colorScheme: newProps.colorScheme,
-            effectiveColorScheme: newProps.colorScheme,
+            fullScreen: true,
+        });
+    }
+
+    removeFullScreen = () => {
+        this.setState({
+            fullScreen: false,
         });
     }
 
@@ -80,8 +101,27 @@ export default class SunBurstView extends PureComponent {
     render() {
         const {
             className,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        const {
+            fullScreen,
+            selectedColorScheme,
+            effectiveColorScheme,
+            selectedNoOfCategories,
+        } = this.state;
+
+        const {
+            handleSelection,
+            handleNoOfCategories,
+            handleSave,
+            handleReset,
+            setFullScreen,
+            removeFullScreen,
+            colors,
+            categories,
+        } = this;
 
         return (
             <div className={`${styles['sunburst-view']} ${className}`}>
@@ -91,39 +131,67 @@ export default class SunBurstView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.image}
-                            onChange={this.handleSelection}
-                            options={this.colors}
+                            onChange={handleSelection}
+                            options={colors}
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.selectedColorScheme}
+                            value={selectedColorScheme}
                         />
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.key}
                             labelSelector={d => d.title}
-                            onChange={this.handleNoOfCategories}
-                            options={this.categories}
+                            onChange={handleNoOfCategories}
+                            options={categories}
                             placeholder="No of Data Classes"
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.selectedNoOfCategories}
+                            value={selectedNoOfCategories}
                         />
                     </div>
                     <div className={styles['action-buttons']}>
-                        <PrimaryButton onClick={this.handleSave}>
-                            Save
-                        </PrimaryButton>
-                        <PrimaryButton onClick={this.handleReset}>
-                            Reset
-                        </PrimaryButton>
+                        <AccentButton
+                            onClick={handleSave}
+                            iconName={iconNames.download}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={setFullScreen}
+                            iconName={iconNames.expand}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={handleReset}
+                            iconName={iconNames.refresh}
+                            transparent
+                        />
                     </div>
                 </div>
-                <SunBurst
-                    className={styles.sunburst}
-                    ref={(instance) => { this.chart = instance; }}
-                    {...otherProps}
-                    colorScheme={this.state.effectiveColorScheme}
-                />
+                {
+                    fullScreen ? (
+                        <FullScreen>
+                            <DangerButton
+                                className={styles.close}
+                                onClick={removeFullScreen}
+                                iconName={iconNames.close}
+                                transparent
+                            />
+                            <SunBurst
+                                className={styles.sunburst}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={effectiveColorScheme}
+                            />
+                        </FullScreen>
+                    ) : (
+                        <SunBurst
+                            className={styles.sunburst}
+                            ref={(instance) => { this.chart = instance; }}
+                            {...otherProps}
+                            colorScheme={effectiveColorScheme}
+                        />
+                    )
+                }
             </div>
         );
     }
