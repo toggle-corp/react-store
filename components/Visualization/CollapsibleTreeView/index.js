@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+
 import CollapsibleTree from '../CollapsibleTree';
+import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+
+import iconNames from '../../../constants/iconNames';
+import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
 
@@ -26,8 +31,9 @@ export default class CollapsibleTreeView extends PureComponent {
         super(props);
         this.state = {
             colorScheme: undefined,
-            selectedColorScheme: undefined,
+            fullScreen: false,
         };
+        this.selectedColorScheme = undefined;
         this.colors = categoricalColorNames()
             .map(color => ({
                 id: color,
@@ -36,13 +42,27 @@ export default class CollapsibleTreeView extends PureComponent {
     }
 
     componentWillReceiveProps(newProps) {
+        if (newProps.colorScheme !== this.props.colorScheme) {
+            this.setState({
+                colorScheme: newProps.colorScheme,
+            });
+        }
+    }
+
+    setFullScreen = () => {
         this.setState({
-            colorScheme: newProps.colorScheme,
-            selectedColorScheme: newProps.colorScheme,
+            fullScreen: true,
+        });
+    }
+
+    removeFullScreen = () => {
+        this.setState({
+            fullScreen: false,
         });
     }
 
     handleSelection = (data) => {
+        this.selectedColorScheme = data;
         const colors = getCategoryColorScheme(data);
         this.setState({
             colorScheme: colors,
@@ -57,8 +77,24 @@ export default class CollapsibleTreeView extends PureComponent {
     render() {
         const {
             className,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const {
+            handleSelection,
+            handleSave,
+            setFullScreen,
+            removeFullScreen,
+            colors,
+            selectedColorScheme,
+        } = this;
+
         return (
             <div
                 className={`${styles['collapsible-tree-view']} ${className}`}
@@ -69,25 +105,51 @@ export default class CollapsibleTreeView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
-                            onChange={this.handleSelection}
-                            options={this.colors}
+                            onChange={handleSelection}
+                            options={colors}
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.selectedColorScheme}
+                            value={selectedColorScheme}
                         />
                     </div>
                     <div className={styles['action-buttons']}>
-                        <PrimaryButton onClick={this.handleSave}>
-                            Save
-                        </PrimaryButton>
+                        <AccentButton
+                            onClick={handleSave}
+                            iconName={iconNames.download}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={setFullScreen}
+                            iconName={iconNames.expand}
+                            transparent
+                        />
                     </div>
                 </div>
-                <CollapsibleTree
-                    className={styles['collapsible-tree']}
-                    ref={(instance) => { this.chart = instance; }}
-                    {...otherProps}
-                    colorScheme={this.state.colorScheme}
-                />
+                {
+                    fullScreen ? (
+                        <FullScreen>
+                            <DangerButton
+                                className={styles.close}
+                                onClick={removeFullScreen}
+                                iconName={iconNames.close}
+                                transparent
+                            />
+                            <CollapsibleTree
+                                className={styles['collapsible-tree']}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </FullScreen>
+                    ) : (
+                        <CollapsibleTree
+                            className={styles['collapsible-tree']}
+                            ref={(instance) => { this.chart = instance; }}
+                            {...otherProps}
+                            colorScheme={colorScheme}
+                        />
+                    )
+                }
             </div>
         );
     }
