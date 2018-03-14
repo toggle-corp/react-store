@@ -73,7 +73,7 @@ export default class TreeMapView extends PureComponent {
     }
 
     handleReset = () => {
-        this.chart.wrappedComponent.drawChart();
+        this.chart.wrappedComponent.renderChart();
     }
     render() {
         const {
@@ -90,6 +90,7 @@ export default class TreeMapView extends PureComponent {
         const {
             handleSelection,
             handleSave,
+            handleReset,
             setFullScreen,
             removeFullScreen,
             colors,
@@ -120,6 +121,11 @@ export default class TreeMapView extends PureComponent {
                         <AccentButton
                             onClick={setFullScreen}
                             iconName={iconNames.expand}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={handleReset}
+                            iconName={iconNames.refresh}
                             transparent
                         />
                     </div>
