@@ -16,6 +16,7 @@ import styles from './styles.scss';
 
 
 const propTypes = {
+    className: PropTypes.string,
     showLabel: PropTypes.bool,
     label: PropTypes.string,
     disabled: PropTypes.bool,
@@ -29,6 +30,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 };
 const defaultProps = {
+    className: '',
     showLabel: true,
     label: '',
     hint: '',
@@ -117,7 +119,12 @@ export default class DateInput extends React.PureComponent {
     }
 
     getClassName = () => {
-        const classNames = [];
+        const { className } = this.props;
+        const classNames = [
+            className,
+            'date-input',
+            styles.dateInput,
+        ];
 
         const {
             error,
@@ -136,9 +143,6 @@ export default class DateInput extends React.PureComponent {
             || isMonthInputFocused
             || isYearInputFocused
             || showDatePicker;
-
-        classNames.push('date-input');
-        classNames.push(styles['date-input']);
 
         if (isInvalid) {
             classNames.push('invalid');
