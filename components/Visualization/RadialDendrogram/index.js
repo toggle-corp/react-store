@@ -93,6 +93,9 @@ export default class RadialDendrogram extends React.PureComponent {
             margins,
         } = this.props;
 
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -108,9 +111,6 @@ export default class RadialDendrogram extends React.PureComponent {
             bottom,
             left,
         } = margins;
-
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
 
         width = width - left - right;
         height = height - top - bottom;
@@ -135,7 +135,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .attr('transform', `translate(${((width + left + right) / 2)}, ${((height + top + bottom) / 2)})`);
 
         const radius = width < height ? width / 2 : height / 2;
-        const leafTextWidth = 100;
+        const leafTextWidth = 50;
 
         const trees = tree()
             .size([360, radius - leafTextWidth])

@@ -99,6 +99,11 @@ export default class TreeMap extends React.PureComponent {
             margins,
         } = this.props;
 
+        const svg = select(this.svg);
+        svg
+            .selectAll('*')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -118,10 +123,6 @@ export default class TreeMap extends React.PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-
-        const svg = select(this.svg);
-        svg.selectAll('*')
-            .remove();
 
         const group = svg
             .style('width', width + left + right)
@@ -191,7 +192,7 @@ export default class TreeMap extends React.PureComponent {
         }
 
         function name(d) {
-            return d.parent ? `${name(d.parent)}${labelAccessor(d.data)}` : '';
+            return d.parent ? `${name(d.parent)} ${labelAccessor(d.data)}` : '';
         }
 
         function rect(shape) {

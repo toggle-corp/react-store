@@ -92,7 +92,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
         this.updateData(this.props);
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props) {
+        if (nextProps.data !== this.props.data) {
             this.updateData(nextProps);
         }
     }
@@ -130,6 +130,13 @@ export default class ForceDirectedGraph extends React.PureComponent {
         } = this.props;
         const { data } = this;
 
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
+
+        select(this.container)
+            .selectAll('.tooltip')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -143,13 +150,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
             bottom,
             left,
         } = margins;
-
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
 
         const tooltip = select(this.container)
             .append('div')

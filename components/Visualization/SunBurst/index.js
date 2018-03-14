@@ -102,6 +102,14 @@ export default class SunBurst extends PureComponent {
             margins,
         } = this.props;
 
+        const el = select(this.svg);
+        el.selectAll('*')
+            .remove();
+
+        select(this.container)
+            .selectAll('.tooltip')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -134,14 +142,6 @@ export default class SunBurst extends PureComponent {
             .endAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x1))))
             .innerRadius(d => Math.max(0, y(d.y0)))
             .outerRadius(d => Math.max(0, y(d.y1)));
-
-        const el = select(this.svg);
-        el.selectAll('*')
-            .remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
 
         const tooltip = select(this.container)
             .append('div')
