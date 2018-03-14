@@ -7,6 +7,7 @@ import FullScreen from '../FullScreen';
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
 import DangerButton from '../../Action/Button/DangerButton';
+import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
@@ -16,11 +17,13 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
+    loading: false,
 };
 
 export default class TreeMapView extends PureComponent {
@@ -78,6 +81,7 @@ export default class TreeMapView extends PureComponent {
     render() {
         const {
             className,
+            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
@@ -100,6 +104,7 @@ export default class TreeMapView extends PureComponent {
         return (
             <div className={`${styles['treemap-view']} ${className}`}>
                 <div className={styles.action}>
+                    { loading && <LoadingAnimation /> }
                     <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}

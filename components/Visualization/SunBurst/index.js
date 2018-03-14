@@ -150,10 +150,10 @@ export default class SunBurst extends PureComponent {
             .style('display', 'none');
 
         const group = el
-            .attr('width', width)
-            .attr('height', height)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
             .append('g')
-            .attr('transform', `translate( ${width / 2}, ${height / 2})`);
+            .attr('transform', `translate( ${(width + left + right) / 2}, ${(height + top + bottom) / 2})`);
 
         function computeTextRotation(d) {
             const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
