@@ -1,25 +1,38 @@
 @import '../../../stylesheets/base';
 
-.tabular-select-input {
+.select-input-with-list {
     display: flex;
     flex-direction: column;
 
-    .select {
+    .input {
         flex-shrink: 0;
     }
 
-    .table-container {
+    .list {
         flex-grow: 1;
-        background-color: $color-background-row-alt;
         overflow-y: auto;
-    }
 
-    :global {
-        .raw-table {
-            .headers {
-                .delete-action-included {
-                    width: 64px;
+        .selected-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: $color-background-row;
+            padding: $spacing-small;
+
+            .selected-item-label {
+                flex-grow: 1;
+            }
+
+            .remove-button {
+                flex-shrink: 0;
+
+                &.disabled {
+                    color: $color-text-label;
                 }
+            }
+
+            &:nth-child(even) {
+                background-color: $color-background-row-alt;
             }
         }
     }

@@ -119,14 +119,8 @@ export default class DateInput extends React.PureComponent {
     }
 
     getClassName = () => {
-        const { className } = this.props;
-        const classNames = [
-            className,
-            'date-input',
-            styles.dateInput,
-        ];
-
         const {
+            className,
             error,
             disabled,
         } = this.props;
@@ -139,11 +133,12 @@ export default class DateInput extends React.PureComponent {
             showDatePicker,
         } = this.state;
 
-        const isFocused = isDayInputFocused
-            || isMonthInputFocused
-            || isYearInputFocused
-            || showDatePicker;
 
+        const classNames = [
+            className,
+            'date-input',
+            styles.dateInput,
+        ];
         if (isInvalid) {
             classNames.push('invalid');
             classNames.push(styles.invalid);
@@ -154,6 +149,10 @@ export default class DateInput extends React.PureComponent {
             classNames.push(styles.error);
         }
 
+        const isFocused = isDayInputFocused
+            || isMonthInputFocused
+            || isYearInputFocused
+            || showDatePicker;
         if (isFocused) {
             classNames.push('focused');
             classNames.push(styles.focused);
