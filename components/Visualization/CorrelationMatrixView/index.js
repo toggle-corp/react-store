@@ -4,6 +4,7 @@ import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
 
 import CorrelationMatrix from '../CorrelationMatrix';
 import FullScreen from '../FullScreen';
+import ColorPallete from '../ColorPallete';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -16,6 +17,7 @@ import {
     sequentialColorNames,
     getDivergingColorScheme,
     getSequentialColorScheme,
+    getCategoryForContinuousColorScheme,
 } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
@@ -56,6 +58,7 @@ export default class CorrelationMatrixView extends PureComponent {
             .map(color => ({
                 id: color,
                 title: color,
+                image: <ColorPallete colorScheme={getCategoryForContinuousColorScheme(color)} />,
             }));
     }
 
@@ -116,6 +119,7 @@ export default class CorrelationMatrixView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
+                            optionLabelSelector={d => d.image}
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}

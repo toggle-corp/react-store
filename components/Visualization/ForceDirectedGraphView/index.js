@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 
 import ForceDirectedGraph from '../ForceDirectedGraph';
-import ColorPallete from '../ColorPallete';
 import FullScreen from '../FullScreen';
+import ColorPallete from '../ColorPallete';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -43,8 +43,8 @@ export default class ForcedDirectedGraphView extends PureComponent {
         this.colors = categoricalColorNames()
             .map(color => (
                 {
+                    id: color,
                     title: color,
-                    id: name,
                     image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
                 }));
     }

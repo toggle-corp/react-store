@@ -34,6 +34,35 @@ import {
     interpolateYlGn,
     interpolateYlOrBr,
     interpolateYlOrRd,
+
+    schemeBrBG,
+    schemePRGn,
+    schemePiYG,
+    schemePuOr,
+    schemeRdBu,
+    schemeRdGy,
+    schemeRdYlBu,
+    schemeRdYlGn,
+    schemeSpectral,
+
+    schemeBlues,
+    schemeGreens,
+    schemeGreys,
+    schemeOranges,
+    schemePurples,
+    schemeReds,
+    schemeBuGn,
+    schemeBuPu,
+    schemeGnBu,
+    schemeOrRd,
+    schemePuBuGn,
+    schemePuBu,
+    schemePuRd,
+    schemeRdPu,
+    schemeYlGnBu,
+    schemeYlGn,
+    schemeYlOrBr,
+    schemeYlOrRd,
 } from 'd3-scale-chromatic';
 
 import {
@@ -56,6 +85,37 @@ const categoricalColors = {
     schemecategory20: schemeCategory20,
     schemecategory20b: schemeCategory20b,
     schemecategory20c: schemeCategory20c,
+};
+
+const NUM_CATEGORIES_PER_SCHEME = 8;
+const categoryForContinuousColors = {
+    BrBG: schemeBrBG[NUM_CATEGORIES_PER_SCHEME],
+    PRGn: schemePRGn[NUM_CATEGORIES_PER_SCHEME],
+    PiYG: schemePiYG[NUM_CATEGORIES_PER_SCHEME],
+    PuOr: schemePuOr[NUM_CATEGORIES_PER_SCHEME],
+    RdBu: schemeRdBu[NUM_CATEGORIES_PER_SCHEME],
+    RdGy: schemeRdGy[NUM_CATEGORIES_PER_SCHEME],
+    RdYlBu: schemeRdYlBu[NUM_CATEGORIES_PER_SCHEME],
+    RdYlGn: schemeRdYlGn[NUM_CATEGORIES_PER_SCHEME],
+    Spectral: schemeSpectral[NUM_CATEGORIES_PER_SCHEME],
+    blues: schemeBlues[NUM_CATEGORIES_PER_SCHEME],
+    greens: schemeGreens[NUM_CATEGORIES_PER_SCHEME],
+    greys: schemeGreys[NUM_CATEGORIES_PER_SCHEME],
+    oranges: schemeOranges[NUM_CATEGORIES_PER_SCHEME],
+    purples: schemePurples[NUM_CATEGORIES_PER_SCHEME],
+    reds: schemeReds[NUM_CATEGORIES_PER_SCHEME],
+    BuGn: schemeBuGn[NUM_CATEGORIES_PER_SCHEME],
+    BuPu: schemeBuPu[NUM_CATEGORIES_PER_SCHEME],
+    GnBu: schemeGnBu[NUM_CATEGORIES_PER_SCHEME],
+    OrRd: schemeOrRd[NUM_CATEGORIES_PER_SCHEME],
+    PuBuGn: schemePuBuGn[NUM_CATEGORIES_PER_SCHEME],
+    PuBu: schemePuBu[NUM_CATEGORIES_PER_SCHEME],
+    PuRd: schemePuRd[NUM_CATEGORIES_PER_SCHEME],
+    RdPu: schemeRdPu[NUM_CATEGORIES_PER_SCHEME],
+    YlGnBu: schemeYlGnBu[NUM_CATEGORIES_PER_SCHEME],
+    YlGn: schemeYlGn[NUM_CATEGORIES_PER_SCHEME],
+    YlOrBr: schemeYlOrBr[NUM_CATEGORIES_PER_SCHEME],
+    YlOrR: schemeYlOrRd[NUM_CATEGORIES_PER_SCHEME],
 };
 
 const divergingColors = {
@@ -104,3 +164,4 @@ export const sequentialColorNames = () => Object.keys(sequentialColors);
 export const getCategoryColorScheme = name => categoricalColors[name];
 export const getDivergingColorScheme = name => divergingColors[name];
 export const getSequentialColorScheme = name => sequentialColors[name];
+export const getCategoryForContinuousColorScheme = name => categoryForContinuousColors[name];
