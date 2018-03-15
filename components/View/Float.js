@@ -31,7 +31,7 @@ export default class Float extends React.PureComponent {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('scroll', this.handleScroll);
+        window.removeEventListener('scroll', this.handleScroll, true);
     }
 
     invalidate = () => {
