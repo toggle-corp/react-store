@@ -189,7 +189,7 @@ export default class RadialDendrogram extends React.PureComponent {
             .style('fill', topicColors)
             .attr('x', d =>
                 ((d.x < 180) === (!d.children) ?
-                    `${scaledValues(d.value)}` : `-${scaledValues(d.value)}`))
+                    `${scaledValues(d.value) + 4}` : `-${scaledValues(d.value) + 4}`))
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)
