@@ -3,6 +3,7 @@ import { PropTypes } from 'prop-types';
 
 import TreeMap from '../TreeMap';
 import FullScreen from '../FullScreen';
+import ColorPallete from '../ColorPallete';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -40,6 +41,7 @@ export default class TreeMapView extends PureComponent {
             .map(color => ({
                 id: color,
                 title: color,
+                image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
             }));
     }
 
@@ -110,6 +112,7 @@ export default class TreeMapView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
+                            optionLabelSelector={d => d.image}
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}

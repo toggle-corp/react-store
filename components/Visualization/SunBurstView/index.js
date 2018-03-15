@@ -135,7 +135,8 @@ export default class SunBurstView extends PureComponent {
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
-                            labelSelector={d => d.image}
+                            labelSelector={d => d.title}
+                            optionLabelSelector={d => d.image}
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}
