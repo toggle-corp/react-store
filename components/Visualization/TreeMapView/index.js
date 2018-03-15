@@ -16,15 +16,17 @@ import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/Co
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
     loading: PropTypes.bool,
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
-    className: '',
     colorScheme: undefined,
+    className: '',
     loading: false,
+    vizContainerClass: '',
 };
 
 export default class TreeMapView extends PureComponent {
@@ -36,7 +38,7 @@ export default class TreeMapView extends PureComponent {
         this.state = {
             colorScheme: undefined,
         };
-        this.selectedColorScheme = undefined;
+        this.selectedColorScheme = 'schemepaired';
         this.colors = categoricalColorNames()
             .map(color => ({
                 id: color,
@@ -85,6 +87,7 @@ export default class TreeMapView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -155,12 +158,14 @@ export default class TreeMapView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <TreeMap
-                            className={styles.treemap}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <TreeMap
+                                className={styles.treemap}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>

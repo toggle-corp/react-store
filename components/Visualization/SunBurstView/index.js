@@ -20,12 +20,14 @@ const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     loading: false,
     colorScheme: undefined,
+    vizContainerClass: '',
 };
 
 export default class SunBurstView extends PureComponent {
@@ -106,6 +108,7 @@ export default class SunBurstView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -190,12 +193,14 @@ export default class SunBurstView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <SunBurst
-                            className={styles.sunburst}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={effectiveColorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <SunBurst
+                                className={styles.sunburst}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={effectiveColorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>

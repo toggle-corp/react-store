@@ -19,12 +19,14 @@ const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     loading: false,
     colorScheme: undefined,
+    vizContainerClass: '',
 };
 
 export default class ForcedDirectedGraphView extends PureComponent {
@@ -86,6 +88,7 @@ export default class ForcedDirectedGraphView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -150,12 +153,14 @@ export default class ForcedDirectedGraphView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <ForceDirectedGraph
-                            className={styles['force-directed-graph']}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <ForceDirectedGraph
+                                className={styles['force-directed-graph']}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>

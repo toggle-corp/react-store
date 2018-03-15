@@ -30,12 +30,14 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     loading: PropTypes.bool,
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
     loading: false,
+    vizContainerClass: '',
 };
 
 export default class CorrelationMatrixView extends PureComponent {
@@ -93,6 +95,7 @@ export default class CorrelationMatrixView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -157,12 +160,14 @@ export default class CorrelationMatrixView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <CorrelationMatrix
-                            className={styles['correlation-matrix']}
-                            ref={(instance) => { this.chart = instance; }}
-                            colorScheme={colorScheme}
-                            {...otherProps}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <CorrelationMatrix
+                                className={styles['correlation-matrix']}
+                                ref={(instance) => { this.chart = instance; }}
+                                colorScheme={colorScheme}
+                                {...otherProps}
+                            />
+                        </div>
                     )
                 }
             </div>

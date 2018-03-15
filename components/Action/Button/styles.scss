@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$radius-button-border: 2px;
+$radius-button-border: 2px !default;
 
 @mixin button-props($base-color) {
     @include background-color($base-color);

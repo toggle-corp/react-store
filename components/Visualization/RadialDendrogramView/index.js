@@ -19,12 +19,14 @@ const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     loading: false,
     colorScheme: undefined,
+    vizContainerClass: '',
 };
 
 export default class RadialDendrogramView extends PureComponent {
@@ -84,6 +86,7 @@ export default class RadialDendrogramView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -148,12 +151,14 @@ export default class RadialDendrogramView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <RadialDendrogram
-                            className={styles['radial-dendrogram']}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <RadialDendrogram
+                                className={styles['radial-dendrogram']}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>

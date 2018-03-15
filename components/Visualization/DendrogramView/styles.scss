@@ -11,6 +11,12 @@
         @extend %action;
     }
 
+    .viz-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
     .dendrogram {
         flex-grow: 1;
     }

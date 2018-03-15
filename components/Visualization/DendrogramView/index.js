@@ -17,11 +17,13 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
+    vizContainerClass: '',
 };
 
 export default class DendrogramView extends PureComponent {
@@ -79,6 +81,7 @@ export default class DendrogramView extends PureComponent {
         const {
             className,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -144,12 +147,14 @@ export default class DendrogramView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <Dendrogram
-                            className={styles.dendrogram}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <Dendrogram
+                                className={styles.dendrogram}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>

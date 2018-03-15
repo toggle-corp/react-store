@@ -19,12 +19,14 @@ const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     loading: false,
     colorScheme: undefined,
+    vizContainerClass: '',
 };
 
 export default class CollapsibleTreeView extends PureComponent {
@@ -83,6 +85,7 @@ export default class CollapsibleTreeView extends PureComponent {
             className,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            vizContainerClass,
             ...otherProps
         } = this.props;
 
@@ -147,12 +150,14 @@ export default class CollapsibleTreeView extends PureComponent {
                             />
                         </FullScreen>
                     ) : (
-                        <CollapsibleTree
-                            className={styles['collapsible-tree']}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <CollapsibleTree
+                                className={styles['collapsible-tree']}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </div>
                     )
                 }
             </div>
