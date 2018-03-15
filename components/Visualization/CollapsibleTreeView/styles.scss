@@ -3,6 +3,7 @@
 
 .collapsible-tree-view {
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -14,4 +15,16 @@
     .collapsible-tree {
         flex-grow: 1;
     }
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: $color-danger;
+}
+
+.collapsible-tree {
+    width: 100%;
+    height: 100%;
 }

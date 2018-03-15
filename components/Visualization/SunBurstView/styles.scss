@@ -3,6 +3,7 @@
 
 .sunburst-view {
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -14,4 +15,16 @@
     .sunburst {
         flex-grow: 1;
     }
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: $color-danger;
+}
+
+.sunburst {
+    width: 100%;
+    height: 100%;
 }

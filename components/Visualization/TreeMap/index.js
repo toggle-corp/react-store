@@ -10,7 +10,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -47,7 +46,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -62,7 +60,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /**
@@ -99,6 +96,11 @@ export default class TreeMap extends React.PureComponent {
             margins,
         } = this.props;
 
+        const svg = select(this.svg);
+        svg
+            .selectAll('*')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -118,10 +120,6 @@ export default class TreeMap extends React.PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-
-        const svg = select(this.svg);
-        svg.selectAll('*')
-            .remove();
 
         const group = svg
             .style('width', width + left + right)
@@ -191,7 +189,7 @@ export default class TreeMap extends React.PureComponent {
         }
 
         function name(d) {
-            return d.parent ? `${name(d.parent)}${labelAccessor(d.data)}` : '';
+            return d.parent ? `${name(d.parent)}/${labelAccessor(d.data)}` : '';
         }
 
         function rect(shape) {
@@ -369,14 +367,11 @@ export default class TreeMap extends React.PureComponent {
     }
 
     render() {
-        const { loading } = this.props;
-
         return (
             <div
                 className={`treemap-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className="treemap"
                     ref={(elem) => { this.svg = elem; }}

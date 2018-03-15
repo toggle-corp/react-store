@@ -1,21 +1,29 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+
 import TreeMap from '../TreeMap';
+import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import AccentButton from '../../Action/Button/AccentButton';
+import DangerButton from '../../Action/Button/DangerButton';
+import LoadingAnimation from '../../View/LoadingAnimation';
+
+import iconNames from '../../../constants/iconNames';
+import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
+    loading: false,
 };
 
 export default class TreeMapView extends PureComponent {
@@ -26,8 +34,8 @@ export default class TreeMapView extends PureComponent {
         super(props);
         this.state = {
             colorScheme: undefined,
-            selectedColorScheme: undefined,
         };
+        this.selectedColorScheme = undefined;
         this.colors = categoricalColorNames()
             .map(color => ({
                 id: color,
@@ -36,17 +44,30 @@ export default class TreeMapView extends PureComponent {
     }
 
     componentWillReceiveProps(newProps) {
+        if (newProps.colorScheme !== this.props.colorScheme) {
+            this.setState({
+                colorScheme: newProps.colorScheme,
+            });
+        }
+    }
+
+    setFullScreen = () => {
         this.setState({
-            colorScheme: newProps.colorScheme,
-            selectedColorScheme: newProps.colorScheme,
+            fullScreen: true,
+        });
+    }
+
+    removeFullScreen = () => {
+        this.setState({
+            fullScreen: false,
         });
     }
 
     handleSelection = (data) => {
+        this.selectedColorScheme = data;
         const colors = getCategoryColorScheme(data);
         this.setState({
             colorScheme: colors,
-            selectedColorScheme: data,
         });
     }
 
@@ -60,38 +81,85 @@ export default class TreeMapView extends PureComponent {
     render() {
         const {
             className,
+            loading,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const {
+            handleSelection,
+            handleSave,
+            handleReset,
+            setFullScreen,
+            removeFullScreen,
+            colors,
+            selectedColorScheme,
+        } = this;
+
         return (
             <div className={`${styles['treemap-view']} ${className}`}>
+                { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
                     <div className={styles['action-selects']}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
-                            onChange={this.handleSelection}
-                            options={this.colors}
+                            onChange={handleSelection}
+                            options={colors}
                             showHintAndError={false}
                             className={styles['select-input']}
-                            value={this.state.selectedColorScheme}
+                            value={selectedColorScheme}
                         />
                     </div>
                     <div className={styles['action-buttons']}>
-                        <PrimaryButton onClick={this.handleSave}>
-                            Save
-                        </PrimaryButton>
-                        <PrimaryButton onClick={this.handleReset}>
-                            Reset
-                        </PrimaryButton>
+                        <AccentButton
+                            onClick={handleSave}
+                            iconName={iconNames.download}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={setFullScreen}
+                            iconName={iconNames.expand}
+                            transparent
+                        />
+                        <AccentButton
+                            onClick={handleReset}
+                            iconName={iconNames.refresh}
+                            transparent
+                        />
                     </div>
                 </div>
-                <TreeMap
-                    className={styles.treemap}
-                    ref={(instance) => { this.chart = instance; }}
-                    {...otherProps}
-                    colorScheme={this.state.colorScheme}
-                />
+                {
+                    fullScreen ? (
+                        <FullScreen>
+                            <DangerButton
+                                className={styles.close}
+                                onClick={removeFullScreen}
+                                iconName={iconNames.close}
+                                transparent
+                            />
+                            <TreeMap
+                                className={styles.treemap}
+                                ref={(instance) => { this.chart = instance; }}
+                                {...otherProps}
+                                colorScheme={colorScheme}
+                            />
+                        </FullScreen>
+                    ) : (
+                        <TreeMap
+                            className={styles.treemap}
+                            ref={(instance) => { this.chart = instance; }}
+                            {...otherProps}
+                            colorScheme={colorScheme}
+                        />
+                    )
+                }
             </div>
         );
     }

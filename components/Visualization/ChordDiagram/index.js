@@ -8,7 +8,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 import styles from './styles.scss';
 
 /**
@@ -39,7 +38,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -54,7 +52,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /**
@@ -305,8 +302,7 @@ export default class ChordDiagram extends React.PureComponent {
     }
 
     render() {
-        const { loading, className } = this.props;
-
+        const { className } = this.props;
         const containerStyle = `${styles['chord-diagram-container']} ${className}`;
         const chordStyle = styles['chord-diagram'];
         const tooltipStyle = styles.tooltip;
@@ -315,7 +311,6 @@ export default class ChordDiagram extends React.PureComponent {
                 className={containerStyle}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <div
                     className={tooltipStyle}
                     ref={(el) => { this.tooltip = el; }}

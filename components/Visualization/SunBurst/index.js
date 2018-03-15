@@ -9,7 +9,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -48,7 +47,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -63,7 +61,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /*
@@ -102,6 +99,14 @@ export default class SunBurst extends PureComponent {
             margins,
         } = this.props;
 
+        const el = select(this.svg);
+        el.selectAll('*')
+            .remove();
+
+        select(this.container)
+            .selectAll('.tooltip')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -135,14 +140,6 @@ export default class SunBurst extends PureComponent {
             .innerRadius(d => Math.max(0, y(d.y0)))
             .outerRadius(d => Math.max(0, y(d.y1)));
 
-        const el = select(this.svg);
-        el.selectAll('*')
-            .remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
-
         const tooltip = select(this.container)
             .append('div')
             .attr('class', 'tooltip')
@@ -150,10 +147,10 @@ export default class SunBurst extends PureComponent {
             .style('display', 'none');
 
         const group = el
-            .attr('width', width)
-            .attr('height', height)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
             .append('g')
-            .attr('transform', `translate( ${width / 2}, ${height / 2})`);
+            .attr('transform', `translate( ${(width + left + right) / 2}, ${(height + top + bottom) / 2})`);
 
         function computeTextRotation(d) {
             const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
@@ -174,7 +171,7 @@ export default class SunBurst extends PureComponent {
         }
 
         function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${labelAccessor(d.data)}</span><span class="value">${d.value}</span>`);
+            tooltip.html(`<span class="name">${labelAccessor(d.data) || ''}</span><span class="value">${d.value}</span>`);
             return tooltip
                 .transition()
                 .style('display', 'inline-block');
@@ -294,14 +291,11 @@ export default class SunBurst extends PureComponent {
     }
 
     render() {
-        const { loading } = this.props;
-
         return (
             <div
                 className={`sunburst-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className="sunburst"
                     ref={(elem) => { this.svg = elem; }}

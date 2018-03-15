@@ -10,7 +10,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -49,7 +48,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -69,7 +67,6 @@ const defaultProps = {
     useVoronoi: true,
     className: '',
     colorScheme: schemePaired,
-    loading: false,
 };
 /**
  * Represents the  network of nodes in force layout with many-body force.
@@ -92,7 +89,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
         this.updateData(this.props);
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props) {
+        if (nextProps.data !== this.props.data) {
             this.updateData(nextProps);
         }
     }
@@ -130,6 +127,13 @@ export default class ForceDirectedGraph extends React.PureComponent {
         } = this.props;
         const { data } = this;
 
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
+
+        select(this.container)
+            .selectAll('.tooltip')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -143,13 +147,6 @@ export default class ForceDirectedGraph extends React.PureComponent {
             bottom,
             left,
         } = margins;
-
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
 
         const tooltip = select(this.container)
             .append('div')
@@ -339,14 +336,11 @@ export default class ForceDirectedGraph extends React.PureComponent {
             .links(data.links);
     }
     render() {
-        const { loading } = this.props;
-
         return (
             <div
                 className={`force-directed-graph-container ${this.props.className}`}
                 ref={(el) => { this.container = el; }}
             >
-                { loading && <LoadingAnimation /> }
                 <input
                     className="input-slider"
                     id="sliderinput"

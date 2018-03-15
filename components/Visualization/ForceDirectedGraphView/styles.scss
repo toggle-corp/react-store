@@ -3,6 +3,7 @@
 
 .force-directed-graph-view {
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -14,4 +15,17 @@
     .force-directed-graph {
         flex-grow: 1;
     }
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    color: $color-danger;
+}
+
+.force-directed-graph {
+    width: 100%;
+    height: 100%;
 }

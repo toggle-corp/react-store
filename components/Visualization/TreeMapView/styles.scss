@@ -3,6 +3,7 @@
 
 .treemap-view {
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -14,4 +15,16 @@
     .treemap {
         flex-grow: 1;
     }
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: $color-danger;
+}
+
+.treemap {
+    width: 100%;
+    height: 100%;
 }

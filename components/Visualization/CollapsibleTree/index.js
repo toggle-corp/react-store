@@ -8,7 +8,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
 import styles from './styles.scss';
 
 /**
@@ -38,7 +37,6 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -52,7 +50,6 @@ const defaultProps = {
         bottom: 100,
         left: 100,
     },
-    loading: false,
 };
 
 /**
@@ -304,8 +301,7 @@ export default class CollapsibleTree extends React.PureComponent {
     }
 
     render() {
-        const { loading, className } = this.props;
-
+        const { className } = this.props;
         const containerStyle = `${styles['collapsible-tree-container']} ${className}`;
         const collapsibleStyle = `${styles['collapsible-tree']}`;
 
@@ -313,7 +309,6 @@ export default class CollapsibleTree extends React.PureComponent {
             <div
                 className={containerStyle}
             >
-                { loading && <LoadingAnimation /> }
                 <svg
                     className={collapsibleStyle}
                     ref={(elem) => { this.svg = elem; }}
