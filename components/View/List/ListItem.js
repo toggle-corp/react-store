@@ -73,6 +73,7 @@ export default class List extends React.PureComponent {
     render() {
         const {
             children,
+            active, // eslint-disable-line no-unused-vars
             scrollIntoView, // eslint-disable-line no-unused-vars
             className, // eslint-disable-line no-unused-vars
             ...otherProps

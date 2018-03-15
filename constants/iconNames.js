@@ -51,7 +51,7 @@ const iconNames = {
     checkAll: 'ion-android-done-all',
     dragHandle: 'ion-android-more-vertical',
     expand: 'ion-arrow-expand',
-    download: 'ion-code-download',
+    download: 'fa fa-download',
     refresh: 'ion-refresh',
 
     sort: 'fa fa-sort',

@@ -16,15 +16,19 @@ import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/Co
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
+    headerText: PropTypes.string,
     loading: PropTypes.bool,
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
-    className: '',
     colorScheme: undefined,
+    className: '',
+    headerText: '',
     loading: false,
+    vizContainerClass: '',
 };
 
 export default class TreeMapView extends PureComponent {
@@ -36,7 +40,7 @@ export default class TreeMapView extends PureComponent {
         this.state = {
             colorScheme: undefined,
         };
-        this.selectedColorScheme = undefined;
+        this.selectedColorScheme = 'schemepaired';
         this.colors = categoricalColorNames()
             .map(color => ({
                 id: color,
@@ -80,18 +84,12 @@ export default class TreeMapView extends PureComponent {
     handleReset = () => {
         this.chart.wrappedComponent.renderChart();
     }
-    render() {
-        const {
-            className,
-            loading,
-            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
-            ...otherProps
-        } = this.props;
 
+    renderHeader = ({ fullScreen }) => {
         const {
-            fullScreen,
-            colorScheme,
-        } = this.state;
+            headerText,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+        } = this.props;
 
         const {
             handleSelection,
@@ -104,63 +102,97 @@ export default class TreeMapView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['treemap-view']} ${className}`}>
-                { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
-                        <SelectInput
-                            clearable={false}
-                            keySelector={d => d.title}
-                            labelSelector={d => d.title}
-                            optionLabelSelector={d => d.image}
-                            onChange={handleSelection}
-                            options={colors}
-                            showHintAndError={false}
-                            className={styles['select-input']}
-                            value={selectedColorScheme}
-                        />
-                    </div>
-                    <div className={styles['action-buttons']}>
-                        <AccentButton
-                            onClick={handleSave}
-                            iconName={iconNames.download}
-                            transparent
-                        />
+            <div className={styles.header}>
+                <div className={styles.leftContent}>
+                    <span className={styles.heading}>
+                        {headerText}
+                    </span>
+                </div>
+                <div className={styles.rightContent}>
+                    <SelectInput
+                        clearable={false}
+                        keySelector={d => d.title}
+                        labelSelector={d => d.title}
+                        optionLabelSelector={d => d.image}
+                        onChange={handleSelection}
+                        optionsClassName={styles.selectInputOptions}
+                        options={colors}
+                        showHintAndError={false}
+                        className={styles.selectInput}
+                        value={selectedColorScheme}
+                    />
+                    <AccentButton
+                        onClick={handleSave}
+                        iconName={iconNames.download}
+                        transparent
+                    />
+                    <AccentButton
+                        onClick={handleReset}
+                        iconName={iconNames.refresh}
+                        transparent
+                    />
+                    { !fullScreen &&
                         <AccentButton
                             onClick={setFullScreen}
                             iconName={iconNames.expand}
                             transparent
                         />
-                        <AccentButton
-                            onClick={handleReset}
-                            iconName={iconNames.refresh}
+                    }
+                    { fullScreen &&
+                        <DangerButton
+                            onClick={removeFullScreen}
+                            iconName={iconNames.close}
                             transparent
                         />
-                    </div>
+                    }
                 </div>
+            </div>
+        );
+    }
+
+    render() {
+        const {
+            className,
+            loading,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            headerText, // eslint-disable-line no-unused-vars
+            vizContainerClass,
+            ...otherProps
+        } = this.props;
+
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const Header = this.renderHeader;
+
+        return (
+            <div className={`${styles.treemapView} ${className}`}>
+                { loading && <LoadingAnimation /> }
+                <Header fullScreen={false} />
                 {
                     fullScreen ? (
-                        <FullScreen>
-                            <DangerButton
-                                className={styles.close}
-                                onClick={removeFullScreen}
-                                iconName={iconNames.close}
-                                transparent
-                            />
+                        <FullScreen className={styles.fullScreenContainer}>
+                            <Header fullScreen />
+                            <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                                <TreeMap
+                                    className={styles.treemap}
+                                    ref={(instance) => { this.chart = instance; }}
+                                    {...otherProps}
+                                    colorScheme={colorScheme}
+                                />
+                            </div>
+                        </FullScreen>
+                    ) : (
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
                             <TreeMap
                                 className={styles.treemap}
                                 ref={(instance) => { this.chart = instance; }}
                                 {...otherProps}
                                 colorScheme={colorScheme}
                             />
-                        </FullScreen>
-                    ) : (
-                        <TreeMap
-                            className={styles.treemap}
-                            ref={(instance) => { this.chart = instance; }}
-                            {...otherProps}
-                            colorScheme={colorScheme}
-                        />
+                        </div>
                     )
                 }
             </div>

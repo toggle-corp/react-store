@@ -30,12 +30,16 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     loading: PropTypes.bool,
+    headerText: PropTypes.string,
+    vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     colorScheme: undefined,
     loading: false,
+    headerText: '',
+    vizContainerClass: '',
 };
 
 export default class CorrelationMatrixView extends PureComponent {
@@ -75,7 +79,6 @@ export default class CorrelationMatrixView extends PureComponent {
         });
     }
 
-
     handleSelection = (data) => {
         const colors = getSequentialColorScheme(data) || getDivergingColorScheme(data);
         this.selectedColorScheme = data;
@@ -88,18 +91,11 @@ export default class CorrelationMatrixView extends PureComponent {
         this.chart.wrappedComponent.save();
     }
 
-    render() {
+    renderHeader = ({ fullScreen }) => {
         const {
-            className,
-            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
-            ...otherProps
+            headerText,
         } = this.props;
-
-        const {
-            fullScreen,
-            colorScheme,
-        } = this.state;
 
         const {
             handleSelection,
@@ -111,58 +107,92 @@ export default class CorrelationMatrixView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['correlation-matrix-view']} ${className}`}>
-                { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
-                        <SelectInput
-                            clearable={false}
-                            keySelector={d => d.title}
-                            labelSelector={d => d.title}
-                            optionLabelSelector={d => d.image}
-                            onChange={handleSelection}
-                            options={colors}
-                            showHintAndError={false}
-                            className={styles['select-input']}
-                            value={selectedColorScheme}
-                        />
-                    </div>
-                    <div className={styles['action-buttons']}>
-                        <AccentButton
-                            onClick={handleSave}
-                            iconName={iconNames.download}
-                            transparent
-                        />
-                        <AccentButton
-                            transparent
-                            iconName={iconNames.expand}
-                            onClick={setFullScreen}
-                        />
-                    </div>
+            <div className={styles.header}>
+                <div className={styles.leftContent}>
+                    <span className={styles.heading}>
+                        {headerText}
+                    </span>
                 </div>
+                <div className={styles.rightContent}>
+                    <SelectInput
+                        clearable={false}
+                        keySelector={d => d.title}
+                        labelSelector={d => d.title}
+                        optionLabelSelector={d => d.image}
+                        optionsClassName={styles.selectInputOptions}
+                        onChange={handleSelection}
+                        options={colors}
+                        showHintAndError={false}
+                        className={styles.selectInput}
+                        value={selectedColorScheme}
+                    />
+                    <AccentButton
+                        onClick={handleSave}
+                        iconName={iconNames.download}
+                        transparent
+                    />
+                    { !fullScreen &&
+                        <AccentButton
+                            onClick={setFullScreen}
+                            iconName={iconNames.expand}
+                            transparent
+                        />
+                    }
+                    { fullScreen &&
+                        <DangerButton
+                            onClick={removeFullScreen}
+                            iconName={iconNames.close}
+                            transparent
+                        />
+                    }
+                </div>
+            </div>
+        );
+    }
+
+    render() {
+        const {
+            className,
+            loading,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            headerText, // eslint-disable-line no-unused-vars
+            vizContainerClass,
+            ...otherProps
+        } = this.props;
+
+        const {
+            fullScreen,
+            colorScheme,
+        } = this.state;
+
+        const Header = this.renderHeader;
+
+        return (
+            <div className={`${styles.correlationMatrixView} ${className}`}>
+                { loading && <LoadingAnimation /> }
+                <Header fullScreen={false} />
                 {
                     fullScreen ? (
-                        <FullScreen>
-                            <DangerButton
-                                className={styles.close}
-                                onClick={removeFullScreen}
-                                iconName={iconNames.close}
-                                transparent
-                            />
+                        <FullScreen className={styles.fullScreenContainer}>
+                            <Header fullScreen />
+                            <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                                <CorrelationMatrix
+                                    className={styles.correlationMatrix}
+                                    ref={(instance) => { this.chart = instance; }}
+                                    colorScheme={colorScheme}
+                                    {...otherProps}
+                                />
+                            </div>
+                        </FullScreen>
+                    ) : (
+                        <div className={`${styles.vizContainer} ${vizContainerClass}`} >
                             <CorrelationMatrix
-                                className={styles['correlation-matrix']}
+                                className={styles.correlationMatrix}
                                 ref={(instance) => { this.chart = instance; }}
                                 colorScheme={colorScheme}
                                 {...otherProps}
                             />
-                        </FullScreen>
-                    ) : (
-                        <CorrelationMatrix
-                            className={styles['correlation-matrix']}
-                            ref={(instance) => { this.chart = instance; }}
-                            colorScheme={colorScheme}
-                            {...otherProps}
-                        />
+                        </div>
                     )
                 }
             </div>
