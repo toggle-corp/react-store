@@ -8,6 +8,7 @@ import ColorPallete from '../ColorPallete';
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
 import DangerButton from '../../Action/Button/DangerButton';
+import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
 import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
@@ -16,12 +17,16 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    loading: PropTypes.bool,
+    headerText: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    loading: false,
+    headerText: '',
     colorScheme: undefined,
     vizContainerClass: '',
 };
@@ -80,6 +85,8 @@ export default class DendrogramView extends PureComponent {
     render() {
         const {
             className,
+            headerText,
+            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             vizContainerClass,
             ...otherProps
@@ -100,11 +107,13 @@ export default class DendrogramView extends PureComponent {
         } = this;
 
         return (
-            <div
-                className={`${styles['dendrogram-view']} ${className}`}
-            >
+            <div className={`${styles['dendrogram-view']} ${className}`}>
+                { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
                     <div className={styles['action-selects']}>
+                        <span className={styles.heading}>
+                            {headerText}
+                        </span>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}

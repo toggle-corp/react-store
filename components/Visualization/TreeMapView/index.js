@@ -18,6 +18,7 @@ import styles from './styles.scss';
 const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
+    headerText: PropTypes.string,
     loading: PropTypes.bool,
     vizContainerClass: PropTypes.string,
 };
@@ -25,6 +26,7 @@ const propTypes = {
 const defaultProps = {
     colorScheme: undefined,
     className: '',
+    headerText: '',
     loading: false,
     vizContainerClass: '',
 };
@@ -85,6 +87,7 @@ export default class TreeMapView extends PureComponent {
     render() {
         const {
             className,
+            headerText,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             vizContainerClass,
@@ -107,10 +110,15 @@ export default class TreeMapView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['treemap-view']} ${className}`}>
+            <div className={`${styles.treemapView} ${className}`}>
                 { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                <div className={styles.header}>
+                    <div className={styles.leftContent}>
+                        <span className={styles.heading}>
+                            {headerText}
+                        </span>
+                    </div>
+                    <div className={styles.rightContent}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -119,11 +127,9 @@ export default class TreeMapView extends PureComponent {
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={selectedColorScheme}
                         />
-                    </div>
-                    <div className={styles['action-buttons']}>
                         <AccentButton
                             onClick={handleSave}
                             iconName={iconNames.download}

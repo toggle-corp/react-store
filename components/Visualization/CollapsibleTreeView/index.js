@@ -18,6 +18,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
+    headerText: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     vizContainerClass: PropTypes.string,
 };
@@ -25,6 +26,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     loading: false,
+    headerText: '',
     colorScheme: undefined,
     vizContainerClass: '',
 };
@@ -83,6 +85,7 @@ export default class CollapsibleTreeView extends PureComponent {
     render() {
         const {
             className,
+            headerText,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             vizContainerClass,
@@ -104,10 +107,15 @@ export default class CollapsibleTreeView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['collapsible-tree-view']} ${className}`}>
+            <div className={`${styles.collapsibleTreeView} ${className}`}>
                 { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                <div className={styles.header}>
+                    <div className={styles.leftContent}>
+                        <span className={styles.heading}>
+                            {headerText}
+                        </span>
+                    </div>
+                    <div className={styles.rightContent}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -116,11 +124,9 @@ export default class CollapsibleTreeView extends PureComponent {
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={selectedColorScheme}
                         />
-                    </div>
-                    <div className={styles['action-buttons']}>
                         <AccentButton
                             onClick={handleSave}
                             iconName={iconNames.download}
@@ -143,7 +149,7 @@ export default class CollapsibleTreeView extends PureComponent {
                                 transparent
                             />
                             <CollapsibleTree
-                                className={styles['collapsible-tree']}
+                                className={styles.collapsibleTree}
                                 ref={(instance) => { this.chart = instance; }}
                                 {...otherProps}
                                 colorScheme={colorScheme}
@@ -152,7 +158,7 @@ export default class CollapsibleTreeView extends PureComponent {
                     ) : (
                         <div className={`${styles.vizContainer} ${vizContainerClass}`} >
                             <CollapsibleTree
-                                className={styles['collapsible-tree']}
+                                className={styles.collapsibleTree}
                                 ref={(instance) => { this.chart = instance; }}
                                 {...otherProps}
                                 colorScheme={colorScheme}

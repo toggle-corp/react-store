@@ -30,6 +30,7 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     loading: PropTypes.bool,
+    headerText: PropTypes.string,
     vizContainerClass: PropTypes.string,
 };
 
@@ -37,6 +38,7 @@ const defaultProps = {
     className: '',
     colorScheme: undefined,
     loading: false,
+    headerText: '',
     vizContainerClass: '',
 };
 
@@ -93,6 +95,7 @@ export default class CorrelationMatrixView extends PureComponent {
     render() {
         const {
             className,
+            headerText,
             loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             vizContainerClass,
@@ -114,10 +117,15 @@ export default class CorrelationMatrixView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['correlation-matrix-view']} ${className}`}>
+            <div className={`${styles.correlationMatrixView} ${className}`}>
                 { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                <div className={styles.header}>
+                    <div className={styles.leftContent}>
+                        <span className={styles.heading}>
+                            {headerText}
+                        </span>
+                    </div>
+                    <div className={styles.rightContent}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -126,11 +134,9 @@ export default class CorrelationMatrixView extends PureComponent {
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={selectedColorScheme}
                         />
-                    </div>
-                    <div className={styles['action-buttons']}>
                         <AccentButton
                             onClick={handleSave}
                             iconName={iconNames.download}
@@ -153,7 +159,7 @@ export default class CorrelationMatrixView extends PureComponent {
                                 transparent
                             />
                             <CorrelationMatrix
-                                className={styles['correlation-matrix']}
+                                className={styles.correlationMatrix}
                                 ref={(instance) => { this.chart = instance; }}
                                 colorScheme={colorScheme}
                                 {...otherProps}
@@ -162,7 +168,7 @@ export default class CorrelationMatrixView extends PureComponent {
                     ) : (
                         <div className={`${styles.vizContainer} ${vizContainerClass}`} >
                             <CorrelationMatrix
-                                className={styles['correlation-matrix']}
+                                className={styles.correlationMatrix}
                                 ref={(instance) => { this.chart = instance; }}
                                 colorScheme={colorScheme}
                                 {...otherProps}

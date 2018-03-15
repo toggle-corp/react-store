@@ -19,12 +19,14 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     loading: PropTypes.bool,
+    headerText: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     vizContainerClass: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    headerText: '',
     loading: false,
     colorScheme: undefined,
     vizContainerClass: '',
@@ -106,8 +108,9 @@ export default class SunBurstView extends PureComponent {
     render() {
         const {
             className,
-            loading,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            headerText,
+            loading,
             vizContainerClass,
             ...otherProps
         } = this.props;
@@ -131,10 +134,15 @@ export default class SunBurstView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['sunburst-view']} ${className}`}>
+            <div className={`${styles.sunburstView} ${className}`}>
                 { loading && <LoadingAnimation /> }
-                <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                <div className={styles.header}>
+                    <div className={styles.leftContent}>
+                        <span className={styles.heading}>
+                            {headerText}
+                        </span>
+                    </div>
+                    <div className={styles.rightContent}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -157,8 +165,6 @@ export default class SunBurstView extends PureComponent {
                             className={styles['select-input']}
                             value={selectedNoOfCategories}
                         />
-                    </div>
-                    <div className={styles['action-buttons']}>
                         <AccentButton
                             onClick={handleSave}
                             iconName={iconNames.download}
