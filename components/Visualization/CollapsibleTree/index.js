@@ -45,9 +45,9 @@ const defaultProps = {
     colorScheme: schemePaired,
     className: '',
     margins: {
-        top: 50,
+        top: 20,
         right: 50,
-        bottom: 100,
+        bottom: 20,
         left: 100,
     },
 };
@@ -166,6 +166,7 @@ export default class CollapsibleTree extends React.PureComponent {
             .enter()
             .append('g')
             .attr('class', 'node')
+            .attr('cursor', 'pointer')
             .attr('transform', `translate(${source.y0}, ${source.x0})`)
             .on('click', this.click);
 
@@ -181,8 +182,9 @@ export default class CollapsibleTree extends React.PureComponent {
             .append('text')
             .attr('dy', '.35em')
             .attr('fill-opacity', 0)
-            .attr('x', d => (d.children || d.childrens ? -13 : 13))
-            .attr('text-anchor', d => ((d.children || d.childrens) ? 'end' : 'start'))
+            .attr('x', 0)
+            .attr('y', -12) // d => (d.children || d.childrens ? 16 : 0))
+            .attr('text-anchor', 'middle') // d => (d.children ? 'end' : 'start'))
             .text(d => labelAccessor(d.data));
 
         const nodeUpdate = nodeEnter.merge(node);
@@ -195,10 +197,9 @@ export default class CollapsibleTree extends React.PureComponent {
 
         nodeUpdate
             .select('circle.node')
-            .attr('r', 10)
+            .attr('r', 6)
             .style('fill', this.topicColors)
-            .style('stroke', d => (d.childrens ? '#039be5' : '#fff'))
-            .attr('cursor', 'pointer');
+            .style('stroke', d => (d.childrens ? '#039be5' : '#fff'));
 
         nodeUpdate
             .selectAll('text')
@@ -233,7 +234,7 @@ export default class CollapsibleTree extends React.PureComponent {
             .insert('path', 'g')
             .attr('class', 'link')
             .attr('stroke', this.topicColors)
-            .attr('stroke-width', '2px')
+            .attr('stroke-width', '1px')
             .attr('fill', 'none')
             .attr('d', () => {
                 const out = { x: source.x0, y: source.y0 };
