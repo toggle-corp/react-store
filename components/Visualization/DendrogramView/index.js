@@ -118,6 +118,7 @@ export default class DendrogramView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
+                            optionsClassName={styles.selectInputOptions}
                             optionLabelSelector={d => d.image}
                             onChange={handleSelection}
                             options={colors}
@@ -148,12 +149,14 @@ export default class DendrogramView extends PureComponent {
                                 iconName={iconNames.close}
                                 transparent
                             />
-                            <Dendrogram
-                                className={styles.dendrogram}
-                                ref={(instance) => { this.chart = instance; }}
-                                {...otherProps}
-                                colorScheme={colorScheme}
-                            />
+                            <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                                <Dendrogram
+                                    className={styles.dendrogram}
+                                    ref={(instance) => { this.chart = instance; }}
+                                    {...otherProps}
+                                    colorScheme={colorScheme}
+                                />
+                            </div>
                         </FullScreen>
                     ) : (
                         <div className={`${styles.vizContainer} ${vizContainerClass}`} >

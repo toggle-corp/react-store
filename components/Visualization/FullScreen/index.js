@@ -5,7 +5,7 @@ import styles from './styles.scss';
 
 const FullScreen = props => (
     <FloatingContainer
-        className={styles.fullscreen}
+        className={`${props.className} ${styles.fullscreen}`}
     >
         {props.children}
     </FloatingContainer>
@@ -13,6 +13,11 @@ const FullScreen = props => (
 
 FullScreen.propTypes = {
     children: PropTypes.node.isRequired,
+    className: PropTypes.string,
+};
+
+FullScreen.defaultProps = {
+    className: '',
 };
 
 export default FullScreen;

@@ -105,20 +105,14 @@ export default class SunBurstView extends PureComponent {
         this.chart.wrappedComponent.renderChart();
     }
 
-    render() {
+    renderHeader = ({ fullScreen }) => {
         const {
-            className,
             colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
             headerText,
-            loading,
-            vizContainerClass,
-            ...otherProps
         } = this.props;
 
         const {
-            fullScreen,
             selectedColorScheme,
-            effectiveColorScheme,
             selectedNoOfCategories,
         } = this.state;
 
@@ -134,69 +128,99 @@ export default class SunBurstView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles.sunburstView} ${className}`}>
-                { loading && <LoadingAnimation /> }
-                <div className={styles.header}>
-                    <div className={styles.leftContent}>
-                        <span className={styles.heading}>
-                            {headerText}
-                        </span>
-                    </div>
-                    <div className={styles.rightContent}>
-                        <SelectInput
-                            clearable={false}
-                            keySelector={d => d.title}
-                            labelSelector={d => d.title}
-                            optionLabelSelector={d => d.image}
-                            onChange={handleSelection}
-                            options={colors}
-                            showHintAndError={false}
-                            className={styles['select-input']}
-                            value={selectedColorScheme}
-                        />
-                        <SelectInput
-                            clearable={false}
-                            keySelector={d => d.key}
-                            labelSelector={d => d.title}
-                            onChange={handleNoOfCategories}
-                            options={categories}
-                            placeholder="No of Data Classes"
-                            showHintAndError={false}
-                            className={styles['select-input']}
-                            value={selectedNoOfCategories}
-                        />
-                        <AccentButton
-                            onClick={handleSave}
-                            iconName={iconNames.download}
-                            transparent
-                        />
+            <div className={styles.header}>
+                <div className={styles.leftContent}>
+                    <span className={styles.heading}>
+                        {headerText}
+                    </span>
+                </div>
+                <div className={styles.rightContent}>
+                    <SelectInput
+                        clearable={false}
+                        keySelector={d => d.title}
+                        labelSelector={d => d.title}
+                        optionLabelSelector={d => d.image}
+                        optionsClassName={styles.selectInputOptions}
+                        onChange={handleSelection}
+                        options={colors}
+                        showHintAndError={false}
+                        className={styles['select-input']}
+                        value={selectedColorScheme}
+                    />
+                    <SelectInput
+                        clearable={false}
+                        keySelector={d => d.key}
+                        labelSelector={d => d.title}
+                        onChange={handleNoOfCategories}
+                        options={categories}
+                        optionsClassName={styles.selectInputOptions}
+                        placeholder="No of Data Classes"
+                        showHintAndError={false}
+                        className={styles['select-input']}
+                        value={selectedNoOfCategories}
+                    />
+                    <AccentButton
+                        onClick={handleSave}
+                        iconName={iconNames.download}
+                        transparent
+                    />
+                    <AccentButton
+                        onClick={handleReset}
+                        iconName={iconNames.refresh}
+                        transparent
+                    />
+                    { !fullScreen &&
                         <AccentButton
                             onClick={setFullScreen}
                             iconName={iconNames.expand}
                             transparent
                         />
-                        <AccentButton
-                            onClick={handleReset}
-                            iconName={iconNames.refresh}
+                    }
+                    { fullScreen &&
+                        <DangerButton
+                            onClick={removeFullScreen}
+                            iconName={iconNames.close}
                             transparent
                         />
-                    </div>
+                    }
                 </div>
+            </div>
+        );
+    }
+
+    render() {
+        const {
+            className,
+            colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+            headerText, // eslint-disable-line no-unused-vars
+            loading,
+            vizContainerClass,
+            ...otherProps
+        } = this.props;
+
+        const {
+            fullScreen,
+            effectiveColorScheme,
+        } = this.state;
+
+        const Header = this.renderHeader;
+
+        return (
+            <div className={`${styles.sunburstView} ${className}`}>
+                { loading && <LoadingAnimation /> }
+                <Header fullScreen={false} />
                 {
                     fullScreen ? (
-                        <FullScreen>
-                            <DangerButton
-                                className={styles.close}
-                                onClick={removeFullScreen}
-                                iconName={iconNames.close}
-                                transparent
-                            />
-                            <SunBurst
-                                className={styles.sunburst}
-                                ref={(instance) => { this.chart = instance; }}
-                                {...otherProps}
-                                colorScheme={effectiveColorScheme}
-                            />
+                        <FullScreen className={styles.fullScreenContainer}>
+                            <Header fullScreen />
+                            <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                                <SunBurst
+                                    className={styles.sunburst}
+                                    ref={(instance) => { this.chart = instance; }}
+                                    {...otherProps}
+                                    colorScheme={effectiveColorScheme}
+                                />
+                            </div>
                         </FullScreen>
                     ) : (
                         <div className={`${styles.vizContainer} ${vizContainerClass}`} >

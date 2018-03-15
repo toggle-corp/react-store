@@ -64,6 +64,7 @@ export default class HorizontalBarView extends PureComponent {
                             clearable={false}
                             keySelector={d => d.title}
                             labelSelector={d => d.title}
+                            optionsClassName={styles.selectInputOptions}
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}

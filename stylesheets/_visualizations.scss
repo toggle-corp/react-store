@@ -1,37 +1,47 @@
 @import 'base';
 
-%header {
+%viz-content {
     display: flex;
-    flex-shrink: 0;
-    align-items: flex-end;
-    justify-content: space-between;
-    border-bottom: 1px solid $color-separator;
-    background-color: $color-background-header;
-    padding: $spacing-small $spacing-medium-alt;
+    flex-direction: column;
 
-    .left-content {
-        .heading {
-            align-self: center;
-            margin: 0;
-            margin-right: $spacing-medium;
-            text-transform: uppercase;
-            font-size: $font-size-large;
+    .header {
+        display: flex;
+        flex-shrink: 0;
+        align-items: flex-end;
+        justify-content: space-between;
+        border-bottom: 1px solid $color-separator;
+        background-color: $color-background-header;
+        padding: $spacing-small $spacing-medium-alt;
+
+        .left-content {
+            .heading {
+                align-self: center;
+                margin: 0;
+                margin-right: $spacing-medium;
+                text-transform: uppercase;
+                font-size: $font-size-large;
+            }
+        }
+
+        .right-content {
+            display: flex;
+            align-items: center;
+
+            .select-input {
+                margin-right: $spacing-extra-small;
+            }
+
+            button {
+                margin-left: $spacing-extra-small;
+                padding: 0 $spacing-small;
+                font-size: $font-size-large;
+            }
         }
     }
 
-    .right-content {
+    .viz-container {
         display: flex;
-        align-items: center;
-
-        .select-input {
-            margin-right: $spacing-extra-small;
-        }
-
-        button {
-            margin-left: $spacing-extra-small;
-            padding: 0 $spacing-small;
-            font-size: $font-size-large;
-        }
+        flex-direction: column;
+        flex-grow: 1;
     }
 }
-
