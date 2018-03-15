@@ -12,7 +12,7 @@ export const keyPropType = numberOrStringPropType;
 
 export const selectInputOptionCommonPropTypes = {
     optionKey: keyPropType.isRequired,
-    optionLabel: numberOrStringPropType.isRequired,
+    optionLabel: PropTypes.node.isRequired,
     onClick: PropTypes.func.isRequired,
 };
 
@@ -39,6 +39,7 @@ export const multiSelectInputOptionDefaultProps = {
 
 export const selectInputOptionsPropTypes = {
     labelSelector: PropTypes.func.isRequired,
+    optionLabelSelector: PropTypes.func,
     keySelector: PropTypes.func.isRequired,
     renderEmpty: PropTypes.func.isRequired,
     optionsClassName: PropTypes.string,
@@ -52,6 +53,7 @@ export const selectInputOptionsPropTypes = {
 };
 
 export const selectInputOptionsDefaultProps = {
+    optionLabelSelector: undefined,
     optionsClassName: '',
     parentContainer: undefined,
     show: false,
@@ -65,6 +67,7 @@ export const selectInputCommonPropTypes = {
     hint: PropTypes.string,
     keySelector: PropTypes.func,
     label: PropTypes.string,
+    optionLabelSelector: PropTypes.func,
     labelSelector: PropTypes.func,
     onChange: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.object),
@@ -84,6 +87,7 @@ export const selectInputCommonDefaultProps = {
     keySelector: d => d.key,
     label: '',
     labelSelector: d => d.label,
+    optionLabelSelector: undefined,
     onChange: undefined,
     optionModifier: undefined,
     options: emptyList,

@@ -68,7 +68,8 @@ export default class ForcedDirectedGraphView extends PureComponent {
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
-                            labelSelector={d => d.image}
+                            labelSelector={d => d.title}
+                            optionLabelSelector={d => d.image}
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}

@@ -23,6 +23,7 @@ export default class Options extends React.PureComponent {
             renderOption: Option,
             keySelector,
             labelSelector,
+            optionLabelSelector,
             optionsClassName,
             renderEmpty: EmptyComponent,
             show,
@@ -56,7 +57,8 @@ export default class Options extends React.PureComponent {
                 {
                     options.map((option) => {
                         const key = keySelector(option);
-                        const label = labelSelector(option);
+                        const label = optionLabelSelector ?
+                            optionLabelSelector(option) : labelSelector(option);
                         const active = !!activeMap[key];
 
                         return (
