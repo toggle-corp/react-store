@@ -28,7 +28,7 @@ const propTypes = {
     /* data to be iterated and shown as list */
     data: propTypeData,
     /* Component to show when data is empty */
-    emptyComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
 
     dragIcon: PropTypes.string,
 
@@ -50,7 +50,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     data: [],
-    emptyComponent: 'Nothing here',
     dragIcon: iconNames.hamburger,
     dragIconPosition: 'left',
     onChange: undefined,
@@ -58,6 +57,7 @@ const defaultProps = {
     sortableItemClass: '',
     keyExtractor: undefined,
     dragHandleModifier: undefined,
+    emptyComponent: undefined,
 };
 
 export default class SortableList extends React.Component {
