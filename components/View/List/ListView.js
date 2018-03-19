@@ -57,9 +57,7 @@ export default class ListView extends React.Component {
         } = this.props;
 
         return (
-            <div
-                className={`${styles['list-view']} list-view ${className}`}
-            >
+            <div className={`${styles['list-view']} list-view ${className}`}>
                 {
                     data.length === 0 ? (
                         <EmptyComponent />
