@@ -8,7 +8,13 @@ export const ACTION = {
     skip: 'skip',
 };
 
-const injectRecursively = (element, injectionProperties) => {
+/*
+const stringRepeat = (str, length) => (
+    Array(length + 1).join(str)
+);
+*/
+
+const injectRecursively = (element, injectionProperties, level = 0) => {
     // Get action to do, and new props for that action
     const getActionAndNewProps = (props, formoverrides = []) => {
         let action;
@@ -40,6 +46,7 @@ const injectRecursively = (element, injectionProperties) => {
     const inject = (e) => {
         // Don't inject props on strings, numbers, etc.
         if (!React.isValidElement(e)) {
+            // console.warn('Skipping', e);
             return e;
         }
 
@@ -47,13 +54,23 @@ const injectRecursively = (element, injectionProperties) => {
         // Calculate new properties if the condition is true
         const { action, newProps } = getActionAndNewProps(originalProps, formoverrides);
 
+        /*
+        // DEBUG:
+        const name = typeof e.type === 'string' ? e.type : (e.type.name || 'unknown');
+        console.warn(`${stringRepeat('\t', level)}${name}: ${action}`);
+        */
+
         switch (action) {
             case ACTION.skip:
                 return React.cloneElement(
                     e,
                     {
                         ...originalProps,
-                        children: injectRecursively(originalProps.children, injectionProperties),
+                        children: injectRecursively(
+                            originalProps.children,
+                            injectionProperties,
+                            level + 1,
+                        ),
                     },
                 );
             case ACTION.inject: {
@@ -62,7 +79,6 @@ const injectRecursively = (element, injectionProperties) => {
                     {
                         ...originalProps,
                         ...newProps,
-                        // children: injectRecursively(originalProps.children, injectionProperties),
                     },
                 );
             } default:
