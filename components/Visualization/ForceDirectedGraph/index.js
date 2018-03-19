@@ -53,7 +53,7 @@ const propTypes = {
 const defaultProps = {
     data: {
         nodes: [],
-        link: [],
+        links: [],
     },
     margins: {
         top: 50,

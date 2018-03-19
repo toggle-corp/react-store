@@ -6,6 +6,7 @@ import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+
 import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
@@ -130,13 +131,13 @@ export default class HorizontalBar extends React.PureComponent {
     addGrid = (svg, xscale, yscale, height, width) => {
         svg
             .append('g')
-            .attr('class', 'grid')
+            .attr('class', styles.grid)
             .attr('transform', `translate(0, ${height})`)
             .call(this.addLines(axisBottom, xscale, height));
 
         svg
             .append('g')
-            .attr('class', 'grid')
+            .attr('class', styles.grid)
             .call(this.addLines(axisLeft, yscale, width));
     }
 
@@ -194,13 +195,13 @@ export default class HorizontalBar extends React.PureComponent {
 
         group
             .append('g')
-            .attr('class', 'x-axis')
+            .attr('class', styles.xAxis)
             .attr('transform', `translate(0, ${height})`)
             .call(xAxis);
 
         group
             .append('g')
-            .attr('class', 'y-axis')
+            .attr('class', styles.yAxis)
             .call(yAxis);
 
         this.addShadow(group);
@@ -252,13 +253,14 @@ export default class HorizontalBar extends React.PureComponent {
     }
 
     render() {
+        const { className } = this.props;
         return (
             <div
-                className={`horizontalbar-container ${this.props.className}`}
+                className={`${styles.horizontalBarContainer} ${className}`}
                 ref={(el) => { this.container = el; }}
             >
                 <svg
-                    className="horizontalbar"
+                    className={styles.horizontalbar}
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>

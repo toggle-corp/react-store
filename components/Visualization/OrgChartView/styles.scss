@@ -1,17 +1,29 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
-.orgchart-view {
+.org-chart-view {
+    @extend %viz-content;
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
     height: 100%;
 
-    .action {
-        @extend %action;
-    }
-
-    .orgchart {
+    .org-chart {
         flex-grow: 1;
     }
+}
+
+.org-chart {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.full-screen-container {
+    @extend %viz-content;
+}
+
+.select-input-options {
+    z-index: 111;
 }
