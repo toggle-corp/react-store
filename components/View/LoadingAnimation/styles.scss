@@ -7,10 +7,10 @@
     left: 0;
     align-items: center;
     justify-content: center;
+    z-index: 11;
     background-color: $color-background-overlay;
     width: 100%;
     height: 100%;
-    z-index: 11;
 
     .icon {
         display: flex;

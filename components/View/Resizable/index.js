@@ -20,10 +20,13 @@ const propTypes = {
     resizeContainers: PropTypes.func.isRequired,
 
     onResize: PropTypes.func,
+
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
     separatorClassName: '',
     firstContainerClassName: '',
     secondContainerClassName: '',
@@ -203,6 +206,7 @@ export default class Resizable extends React.PureComponent {
         const {
             firstChild,
             secondChild,
+            disabled,
         } = this.props;
         const { dragging } = this.state;
 
@@ -223,10 +227,12 @@ export default class Resizable extends React.PureComponent {
                     className={this.getSecondContainerClassName()}
                 >
                     { secondChild }
-                    <div
-                        ref={(el) => { this.separator = el; }}
-                        className={this.getSeparatorClassName()}
-                    />
+                    { !disabled &&
+                        <div
+                            ref={(el) => { this.separator = el; }}
+                            className={this.getSeparatorClassName()}
+                        />
+                    }
                     { dragging && <div className={this.getOverlayClassName()} /> }
                 </div>
             </div>

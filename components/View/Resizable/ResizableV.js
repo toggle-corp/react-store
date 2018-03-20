@@ -32,7 +32,7 @@ export default class ResizableV extends React.PureComponent {
     )
 
     static resizeContainers = (topContainer, bottomContainer, newHeight) => { // PROPS
-        if (newHeight !== 0 && topContainer && bottomContainer) {
+        if (newHeight >= 0 && topContainer && bottomContainer) {
             // eslint-disable-next-line no-param-reassign
             topContainer.style.height = `${newHeight}px`;
             // eslint-disable-next-line no-param-reassign
