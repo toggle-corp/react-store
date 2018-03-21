@@ -2,14 +2,14 @@ $tooltip-background-color: rgba(0, 0, 0, .75) !default;
 
 .tooltip {
     position: fixed;
-    color: white;
-    padding: 8px;
-    background-color: $tooltip-background-color;
-    border-radius: 6px;
-    font: 12px sans-serif;
-    text-align: center;
     opacity: 0;
     z-index: 10;
+    border-radius: 6px;
+    background-color: $tooltip-background-color;
+    padding: 8px;
+    text-align: center;
+    color: white;
+    font: 12px sans-serif;
     pointer-events: none;
 
     &.hide {

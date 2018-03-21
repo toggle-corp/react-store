@@ -9,16 +9,16 @@ $width-modal-small: 420px !default;
     top: 50%;
     left: 50%;
     flex-direction: column;
-    animation: fade-in-from-top .3s ease forwards;
     box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
     background-color: $color-foreground;
     width: $width-modal-medium;
     max-height: 96vh;
+    animation: fade-in-from-top .3s ease forwards;
 
     .header {
         display: flex;
-        flex-shrink: 0;
         align-items: center;
+        flex-shrink: 0;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
         padding: $spacing-medium $spacing-medium-alt;
@@ -37,8 +37,8 @@ $width-modal-small: 420px !default;
 
     .footer {
         display: flex;
-        flex-shrink: 0;
         align-items: center;
+        flex-shrink: 0;
         justify-content: flex-end;
         background-color: $color-background;
         padding: $spacing-medium $spacing-medium-alt;

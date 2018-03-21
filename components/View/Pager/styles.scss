@@ -1,6 +1,5 @@
 @import '../../../stylesheets/base';
 
-
 .pager {
     .page-list {
         button {
@@ -20,7 +19,7 @@
             &:hover {
                 background-color: $color-background-hover;
             }
-       }
+        }
 
         span {
             display: inline-flex;

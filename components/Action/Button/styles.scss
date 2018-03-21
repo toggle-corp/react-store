@@ -5,14 +5,14 @@ $radius-button-border: 2px !default;
 @mixin button-props($base-color) {
     @include background-color($base-color);
 
+    &:focus {
+        @include outline-button($base-color);
+    }
+
     &:not(:disabled) {
         &:hover {
             background-color: get-hover-color($base-color);
         }
-    }
-
-    &:focus {
-        @include outline-button($base-color);
     }
 }
 

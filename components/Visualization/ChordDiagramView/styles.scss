@@ -1,6 +1,12 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
+.chord-diagram {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
 .chord-diagram-view {
     @extend %viz-content;
     display: flex;
@@ -12,12 +18,6 @@
     .chord-diagram {
         flex-grow: 1;
     }
-}
-
-.chord-diagram {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
 }
 
 .full-screen-container {

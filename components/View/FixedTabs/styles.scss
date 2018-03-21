@@ -2,8 +2,8 @@
 
 .fixed-tabs {
     display: flex;
-    overflow: hidden;
     background-color: $color-foreground;
+    overflow: hidden;
 
     .tab {
         flex-shrink: 0;
@@ -25,8 +25,8 @@
     }
 
     .void {
-        flex-grow: 1;
         align-self: stretch;
+        flex-grow: 1;
         border-bottom: $width-separator-medium solid $color-separator;
     }
 }

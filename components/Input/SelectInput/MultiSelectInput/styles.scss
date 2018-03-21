@@ -165,8 +165,8 @@
 .options {
     padding: $spacing-small 0;
     max-height: 200px;
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto;
 
     .option {
         @extend %default-input-style;

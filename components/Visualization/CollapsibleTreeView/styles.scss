@@ -1,6 +1,12 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
+.collapsible-tree {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
 .collapsible-tree-view {
     @extend %viz-content;
     display: flex;
@@ -12,12 +18,6 @@
     .collapsible-tree {
         flex-grow: 1;
     }
-}
-
-.collapsible-tree {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
 }
 
 .full-screen-container {

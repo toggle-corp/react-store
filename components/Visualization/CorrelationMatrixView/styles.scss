@@ -1,6 +1,12 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
+.correlation-matrix {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
 .correlation-matrix-view {
     @extend %viz-content;
     display: flex;
@@ -12,12 +18,6 @@
     .correlation-matrix {
         flex-grow: 1;
     }
-}
-
-.correlation-matrix {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
 }
 
 .full-screen-container {

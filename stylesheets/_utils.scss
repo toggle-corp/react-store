@@ -88,8 +88,8 @@
 }
 
 @mixin outline-button($background-color) {
-    outline-offset: -$spacing-extra-small-alt;
     outline: $width-separator-thin dotted get-text-color($background-color);
+    outline-offset: -$spacing-extra-small-alt;
 }
 
 @function get-hover-color($color) {

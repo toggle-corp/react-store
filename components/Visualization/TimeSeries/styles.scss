@@ -9,13 +9,13 @@ $timeseries-stroke-overlay: #fff !default;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: 100%;
     width: 100%;
+    height: 100%;
 
     svg {
-        height: 100%;
-        width: 100%;
         flex-grow: 1;
+        width: 100%;
+        height: 100%;
 
         :global {
             .axis {
