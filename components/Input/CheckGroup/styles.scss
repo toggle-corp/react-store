@@ -1,0 +1,23 @@
+@import '../../../stylesheets/base';
+
+.check-group {
+    display: flex;
+    flex-direction: column;
+
+    .title {
+        flex-shrink: 0;
+        padding: $spacing-small $spacing-medium;
+        text-transform: uppercase;
+        color: $color-accent;
+    }
+
+    .inputs {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .input {
+            @extend %background-alternating-row;
+            padding: $spacing-extra-small $spacing-medium;
+        }
+    }
+}
