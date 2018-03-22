@@ -8,7 +8,6 @@
         flex-shrink: 0;
         padding: $spacing-small $spacing-medium;
         text-transform: uppercase;
-        color: $color-accent;
     }
 
     .inputs {
@@ -16,7 +15,6 @@
         overflow-y: auto;
 
         .input {
-            @extend %background-alternating-row;
             padding: $spacing-extra-small $spacing-medium;
         }
     }
