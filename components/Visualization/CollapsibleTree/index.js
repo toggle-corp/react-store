@@ -307,9 +307,7 @@ export default class CollapsibleTree extends React.PureComponent {
         const collapsibleStyle = `${styles.collapsibleTree}`;
 
         return (
-            <div
-                className={containerStyle}
-            >
+            <div className={containerStyle}>
                 <svg
                     className={collapsibleStyle}
                     ref={(elem) => { this.svg = elem; }}

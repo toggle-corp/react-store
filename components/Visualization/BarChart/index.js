@@ -264,22 +264,18 @@ export default class BarChart extends React.PureComponent {
         const { className } = this.props;
         return (
             <div
-                className={className}
-                className={styles.barChart}
                 ref={(div) => { this.root = div; }}
+                className={`${className} ${styles.barChart}`}
             >
                 <div
-                    className={styles.content}
-                    className="content"
                     ref={(div) => { this.svgContainer = div; }}
+                    className={`content ${styles.content}`}
                 >
                     <svg
-                        className="svg"
                         ref={(svg) => { this.svg = svg; }}
+                        className="svg"
                     />
-                    <Tooltip
-                        ref={(div) => { this.tooltipDiv = div; }}
-                    />
+                    <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
                 </div>
             </div>
         );
