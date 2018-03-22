@@ -208,7 +208,7 @@ export default class NumberInput extends React.PureComponent {
         const classNames = [];
 
         classNames.push('text-input');
-        classNames.push(styles['text-input']);
+        classNames.push(styles.textInput);
 
         if (disabled) {
             classNames.push(styles.disabled);

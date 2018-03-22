@@ -82,7 +82,7 @@ export default class SortableList extends React.Component {
 
     SortableItem = SortableElement(({ value: { data, key, index } }) => (
         <div
-            className={`${styles['sortable-item']} ${this.props.sortableItemClass} sortable-item`}
+            className={`${styles.sortableItem} ${this.props.sortableItemClass} sortableItem`}
         >
             {this.props.useDragHandle && (
                 this.props.dragIconPosition === 'left' &&
@@ -111,7 +111,7 @@ export default class SortableList extends React.Component {
             return (this.props.dragHandleModifier(dataKey, data, dataIndex));
         }
         return (
-            <span className={`${this.props.dragIcon} ${styles['drag-handle']} drag-handle`} />
+            <span className={`${this.props.dragIcon} ${styles.dragHandle} dragHandle`} />
         );
     });
 

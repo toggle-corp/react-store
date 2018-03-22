@@ -267,7 +267,7 @@ export default class TimeSeries extends React.PureComponent {
         const { className } = this.props;
 
         return (
-            <div className={`${className} ${styles['time-series']}`} >
+            <div className={`${className} ${styles.timeSeries}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
             </div>

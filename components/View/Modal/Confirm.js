@@ -94,14 +94,14 @@ export default class Confirm extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button
-                        className={`cancel-button ${styles['cancel-button']}`}
+                        className={`cancelButton ${styles.cancelButton}`}
                         onClick={this.handleCancelButtonClick}
                         autoFocus
                     >
                         Cancel
                     </Button>
                     <PrimaryButton
-                        className={`ok-button ${styles['ok-button']}`}
+                        className={`okButton ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}
                     >
                         Ok

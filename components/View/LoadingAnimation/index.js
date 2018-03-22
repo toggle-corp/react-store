@@ -23,7 +23,7 @@ export default class LoadingAnimation extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${styles['loading-animation']} ${className}`}>
+            <div className={`${styles.loadingAnimation} ${className}`}>
                 <span className={`${iconNames.loading} ${styles.icon}`} />
             </div>
         );

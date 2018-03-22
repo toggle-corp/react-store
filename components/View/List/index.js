@@ -50,7 +50,7 @@ export default class List extends React.Component {
         // If there is no modifier, then return a ListItem
         return (
             <ListItem
-                className={`${styles['list-item']} list-item`}
+                className={`${styles.listItem} listItem`}
                 key={key}
             >
                 { datum }

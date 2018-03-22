@@ -147,7 +147,7 @@ export default class Toast extends React.Component {
                                     {
                                         notification.dismissable && (
                                             <Button
-                                                className={styles['close-button']}
+                                                className={styles.closeButton}
                                                 onClick={this.handleDissmissButtonClick}
                                                 transparent
                                             >
@@ -156,12 +156,12 @@ export default class Toast extends React.Component {
                                         )
                                     }
                                 </header>
-                                <div className={styles['main-content']}>
+                                <div className={styles.mainContent}>
                                     <span className={`${styles.icon} ${this.getIconName()}`} />
                                     <div className={styles.message}>
                                         { notification.message }
                                     </div>
-                                    <div className={styles['action-buttons']}>
+                                    <div className={styles.actionButtons}>
                                         { notification.actionButtons }
                                     </div>
                                 </div>

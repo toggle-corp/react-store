@@ -65,11 +65,11 @@ export default class GridLayout extends React.PureComponent {
 
         const classNames = [
             className,
-            styles['grid-layout'],
+            styles.gridLayout,
         ];
 
         if (viewOnly) {
-            classNames.push(styles['view-only']);
+            classNames.push(styles.viewOnly);
         }
 
         return classNames.join(' ');
@@ -281,7 +281,7 @@ export default class GridLayout extends React.PureComponent {
 
         return (
             <div
-                className={styles['ghost-item']}
+                className={styles.ghostItem}
                 style={{
                     width: layout.width,
                     height: layout.height,

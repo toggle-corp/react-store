@@ -187,7 +187,7 @@ export default class Pager extends React.PureComponent {
 
         return (
             <div className={`pager ${className} ${styles.pager}`}>
-                <div className={`page-list ${styles['page-list']}`}>
+                <div className={`pageList ${styles.pageList}`}>
                     {
                         numPages > 0 &&
                         this.pagination(totalCapacity, activePage, numPages)

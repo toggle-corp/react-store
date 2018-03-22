@@ -148,7 +148,7 @@ export default class SparkLine extends React.PureComponent {
         const { className } = this.props;
 
         return (
-            <div className={`${className} ${styles['spark-lines']}`} >
+            <div className={`${className} ${styles.sparkLines}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
             </div>

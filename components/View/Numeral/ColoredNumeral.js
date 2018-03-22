@@ -47,7 +47,7 @@ const defaultProps = {
     referenceValue: undefined,
     referenceLine: undefined,
     modifier: (refValue, value, refLine) =>
-        (refValue - refLine >= 0 ? styles['gain-positive'] : styles['gain-negative']),
+        (refValue - refLine >= 0 ? styles.gainPositive : styles['gainNegative']),
     inBlock: false,
 };
 

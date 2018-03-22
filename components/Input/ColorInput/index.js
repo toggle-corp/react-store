@@ -126,7 +126,7 @@ export default class ColorInput extends React.PureComponent {
 
         return (
             <div
-                className={`${styles['color-input']} ${className}`}
+                className={`${styles.colorInput} ${className}`}
                 ref={(el) => { this.container = el; }}
             >
                 {
@@ -137,7 +137,7 @@ export default class ColorInput extends React.PureComponent {
                     )
                 }
                 <button
-                    className={`${styles['color-box']} color-box`}
+                    className={`${styles.colorBox} colorBox`}
                     onClick={() => this.handleColorBoxClick()}
                 >
                     <span

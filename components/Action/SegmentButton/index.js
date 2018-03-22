@@ -55,7 +55,7 @@ export default class SegmentButton extends React.PureComponent {
     getClassNameWithStatus = (value) => {
         const style = [
             'button',
-            styles['segment-label'],
+            styles.segmentLabel,
             value,
             styles[value],
         ];
@@ -64,7 +64,7 @@ export default class SegmentButton extends React.PureComponent {
 
         if (backgroundHighlight) {
             style.push('background-highlight');
-            style.push(styles['background-highlight']);
+            style.push(styles.backgroundHighlight);
         }
 
         if (selectedValue === value) {
@@ -112,7 +112,7 @@ export default class SegmentButton extends React.PureComponent {
                     value={value}
                     checked={selectedValue === value}
                 />
-                <p className={`label ${styles['segment-name']}`}>
+                <p className={`label ${styles.segmentName}`}>
                     {label}
                 </p>
             </label>
@@ -127,7 +127,7 @@ export default class SegmentButton extends React.PureComponent {
 
         return (
             <ListView
-                className={`segment-button ${className} ${styles['segment-container']}`}
+                className={`segmentButton ${className} ${styles.segmentContainer}`}
                 data={data}
                 modifier={this.renderSegment}
                 keyExtractor={this.keyExtractor}

@@ -73,7 +73,7 @@ export default class YearPicker extends React.PureComponent {
         const endYear = (startYear + YEARS_PER_PAGE) - 1;
 
         return (
-            <div className={`${className} ${styles['year-picker']}`}>
+            <div className={`${className} ${styles.yearPicker}`}>
                 <header className={styles.header}>
                     <Button
                         className={styles.left}

@@ -43,7 +43,7 @@ export default class List extends React.PureComponent {
         const classNames = [
             className,
             'list-item',
-            styles['list-item'],
+            styles.listItem,
         ];
 
         if (active) {

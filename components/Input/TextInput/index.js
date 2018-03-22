@@ -132,7 +132,7 @@ export default class TextInput extends React.PureComponent {
 
         const classNames = [];
         classNames.push('text-input');
-        classNames.push(styles['text-input']);
+        classNames.push(styles.textInput);
         if (disabled) {
             classNames.push('disabled');
             classNames.push(styles.disabled);

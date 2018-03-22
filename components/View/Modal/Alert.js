@@ -78,7 +78,7 @@ export default class Alert extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <PrimaryButton
-                        className={`ok-button ${styles['ok-button']}`}
+                        className={`okButton ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}
                         autoFocus
                     >

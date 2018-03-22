@@ -30,7 +30,7 @@ export default class ScrollTabs extends React.PureComponent {
         const classNames = [
             className,
             'fixed-tabs',
-            styles['fixed-tabs'],
+            styles.fixedTabs,
         ];
 
         return classNames.join(' ');

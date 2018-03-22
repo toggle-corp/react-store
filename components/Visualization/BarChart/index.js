@@ -265,11 +265,11 @@ export default class BarChart extends React.PureComponent {
         return (
             <div
                 className={className}
-                className={styles['bar-chart']}
+                className={styles.barChart}
                 ref={(div) => { this.root = div; }}
             >
                 <div
-                    className={styles['content']}
+                    className={styles.content}
                     className="content"
                     ref={(div) => { this.svgContainer = div; }}
                 >

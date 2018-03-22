@@ -218,7 +218,7 @@ export default class Dendrogram extends React.PureComponent {
     render() {
         const { loading, className } = this.props;
 
-        const containerStyle = `${styles['dendrogram-container']} ${className}`;
+        const containerStyle = `${styles.dendrogramContainer} ${className}`;
         const dendroGramStyle = `${styles.dendrogram}`;
         return (
             <div

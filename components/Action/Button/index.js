@@ -99,15 +99,15 @@ export default class Button extends React.PureComponent {
 
         if (iconName && children) {
             classNames.push('with-icon-and-children');
-            classNames.push(styles['with-icon-and-children']);
+            classNames.push(styles.withIconAndChildren);
         }
 
         if (smallHorizontalPadding) {
-            classNames.push(styles['small-horizontal-padding']);
+            classNames.push(styles.smallHorizontalPadding);
         }
 
         if (smallVerticalPadding) {
-            classNames.push(styles['small-vertical-padding']);
+            classNames.push(styles.smallVerticalPadding);
         }
 
         if (transparent) {

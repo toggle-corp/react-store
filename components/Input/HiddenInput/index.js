@@ -38,7 +38,7 @@ export default class HiddenInput extends React.PureComponent {
 
         return (
             <input
-                className={`${styles['hidden-input']} ${className}`}
+                className={`${styles.hiddenInput} ${className}`}
                 value={value}
                 type="hidden"
                 readOnly

@@ -117,7 +117,7 @@ export default class FileInput extends React.PureComponent {
         const { files, preview } = this.state;
 
         return (
-            <div className={`file-input ${className} ${styles['file-input-wrapper']}`} >
+            <div className={`fileInput ${className} ${styles.fileInputWrapper}`} >
                 {
                     showPreview && (
                         <div className={`${styles.preview} image-input-preview`}>

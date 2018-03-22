@@ -107,10 +107,10 @@ export default class DendrogramView extends PureComponent {
         } = this;
 
         return (
-            <div className={`${styles['dendrogram-view']} ${className}`}>
+            <div className={`${styles.dendrogramView} ${className}`}>
                 { loading && <LoadingAnimation /> }
                 <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                    <div className={styles.actionSelects}>
                         <span className={styles.heading}>
                             {headerText}
                         </span>
@@ -123,11 +123,11 @@ export default class DendrogramView extends PureComponent {
                             onChange={handleSelection}
                             options={colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={selectedColorScheme}
                         />
                     </div>
-                    <div className={styles['action-buttons']}>
+                    <div className={styles.actionButtons}>
                         <AccentButton
                             onClick={handleSave}
                             iconName={iconNames.download}

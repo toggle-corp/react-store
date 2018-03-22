@@ -37,11 +37,11 @@ export default class GridItem extends React.PureComponent {
 
         const classNames = [
             className,
-            styles['grid-item'],
+            styles.gridItem,
         ];
 
         if (viewOnly) {
-            classNames.push(styles['view-only']);
+            classNames.push(styles.viewOnly);
         }
 
         return classNames.join(' ');
@@ -142,7 +142,7 @@ export default class GridItem extends React.PureComponent {
 
     renderResizeHandle = () => {
         const className = [
-            styles['resize-handle'],
+            styles.resizeHandle,
             'resize-handle',
         ].join(' ');
 

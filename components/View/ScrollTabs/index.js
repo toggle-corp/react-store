@@ -83,16 +83,16 @@ export default class ScrollTabs extends React.Component {
 
         const tabList = Object.keys(tabs);
         const leftButtonClassNames = [
-            styles['scroll-button'],
-            styles['scroll-button-left'],
+            styles.scrollButton,
+            styles.scrollButtonLeft,
         ];
         const rightButtonClassNames = [
-            styles['scroll-button'],
-            styles['scroll-button-right'],
+            styles.scrollButton,
+            styles.scrollButtonRight,
         ];
 
         return (
-            <div className={styles['scroll-tabs']}>
+            <div className={styles.scrollTabs}>
                 <Button
                     className={leftButtonClassNames.join(' ')}
                     transparent

@@ -55,7 +55,7 @@ export default class DatePicker extends React.PureComponent {
 
         const classNames = [
             className,
-            styles['date-picker'],
+            styles.datePicker,
             'date-picker',
         ];
 

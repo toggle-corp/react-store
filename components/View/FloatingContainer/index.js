@@ -102,7 +102,7 @@ export default class FloatingContainer extends React.PureComponent {
         return (
             <Float onInvalidate={this.handleContainerInvalidate}>
                 <div
-                    className={`${className} ${styles['floating-container']}`}
+                    className={`${className} ${styles.floatingContainer}`}
                     ref={(el) => { this.container = el; }}
                 >
                     { children }

@@ -366,7 +366,7 @@ export default class DateInput extends React.PureComponent {
             unitClassName,
             styles[unitClassName],
             'date-unit',
-            styles['date-unit'],
+            styles.dateUnit,
         ];
 
         return (
@@ -452,7 +452,7 @@ export default class DateInput extends React.PureComponent {
 
         const classNames = [
             'action-buttons',
-            styles['action-buttons'],
+            styles.actionButtons,
         ];
 
         const clearButtonClassName = [
@@ -503,7 +503,7 @@ export default class DateInput extends React.PureComponent {
 
         return (
             <div className={classNames.join(' ')} >
-                <div className={styles['date-units']}>
+                <div className={styles.dateUnits}>
                     <DayUnit />
                     <MonthUnit />
                     <YearUnit />
