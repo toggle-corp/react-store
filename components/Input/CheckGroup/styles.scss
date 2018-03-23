@@ -1,0 +1,21 @@
+@import '../../../stylesheets/base';
+
+.check-group {
+    display: flex;
+    flex-direction: column;
+
+    .title {
+        flex-shrink: 0;
+        padding: $spacing-small $spacing-medium;
+        text-transform: uppercase;
+    }
+
+    .inputs {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .input {
+            padding: $spacing-extra-small $spacing-medium;
+        }
+    }
+}

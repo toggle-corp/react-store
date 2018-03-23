@@ -95,3 +95,11 @@
 @function get-hover-color($color) {
     @return darken($color, 10%);
 }
+
+%background-alternating-row {
+    @include background-color($color-background-row);
+
+    &:nth-child(odd) {
+        @include background-color($color-background-row-alt);
+    }
+}
