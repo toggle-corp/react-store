@@ -5,6 +5,12 @@ import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
 import Portal from '../Portal';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    { markAsUsed: ['info', 'error', 'warning', 'success'], camelCase: true }
+]
+*/
 import styles from './styles.scss';
 
 export const NOTIFICATION = {

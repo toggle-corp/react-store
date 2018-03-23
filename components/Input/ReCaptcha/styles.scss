@@ -16,10 +16,12 @@
         font-size: $font-size-extra-small;
     }
 
+    /*
     .hint {
         @extend %base;
         color: $color-text-label;
     }
+    */
 
     .error {
         @extend %base;

@@ -165,10 +165,6 @@ export default class GridItem extends React.PureComponent {
 
         const { layout } = data;
         const className = this.getClassName();
-        const contentClassName = [
-            'content',
-            styles.content,
-        ].join(' ');
         const style = {
             width: layout.width,
             height: layout.height,
@@ -185,7 +181,7 @@ export default class GridItem extends React.PureComponent {
                 style={style}
             >
                 <Header />
-                <div className={contentClassName}>
+                <div className="content">
                     { modifier(data) }
                 </div>
                 <ResizeHandle />

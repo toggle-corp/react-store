@@ -1,0 +1,23 @@
+@import '../../../../stylesheets/base';
+
+$width-modal-small: 420px !default;
+
+.alert {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    background-color: $color-foreground;
+    width: $width-modal-small;
+
+    .ok-button {
+        box-shadow: none;
+        min-width: 72px;
+    }
+
+    /*
+    .cancel-button {
+        box-shadow: none;
+    }
+    */
+}
+

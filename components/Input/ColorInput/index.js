@@ -137,7 +137,7 @@ export default class ColorInput extends React.PureComponent {
                     )
                 }
                 <button
-                    className={`${styles.colorBox} colorBox`}
+                    className={`${styles.colorBox} color-box`}
                     onClick={() => this.handleColorBoxClick()}
                 >
                     <span

@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { isEqualAndTruthy } from '../../../utils/common';
-import List from '../List';
+import { isEqualAndTruthy } from '../../../../../utils/common';
+import List from '../../../List';
 
-import Cell from './Cell';
+import Cell from '../Cell';
 import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([

@@ -1,6 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    {
+        markAsUsed: [
+            'button-default', 'button-accent', 'button-primary', 'button-danger',
+            'button-warning', 'button-success'
+        ],
+        camelCase: true
+    }
+]
+*/
 import styles from './styles.scss';
 
 const propTypes = {
@@ -103,10 +115,12 @@ export default class Button extends React.PureComponent {
         }
 
         if (smallHorizontalPadding) {
+            classNames.push('small-horizontal-padding');
             classNames.push(styles.smallHorizontalPadding);
         }
 
         if (smallVerticalPadding) {
+            classNames.push('small-vertical-padding');
             classNames.push(styles.smallVerticalPadding);
         }
 

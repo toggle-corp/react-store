@@ -127,7 +127,7 @@ export default class SegmentButton extends React.PureComponent {
 
         return (
             <ListView
-                className={`segmentButton ${className} ${styles.segmentContainer}`}
+                className={`segment-button ${className} ${styles.segmentContainer}`}
                 data={data}
                 modifier={this.renderSegment}
                 keyExtractor={this.keyExtractor}

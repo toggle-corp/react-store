@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '../../../utils/common';
-import { iconNames } from '../../../constants';
+import { randomString } from '../../../../utils/common';
+import { iconNames } from '../../../../constants';
 
 import styles from './styles.scss';
 

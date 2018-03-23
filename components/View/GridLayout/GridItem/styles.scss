@@ -1,0 +1,48 @@
+@import '../../../../stylesheets/base';
+
+$width-resize-handle: 10px;
+$height-resize-handle: 10px;
+
+.grid-item {
+    @include transition-medium;
+    position: absolute;
+    transform-origin: (0, 0);
+
+    &:not(.view-only) {
+        .resize-handle {
+            display: block;
+            position: absolute;
+            right: $width-separator-medium;
+            bottom: $width-separator-medium;
+            border-right: $width-separator-medium solid $color-separator-alt;
+            border-bottom: $width-separator-medium solid $color-separator-alt;
+            cursor: se-resize;
+            width: $width-resize-handle;
+            height: $height-resize-handle;
+
+            &:hover {
+                border-right-color: $color-accent;
+                border-bottom-color: $color-accent;
+            }
+        }
+
+        &.dragging {
+            @include shadow-small;
+            transition: none;
+            opacity: .8;
+            z-index: 11;
+        }
+
+        &.resizing {
+            transition: none;
+            opacity: .8;
+            z-index: 11;
+            border: $width-separator-thin solid $color-danger;
+
+            .resize-handle {
+                border-right-color: $color-accent;
+                border-bottom-color: $color-accent;
+            }
+        }
+    }
+}

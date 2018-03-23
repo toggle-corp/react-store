@@ -95,7 +95,6 @@ export default class DatePicker extends React.PureComponent {
             case 'day':
                 return (
                     <DayPicker
-                        className={styles.picker}
                         year={year}
                         month={month}
                         value={value}
@@ -107,7 +106,6 @@ export default class DatePicker extends React.PureComponent {
             case 'month':
                 return (
                     <MonthPicker
-                        className={styles.picker}
                         year={year}
                         month={month}
                         value={value}
@@ -118,7 +116,6 @@ export default class DatePicker extends React.PureComponent {
             case 'year':
                 return (
                     <YearPicker
-                        className={styles.picker}
                         year={year}
                         month={month}
                         value={value}

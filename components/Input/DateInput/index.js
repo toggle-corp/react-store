@@ -12,8 +12,14 @@ import {
     encodeDate,
     decodeDate,
 } from '../../../utils/common';
-import styles from './styles.scss';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    { markAsUsed: ['day-unit', 'month-unit', 'year-unit'], camelCase: true }
+]
+*/
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,

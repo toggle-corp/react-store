@@ -1,0 +1,35 @@
+@import '../../../../stylesheets/base';
+
+$color-text-on-positive: rgba(0, 0, 0, .5);
+$color-text-on-negative: rgba(0, 0, 0, .5);
+
+.gain-positive {
+    &.colored-numeral {
+        color: $color-positive;
+    }
+
+    &.block-numeral {
+        background-color: $color-positive;
+        color: $color-text-on-positive;
+    }
+}
+
+.gain-negative {
+    &.colored-numeral {
+        color: $color-negative;
+    }
+
+    &.block-numeral {
+        background-color: $color-negative;
+        color: $color-text-on-negative;
+    }
+}
+
+.block-numeral {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: $spacing-medium;
+    min-width: 72px;
+}

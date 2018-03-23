@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '../../Action/Button';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import Button from '../../../Action/Button';
+import PrimaryButton from '../../../Action/Button/PrimaryButton';
 
-import ModalHeader from './Header';
-import ModalBody from './Body';
-import ModalFooter from './Footer';
+import ModalHeader from '../Header';
+import ModalBody from '../Body';
+import ModalFooter from '../Footer';
 
 import Modal from './index';
 import styles from './styles.scss';
@@ -94,14 +94,14 @@ export default class Confirm extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button
-                        className={`cancelButton ${styles.cancelButton}`}
+                        className={`cancel-button ${styles.cancelButton}`}
                         onClick={this.handleCancelButtonClick}
                         autoFocus
                     >
                         Cancel
                     </Button>
                     <PrimaryButton
-                        className={`okButton ${styles.okButton}`}
+                        className={`ok-button ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}
                     >
                         Ok

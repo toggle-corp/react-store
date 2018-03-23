@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListItem from './ListItem';
-import styles from './styles.scss';
 
 const propTypeData = PropTypes.arrayOf(
     PropTypes.oneOfType([
@@ -49,10 +48,7 @@ export default class List extends React.Component {
 
         // If there is no modifier, then return a ListItem
         return (
-            <ListItem
-                className={`${styles.listItem} listItem`}
-                key={key}
-            >
+            <ListItem key={key}>
                 { datum }
             </ListItem>
         );

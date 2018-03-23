@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import PrimaryButton from '../../Action/Button/PrimaryButton';
+import PrimaryButton from '../../../Action/Button/PrimaryButton';
 
-import ModalHeader from './Header';
-import ModalBody from './Body';
-import ModalFooter from './Footer';
+import ModalHeader from '../Header';
+import ModalBody from '../Body';
+import ModalFooter from '../Footer';
 
-import Modal from './index';
+import Modal from '../index';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -78,7 +78,7 @@ export default class Alert extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <PrimaryButton
-                        className={`okButton ${styles.okButton}`}
+                        className={`ok-button ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}
                         autoFocus
                     >

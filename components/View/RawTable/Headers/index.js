@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from '../List';
+import List from '../../List';
 
 import Header from './Header';
-import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -39,7 +38,6 @@ export default class Headers extends React.Component {
 
         // default className for global override
         classNames.push('headers');
-        classNames.push(styles.headers);
 
         // className provided by parent (through className)
         classNames.push(className);

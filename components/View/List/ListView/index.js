@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from './index';
+import List from '../index';
 import styles from './styles.scss';
 
 const defaultEmptyComponent = () => {
@@ -57,7 +57,7 @@ export default class ListView extends React.Component {
         } = this.props;
 
         return (
-            <div className={`${styles.listView} listView ${className}`}>
+            <div className={`${styles.listView} list-view ${className}`}>
                 {
                     data.length === 0 ? (
                         <EmptyComponent />

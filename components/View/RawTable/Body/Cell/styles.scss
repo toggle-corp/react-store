@@ -1,0 +1,21 @@
+@import '../../../../../stylesheets/base';
+
+.cell {
+    padding: $spacing-small $spacing-medium;
+
+    &.hoverable {
+        &:hover {
+            background-color: $color-background-hover;
+            color: $color-text;
+        }
+    }
+
+    &.highlighted,
+    &.column-highlighted {
+        @include background-color($color-accent);
+    }
+
+    &:not(:last-child) {
+        border-right: $width-separator-thin solid $color-separator;
+    }
+}

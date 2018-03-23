@@ -193,7 +193,7 @@ export default class SelectInput extends React.PureComponent {
                     styles={styles}
                     {...this.props}
                 />
-                <div className={`inputWrapper ${styles.inputWrapper}`}>
+                <div className={`input-wrapper ${styles.inputWrapper}`}>
                     <Input />
                     <Actions />
                 </div>

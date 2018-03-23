@@ -146,7 +146,7 @@ export const renderLabel = p => (
 export const renderClearButton = p => (
     p.show ? (
         <button
-            className={`clearButton ${p.styles.clearButton}`}
+            className={`clear-button ${p.styles.clearButton}`}
             onClick={p.parent.handleClearButtonClick}
             title="Clear selected option(s)"
             disabled={p.parent.props.disabled}

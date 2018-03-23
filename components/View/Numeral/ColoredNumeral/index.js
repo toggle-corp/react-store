@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Numeral from './index';
+import Numeral from '../index';
 
 import styles from './styles.scss';
 
@@ -47,7 +47,7 @@ const defaultProps = {
     referenceValue: undefined,
     referenceLine: undefined,
     modifier: (refValue, value, refLine) =>
-        (refValue - refLine >= 0 ? styles.gainPositive : styles['gainNegative']),
+        (refValue - refLine >= 0 ? styles.gainPositive : styles.gainNegative),
     inBlock: false,
 };
 
@@ -70,16 +70,25 @@ export default class ColoredNumeral extends React.PureComponent {
             ...props
         } = this.props;
 
-        const defaultStyle = inBlock ? 'block-numeral' : 'colored-numeral';
         const colorClass = modifier(referenceValue, value, referenceLine);
 
+        const classNames = [
+            className,
+            colorClass,
+        ];
+        if (inBlock) {
+            classNames.push('block-numeral');
+            classNames.push(styles.blockNumeral);
+        } else {
+            classNames.push('colored-numeral');
+            classNames.push(styles.coloredNumeral);
+        }
+
         return (
-            <span className={`${defaultStyle} ${className} ${colorClass} ${styles[defaultStyle]}`}>
+            <span className={classNames.join(' ')}>
                 {
                     label && (
-                        <div
-                            className="label"
-                        >
+                        <div className="label">
                             { label }
                         </div>
                     )

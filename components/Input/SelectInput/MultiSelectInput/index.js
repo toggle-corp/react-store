@@ -234,7 +234,7 @@ export default class MultiSelectInput extends React.PureComponent {
 
         return (
             <button
-                className={`selectAllButton ${styles.selectAllButton}`}
+                className={`select-all-button ${styles.selectAllButton}`}
                 onClick={this.handleSelectAllButtonClick}
                 title="Select all options"
                 disabled={this.props.disabled}
@@ -263,7 +263,7 @@ export default class MultiSelectInput extends React.PureComponent {
                     styles={styles}
                     parent={this}
                 />
-                <span className={`dropdownIcon ${styles.dropdownIcon} ${iconNames.arrowDropdown}`} />
+                <span className={`dropdown-icon ${styles.dropdownIcon} ${iconNames.arrowDropdown}`} />
             </div>
         );
     }
@@ -298,7 +298,7 @@ export default class MultiSelectInput extends React.PureComponent {
                     styles={styles}
                     {...this.props}
                 />
-                <div className={`inputWrapper ${styles.inputWrapper}`}>
+                <div className={`input-wrapper ${styles.inputWrapper}`}>
                     <Input />
                     <Actions />
                 </div>

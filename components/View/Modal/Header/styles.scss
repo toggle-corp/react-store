@@ -1,0 +1,15 @@
+@import '../../../../stylesheets/base';
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-between;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-medium $spacing-medium-alt;
+
+    .heading {
+        font-size: $font-size-large;
+        font-weight: $font-weight-medium;
+    }
+}
