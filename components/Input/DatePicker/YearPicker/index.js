@@ -78,13 +78,11 @@ export default class YearPicker extends React.PureComponent {
                     <Button
                         className={styles.left}
                         onClick={this.handlePrevious}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronLeft}
                     />
                     <Button
                         className={styles.title}
-                        type="button"
                         transparent
                     >
                         { startYear } - { endYear }
@@ -92,7 +90,6 @@ export default class YearPicker extends React.PureComponent {
                     <Button
                         className={styles.right}
                         onClick={this.handleNext}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronRight}
                     />
@@ -103,7 +100,6 @@ export default class YearPicker extends React.PureComponent {
                             key={year}
                             className={this.getYearClassName(year)}
                             onClick={() => this.handleYearChange(year)}
-                            type="button"
                             transparent
                         >
                             { year }

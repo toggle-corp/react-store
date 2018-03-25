@@ -147,7 +147,6 @@ export default class DayPicker extends React.PureComponent {
                 day.value && (
                     <Button
                         onClick={() => this.handleDayChange(day.value)}
-                        type="button"
                         transparent
                     >
                         {day.value}
@@ -187,14 +186,12 @@ export default class DayPicker extends React.PureComponent {
                     <Button
                         className={styles.left}
                         onClick={this.handlePrevious}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronLeft}
                     />
                     <Button
                         className={styles.month}
                         onClick={onMonthClick}
-                        type="button"
                         transparent
                     >
                         { monthName }, { year}
@@ -202,7 +199,6 @@ export default class DayPicker extends React.PureComponent {
                     <Button
                         className={styles.right}
                         onClick={this.handleNext}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronRight}
                     />
