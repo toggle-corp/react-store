@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import { schemeSet3 } from 'd3-scale-chromatic';
+import { schemePaired } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
-import { rgb } from 'd3-color';
 import { extent } from 'd3-array';
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
 import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 /**
@@ -33,6 +33,7 @@ const propTypes = {
     }),
     valueAccessor: PropTypes.func,
     labelAccessor: PropTypes.func,
+    fontSizeExtent: PropTypes.arrayOf(PropTypes.number),
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     loading: PropTypes.bool,
@@ -51,7 +52,8 @@ const defaultProps = {
     },
     valueAccessor: d => d.value,
     labelAccessor: d => d.label,
-    colorScheme: schemeSet3,
+    colorScheme: schemePaired,
+    fontSizeExtent: [14, 30],
     className: '',
     loading: false,
     margins: {
@@ -62,6 +64,7 @@ const defaultProps = {
     },
 };
 
+@BoundError()
 @Responsive
 export default class Sankey extends PureComponent {
     static propTypes = propTypes;
@@ -100,7 +103,7 @@ export default class Sankey extends PureComponent {
         this.dynamicFontSize.domain(extent(nodes, d => valueAccessor(d)));
     }
 
-    dynamicFontSize = scaleLinear().range([14, 30]);
+    dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
 
     save = () => {
         const svg = select(this.svg);
@@ -117,7 +120,6 @@ export default class Sankey extends PureComponent {
     addLinks = (element, data, colors) => {
         const { labelAccessor, valueAccessor } = this.props;
 
-
         const links = element
             .selectAll('.link')
             .data(data)
@@ -126,25 +128,24 @@ export default class Sankey extends PureComponent {
             .attr('class', 'link')
             .style('fill', 'none')
             .attr('d', sankeyLinkHorizontal())
+            .style('cursor', 'pointer')
             .style('stroke-width', d => Math.max(1, d.width))
             .style('stroke', d => colors(labelAccessor(d.source)))
             .style('stroke-opacity', 0.3)
-            .on('mouseover', function onMouseOver() {
-                select(this)
-                    .style('stroke-opacity', 0.6);
+            .sort((a, b) => b.width - a.width)
+            .on('mouseover', (d, i, nodes) => {
+                select(nodes[i]).style('stroke-opacity', 0.8);
             })
-            .on('mouseout', function onMouseOut() {
-                select(this)
-                    .style('stroke-opacity', 0.3);
+            .on('mouseout', (d, i, nodes) => {
+                select(nodes[i]).style('stroke-opacity', 0.3);
             });
-
 
         links
             .append('title')
             .text(d => `${labelAccessor(d.source)} → ${labelAccessor(d.target)}\n${valueAccessor(d)}`);
     }
 
-    addNodes = (element, data, sankeyGenerator, colors, width) => {
+    addNodes = (element, data, colors, width) => {
         const { labelAccessor, valueAccessor } = this.props;
         const nodes = element
             .selectAll('.node')
@@ -155,11 +156,15 @@ export default class Sankey extends PureComponent {
 
         nodes
             .append('rect')
+            .attr('id', d => `node${d.index}`)
             .attr('x', d => d.x0)
             .attr('y', d => d.y0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
             .style('fill', d => colors(labelAccessor(d) || '#d3d3d3'))
+            .style('opacity', 0.8)
+            .style('stroke', '#d3d3d3')
+            .style('cursor', 'pointer')
             .append('text')
             .text(d => `${labelAccessor(d)} ${valueAccessor(d)}`);
 
@@ -170,11 +175,7 @@ export default class Sankey extends PureComponent {
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .text(d => labelAccessor(d))
-            .style('font-size', (d) => {
-                const fs = this.getFontSize(d);
-                console.warn(fs);
-                return fs;
-            })
+            .style('font-size', d => this.getFontSize(d))
             .filter(d => d.x0 < width / 2)
             .attr('x', d => d.x1 + 6)
             .attr('text-anchor', 'start');
@@ -182,14 +183,49 @@ export default class Sankey extends PureComponent {
         nodes
             .append('title')
             .text(d => `${labelAccessor(d)}\n${valueAccessor(d)}`);
+
+        const links = select(this.svg)
+            .selectAll('.link');
+
+        nodes
+            .on('mouseover', (d) => {
+                nodes
+                    .select(`#node${d.index}`)
+                    .style('opacity', 1);
+
+                links
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0.1);
+
+                links
+                    .filter(s => d.name === s.source.name)
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
+
+                links
+                    .filter(t => d.name === t.target.name)
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
+            })
+            .on('mouseout', (d) => {
+                nodes
+                    .select(`#node${d.index}`)
+                    .style('opacity', 0.8);
+
+                links
+                    .transition()
+                    .duration(500)
+                    .style('opacity', 0.8);
+            });
     }
 
     drawChart = () => {
         const {
             data,
             boundingClientRect,
-            nodeAccessor,
-            linkAccessor,
             colorScheme,
             margins,
         } = this.props;
@@ -214,7 +250,7 @@ export default class Sankey extends PureComponent {
         const colors = scaleOrdinal().range(colorScheme);
 
         const sankeyGenerator = sankey()
-            .nodeWidth(15)
+            .nodeWidth(25)
             .nodePadding(10)
             .extent([[1, 1], [width - 1, height - 1]]);
 
@@ -223,7 +259,7 @@ export default class Sankey extends PureComponent {
         this.updateRangeFontData(data.nodes);
 
         this.addLinks(links, data.links, colors);
-        this.addNodes(nodes, data.nodes, sankeyGenerator, colors, width);
+        this.addNodes(nodes, data.nodes, colors, width);
     }
 
     render() {
