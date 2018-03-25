@@ -1,6 +1,12 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
+.sunburst {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
 .sunburst-view {
     @extend %viz-content;
     display: flex;
@@ -12,12 +18,6 @@
     .sunburst {
         flex-grow: 1;
     }
-}
-
-.sunburst {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
 }
 
 .full-screen-container {

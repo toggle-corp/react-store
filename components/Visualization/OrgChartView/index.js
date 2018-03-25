@@ -70,9 +70,9 @@ export default class OrgChartView extends PureComponent {
         } = this.props;
 
         return (
-            <div className={`${styles['orgchart-view']} ${className}`}>
+            <div className={`${styles.orgchartView} ${className}`}>
                 <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                    <div className={styles.actionSelects}>
                         <SelectInput
                             clearlable={false}
                             keySelector={d => d.title}
@@ -80,7 +80,7 @@ export default class OrgChartView extends PureComponent {
                             onChange={this.fillColor}
                             options={this.colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={this.state.fillColor}
                         />
                         <SelectInput
@@ -90,11 +90,11 @@ export default class OrgChartView extends PureComponent {
                             onChange={this.selectColor}
                             options={this.colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={this.state.selectColor}
                         />
                     </div>
-                    <div className={styles['action-buttons']}>
+                    <div className={styles.actionButtons}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>

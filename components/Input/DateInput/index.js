@@ -12,8 +12,14 @@ import {
     encodeDate,
     decodeDate,
 } from '../../../utils/common';
-import styles from './styles.scss';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    { markAsUsed: ['day-unit', 'month-unit', 'year-unit'], camelCase: true }
+]
+*/
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -366,7 +372,7 @@ export default class DateInput extends React.PureComponent {
             unitClassName,
             styles[unitClassName],
             'date-unit',
-            styles['date-unit'],
+            styles.dateUnit,
         ];
 
         return (
@@ -452,7 +458,7 @@ export default class DateInput extends React.PureComponent {
 
         const classNames = [
             'action-buttons',
-            styles['action-buttons'],
+            styles.actionButtons,
         ];
 
         const clearButtonClassName = [
@@ -503,7 +509,7 @@ export default class DateInput extends React.PureComponent {
 
         return (
             <div className={classNames.join(' ')} >
-                <div className={styles['date-units']}>
+                <div className={styles.dateUnits}>
                     <DayUnit />
                     <MonthUnit />
                     <YearUnit />

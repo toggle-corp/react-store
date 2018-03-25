@@ -155,7 +155,7 @@ export default class SelectInput extends React.PureComponent {
                 />
                 <span
                     className={
-                        `dropdown-icon ${styles['dropdown-icon']} ${iconNames.arrowDropdown}`
+                        `dropdownIcon ${styles.dropdownIcon} ${iconNames.arrowDropdown}`
                     }
                 />
             </div>
@@ -193,7 +193,7 @@ export default class SelectInput extends React.PureComponent {
                     styles={styles}
                     {...this.props}
                 />
-                <div className={`input-wrapper ${styles['input-wrapper']}`}>
+                <div className={`input-wrapper ${styles.inputWrapper}`}>
                     <Input />
                     <Actions />
                 </div>

@@ -117,7 +117,7 @@ export default class FileInput extends React.PureComponent {
         const { files, preview } = this.state;
 
         return (
-            <div className={`file-input ${className} ${styles['file-input-wrapper']}`} >
+            <div className={`file-input ${className} ${styles.fileInputWrapper}`} >
                 {
                     showPreview && (
                         <div className={`${styles.preview} image-input-preview`}>
@@ -125,7 +125,7 @@ export default class FileInput extends React.PureComponent {
                                 preview ? (
                                     <img
                                         alt="No preview available"
-                                        className="img"
+                                        className={`img ${styles.img}`}
                                         src={preview}
                                     />
                                 ) : (
@@ -138,13 +138,13 @@ export default class FileInput extends React.PureComponent {
                     )
                 }
                 <label
-                    className="label"
+                    className={`label ${styles.label}`}
                     htmlFor={this.inputId}
                 >
                     { children }
                 </label>
                 <input
-                    className="input"
+                    className={`input ${styles.input}`}
                     id={this.inputId}
                     onChange={this.handleChange}
                     ref={(el) => { this.fileInput = el; }}

@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { isEqualAndTruthy } from '../../../utils/common';
+import { isEqualAndTruthy } from '../../../../utils/common';
 
-import List from '../List';
+import List from '../../List';
 
 import Row from './Row';
 import ExpandedRow from './ExpandedRow';
-import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
@@ -80,7 +79,7 @@ export default class Body extends React.PureComponent {
 
         // default className for global override
         classNames.push('body');
-        classNames.push(styles.body);
+        // classNames.push(styles.body);
 
         // className provided by parent (through className)
         classNames.push(className);

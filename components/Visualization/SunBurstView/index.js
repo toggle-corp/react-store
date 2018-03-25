@@ -144,7 +144,7 @@ export default class SunBurstView extends PureComponent {
                         onChange={handleSelection}
                         options={colors}
                         showHintAndError={false}
-                        className={styles['select-input']}
+                        className={styles.selectInput}
                         value={selectedColorScheme}
                     />
                     <SelectInput
@@ -156,7 +156,7 @@ export default class SunBurstView extends PureComponent {
                         optionsClassName={styles.selectInputOptions}
                         placeholder="No of Data Classes"
                         showHintAndError={false}
-                        className={styles['select-input']}
+                        className={styles.selectInput}
                         value={selectedNoOfCategories}
                     />
                     <AccentButton

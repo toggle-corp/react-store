@@ -1,6 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    {
+        markAsUsed: [
+            'button-default', 'button-accent', 'button-primary', 'button-danger',
+            'button-warning', 'button-success'
+        ],
+        camelCase: true
+    }
+]
+*/
 import styles from './styles.scss';
 
 const propTypes = {
@@ -99,15 +111,17 @@ export default class Button extends React.PureComponent {
 
         if (iconName && children) {
             classNames.push('with-icon-and-children');
-            classNames.push(styles['with-icon-and-children']);
+            classNames.push(styles.withIconAndChildren);
         }
 
         if (smallHorizontalPadding) {
-            classNames.push(styles['small-horizontal-padding']);
+            classNames.push('small-horizontal-padding');
+            classNames.push(styles.smallHorizontalPadding);
         }
 
         if (smallVerticalPadding) {
-            classNames.push(styles['small-vertical-padding']);
+            classNames.push('small-vertical-padding');
+            classNames.push(styles.smallVerticalPadding);
         }
 
         if (transparent) {

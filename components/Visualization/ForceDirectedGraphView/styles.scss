@@ -1,6 +1,12 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/visualizations';
 
+.force-directed-graph {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
 .force-directed-graph-view {
     @extend %viz-content;
     display: flex;
@@ -12,12 +18,6 @@
     .force-directed-graph {
         flex-grow: 1;
     }
-}
-
-.force-directed-graph {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
 }
 
 .full-screen-container {

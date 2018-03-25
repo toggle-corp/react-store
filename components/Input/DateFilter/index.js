@@ -64,7 +64,7 @@ export default class DateFilter extends React.PureComponent {
     static getClassName = (className, value) => {
         const classNames = [
             ...className.split(' '),
-            styles['select-input'],
+            styles.selectInput,
         ];
 
         if (value && value.type === 'custom') {

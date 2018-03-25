@@ -48,7 +48,7 @@ export default class NonFieldErrors extends React.PureComponent {
         }
 
         return (
-            <div className={`${styles['non-field-errors']} ${className}`}>
+            <div className={`${styles.nonFieldErrors} ${className}`}>
                 { errorComponents }
             </div>
         );

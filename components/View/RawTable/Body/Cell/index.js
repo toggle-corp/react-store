@@ -67,7 +67,7 @@ export default class Cell extends React.PureComponent {
 
         if (columnHighlighted) {
             classNames.push('column-highlighted');
-            classNames.push(styles['column-highlighted']);
+            classNames.push(styles.columnHighlighted);
         }
 
         return classNames.join(' ');

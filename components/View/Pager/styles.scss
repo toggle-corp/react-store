@@ -1,9 +1,8 @@
 @import '../../../stylesheets/base';
 
-
 .pager {
     .page-list {
-        button {
+        .paginate-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -20,9 +19,9 @@
             &:hover {
                 background-color: $color-background-hover;
             }
-       }
+        }
 
-        span {
+        .paginate-span {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -32,7 +31,7 @@
             font-weight: $font-weight-bold;
             user-select: none;
 
-            :global &.active {
+            &.active {
                 @include background-color($color-accent);
             }
         }

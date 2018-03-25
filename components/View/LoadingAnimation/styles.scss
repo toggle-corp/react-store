@@ -16,9 +16,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        animation: spin 1s linear infinite;
         width: $width-loading-icon;
         height: $height-loading-icon;
+        animation: spin 1s linear infinite;
         font-size: $font-size-loading-icon;
     }
 }

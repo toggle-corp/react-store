@@ -32,7 +32,7 @@ export default class TableHeader extends React.PureComponent {
         } = props;
 
         classNames.push(className);
-        classNames.push(styles['table-header']);
+        classNames.push(styles.tableHeader);
 
         if (sortable) {
             classNames.push(styles.sortable);

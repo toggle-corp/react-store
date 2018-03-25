@@ -303,8 +303,8 @@ export default class ChordDiagram extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles['chord-diagram-container']} ${className}`;
-        const chordStyle = styles['chord-diagram'];
+        const containerStyle = `${styles.chordDiagramContainer} ${className}`;
+        const chordStyle = styles.chordDiagram;
         const tooltipStyle = styles.tooltip;
         return (
             <div

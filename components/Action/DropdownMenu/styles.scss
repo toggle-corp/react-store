@@ -1,17 +1,13 @@
 @import '../../../stylesheets/base';
 
-.item-icon {
-    display: inline-block;
-    width: $width-icon-large-alt;
-}
-
-.rotated {
-    transform: rotate(180deg);
-}
 
 .dropdown-container {
     @include shadow-small;
     background-color: $color-foreground;
+}
+
+.active {
+    background-color: $color-background-selected;
 }
 
 %button-basic {
@@ -52,53 +48,4 @@
             padding: 0 $spacing-small;
         }
     }
-}
-
-.dropdown-list {
-    @include shadow-small;
-    background-color: $color-foreground;
-    width: 100%;
-    color: $color-text;
-}
-
-.group {
-    border-bottom: $width-separator-thin solid $color-separator;
-}
-
-.group-header {
-    background-color: $color-background-header-alt;
-    padding: $spacing-small $spacing-medium;
-    text-transform: uppercase;
-}
-
-.dropdown-item {
-    display: flex;
-    outline: none;
-    border: 0;
-    background-color: transparent;
-    cursor: pointer;
-    padding: $spacing-medium-alt $spacing-large;
-    text-align: left;
-    text-transform: uppercase;
-    font-family: inherit;
-    font-size: inherit;
-
-    .icon {
-        display: inline-block;
-        flex-basis: $width-icon-extra-large;
-        flex-shrink: 0;
-    }
-
-    .label {
-        flex-grow: 1;
-        color: $color-text;
-    }
-
-    &:hover {
-        background-color: $color-background-header;
-    }
-}
-
-.shown {
-    display: inline-block;
 }

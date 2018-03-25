@@ -74,7 +74,7 @@ export default class MonthPicker extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${className} ${styles['month-picker']}`}>
+            <div className={`${className} ${styles.monthPicker}`}>
                 <header className={styles.header}>
                     <Button
                         className={styles.left}

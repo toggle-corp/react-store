@@ -304,8 +304,8 @@ export default class CorrelationMatrix extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles['correlationmatrix-container']} ${className}`;
-        const matrixStyle = styles['correlation-matrix'];
+        const containerStyle = `${styles.correlationmatrixContainer} ${className}`;
+        const matrixStyle = styles.correlationMatrix;
 
         return (
             <div

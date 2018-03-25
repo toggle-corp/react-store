@@ -1,9 +1,9 @@
 @import '../../../stylesheets/base';
 
 .scroll-tabs {
+    display: flex;
     position: relative;
     width: 200px;
-    display: flex;
     overflow: hidden;
 
     .tab {
@@ -38,8 +38,8 @@
     }
 
     .void {
-        flex-grow: 1;
         align-self: stretch;
+        flex-grow: 1;
         border-bottom: $width-separator-medium solid $color-separator;
     }
 }

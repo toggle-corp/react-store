@@ -6,9 +6,9 @@
     right: 0;
     bottom: 0;
     left: 0;
-    animation: fade-in-from-top .3s ease forwards;
     z-index: 12;
     box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
     background-color: $color-foreground;
     overflow: auto;
-};
+    animation: fade-in-from-top .3s ease forwards;
+}

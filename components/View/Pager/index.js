@@ -63,25 +63,6 @@ export default class Pager extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getSpan = (className, index, key) => (
-        <span
-            className={className}
-            key={key || index}
-        >
-            {index}
-        </span>
-    )
-
-    getButton = index => (
-        <button
-            key={index}
-            onClick={() => this.props.onPageClick(index)}
-            className="paginate-btn"
-        >
-            {index}
-        </button>
-    )
-
     pagination = (totalCapacity, active, total) => {
         const oneSideCapacity = (totalCapacity - 1) / 2;
         const startIndex = 1;
@@ -111,10 +92,10 @@ export default class Pager extends React.PureComponent {
         let lst = [
             (
                 <button
-                    key={'prev'}
+                    key="prev"
                     onClick={() => this.props.onPageClick(active - 1)}
                     disabled={active - 1 < startIndex}
-                    className="paginate-btn"
+                    className={styles.paginateBtn}
                 >
                     <span className={iconNames.chevronLeft} />
                 </button>
@@ -125,35 +106,35 @@ export default class Pager extends React.PureComponent {
             if (right.excess >= 0) {
                 lst = [
                     ...lst,
-                    ...range(startIndex, active - 1).map(this.getButton),
+                    ...range(startIndex, active - 1).map(this.renderButton),
                 ];
             } else {
                 lst = [
                     ...lst,
-                    this.getButton(startIndex),
-                    this.getSpan('tick', '...', 'startTick'),
-                    ...range(active - (right.capacity - 2), active - 1).map(this.getButton),
+                    this.renderButton(startIndex),
+                    this.renderSpan('', '...', 'startTick'),
+                    ...range(active - (right.capacity - 2), active - 1).map(this.renderButton),
                 ];
             }
         }
 
         lst = [
             ...lst,
-            this.getSpan('active', active),
+            this.renderSpan(styles.active, active),
         ];
 
         if (left.capacity > 0) {
             if (left.excess >= 0) {
                 lst = [
                     ...lst,
-                    ...range(active + 1, lastIndex).map(this.getButton),
+                    ...range(active + 1, lastIndex).map(this.renderButton),
                 ];
             } else {
                 lst = [
                     ...lst,
-                    ...range(active + 1, active + (left.capacity - 2)).map(this.getButton),
-                    this.getSpan('tick', '...', 'endTick'),
-                    this.getButton(lastIndex),
+                    ...range(active + 1, active + (left.capacity - 2)).map(this.renderButton),
+                    this.renderSpan('', '...', 'endTick'),
+                    this.renderButton(lastIndex),
                 ];
             }
         }
@@ -162,10 +143,10 @@ export default class Pager extends React.PureComponent {
             ...lst,
             (
                 <button
-                    key={'next'}
+                    key="next"
                     onClick={() => this.props.onPageClick(active + 1)}
                     disabled={active + 1 > lastIndex}
-                    className="paginate-btn"
+                    className={styles.paginateBtn}
                 >
                     <span className={iconNames.chevronRight} />
                 </button>
@@ -173,6 +154,25 @@ export default class Pager extends React.PureComponent {
         ];
         return lst;
     }
+
+    renderSpan = (className, index, key) => (
+        <span
+            className={`${styles.paginateSpan} ${className}`}
+            key={key || index}
+        >
+            {index}
+        </span>
+    )
+
+    renderButton = index => (
+        <button
+            key={index}
+            onClick={() => this.props.onPageClick(index)}
+            className={styles.paginateBtn}
+        >
+            {index}
+        </button>
+    )
 
     render() {
         const {
@@ -186,8 +186,8 @@ export default class Pager extends React.PureComponent {
         const numPages = Math.ceil(itemsCount / maxItemsPerPage);
 
         return (
-            <div className={`pager ${className} ${styles.pager}`}>
-                <div className={`page-list ${styles['page-list']}`}>
+            <div className={`${styles.pager} ${className} ${styles.pager}`}>
+                <div className={`${styles.pageList} ${styles.pageList}`}>
                     {
                         numPages > 0 &&
                         this.pagination(totalCapacity, activePage, numPages)

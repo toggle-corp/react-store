@@ -1,0 +1,28 @@
+@import '../../../../stylesheets/base';
+
+.option {
+    cursor: pointer;
+
+    .input {
+        display: none;
+    }
+
+    .radio {
+        display: inline-block;
+        margin-right: $spacing-small;
+    }
+
+    .label {
+        display: inline-block;
+    }
+
+    &.checked {
+        .radio {
+            color: $color-accent;
+        }
+    }
+
+    &:not(:last-child) {
+        margin-right: $spacing-medium;
+    }
+}

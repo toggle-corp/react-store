@@ -12,7 +12,7 @@ export default class GroupTitle extends React.PureComponent {
 
     render() {
         return (
-            <div className={styles['group-header']}>
+            <div className={styles.groupHeader}>
                 {this.props.title}
             </div>
         );

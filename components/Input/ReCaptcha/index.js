@@ -160,7 +160,7 @@ export default class ReCaptcha extends Component {
         const { ready } = this.state;
 
         const containerStyle = `${styles.recaptcha} ${className}`;
-        const reCaptchaStyle = `${styles['g-recaptcha']} ${(showHintAndError && error) ? styles.errored : ''}`;
+        const reCaptchaStyle = `${styles.gRecaptcha} ${(showHintAndError && error) ? styles.errored : ''}`;
 
         return (
             <div className={containerStyle}>

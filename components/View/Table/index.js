@@ -9,8 +9,6 @@ import {
 import RawTable from '../RawTable';
 import TableHeader from '../TableHeader';
 
-// import styles from './styles.scss';
-
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,

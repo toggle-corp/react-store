@@ -291,7 +291,7 @@ export default class PieChart extends Component {
             loading,
         } = this.props;
 
-        const containerStyle = `${styles['piechart-container']} ${className}`;
+        const containerStyle = `${styles.piechartContainer} ${className}`;
         const pieChartStyle = `${styles.piechart}`;
 
         return (

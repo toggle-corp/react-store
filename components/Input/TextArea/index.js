@@ -131,7 +131,7 @@ export default class TextArea extends React.PureComponent {
         } = this.state;
 
         classNames.push('text-area');
-        classNames.push(styles['text-area']);
+        classNames.push(styles.textArea);
 
         if (disabled) {
             classNames.push(styles.disabled);

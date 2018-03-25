@@ -51,12 +51,12 @@ export default class Header extends React.PureComponent {
 
         if (hoverable) {
             classNames.push('hoverable');
-            classNames.push(styles.hoverable);
+            // classNames.push(styles.hoverable);
         }
 
         if (highlighted) {
             classNames.push('highlighted');
-            classNames.push(styles.highlighted);
+            // classNames.push(styles.highlighted);
         }
 
         if (uniqueKey) {

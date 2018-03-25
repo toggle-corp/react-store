@@ -123,7 +123,7 @@ export default class RawTable extends React.PureComponent {
 
         // default className for global override
         classNames.push('raw-table');
-        classNames.push(styles['raw-table']);
+        classNames.push(styles.rawTable);
 
         // className provided by parent (through className)
         classNames.push(className);

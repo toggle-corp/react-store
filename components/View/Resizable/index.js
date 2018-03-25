@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    { markAsUsed: ['resizable-h', 'resizable-v'], camelCase: true }
+]
+*/
 import styles from './styles.scss';
 
 const propTypes = {
@@ -130,11 +136,10 @@ export default class Resizable extends React.PureComponent {
 
     getFirstContainerClassName = () => {
         const { firstContainerClassName } = this.props;
-        const firstChildClassName = 'first';
         const classNames = [
             firstContainerClassName,
-            firstChildClassName,
-            styles[firstChildClassName],
+            'first',
+            styles.first,
         ];
 
         return classNames.join(' ');
@@ -142,11 +147,10 @@ export default class Resizable extends React.PureComponent {
 
     getSecondContainerClassName = () => {
         const { secondContainerClassName } = this.props;
-        const secondChildClassName = 'second';
         const classNames = [
             secondContainerClassName,
-            secondChildClassName,
-            styles[secondChildClassName],
+            'second',
+            styles.second,
         ];
 
         return classNames.join(' ');

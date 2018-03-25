@@ -42,7 +42,7 @@ export const getClassName = (styles, base, state, p) => {
 
     if (showOptions) {
         classNames.push('options-shown');
-        classNames.push(styles['options-shown']);
+        classNames.push(styles.optionsShown);
     }
 
     if (value && value.length !== 0) {
@@ -146,7 +146,7 @@ export const renderLabel = p => (
 export const renderClearButton = p => (
     p.show ? (
         <button
-            className={`clear-button ${p.styles['clear-button']}`}
+            className={`clear-button ${p.styles.clearButton}`}
             onClick={p.parent.handleClearButtonClick}
             title="Clear selected option(s)"
             disabled={p.parent.props.disabled}

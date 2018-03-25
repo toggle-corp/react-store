@@ -57,9 +57,9 @@ export default class HorizontalBarView extends PureComponent {
         } = this.props;
 
         return (
-            <div className={`${styles['horizontal-bar-view']} ${className}`}>
+            <div className={`${styles.horizontalBarView} ${className}`}>
                 <div className={styles.action}>
-                    <div className={styles['action-selects']}>
+                    <div className={styles.actionSelects}>
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
@@ -68,18 +68,18 @@ export default class HorizontalBarView extends PureComponent {
                             onChange={this.handleSelection}
                             options={this.colors}
                             showHintAndError={false}
-                            className={styles['select-input']}
+                            className={styles.selectInput}
                             value={this.state.selectedBarColor}
                         />
                     </div>
-                    <div className={styles['action-buttons']}>
+                    <div className={styles.actionButtons}>
                         <PrimaryButton onClick={this.handleSave}>
                             Save
                         </PrimaryButton>
                     </div>
                 </div>
                 <HorizontalBar
-                    className={styles['horizontal-bar']}
+                    className={styles.horizontalBar}
                     ref={(instance) => { this.chart = instance; }}
                     {...otherProps}
                     barColor={this.state.barColor}
