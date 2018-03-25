@@ -8,8 +8,6 @@ import Responsive from '../../General/Responsive';
 import update from '../../../utils/immutable-update';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 
 /**
@@ -163,6 +161,11 @@ export default class OrgChart extends React.PureComponent {
             margins,
         } = this.props;
 
+        const svg = select(this.svg);
+        svg
+            .selectAll('*')
+            .remove();
+
         if (!boundingClientRect.width) {
             return;
         }
@@ -183,10 +186,6 @@ export default class OrgChart extends React.PureComponent {
         height = height - top - bottom;
         const rectSize = 30;
         const rectPadding = 20;
-
-        const svg = select(this.svg);
-        svg.selectAll('*')
-            .remove();
 
         const group = svg
             .attr('width', width + left + right)
@@ -270,12 +269,13 @@ export default class OrgChart extends React.PureComponent {
     }
 
     render() {
+        const { className } = this.props;
         return (
             <div
-                className={`org-chart-container ${this.props.className}`}
+                className={`${styles.orgChartContainer} ${className}`}
             >
                 <svg
-                    className="org-chart"
+                    className={styles.orgChart}
                     ref={(elem) => { this.svg = elem; }}
                 />
             </div>
