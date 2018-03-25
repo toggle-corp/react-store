@@ -199,7 +199,6 @@ export default class SelectInputWithList extends React.PureComponent {
                     <DangerButton
                         onClick={() => this.handleListItemRemove(key)}
                         className={`${additionalStyle} ${styles.removeButton}`}
-                        type="button"
                         smallHorizontalPadding
                         smallVerticalPadding
                         transparent

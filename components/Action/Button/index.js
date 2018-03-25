@@ -66,10 +66,13 @@ const propTypes = {
      * show small vertical padding
      */
     transparent: PropTypes.bool,
+
+    type: PropTypes.string,
 };
 
 const defaultProps = {
     buttonType: 'button-default',
+    type: 'button',
     className: '',
     disabled: false,
     iconName: undefined,
@@ -162,6 +165,7 @@ export default class Button extends React.PureComponent {
             children,
             disabled,
             onClick,
+            type,
 
             buttonType, // eslint-disable-line no-unused-vars
             className: captureClassName, // eslint-disable-line no-unused-vars
@@ -181,6 +185,7 @@ export default class Button extends React.PureComponent {
                 className={className}
                 disabled={disabled}
                 onClick={onClick}
+                type={type}
                 {...otherProps}
             >
                 <Icon iconName={iconName} />

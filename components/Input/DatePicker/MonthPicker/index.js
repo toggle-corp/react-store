@@ -79,14 +79,12 @@ export default class MonthPicker extends React.PureComponent {
                     <Button
                         className={styles.left}
                         onClick={this.handlePrevYearClick}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronLeft}
                     />
                     <Button
                         className={styles.year}
                         onClick={onYearClick}
-                        type="button"
                         transparent
                     >
                         { year }
@@ -94,7 +92,6 @@ export default class MonthPicker extends React.PureComponent {
                     <Button
                         className={styles.right}
                         onClick={this.handleNextYearClick}
-                        type="button"
                         transparent
                         iconName={iconNames.chevronRight}
                     />
@@ -106,7 +103,6 @@ export default class MonthPicker extends React.PureComponent {
                             key={monthName}
                             className={this.getMonthClassName(monthIndex)}
                             onClick={() => this.handleMonthChange(monthIndex)}
-                            type="button"
                             transparent
                         >
                             { monthName }

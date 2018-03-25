@@ -194,14 +194,12 @@ export default class TreeSelection extends React.PureComponent {
                 {node.draggable && <DragHandle />}
                 <Button
                     className={`${this.getCheckBoxStyle(node.selected)} checkbox`}
-                    type="button"
                     onClick={() => this.handleCheckBox(node.key)}
                     transparent
                 />
                 {node.nodes ? (
                     <Button
                         className="node-title"
-                        type="button"
                         onClick={() => this.handleToggleExpand(node.key)}
                         transparent
                     >
