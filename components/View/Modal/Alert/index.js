@@ -7,7 +7,7 @@ import ModalHeader from '../Header';
 import ModalBody from '../Body';
 import ModalFooter from '../Footer';
 
-import Modal from '../index';
+import Modal from '../../Modal';
 import styles from './styles.scss';
 
 const propTypes = {
