@@ -24,6 +24,12 @@ export default class MultiContentView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+
+        this.lazyContainers = {};
+    }
+
     getClassName = () => {
         const { className } = this.props;
 
@@ -84,22 +90,46 @@ export default class MultiContentView extends React.Component {
         return <Component className={className} />;
     }
 
-    renderView = (key, data) => {
+    renderView = (k, data) => {
         const {
             views,
             active,
         } = this.props;
 
-        const isActive = active === data;
+        const key = data;
+        const isActive = active === key;
         const view = views[data];
         const Container = this.renderContainer;
+        const { lazyMount } = view;
 
         if (!view.mount && !isActive) {
             return null;
         }
+
+        if (lazyMount) {
+            let LazyContainer = this.lazyContainers[key] || null;
+
+            if (!LazyContainer) {
+                if (!isActive) {
+                    return null;
+                }
+
+                this.lazyContainers[key] = p => <Container {...p} />;
+                LazyContainer = this.lazyContainers[key];
+            }
+
+            return (
+                <LazyContainer
+                    key={key}
+                    view={view}
+                    isActive={isActive}
+                />
+            );
+        }
+
         return (
             <Container
-                key={data}
+                key={key}
                 view={view}
                 isActive={isActive}
             />
