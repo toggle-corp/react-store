@@ -32,6 +32,10 @@ const access = (value, formname) => {
 // example: name.firstname becomes name
 const getParent = (formnames) => {
     const lastIndex = formnames.lastIndexOf(':');
+    // There is no parent for formname ''
+    if (formnames === '') {
+        return undefined;
+    }
     return formnames.substring(0, lastIndex);
 };
 
@@ -179,7 +183,7 @@ export default class FormHelper {
 
         let newFormErrors = this.formErrors;
         let elementNameForFormErrors = getParent(elementName);
-        while (elementNameForFormErrors) {
+        while (elementNameForFormErrors !== undefined) {
             const formErrorsValue = this.getFormError(elementNameForFormErrors);
             // NOTE: no need to use $auto/$autoArray when there is a value already
             if (formErrorsValue !== undefined) {
@@ -228,7 +232,7 @@ export default class FormHelper {
         // setting formFieldError
         let newFormErrors = this.formErrors;
         let elementNameForFormErrors = elementName;
-        while (elementNameForFormErrors) {
+        while (elementNameForFormErrors !== undefined) {
             const formErrorsValue = this.getFormError(elementNameForFormErrors);
             // NOTE: no need to use $auto/$autoArray when there is a value already
             if (formErrorsValue !== undefined) {
@@ -279,7 +283,7 @@ export default class FormHelper {
         // setting formFieldError
         let newFormErrors = this.formErrors;
         let elementNameForFormErrors = elementName;
-        while (elementNameForFormErrors) {
+        while (elementNameForFormErrors !== undefined) {
             const formErrorsValue = this.getFormError(elementNameForFormErrors);
             // NOTE: no need to use $auto/$autoArray when there is a value already
             if (formErrorsValue !== undefined) {
