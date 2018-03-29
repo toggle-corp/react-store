@@ -91,26 +91,6 @@
         }
     }
 
-    %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
-    }
-
-    .hint {
-        @extend %base;
-        color: $color-text-label;
-    }
-
-    .error {
-        @extend %base;
-        color: $color-danger;
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
-    }
-
     &.disabled {
         .label {
             color: $color-text-disabled;

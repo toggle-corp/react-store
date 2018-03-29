@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FloatingContainer from '../../../View/FloatingContainer';
 import List from '../../../View/List';
 
@@ -11,9 +12,22 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    activeKeys: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
+    data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    keySelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
+    onBlur: PropTypes.func.isRequired,
+    onInvalidate: PropTypes.func.isRequired,
+    onOptionClick: PropTypes.func.isRequired,
+    parentContainer: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    renderEmpty: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
+    className: '',
+    parentContainer: undefined,
 };
 
 export default class Options extends React.PureComponent {
@@ -22,14 +36,12 @@ export default class Options extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
         this.generateActiveMap(props);
     }
 
     componentWillReceiveProps(nextProps) {
         const { activeKeys: oldActiveKeys } = this.props;
         const { activeKeys: newActiveKeys } = nextProps;
-
 
         if (!isArrayEqual(oldActiveKeys, newActiveKeys)) {
             this.generateActiveMap(nextProps);
@@ -82,11 +94,14 @@ export default class Options extends React.PureComponent {
     renderEmpty = () => {
         const {
             renderEmpty: EmptyComponent,
-            options,
+            data,
         } = this.props;
 
-        const className = `empty ${styles.empty}`;
+        if (data.length > 0) {
+            return null;
+        }
 
+        const className = `empty ${styles.empty}`;
         return (
             <div className={className}>
                 <EmptyComponent />
@@ -103,8 +118,8 @@ export default class Options extends React.PureComponent {
             show,
         } = this.props;
 
-
         const className = this.getClassName();
+        const Empty = this.renderEmpty;
 
         if (!show) {
             return null;
@@ -121,6 +136,7 @@ export default class Options extends React.PureComponent {
                     data={data}
                     modifier={this.renderOption}
                 />
+                <Empty />
             </FloatingContainer>
         );
     }

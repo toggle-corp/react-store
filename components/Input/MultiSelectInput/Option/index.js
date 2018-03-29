@@ -1,12 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Checkbox from '../Checkbox';
 import styles from './styles.scss';
 
 const propTypes = {
+    active: PropTypes.bool.isRequired,
+    className: PropTypes.string,
+    onClick: PropTypes.func.isRequired,
+    optionKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
+    optionLabel: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
+    optionLabel: '',
 };
 
 export default class Option extends React.PureComponent {
@@ -27,7 +38,6 @@ export default class Option extends React.PureComponent {
 
         if (active) {
             classNames.push('active');
-            classNames.push(styles.active);
         }
 
         return classNames.join(' ');

@@ -143,6 +143,7 @@ export default class MultiSelectInput extends React.PureComponent {
             inputValue: '',
             placeholder: getInputPlaceholder(props),
             displayOptions: props.options,
+            showOptions: false,
         };
     }
 
@@ -474,6 +475,7 @@ export default class MultiSelectInput extends React.PureComponent {
                 className={className}
             >
                 <Label
+                    className={styles.label}
                     show={showLabel}
                     text={label}
                 />
