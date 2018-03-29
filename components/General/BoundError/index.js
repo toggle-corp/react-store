@@ -26,9 +26,11 @@ export default ErrorComponent => (WrappedComponent) => {
                 return <ErrorComponent />;
             }
 
+            const defaultErrorText = '(x_x)';
+
             return (
                 <div>
-                    An unexpected error has occured!
+                    { defaultErrorText }
                 </div>
             );
         }
