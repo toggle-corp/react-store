@@ -1,0 +1,11 @@
+%input-border {
+    border-bottom: $width-separator-medium solid $color-separator-alt;
+
+    &:hover {
+        border-bottom-color: $color-separator-hover;
+    }
+
+    &:focus {
+        border-bottom-color: $color-accent;
+    }
+}
