@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import MultiSelectInput from '../../Input/SelectInput/MultiSelectInput';
+import MultiSelectInput from '../../Input/MultiSelectInput';
 import DangerButton from '../../Action/Button/DangerButton';
 import ListView from '../../View/List/ListView';
 import { iconNames } from '../../../../../constants';

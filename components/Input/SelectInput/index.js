@@ -220,5 +220,3 @@ export default class SelectInput extends React.PureComponent {
         );
     }
 }
-
-export { default as MultiSelectInput } from './MultiSelectInput';

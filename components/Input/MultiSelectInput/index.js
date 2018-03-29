@@ -148,9 +148,9 @@ export default class MultiSelectInput extends React.PureComponent {
     }
 
     componentWillMount() {
-        const result = validateValue(this.props);
-        if (!result.valid) {
-            this.props.onChange(result.value);
+        const { valid, value } = validateValue(this.props);
+        if (!valid) {
+            this.props.onChange(value);
         }
     }
 
@@ -173,36 +173,30 @@ export default class MultiSelectInput extends React.PureComponent {
 
         const areValuesEqual = nextProps.value === oldValue;
         const areOptionsEqual = nextProps.options === oldOptions;
-        let resultValid = true;
 
-        if (!(areValuesEqual && areOptionsEqual)) {
-            const result = validateValue(nextProps);
-
-            if (!result.valid) {
-                resultValid = false;
-                nextProps.onChange(result.value);
+        if (!areValuesEqual || !areOptionsEqual) {
+            const { valid, value } = validateValue(nextProps);
+            if (!valid) {
+                nextProps.onChange(value);
+                return;
             }
         }
 
-        if (resultValid) {
-            const arePlaceholdersEqual = nextProps.placeholder === oldPlaceholder;
+        const arePlaceholdersEqual = nextProps.placeholder === oldPlaceholder;
 
-            if (!(areValuesEqual && arePlaceholdersEqual)) {
-                this.setState({
-                    placeholder: getInputPlaceholder(nextProps),
-                });
-            }
+        if (!areValuesEqual || !arePlaceholdersEqual) {
+            const placeholder = getInputPlaceholder(nextProps);
+            this.setState({ placeholder });
+        }
 
-            if (!areOptionsEqual) {
-                const {
-                    labelSelector,
-                    options,
-                } = nextProps;
-
-                const { inputValue } = this.state;
-                const displayOptions = filterAndSortOptions(options, inputValue, labelSelector);
-                this.setState({ displayOptions });
-            }
+        if (!areOptionsEqual) {
+            const { inputValue } = this.state;
+            const displayOptions = filterAndSortOptions(
+                nextProps.options,
+                inputValue,
+                nextProps.labelSelector,
+            );
+            this.setState({ displayOptions });
         }
     }
 
