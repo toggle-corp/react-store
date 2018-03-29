@@ -1,0 +1,18 @@
+@import '../../../../stylesheets/base';
+
+.option {
+    display: block;
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    padding: $spacing-small $spacing-small-alt;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+
+    &:hover {
+        background-color: get-hover-color($color-foreground);
+    }
+}

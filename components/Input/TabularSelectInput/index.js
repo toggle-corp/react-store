@@ -5,7 +5,7 @@ import { listToMap } from '../../../utils/common';
 import { iconNames } from '../../../constants';
 
 import DangerButton from '../../Action/Button/DangerButton';
-import MultiSelectInput from '../../Input/SelectInput/MultiSelectInput';
+import MultiSelectInput from '../../Input/MultiSelectInput';
 import Table from '../../View/Table';
 
 import styles from './styles.scss';

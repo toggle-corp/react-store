@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { iconNames } from '../../../../constants';
-import styles from '../options.scss';
+import styles from './styles.scss';
 
 const propTypes = {
     active: PropTypes.bool.isRequired,
@@ -11,9 +11,12 @@ const propTypes = {
 export default class Checkbox extends React.PureComponent {
     static propTypes = propTypes;
 
-    render() {
+    getClassName = () => {
         const { active } = this.props;
-        const classNames = ['checkbox', styles.checkbox];
+        const classNames = [
+            'checkbox',
+            styles.checkbox,
+        ];
 
         if (active) {
             classNames.push(iconNames.checkbox);
@@ -21,7 +24,12 @@ export default class Checkbox extends React.PureComponent {
             classNames.push(iconNames.checkboxOutlineBlank);
         }
 
-        return <span className={classNames.join(' ')} />;
+        return classNames.join(' ');
+    }
+
+    render() {
+        const className = this.getClassName();
+        return <span className={className} />;
     }
 }
 

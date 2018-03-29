@@ -1,0 +1,14 @@
+%input-base {
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    padding: $spacing-extra-small 0;
+    width: 100%;
+    color: $color-text;
+    font-family: inherit;
+    font-size: inherit;
+
+    &::placeholder {
+        color: $color-text-disabled;
+    }
+}

@@ -1,0 +1,110 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/input-base';
+@import '../../../stylesheets/input-border';
+
+.multi-select-input {
+    .input-wrapper {
+        position: relative;
+
+        .input {
+            @extend %input-base;
+            @extend %input-border;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .actions {
+            position: absolute;
+            top: 50%;
+            right: $spacing-small;
+            transform: translateY(-50%);
+
+            %action-button {
+                transition: $duration-transition-medium opacity ease-in-out;
+                opacity: 0;
+                padding: $spacing-extra-small-alt $spacing-small;
+            }
+
+            .clear-button {
+                @extend %action-button;
+
+                &:hover {
+                    color: $color-danger;
+                }
+            }
+
+            .select-all-button {
+                @extend %action-button;
+
+                &:hover {
+                    color: $color-info;
+                }
+            }
+
+            .dropdown-icon {
+                transform: none;
+                transition: $duration-transition-medium transform ease-in-out;
+            }
+        }
+
+        &:hover {
+            .actions {
+                .clear-button,
+                .select-all-button {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &.options-shown {
+        .label {
+            color: $color-accent;
+        }
+
+        .input-wrapper {
+            .actions {
+                .dropdown-icon {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    &.error {
+        .input-wrapper {
+            .input {
+                border-bottom-color: $color-danger;
+            }
+        }
+
+        .label {
+            color: $color-danger;
+        }
+    }
+
+    &.filled {
+        .input-wrapper {
+            .input::placeholder {
+                color: $color-text;
+            }
+        }
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .input-wrapper {
+            .input {
+                border-bottom-color: $color-separator;
+                color: $color-text-disabled;
+            }
+
+            .actions {
+                color: $color-text-disabled;
+            }
+        }
+    }
+}
