@@ -1,0 +1,28 @@
+@import '../../../stylesheets/base';
+
+.list-input {
+    .item {
+        display: flex;
+        align-items: center;
+        background-color: $color-background-row;
+
+        &:nth-child(even) {
+            background-color: $color-background-row-alt;
+        }
+
+        .label {
+            flex-grow: 1;
+            padding: $spacing-small $spacing-small-alt;
+        }
+
+        .action {
+            display: none;
+            flex-shrink: 0;
+            color: $color-danger;
+        }
+
+        &:hover .action {
+            display: initial;
+        }
+    }
+}
