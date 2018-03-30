@@ -7,9 +7,8 @@ $width-icon: 16px;
 
     .icon {
         position: absolute;
-        top: 50%;
+        bottom: $spacing-extra-small;
         left: 0;
-        transform: translateY(-50%);
         width: $width-icon;
         color: $color-text-label;
     }
