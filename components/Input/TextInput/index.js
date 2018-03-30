@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 import styles from './styles.scss';
-
 
 const propTypes = {
     /**
@@ -110,7 +111,7 @@ export default class TextInput extends React.PureComponent {
             if (!this.pendingChange) {
                 this.setState({ value: nextProps.value });
             } else {
-                console.warn('Not updating, as there is a pending change.');
+                console.warn('TextInput: not updating, as there is a pending change.');
             }
         }
     }
@@ -123,6 +124,7 @@ export default class TextInput extends React.PureComponent {
 
     getClassName() {
         const {
+            className,
             disabled,
             error,
             required,
@@ -130,9 +132,12 @@ export default class TextInput extends React.PureComponent {
 
         const { isFocused } = this.state;
 
-        const classNames = [];
-        classNames.push('text-input');
-        classNames.push(styles.textInput);
+        const classNames = [
+            className,
+            'text-input',
+            styles.textInput,
+        ];
+
         if (disabled) {
             classNames.push('disabled');
             classNames.push(styles.disabled);
@@ -159,7 +164,11 @@ export default class TextInput extends React.PureComponent {
         const { value } = event.target;
         this.setState({ value });
 
-        const { onChange, changeDelay } = this.props;
+        const {
+            onChange,
+            changeDelay,
+        } = this.props;
+
         if (onChange) {
             this.changeTimeout = setTimeout(
                 () => {
@@ -172,7 +181,11 @@ export default class TextInput extends React.PureComponent {
     }
 
     handleFocus = (event) => {
-        const { selectOnFocus, onFocus } = this.props;
+        const {
+            selectOnFocus,
+            onFocus,
+        } = this.props;
+
         if (selectOnFocus) {
             event.target.select();
         }
@@ -195,14 +208,14 @@ export default class TextInput extends React.PureComponent {
     render() {
         const {
             // skip prop injection for initialValue & onChange (used internally)
-            initialValue, // eslint-disable-line
-            value: propValue, // eslint-disable-line
-            onBlur, // eslint-disable-line
-            onChange, // eslint-disable-line
-            onFocus, // eslint-disable-line
-            selectOnFocus, // eslint-disable-line
-            changeDelay, // eslint-disable-line
-            className,
+            initialValue, // eslint-disable-line no-unused-vars
+            value: propValue, // eslint-disable-line no-unused-vars
+            onBlur, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars
+            onFocus, // eslint-disable-line no-unused-vars
+            selectOnFocus, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars
+            className: dummy, // eslint-disable-line no-unused-vars
 
             error,
             hint,
@@ -213,17 +226,15 @@ export default class TextInput extends React.PureComponent {
         } = this.props;
 
         const { value = '' } = this.state;
-        const classNames = this.getClassName();
+        const className = this.getClassName();
 
         return (
-            <div className={`${classNames} ${className}`}>
-                {
-                    showLabel && (
-                        <div className={`${styles.label} label`}>
-                            {label}
-                        </div>
-                    )
-                }
+            <div className={className}>
+                <Label
+                    className={styles.label}
+                    show={showLabel}
+                    text={label}
+                />
                 <input
                     className={`${styles.input} input`}
                     id={this.inputId}
@@ -233,34 +244,11 @@ export default class TextInput extends React.PureComponent {
                     value={value}
                     {...otherProps}
                 />
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} error empty`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
             </div>
         );
     }

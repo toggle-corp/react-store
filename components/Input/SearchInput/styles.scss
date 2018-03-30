@@ -1,0 +1,24 @@
+@import '../../../stylesheets/base';
+
+$width-icon: 16px;
+
+.search-input {
+    position: relative;
+
+    .icon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: $width-icon;
+        color: $color-text-label;
+    }
+
+    .text-input {
+        :global {
+            .input {
+                padding-left: $width-icon;
+            }
+        }
+    }
+}
