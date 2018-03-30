@@ -1,0 +1,23 @@
+@import '../../../stylesheets/base';
+
+$width-icon: 16px;
+
+.search-input {
+    position: relative;
+
+    .icon {
+        position: absolute;
+        bottom: $spacing-extra-small;
+        left: 0;
+        width: $width-icon;
+        color: $color-text-label;
+    }
+
+    .text-input {
+        :global {
+            .input {
+                padding-left: $width-icon;
+            }
+        }
+    }
+}
