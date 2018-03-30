@@ -1,4 +1,4 @@
-const defaultProgressFn = () => { console.warn('No progress callback defined'); };
+const defaultProgressFn = () => { /* console.warn('No progress callback defined'); */ };
 const defaultSuccessFn = () => { console.warn('No success callback defined'); };
 const defaultFailureFn = () => { console.warn('No failure callback defined'); };
 const defaultFatalFn = () => { console.warn('No fatal callback defined'); };
