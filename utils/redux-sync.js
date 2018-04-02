@@ -1,50 +1,34 @@
-import localForage from 'localforage';
-import * as lfo from 'localforage-observable';
-import { REHYDRATE } from 'redux-persist';
-import Observable from 'zen-observable';
+const SYNC_KEY = 'ACTION_DISPATCHED';
 
-const localforage = lfo.extendPrototype(localForage);
-localforage.newObservable.factory = subscribeFn => new Observable(subscribeFn);
-
-
-// Listen to localforage changes and rehydrate the store
-// with new data.
-// Allows blacklisted keys to be ignored while syncing.
-const reduxSync = (store, persistor, blacklist = undefined, key = undefined) => {
-    localforage.ready(() => {
-        localforage.configObservables({
-            crossTabNotification: true,
-        });
-        const observable = localforage.newObservable({
-            crossTabNotification: true,
-            changeDetection: false,
-        });
-
-        observable.subscribe({
-            next: (args) => {
-                if (args.crossTabNotification) {
-                    const stringData = JSON.parse(args.newValue);
-                    const data = {};
-                    Object.keys(stringData).forEach((k) => {
-                        if (blacklist && blacklist.indexOf(k) !== -1) {
-                            return;
-                        }
-                        data[k] = JSON.parse(stringData[k]);
-                    });
-                    const rehydrateAction = {
-                        type: REHYDRATE,
-                        payload: data,
-                        key,
-                    };
-                    store.dispatch(rehydrateAction);
-                    persistor.dispatch(rehydrateAction);
-                }
-            },
-            error: (err) => {
-                console.error('Found an error while observing local-forage', err);
-            },
-        });
+// Start listening to actions from other tabs and synchronize.
+export const startActionsSync = (store) => {
+    // Local storage is, by definition, listened when changed from
+    // other tabs.
+    window.addEventListener('storage', (e) => {
+        if (e.key === SYNC_KEY) {
+            const event = JSON.parse(e.newValue);
+            if (event.action) {
+                store.dispatch(event.action);
+            }
+        }
     });
 };
 
-export default reduxSync;
+// Create a middleware that dispatches actions to other tabs.
+export const createActionSyncMiddleware = actionPrefixes => () => next => (action) => {
+    const containsPrefix = prefix => action.type.startsWith(prefix);
+    if (!action.noFurtherDispatch && actionPrefixes.find(containsPrefix)) {
+        // Two successive actions with same body won't propagate twice.
+        // So, we add timestamp to make sure the body is unique.
+        const timestampedAction = {
+            action: {
+                ...action,
+                noFurtherDispatch: true,
+            },
+            time: Date.now(),
+        };
+        localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
+    }
+
+    next(action);
+};
