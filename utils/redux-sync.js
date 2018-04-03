@@ -29,6 +29,5 @@ export const createActionSyncMiddleware = actionPrefixes => () => next => (actio
         };
         localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
     }
-
-    next(action);
+    return next(action);
 };
