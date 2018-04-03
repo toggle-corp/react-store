@@ -5,3 +5,5 @@ node_modules/
 .tern-port
 
 _user-imports.scss
+
+*css.d.ts
