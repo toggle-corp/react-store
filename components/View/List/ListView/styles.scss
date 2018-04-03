@@ -1,6 +1,8 @@
 @import '../../../../stylesheets/base';
 
 .list-view {
+    overflow-y: auto;
+
     .empty {
         display: flex;
         align-items: center;
