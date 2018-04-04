@@ -1,4 +1,7 @@
-import React, { PureComponent } from 'react';
+import React, {
+    PureComponent,
+    Fragment,
+} from 'react';
 import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
@@ -8,10 +11,13 @@ import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    getColorOnBgColor,
+    isObjectEmpty,
+} from '../../../utils/common';
+import Float from '../../View/Float';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 
 /**
@@ -63,6 +69,10 @@ const defaultProps = {
     },
 };
 
+const twoPi = 2 * Math.PI;
+const tooltipOffset = { x: 10, y: 10 };
+const transitionDuration = 750;
+
 /*
  * Sunburst is a multilevel pie chart used to represent proportion of values found at each level
  * in hierarchy.
@@ -71,6 +81,13 @@ const defaultProps = {
 export default class SunBurst extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.scaleX = scaleLinear()
+            .range([0, twoPi]);
+    }
 
     componentDidMount() {
         this.renderChart();
@@ -86,36 +103,17 @@ export default class SunBurst extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('sunburst', 'graph')}.svg`);
     }
 
-    renderChart = () => {
+    calculateBounds = () => {
         const {
-            boundingClientRect,
-            data,
-            childrenAccessor,
-            labelAccessor,
-            valueAccessor,
-            colorScheme,
-            showLabels,
-            showTooltip,
             margins,
+            boundingClientRect,
         } = this.props;
 
-        const el = select(this.svg);
-        el.selectAll('*')
-            .remove();
+        const {
+            width,
+            height,
+        } = boundingClientRect;
 
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
-
-        if (!boundingClientRect.width) {
-            return;
-        }
-
-        if (!data || data.length === 0 || isObjectEmpty(data)) {
-            return;
-        }
-
-        let { width, height } = boundingClientRect;
         const {
             top,
             right,
@@ -123,184 +121,270 @@ export default class SunBurst extends PureComponent {
             left,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
-        const radius = Math.min(width, height) / 2;
+        this.width = width - left - right;
+        this.height = height - top - bottom;
 
-        const x = scaleLinear()
-            .range([0, 2 * Math.PI]);
-        const y = scaleLinear()
-            .range([0, radius]);
-        const color = scaleOrdinal()
+        this.svgGroupTransformation = `translate(
+            ${(this.width) / 2},
+            ${(this.height) / 2}
+        )`;
+    }
+
+    calculateLabelTransformation = (t) => {
+        const st = this.arch.startAngle()(t);
+        const ed = this.arch.endAngle()(t);
+        const angle = Math.round(Math.abs(st - ed)).toFixed(2);
+        const twoPI = Math.round(twoPi).toFixed(2);
+
+        if (t.parent === null) {
+            return 'translate(0, 0)';
+        }
+
+        const { centroid } = this.arch;
+
+        if (angle >= twoPI) {
+            return `translate(${centroid(t)})`;
+        }
+
+        return `
+            translate(${centroid(t)})
+            rotate(${this.calculateTextRotation(t)})
+        `;
+    }
+
+    calculateTextRotation = (d) => {
+        const angle = ((this.scaleX((d.x0 + d.x1) / 2)
+            - (Math.PI / 2)) / Math.PI) * 180;
+
+        return (angle > 90) ? 180 + angle : angle;
+    };
+
+    init = () => {
+        const { colorScheme } = this.props;
+
+        this.calculateBounds();
+
+        this.radius = Math.min(this.width, this.height) / 2;
+        this.scaleY = scaleLinear()
+            .range([0, this.radius]);
+
+        this.color = scaleOrdinal()
             .range(colorScheme);
 
-        const arch = arc()
-            .startAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x0))))
-            .endAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x1))))
-            .innerRadius(d => Math.max(0, y(d.y0)))
-            .outerRadius(d => Math.max(0, y(d.y1)));
+        this.arch = arc()
+            .startAngle(d => Math.max(0, Math.min(twoPi, this.scaleX(d.x0))))
+            .endAngle(d => Math.max(0, Math.min(twoPi, this.scaleX(d.x1))))
+            .innerRadius(d => Math.max(0, this.scaleY(d.y0)))
+            .outerRadius(d => Math.max(0, this.scaleY(d.y1)));
+    }
 
-        const tooltip = select(this.container)
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('z-index', 10)
-            .style('display', 'none');
+    clearNodes = (svg) => {
+        svg.selectAll('*')
+            .remove();
+    }
 
-        const group = el
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+    handleArcMouseOver = (d) => {
+        const { labelAccessor } = this.props;
+        const label = labelAccessor(d.data) || '';
+
+        this.tooltip.innerHTML = `
+            <span class="${styles.label}">
+                ${label}
+            </span>
+            <span class="${styles.value}">
+                ${d.value}
+            </span>
+        `;
+
+        const { style } = this.tooltip;
+        style.display = 'block';
+    }
+
+    handleArcMouseMove = () => {
+        const { style } = this.tooltip;
+        style.top = `${event.pageY + tooltipOffset.y}px`;
+        style.left = `${event.pageX + tooltipOffset.x}px`;
+    }
+
+    handleArcMouseOut = () => {
+        const { style } = this.tooltip;
+        style.display = 'none';
+    }
+
+    filterText = (d, textLength, textWidth) => {
+        const innerRadius = this.arch.innerRadius()(d);
+        const outerRadius = this.arch.outerRadius()(d);
+        const arcWidth = outerRadius - innerRadius;
+        const angle = this.arch.endAngle()(d)
+            - this.arch.startAngle()(d);
+        const arcLength = angle * innerRadius;
+
+        return (arcWidth <= textLength || arcLength <= textWidth);
+    }
+
+    handleSliceClick = (selection, node) => {
+        selection
+            .selectAll('text')
+            .transition()
+            .attr('opacity', 0);
+
+        const tran = transition()
+            .duration(transitionDuration);
+
+        selection
+            .transition(tran)
+            .tween('scale', () => {
+                const xd = interpolateArray(this.scaleX.domain(), [node.x0, node.x1]);
+                const yd = interpolateArray(this.scaleY.domain(), [node.y0, 1]);
+                const yr = interpolateArray(this.scaleY.range(), [node.y0 ? 20 : 0, this.radius]);
+
+                return (t) => {
+                    this.scaleX.domain(xd(t));
+                    this.scaleY.domain(yd(t))
+                        .range(yr(t));
+                };
+            })
+            .selectAll('path')
+            .attrTween('d', t => () => this.arch(t))
+            .on('end', (e, dummy, nodes) => {
+                this.renderText(node, e, nodes[0]);
+            });
+    }
+
+    filterText = (e, currentText) => {
+        const textLength = currentText.getComputedTextLength();
+        const textWidth = select(currentText).node().getBBox().width;
+
+        const innerRadius = this.arch.innerRadius()(e);
+        const outerRadius = this.arch.outerRadius()(e);
+        const arcWidth = outerRadius - innerRadius;
+        const angle = this.arch.endAngle()(e)
+            - this.arch.startAngle()(e);
+        const arcLength = angle * innerRadius;
+
+        return (arcWidth <= textLength || arcLength <= textWidth);
+    }
+
+    renderText = (node, e, currentNode) => {
+        if (e.x0 >= node.x0 && e.x1 <= node.x1) {
+            const text = select(currentNode.parentNode)
+                .select('text');
+
+            text.transition()
+                .duration(transitionDuration)
+                .attr('opacity', 1)
+                .attr('transform', this.calculateLabelTransformation)
+                .filter((e1, dummy, textNodes) => (
+                    this.filterText(e1, textNodes[0])
+                ))
+                .attr('opacity', 0)
+                .attr('text-anchor', 'middle');
+        }
+    }
+
+    renderChart = () => {
+        const {
+            boundingClientRect,
+            data,
+            childrenAccessor,
+            labelAccessor,
+            valueAccessor,
+            showLabels,
+            showTooltip,
+        } = this.props;
+
+        if (!boundingClientRect.width || isObjectEmpty(data)) {
+            return;
+        }
+
+        this.init();
+
+        const {
+            width,
+            height,
+        } = boundingClientRect;
+
+        const svg = select(this.svg);
+
+        this.clearNodes(svg);
+        // this.tooltip = this.createTooltip(container);
+
+        const group = svg.attr('width', width)
+            .attr('height', height)
             .append('g')
-            .attr('transform', `translate( ${(width + left + right) / 2}, ${(height + top + bottom) / 2})`);
-
-        function computeTextRotation(d) {
-            const angle = ((x((d.x0 + d.x1) / 2) - (Math.PI / 2)) / Math.PI) * 180;
-            return (angle > 90) ? 180 + angle : angle;
-            // return (angle < 90 || angle > 180) ? angle + 90 : angle - 90; // rotation as rims
-        }
-
-        function placeTextLabel(t) {
-            const st = arch.startAngle()(t);
-            const ed = arch.endAngle()(t);
-            const angle = Math.round(Math.abs(st - ed)).toFixed(2);
-            const twoPI = Math.round(2 * Math.PI).toFixed(2);
-            if (t.parent === null) return 'translate(0,0)';
-            if (angle >= twoPI) {
-                return `translate(${arch.centroid(t)})`;
-            }
-            return `translate(${arch.centroid(t)})rotate(${computeTextRotation(t)})`;
-        }
-
-        function mouseOverArc(d) {
-            tooltip.html(`<span class="name">${labelAccessor(d.data) || ''}</span><span class="value">${d.value}</span>`);
-            return tooltip
-                .transition()
-                .style('display', 'inline-block');
-        }
-
-        function mouseMoveArc() {
-            return tooltip
-                .style('top', `${event.pageY - 30}px`)
-                .style('left', `${event.pageX + 20}px`);
-        }
-
-        function mouseOutArc() {
-            return tooltip
-                .transition()
-                .style('display', 'none');
-        }
-        const partitions = partition();
+            .attr('transform', this.svgGroupTransformation);
 
         const root = hierarchy(data, childrenAccessor)
             .sum(d => valueAccessor(d));
+        const partitions = partition()(root);
+        const slicesData = partitions.descendants();
 
         const slices = group
             .selectAll('g')
-            .data(partitions(root)
-                .descendants())
+            .data(slicesData)
             .enter()
             .append('g');
-
-        function filterText(d, textLength, textWidth) {
-            const innerRadius = arch.innerRadius()(d);
-            const outerRadius = arch.outerRadius()(d);
-            const arcWidth = outerRadius - innerRadius;
-            const angle = arch.endAngle()(d) - arch.startAngle()(d);
-            const arcLength = angle * innerRadius;
-
-            return (arcWidth <= textLength || arcLength <= textWidth);
-        }
-
-        function handleClick(d) {
-            slices
-                .selectAll('text')
-                .transition()
-                .attr('opacity', 0);
-            const tran = transition()
-                .duration(750);
-            slices
-                .transition(tran)
-                .tween('scale', () => {
-                    const xd = interpolateArray(x.domain(), [d.x0, d.x1]);
-                    const yd = interpolateArray(y.domain(), [d.y0, 1]);
-                    const yr = interpolateArray(y.range(), [d.y0 ? 20 : 0, radius]);
-                    return (t) => {
-                        x.domain(xd(t));
-                        y.domain(yd(t))
-                            .range(yr(t));
-                    };
-                })
-                .selectAll('path')
-                .attrTween('d', t => () => arch(t))
-                .on('end', function addLabels(e) {
-                    if (e.x0 >= d.x0 && e.x1 <= d.x1) {
-                        const labelText = select(this.parentNode)
-                            .select('text');
-                        labelText
-                            .transition()
-                            .duration(750)
-                            .attr('opacity', 1)
-                            .attr('transform', t => placeTextLabel(t))
-                            .filter(function filtrate(t) {
-                                const textLength = this.getComputedTextLength();
-                                const textWidth = select(this).node().getBBox().width;
-                                return filterText(t, textLength, textWidth);
-                            })
-                            .attr('opacity', 0)
-                            .attr('text-anchor', 'middle');
-                    }
-                });
-        }
 
         const arcs = slices
             .append('path')
             .attr('class', 'arcs')
-            .attr('d', arch)
+            .attr('d', this.arch)
             .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
-            .style('fill', d => color(labelAccessor(d.children ? d.data : d.parent.data)))
-            .on('click', handleClick);
+            .style('fill', d => this.color(labelAccessor(d.children ? d.data : d.parent.data)))
+            .on('click', d => this.handleSliceClick(slices, d));
 
         if (showTooltip) {
-            arcs
-                .on('mouseover', mouseOverArc)
-                .on('mousemove', mouseMoveArc)
-                .on('mouseout', mouseOutArc);
+            arcs.on('mouseover', this.handleArcMouseOver)
+                .on('mousemove', this.handleArcMouseMove)
+                .on('mouseout', this.handleArcMouseOut);
         }
 
         if (showLabels) {
             const labels = slices
                 .append('text')
                 .attr('class', 'labels')
-                .attr('transform', d => placeTextLabel(d))
+                .attr('transform', this.calculateLabelTransformation)
                 .attr('pointer-events', 'none')
                 .attr('text-anchor', 'middle')
                 .text(d => labelAccessor(d.data))
                 .style('fill', (d) => {
-                    const colorBg = color(labelAccessor(d.children ? d.data : d.parent.data));
+                    const colorBg = this.color(labelAccessor(d.children ? d.data : d.parent.data));
                     return getColorOnBgColor(colorBg);
                 });
 
-            labels
-                .filter(function filtrate(d) {
-                    const textLength = this.getComputedTextLength();
-                    const textWidth = select(this).node().getBBox().height;
-                    return filterText(d, textLength, textWidth);
-                })
-                .attr('opacity', 0);
+            labels.filter((e, dummy, textNodes) => (
+                this.filterText(e, textNodes[0])
+            )).attr('opacity', 0);
         }
     }
 
     render() {
+        const { className } = this.props;
+        const svgClassName = [
+            'sunburst',
+            styles.sunburst,
+            className,
+        ].join(' ');
+
+        const tooltipClassName = [
+            'sunburst-tooltip',
+            styles.sunburstTooltip,
+        ].join(' ');
+
         return (
-            <div
-                className={`sunburst-container ${this.props.className}`}
-                ref={(el) => { this.container = el; }}
-            >
+            <Fragment>
                 <svg
-                    className="sunburst"
                     ref={(elem) => { this.svg = elem; }}
+                    className={svgClassName}
                 />
-            </div>
+                <Float>
+                    <div
+                        ref={(el) => { this.tooltip = el; }}
+                        className={tooltipClassName}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }
