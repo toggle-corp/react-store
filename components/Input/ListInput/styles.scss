@@ -11,13 +11,12 @@
         }
 
         .label {
-            flex-grow: 1;
             padding: $spacing-small $spacing-small-alt;
+            width: calc(100% - #{$width-icon-large});
         }
 
         .action {
             display: none;
-            flex-shrink: 0;
             color: $color-danger;
         }
 

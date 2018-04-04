@@ -1,8 +1,10 @@
 @import '../../../stylesheets/base';
 
 .text-area {
+    display: flex;
+    flex-direction: column;
+
     .label {
-        width: 100%;
         text-transform: uppercase;
         color: $color-text-label;
         font-size: $font-size-extra-small;
@@ -14,7 +16,6 @@
         border-bottom: $width-separator-medium solid $color-separator-alt;
         background-color: transparent;
         padding: $spacing-extra-small 0;
-        width: 100%;
         color: $color-text;
         font-family: inherit;
         font-size: inherit;
