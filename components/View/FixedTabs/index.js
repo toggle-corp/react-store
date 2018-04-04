@@ -11,6 +11,7 @@ const propTypes = {
     }),
     onClick: PropTypes.func,
     active: PropTypes.string,
+    children: PropTypes.node,
 };
 
 const defaultProps = {
@@ -18,6 +19,7 @@ const defaultProps = {
     className: '',
     tabs: [],
     onClick: () => {},
+    children: null,
 };
 
 export default class ScrollTabs extends React.PureComponent {
@@ -93,7 +95,9 @@ export default class ScrollTabs extends React.PureComponent {
                     data={tabList}
                     modifier={this.renderTab}
                 />
-                <div className={styles.void} />
+                <div className={styles.void}>
+                    { this.props.children }
+                </div>
             </div>
         );
     }
