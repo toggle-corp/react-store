@@ -51,7 +51,11 @@ export default class GeoReferencedMap extends React.PureComponent {
             container: this.mapContainer,
             style: process.env.REACT_APP_MAPBOX_STYLE,
             zoom: 2,
+            scrollZoom: false,
         });
+
+        this.mapContainer.addEventListener('wheel', this.handleZoom);
+        map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
         map.on('load', () => {
             if (this.mounted) {
@@ -61,8 +65,8 @@ export default class GeoReferencedMap extends React.PureComponent {
                 });
             }
         });
-        setTimeout(() => { map.resize(); }, 900);
 
+        setTimeout(() => { map.resize(); }, 900);
         const popup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false,
@@ -126,6 +130,8 @@ export default class GeoReferencedMap extends React.PureComponent {
             map.remove();
             this.setState({ map: undefined });
         }
+
+        this.mapContainer.removeEventListener('wheel', this.handleZoom);
         this.mounted = false;
     }
 
@@ -138,6 +144,22 @@ export default class GeoReferencedMap extends React.PureComponent {
             return '#f768a1';
         }
         return '#ae017e';
+    }
+
+    handleZoom = (event) => {
+        const { map } = this.state;
+        if (!map) return;
+        if (event.type === 'wheel') {
+            if (event.ctrlKey) {
+                if (!map.scrollZoom.isEnabled()) {
+                    map.scrollZoom.enable();
+                }
+            } else {
+                map.scrollZoom.disable();
+            }
+        }
+        event.preventDefault();
+        event.stopPropagation();
     }
 
     addPointsLayers = () => {
