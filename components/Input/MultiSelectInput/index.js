@@ -158,6 +158,8 @@ export default class MultiSelectInput extends React.PureComponent {
         if (this.container) {
             this.boundingClientRect = this.container.getBoundingClientRect();
         } else {
+            // NOTE: timeout
+            // should have a clearTimeout
             setTimeout(() => {
                 this.boundingClientRect = this.container.getBoundingClientRect();
             }, 0);

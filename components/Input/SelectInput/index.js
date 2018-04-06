@@ -48,6 +48,8 @@ export default class SelectInput extends React.PureComponent {
         if (this.container) {
             this.boundingClientRect = this.container.getBoundingClientRect();
         } else {
+            // FIXME: timeout
+            // should have a clearTimeout
             setTimeout(() => {
                 this.boundingClientRect = this.container.getBoundingClientRect();
             }, 0);
