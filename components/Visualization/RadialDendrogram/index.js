@@ -7,6 +7,7 @@ import { scalePow, scaleOrdinal } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 
 // FIXME: don't use globals
@@ -60,6 +61,8 @@ const defaultProps = {
  * RadialDendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical
  * clustering. The clusters are arranged in circle.
  */
+
+@BoundError()
 @Responsive
 export default class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;

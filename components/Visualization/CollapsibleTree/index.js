@@ -7,6 +7,7 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import styles from './styles.scss';
 
@@ -55,6 +56,8 @@ const defaultProps = {
 /**
  * CollapsibleTree is a tree diagram showing the hierarchical structure of the data.
  */
+
+@BoundError()
 @Responsive
 export default class CollapsibleTree extends React.PureComponent {
     static propTypes = propTypes;

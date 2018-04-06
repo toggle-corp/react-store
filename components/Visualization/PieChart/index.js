@@ -8,6 +8,7 @@ import { interpolateNumber } from 'd3-interpolate';
 
 import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
 
@@ -39,6 +40,8 @@ const defaultProps = {
     loading: false,
 };
 
+
+@BoundError()
 @Responsive
 export default class PieChart extends Component {
     static propTypes = propTypes;
