@@ -199,7 +199,9 @@ export default class FormHelper {
     }
 
     handlePush = (elementName, mode) => {
-        const basicSetting = mode === 'start' ? { $unshift: [undefined] } : { $push: [undefined] };
+        const basicSetting = mode === 'start'
+            ? { $autoArray: { $unshift: [undefined] } }
+            : { $autoArray: { $push: [undefined] } };
         // setting value
         const valueSettings = createSettings(
             elementName,
