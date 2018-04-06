@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '../../../constants';
-
+import loading from '../../../resources/img/loading.gif';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -27,7 +26,7 @@ export default class LoadingAnimation extends React.PureComponent {
 
         return (
             <div className={`${styles.loadingAnimation} ${className}`}>
-                <span className={`${iconNames.loading} ${styles.icon}`} />
+                <img src={loading} alt="loading" />
                 { children &&
                     <span className={styles.message}>
                         {children}
