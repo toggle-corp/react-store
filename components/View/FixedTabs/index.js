@@ -76,6 +76,7 @@ export default class ScrollTabs extends React.PureComponent {
                 onClick={onClick}
                 className={className}
                 key={data}
+                type="button"
             >
                 { tabs[data] }
             </button>

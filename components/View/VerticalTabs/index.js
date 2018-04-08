@@ -71,9 +71,10 @@ export default class VerticalTabs extends React.PureComponent {
 
         return (
             <button
-                onClick={onClick}
                 className={className}
                 key={data}
+                onClick={onClick}
+                type="button"
             >
                 { tabs[data] }
             </button>

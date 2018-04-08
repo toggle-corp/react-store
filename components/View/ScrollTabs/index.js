@@ -67,9 +67,10 @@ export default class ScrollTabs extends React.Component {
 
         return (
             <button
-                onClick={onClick}
                 className={className}
                 key={data}
+                onClick={onClick}
+                type="button"
             >
                 { tabs[data] }
             </button>
