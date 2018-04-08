@@ -11,6 +11,7 @@ import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import {
     getStandardFilename,
     getColorOnBgColor,
@@ -77,6 +78,8 @@ const transitionDuration = 750;
  * Sunburst is a multilevel pie chart used to represent proportion of values found at each level
  * in hierarchy.
  * */
+
+@BoundError()
 @Responsive
 export default class SunBurst extends PureComponent {
     static propTypes = propTypes;

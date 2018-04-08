@@ -8,6 +8,7 @@ import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import {
     getStandardFilename,
     getColorOnBgColor,
@@ -62,6 +63,8 @@ const defaultProps = {
  * CorrelationMatrix visualizes the correlation coefficients of multiple variables as colors
  * in the grid.
  * */
+
+@BoundError()
 @Responsive
 export default class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;

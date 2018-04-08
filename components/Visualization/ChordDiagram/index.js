@@ -6,8 +6,11 @@ import { arc } from 'd3-shape';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+
 import styles from './styles.scss';
 
 /**
@@ -59,6 +62,7 @@ const defaultProps = {
  * radially around a circle with the relationships between the data points typically drawn as arcs
  * connecting the data.
  */
+@BoundError()
 @Responsive
 export default class ChordDiagram extends React.PureComponent {
     static propTypes = propTypes;

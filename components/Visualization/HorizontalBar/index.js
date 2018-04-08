@@ -6,6 +6,7 @@ import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
@@ -56,6 +57,8 @@ const defaultProps = {
  * A horizontal bar graph shows categorical data with rectangular bars with length proportional
  * to values they represent.
  */
+
+@BoundError()
 @Responsive
 export default class HorizontalBar extends React.PureComponent {
     static propTypes = propTypes;

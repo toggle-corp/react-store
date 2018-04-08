@@ -7,6 +7,7 @@ import { extent } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import styles from './styles.scss';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
@@ -61,6 +62,8 @@ const defaultProps = {
  * Dendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical
  * clustering.
  */
+
+@BoundError()
 @Responsive
 export default class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;

@@ -9,6 +9,7 @@ import { range } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import { getStandardFilename, getColorOnBgColor, getHexFromRgb, isObjectEmpty } from '../../../utils/common';
 
 // FIXME: don't use globals
@@ -65,6 +66,8 @@ const defaultProps = {
 /**
  * TreeMap shows hierarchical data  as nested rectangles.
  */
+
+@BoundError()
 @Responsive
 export default class TreeMap extends React.PureComponent {
     static propTypes = propTypes;

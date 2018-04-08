@@ -5,6 +5,7 @@ import { hierarchy, tree } from 'd3-hierarchy';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
+import BoundError from '../../General/BoundError';
 import update from '../../../utils/immutable-update';
 import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
 
@@ -67,6 +68,8 @@ const defaultProps = {
     },
 };
 
+
+@BoundError()
 @Responsive
 export default class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
