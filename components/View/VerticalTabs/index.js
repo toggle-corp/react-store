@@ -11,7 +11,6 @@ const propTypes = {
     }),
     onClick: PropTypes.func,
     active: PropTypes.string,
-    children: PropTypes.node,
 };
 
 const defaultProps = {
@@ -19,10 +18,9 @@ const defaultProps = {
     className: '',
     tabs: [],
     onClick: () => {},
-    children: null,
 };
 
-export default class ScrollTabs extends React.PureComponent {
+export default class VerticalTabs extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -31,8 +29,8 @@ export default class ScrollTabs extends React.PureComponent {
 
         const classNames = [
             className,
-            'fixed-tabs',
-            styles.fixedTabs,
+            'vertical-tabs',
+            styles.verticalTabs,
         ];
 
         return classNames.join(' ');
@@ -41,7 +39,7 @@ export default class ScrollTabs extends React.PureComponent {
     getTabClassName = (isActive) => {
         const classNames = [
             styles.tab,
-            'fixed-tab',
+            'vertical-tab',
         ];
 
         if (isActive) {
@@ -73,9 +71,9 @@ export default class ScrollTabs extends React.PureComponent {
 
         return (
             <button
-                onClick={onClick}
                 className={className}
                 key={data}
+                onClick={onClick}
                 type="button"
             >
                 { tabs[data] }
@@ -96,9 +94,6 @@ export default class ScrollTabs extends React.PureComponent {
                     data={tabList}
                     modifier={this.renderTab}
                 />
-                <div className={styles.void}>
-                    { this.props.children }
-                </div>
             </div>
         );
     }

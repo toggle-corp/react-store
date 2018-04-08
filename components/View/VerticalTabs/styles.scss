@@ -1,0 +1,18 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/button-base';
+
+.vertical-tabs {
+    overflow-y: auto;
+
+    .tab {
+        @extend %button-base;
+        padding: $spacing-small $spacing-medium;
+        width: 100%;
+        text-align: left;
+
+        &.active {
+            @include background-color($color-accent);
+        }
+    }
+}
+
