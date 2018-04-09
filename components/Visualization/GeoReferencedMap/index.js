@@ -6,6 +6,8 @@ import mapboxgl from 'mapbox-gl';
 import LoadingAnimation from '../../View/LoadingAnimation';
 import { getDifferenceInDays } from '../../../utils/common';
 
+import styles from './styles.scss';
+
 const propTypes = {
     className: PropTypes.string,
     geoLocations: PropTypes.arrayOf(PropTypes.shape({
@@ -18,7 +20,7 @@ const propTypes = {
         title: PropTypes.string,
         date: PropTypes.string,
     })),
-    // loading: PropTypes.bool,
+    loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -27,7 +29,7 @@ const defaultProps = {
     geoLocations: [],
     geoPoints: [],
     geoJsonBounds: undefined,
-    // loading: false,
+    loading: false,
 };
 
 export default class GeoReferencedMap extends React.PureComponent {
@@ -108,6 +110,7 @@ export default class GeoReferencedMap extends React.PureComponent {
 
         window.addEventListener('keydown', this.handleCtrlDown);
         window.addEventListener('keyup', this.handleCtrlUp);
+        window.addEventListener('wheel', this.handleScroll);
         this.mapResizeTimeout = setTimeout(() => { map.resize(); }, 900);
     }
 
@@ -135,7 +138,9 @@ export default class GeoReferencedMap extends React.PureComponent {
 
         window.removeEventListener('keyup', this.handleCtrlUp);
         window.removeEventListener('keydown', this.handleCtrlDown);
+        window.removeEventListener('wheel', this.handleScroll);
         clearTimeout(this.mapResizeTimeout);
+        clearTimeout(this.mapOverlayTimeout);
     }
 
     getColorForMarker = (date) => {
@@ -303,28 +308,46 @@ export default class GeoReferencedMap extends React.PureComponent {
 
     handleCtrlDown = (event) => {
         if (this.map && event.key === 'Control') {
+            if (this.overlay) {
+                this.overlay.style.display = 'none';
+            }
             this.map.scrollZoom.enable();
         }
+    }
+
+    handleScroll = (event) => {
+        if (!this.map) {
+            return;
+        }
+        if (!this.map.scrollZoom.isEnabled() && !event.ctrlKey) {
+            if (this.overlay) {
+                this.overlay.style.display = 'flex';
+            }
+        }
+        this.mapOverlayTimout = setTimeout(() => { this.overlay.style.display = 'none'; }, 1500);
     }
 
     render() {
         const {
             className,
-            // loading,
+            loading,
         } = this.props;
-        const loading = false;
-
         return (
             <div
-                className={className}
+                className={`${className} ${styles.container}`}
                 ref={(el) => { this.mapContainer = el; }}
-                style={{ position: 'relative' }}
             >
                 {
                     (this.state.pendingMap || loading) && (
                         <LoadingAnimation />
                     )
                 }
+                <div
+                    className={`${styles.overlay} overlay`}
+                    ref={(el) => { this.overlay = el; }}
+                >
+                    Use ctrl + scrool to zoom the map
+                </div>
             </div>
         );
     }

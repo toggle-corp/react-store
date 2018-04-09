@@ -1,0 +1,19 @@
+@import '../../../stylesheets/base';
+
+.container {
+    position: relative;
+
+    .overlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        background-color: $color-background-overlay;
+        font-size: $font-size-extra-large;
+        align-items: center;
+        z-index: 111111;
+    }
+}
