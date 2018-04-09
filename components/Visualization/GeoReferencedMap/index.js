@@ -18,7 +18,7 @@ const propTypes = {
         title: PropTypes.string,
         date: PropTypes.string,
     })),
-    loading: PropTypes.bool,
+    // loading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -27,7 +27,7 @@ const defaultProps = {
     geoLocations: [],
     geoPoints: [],
     geoJsonBounds: undefined,
-    loading: false,
+    // loading: false,
 };
 
 export default class GeoReferencedMap extends React.PureComponent {
@@ -36,9 +36,8 @@ export default class GeoReferencedMap extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
         this.state = {
-            map: undefined,
+            pendingMap: true,
         };
     }
 
@@ -54,19 +53,18 @@ export default class GeoReferencedMap extends React.PureComponent {
             scrollZoom: false,
         });
 
-        this.mapContainer.addEventListener('wheel', this.handleZoom);
         map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
         map.on('load', () => {
-            if (this.mounted) {
-                this.setState({ map }, () => {
-                    this.loadGeoRegions(this.props.geoLocations);
-                    this.loadGeoPoints(this.props.geoPoints);
-                });
+            if (!this.mounted) {
+                return;
             }
+            this.map = map;
+            this.loadGeoRegions(this.props.geoLocations);
+            this.loadGeoPoints(this.props.geoPoints);
+            this.setState({ pendingMap: false });
         });
 
-        setTimeout(() => { map.resize(); }, 900);
         const popup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false,
@@ -107,6 +105,10 @@ export default class GeoReferencedMap extends React.PureComponent {
             map.getCanvas().style.cursor = '';
             popup.remove();
         });
+
+        window.addEventListener('keydown', this.handleCtrlDown);
+        window.addEventListener('keyup', this.handleCtrlUp);
+        this.mapResizeTimeout = setTimeout(() => { map.resize(); }, 900);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -119,20 +121,21 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        const { map } = this.state;
-        if (map) {
-            map.removeLayer('region-layer');
-            map.removeLayer('points-layer');
-            map.removeLayer('clustered-point-symbol');
-            map.removeLayer('unclustered-point-symbol');
-            map.removeLayer('unclustered-point-circle');
-            map.removeSource('geojson');
-            map.remove();
-            this.setState({ map: undefined });
+        if (this.map) {
+            this.map.removeLayer('region-layer');
+            this.map.removeLayer('points-layer');
+            this.map.removeLayer('clustered-point-symbol');
+            this.map.removeLayer('unclustered-point-symbol');
+            this.map.removeLayer('unclustered-point-circle');
+            this.map.removeSource('geojson');
+            this.map.remove();
+            this.map = undefined;
         }
-
-        this.mapContainer.removeEventListener('wheel', this.handleZoom);
         this.mounted = false;
+
+        window.removeEventListener('keyup', this.handleCtrlUp);
+        window.removeEventListener('keydown', this.handleCtrlDown);
+        clearTimeout(this.mapResizeTimeout);
     }
 
     getColorForMarker = (date) => {
@@ -146,26 +149,8 @@ export default class GeoReferencedMap extends React.PureComponent {
         return '#ae017e';
     }
 
-    handleZoom = (event) => {
-        const { map } = this.state;
-        if (!map) return;
-        if (event.type === 'wheel') {
-            if (event.ctrlKey) {
-                if (!map.scrollZoom.isEnabled()) {
-                    map.scrollZoom.enable();
-                }
-            } else {
-                map.scrollZoom.disable();
-            }
-        }
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
     addPointsLayers = () => {
-        const { map } = this.state;
-
-        map.addLayer({
+        this.map.addLayer({
             id: 'points-layer',
             type: 'circle',
             source: 'points',
@@ -192,7 +177,7 @@ export default class GeoReferencedMap extends React.PureComponent {
             },
         });
 
-        map.addLayer({
+        this.map.addLayer({
             id: 'clustered-point-symbol',
             type: 'symbol',
             source: 'points',
@@ -203,7 +188,7 @@ export default class GeoReferencedMap extends React.PureComponent {
             },
         });
 
-        map.addLayer({
+        this.map.addLayer({
             id: 'unclustered-point-symbol',
             type: 'symbol',
             source: 'points',
@@ -217,7 +202,7 @@ export default class GeoReferencedMap extends React.PureComponent {
             },
         });
 
-        map.addLayer({
+        this.map.addLayer({
             id: 'unclustered-point-circle',
             type: 'circle',
             source: 'points',
@@ -236,9 +221,7 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     addRegionsLayer = () => {
-        const { map } = this.state;
-
-        map.addLayer({
+        this.map.addLayer({
             id: 'region-layer',
             type: 'fill',
             source: 'geojson',
@@ -251,12 +234,11 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     loadGeoRegions(geoLocations) {
-        const { map } = this.state;
-        if (!geoLocations || !map) {
+        if (!geoLocations || !this.map) {
             return;
         }
 
-        const source = map.getSource('geojson');
+        const source = this.map.getSource('geojson');
         const countriesData = {
             type: 'FeatureCollection',
             features: geoLocations.map(selection => (
@@ -267,7 +249,7 @@ export default class GeoReferencedMap extends React.PureComponent {
             return;
         }
 
-        map.addSource('geojson', {
+        this.map.addSource('geojson', {
             type: 'geojson',
             data: countriesData,
         });
@@ -276,8 +258,7 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     loadGeoPoints(geoPoints) {
-        const { map } = this.state;
-        if (!geoPoints || !map) {
+        if (!geoPoints || !this.map) {
             return;
         }
 
@@ -299,12 +280,12 @@ export default class GeoReferencedMap extends React.PureComponent {
             )),
         };
 
-        const source = map.getSource('points');
+        const source = this.map.getSource('points');
         if (source) {
             source.setData(pointsData);
             return;
         }
-        map.addSource('points', {
+        this.map.addSource('points', {
             type: 'geojson',
             data: pointsData,
             cluster: true,
@@ -314,11 +295,24 @@ export default class GeoReferencedMap extends React.PureComponent {
         this.addPointsLayers();
     }
 
+    handleCtrlUp = (event) => {
+        if (this.map && event.key === 'Control') {
+            this.map.scrollZoom.disable();
+        }
+    }
+
+    handleCtrlDown = (event) => {
+        if (this.map && event.key === 'Control') {
+            this.map.scrollZoom.enable();
+        }
+    }
+
     render() {
         const {
             className,
-            loading,
+            // loading,
         } = this.props;
+        const loading = false;
 
         return (
             <div
@@ -327,7 +321,7 @@ export default class GeoReferencedMap extends React.PureComponent {
                 style={{ position: 'relative' }}
             >
                 {
-                    (!this.state.map || loading) && (
+                    (this.state.pendingMap || loading) && (
                         <LoadingAnimation />
                     )
                 }
