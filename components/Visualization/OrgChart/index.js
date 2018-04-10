@@ -1,7 +1,8 @@
 import React from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
+import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
@@ -40,6 +41,7 @@ const propTypes = {
     disabled: PropTypes.bool,
     fillColor: PropTypes.string,
     selectColor: PropTypes.string,
+    nodeSize: PropTypes.arrayOf(PropTypes.number),
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -56,6 +58,7 @@ const defaultProps = {
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
+    nodeSize: [150, 300],
     onSelection: () => [],
     disabled: false,
     fillColor: '#ffffff',
@@ -77,6 +80,7 @@ export default class OrgChart extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        Object.assign(this, { x: 0, y: 0, k: 1 });
         const { value = [] } = props;
         this.state = {
             selected: value,
@@ -160,6 +164,7 @@ export default class OrgChart extends React.PureComponent {
             labelAccessor,
             disabled,
             fillColor,
+            nodeSize,
             selectColor,
             margins,
         } = this.props;
@@ -193,14 +198,20 @@ export default class OrgChart extends React.PureComponent {
         const group = svg
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
+            .call(zoom().on('zoom', () => {
+                const { x, y, k } = event.transform;
+                Object.assign(this, { x, y, k });
+                group
+                    .attr('transform', `translate(${x + left + (width / 2)}, ${top + rectPadding + y}) scale(${k})`);
+            }))
             .append('g')
-            .attr('transform', `translate(${left}, ${top + rectPadding})`);
-
-        const treemap = tree()
-            .size([width, height - 100])
-            .separation((a, b) => (a.parent === b.parent ? 1 : 1));
+            .attr('transform',
+                `translate(${this.x + left + (width / 2)}, ${top + rectPadding + this.y}) scale(${this.k})`);
 
         const root = hierarchy(data, childAccessor);
+        const treemap = tree()
+            .nodeSize(nodeSize)
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
         const treeData = treemap(root);
 
         const link = linkVertical()

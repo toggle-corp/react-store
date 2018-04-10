@@ -1,9 +1,10 @@
 import React from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { scaleOrdinal } from 'd3-scale';
 import { easeSinInOut } from 'd3-ease';
 import { schemePaired } from 'd3-scale-chromatic';
+import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
@@ -31,6 +32,7 @@ const propTypes = {
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    nodeSize: PropTypes.arrayOf(PropTypes.number),
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -44,6 +46,7 @@ const defaultProps = {
     data: [],
     childrenAccessor: d => d.children,
     colorScheme: schemePaired,
+    nodeSize: [50, 300],
     className: '',
     margins: {
         top: 20,
@@ -63,6 +66,11 @@ export default class CollapsibleTree extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        Object.assign(this, { x: 0, y: 0, k: 1 });
+    }
+
     componentDidMount() {
         this.drawChart();
     }
@@ -77,11 +85,19 @@ export default class CollapsibleTree extends React.PureComponent {
             bottom,
             left,
         } = margins;
-        return select(this.svg)
+        const group = select(this.svg)
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
+            .call(zoom().on('zoom', () => {
+                const { x, y, k } = event.transform;
+                Object.assign(this, { x, y, k });
+                group
+                    .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
+            }))
             .append('g')
-            .attr('transform', `translate(${left},${top})`);
+            .attr('transform', `translate(${left},${top + (height / 2)})`);
+
+        return group;
     }
 
     setupChart = () => {
@@ -90,6 +106,7 @@ export default class CollapsibleTree extends React.PureComponent {
             childrenAccessor,
             boundingClientRect,
             colorScheme,
+            nodeSize,
             margins,
         } = this.props;
 
@@ -104,7 +121,7 @@ export default class CollapsibleTree extends React.PureComponent {
         width = width - left - right;
         height = height - top - bottom;
 
-        this.trees = tree().size([height, width - 160]);
+        this.trees = tree().nodeSize(nodeSize);
         this.root = hierarchy(data, childrenAccessor);
         this.root.x0 = height / 2;
         this.root.y0 = 0;
