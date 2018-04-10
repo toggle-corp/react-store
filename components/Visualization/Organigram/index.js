@@ -22,9 +22,7 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    value: PropTypes.shape({
-        name: PropTypes.string,
-    }),
+    value: PropTypes.string,
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     idAccessor: PropTypes.func,
@@ -76,9 +74,8 @@ export default class Organigram extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
-            const { value = undefined } = nextProps;
             this.setState({
-                selected: value,
+                selected: nextProps.value,
             });
         }
     }
@@ -156,15 +153,9 @@ export default class Organigram extends React.PureComponent {
     }
 
     addSelection = (data) => {
-        const {
-            idAccessor,
-            labelAccessor,
-        } = this.props;
+        const { idAccessor } = this.props;
 
-        const newSelection = {
-            name: labelAccessor(data),
-            id: idAccessor(data),
-        };
+        const newSelection = idAccessor(data);
         this.setState({
             selected: newSelection,
         });
@@ -174,12 +165,13 @@ export default class Organigram extends React.PureComponent {
 
     removeSelection = () => {
         this.setState({
-            selected: {},
+            selected: undefined,
+        }, () => {
+            this.props.onSelection(undefined);
         });
-        this.props.onSelection({});
     }
 
-    isSelected = data => this.props.idAccessor(data) === (this.state.selected || {}).id;
+    isSelected = data => this.props.idAccessor(data) === this.state.selected;
 
     calculateBounds = () => {
         const {
