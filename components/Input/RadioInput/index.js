@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '../../View/List/ListView';
+import Input from '../../../utils/input';
 
 import Option from './Option';
 import styles from './styles.scss';
@@ -41,6 +42,7 @@ const defaultProps = {
     value: undefined,
 };
 
+@Input
 export default class RadioInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

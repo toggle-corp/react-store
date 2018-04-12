@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
+import Input from '../../../utils/input';
+
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 import styles from './styles.scss';
-
-import Input from '../../../utils/input';
 
 const propTypes = {
     /**

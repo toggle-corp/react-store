@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Input from '../../../utils/input';
+
 import DayPicker from './DayPicker';
 import MonthPicker from './MonthPicker';
 import YearPicker from './YearPicker';
@@ -24,6 +26,7 @@ const defaultProps = {
 };
 
 
+@Input
 export default class DatePicker extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

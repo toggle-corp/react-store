@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import Input from '../../../utils/input';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -39,6 +40,7 @@ const defaultProps = {
     error: '',
 };
 
+@Input
 export default class ReCaptcha extends Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

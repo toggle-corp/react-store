@@ -6,6 +6,8 @@ import {
     randomString,
     calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
+import Input from '../../../utils/input';
+
 import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
@@ -55,6 +57,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
+@Input
 export default class ColorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -3,6 +3,7 @@ import React from 'react';
 
 import { iconNames } from '../../../constants';
 import { randomString } from '../../../utils/common';
+import Input from '../../../utils/input';
 
 import styles from './styles.scss';
 
@@ -30,6 +31,7 @@ const defaultProps = {
     value: false,
 };
 
+@Input
 export default class Checkbox extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

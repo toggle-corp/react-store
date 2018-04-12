@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 /*
  * InputAPI
@@ -56,10 +57,12 @@ export const InputContext = React.createContext(undefined);
 
 const propTypes = {
     inputName: PropTypes.string,
+    forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
-    inputName: '',
+    inputName: undefined,
+    forwardedRef: undefined,
 };
 
 const Input = (WrappedComponent) => {
@@ -68,12 +71,13 @@ const Input = (WrappedComponent) => {
         static defaultProps = defaultProps;
 
         render() {
-            const { inputName, ...props } = this.props;
+            const { inputName, forwardedRef, ...props } = this.props;
 
             return (
                 <InputContext.Consumer>
-                    {api => (api ? (
+                    {api => ((api && inputName) ? (
                         <WrappedComponent
+                            ref={forwardedRef}
                             {...api.getProps(inputName)}
                             {...props}
                         />
@@ -85,9 +89,9 @@ const Input = (WrappedComponent) => {
         }
     }
 
-    return React.forwardRef((props, ref) => (
+    return hoistNonReactStatics(React.forwardRef((props, ref) => (
         <InputHOC {...props} forwardedRef={ref} />
-    ));
+    )), WrappedComponent);
 };
 
 export default Input;

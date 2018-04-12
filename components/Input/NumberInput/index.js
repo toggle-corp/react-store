@@ -7,6 +7,7 @@ import {
     isFalsy,
     addSeparator,
 } from '../../../utils/common';
+import Input from '../../../utils/input';
 
 import styles from './styles.scss';
 
@@ -95,6 +96,7 @@ const defaultProps = {
 
 const INT_LIMIT = 9007199254740992;
 
+@Input
 export default class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

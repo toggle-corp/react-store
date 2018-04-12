@@ -14,6 +14,8 @@ import {
     decodeDate,
 } from '../../../utils/common';
 
+import Input from '../../../utils/input';
+
 /*
 eslint css-modules/no-unused-class: [
     1,
@@ -50,6 +52,7 @@ const defaultProps = {
 
 const MIN_YEAR = 1990;
 
+@Input
 export default class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -597,7 +600,7 @@ export default class DateInput extends React.PureComponent {
         const className = this.getClassName();
 
         const Label = this.renderLabel;
-        const Input = this.renderInput;
+        const InputElement = this.renderInput;
         const FloatingDatePicker = this.renderDatePicker;
         const HintAndError = this.renderHintAndError;
 
@@ -607,7 +610,7 @@ export default class DateInput extends React.PureComponent {
                 className={className}
             >
                 <Label />
-                <Input />
+                <InputElement />
                 <HintAndError />
                 <FloatingDatePicker />
             </div>

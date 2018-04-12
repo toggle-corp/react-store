@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { InputContext, InputAPI } from '../../../utils/input';
+import Input, { InputContext, InputAPI } from '../../../utils/input';
 
 
 const propTypes = {
-    className: PropTypes.string,
     children: PropTypes.node.isRequired,
     onChange: PropTypes.func,
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -14,7 +13,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
     onChange: undefined,
     value: {},
     error: {},
@@ -22,19 +20,10 @@ const defaultProps = {
 };
 
 
+@Input
 export default class InputGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    getClassName = () => {
-        const { className } = this.props;
-        const classNames = [
-            className,
-            'input-group',
-        ];
-
-        return classNames.join(' ');
-    }
 
     render() {
         const {
@@ -59,11 +48,9 @@ export default class InputGroup extends React.PureComponent {
         });
 
         return (
-            <div className={this.getClassName()}>
-                <InputContext.Provider value={inputAPI}>
-                    { children }
-                </InputContext.Provider>
-            </div>
+            <InputContext.Provider value={inputAPI}>
+                { children }
+            </InputContext.Provider>
         );
     }
 }

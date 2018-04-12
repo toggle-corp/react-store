@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Input from '../../../utils/input';
+
 
 const propTypes = {
     className: PropTypes.string,
@@ -21,6 +23,7 @@ const defaultProps = {
 };
 
 
+@Input
 export default class InputList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -9,6 +9,7 @@ import {
 
 import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
+import Input from '../../../utils/input';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -73,7 +74,7 @@ function updateNodeState(node) {
     };
 }
 
-
+@Input
 export default class TreeSelection extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

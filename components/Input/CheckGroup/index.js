@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Input from '../../../utils/input';
+
 import ListView from '../../View/List/ListView';
 import Checkbox from '../Checkbox';
 
@@ -26,6 +28,7 @@ const defaultProps = {
     value: [],
 };
 
+@Input
 export default class CheckGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
