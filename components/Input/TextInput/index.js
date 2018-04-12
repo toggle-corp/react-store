@@ -6,6 +6,8 @@ import HintAndError from '../HintAndError';
 import Label from '../Label';
 import styles from './styles.scss';
 
+import Input from '../../../utils/input';
+
 const propTypes = {
     /**
      * required for style override
@@ -89,6 +91,7 @@ const defaultProps = {
     changeDelay: 200,
 };
 
+@Input
 export default class TextInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

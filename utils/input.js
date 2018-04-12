@@ -1,0 +1,95 @@
+import PropTypes from 'prop-types';
+import React from 'react';
+
+const emptyObject = {};
+
+/*
+ * InputAPI
+ *
+ * Instance of this is passed with InputContext
+ * and is used by context provider to control all
+ * input children.
+ */
+
+export class InputAPI {
+    setProps = (props) => {
+        this.props = props;
+    }
+
+    setValue = (inputName, value) => {
+        if (this.props.onChange) {
+            const newValue = {
+                ...this.props.value,
+                [inputName]: value,
+            };
+            this.props.onChange(newValue);
+        }
+    }
+
+    getValue = inputName => (this.props.value || emptyObject)[inputName];
+    getError = inputName => (this.props.error || emptyObject)[inputName];
+    isDisabled = () => this.props.disabled;
+
+    getProps = inputName => ({
+        value: this.getValue(inputName),
+        error: this.getError(inputName),
+        disabled: this.isDisabled(),
+    })
+}
+
+/*
+ * InputContext
+ *
+ * A react context to pass InputAPI
+ */
+
+export const InputContext = React.createContext(undefined);
+
+
+/*
+ * Input HOC
+ *
+ * Transforms a component that has `onChange` and `value`
+ * props to a consumer of InputContext and auto connect the
+ * input `inputName` field of the form data.
+ */
+
+
+const propTypes = {
+    inputName: PropTypes.string,
+};
+
+const defaultProps = {
+    inputName: '',
+};
+
+const Input = (WrappedComponent) => {
+    class InputHOC extends React.PureComponent {
+        static propTypes = propTypes;
+        static defaultProps = defaultProps;
+
+        render() {
+            const { inputName, ...props } = this.props;
+
+            return (
+                <InputContext.Consumer>
+                    {api => (api ? (
+                        <WrappedComponent
+                            onChange={v => api.setValue(inputName, v)}
+                            {...api.getProps(inputName)}
+                            {...props}
+                        />
+                    ) : (
+                        <WrappedComponent {...this.props} />
+                    ))}
+                </InputContext.Consumer>
+            );
+        }
+    }
+
+    return React.forwardRef((props, ref) => (
+        <InputHOC {...props} forwardedRef={ref} />
+    ));
+};
+
+export default Input;
