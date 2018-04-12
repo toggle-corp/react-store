@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const emptyObject = {};
-
 /*
  * InputAPI
  *
@@ -12,7 +10,7 @@ const emptyObject = {};
  */
 
 export class InputAPI {
-    setProps = (props) => {
+    constructor(props) {
         this.props = props;
     }
 
@@ -26,13 +24,14 @@ export class InputAPI {
         }
     }
 
-    getValue = inputName => (this.props.value || emptyObject)[inputName];
-    getError = inputName => (this.props.error || emptyObject)[inputName];
+    getValue = inputName => this.props.value[inputName];
+    getError = inputName => this.props.error[inputName];
     isDisabled = () => this.props.disabled;
 
     getProps = inputName => ({
         value: this.getValue(inputName),
         error: this.getError(inputName),
+        onChange: v => this.setValue(inputName, v),
         disabled: this.isDisabled(),
     })
 }
@@ -75,7 +74,6 @@ const Input = (WrappedComponent) => {
                 <InputContext.Consumer>
                     {api => (api ? (
                         <WrappedComponent
-                            onChange={v => api.setValue(inputName, v)}
                             {...api.getProps(inputName)}
                             {...props}
                         />

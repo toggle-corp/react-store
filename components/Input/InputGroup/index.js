@@ -15,7 +15,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    onChange: () => { console.log('No change callback'); },
+    onChange: undefined,
     value: {},
     error: {},
     disabled: false,
@@ -25,11 +25,6 @@ const defaultProps = {
 export default class InputGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-        this.inputAPI = new InputAPI();
-    }
 
     getClassName = () => {
         const { className } = this.props;
@@ -50,7 +45,13 @@ export default class InputGroup extends React.PureComponent {
             onChange,
         } = this.props;
 
-        this.inputAPI.setProps({
+        // Always create new InputAPI so that the context provider
+        // is rerendered.
+        // As long as children's props themselves remain constant,
+        // they wouldn't be rerendered by react.
+        // VERIFY THAT IS IS NOT EXPENSIVE !
+
+        const inputAPI = new InputAPI({
             value,
             error,
             disabled,
@@ -59,7 +60,7 @@ export default class InputGroup extends React.PureComponent {
 
         return (
             <div className={this.getClassName()}>
-                <InputContext.Provider value={this.inputAPI}>
+                <InputContext.Provider value={inputAPI}>
                     { children }
                 </InputContext.Provider>
             </div>
