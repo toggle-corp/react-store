@@ -324,7 +324,13 @@ export default class GeoReferencedMap extends React.PureComponent {
                 this.overlay.style.display = 'flex';
             }
         }
-        this.mapOverlayTimout = setTimeout(() => { this.overlay.style.display = 'none'; }, 1500);
+        if (this.mapOverlayTimeout) {
+            clearTimeout(this.mapOverlayTimeout);
+        }
+        this.mapOverlayTimout = setTimeout(
+            () => { this.overlay.style.display = 'none'; },
+            1000,
+        );
     }
 
     render() {

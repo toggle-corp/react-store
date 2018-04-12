@@ -8,12 +8,18 @@
         position: absolute;
         top: 0;
         right: 0;
-        height: 100%;
-        width: 100%;
-        justify-content: center;
-        background-color: $color-background-overlay;
-        font-size: $font-size-extra-large;
         align-items: center;
-        z-index: 111111;
+        justify-content: center;
+        z-index: 1;
+        background-color: $color-background-overlay;
+        width: 100%;
+        height: 100%;
+        animation: fade-in $duration-medium ease-in forwards;
+        font-size: $font-size-extra-large;
     }
+}
+
+@keyframes fade-in {
+    from { opacity: 0 }
+    to { opacity: 1 }
 }
