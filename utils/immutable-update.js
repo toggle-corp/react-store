@@ -17,7 +17,12 @@ update.extend(
 // Control
 update.extend(
     '$if',
-    (value, object) => (value[0] ? update(object, value[1]) : object),
+    (value, object) => {
+        if (value[0]) {
+            return update(object, value[1]);
+        }
+        return value[2] ? update(object, value[2]) : object;
+    },
 );
 update.extend(
     '$bulk',
