@@ -352,7 +352,7 @@ export default class GeoReferencedMap extends React.PureComponent {
                     className={`${styles.overlay} overlay`}
                     ref={(el) => { this.overlay = el; }}
                 >
-                    Use ctrl + scrool to zoom the map
+                    Use ctrl + scroll to zoom the map
                 </div>
             </div>
         );

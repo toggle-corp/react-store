@@ -30,6 +30,8 @@ export const isFalsy = val => (
 
 export const isTruthy = val => !isFalsy(val);
 
+export const isEmpty = val => val === undefined || val === '';
+
 export const isInteger = value => (
     typeof value === 'number' && value % 1 === 0
 );

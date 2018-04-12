@@ -9,6 +9,7 @@ import {
     calcFloatingPositionInMainWindow,
     getNumDaysInMonthX,
     isDateValid,
+    isEmpty,
     encodeDate,
     decodeDate,
 } from '../../../utils/common';
@@ -203,9 +204,16 @@ export default class DateInput extends React.PureComponent {
         const { onChange } = this.props;
         const date = DateInput.getDateFromValues(this.state);
 
-        if (date) {
+        const { dayValue, yearValue, monthValue } = this.state;
+        const emptyDate = (
+            isEmpty(dayValue) &&
+            isEmpty(monthValue) &&
+            isEmpty(yearValue)
+        );
+
+        if (emptyDate || date) {
             // DateInput value should be of format yyyy-MM-dd
-            const value = encodeDate(date);
+            const value = date && encodeDate(date);
             onChange(value);
             this.setState({ isInvalid: false });
         } else {
@@ -242,16 +250,12 @@ export default class DateInput extends React.PureComponent {
     }
 
     handleClearButtonClick = () => {
-        const { onChange } = this.props;
-
         // FIXME: possibly redundant
         this.setState({
             dayValue: undefined,
             monthValue: undefined,
             yearValue: undefined,
-        });
-
-        onChange(undefined);
+        }, this.validate);
     }
 
     handleTodayButtonClick = () => {
