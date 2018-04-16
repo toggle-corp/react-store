@@ -27,6 +27,9 @@ export default function (WrappedComponent) {
 
         componentDidMount() {
             window.addEventListener('resize', this.handleWindowResize);
+            // FIXME: timeout
+            // should have a clearTimeout
+            // why is an arbitrary value of 300 used here?
             setTimeout(this.handleMount, 300);
         }
 
