@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 import SelectInput from '../SelectInput';
 
 const propTypes = {
@@ -23,7 +23,7 @@ const defaultProps = {
 };
 
 
-@Input
+@FaramElement('input')
 export default class RangeFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

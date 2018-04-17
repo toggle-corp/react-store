@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import ListView from '../../View/List/ListView';
 import Checkbox from '../Checkbox';
@@ -28,7 +28,7 @@ const defaultProps = {
     value: [],
 };
 
-@Input
+@FaramElement('input')
 export default class CheckGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

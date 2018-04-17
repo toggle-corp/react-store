@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { iconNames } from '../../../constants';
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import Option from './Option';
 import Options from './Options';
@@ -20,7 +20,7 @@ import {
     renderClearButton,
 } from './utils';
 
-@Input
+@FaramElement('input')
 export default class SelectInput extends React.PureComponent {
     static propTypes = singleSelectInputPropTypes;
     static defaultProps = singleSelectInputDefaultProps;

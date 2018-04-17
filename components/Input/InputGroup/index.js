@@ -20,7 +20,7 @@ const defaultProps = {
 };
 
 
-@Input
+@Input('input')
 export default class InputGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

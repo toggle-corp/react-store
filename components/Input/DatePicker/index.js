@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import DayPicker from './DayPicker';
 import MonthPicker from './MonthPicker';
@@ -26,7 +26,7 @@ const defaultProps = {
 };
 
 
-@Input
+@FaramElement('input')
 export default class DatePicker extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

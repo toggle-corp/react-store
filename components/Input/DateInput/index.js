@@ -14,7 +14,7 @@ import {
     decodeDate,
 } from '../../../utils/common';
 
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 /*
 eslint css-modules/no-unused-class: [
@@ -52,7 +52,7 @@ const defaultProps = {
 
 const MIN_YEAR = 1990;
 
-@Input
+@FaramElement('input')
 export default class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

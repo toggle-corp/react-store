@@ -1,10 +1,11 @@
 /**
- * @author frozenhelium <fren.ankit@gmail.com>
+* @author frozenhelium <fren.ankit@gmail.com>
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -19,6 +20,7 @@ const defaultProps = {
     errors: [],
 };
 
+@FaramElement('errorMessage')
 export default class NonFieldErrors extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

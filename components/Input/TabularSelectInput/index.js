@@ -3,7 +3,7 @@ import React from 'react';
 
 import { listToMap } from '../../../utils/common';
 import { iconNames } from '../../../constants';
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import DangerButton from '../../Action/Button/DangerButton';
 import MultiSelectInput from '../../Input/MultiSelectInput';
@@ -118,7 +118,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@Input
+@FaramElement('input')
 export default class TabularSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

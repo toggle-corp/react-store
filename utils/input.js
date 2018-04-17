@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
+// XXX: Remove this file after using Faram
+
 /*
  * InputAPI
  *

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { iconNames } from '../../../constants';
-import Input from '../../../utils/input';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import Label from '../Label';
 import HintAndError from '../HintAndError';
@@ -134,7 +134,7 @@ const getInputPlaceholder = (props) => {
 };
 
 
-@Input
+@FaramElement('input')
 export default class MultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
