@@ -563,3 +563,7 @@ export const getObjectChildren = (object, childrens, defaultValue) => {
     return getObjectChildren(object[child], childrens.slice(1), defaultValue);
 };
 
+export const checkVersion = (oldVersionId, newVersionId) => ({
+    shouldSetValue: isFalsy(oldVersionId) || oldVersionId < newVersionId,
+    isValueOverriden: isTruthy(oldVersionId) && oldVersionId < newVersionId,
+});
