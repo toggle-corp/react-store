@@ -20,9 +20,9 @@ export default class ElementGroupApi {
 
     getValue = faramElementName => this.props.value[faramElementName];
 
-    getError = faramElementName => this.props.errors[faramElementName];
+    getError = faramElementName => this.props.error[faramElementName];
 
-    getInternalError = () => this.props.errors.$internal;
+    getInternalError = () => this.props.error.$internal;
 
     isDisabled = () => this.props.disabled;
 
@@ -37,12 +37,12 @@ export default class ElementGroupApi {
                     ...this.props.value,
                     [faramElementName]: value,
                 };
-                const newErrors = {
-                    ...this.props.errors,
+                const newError = {
+                    ...this.props.error,
                     $internal: undefined,
                     [faramElementName]: undefined,
                 };
-                this.props.onChange(newValue, newErrors);
+                this.props.onChange(newValue, newError);
             };
             this.onChangeCallbacks[faramElementName] = callback;
         }

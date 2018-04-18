@@ -10,14 +10,14 @@ const propTypes = {
     children: PropTypes.node.isRequired,
     onChange: PropTypes.func,
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    errors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     onChange: undefined,
     value: {},
-    errors: {},
+    error: {},
     disabled: false,
 };
 
@@ -30,14 +30,14 @@ export default class FaramGroup extends React.PureComponent {
     componentWillMount() {
         const {
             value,
-            errors,
+            error,
             disabled,
             onChange,
         } = this.props;
 
         this.api = new ElementGroupApi({
             value,
-            errors,
+            error,
             disabled,
             onChange,
         });
@@ -47,14 +47,14 @@ export default class FaramGroup extends React.PureComponent {
         if (this.props !== nextProps) {
             const {
                 value,
-                errors,
+                error,
                 disabled,
                 onChange,
             } = nextProps;
 
             this.api.setProps({
                 value,
-                errors,
+                error,
                 disabled,
                 onChange,
             });

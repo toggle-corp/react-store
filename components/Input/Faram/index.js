@@ -30,7 +30,7 @@ const propTypes = {
     /* object with values */
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     /* Error for every field of form */
-    errors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     /* Disable all elements in form */
     disabled: PropTypes.bool,
     /* Delay every input component in form */
@@ -48,7 +48,7 @@ const defaultProps = {
     changeDelay: 100, // ms
     schema: {},
     value: {},
-    errors: {},
+    error: {},
 };
 
 /*
@@ -118,7 +118,7 @@ export default class Form extends React.PureComponent {
                 <FaramGroup
                     onChange={this.props.onChange}
                     value={this.props.value}
-                    errors={this.props.errors}
+                    error={this.props.error}
                     disabled={this.props.disabled}
                     changeDelay={this.props.changeDelay}
                 >
