@@ -27,7 +27,9 @@ export default class FaramGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    componentWillMount() {
+    render() {
+        const { children } = this.props;
+
         const {
             value,
             error,
@@ -35,34 +37,14 @@ export default class FaramGroup extends React.PureComponent {
             onChange,
         } = this.props;
 
+        // FIXME: optimize
+        // Don't create new instances
         this.api = new ElementGroupApi({
             value,
             error,
             disabled,
             onChange,
         });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props !== nextProps) {
-            const {
-                value,
-                error,
-                disabled,
-                onChange,
-            } = nextProps;
-
-            this.api.setProps({
-                value,
-                error,
-                disabled,
-                onChange,
-            });
-        }
-    }
-
-    render() {
-        const { children } = this.props;
 
         return (
             <FaramContext.Provider value={this.api}>

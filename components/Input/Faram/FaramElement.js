@@ -26,7 +26,7 @@ const defaultProps = {
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
-    class FaramElementHOC extends React.Component {
+    class FaramElementHOC extends React.PureComponent {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 

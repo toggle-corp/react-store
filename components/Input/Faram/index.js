@@ -79,7 +79,6 @@ export default class Form extends React.PureComponent {
     }
 
     // Submit using ref
-
     submit = () => {
         if (this.props.disabled) {
             return;

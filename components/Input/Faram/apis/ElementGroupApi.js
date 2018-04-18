@@ -1,7 +1,7 @@
 /*
  * ElementGroupApi
  *
- * Instance of this is passed with InputContext
+ * Instance of this is passed with FaramContext
  * and is used by context provider to control all
  * input children.
  */
@@ -9,11 +9,8 @@
 export default class ElementGroupApi {
     constructor(props) {
         this.setProps(props);
-        // memoize onChange callbacks
-        this.onChangeCallbacks = {};
     }
 
-    // To update props later
     setProps = (props) => {
         this.props = props;
     }
@@ -26,27 +23,25 @@ export default class ElementGroupApi {
 
     isDisabled = () => this.props.disabled;
 
-    getOnChange = (faramElementName) => {
-        if (!this.onChangeCallbacks[faramElementName]) {
-            const callback = (value) => {
-                if (!this.props.onChange) {
-                    return;
-                }
-
-                const newValue = {
-                    ...this.props.value,
-                    [faramElementName]: value,
-                };
-                const newError = {
-                    ...this.props.error,
-                    $internal: undefined,
-                    [faramElementName]: undefined,
-                };
-                this.props.onChange(newValue, newError);
-            };
-            this.onChangeCallbacks[faramElementName] = callback;
+    // FIXME: optimize
+    // Memoize this function
+    getOnChange = faramElementName => (value, error) => {
+        if (!this.props.onChange) {
+            return;
         }
-        return this.onChangeCallbacks[faramElementName];
+
+        const newValue = {
+            ...this.props.value,
+            [faramElementName]: value,
+        };
+
+        const newError = {
+            ...this.props.error,
+            $internal: undefined,
+            [faramElementName]: error,
+        };
+
+        this.props.onChange(newValue, newError);
     }
 
     getCalculatedProps = (faramElementName, elementType) => {
@@ -58,13 +53,11 @@ export default class ElementGroupApi {
                     onChange: this.getOnChange(faramElementName),
                     disabled: this.isDisabled(),
                 };
-                // console.warn(faramElementName, calculatedProps);
                 return calculatedProps;
             } case 'errorMessage': {
                 const calculatedProps = {
                     errors: this.getInternalError(),
                 };
-                // console.warn(faramElementName, calculatedProps);
                 return calculatedProps;
             } default:
                 console.warn(`Unidentified element type '${elementType}'`);
