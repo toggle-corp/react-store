@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { iconNames } from '../../../constants';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import Option from './Option';
 import Options from './Options';
@@ -19,6 +20,7 @@ import {
     renderClearButton,
 } from './utils';
 
+@FaramElement('input')
 export default class SelectInput extends React.PureComponent {
     static propTypes = singleSelectInputPropTypes;
     static defaultProps = singleSelectInputDefaultProps;
@@ -167,7 +169,7 @@ export default class SelectInput extends React.PureComponent {
     render() {
         const className = getClassName(styles, 'single-select-input', this.state, this.props);
         const Label = renderLabel;
-        const Input = this.renderInput;
+        const InputElement = this.renderInput;
         const Actions = this.renderActions;
         const HintAndError = renderHintAndError;
 
@@ -196,7 +198,7 @@ export default class SelectInput extends React.PureComponent {
                     {...this.props}
                 />
                 <div className={`input-wrapper ${styles.inputWrapper}`}>
-                    <Input />
+                    <InputElement />
                     <Actions />
                 </div>
                 <HintAndError

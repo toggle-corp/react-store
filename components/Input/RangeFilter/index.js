@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
 import SelectInput from '../SelectInput';
 
 const propTypes = {
@@ -22,7 +23,8 @@ const defaultProps = {
 };
 
 
-export default class ScaleFrameworkList extends React.PureComponent {
+@FaramElement('input')
+export default class RangeFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

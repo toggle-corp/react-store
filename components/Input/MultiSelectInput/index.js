@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { iconNames } from '../../../constants';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import Label from '../Label';
 import HintAndError from '../HintAndError';
@@ -132,6 +133,8 @@ const getInputPlaceholder = (props) => {
     return placeholder;
 };
 
+
+@FaramElement('input')
 export default class MultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -444,7 +447,7 @@ export default class MultiSelectInput extends React.PureComponent {
 
     render() {
         const className = this.getClassName();
-        const Input = this.renderInput;
+        const InputElement = this.renderInput;
         const Actions = this.renderActions;
 
         const {
@@ -476,7 +479,7 @@ export default class MultiSelectInput extends React.PureComponent {
                     text={label}
                 />
                 <div className={`input-wrapper ${styles.inputWrapper}`}>
-                    <Input />
+                    <InputElement />
                     <Actions />
                 </div>
                 <HintAndError

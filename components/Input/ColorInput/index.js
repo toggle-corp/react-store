@@ -6,6 +6,8 @@ import {
     randomString,
     calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
+import FaramElement from '../../Input/Faram/FaramElement';
+
 import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
@@ -55,6 +57,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
+@FaramElement('input')
 export default class ColorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

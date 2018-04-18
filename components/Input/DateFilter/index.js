@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
+
 import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
@@ -47,6 +49,7 @@ const defaultProps = {
     onChange: undefined,
 };
 
+@FaramElement('input')
 export default class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

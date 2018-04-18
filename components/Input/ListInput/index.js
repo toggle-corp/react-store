@@ -3,6 +3,7 @@ import React from 'react';
 import Button from '../../Action/Button';
 import ListView from '../../View/List/ListView';
 import iconNames from '../../../constants/iconNames';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import styles from './styles.scss';
 
@@ -25,6 +26,7 @@ const defaultProps = {
     labelSelector: item => item,
 };
 
+@FaramElement('input')
 export default class ListInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

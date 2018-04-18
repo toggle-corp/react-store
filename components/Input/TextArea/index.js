@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
+import FaramElement from '../../Input/Faram/FaramElement';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -84,6 +86,7 @@ const defaultProps = {
     changeDelay: 200,
 };
 
+@FaramElement('input')
 export default class TextArea extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

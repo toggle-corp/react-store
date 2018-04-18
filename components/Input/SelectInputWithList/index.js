@@ -4,6 +4,7 @@ import MultiSelectInput from '../../Input/MultiSelectInput';
 import DangerButton from '../../Action/Button/DangerButton';
 import ListView from '../../View/List/ListView';
 import { iconNames } from '../../../../../constants';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 import styles from './styles.scss';
 
@@ -80,6 +81,7 @@ const defaultProps = {
 
 const emptyList = [];
 
+@FaramElement('input')
 export default class SelectInputWithList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
