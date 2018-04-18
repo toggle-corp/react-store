@@ -7,31 +7,76 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    children: PropTypes.string,
+    small: PropTypes.bool,
+    medium: PropTypes.bool,
+    large: PropTypes.bool,
+    message: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    children: null,
+    small: false,
+    medium: false,
+    large: false,
+    message: undefined,
 };
 
 export default class LoadingAnimation extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
+    getClassName = () => {
         const {
             className,
-            children,
+            small,
+            medium,
+            large,
         } = this.props;
 
+        const classNames = [
+            className,
+            styles.loadingAnimation,
+        ];
+
+        if (small) {
+            classNames.push(styles.small);
+        }
+
+        if (medium) {
+            classNames.push(styles.medium);
+        }
+
+        if (large) {
+            classNames.push(styles.large);
+        }
+
+        if (!small && !medium && !large) {
+            classNames.push(styles.large);
+        }
+
+        return classNames.join(' ');
+    }
+
+    render() {
+        const {
+            message,
+        } = this.props;
+
+        const className = this.getClassName();
+        const iconClassName = `
+            ${iconNames.loading}
+            ${styles.icon}
+        `;
+
         return (
-            <div className={`${styles.loadingAnimation} ${className}`}>
-                <span className={`${iconNames.loading} ${styles.icon}`} />
-                { children &&
-                    <span className={styles.message}>
-                        {children}
-                    </span>
+            <div className={className}>
+                <span className={iconClassName} />
+                {
+                    message && (
+                        <span className={styles.message}>
+                            {message}
+                        </span>
+                    )
                 }
             </div>
         );
