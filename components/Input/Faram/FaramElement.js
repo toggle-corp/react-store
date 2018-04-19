@@ -19,16 +19,16 @@ const propTypes = {
     faramElementName: PropTypes.string,
     faramElementIndex: PropTypes.number,
     forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-    listAdd: PropTypes.bool,
-    listRemove: PropTypes.bool,
+    faramAction: PropTypes.string,
+    faramElement: PropTypes.bool,
 };
 
 const defaultProps = {
     faramElementName: undefined,
     faramElementIndex: undefined,
     forwardedRef: undefined,
-    listAdd: false,
-    listRemove: false,
+    faramAction: undefined,
+    faramElement: undefined,
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
@@ -40,9 +40,9 @@ const FaramElement = elementType => (WrappedComponent) => {
             const {
                 faramElementName,
                 faramElementIndex,
-                listAdd,
-                listRemove,
                 forwardedRef,
+                faramAction,
+                faramElement,
                 ...props
             } = this.props;
             props.ref = forwardedRef;
@@ -58,12 +58,16 @@ const FaramElement = elementType => (WrappedComponent) => {
                 };
             }
 
-            if (listAdd || listRemove || isTruthy(faramElementIndex)) {
+            if (faramAction || isTruthy(faramElementIndex)) {
                 return {
-                    ...api.getCalculatedProps(
-                        faramElementIndex, elementType,
-                        listAdd, listRemove,
-                    ),
+                    ...api.getCalculatedProps(faramElementIndex, elementType, faramAction),
+                    ...props,
+                };
+            }
+
+            if (faramElement) {
+                return {
+                    ...api.getCalculatedProps(undefined, elementType),
                     ...props,
                 };
             }
@@ -81,34 +85,10 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
 
         render() {
-            const {
-                faramElementName,
-                faramElementIndex,
-                listAdd,
-                listRemove,
-                forwardedRef,
-                ...props
-            } = this.props;
-
-            if (isTruthy(faramElementName)) {
-                return (
-                    <FaramContext.Group.Consumer>
-                        {this.renderWrappedComponent}
-                    </FaramContext.Group.Consumer>
-                );
-            } else if (listAdd || listRemove || isTruthy(faramElementIndex)) {
-                return (
-                    <FaramContext.List.Consumer>
-                        {this.renderWrappedComponent}
-                    </FaramContext.List.Consumer>
-                );
-            }
-
             return (
-                <WrappedComponent
-                    ref={forwardedRef}
-                    {...props}
-                />
+                <FaramContext.Consumer>
+                    {this.renderWrappedComponent}
+                </FaramContext.Consumer>
             );
         }
     }

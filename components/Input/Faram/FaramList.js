@@ -46,9 +46,9 @@ export default class FaramList extends React.PureComponent {
         });
 
         return (
-            <FaramContext.List.Provider value={this.api}>
+            <FaramContext.Provider value={this.api}>
                 { children }
-            </FaramContext.List.Provider>
+            </FaramContext.Provider>
         );
     }
 }

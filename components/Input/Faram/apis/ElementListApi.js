@@ -40,12 +40,12 @@ export default class ElementListApi {
         this.props.onChange(newValue, newError);
     }
 
-    getOnClick = (add, remove, faramElementIndex) => (
-        (add && this.add) ||
-        (remove && this.createRemoveHandler(faramElementIndex))
+    getOnClick = (action, faramElementIndex) => (
+        (action === 'add' && this.add) ||
+        (action === 'remove' && this.createRemoveHandler(faramElementIndex))
     )
 
-    getCalculatedProps = (faramElementIndex, elementType, add, remove) => {
+    getCalculatedProps = (faramElementIndex, elementType, action) => {
         switch (elementType) {
             case 'input': {
                 const calculatedProps = {
@@ -63,7 +63,7 @@ export default class ElementListApi {
             } case 'action': {
                 const calculatedProps = {
                     disabled: this.isDisabled(),
-                    onClick: this.getOnClick(add, remove, faramElementIndex),
+                    onClick: this.getOnClick(action, faramElementIndex),
                 };
                 return calculatedProps;
             } default:
