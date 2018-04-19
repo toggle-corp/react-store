@@ -23,8 +23,8 @@ export default class ElementGroupApi {
 
     isDisabled = () => this.props.disabled;
 
-    // FIXME: optimize
-    // Memoize this function
+    // FIXME: Optimize
+    // Memoize function
     getOnChange = faramElementName => (value, error) => {
         if (!this.props.onChange) {
             return;

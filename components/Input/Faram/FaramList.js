@@ -4,26 +4,26 @@ import React from 'react';
 
 import FaramElement from './FaramElement';
 import FaramContext from './FaramContext';
-import ElementGroupApi from './apis/ElementGroupApi';
+import ElementListApi from './apis/ElementListApi';
 
 const propTypes = {
     children: PropTypes.node.isRequired,
     onChange: PropTypes.func,
-    value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    error: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     onChange: undefined,
-    value: {},
-    error: {},
+    value: [],
+    error: [],
     disabled: false,
 };
 
 
 @FaramElement('input')
-export default class FaramGroup extends React.PureComponent {
+export default class FaramList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -38,8 +38,7 @@ export default class FaramGroup extends React.PureComponent {
         } = this.props;
 
         // FIXME: optimize
-        // Don't create new instances
-        this.api = new ElementGroupApi({
+        this.api = new ElementListApi({
             value,
             error,
             disabled,
@@ -47,9 +46,9 @@ export default class FaramGroup extends React.PureComponent {
         });
 
         return (
-            <FaramContext.Group.Provider value={this.api}>
+            <FaramContext.List.Provider value={this.api}>
                 { children }
-            </FaramContext.Group.Provider>
+            </FaramContext.List.Provider>
         );
     }
 }

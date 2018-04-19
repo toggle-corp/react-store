@@ -6,5 +6,8 @@ import React from 'react';
  * A react context to pass apis
  */
 
-const FaramContext = React.createContext(undefined);
+const FaramContext = {
+    Group: React.createContext(undefined),
+    List: React.createContext(undefined),
+};
 export default FaramContext;
