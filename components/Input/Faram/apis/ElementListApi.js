@@ -9,12 +9,10 @@ import { isTruthy } from '../../../../utils/common';
  */
 
 export default class ElementListApi {
-    constructor(props) {
-        this.setProps(props);
-    }
+    changeHandlers = {};
 
     setProps = (props) => {
-        this.props = props;
+        this.props = { ...props };
     }
 
     getValue = faramElementIndex => (this.props.value || [])[faramElementIndex];
@@ -25,9 +23,7 @@ export default class ElementListApi {
 
     isDisabled = () => this.props.disabled;
 
-    // FIXME: optimize
-    // Memoize this function
-    getOnChange = faramElementIndex => (value, error) => {
+    createOnChange = faramElementIndex => (value, error) => {
         if (!this.props.onChange) {
             return;
         }
@@ -41,7 +37,22 @@ export default class ElementListApi {
             [faramElementIndex]: error,
         };
 
+        // NOTE: Save these values in this.props so that above
+        // destructuring keeps working before setProps is
+        // again called.
+        this.props.value = newValue;
+        this.props.error = newError;
         this.props.onChange(newValue, newError);
+    }
+
+    getOnChange = (faramElementName) => {
+        if (this.changeHandlers[faramElementName]) {
+            return this.changeHandlers[faramElementName];
+        }
+
+        const handler = this.createOnChange(faramElementName);
+        this.changeHandlers[faramElementName] = handler;
+        return handler;
     }
 
     getOnClick = (action, faramElementIndex) => {

@@ -64,7 +64,7 @@ const FaramElement = elementType => (WrappedComponent) => {
             return props;
         }
 
-        renderWrappedComponent = (api) => {
+        renderWrappedComponent = ({ api } = {}) => {
             const newProps = this.calculateProps(api);
             return <WrappedComponent {...newProps} />;
         }

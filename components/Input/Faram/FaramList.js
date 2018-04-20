@@ -27,6 +27,8 @@ export default class FaramList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    api = new ElementListApi();
+
     render() {
         const { children } = this.props;
 
@@ -37,8 +39,7 @@ export default class FaramList extends React.PureComponent {
             onChange,
         } = this.props;
 
-        // FIXME: optimize
-        this.api = new ElementListApi({
+        this.api.setProps({
             value,
             error,
             disabled,
@@ -46,7 +47,9 @@ export default class FaramList extends React.PureComponent {
         });
 
         return (
-            <FaramContext.Provider value={this.api}>
+            // Context Provider is pure so we need to pass new object
+            // as value everytime.
+            <FaramContext.Provider value={{ api: this.api }}>
                 { children }
             </FaramContext.Provider>
         );
