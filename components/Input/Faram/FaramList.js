@@ -1,46 +1,45 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Input, { InputContext, InputAPI } from '../../../utils/input';
 
+import FaramElement from './FaramElement';
+import FaramContext from './FaramContext';
+import ElementListApi from './apis/ElementListApi';
 
 const propTypes = {
     children: PropTypes.node.isRequired,
     onChange: PropTypes.func,
-    value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     onChange: undefined,
-    value: {},
+    value: [],
     error: {},
     disabled: false,
 };
 
 
-@Input('input')
-export default class InputGroup extends React.PureComponent {
+@FaramElement('input')
+export default class FaramList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    api = new ElementListApi();
+
     render() {
+        const { children } = this.props;
+
         const {
-            children,
             value,
             error,
             disabled,
             onChange,
         } = this.props;
 
-        // Always create new InputAPI so that the context provider
-        // is rerendered.
-        // As long as children's props themselves remain constant,
-        // they wouldn't be rerendered by react.
-        // VERIFY THAT IS IS NOT EXPENSIVE !
-
-        const inputAPI = new InputAPI({
+        this.api.setProps({
             value,
             error,
             disabled,
@@ -48,9 +47,11 @@ export default class InputGroup extends React.PureComponent {
         });
 
         return (
-            <InputContext.Provider value={inputAPI}>
+            // Context Provider is pure so we need to pass new object
+            // as value everytime.
+            <FaramContext.Provider value={{ api: this.api }}>
                 { children }
-            </InputContext.Provider>
+            </FaramContext.Provider>
         );
     }
 }

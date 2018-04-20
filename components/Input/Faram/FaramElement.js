@@ -17,12 +17,18 @@ import { isTruthy } from '../../../utils/common';
 
 const propTypes = {
     faramElementName: PropTypes.string,
+    faramElementIndex: PropTypes.number,
     forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
+    faramAction: PropTypes.string,
+    faramElement: PropTypes.bool,
 };
 
 const defaultProps = {
     faramElementName: undefined,
+    faramElementIndex: undefined,
     forwardedRef: undefined,
+    faramAction: undefined,
+    faramElement: false,
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
@@ -30,19 +36,37 @@ const FaramElement = elementType => (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        renderWrappedComponent = (api) => {
-            const { faramElementName, forwardedRef, ...props } = this.props;
+        calculateProps = (api) => {
+            const {
+                forwardedRef,
+                faramElementName,
+                faramElementIndex,
+                faramAction,
+                faramElement,
+                ...props
+            } = this.props;
 
-            const newProps = (api && isTruthy(faramElementName))
-                ? { ...api.getCalculatedProps(faramElementName, elementType), ...props }
-                : props;
+            // Set reference
+            props.ref = forwardedRef;
 
-            return (
-                <WrappedComponent
-                    ref={forwardedRef}
-                    {...newProps}
-                />
-            );
+            if (!api) {
+                return props;
+            }
+
+            const identifier = faramElementName || faramElementIndex;
+            if (faramElement || isTruthy(identifier) || isTruthy(faramAction)) {
+                return {
+                    ...api.getCalculatedProps(identifier, elementType, faramAction),
+                    ...props,
+                };
+            }
+
+            return props;
+        }
+
+        renderWrappedComponent = ({ api } = {}) => {
+            const newProps = this.calculateProps(api);
+            return <WrappedComponent {...newProps} />;
         }
 
         render() {
@@ -56,7 +80,10 @@ const FaramElement = elementType => (WrappedComponent) => {
 
     return hoistNonReactStatics(
         React.forwardRef((props, ref) => (
-            <FaramElementHOC {...props} forwardedRef={ref} />
+            <FaramElementHOC
+                {...props}
+                forwardedRef={ref}
+            />
         )),
         WrappedComponent,
     );

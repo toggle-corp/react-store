@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import FaramElement from '../../Input/Faram/FaramElement';
 
 /*
 eslint css-modules/no-unused-class: [
@@ -86,6 +87,7 @@ const defaultProps = {
 /**
  * Basic button component
  */
+@FaramElement('action')
 export default class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

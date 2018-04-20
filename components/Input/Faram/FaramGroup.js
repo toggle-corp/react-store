@@ -27,19 +27,18 @@ export default class FaramGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
-        const { children } = this.props;
+    api = new ElementGroupApi();
 
+    render() {
         const {
+            children,
             value,
             error,
             disabled,
             onChange,
         } = this.props;
 
-        // FIXME: optimize
-        // Don't create new instances
-        this.api = new ElementGroupApi({
+        this.api.setProps({
             value,
             error,
             disabled,
@@ -47,7 +46,9 @@ export default class FaramGroup extends React.PureComponent {
         });
 
         return (
-            <FaramContext.Provider value={this.api}>
+            // Context Provider is pure so we need to pass new object
+            // as value everytime.
+            <FaramContext.Provider value={{ api: this.api }}>
                 { children }
             </FaramContext.Provider>
         );

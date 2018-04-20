@@ -7,25 +7,21 @@
  */
 
 export default class ElementGroupApi {
-    constructor(props) {
-        this.setProps(props);
-    }
+    changeHandlers = {};
 
     setProps = (props) => {
-        this.props = props;
+        this.props = { ...props };
     }
 
-    getValue = faramElementName => this.props.value[faramElementName];
+    getValue = faramElementName => (this.props.value || {})[faramElementName];
 
-    getError = faramElementName => this.props.error[faramElementName];
+    getError = faramElementName => (this.props.error || {})[faramElementName];
 
-    getInternalError = () => this.props.error.$internal;
+    getInternalError = () => (this.props.error || {}).$internal;
 
     isDisabled = () => this.props.disabled;
 
-    // FIXME: optimize
-    // Memoize this function
-    getOnChange = faramElementName => (value, error) => {
+    createOnChange = faramElementName => (value, error) => {
         if (!this.props.onChange) {
             return;
         }
@@ -41,7 +37,22 @@ export default class ElementGroupApi {
             [faramElementName]: error,
         };
 
+        // NOTE: Save these values in this.props so that above
+        // destructuring keeps working before setProps is
+        // again called.
+        this.props.value = newValue;
+        this.props.error = newError;
         this.props.onChange(newValue, newError);
+    }
+
+    getOnChange = (faramElementName) => {
+        if (this.changeHandlers[faramElementName]) {
+            return this.changeHandlers[faramElementName];
+        }
+
+        const handler = this.createOnChange(faramElementName);
+        this.changeHandlers[faramElementName] = handler;
+        return handler;
     }
 
     getCalculatedProps = (faramElementName, elementType) => {
