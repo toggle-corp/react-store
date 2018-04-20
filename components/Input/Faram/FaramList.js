@@ -10,14 +10,14 @@ const propTypes = {
     children: PropTypes.node.isRequired,
     onChange: PropTypes.func,
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    error: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     onChange: undefined,
     value: [],
-    error: [],
+    error: {},
     disabled: false,
 };
 

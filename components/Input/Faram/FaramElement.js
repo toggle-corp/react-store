@@ -28,7 +28,7 @@ const defaultProps = {
     faramElementIndex: undefined,
     forwardedRef: undefined,
     faramAction: undefined,
-    faramElement: undefined,
+    faramElement: false,
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
@@ -38,36 +38,25 @@ const FaramElement = elementType => (WrappedComponent) => {
 
         calculateProps = (api) => {
             const {
+                forwardedRef,
                 faramElementName,
                 faramElementIndex,
-                forwardedRef,
                 faramAction,
                 faramElement,
                 ...props
             } = this.props;
+
+            // Set reference
             props.ref = forwardedRef;
 
             if (!api) {
                 return props;
             }
 
-            if (isTruthy(faramElementName)) {
+            const identifier = faramElementName || faramElementIndex;
+            if (faramElement || isTruthy(identifier) || isTruthy(faramAction)) {
                 return {
-                    ...api.getCalculatedProps(faramElementName, elementType),
-                    ...props,
-                };
-            }
-
-            if (faramAction || isTruthy(faramElementIndex)) {
-                return {
-                    ...api.getCalculatedProps(faramElementIndex, elementType, faramAction),
-                    ...props,
-                };
-            }
-
-            if (faramElement) {
-                return {
-                    ...api.getCalculatedProps(undefined, elementType),
+                    ...api.getCalculatedProps(identifier, elementType, faramAction),
                     ...props,
                 };
             }
@@ -77,11 +66,7 @@ const FaramElement = elementType => (WrappedComponent) => {
 
         renderWrappedComponent = (api) => {
             const newProps = this.calculateProps(api);
-            return (
-                <WrappedComponent
-                    {...newProps}
-                />
-            );
+            return <WrappedComponent {...newProps} />;
         }
 
         render() {
@@ -95,7 +80,10 @@ const FaramElement = elementType => (WrappedComponent) => {
 
     return hoistNonReactStatics(
         React.forwardRef((props, ref) => (
-            <FaramElementHOC {...props} forwardedRef={ref} />
+            <FaramElementHOC
+                {...props}
+                forwardedRef={ref}
+            />
         )),
         WrappedComponent,
     );

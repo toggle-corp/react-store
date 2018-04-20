@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
 import ListItem from './ListItem';
 
 const propTypeData = PropTypes.arrayOf(
@@ -29,6 +30,7 @@ const defaultProps = {
     keyExtractor: undefined,
 };
 
+@FaramElement('list')
 export default class List extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

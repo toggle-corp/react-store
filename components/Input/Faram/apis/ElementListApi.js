@@ -1,3 +1,5 @@
+import { isTruthy } from '../../../../utils/common';
+
 /*
  * ElementListApi
  *
@@ -15,14 +17,16 @@ export default class ElementListApi {
         this.props = props;
     }
 
-    getValue = faramElementIndex => this.props.value[faramElementIndex];
+    getValue = faramElementIndex => (this.props.value || [])[faramElementIndex];
 
-    getError = faramElementIndex => this.props.error[faramElementIndex];
+    getError = faramElementIndex => (this.props.error || {})[faramElementIndex];
 
-    getInternalError = () => this.props.error.$internal;
+    getInternalError = () => (this.props.error || {}).$internal;
 
     isDisabled = () => this.props.disabled;
 
+    // FIXME: optimize
+    // Memoize this function
     getOnChange = faramElementIndex => (value, error) => {
         if (!this.props.onChange) {
             return;
@@ -40,10 +44,49 @@ export default class ElementListApi {
         this.props.onChange(newValue, newError);
     }
 
-    getOnClick = (action, faramElementIndex) => (
-        (action === 'add' && this.add) ||
-        (action === 'remove' && this.createRemoveHandler(faramElementIndex))
-    )
+    getOnClick = (action, faramElementIndex) => {
+        switch (action) {
+            case 'add':
+                return this.add;
+            case 'remove':
+                return () => this.remove(faramElementIndex);
+            default:
+                return this.noOp;
+        }
+    }
+
+    noOp = () => {};
+
+    add = () => {
+        const newValue = [...this.props.value, undefined];
+        const newError = {
+            ...this.props.error,
+            $internal: undefined,
+        };
+
+        this.props.onChange(newValue, newError);
+    }
+
+    remove = (index) => {
+        const newValue = [...this.props.value];
+        newValue.splice(index, 1);
+
+        const newError = {
+            ...this.props.error,
+            $internal: undefined,
+        };
+
+        delete newError[index];
+
+        for (let i = index + 1; i < this.props.value.length; i += 1) {
+            delete newError[i - 1];
+            if (isTruthy(newError[i])) {
+                newError[i - 1] = newError[i];
+            }
+        }
+
+        this.props.onChange(newValue, newError);
+    }
 
     getCalculatedProps = (faramElementIndex, elementType, action) => {
         switch (elementType) {
@@ -66,38 +109,15 @@ export default class ElementListApi {
                     onClick: this.getOnClick(action, faramElementIndex),
                 };
                 return calculatedProps;
-            } default:
+            } case 'list': {
+                const calculatedProps = {
+                    data: this.props.value,
+                };
+                return calculatedProps;
+            }
+            default:
                 console.warn(`Unidentified element type '${elementType}'`);
                 return {};
         }
-    }
-
-    createRemoveHandler = index => () => this.remove(index);
-
-    add = () => {
-        const newValue = [...this.props.value, undefined];
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
-        };
-
-        this.props.onChange(newValue, newError);
-    }
-
-    remove = (index) => {
-        const newValue = [...this.props.value];
-        newValue.splice(index, 1);
-
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
-        };
-
-        delete newError[index];
-        for (let i = index + 1; i < this.props.value.length; i += 1) {
-            newError[i - 1] = newError[i];
-        }
-
-        this.props.onChange(newValue, newError);
     }
 }

@@ -15,16 +15,16 @@ export default class ElementGroupApi {
         this.props = props;
     }
 
-    getValue = faramElementName => this.props.value[faramElementName];
+    getValue = faramElementName => (this.props.value || {})[faramElementName];
 
-    getError = faramElementName => this.props.error[faramElementName];
+    getError = faramElementName => (this.props.error || {})[faramElementName];
 
-    getInternalError = () => this.props.error.$internal;
+    getInternalError = () => (this.props.error || {}).$internal;
 
     isDisabled = () => this.props.disabled;
 
-    // FIXME: Optimize
-    // Memoize function
+    // FIXME: optimize
+    // Memoize this function
     getOnChange = faramElementName => (value, error) => {
         if (!this.props.onChange) {
             return;
