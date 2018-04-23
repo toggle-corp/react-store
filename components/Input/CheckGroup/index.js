@@ -28,8 +28,7 @@ const defaultProps = {
     value: [],
 };
 
-@FaramElement('input')
-export default class CheckGroup extends React.PureComponent {
+class CheckGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -115,3 +114,5 @@ export default class CheckGroup extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(CheckGroup);

@@ -57,8 +57,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@FaramElement('input')
-export default class ColorInput extends React.PureComponent {
+class ColorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -194,3 +193,5 @@ export default class ColorInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(ColorInput);

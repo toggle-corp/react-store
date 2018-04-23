@@ -20,8 +20,7 @@ import {
     renderClearButton,
 } from './utils';
 
-@FaramElement('input')
-export default class SelectInput extends React.PureComponent {
+class SelectInput extends React.PureComponent {
     static propTypes = singleSelectInputPropTypes;
     static defaultProps = singleSelectInputDefaultProps;
 
@@ -224,3 +223,5 @@ export default class SelectInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(SelectInput);

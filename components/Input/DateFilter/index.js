@@ -49,8 +49,7 @@ const defaultProps = {
     onChange: undefined,
 };
 
-@FaramElement('input')
-export default class DateFilter extends React.PureComponent {
+class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -334,3 +333,5 @@ export default class DateFilter extends React.PureComponent {
         ]);
     }
 }
+
+export default FaramElement('input')(DateFilter);

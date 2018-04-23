@@ -30,8 +30,7 @@ const defaultProps = {
     keyExtractor: undefined,
 };
 
-@FaramElement('list')
-export default class List extends React.Component {
+class List extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -64,3 +63,5 @@ export default class List extends React.Component {
         );
     }
 }
+
+export default FaramElement('list')(List);

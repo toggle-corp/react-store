@@ -118,8 +118,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@FaramElement('input')
-export default class TabularSelectInput extends React.PureComponent {
+class TabularSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -389,3 +388,5 @@ export default class TabularSelectInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(TabularSelectInput);

@@ -96,8 +96,7 @@ const defaultProps = {
 
 const INT_LIMIT = 9007199254740992;
 
-@FaramElement('input')
-export default class NumberInput extends React.PureComponent {
+class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -357,3 +356,5 @@ export default class NumberInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(NumberInput);

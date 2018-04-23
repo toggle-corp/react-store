@@ -81,8 +81,7 @@ const defaultProps = {
 
 const emptyList = [];
 
-@FaramElement('input')
-export default class SelectInputWithList extends React.PureComponent {
+class SelectInputWithList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -285,3 +284,5 @@ export default class SelectInputWithList extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(SelectInputWithList);

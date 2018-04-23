@@ -26,8 +26,7 @@ const defaultProps = {
 };
 
 
-@FaramElement('input')
-export default class DatePicker extends React.PureComponent {
+class DatePicker extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -141,3 +140,5 @@ export default class DatePicker extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(DatePicker);

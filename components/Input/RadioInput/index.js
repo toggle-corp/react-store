@@ -42,8 +42,7 @@ const defaultProps = {
     value: undefined,
 };
 
-@FaramElement('input')
-export default class RadioInput extends React.PureComponent {
+class RadioInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -112,3 +111,5 @@ export default class RadioInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(RadioInput);
