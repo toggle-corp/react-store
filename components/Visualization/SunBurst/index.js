@@ -214,17 +214,6 @@ export default class SunBurst extends PureComponent {
         style.display = 'none';
     }
 
-    filterText = (d, textLength, textWidth) => {
-        const innerRadius = this.arch.innerRadius()(d);
-        const outerRadius = this.arch.outerRadius()(d);
-        const arcWidth = outerRadius - innerRadius;
-        const angle = this.arch.endAngle()(d)
-            - this.arch.startAngle()(d);
-        const arcLength = angle * innerRadius;
-
-        return (arcWidth <= textLength || arcLength <= textWidth);
-    }
-
     handleSliceClick = (selection, node) => {
         selection
             .selectAll('text')
@@ -256,7 +245,7 @@ export default class SunBurst extends PureComponent {
 
     filterText = (e, currentText) => {
         const textLength = currentText.getComputedTextLength();
-        const textWidth = select(currentText).node().getBBox().width;
+        const textWidth = select(currentText).node().getBBox().height;
 
         const innerRadius = this.arch.innerRadius()(e);
         const outerRadius = this.arch.outerRadius()(e);
@@ -264,7 +253,7 @@ export default class SunBurst extends PureComponent {
         const angle = this.arch.endAngle()(e)
             - this.arch.startAngle()(e);
         const arcLength = angle * innerRadius;
-
+        console.warn('arc-width:', arcWidth, textLength, 'arc-length:', arcLength, textWidth);
         return (arcWidth <= textLength || arcLength <= textWidth);
     }
 
@@ -277,11 +266,10 @@ export default class SunBurst extends PureComponent {
                 .duration(transitionDuration)
                 .attr('opacity', 1)
                 .attr('transform', this.calculateLabelTransformation)
-                .filter((e1, dummy, textNodes) => (
-                    this.filterText(e1, textNodes[0])
+                .filter((e1, i, textNodes) => (
+                    this.filterText(e1, textNodes[i])
                 ))
-                .attr('opacity', 0)
-                .attr('text-anchor', 'middle');
+                .attr('opacity', 0);
         }
     }
 
@@ -356,8 +344,8 @@ export default class SunBurst extends PureComponent {
                     return getColorOnBgColor(colorBg);
                 });
 
-            labels.filter((e, dummy, textNodes) => (
-                this.filterText(e, textNodes[0])
+            labels.filter((e, i, textNodes) => (
+                this.filterText(e, textNodes[i])
             )).attr('opacity', 0);
         }
     }

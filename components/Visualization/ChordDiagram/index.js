@@ -1,15 +1,18 @@
-import React from 'react';
+import React, {
+    PureComponent,
+    Fragment,
+} from 'react';
 import { select, event } from 'd3-selection';
 import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
-import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import Float from '../../View/Float';
+import { saveSvg, getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -64,7 +67,7 @@ const defaultProps = {
  */
 @BoundError()
 @Responsive
-export default class ChordDiagram extends React.PureComponent {
+export default class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -94,8 +97,7 @@ export default class ChordDiagram extends React.PureComponent {
 
     save = () => {
         const svg = select(this.svg);
-        const svgsaver = new SvgSaver();
-        svgsaver.asSvg(svg.node(), `${getStandardFilename('chord-diagram', 'graph')}.svg`);
+        saveSvg(svg.node(), `${getStandardFilename('chord-diagram', 'graph')}.svg`);
     }
 
     addGlowGradients = (svg) => {
@@ -137,7 +139,7 @@ export default class ChordDiagram extends React.PureComponent {
             .style('filter', 'url(#glow)');
 
         return select(this.tooltip)
-            .html(`<span class="name">${labelsData[d.index]}</span>`)
+            .html(`<span class=${styles.name}>${labelsData[d.index]}</span>`)
             .transition()
             .style('display', 'inline-block');
     }
@@ -165,7 +167,8 @@ export default class ChordDiagram extends React.PureComponent {
             .enter()
             .append('g')
             .on('mouseover', this.fade(0.1))
-            .on('mouseout', this.fade(1));
+            .on('mouseout', this.fade(1))
+            .style('cursor', 'pointer');
 
         const paths = group
             .append('path')
@@ -307,23 +310,24 @@ export default class ChordDiagram extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles.chordDiagramContainer} ${className}`;
-        const chordStyle = styles.chordDiagram;
-        const tooltipStyle = styles.tooltip;
+        const chordStyle = [
+            styles.chordDiagram,
+            className,
+        ].join(' ');
+
         return (
-            <div
-                className={containerStyle}
-                ref={(el) => { this.container = el; }}
-            >
-                <div
-                    className={tooltipStyle}
-                    ref={(el) => { this.tooltip = el; }}
-                />
+            <Fragment>
                 <svg
-                    className={chordStyle}
                     ref={(elem) => { this.svg = elem; }}
+                    className={chordStyle}
                 />
-            </div>
+                <Float>
+                    <div
+                        ref={(elem) => { this.tooltip = elem; }}
+                        className={styles.tooltip}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }
