@@ -74,8 +74,7 @@ function updateNodeState(node) {
     };
 }
 
-@FaramElement('input')
-export default class TreeSelection extends React.PureComponent {
+class TreeSelection extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -249,3 +248,5 @@ export default class TreeSelection extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(TreeSelection);

@@ -22,8 +22,7 @@ const defaultProps = {
 };
 
 
-@FaramElement('input')
-export default class FaramGroup extends React.PureComponent {
+class FaramGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -54,3 +53,5 @@ export default class FaramGroup extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(FaramGroup);

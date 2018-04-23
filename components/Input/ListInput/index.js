@@ -26,8 +26,7 @@ const defaultProps = {
     labelSelector: item => item,
 };
 
-@FaramElement('input')
-export default class ListInput extends React.PureComponent {
+class ListInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -91,3 +90,5 @@ export default class ListInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(ListInput);

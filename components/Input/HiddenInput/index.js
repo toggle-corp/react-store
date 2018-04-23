@@ -24,8 +24,7 @@ const defaultProps = {
     value: '',
 };
 
-@FaramElement('input')
-export default class HiddenInput extends React.PureComponent {
+class HiddenInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -49,3 +48,5 @@ export default class HiddenInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(HiddenInput);

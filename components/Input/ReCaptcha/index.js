@@ -40,8 +40,7 @@ const defaultProps = {
     error: '',
 };
 
-@FaramElement('input')
-export default class ReCaptcha extends Component {
+class ReCaptcha extends Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -177,3 +176,5 @@ export default class ReCaptcha extends Component {
         );
     }
 }
+
+export default FaramElement('input')(ReCaptcha);

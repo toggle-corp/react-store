@@ -87,8 +87,7 @@ const defaultProps = {
 /**
  * Basic button component
  */
-@FaramElement('action')
-export default class Button extends React.PureComponent {
+class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -196,3 +195,5 @@ export default class Button extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('action')(Button);

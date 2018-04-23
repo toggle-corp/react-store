@@ -23,8 +23,7 @@ const defaultProps = {
 };
 
 
-@FaramElement('input')
-export default class RangeFilter extends React.PureComponent {
+class RangeFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -98,3 +97,5 @@ export default class RangeFilter extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(RangeFilter);

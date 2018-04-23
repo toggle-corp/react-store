@@ -133,9 +133,7 @@ const getInputPlaceholder = (props) => {
     return placeholder;
 };
 
-
-@FaramElement('input')
-export default class MultiSelectInput extends React.PureComponent {
+class MultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -504,3 +502,5 @@ export default class MultiSelectInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(MultiSelectInput);

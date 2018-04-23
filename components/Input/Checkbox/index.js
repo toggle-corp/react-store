@@ -31,8 +31,7 @@ const defaultProps = {
     value: false,
 };
 
-@FaramElement('input')
-export default class Checkbox extends React.PureComponent {
+class Checkbox extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -96,3 +95,5 @@ export default class Checkbox extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(Checkbox);

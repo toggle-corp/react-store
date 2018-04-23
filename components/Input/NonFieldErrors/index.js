@@ -20,8 +20,7 @@ const defaultProps = {
     errors: [],
 };
 
-@FaramElement('errorMessage')
-export default class NonFieldErrors extends React.PureComponent {
+class NonFieldErrors extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -57,3 +56,4 @@ export default class NonFieldErrors extends React.PureComponent {
     }
 }
 
+export default FaramElement('errorMessage')(NonFieldErrors);

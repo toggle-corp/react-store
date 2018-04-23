@@ -86,8 +86,7 @@ const defaultProps = {
     changeDelay: 200,
 };
 
-@FaramElement('input')
-export default class TextArea extends React.PureComponent {
+class TextArea extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -283,3 +282,5 @@ export default class TextArea extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(TextArea);

@@ -52,8 +52,7 @@ const defaultProps = {
 
 const MIN_YEAR = 1990;
 
-@FaramElement('input')
-export default class DateInput extends React.PureComponent {
+class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -617,3 +616,5 @@ export default class DateInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(DateInput);
