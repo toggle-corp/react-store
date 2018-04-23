@@ -32,9 +32,18 @@ const defaultProps = {
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
-    class FaramElementHOC extends React.PureComponent {
+    // NOTE: FaramElementHOC must not be a PureComponent
+    class FaramElementHOC extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
+
+        constructor(props) {
+            super(props);
+
+            this.state = {
+                calculatedProps: undefined,
+            };
+        }
 
         calculateProps = (api) => {
             const {
@@ -43,25 +52,25 @@ const FaramElement = elementType => (WrappedComponent) => {
                 faramElementIndex,
                 faramAction,
                 faramElement,
-                ...props
+                ...otherProps
             } = this.props;
 
-            // Set reference
-            props.ref = forwardedRef;
-
             if (!api) {
-                return props;
+                return otherProps;
             }
 
             const identifier = faramElementName || faramElementIndex;
             if (faramElement || isTruthy(identifier) || isTruthy(faramAction)) {
                 return {
                     ...api.getCalculatedProps(identifier, elementType, faramAction),
-                    ...props,
+                    ...otherProps,
                 };
             }
 
-            return props;
+            // Set reference
+            otherProps.ref = forwardedRef;
+
+            return otherProps;
         }
 
         renderWrappedComponent = ({ api } = {}) => {
