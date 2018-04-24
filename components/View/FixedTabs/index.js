@@ -28,7 +28,7 @@ const defaultProps = {
     useHash: false,
 };
 
-export default class ScrollTabs extends React.PureComponent {
+export default class FixedTabs extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -40,7 +40,7 @@ export default class ScrollTabs extends React.PureComponent {
         };
 
         if (props.defaultHash && !window.location.hash) {
-            window.location.hash = `#/${props.defaultHash}`;
+            window.location.replace(`#/${props.defaultHash}`);
         }
     }
 
