@@ -51,12 +51,12 @@ const iconNames = {
     checkAll: 'ion-android-done-all',
     dragHandle: 'ion-android-more-vertical',
     expand: 'ion-arrow-expand',
-    download: 'fa fa-download',
+    download: 'fas fa-download',
     refresh: 'ion-refresh',
 
-    sort: 'fa fa-sort',
-    sortAscending: 'fa fa-sort-asc',
-    sortDescending: 'fa fa-sort-desc',
+    sort: 'fas fa-sort',
+    sortAscending: 'fas fa-sort-asc',
+    sortDescending: 'fas fa-sort-desc',
 };
 
 export default iconNames;

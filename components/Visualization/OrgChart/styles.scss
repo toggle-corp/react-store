@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-.org-chart-container {
+.container {
     display: flex;
     position: relative;
     width: 100%;
@@ -8,5 +8,24 @@
 
     .org-chart {
         flex: 1 1 auto;
+    }
+
+    .info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+    }
+
+    .tooltip {
+        @include shadow-medium;
+        @include background-color($color-foreground);
+
+        display: none;
+        padding: $spacing-small $spacing-medium-alt;
+        position: fixed;
+        right: 40px;
+        top: 40px;
+        z-index: 10;
     }
 }

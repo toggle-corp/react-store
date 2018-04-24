@@ -7,8 +7,14 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
+import AccentButton from '../../Action/Button/AccentButton';
 import update from '../../../utils/immutable-update';
-import { getStandardFilename, getColorOnBgColor, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    getColorOnBgColor,
+    isObjectEmpty,
+} from '../../../utils/common';
+import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -102,6 +108,10 @@ export default class OrgChart extends React.PureComponent {
         this.renderChart();
     }
 
+    componentWillUnmout() {
+        clearTimeout(this.timeout);
+    }
+
     save = () => {
         const svg = select(this.svg);
         const svgsaver = new SvgSaver();
@@ -154,6 +164,17 @@ export default class OrgChart extends React.PureComponent {
     isSelected = (item) => {
         const indexInSelection = this.findIndexInSelectedList(item);
         return indexInSelection !== -1;
+    };
+
+    showTooltip = () => {
+        this.timeout = setTimeout(this.handleTimeout, 700);
+        select(this.tooltip)
+            .style('display', 'block');
+    };
+
+    handleTimeout = () => {
+        select(this.tooltip)
+            .style('display', 'none');
     };
 
     renderChart = () => {
@@ -284,14 +305,31 @@ export default class OrgChart extends React.PureComponent {
 
     render() {
         const { className } = this.props;
+        const containerClassName = [
+            styles.container,
+            className,
+        ].join(' ');
         return (
             <div
-                className={`${styles.orgChartContainer} ${className}`}
+                className={containerClassName}
             >
                 <svg
                     className={styles.orgChart}
                     ref={(elem) => { this.svg = elem; }}
                 />
+                <AccentButton
+                    onClick={this.showTooltip}
+                    className={styles.info}
+                    iconName={iconNames.info}
+                    title="Use mouse to pan and zoom"
+                    transparent
+                />
+                <div
+                    className={styles.tooltip}
+                    ref={(el) => { this.tooltip = el; }}
+                >
+                    Use mouse to pan and zoom
+                </div>
             </div>
         );
     }
