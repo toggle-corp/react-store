@@ -9,6 +9,7 @@ const propTypes = {
     views: PropTypes.shape(PropTypes.Node),
     activeClassName: PropTypes.string,
     containerClassName: PropTypes.string,
+    useHash: PropTypes.bool,
     active: PropTypes.string,
 };
 
@@ -18,6 +19,7 @@ const defaultProps = {
     views: {},
     activeClassName: styles.active,
     containerClassName: '',
+    useHash: false,
 };
 
 export default class MultiContentView extends React.Component {
@@ -27,8 +29,38 @@ export default class MultiContentView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            hash: props.useHash ? this.getHash() : undefined,
+        };
+
         this.lazyContainers = {};
     }
+
+    componentDidMount() {
+        window.addEventListener('hashchange', this.handleHashChange);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { useHash: newUseHash } = nextProps;
+        const { useHash: oldUseHash } = this.props;
+
+        if (newUseHash !== oldUseHash) {
+            if (newUseHash) {
+                this.setState({ hash: this.getHash() });
+                window.addEventListener('hashchange', this.handleHashChange);
+            } else {
+                window.removeEventListener('hashchange', this.handleHashChange);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('hashchange', this.handleHashChange);
+    }
+
+    getHash = () => (
+        window.location.hash.substr(2)
+    )
 
     getClassName = () => {
         const { className } = this.props;
@@ -68,6 +100,10 @@ export default class MultiContentView extends React.Component {
         }
     }
 
+    handleHashChange = () => {
+        this.setState({ hash: this.getHash() });
+    }
+
     renderContainer = (p) => {
         const {
             view,
@@ -94,10 +130,18 @@ export default class MultiContentView extends React.Component {
         const {
             views,
             active,
+            useHash,
         } = this.props;
 
         const key = data;
-        const isActive = active === key;
+        let isActive;
+
+        if (useHash) {
+            isActive = this.getHash() === key;
+        } else {
+            isActive = active === key;
+        }
+
         const view = views[data];
         const Container = this.renderContainer;
         const { lazyMount } = view;
