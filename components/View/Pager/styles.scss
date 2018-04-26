@@ -10,9 +10,8 @@
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: 0;
+            padding: $spacing-extra-small 0;
             min-width: $width-icon-extra-large;
-            min-height: $width-icon-extra-large;
             font-family: inherit;
             font-size: inherit;
 
@@ -25,8 +24,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            padding: $spacing-extra-small 0;
             min-width: $width-icon-extra-large;
-            min-height: $width-icon-extra-large;
             color: $color-text-label;
             font-weight: $font-weight-bold;
             user-select: none;

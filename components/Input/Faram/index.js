@@ -19,7 +19,7 @@ const propTypes = {
     children: PropTypes.node.isRequired, // eslint-disable-line
 
     /* schema for validation */
-    schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     /* fn to be called when value of any element change */
     onChange: PropTypes.func,
     /* fn to be called when form validation fails */
@@ -46,7 +46,6 @@ const defaultProps = {
     onValidationSuccess: noOp,
     disabled: false,
     changeDelay: 100, // ms
-    schema: {},
     value: {},
     error: {},
 };

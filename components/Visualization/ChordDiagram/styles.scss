@@ -1,34 +1,20 @@
 @import '../../../stylesheets/base';
 
-.chord-diagram-container {
+.chord-diagram {
     display: flex;
-    position: relative;
-    width: 100%;
-    height: 100%;
+    flex: 1 1 auto;
+}
 
-    .tooltip {
-        @include shadow-medium;
-        display: none;
-        position: fixed;
-        z-index: 10;
-        background-color: $color-foreground;
-        padding: $spacing-small $spacing-medium-alt;
-        color: $color-text;
+.tooltip {
+    @include shadow-medium;
+    display: none;
+    position: fixed;
+    z-index: 10;
+    background-color: $color-foreground;
+    padding: $spacing-small $spacing-medium-alt;
+    color: $color-text;
 
-        .name {
-            display: block;
-        }
-    }
-
-    .chord-diagram {
-        flex: 1 1 auto;
-
-        .arcs {
-            cursor: pointer;
-        }
-
-        .glow {
-            box-shadow: inset 0 0 8px $color-shadow-light;
-        }
+    .name {
+        display: block;
     }
 }
