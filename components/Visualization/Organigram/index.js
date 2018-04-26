@@ -1,7 +1,8 @@
 import React from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
+import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 
 import Responsive from '../../General/Responsive';
@@ -27,6 +28,7 @@ const propTypes = {
     labelAccessor: PropTypes.func.isRequired,
     idAccessor: PropTypes.func,
     onSelection: PropTypes.func,
+    nodeSize: PropTypes.arrayOf(PropTypes.number),
     disabled: PropTypes.bool,
     fillColor: PropTypes.string,
     selectColor: PropTypes.string,
@@ -46,6 +48,7 @@ const defaultProps = {
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
     onSelection: () => {},
+    nodeSize: [150, 300],
     disabled: false,
     fillColor: '#ffffff',
     selectColor: '#afeeee',
@@ -58,12 +61,17 @@ const defaultProps = {
     },
 };
 
+const rectWidth = 30;
 @BoundError()
 @Responsive
 export default class Organigram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        Object.assign(this, { x: 0, y: 0, k: 1 });
+    }
     state = {
         selected: this.props.value,
     };
@@ -92,11 +100,20 @@ export default class Organigram extends React.PureComponent {
             left,
         } = margins;
 
-        return select(this.svg)
+        const group = select(this.svg)
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
+            .call(zoom().on('zoom', () => {
+                const { x, y, k } = event.transform;
+                Object.assign(this, { x, y, k });
+                group
+                    .attr('transform', `translate(${x + left + (width / 2)}, ${top + rectWidth + y}) scale(${k})`);
+            }))
             .append('g')
-            .attr('transform', `translate(${left}, ${top + 30})`);
+            .attr('transform',
+                `translate(${this.x + left + (width / 2)}, ${top + rectWidth + this.y}) scale(${this.k})`);
+
+        return group;
     }
 
     addDropShadow = (svg) => {
@@ -217,6 +234,7 @@ export default class Organigram extends React.PureComponent {
             boundingClientRect,
             childrenAccessor,
             labelAccessor,
+            nodeSize,
             disabled,
             margins,
         } = this.props;
@@ -239,7 +257,9 @@ export default class Organigram extends React.PureComponent {
         addDropShadow(select(this.svg));
         const group = setContext(width, height, margins);
         const treemap = tree()
-            .size([width, height - 50]);
+            .nodeSize(nodeSize)
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
+
         const root = hierarchy(data, childrenAccessor);
         const treeData = treemap(root);
         const links = treeData.links();
