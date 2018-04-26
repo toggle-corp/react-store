@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import hoistNonReactStatics from 'hoist-non-react-statics';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const propTypes = {
     forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
@@ -53,12 +53,12 @@ export default ErrorComponent => (WrappedComponent) => {
         }
     };
 
-    return React.forwardRef((props, ref) => (
+    const ForwardedComponent = React.forwardRef((props, ref) => (
         <Component
             {...props}
             forwardedRef={ref}
         />
     ));
 
-    // return hoistNonReactStatics(Component, WrappedComponent);
+    return hoistNonReactStatics(ForwardedComponent, WrappedComponent);
 };

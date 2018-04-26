@@ -253,7 +253,6 @@ export default class SunBurst extends PureComponent {
         const angle = this.arch.endAngle()(e)
             - this.arch.startAngle()(e);
         const arcLength = angle * innerRadius;
-        console.warn('arc-width:', arcWidth, textLength, 'arc-length:', arcLength, textWidth);
         return (arcWidth <= textLength || arcLength <= textWidth);
     }
 
