@@ -12,20 +12,9 @@
 
     .info {
         position: absolute;
-        right: 0;
-        top: 0;
+        top: $spacing-small;
+        right: $spacing-small;
         cursor: pointer;
-    }
-
-    .tooltip {
-        @include shadow-medium;
-        @include background-color($color-foreground);
-
-        display: none;
-        padding: $spacing-small $spacing-medium-alt;
-        position: fixed;
-        right: 40px;
-        top: 40px;
-        z-index: 10;
+        color: $color-accent;
     }
 }

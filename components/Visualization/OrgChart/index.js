@@ -166,17 +166,6 @@ export default class OrgChart extends React.PureComponent {
         return indexInSelection !== -1;
     };
 
-    showTooltip = () => {
-        this.timeout = setTimeout(this.handleTimeout, 700);
-        select(this.tooltip)
-            .style('display', 'block');
-    };
-
-    handleTimeout = () => {
-        select(this.tooltip)
-            .style('display', 'none');
-    };
-
     renderChart = () => {
         const {
             boundingClientRect,
@@ -317,19 +306,10 @@ export default class OrgChart extends React.PureComponent {
                     className={styles.orgChart}
                     ref={(elem) => { this.svg = elem; }}
                 />
-                <AccentButton
-                    onClick={this.showTooltip}
-                    className={styles.info}
-                    iconName={iconNames.info}
+                <span
+                    className={`${styles.info} ${iconNames.info}`}
                     title="Use mouse to pan and zoom"
-                    transparent
                 />
-                <div
-                    className={styles.tooltip}
-                    ref={(el) => { this.tooltip = el; }}
-                >
-                    Use mouse to pan and zoom
-                </div>
             </div>
         );
     }
