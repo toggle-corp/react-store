@@ -157,9 +157,9 @@ export default class OrgChart extends React.PureComponent {
         this.props.onSelection(selected);
     }
 
-    findIndexInSelectedList = item => this.state.selected.findIndex(
-        e => e.id === this.props.idAccessor(item),
-    );
+    findIndexInSelectedList = item =>
+        this.state.selected.findIndex(e => e.id === this.props.idAccessor(item));
+
 
     isSelected = (item) => {
         const indexInSelection = this.findIndexInSelectedList(item);

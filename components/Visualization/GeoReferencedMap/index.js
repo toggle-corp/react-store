@@ -25,10 +25,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    onAreaClick: undefined,
     geoLocations: [],
     geoPoints: [],
-    geoJsonBounds: undefined,
     loading: false,
 };
 
