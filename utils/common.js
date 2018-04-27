@@ -550,17 +550,17 @@ export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
 export const compareLength = comparision(x => x.length, (a, b) => (a - b));
 export const compareStringByWordCount = comparision(x => x.split(/\s+/).length, (a, b) => a - b);
 
-export const getObjectChildren = (object, childrens, defaultValue) => {
-    // object: object, childrens: (string | number | undefined)[], defaultValue: any,
-// ): any => {
-    const child = childrens[0];
-    if (!object || !child || object[child]) {
+export const getObjectChildren = (object, keys, defaultValue = undefined) => {
+    // object: object, keys: (string | number | undefined)[], defaultValue: any,
+    // ): any => {
+    const key = keys[0];
+    if (!object || !key || !object[key]) {
         return defaultValue;
     }
-    if (childrens.length === 1) {
-        return object[child];
+    if (keys.length === 1) {
+        return object[key];
     }
-    return getObjectChildren(object[child], childrens.slice(1), defaultValue);
+    return getObjectChildren(object[key], keys.slice(1), defaultValue);
 };
 
 export const checkVersion = (oldVersionId, newVersionId) => ({
