@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
 import styles from './styles.scss';
 
 import {
@@ -71,7 +72,7 @@ const defaultProps = {
 /**
  * Numeral component for formatted numbers
  */
-export default class Numeral extends React.PureComponent {
+class Numeral extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -188,3 +189,5 @@ export default class Numeral extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('output')(Numeral);

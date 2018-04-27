@@ -9,6 +9,7 @@ import {
     accumulateErrors,
     analyzeErrors,
 } from './validator';
+import computeOutputs from './computer';
 import FaramGroup from './FaramGroup';
 import styles from './styles.scss';
 
@@ -20,6 +21,7 @@ const propTypes = {
 
     /* schema for validation */
     schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.objectOf(PropTypes.any),
     /* fn to be called when value of any element change */
     onChange: PropTypes.func,
     /* fn to be called when form validation fails */
@@ -46,6 +48,7 @@ const defaultProps = {
     onValidationSuccess: noOp,
     disabled: false,
     changeDelay: 100, // ms
+    computeSchema: {},
     value: {},
     error: {},
 };
@@ -53,9 +56,28 @@ const defaultProps = {
 /*
  * Form Component for field validations and values aggregation
  */
-export default class Form extends React.PureComponent {
+export default class Faram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static checkAndUpdateOutputs = (props) => {
+        const { onChange, computeSchema, value } = props;
+        const newValue = computeOutputs(value, computeSchema);
+        if (onChange && newValue !== value) {
+            onChange(newValue);
+        }
+    }
+
+    constructor(props) {
+        super(props);
+        Faram.checkAndUpdateOutputs(props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.computeSchema !== this.props.computeSchema) {
+            Faram.checkAndUpdateOutputs(nextProps);
+        }
+    }
 
     componentWillUnmount() {
         clearTimeout(this.changeTimeout);
@@ -101,6 +123,14 @@ export default class Form extends React.PureComponent {
         return false;
     }
 
+    handleFormChange = (value) => {
+        const { onChange, computeSchema } = this.props;
+        if (onChange) {
+            const newValue = computeOutputs(value, computeSchema);
+            onChange(newValue);
+        }
+    }
+
     render() {
         const {
             children,
@@ -114,7 +144,7 @@ export default class Form extends React.PureComponent {
                 noValidate
             >
                 <FaramGroup
-                    onChange={this.props.onChange}
+                    onChange={this.handleFormChange}
                     value={this.props.value}
                     error={this.props.error}
                     disabled={this.props.disabled}

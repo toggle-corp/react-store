@@ -65,6 +65,11 @@ export default class ElementGroupApi {
                     disabled: this.isDisabled(),
                 };
                 return calculatedProps;
+            } case 'output': {
+                const calculatedProps = {
+                    value: this.getValue(faramElementName),
+                };
+                return calculatedProps;
             } case 'errorMessage': {
                 const calculatedProps = {
                     errors: this.getInternalError(),
