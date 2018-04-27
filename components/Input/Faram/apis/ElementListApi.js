@@ -109,6 +109,11 @@ export default class ElementListApi {
                     disabled: this.isDisabled(),
                 };
                 return calculatedProps;
+            } case 'output': {
+                const calculatedProps = {
+                    value: this.getValue(faramElementIndex),
+                };
+                return calculatedProps;
             } case 'errorMessage': {
                 const calculatedProps = {
                     errors: this.getInternalError(),

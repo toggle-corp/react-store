@@ -1,7 +1,9 @@
 import update from '../../../utils/immutable-update';
 
+const emptyObject = {};
+const emptyList = [];
 
-const computeOutputSettings = (obj, schema, data, otherParams = []) => {
+const computeOutputSettings = (obj, schema, data = []) => {
     const { fields, member } = schema;
 
     if (fields) {
@@ -13,13 +15,12 @@ const computeOutputSettings = (obj, schema, data, otherParams = []) => {
             let subSettings;
 
             if (isComputer) {
-                subSettings = { $set: childSchema(data, ...otherParams) };
+                subSettings = { $set: childSchema(...data) };
             } else {
                 subSettings = computeOutputSettings(
-                    obj[fieldName],
+                    (obj || emptyObject)[fieldName],
                     childSchema,
-                    data,
-                    otherParams,
+                    [...data, (obj || emptyObject)[fieldName]],
                 );
             }
 
@@ -32,12 +33,11 @@ const computeOutputSettings = (obj, schema, data, otherParams = []) => {
     if (member) {
         const settings = {};
 
-        obj.forEach((arrayItem, index) => {
+        (obj || emptyList).forEach((arrayItem, index) => {
             const itemSettings = computeOutputSettings(
                 arrayItem,
                 member,
-                data,
-                [...otherParams, index],
+                [...data, arrayItem],
             );
 
             settings[index] = itemSettings;
@@ -49,9 +49,21 @@ const computeOutputSettings = (obj, schema, data, otherParams = []) => {
     return {};
 };
 
-const computeOutputs = (obj, schema) => {
-    const settings = computeOutputSettings(obj, schema, obj);
-    return update(obj, settings);
+const MAX_ITERATIONS = 100;
+
+const computeOutputs = (initialObj, schema) => {
+    let obj = initialObj;
+    let finalObj = initialObj;
+    let iteration = 0;
+
+    do {
+        obj = finalObj;
+        const settings = computeOutputSettings(obj, schema, [obj]);
+        finalObj = update(obj, settings);
+        iteration += 1;
+    } while (finalObj !== obj && iteration < MAX_ITERATIONS);
+
+    return finalObj;
 };
 
 export default computeOutputs;

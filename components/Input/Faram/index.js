@@ -60,6 +60,25 @@ export default class Faram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static checkAndUpdateOutputs = (props) => {
+        const { onChange, computeSchema, value } = props;
+        const newValue = computeOutputs(value, computeSchema);
+        if (onChange && newValue !== value) {
+            onChange(newValue);
+        }
+    }
+
+    constructor(props) {
+        super(props);
+        Faram.checkAndUpdateOutputs(props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.computeSchema !== this.props.computeSchema) {
+            Faram.checkAndUpdateOutputs(nextProps);
+        }
+    }
+
     componentWillUnmount() {
         clearTimeout(this.changeTimeout);
     }
@@ -107,7 +126,8 @@ export default class Faram extends React.PureComponent {
     handleFormChange = (value) => {
         const { onChange, computeSchema } = this.props;
         if (onChange) {
-            onChange(computeOutputs(value, computeSchema));
+            const newValue = computeOutputs(value, computeSchema);
+            onChange(newValue);
         }
     }
 
