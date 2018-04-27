@@ -123,11 +123,11 @@ export default class Faram extends React.PureComponent {
         return false;
     }
 
-    handleFormChange = (value) => {
+    handleFormChange = (value, error) => {
         const { onChange, computeSchema } = this.props;
         if (onChange) {
             const newValue = computeOutputs(value, computeSchema);
-            onChange(newValue);
+            onChange(newValue, error);
         }
     }
 
