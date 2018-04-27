@@ -6,13 +6,13 @@ export const sum = values => values.reduce(
 export const mean = values => sum(values) / values.length;
 
 export const median = (values) => {
-    values.sort();
-    const half = Math.floor(values.length / 2);
+    const sortedValues = [...values].sort();
+    const half = Math.floor(sortedValues.length / 2);
 
-    return (values.length % 2) ? (
-        values[half]
+    return (sortedValues.length % 2) ? (
+        sortedValues[half]
     ) : (
-        (values[half - 1] + values[half]) / 2.0
+        (sortedValues[half - 1] + sortedValues[half]) / 2.0
     );
 };
 
