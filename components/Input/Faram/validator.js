@@ -108,7 +108,7 @@ export const analyzeErrors = (errors) => {
     if (keys.length === 0) {
         return false;
     }
-    return keys.every((key) => {
+    return keys.some((key) => {
         const subErrors = errors[key];
         // handles object
         if (isObject(subErrors)) {
