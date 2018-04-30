@@ -16,7 +16,7 @@ const propTypes = {
 const defaultProps = {
     active: undefined,
     className: '',
-    tabs: [],
+    tabs: {},
     onClick: () => {},
 };
 
