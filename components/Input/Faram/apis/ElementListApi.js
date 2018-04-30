@@ -1,5 +1,7 @@
 import { isTruthy } from '../../../../utils/common';
 
+import ElementApi from './ElementApi';
+
 /*
  * ElementListApi
  *
@@ -8,66 +10,20 @@ import { isTruthy } from '../../../../utils/common';
  * input children.
  */
 
-export default class ElementListApi {
-    changeHandlers = {};
-
-    setProps = (props) => {
-        this.props = { ...props };
-    }
-
+export default class ElementListApi extends ElementApi {
     getValue = faramElementIndex => (this.props.value || [])[faramElementIndex];
 
-    getError = faramElementIndex => (this.props.error || {})[faramElementIndex];
-
-    getInternalError = () => (this.props.error || {}).$internal;
-
-    isDisabled = () => this.props.disabled;
-
-    createOnChange = faramElementIndex => (value, error) => {
-        if (!this.props.onChange) {
-            return;
-        }
-
-        const newValue = [...this.props.value];
-        newValue[faramElementIndex] = value;
-
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
-            [faramElementIndex]: error,
-        };
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-        this.props.onChange(newValue, newError);
+    // PRIVATE
+    getNewValue = (oldValue, key, val) => {
+        const newValue = [...oldValue];
+        newValue[key] = val;
+        return newValue;
     }
 
-    getOnChange = (faramElementName) => {
-        if (this.changeHandlers[faramElementName]) {
-            return this.changeHandlers[faramElementName];
-        }
-
-        const handler = this.createOnChange(faramElementName);
-        this.changeHandlers[faramElementName] = handler;
-        return handler;
-    }
-
-    getOnClick = (action, faramElementIndex) => {
-        switch (action) {
-            case 'add':
-                return this.add;
-            case 'remove':
-                return () => this.remove(faramElementIndex);
-            default:
-                return this.noOp;
-        }
-    }
-
+    // PRIVATE
     noOp = () => {};
 
+    // PRIVATE
     add = () => {
         const newValue = [...this.props.value, undefined];
         const newError = {
@@ -78,6 +34,7 @@ export default class ElementListApi {
         this.props.onChange(newValue, newError);
     }
 
+    // PRIVATE
     remove = (index) => {
         const newValue = [...this.props.value];
         newValue.splice(index, 1);
@@ -99,41 +56,32 @@ export default class ElementListApi {
         this.props.onChange(newValue, newError);
     }
 
-    getCalculatedProps = (faramElementIndex, elementType, action) => {
-        switch (elementType) {
-            case 'input': {
-                const calculatedProps = {
-                    value: this.getValue(faramElementIndex),
-                    error: this.getError(faramElementIndex),
-                    onChange: this.getOnChange(faramElementIndex),
-                    disabled: this.isDisabled(),
-                };
-                return calculatedProps;
-            } case 'output': {
-                const calculatedProps = {
-                    value: this.getValue(faramElementIndex),
-                };
-                return calculatedProps;
-            } case 'errorMessage': {
-                const calculatedProps = {
-                    errors: this.getInternalError(),
-                };
-                return calculatedProps;
-            } case 'action': {
-                const calculatedProps = {
-                    disabled: this.isDisabled(),
-                    onClick: this.getOnClick(action, faramElementIndex),
-                };
-                return calculatedProps;
-            } case 'list': {
-                const calculatedProps = {
-                    data: this.props.value,
-                };
-                return calculatedProps;
-            }
+    // PRIVATE
+    getOnClick = (faramElementIndex, elementType, action) => {
+        switch (action) {
+            case 'add':
+                return this.add;
+            case 'remove':
+                return () => this.remove(faramElementIndex);
             default:
-                console.warn(`Unidentified element type '${elementType}'`);
-                return {};
+                return this.noOp;
         }
+    }
+
+    // Handlers
+
+    actionHandler = (faramElementIndex, elementType, action) => {
+        const calculatedProps = {
+            disabled: this.isDisabled(),
+            onClick: this.getOnClick(faramElementIndex, elementType, action),
+        };
+        return calculatedProps;
+    }
+
+    listHandler = () => {
+        const calculatedProps = {
+            data: this.props.value,
+        };
+        return calculatedProps;
     }
 }
