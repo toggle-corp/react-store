@@ -1,3 +1,6 @@
+import { analyzeErrors } from '../validator';
+
+
 export default class ElementApi {
     changeHandlers = {};
     propsCalculators = {};
@@ -86,6 +89,13 @@ export default class ElementApi {
     errorMessageHandler = () => {
         const calculatedProps = {
             errors: this.getInternalError(),
+        };
+        return calculatedProps;
+    }
+
+    errorIndicatorHandler = (faramElementName) => {
+        const calculatedProps = {
+            hasError: analyzeErrors(this.getError(faramElementName)),
         };
         return calculatedProps;
     }

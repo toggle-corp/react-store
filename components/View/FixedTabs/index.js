@@ -15,6 +15,7 @@ const propTypes = {
         dummy: PropTypes.string,
     }),
     useHash: PropTypes.bool,
+    modifier: PropTypes.func,
 };
 
 const defaultProps = {
@@ -24,8 +25,9 @@ const defaultProps = {
     defaultHash: undefined,
     onClick: () => {},
     replaceHistory: false,
-    tabs: [],
+    tabs: {},
     useHash: false,
+    modifier: undefined,
 };
 
 export default class FixedTabs extends React.PureComponent {
@@ -123,6 +125,7 @@ export default class FixedTabs extends React.PureComponent {
             active,
             tabs,
             useHash,
+            modifier,
         } = this.props;
 
         if (!tabs[data]) {
@@ -130,6 +133,7 @@ export default class FixedTabs extends React.PureComponent {
         }
 
         const onClick = (e) => { this.handleTabClick(data, e); };
+        const content = modifier ? modifier(data) : tabs[data];
 
         if (!useHash) {
             const isActive = data === active;
@@ -142,7 +146,7 @@ export default class FixedTabs extends React.PureComponent {
                     key={data}
                     type="button"
                 >
-                    { tabs[data] }
+                    { content }
                 </button>
             );
         }
@@ -159,7 +163,7 @@ export default class FixedTabs extends React.PureComponent {
                 className={className}
                 key={data}
             >
-                { tabs[data] }
+                { content }
             </a>
         );
     }
