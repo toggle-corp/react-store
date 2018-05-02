@@ -84,7 +84,7 @@ export default class FixedTabs extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getTabClassName = (isActive, key) => {
+    getTabClassName = (isActive) => {
         const classNames = [
             styles.tab,
             'fixed-tab',
@@ -137,7 +137,7 @@ export default class FixedTabs extends React.PureComponent {
 
         if (!useHash) {
             const isActive = data === active;
-            const className = this.getTabClassName(isActive, data);
+            const className = this.getTabClassName(isActive);
 
             return (
                 <button
@@ -154,7 +154,7 @@ export default class FixedTabs extends React.PureComponent {
         const { hash } = this.state;
 
         const isActive = hash === data;
-        const className = this.getTabClassName(isActive, data);
+        const className = this.getTabClassName(isActive);
 
         return (
             <a
