@@ -30,11 +30,6 @@ const propTypes = {
     hint: PropTypes.string,
 
     /**
-     * Initial value for the input
-     */
-    initialValue: PropTypes.string,
-
-    /**
      * Input label
      */
     label: PropTypes.string,
@@ -78,7 +73,6 @@ const defaultProps = {
     disabled: false,
     error: '',
     hint: '',
-    initialValue: undefined,
     label: '',
     onBlur: undefined,
     onChange: undefined,
@@ -98,7 +92,7 @@ class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const value = this.props.initialValue || this.props.value;
+        const { value } = props;
         this.state = {
             isFocused: false,
             value,
@@ -209,8 +203,7 @@ class TextInput extends React.PureComponent {
 
     render() {
         const {
-            // skip prop injection for initialValue & onChange (used internally)
-            initialValue, // eslint-disable-line no-unused-vars
+            // skip prop injection
             value: propValue, // eslint-disable-line no-unused-vars
             onBlur, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars

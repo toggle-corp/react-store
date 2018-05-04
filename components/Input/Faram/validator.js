@@ -40,7 +40,7 @@ export const accumulateValues = (obj, schema, settings = { noUndefined: false })
         const values = {};
         Object.keys(fields).forEach((fieldName) => {
             const value = accumulateValues(safeObj[fieldName], fields[fieldName]);
-            if (value) {
+            if (value !== undefined) {
                 values[fieldName] = value;
             }
         });
