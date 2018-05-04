@@ -56,18 +56,18 @@ const defaultProps = {
         nodes: [],
         links: [],
     },
-    margins: {
-        top: 50,
-        right: 50,
-        bottom: 100,
-        left: 100,
-    },
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
     circleRadius: 30,
     useVoronoi: true,
     className: '',
     colorScheme: schemePaired,
+    margins: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+    },
 };
 /**
  * Represents the  network of nodes in force layout with many-body force.
@@ -115,6 +115,7 @@ export default class ForceDirectedGraph extends React.PureComponent {
         this.setState({
             value: eve.target.value,
         });
+        this.updateData(this.props);
     }
 
     renderChart() {

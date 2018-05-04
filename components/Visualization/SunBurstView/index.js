@@ -52,7 +52,7 @@ export default class SunBurstView extends PureComponent {
             .map(color => (
                 {
                     title: color,
-                    id: name,
+                    id: color,
                     image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
                 }));
     }
