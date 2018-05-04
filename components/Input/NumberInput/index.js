@@ -33,11 +33,6 @@ const propTypes = {
     hint: PropTypes.string,
 
     /**
-     * Initial value for the input
-     */
-    initialValue: PropTypes.number,
-
-    /**
      * Input label
      */
     label: PropTypes.string,
@@ -80,7 +75,6 @@ const defaultProps = {
     disabled: false,
     error: '',
     hint: '',
-    initialValue: undefined,
     label: '',
     onBlur: undefined,
     onChange: undefined,
@@ -162,7 +156,7 @@ class NumberInput extends React.PureComponent {
         super(props);
 
         const { displayValue } = NumberInput.calculateNewValues(
-            props.value || props.initialValue,
+            props.value,
             props.separator,
         );
 
@@ -281,8 +275,7 @@ class NumberInput extends React.PureComponent {
 
     render() {
         const {
-            // skip prop injection for initialValue & onChange (used internally)
-            initialValue, // eslint-disable-line
+            // skip prop injection
             value: propValue, // eslint-disable-line
             onBlur, // eslint-disable-line
             onChange, // eslint-disable-line
