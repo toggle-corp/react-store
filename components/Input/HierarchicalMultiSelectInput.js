@@ -9,8 +9,7 @@ const propTypes = {
     keySelector: PropTypes.func,
     childrenSelector: PropTypes.func,
     // eslint-disable-next-line react/forbid-prop-types
-    options: PropTypes.object,
-    value: PropTypes.string,
+    options: PropTypes.array,
 };
 
 const defaultProps = {
@@ -18,8 +17,7 @@ const defaultProps = {
     labelSelector: d => d.label,
     keySelector: d => d.key,
     childrenSelector: d => d.children,
-    options: {},
-    value: undefined,
+    options: [],
 };
 
 export default class HierarchicalMultiSelectInput extends React.PureComponent {
@@ -30,7 +28,7 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            options: this.deflate(props.options),
+            options: this.deflateList(props.options),
         };
     }
 
@@ -38,12 +36,22 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
         const { options: oldOptions } = this.props;
         const { options: newOptions } = nextProps;
         if (oldOptions !== newOptions) {
-            const options = this.deflate(newOptions);
+            const options = this.deflateList(newOptions);
             this.setState({ options });
         }
     }
 
-    deflate = (obj, parentLabel = undefined) => {
+    deflateList = (list, parentLabel = undefined) => (
+        list.reduce(
+            (acc, c) => ([
+                ...acc,
+                ...this.deflateObj(c, parentLabel),
+            ]),
+            [],
+        )
+    )
+
+    deflateObj = (obj, parentLabel = undefined) => {
         const {
             childrenSelector,
             keySelector,
@@ -62,14 +70,7 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
             label,
         };
 
-        const deflatedChildren = children.reduce(
-            (acc, c) => ([
-                ...acc,
-                ...this.deflate(c, label),
-            ]),
-            [],
-        );
-
+        const deflatedChildren = this.deflateList(children, label);
         return [
             current,
             ...deflatedChildren,

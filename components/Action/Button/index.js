@@ -189,6 +189,7 @@ class Button extends React.PureComponent {
             type,
 
             onClick, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars
             buttonType, // eslint-disable-line no-unused-vars
             className: captureClassName, // eslint-disable-line no-unused-vars
             smallHorizontalPadding, // eslint-disable-line no-unused-vars
