@@ -59,10 +59,10 @@ const FaramElement = elementType => (WrappedComponent) => {
                 return otherProps;
             }
 
-            const identifier = faramElementName || faramElementIndex;
-            if (faramElement || isTruthy(identifier) || isTruthy(faramAction)) {
+            const faramIdentifier = faramElementName || faramElementIndex;
+            if (faramElement || isTruthy(faramIdentifier) || isTruthy(faramAction)) {
                 return {
-                    ...api.getCalculatedProps(identifier, elementType, faramAction),
+                    ...api.getCalculatedProps(faramIdentifier, elementType, faramAction),
                     ...otherProps,
                 };
             }

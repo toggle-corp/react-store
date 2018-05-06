@@ -69,6 +69,8 @@ const propTypes = {
     transparent: PropTypes.bool,
 
     type: PropTypes.string,
+
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -82,6 +84,7 @@ const defaultProps = {
     smallHorizontalPadding: false,
     smallVerticalPadding: false,
     transparent: false,
+    changeDelay: 0,
 };
 
 /**
@@ -148,6 +151,24 @@ class Button extends React.PureComponent {
         return classNames.join(' ');
     }
 
+    componentWillUnmount() {
+        if (this.changeTimeout) {
+            clearTimeout(this.changeTimeout);
+        }
+    }
+
+    handleClick = () => {
+        clearTimeout(this.changeTimeout);
+        this.pendingChange = true;
+        this.changeTimeout = setTimeout(
+            () => {
+                this.pendingChange = false;
+                this.props.onClick();
+            },
+            this.props.changeDelay,
+        );
+    }
+
     renderIcon = (props) => {
         const { iconName } = props;
         if (!iconName) {
@@ -165,9 +186,9 @@ class Button extends React.PureComponent {
             iconName,
             children,
             disabled,
-            onClick,
             type,
 
+            onClick, // eslint-disable-line no-unused-vars
             buttonType, // eslint-disable-line no-unused-vars
             className: captureClassName, // eslint-disable-line no-unused-vars
             smallHorizontalPadding, // eslint-disable-line no-unused-vars
@@ -185,7 +206,7 @@ class Button extends React.PureComponent {
             <button
                 className={className}
                 disabled={disabled}
-                onClick={onClick}
+                onClick={this.handleClick}
                 type={type}
                 {...otherProps}
             >

@@ -11,7 +11,7 @@ import ElementApi from './ElementApi';
  */
 
 export default class ElementListApi extends ElementApi {
-    getValue = faramElementIndex => (this.props.value || [])[faramElementIndex];
+    getValue = faramIdentifier => (this.props.value || [])[faramIdentifier];
 
     // PRIVATE
     getNewValue = (oldValue, key, val) => {
@@ -57,12 +57,12 @@ export default class ElementListApi extends ElementApi {
     }
 
     // PRIVATE
-    getOnClick = (faramElementIndex, elementType, action) => {
+    getOnClick = (faramIdentifier, elementType, action) => {
         switch (action) {
             case 'add':
                 return this.add;
             case 'remove':
-                return () => this.remove(faramElementIndex);
+                return () => this.remove(faramIdentifier);
             default:
                 return this.noOp;
         }
@@ -70,10 +70,11 @@ export default class ElementListApi extends ElementApi {
 
     // Handlers
 
-    actionHandler = (faramElementIndex, elementType, action) => {
+    actionHandler = (faramIdentifier, elementType, action) => {
         const calculatedProps = {
             disabled: this.isDisabled(),
-            onClick: this.getOnClick(faramElementIndex, elementType, action),
+            onClick: this.getOnClick(faramIdentifier, elementType, action),
+            changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;
     }
