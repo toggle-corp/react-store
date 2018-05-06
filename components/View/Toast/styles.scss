@@ -63,9 +63,9 @@ $z-index-toast: 11111;
     }
 
     &.shown {
-        @include shadow-large;
         transform: translate(-50%, 0%);
         opacity: 1;
+        box-shadow: 0 (0 - $spacing-extra-small) $radius-blur-medium  $radius-spread-medium $color-shadow-medium;
         pointer-events: all;
     }
 
