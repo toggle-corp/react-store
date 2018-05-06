@@ -1,4 +1,7 @@
-import React from 'react';
+import React, {
+    PureComponent,
+    Fragment,
+} from 'react';
 import { select, event } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
@@ -12,6 +15,7 @@ import {
     getColorOnBgColor,
     isObjectEmpty,
 } from '../../../utils/common';
+import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -19,20 +23,31 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    /* the width and height of the container */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /* the selected values (nodes) */
     value: PropTypes.string,
+    /* the accessor function to return array of data representing the children */
     childrenAccessor: PropTypes.func,
+    /* access the individual label of each data element */
     labelAccessor: PropTypes.func.isRequired,
+    /* access the id of each data element */
     idAccessor: PropTypes.func,
+    /* handle selection of nodes */
     onSelection: PropTypes.func,
     nodeSize: PropTypes.arrayOf(PropTypes.number),
+    /* if true no click events on nodes */
     disabled: PropTypes.bool,
+    /* default color for nodes */
     fillColor: PropTypes.string,
+    /* nodes color when selected */
     selectColor: PropTypes.string,
+    /* additional class name for styling */
     className: PropTypes.string,
+    /* the margin object with properties for the four sides(clockwise from top) */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -64,7 +79,7 @@ const defaultProps = {
 const rectWidth = 30;
 @BoundError()
 @Responsive
-export default class Organigram extends React.PureComponent {
+export default class Organigram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -331,10 +346,16 @@ export default class Organigram extends React.PureComponent {
         ].join(' ');
 
         return (
-            <svg
-                ref={(elem) => { this.svg = elem; }}
-                className={svgClassName}
-            />
+            <Fragment>
+                <svg
+                    ref={(elem) => { this.svg = elem; }}
+                    className={svgClassName}
+                />
+                <span
+                    className={`${styles.info} ${iconNames.info}`}
+                    title="Use mouse to pan and zoom"
+                />
+            </Fragment>
         );
     }
 }
