@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import MultiSelectInput from '../MultiSelectInput';
+import MultiSelectInput from './MultiSelectInput';
 
 const propTypes = {
     className: PropTypes.string,
