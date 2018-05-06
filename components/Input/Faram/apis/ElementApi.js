@@ -9,13 +9,15 @@ export default class ElementApi {
         this.props = { ...props };
     }
 
-    getValue = faramElementName => (this.props.value || {})[faramElementName];
+    getValue = faramIdentifier => (this.props.value || {})[faramIdentifier];
 
-    getError = faramElementName => (this.props.error || {})[faramElementName];
+    getError = faramIdentifier => (this.props.error || {})[faramIdentifier];
 
     getInternalError = () => (this.props.error || {}).$internal;
 
     isDisabled = () => this.props.disabled;
+
+    getChangeDelay = () => this.props.changeDelay;
 
     // PRIVATE
     getNewValue = (oldValue, key, val) => ({
@@ -30,13 +32,13 @@ export default class ElementApi {
     });
 
     // PRIVATE
-    createOnChange = faramElementName => (value, error) => {
+    createOnChange = faramIdentifier => (value, error) => {
         if (!this.props.onChange) {
             return;
         }
 
-        const newValue = this.getNewValue(this.props.value, faramElementName, value);
-        const newError = this.getNewError(this.props.error, faramElementName, error);
+        const newValue = this.getNewValue(this.props.value, faramIdentifier, value);
+        const newError = this.getNewError(this.props.error, faramIdentifier, error);
 
         // NOTE: Save these values in this.props so that above
         // destructuring keeps working before setProps is
@@ -47,20 +49,21 @@ export default class ElementApi {
     }
 
     // PRIVATE
-    getOnChange = (faramElementName) => {
-        if (this.changeHandlers[faramElementName]) {
-            return this.changeHandlers[faramElementName];
+    getOnChange = (faramIdentifier) => {
+        if (this.changeHandlers[faramIdentifier]) {
+            return this.changeHandlers[faramIdentifier];
         }
 
-        const handler = this.createOnChange(faramElementName);
-        this.changeHandlers[faramElementName] = handler;
+        const handler = this.createOnChange(faramIdentifier);
+        this.changeHandlers[faramIdentifier] = handler;
         return handler;
     }
 
-    getCalculatedProps = (faramElementName, elementType, action) => {
+    // PUBLIC
+    getCalculatedProps = (faramIdentifier, elementType, action) => {
         const calculator = this[`${elementType}Handler`];
         if (calculator) {
-            const values = calculator(faramElementName, elementType, action);
+            const values = calculator(faramIdentifier, elementType, action);
             return values;
         }
         console.error(`I do not have handler for ${elementType}`);
@@ -69,19 +72,27 @@ export default class ElementApi {
 
     // Handlers
 
-    inputHandler = (faramElementName) => {
+    inputHandler = (faramIdentifier) => {
         const calculatedProps = {
-            value: this.getValue(faramElementName),
-            error: this.getError(faramElementName),
-            onChange: this.getOnChange(faramElementName),
+            value: this.getValue(faramIdentifier),
+            error: this.getError(faramIdentifier),
+            onChange: this.getOnChange(faramIdentifier),
             disabled: this.isDisabled(),
+            changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;
     }
 
-    outputHandler = (faramElementName) => {
+    outputHandler = (faramIdentifier) => {
         const calculatedProps = {
-            value: this.getValue(faramElementName),
+            value: this.getValue(faramIdentifier),
+        };
+        return calculatedProps;
+    }
+
+    errorIndicatorHandler = (faramIdentifier) => {
+        const calculatedProps = {
+            hasError: analyzeErrors(this.getError(faramIdentifier)),
         };
         return calculatedProps;
     }
@@ -89,13 +100,6 @@ export default class ElementApi {
     errorMessageHandler = () => {
         const calculatedProps = {
             errors: this.getInternalError(),
-        };
-        return calculatedProps;
-    }
-
-    errorIndicatorHandler = (faramElementName) => {
-        const calculatedProps = {
-            hasError: analyzeErrors(this.getError(faramElementName)),
         };
         return calculatedProps;
     }

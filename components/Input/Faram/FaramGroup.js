@@ -12,6 +12,7 @@ const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -19,6 +20,7 @@ const defaultProps = {
     value: {},
     error: {},
     disabled: false,
+    changeDelay: undefined,
 };
 
 
@@ -35,6 +37,7 @@ class FaramGroup extends React.PureComponent {
             error,
             disabled,
             onChange,
+            changeDelay,
         } = this.props;
 
         this.api.setProps({
@@ -42,6 +45,7 @@ class FaramGroup extends React.PureComponent {
             error,
             disabled,
             onChange,
+            changeDelay,
         });
 
         return (
