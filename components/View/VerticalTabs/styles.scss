@@ -6,12 +6,22 @@
 
     .tab {
         @extend %button-base;
+        border-bottom: $width-separator-thin solid $color-separator;
+        border-left: $width-separator-thick solid transparent;
         padding: $spacing-small $spacing-medium;
         width: 100%;
         text-align: left;
+        color: $color-text-label;
+
+        &:hover {
+            background-color: $color-background-hover;
+            color: $color-text;
+        }
 
         &.active {
-            @include background-color($color-accent);
+            border-left-color: $color-accent;
+            background-color: $color-background-selected;
+            color: $color-text;
         }
     }
 }
