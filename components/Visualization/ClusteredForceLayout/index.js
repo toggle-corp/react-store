@@ -155,7 +155,7 @@ export default class ClusteredForceLayout extends PureComponent {
         this.radius = Math.min(width, height) / 2;
         this.nodeDistance = scaleLinear()
             .domain([1, 10])
-            .range([1, this.radius / 2]);
+            .range([1, this.radius / 3]);
         this.color = scaleOrdinal()
             .range(colorScheme);
         this.distance = scaleLinear()
@@ -188,7 +188,12 @@ export default class ClusteredForceLayout extends PureComponent {
         this.simulation = forceSimulation()
             .force('link', forceLink()
                 .id(d => idAccessor(d))
-                .distance(this.distance(this.state.value)))
+                .distance((d) => {
+                    if (d.source.group !== d.target.group) {
+                        return this.distance(+this.state.value * 2);
+                    }
+                    return this.distance(this.state.value);
+                }))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
     }
