@@ -37,6 +37,7 @@ const propTypes = {
     ]),
     onChange: PropTypes.func,
     showHintAndError: PropTypes.bool,
+    title: PropTypes.string,
 };
 const defaultProps = {
     className: '',
@@ -48,6 +49,7 @@ const defaultProps = {
     value: undefined,
     onChange: undefined,
     showHintAndError: true,
+    title: undefined,
 };
 
 const MIN_YEAR = 1990;
@@ -536,6 +538,7 @@ class DateInput extends React.PureComponent {
 
         return (
             <FloatingContainer
+                className={styles.datePickerContainer}
                 parent={this.container}
                 onBlur={this.handleDatePickerBlur}
                 onInvalidate={this.handleDatePickerInvalidate}
@@ -607,6 +610,7 @@ class DateInput extends React.PureComponent {
             <div
                 ref={(el) => { this.container = el; }}
                 className={className}
+                title={this.props.title}
             >
                 <Label />
                 <InputElement />

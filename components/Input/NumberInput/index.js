@@ -68,6 +68,8 @@ const propTypes = {
     selectOnFocus: PropTypes.bool,
 
     changeDelay: PropTypes.number,
+
+    title: PropTypes.string,
 };
 
 const defaultProps = {
@@ -86,6 +88,7 @@ const defaultProps = {
     separator: ',',
     selectOnFocus: false,
     changeDelay: 400,
+    title: undefined,
 };
 
 const INT_LIMIT = 9007199254740992;
@@ -289,6 +292,7 @@ class NumberInput extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            title,
             ...otherProps
         } = this.props;
 
@@ -297,7 +301,10 @@ class NumberInput extends React.PureComponent {
         const classNames = this.getClassName();
 
         return (
-            <div className={`${classNames} ${className}`}>
+            <div
+                className={`${classNames} ${className}`}
+                title={title}
+            >
                 {
                     showLabel && (
                         <label

@@ -76,6 +76,7 @@ export const selectInputCommonPropTypes = {
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
     renderEmpty: PropTypes.func,
+    title: PropTypes.string,
 };
 
 export const selectInputCommonDefaultProps = {
@@ -95,6 +96,7 @@ export const selectInputCommonDefaultProps = {
     renderEmpty: () => 'No option available',
     showHintAndError: true,
     showLabel: true,
+    title: undefined,
 };
 
 // Single select input
