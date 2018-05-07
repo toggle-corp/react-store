@@ -22,7 +22,7 @@ const defaultProps = {
     useHash: false,
 };
 
-export default class MultiContentView extends React.Component {
+export default class MultiViewContainer extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -137,9 +137,9 @@ export default class MultiContentView extends React.Component {
         let isActive;
 
         if (useHash) {
-            isActive = this.getHash() === key;
+            isActive = this.getHash() === String(key);
         } else {
-            isActive = active === key;
+            isActive = String(active) === String(key);
         }
 
         const view = views[data];
