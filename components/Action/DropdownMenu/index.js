@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { iconNames } from '../../../constants';
-import { calcFloatingPositionInMainWindow } from '../../../utils/common';
+import { calcFloatPositionInMainWindow } from '../../../utils/bounds';
 import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
@@ -107,14 +107,17 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     handleDropdownContainerInvalidate = (dropdownContainer) => {
-        const containerRect = dropdownContainer.getBoundingClientRect();
+        const contentRect = dropdownContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
         if (this.container) {
             parentRect = this.container.getBoundingClientRect();
         }
 
         const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect)
+            calcFloatPositionInMainWindow({
+                parentRect,
+                contentRect,
+            })
         );
         return optionsContainerPosition;
     }

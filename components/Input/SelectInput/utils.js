@@ -4,9 +4,15 @@ import { iconNames } from '../../../constants';
 
 import {
     caseInsensitiveSubmatch,
-    calcFloatingPositionInMainWindow,
+    // calcFloatingPositionInMainWindow,
     getRatingForContentInString,
 } from '../../../utils/common';
+
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '../../../utils/bounds';
 
 // p => props
 
@@ -118,20 +124,29 @@ export const handleInputClick = (parent) => {
 };
 
 export const getOptionsContainerPosition = (parent, optionsContainer) => {
-    const containerRect = optionsContainer.getBoundingClientRect();
+    const contentRect = optionsContainer.getBoundingClientRect();
     let parentRect = parent.boundingClientRect;
     if (parent.container) {
         parentRect = parent.container.getBoundingClientRect();
     }
 
-    const offset = { top: 0, bottom: 0, left: 0, right: 0 };
+    const offset = { ...defaultOffset };
     if (parent.props.showHintAndError) {
         offset.top = 12;
     }
 
     const optionsContainerPosition = (
-        calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
+        calcFloatPositionInMainWindow({
+            parentRect,
+            contentRect,
+            offset,
+            limit: {
+                ...defaultLimit,
+                minW: parentRect.width,
+            },
+        })
     );
+
     return optionsContainerPosition;
 };
 
