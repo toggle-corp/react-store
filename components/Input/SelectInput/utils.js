@@ -143,6 +143,7 @@ export const getOptionsContainerPosition = (parent, optionsContainer) => {
             limit: {
                 ...defaultLimit,
                 minW: parentRect.width,
+                maxW: parentRect.width,
             },
         })
     );

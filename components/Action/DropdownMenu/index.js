@@ -170,23 +170,28 @@ export default class DropdownMenu extends React.PureComponent {
         const LeftIcon = this.renderLeftIcon;
         const LeftComponent = this.renderLeftComponent;
         const DropdownIcon = this.renderDropdownIcon;
-        const className = [
+
+        const classNames = [
             'dropdown-button',
             styles.dropdownButton,
-        ].join(' ');
-        const titleClassName = [
+        ];
+        if (this.props.leftComponent || this.props.iconName) {
+            classNames.push(styles.hasLeft);
+        }
+
+        const titleClassNames = [
             'title',
             styles.title,
-        ].join(' ');
+        ];
 
         return (
             <button
                 onClick={this.handleDropdownClick}
-                className={className}
+                className={classNames.join(' ')}
             >
                 <LeftIcon />
                 <LeftComponent />
-                <span className={titleClassName}>
+                <span className={titleClassNames.join(' ')}>
                     {title}
                 </span>
                 <DropdownIcon />
