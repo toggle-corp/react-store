@@ -4,10 +4,7 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
-    children: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.Element,
-    ]),
+    children: PropTypes.node,
     className: PropTypes.string,
 };
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { iconNames } from '../../../constants';
-import { calcFloatingPositionInMainWindow } from '../../../utils/common';
+import { calcFloatPositionInMainWindow } from '../../../utils/bounds';
 import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
@@ -107,14 +107,17 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     handleDropdownContainerInvalidate = (dropdownContainer) => {
-        const containerRect = dropdownContainer.getBoundingClientRect();
+        const contentRect = dropdownContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
         if (this.container) {
             parentRect = this.container.getBoundingClientRect();
         }
 
         const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect)
+            calcFloatPositionInMainWindow({
+                parentRect,
+                contentRect,
+            })
         );
         return optionsContainerPosition;
     }
@@ -167,23 +170,28 @@ export default class DropdownMenu extends React.PureComponent {
         const LeftIcon = this.renderLeftIcon;
         const LeftComponent = this.renderLeftComponent;
         const DropdownIcon = this.renderDropdownIcon;
-        const className = [
+
+        const classNames = [
             'dropdown-button',
             styles.dropdownButton,
-        ].join(' ');
-        const titleClassName = [
+        ];
+        if (this.props.leftComponent || this.props.iconName) {
+            classNames.push(styles.hasLeft);
+        }
+
+        const titleClassNames = [
             'title',
             styles.title,
-        ].join(' ');
+        ];
 
         return (
             <button
                 onClick={this.handleDropdownClick}
-                className={className}
+                className={classNames.join(' ')}
             >
                 <LeftIcon />
                 <LeftComponent />
-                <span className={titleClassName}>
+                <span className={titleClassNames.join(' ')}>
                     {title}
                 </span>
                 <DropdownIcon />

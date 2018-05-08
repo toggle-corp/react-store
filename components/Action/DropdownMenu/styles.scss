@@ -1,6 +1,5 @@
 @import '../../../stylesheets/base';
 
-
 .dropdown-container {
     @include shadow-small;
     background-color: $color-foreground;
@@ -41,6 +40,12 @@
 
         .title {
             flex-grow: 1;
+        }
+
+        &.has-left {
+            .title {
+                padding-left: $spacing-small;
+            }
         }
 
         .dropdown-icon {
