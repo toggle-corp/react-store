@@ -11,6 +11,7 @@ const propTypes = {
     }),
     onClick: PropTypes.func,
     active: PropTypes.string,
+    modifier: PropTypes.func,
 };
 
 const defaultProps = {
@@ -18,6 +19,7 @@ const defaultProps = {
     className: '',
     tabs: {},
     onClick: () => {},
+    modifier: undefined,
 };
 
 export default class VerticalTabs extends React.PureComponent {
@@ -59,6 +61,7 @@ export default class VerticalTabs extends React.PureComponent {
         const {
             active,
             tabs,
+            modifier,
         } = this.props;
 
         if (!tabs[data]) {
@@ -68,6 +71,7 @@ export default class VerticalTabs extends React.PureComponent {
         const isActive = data === active;
         const className = this.getTabClassName(isActive);
         const onClick = () => { this.handleTabClick(data); };
+        const content = modifier ? modifier(data) : tabs[data];
 
         return (
             <button
@@ -76,7 +80,7 @@ export default class VerticalTabs extends React.PureComponent {
                 onClick={onClick}
                 type="button"
             >
-                { tabs[data] }
+                { content }
             </button>
         );
     }
