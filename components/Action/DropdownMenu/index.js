@@ -27,6 +27,8 @@ const propTypes = {
 
     hideDropdownIcon: PropTypes.bool,
 
+    leftComponent: PropTypes.node,
+
     title: PropTypes.string,
 
     dropdownClassName: PropTypes.string,
@@ -35,6 +37,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     iconName: undefined,
+    leftComponent: undefined,
     marginTop: 0,
     hideDropdownIcon: false,
     title: '',
@@ -132,6 +135,16 @@ export default class DropdownMenu extends React.PureComponent {
         return <i className={className} />;
     }
 
+    renderLeftComponent = () => {
+        const { leftComponent } = this.props;
+
+        if (!leftComponent) {
+            return null;
+        }
+
+        return leftComponent;
+    }
+
     renderDropdownIcon = () => {
         const { hideDropdownIcon } = this.props;
 
@@ -152,6 +165,7 @@ export default class DropdownMenu extends React.PureComponent {
         const { title } = this.props;
 
         const LeftIcon = this.renderLeftIcon;
+        const LeftComponent = this.renderLeftComponent;
         const DropdownIcon = this.renderDropdownIcon;
         const className = [
             'dropdown-button',
@@ -168,6 +182,7 @@ export default class DropdownMenu extends React.PureComponent {
                 className={className}
             >
                 <LeftIcon />
+                <LeftComponent />
                 <span className={titleClassName}>
                     {title}
                 </span>

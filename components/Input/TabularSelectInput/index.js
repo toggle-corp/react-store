@@ -93,7 +93,6 @@ const propTypes = {
         PropTypes.object,
     ),
 
-    optionsIdentifier: PropTypes.string,
     /**
      * headers is an array of the structure objects required for the header
      *
@@ -107,7 +106,6 @@ const defaultProps = {
     keySelector: d => (d || {}).key,
     labelSelector: d => (d || {}).label,
     onChange: undefined,
-    optionsIdentifier: undefined,
     hideRemoveFromListButton: false,
     error: '',
     hint: '',
@@ -315,7 +313,6 @@ class TabularSelectInput extends React.PureComponent {
         const {
             keySelector,
             labelSelector,
-            optionsIdentifier,
             error,
             hint,
             showHintAndError,
@@ -342,7 +339,6 @@ class TabularSelectInput extends React.PureComponent {
                     options={validOptions}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
-                    optionsIdentifier={optionsIdentifier}
                     onChange={this.handleSelectInputChange}
                     disabled={disabled}
                     error={error}
