@@ -100,6 +100,10 @@
             .input {
                 border-bottom-color: $color-separator;
                 color: $color-text-disabled;
+
+                &::placeholder {
+                    color: $color-text-disabled;
+                }
             }
 
             .actions {

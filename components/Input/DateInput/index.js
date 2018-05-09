@@ -6,7 +6,6 @@ import DatePicker from '../DatePicker';
 import { iconNames } from '../../../constants';
 
 import {
-    calcFloatingPositionInMainWindow,
     getNumDaysInMonthX,
     isDateValid,
     isEmpty,
@@ -14,14 +13,16 @@ import {
     decodeDate,
 } from '../../../utils/common';
 
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '../../../utils/bounds';
+
 import FaramElement from '../../Input/Faram/FaramElement';
 
-/*
-eslint css-modules/no-unused-class: [
-    1,
-    { markAsUsed: ['day-unit', 'month-unit', 'year-unit'], camelCase: true }
-]
-*/
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -39,6 +40,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
     title: PropTypes.string,
 };
+
 const defaultProps = {
     className: '',
     showLabel: true,
@@ -150,6 +152,7 @@ class DateInput extends React.PureComponent {
             'date-input',
             styles.dateInput,
         ];
+
         if (isInvalid) {
             classNames.push('invalid');
             classNames.push(styles.invalid);
@@ -281,21 +284,30 @@ class DateInput extends React.PureComponent {
     }
 
     handleDatePickerInvalidate = (datePickerContainer) => {
-        const containerRect = datePickerContainer.getBoundingClientRect();
+        const contentRect = datePickerContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
         if (this.container) {
             parentRect = this.container.getBoundingClientRect();
         }
 
-        const offset = { top: 0, right: 0, bottom: 0, left: 0 };
         const { showHintAndError } = this.props;
+        const offset = { ...defaultOffset };
         if (showHintAndError) {
             offset.top = 12;
         }
 
         const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
+            calcFloatPositionInMainWindow({
+                parentRect,
+                contentRect,
+                offset,
+                limit: {
+                    ...defaultLimit,
+                    minW: parentRect.width,
+                },
+            })
         );
+
         return optionsContainerPosition;
     }
 
@@ -340,28 +352,6 @@ class DateInput extends React.PureComponent {
         );
     }
 
-    renderLabel = () => {
-        const {
-            showLabel,
-            label,
-        } = this.props;
-
-        if (!showLabel) {
-            return null;
-        }
-
-        const classNames = [
-            'label',
-            styles.label,
-        ];
-
-        return (
-            <div className={classNames.join(' ')}>
-                { label }
-            </div>
-        );
-    }
-
     renderDateUnit = ({
         unitClassName,
         placeholder,
@@ -378,7 +368,6 @@ class DateInput extends React.PureComponent {
 
         const classNames = [
             unitClassName,
-            styles[unitClassName],
             'date-unit',
             styles.dateUnit,
         ];
@@ -412,7 +401,7 @@ class DateInput extends React.PureComponent {
             <DateUnit
                 max={maxDay}
                 placeholder="dd"
-                unitClassName="day-unit"
+                unitClassName={styles.dayUnit}
                 value={dayValue}
                 onChange={this.handleDayChange}
                 onFocus={this.handleDayInputFocus}
@@ -430,7 +419,7 @@ class DateInput extends React.PureComponent {
             <DateUnit
                 max={maxMonth}
                 placeholder="mm"
-                unitClassName="month-unit"
+                unitClassName={styles.monthUnit}
                 value={monthValue}
                 onChange={this.handleMonthChange}
                 onFocus={this.handleMonthInputFocus}
@@ -447,7 +436,7 @@ class DateInput extends React.PureComponent {
         return (
             <DateUnit
                 placeholder="yyyy"
-                unitClassName="year-unit"
+                unitClassName={styles.yearUnit}
                 min={minYear}
                 value={yearValue}
                 onChange={this.handleYearChange}
@@ -506,7 +495,10 @@ class DateInput extends React.PureComponent {
     }
 
     renderInput = () => {
-        const classNames = [];
+        const classNames = [
+            'input',
+            styles.input,
+        ];
         classNames.push('input');
         classNames.push(styles.input);
 
@@ -551,70 +543,37 @@ class DateInput extends React.PureComponent {
         );
     }
 
-    renderHintAndError = () => {
+    render() {
         const {
-            showHintAndError,
+            showLabel,
+            label,
             hint,
             error,
+            showHintAndError,
+            title,
         } = this.props;
-
-        if (!showHintAndError) {
-            return null;
-        }
-
-        if (error) {
-            const classNames = [
-                'error',
-                styles.error,
-            ];
-
-            return (
-                <p className={classNames.join(' ')}>
-                    {error}
-                </p>
-            );
-        }
-
-        if (hint) {
-            const classNames = [
-                'hint',
-                styles.hint,
-            ];
-            return (
-                <p className={classNames.join(' ')}>
-                    {hint}
-                </p>
-            );
-        }
-
-        const classNames = [
-            'empty',
-            styles.empty,
-        ];
-        return (
-            <p className={classNames.join(' ')}>
-                -
-            </p>
-        );
-    }
-
-    render() {
         const className = this.getClassName();
 
-        const Label = this.renderLabel;
         const InputElement = this.renderInput;
         const FloatingDatePicker = this.renderDatePicker;
-        const HintAndError = this.renderHintAndError;
 
         return (
             <div
                 ref={(el) => { this.container = el; }}
                 className={className}
-                title={this.props.title}
+                title={title}
             >
-                <Label />
+                <Label
+                    className={styles.label}
+                    show={showLabel}
+                    text={label}
+                />
                 <InputElement />
-                <HintAndError />
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
                 <FloatingDatePicker />
             </div>
         );
