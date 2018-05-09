@@ -6,21 +6,13 @@ import styles from './styles.scss';
 const propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.node,
-        PropTypes.arrayOf(
-            PropTypes.node,
-        ),
+        PropTypes.arrayOf(PropTypes.node),
     ]),
-
     className: PropTypes.string,
-
     highlighted: PropTypes.bool,
-
     columnHighlighted: PropTypes.bool,
-
     hoverable: PropTypes.bool,
-
     onClick: PropTypes.func,
-
     uniqueKey: PropTypes.string.isRequired,
 };
 
@@ -37,15 +29,8 @@ export default class Cell extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (hoverable, highlighted, className, columnHighlighted, uniqueKey) => {
         const classNames = [];
-        const {
-            hoverable,
-            highlighted,
-            className,
-            columnHighlighted,
-            uniqueKey,
-        } = props;
 
         classNames.push(uniqueKey);
         classNames.push('cell');
@@ -85,11 +70,24 @@ export default class Cell extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName(this.props);
+        const {
+            hoverable,
+            highlighted,
+            className,
+            columnHighlighted,
+            uniqueKey,
+        } = this.props;
+        const tdClassName = this.getClassName(
+            hoverable,
+            highlighted,
+            className,
+            columnHighlighted,
+            uniqueKey,
+        );
 
         return (
             <td
-                className={className}
+                className={tdClassName}
                 role="gridcell"
                 onClick={this.handleClick}
             >

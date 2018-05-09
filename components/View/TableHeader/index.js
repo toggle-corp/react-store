@@ -23,13 +23,8 @@ export default class TableHeader extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (sortOrder, sortable, className) => {
         const classNames = [];
-        const {
-            sortOrder,
-            sortable,
-            className,
-        } = props;
 
         classNames.push(className);
         classNames.push(styles.tableHeader);
@@ -43,12 +38,7 @@ export default class TableHeader extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getIconClassName = (props) => {
-        const {
-            sortOrder,
-            sortable,
-        } = props;
-
+    getIconClassName = (sortOrder, sortable) => {
         const classNames = [];
         classNames.push(styles.icon);
 
@@ -64,10 +54,15 @@ export default class TableHeader extends React.PureComponent {
     }
 
     render() {
-        const { label } = this.props;
+        const {
+            label,
+            sortOrder,
+            sortable,
+            className,
+        } = this.props;
 
-        const divClassName = this.getClassName(this.props);
-        const iconClassName = this.getIconClassName(this.props);
+        const divClassName = this.getClassName(sortOrder, sortable, className);
+        const iconClassName = this.getIconClassName(sortOrder, sortable);
 
         return (
             <div className={divClassName}>

@@ -30,7 +30,9 @@ export default class MultiViewContainer extends React.Component {
         super(props);
 
         this.state = {
-            hash: props.useHash ? this.getHash() : undefined,
+            hash: props.useHash
+                ? this.getHash()
+                : undefined,
         };
 
         this.lazyContainers = {};
@@ -101,6 +103,8 @@ export default class MultiViewContainer extends React.Component {
     }
 
     handleHashChange = () => {
+        // NOTE: added this because hash wasn't used
+        console.warn('Hash has changed from ', this.state.hash, 'to', this.getHash());
         this.setState({ hash: this.getHash() });
     }
 

@@ -37,14 +37,6 @@ const FaramElement = elementType => (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        constructor(props) {
-            super(props);
-
-            this.state = {
-                calculatedProps: undefined,
-            };
-        }
-
         calculateProps = (api) => {
             const {
                 forwardedRef,

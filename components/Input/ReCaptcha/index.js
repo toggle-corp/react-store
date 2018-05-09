@@ -28,7 +28,6 @@ const defaultProps = {
     onloadCallback: undefined,
     onChange: undefined,
     expiredCallback: undefined,
-    reset: false,
     theme: 'light',
     type: 'image',
     size: 'normal',

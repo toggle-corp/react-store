@@ -38,7 +38,6 @@ export const propTypes = {
     label: PropTypes.string,
     labelSelector: PropTypes.func,
     onChange: PropTypes.func,
-    // optionLabelSelector: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.object),
     optionsClassName: PropTypes.string,
     placeholder: PropTypes.string,
@@ -61,8 +60,6 @@ export const defaultProps = {
     label: '',
     labelSelector: d => d.label,
     onChange: undefined,
-    optionLabelSelector: undefined,
-    optionModifier: undefined,
     options: emptyList,
     optionsClassName: '',
     placeholder: 'Select option(s)',
@@ -74,13 +71,13 @@ export const defaultProps = {
 };
 
 const filterAndSortOptions = (options, value, labelSelector) => {
-    const newOptions = options.filter(option =>
-        caseInsensitiveSubmatch(labelSelector(option), value),
+    const newOptions = options.filter(
+        option => caseInsensitiveSubmatch(labelSelector(option), value),
     );
 
     newOptions.sort((a, b) => (
         getRatingForContentInString(value, labelSelector(a))
-        - getRatingForContentInString(value, labelSelector(b))
+            - getRatingForContentInString(value, labelSelector(b))
     ));
 
     return newOptions;

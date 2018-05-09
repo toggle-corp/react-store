@@ -76,16 +76,24 @@ class Numeral extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getNormalizedNumber({ value, showSign, normal, precision, showSeparator, separator }) {
+    static getNormalizedNumber({
+        value,
+        showSign,
+        normal,
+        precision,
+        showSeparator,
+        separator,
+    }) {
         // Only use absolute part if showSign is true (sign are added later)
         let number = isTruthy(showSign) ? Math.abs(value) : value;
 
         // Get normalize-suffix and reduce the number
         let normalizedSuffix;
+
         if (normal) {
-            const val = formattedNormalize(number);
-            number = val.number;
-            normalizedSuffix = val.normalizeSuffix;
+            const { number: num, normalizedSuffix: norm } = formattedNormalize(number);
+            number = num;
+            normalizedSuffix = norm;
         }
 
         // Convert number to fixed precision

@@ -16,10 +16,13 @@ export default class RestRequest {
     static parseUrlParams(stringParams) {
         // TODO: Decode
         const params = decodeURIComponent(stringParams).split('&');
-        const paramsJson = {};
+        let paramsJson = {};
         params.forEach((param) => {
             const split = param.split('=');
-            paramsJson[split[0]] = split[1];
+            paramsJson = {
+                ...paramsJson,
+                [split[0]]: split[1],
+            };
         });
         return paramsJson;
     }

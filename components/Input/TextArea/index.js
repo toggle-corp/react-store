@@ -173,6 +173,7 @@ class TextArea extends React.PureComponent {
     handleFocus = () => {
         const { selectOnFocus, onFocus } = this.props;
         if (selectOnFocus) {
+            // eslint-disable-next-line no-restricted-globals
             event.target.select();
         }
 

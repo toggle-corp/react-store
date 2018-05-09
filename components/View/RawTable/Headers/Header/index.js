@@ -6,19 +6,12 @@ import styles from './styles.scss';
 const propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.node,
-        PropTypes.arrayOf(
-            PropTypes.node,
-        ),
+        PropTypes.arrayOf(PropTypes.node),
     ]).isRequired,
-
     className: PropTypes.string,
-
     highlighted: PropTypes.bool,
-
     hoverable: PropTypes.bool,
-
     onClick: PropTypes.func,
-
     uniqueKey: PropTypes.string.isRequired,
 };
 
@@ -33,14 +26,8 @@ export default class Header extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (className, highlighted, hoverable, uniqueKey) => {
         const classNames = [];
-        const {
-            className,
-            highlighted,
-            hoverable,
-            uniqueKey,
-        } = props;
 
         // default className for global override
         classNames.push('header');
@@ -78,11 +65,18 @@ export default class Header extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName(this.props);
+        const {
+            className,
+            highlighted,
+            hoverable,
+            uniqueKey,
+        } = this.props;
+
+        const thClassName = this.getClassName(className, highlighted, hoverable, uniqueKey);
 
         return (
             <th
-                className={className}
+                className={thClassName}
                 role="gridcell"
                 onClick={this.handleClick}
             >

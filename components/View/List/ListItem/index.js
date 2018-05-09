@@ -16,7 +16,6 @@ const defaultProps = {
     active: false,
     children: '',
     className: '',
-    onClick: undefined,
     scrollIntoView: false,
 };
 
