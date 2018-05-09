@@ -9,10 +9,7 @@ const propTypes = {
     className: PropTypes.string,
     year: PropTypes.number.isRequired,
     month: PropTypes.number.isRequired,
-    value: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-    ]),
+    value: PropTypes.number,
     onYearMonthChange: PropTypes.func,
 };
 

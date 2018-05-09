@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
-    randomString,
     isTruthy,
     isFalsy,
     addSeparator,
 } from '../../../utils/common';
 import FaramElement from '../../Input/Faram/FaramElement';
 
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -56,18 +57,13 @@ const propTypes = {
      * Is a required element for form
      */
     required: PropTypes.bool,
-
     showLabel: PropTypes.bool,
-
     showHintAndError: PropTypes.bool,
-
     value: PropTypes.number,
-
     separator: PropTypes.string,
-
     selectOnFocus: PropTypes.bool,
-
     changeDelay: PropTypes.number,
+    title: PropTypes.string,
 };
 
 const defaultProps = {
@@ -86,6 +82,7 @@ const defaultProps = {
     separator: ',',
     selectOnFocus: false,
     changeDelay: 400,
+    title: undefined,
 };
 
 const INT_LIMIT = 9007199254740992;
@@ -165,7 +162,6 @@ class NumberInput extends React.PureComponent {
             value: displayValue,
         };
 
-        this.inputId = randomString();
         this.pendingChange = false;
     }
 
@@ -194,16 +190,18 @@ class NumberInput extends React.PureComponent {
             disabled,
             error,
             required,
+            className,
         } = this.props;
 
         const {
             isFocused,
         } = this.state;
 
-        const classNames = [];
-
-        classNames.push('text-input');
-        classNames.push(styles.textInput);
+        const classNames = [
+            className,
+            'number-input',
+            styles.numberInput,
+        ];
 
         if (disabled) {
             classNames.push(styles.disabled);
@@ -276,75 +274,50 @@ class NumberInput extends React.PureComponent {
     render() {
         const {
             // skip prop injection
-            value: propValue, // eslint-disable-line
-            onBlur, // eslint-disable-line
-            onChange, // eslint-disable-line
-            onFocus, // eslint-disable-line
-            selectOnFocus, // eslint-disable-line
-            changeDelay, // eslint-disable-line
-            className,
+            value: propValue, // eslint-disable-line no-unused-vars
+            onBlur, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars
+            onFocus, // eslint-disable-line no-unused-vars
+            selectOnFocus, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars
+            className: propClassName, // eslint-disable-line no-unused-vars
 
             error,
             hint,
             label,
             showLabel,
             showHintAndError,
+            title,
             ...otherProps
         } = this.props;
 
         const { value = '' } = this.state;
 
-        const classNames = this.getClassName();
+        const className = this.getClassName();
 
         return (
-            <div className={`${classNames} ${className}`}>
-                {
-                    showLabel && (
-                        <label
-                            className={`${styles.label} label`}
-                            htmlFor={this.inputId}
-                        >
-                            {label}
-                        </label>
-                    )
-                }
+            <div
+                className={className}
+                title={title}
+            >
+                <Label
+                    className={styles.label}
+                    show={showLabel}
+                    text={label}
+                />
                 <input
                     className={`${styles.input} input`}
-                    id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
                     value={value}
                     {...otherProps}
                 />
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} empty error`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
             </div>
         );
     }

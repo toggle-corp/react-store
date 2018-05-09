@@ -6,7 +6,9 @@ import {
     isFalsy,
     isTruthy,
     isInteger,
+    decodeDate,
     splitInWhitespace,
+    getErrorForDateValues,
 } from '../../../utils/common';
 import urlRegex from './regexForWeburl';
 
@@ -116,5 +118,23 @@ export const urlCondition = (value) => {
     return {
         ok,
         message: 'Value must be a valid URL',
+    };
+};
+
+export const dateCondition = (value) => {
+    let error;
+
+    if (value) {
+        const dates = value.split('-');
+        const yearValue = dates[0];
+        const monthValue = dates[1];
+        const dayValue = dates[2];
+
+        error = getErrorForDateValues({ yearValue, monthValue, dayValue });
+    }
+
+    return {
+        ok: !error,
+        message: error,
     };
 };

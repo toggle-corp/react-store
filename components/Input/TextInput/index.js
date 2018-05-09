@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '../../../utils/common';
 import FaramElement from '../../Input/Faram/FaramElement';
 
 import HintAndError from '../HintAndError';
@@ -66,6 +65,8 @@ const propTypes = {
     selectOnFocus: PropTypes.bool,
 
     changeDelay: PropTypes.number,
+
+    title: PropTypes.string,
 };
 
 const defaultProps = {
@@ -83,6 +84,7 @@ const defaultProps = {
     value: '',
     selectOnFocus: false,
     changeDelay: 200,
+    title: undefined,
 };
 
 class TextInput extends React.PureComponent {
@@ -98,7 +100,6 @@ class TextInput extends React.PureComponent {
             value,
         };
 
-        this.inputId = randomString();
         this.pendingChange = false;
     }
 
@@ -217,6 +218,7 @@ class TextInput extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            title,
             ...otherProps
         } = this.props;
 
@@ -224,7 +226,10 @@ class TextInput extends React.PureComponent {
         const className = this.getClassName();
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                title={title}
+            >
                 <Label
                     className={styles.label}
                     show={showLabel}
@@ -232,7 +237,6 @@ class TextInput extends React.PureComponent {
                 />
                 <input
                     className={`${styles.input} input`}
-                    id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}

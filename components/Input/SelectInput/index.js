@@ -179,6 +179,7 @@ class SelectInput extends React.PureComponent {
             renderEmpty,
             optionsClassName,
             value,
+            title,
         } = this.props;
 
         const {
@@ -191,6 +192,7 @@ class SelectInput extends React.PureComponent {
             <div
                 ref={(el) => { this.container = el; }}
                 className={className}
+                title={title}
             >
                 <Label
                     styles={styles}

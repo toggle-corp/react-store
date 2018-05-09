@@ -4,7 +4,6 @@ import { iconNames } from '../../../constants';
 
 import {
     caseInsensitiveSubmatch,
-    // calcFloatingPositionInMainWindow,
     getRatingForContentInString,
 } from '../../../utils/common';
 
@@ -13,8 +12,6 @@ import {
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
-
-// p => props
 
 export const getClassName = (styles, base, state, p) => {
     const {
