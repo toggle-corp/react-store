@@ -43,8 +43,11 @@ const propTypes = {
     fillColor: PropTypes.string,
     /* nodes color when selected */
     selectColor: PropTypes.string,
-    /* the cluster layout's node size */
-    nodeSize: PropTypes.arrayOf(PropTypes.number),
+    /* the cluster minimum layout's node size */
+    nodeSize: PropTypes.shape({
+        minNodeWidth: PropTypes.number,
+        minNodeHeight: PropTypes.number,
+    }),
     /* additional class name for styling */
     className: PropTypes.string,
     /* the margin object with properties for the four sides(clockwise from top) */
@@ -63,7 +66,10 @@ const defaultProps = {
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
-    nodeSize: [150, 300],
+    nodeSize: {
+        minNodeWidth: 150,
+        minNodeHeight: 150,
+    },
     onSelection: () => [],
     disabled: false,
     fillColor: '#ffffff',
@@ -209,9 +215,18 @@ export default class OrgChart extends React.PureComponent {
                 `translate(${this.x + left + (width / 2)}, ${top + rectWidth + this.y}) scale(${this.k})`);
 
         const root = hierarchy(data, childAccessor);
+
+        const widthPerTreeLeaves = width / root.leaves().length;
+        const heightPerTreeDepth = height / root.height;
+        const { minNodeWidth, minNodeHeight } = nodeSize;
+        const nodeWidth = widthPerTreeLeaves < minNodeWidth ?
+            minNodeWidth : widthPerTreeLeaves;
+        const nodeHeight = heightPerTreeDepth < minNodeHeight ?
+            minNodeHeight : heightPerTreeDepth - rectWidth;
+
         const treemap = tree()
-            .nodeSize(nodeSize)
-            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
+            .nodeSize([nodeWidth, nodeHeight])
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1.25));
         const treeData = treemap(root);
         const link = linkVertical()
             .x(d => d.x)
