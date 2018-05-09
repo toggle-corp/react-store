@@ -523,17 +523,33 @@ const comparision = (extractor, func) => (x, y, direction = 1) => {
     return direction * func(a, b);
 };
 
-export const isDateValid = (date) => {
-    if (Object.prototype.toString.call(date) === '[object Date]') {
-        // it is a date
-        if (isNaN(date.getTime())) {
-            return false;
-        }
+export const MIN_YEAR = 1990;
 
-        return true;
+export const isDateValuesComplete = ({ yearValue, monthValue, dayValue }) => (
+    // Complete if all values are undefined or none are
+    (dayValue && monthValue && yearValue) ||
+    (!dayValue && !monthValue && !yearValue)
+);
+
+export const getErrorForDateValues = ({ yearValue, monthValue, dayValue }) => {
+    if (!isDateValuesComplete({ yearValue, monthValue, dayValue })) {
+        return 'Date values incomplete';
     }
 
-    return false;
+    if (yearValue < MIN_YEAR) {
+        return 'Year should be greater than or equal to 1990';
+    }
+
+    if (monthValue < 1 || monthValue > 12) {
+        return 'Month should be between 1 and 12';
+    }
+
+    const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
+    if (dayValue < 1 || dayValue > maxNumberOfDays) {
+        return 'Invalid day for this month';
+    }
+
+    return undefined;
 };
 
 // NOTE: func is never called for boolean

@@ -12,10 +12,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
+    value: PropTypes.number,
     onChange: PropTypes.func,
 };
 

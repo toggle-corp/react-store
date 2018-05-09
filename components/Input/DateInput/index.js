@@ -7,10 +7,10 @@ import { iconNames } from '../../../constants';
 
 import {
     getNumDaysInMonthX,
-    isDateValid,
-    isEmpty,
-    encodeDate,
+    leftPad,
     decodeDate,
+    getErrorForDateValues,
+    MIN_YEAR,
 } from '../../../utils/common';
 
 import {
@@ -32,10 +32,7 @@ const propTypes = {
     disabled: PropTypes.bool,
     hint: PropTypes.string,
     error: PropTypes.string,
-    value: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-    ]),
+    value: PropTypes.string,
     onChange: PropTypes.func,
     showHintAndError: PropTypes.bool,
     title: PropTypes.string,
@@ -54,13 +51,22 @@ const defaultProps = {
     title: undefined,
 };
 
-const MIN_YEAR = 1990;
-
 class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getDateFromValues = ({
+    static encodeDateValues = ({
+        dayValue,
+        monthValue,
+        yearValue,
+    }) => {
+        const yearStr = yearValue && leftPad(yearValue, 4);
+        const monthStr = monthValue && leftPad(monthValue, 2);
+        const dayStr = dayValue && leftPad(dayValue, 2);
+        return `${yearStr}-${monthStr}-${dayStr}`;
+    }
+
+    static decodeDateValues = ({
         dayValue,
         monthValue,
         yearValue,
@@ -69,30 +75,15 @@ class DateInput extends React.PureComponent {
             return undefined;
         }
 
-        if (yearValue < MIN_YEAR) {
+        if (getErrorForDateValues({ yearValue, monthValue, dayValue })) {
             return undefined;
         }
 
-        if (monthValue < 1 || monthValue > 12) {
-            return undefined;
-        }
-
-        const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
-        if (dayValue < 1 || dayValue > maxNumberOfDays) {
-            return undefined;
-        }
-
-        const date = new Date(
+        return new Date(
             yearValue,
             monthValue - 1,
             dayValue,
         );
-
-        if (isDateValid(date)) {
-            return date;
-        }
-
-        return undefined;
     }
 
     constructor(props) {
@@ -114,20 +105,24 @@ class DateInput extends React.PureComponent {
         this.boundingClientRect = {};
     }
 
+    componentWillMount() {
+        this.validate(false);
+    }
+
     componentWillReceiveProps(nextProps) {
         const { value: newValue } = nextProps;
-        const { value: oldValue } = this.props;
+        const { d, m, y } = this.processValue(newValue);
 
-        if (newValue !== oldValue) {
-            const { d, m, y } = this.processValue(newValue);
-            this.setState(
-                {
-                    dayValue: d,
-                    monthValue: m,
-                    yearValue: y,
-                },
-                this.validate,
-            );
+        if (this.currentValue !== newValue) {
+            const newState = {
+                dayValue: d,
+                monthValue: m,
+                yearValue: y,
+            };
+
+            if (!getErrorForDateValues(newState)) {
+                this.setState(newState, this.validate);
+            }
         }
     }
 
@@ -181,23 +176,13 @@ class DateInput extends React.PureComponent {
     }
 
     processValue = (value) => {
-        const { onChange } = this.props;
-
         if (value) {
-            const date = decodeDate(value);
-            if (isDateValid(date)) {
-                const d = date.getDate();
-                const m = date.getMonth();
-                const y = date.getFullYear();
+            const dates = value.split('-');
+            const y = dates[0];
+            const m = dates[1];
+            const d = dates[2];
 
-                return {
-                    d,
-                    m: m + 1,
-                    y,
-                };
-            }
-            // If date is invalid, send back undefined
-            onChange(undefined);
+            return { d, m, y };
         }
 
         return {
@@ -207,25 +192,17 @@ class DateInput extends React.PureComponent {
         };
     }
 
-    validate = () => {
+    validate = (callOnChange = true) => {
         const { onChange } = this.props;
-        const date = DateInput.getDateFromValues(this.state);
+        const value = DateInput.encodeDateValues(this.state);
+        const isDateValid = !getErrorForDateValues(this.state);
 
-        const { dayValue, yearValue, monthValue } = this.state;
-        const emptyDate = (
-            isEmpty(dayValue) &&
-            isEmpty(monthValue) &&
-            isEmpty(yearValue)
-        );
-
-        if (emptyDate || date) {
-            // DateInput value should be of format yyyy-MM-dd
-            const value = date && encodeDate(date);
+        // DateInput value should be of format yyyy-MM-dd
+        this.currentValue = value;
+        if (callOnChange) {
             onChange(value);
-            this.setState({ isInvalid: false });
-        } else {
-            this.setState({ isInvalid: true });
         }
+        this.setState({ isInvalid: !isDateValid });
     }
 
     handleDayInputFocus = () => { this.setState({ isDayInputFocused: true }); }
@@ -237,21 +214,21 @@ class DateInput extends React.PureComponent {
 
     handleDayChange = (e) => {
         this.setState(
-            { dayValue: e.target.value },
+            { dayValue: e.target.value && parseInt(e.target.value, 10) },
             this.validate,
         );
     }
 
     handleMonthChange = (e) => {
         this.setState(
-            { monthValue: e.target.value },
+            { monthValue: e.target.value && parseInt(e.target.value, 10) },
             this.validate,
         );
     }
 
     handleYearChange = (e) => {
         this.setState(
-            { yearValue: e.target.value },
+            { yearValue: e.target.value && parseInt(e.target.value, 10) },
             this.validate,
         );
     }
@@ -317,17 +294,7 @@ class DateInput extends React.PureComponent {
 
     handleDatePickerDatePick = (timestamp) => {
         const newDate = decodeDate(timestamp);
-
-        const {
-            dayValue,
-            monthValue,
-            yearValue,
-        } = this.state;
-        const currentDate = DateInput.getDateFromValues({
-            dayValue,
-            monthValue,
-            yearValue,
-        });
+        const currentDate = DateInput.decodeDateValues(this.state);
 
         this.setState(
             { showDatePicker: false },
@@ -526,7 +493,7 @@ class DateInput extends React.PureComponent {
             return null;
         }
 
-        const date = DateInput.getDateFromValues(this.state);
+        const date = DateInput.decodeDateValues(this.state);
 
         return (
             <FloatingContainer
