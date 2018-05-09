@@ -46,6 +46,7 @@ export const propTypes = {
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
     value: PropTypes.arrayOf(keyPropType),
+    title: PropTypes.string,
 };
 
 export const defaultProps = {
@@ -69,6 +70,7 @@ export const defaultProps = {
     showHintAndError: true,
     showLabel: true,
     value: emptyList,
+    title: undefined,
 };
 
 const filterAndSortOptions = (options, value, labelSelector) => {
@@ -459,6 +461,7 @@ class MultiSelectInput extends React.PureComponent {
             showHintAndError,
             showLabel,
             value,
+            title,
         } = this.props;
 
         const {
@@ -470,6 +473,7 @@ class MultiSelectInput extends React.PureComponent {
             <div
                 ref={(el) => { this.container = el; }}
                 className={className}
+                title={title}
             >
                 <Label
                     className={styles.label}
