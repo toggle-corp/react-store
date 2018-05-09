@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '../../../utils/common';
 import FaramElement from '../../Input/Faram/FaramElement';
 
 import HintAndError from '../HintAndError';
@@ -101,7 +100,6 @@ class TextInput extends React.PureComponent {
             value,
         };
 
-        this.inputId = randomString();
         this.pendingChange = false;
     }
 
@@ -239,7 +237,6 @@ class TextInput extends React.PureComponent {
                 />
                 <input
                     className={`${styles.input} input`}
-                    id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}

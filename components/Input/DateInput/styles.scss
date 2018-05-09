@@ -2,6 +2,8 @@
 @import '../../../stylesheets/input-label';
 
 .date-input {
+    min-width: $width-input-min;
+
     .label {
         @extend %input-label;
     }
