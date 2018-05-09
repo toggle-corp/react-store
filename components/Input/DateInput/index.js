@@ -60,9 +60,9 @@ class DateInput extends React.PureComponent {
         monthValue,
         yearValue,
     }) => {
-        const yearStr = yearValue && leftPad(yearValue, 4);
-        const monthStr = monthValue && leftPad(monthValue, 2);
-        const dayStr = dayValue && leftPad(dayValue, 2);
+        const yearStr = yearValue ? leftPad(yearValue, 4) : '';
+        const monthStr = monthValue ? leftPad(monthValue, 2) : '';
+        const dayStr = dayValue ? leftPad(dayValue, 2) : '';
         return `${yearStr}-${monthStr}-${dayStr}`;
     }
 
@@ -110,10 +110,11 @@ class DateInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
+        const { value: oldValue } = this.props;
         const { value: newValue } = nextProps;
         const { d, m, y } = this.processValue(newValue);
 
-        if (this.currentValue !== newValue) {
+        if (this.currentValue !== newValue && oldValue !== newValue) {
             const newState = {
                 dayValue: d,
                 monthValue: m,
