@@ -7,48 +7,49 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
-import AccentButton from '../../Action/Button/AccentButton';
 import update from '../../../utils/immutable-update';
 import {
     getStandardFilename,
-    getColorOnBgColor,
     isObjectEmpty,
 } from '../../../utils/common';
 import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
-/**
- * boundingClientRect: the width and height of the container.
- * value: the selected values (nodes).
- * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
- * onSelection: handle selection of nodes.
- * disabled: if true no click events on nodes.
- * fillColor: default color for nodes.
- * selectColor: nodes color when selected
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
 const propTypes = {
+    /* the width and height of the container */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /* the selected values (nodes) */
     value: PropTypes.array, // eslint-disable-line
+    /* the hierarchical data to be visualized */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    /* the accessor function to return array of data representing the children */
     childAccessor: PropTypes.func,
+    /* access the individual label of each data element */
     labelAccessor: PropTypes.func,
+    /* access the id of each data element */
     idAccessor: PropTypes.func,
+    /* handle selection of nodes */
     onSelection: PropTypes.func,
+    /* if true no click events on nodes */
     disabled: PropTypes.bool,
+    /* default color for nodes */
     fillColor: PropTypes.string,
+    /* nodes color when selected */
     selectColor: PropTypes.string,
-    nodeSize: PropTypes.arrayOf(PropTypes.number),
+    /* the cluster minimum layout's node size */
+    nodeSize: PropTypes.shape({
+        minNodeWidth: PropTypes.number,
+        minNodeHeight: PropTypes.number,
+    }),
+    /* additional class name for styling */
     className: PropTypes.string,
+    /* the margin object with properties for the four sides(clockwise from top) */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -64,11 +65,14 @@ const defaultProps = {
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
-    nodeSize: [150, 300],
+    nodeSize: {
+        minNodeWidth: 150,
+        minNodeHeight: 50,
+    },
     onSelection: () => [],
     disabled: false,
     fillColor: '#ffffff',
-    selectColor: '#58C9B9',
+    selectColor: '#afeeee',
     margins: {
         top: 0,
         right: 0,
@@ -77,7 +81,7 @@ const defaultProps = {
     },
 };
 
-
+const rectWidth = 30;
 @BoundError()
 @Responsive
 export default class OrgChart extends React.PureComponent {
@@ -94,7 +98,7 @@ export default class OrgChart extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -105,11 +109,28 @@ export default class OrgChart extends React.PureComponent {
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
     }
 
-    componentWillUnmout() {
-        clearTimeout(this.timeout);
+    getNodeClassName = (d) => {
+        const classNames = [
+            'node',
+            styles.node,
+        ];
+
+        if (d.children) {
+            classNames.push('node-internal');
+        } else {
+            classNames.push('node-leaf');
+        }
+
+        const isActive = this.isSelected(d.data);
+        if (isActive) {
+            classNames.push(styles.active);
+            classNames.push('active');
+        }
+
+        return classNames.join(' ');
     }
 
     save = () => {
@@ -166,7 +187,7 @@ export default class OrgChart extends React.PureComponent {
         return indexInSelection !== -1;
     };
 
-    renderChart = () => {
+    drawChart = () => {
         const {
             boundingClientRect,
             data,
@@ -180,10 +201,6 @@ export default class OrgChart extends React.PureComponent {
         } = this.props;
 
         const svg = select(this.svg);
-        svg
-            .selectAll('*')
-            .remove();
-
         if (!boundingClientRect.width) {
             return;
         }
@@ -202,8 +219,6 @@ export default class OrgChart extends React.PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-        const rectSize = 30;
-        const rectPadding = 20;
 
         const group = svg
             .attr('width', width + left + right)
@@ -212,30 +227,37 @@ export default class OrgChart extends React.PureComponent {
                 const { x, y, k } = event.transform;
                 Object.assign(this, { x, y, k });
                 group
-                    .attr('transform', `translate(${x + left + (width / 2)}, ${top + rectPadding + y}) scale(${k})`);
+                    .attr('transform', `translate(${x + left + (width / 2)}, ${top + rectWidth + y}) scale(${k})`);
             }))
             .append('g')
             .attr('transform',
-                `translate(${this.x + left + (width / 2)}, ${top + rectPadding + this.y}) scale(${this.k})`);
+                `translate(${this.x + left + (width / 2)}, ${top + rectWidth + this.y}) scale(${this.k})`);
 
         const root = hierarchy(data, childAccessor);
-        const treemap = tree()
-            .nodeSize(nodeSize)
-            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
-        const treeData = treemap(root);
 
+        const widthPerTreeLeaves = width / root.leaves().length;
+        const heightPerTreeDepth = height / root.height;
+        const { minNodeWidth, minNodeHeight } = nodeSize;
+        const nodeWidth = widthPerTreeLeaves < minNodeWidth ?
+            minNodeWidth : widthPerTreeLeaves;
+        const nodeHeight = heightPerTreeDepth < minNodeHeight ?
+            minNodeHeight : heightPerTreeDepth - rectWidth;
+
+        const treemap = tree()
+            .nodeSize([nodeWidth, nodeHeight])
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1.25));
+        const treeData = treemap(root);
         const link = linkVertical()
             .x(d => d.x)
-            .y(d => d.y + ((rectSize / 2) - (rectPadding)));
+            .y(d => d.y);
 
+        const linkClassName = `${styles.link} link`;
         group
             .selectAll('.link')
             .data(treeData.links())
             .enter()
             .append('path')
-            .attr('class', 'link')
-            .attr('fill', 'none')
-            .attr('stroke', '#ccc')
+            .attr('class', linkClassName)
             .attr('d', link);
 
         const nodes = group
@@ -243,45 +265,31 @@ export default class OrgChart extends React.PureComponent {
             .data(treeData.descendants())
             .enter()
             .append('g')
-            .attr('class', d => `node ${d.children ? 'node--internal' : 'node-leaf'}`)
-            .attr('transform', d => `translate(${d.x}, ${d.y + (rectSize / 2)})`);
-
-        const colorExtractor = (item) => {
-            const isSelected = this.isSelected(item.data);
-            return isSelected ? selectColor : fillColor;
-        };
+            .attr('class', this.getNodeClassName)
+            .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
         nodes
             .append('rect')
-            .attr('rx', 6)
-            .attr('ry', 6)
-            .style('fill', colorExtractor)
-            .style('stroke', '#666')
-            .style('cursor', 'pointer')
-            .style('stroke-width', '1.5px');
+            .style('cursor', 'pointer');
 
         nodes
             .append('text')
             .attr('dy', '.35em')
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
-            .text(d => labelAccessor(d.data))
-            .style('fill', d => getColorOnBgColor(colorExtractor(d)));
+            .text(d => labelAccessor(d.data));
 
+        const boxPadding = {
+            x: 10,
+            y: 6,
+        };
+        const getBBox = d => select(d).node().parentNode.getBBox();
         nodes
             .selectAll('rect')
-            .attr('width', function wrap() {
-                return this.parentNode.getBBox().width + rectPadding;
-            })
-            .attr('height', function wrap() {
-                return this.parentNode.getBBox().height + rectPadding;
-            })
-            .attr('x', function position() {
-                return this.parentNode.getBBox().x - (rectPadding / 2);
-            })
-            .attr('y', function position() {
-                return this.parentNode.getBBox().y - (rectPadding / 2);
-            });
+            .attr('width', (d, i, groups) => getBBox(groups[i]).width + (boxPadding.x * 2))
+            .attr('height', (d, i, groups) => getBBox(groups[i]).height + (boxPadding.y * 2))
+            .attr('x', (d, i, groups) => getBBox(groups[i]).x - boxPadding.x)
+            .attr('y', (d, i, groups) => getBBox(groups[i]).y - boxPadding.y);
 
         if (!disabled) {
             nodes
@@ -292,23 +300,45 @@ export default class OrgChart extends React.PureComponent {
         }
     }
 
+    redrawChart = () => {
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
+        this.drawChart();
+    }
+
     render() {
         const { className } = this.props;
+
         const containerClassName = [
-            styles.container,
+            // for internal styling
+            styles.orgChart,
+
+            // global class name, for external override
+            'org-chart',
+
             className,
         ].join(' ');
+
+        const chartClassName = [
+            styles.chart,
+            'chart',
+        ].join(' ');
+
+        const infoIconClassName = [
+            styles.infoIcon,
+            'info-icon',
+            iconNames.info,
+        ].join(' ');
+
         return (
-            <div
-                className={containerClassName}
-            >
-                <svg
-                    className={styles.orgChart}
-                    ref={(elem) => { this.svg = elem; }}
-                />
+            <div className={containerClassName}>
                 <span
-                    className={`${styles.info} ${iconNames.info}`}
+                    className={infoIconClassName}
                     title="Use mouse to pan and zoom"
+                />
+                <svg
+                    className={chartClassName}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </div>
         );

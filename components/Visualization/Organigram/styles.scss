@@ -4,3 +4,12 @@
     width: 100%;
     height: 100%;
 }
+
+.info {
+    position: absolute;
+    top: $spacing-small;
+    right: $spacing-small;
+    cursor: pointer;
+    color: $color-accent;
+}
+
