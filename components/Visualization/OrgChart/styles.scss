@@ -1,20 +1,51 @@
 @import '../../../stylesheets/base';
 
-.container {
+.org-chart {
     display: flex;
     position: relative;
     width: 100%;
     height: 100%;
 
-    .org-chart {
-        flex: 1 1 auto;
-    }
-
-    .info {
+    .info-icon {
         position: absolute;
         top: $spacing-small;
         right: $spacing-small;
         cursor: pointer;
         color: $color-accent;
+    }
+
+    .chart {
+        flex: 1 1 auto;
+
+        .link {
+            fill: none;
+            stroke: $color-text-label;
+        }
+
+        .node {
+            fill: $color-foreground;
+
+            rect {
+                stroke: $color-text-label;
+                fill: $color-foreground;
+                rx: $radius-border-medium;
+                ry: $radius-border-medium;
+            }
+
+            text {
+                fill: $color-text;
+                font-family: $font-family-sans-serif;
+            }
+
+            &.active {
+                rect {
+                    fill: $color-accent;
+                }
+
+                text {
+                    fill: get-text-color($color-accent);
+                }
+            }
+        }
     }
 }

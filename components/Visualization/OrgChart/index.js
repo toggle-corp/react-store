@@ -10,7 +10,6 @@ import BoundError from '../../General/BoundError';
 import update from '../../../utils/immutable-update';
 import {
     getStandardFilename,
-    getColorOnBgColor,
     isObjectEmpty,
 } from '../../../utils/common';
 import iconNames from '../../../constants/iconNames';
@@ -68,7 +67,7 @@ const defaultProps = {
     idAccessor: d => d.id,
     nodeSize: {
         minNodeWidth: 150,
-        minNodeHeight: 150,
+        minNodeHeight: 50,
     },
     onSelection: () => [],
     disabled: false,
@@ -111,6 +110,27 @@ export default class OrgChart extends React.PureComponent {
 
     componentDidUpdate() {
         this.redrawChart();
+    }
+
+    getNodeClassName = (d) => {
+        const classNames = [
+            'node',
+            styles.node,
+        ];
+
+        if (d.children) {
+            classNames.push('node-internal');
+        } else {
+            classNames.push('node-leaf');
+        }
+
+        const isActive = this.isSelected(d.data);
+        if (isActive) {
+            classNames.push(styles.active);
+            classNames.push('active');
+        }
+
+        return classNames.join(' ');
     }
 
     save = () => {
@@ -166,7 +186,6 @@ export default class OrgChart extends React.PureComponent {
         const indexInSelection = this.findIndexInSelectedList(item);
         return indexInSelection !== -1;
     };
-
 
     drawChart = () => {
         const {
@@ -232,19 +251,13 @@ export default class OrgChart extends React.PureComponent {
             .x(d => d.x)
             .y(d => d.y);
 
-        const colorExtractor = (item) => {
-            const isSelected = this.isSelected(item.data);
-            return isSelected ? selectColor : fillColor;
-        };
-
+        const linkClassName = `${styles.link} link`;
         group
             .selectAll('.link')
             .data(treeData.links())
             .enter()
             .append('path')
-            .attr('class', 'link')
-            .style('fill', 'none')
-            .style('stroke', '#ccc')
+            .attr('class', linkClassName)
             .attr('d', link);
 
         const nodes = group
@@ -252,15 +265,11 @@ export default class OrgChart extends React.PureComponent {
             .data(treeData.descendants())
             .enter()
             .append('g')
-            .attr('class', d => `node ${d.children ? 'node--internal' : 'node-leaf'}`)
+            .attr('class', this.getNodeClassName)
             .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
         nodes
             .append('rect')
-            .attr('rx', 3)
-            .attr('ry', 3)
-            .style('fill', colorExtractor)
-            .style('stroke', '#bdbdbd')
             .style('cursor', 'pointer');
 
         nodes
@@ -268,17 +277,19 @@ export default class OrgChart extends React.PureComponent {
             .attr('dy', '.35em')
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
-            .text(d => labelAccessor(d.data))
-            .style('fill', d => getColorOnBgColor(colorExtractor(d)));
+            .text(d => labelAccessor(d.data));
 
-        const boxPadding = 15;
-
+        const boxPadding = {
+            x: 10,
+            y: 6,
+        };
+        const getBBox = d => select(d).node().parentNode.getBBox();
         nodes
             .selectAll('rect')
-            .attr('width', (d, i, groups) => select(groups[i]).node().parentNode.getBBox().width + boxPadding)
-            .attr('height', (d, i, groups) => select(groups[i]).node().parentNode.getBBox().height + boxPadding)
-            .attr('x', (d, i, groups) => select(groups[i]).node().parentNode.getBBox().x - (boxPadding / 2))
-            .attr('y', (d, i, groups) => select(groups[i]).node().parentNode.getBBox().y - (boxPadding / 2));
+            .attr('width', (d, i, groups) => getBBox(groups[i]).width + (boxPadding.x * 2))
+            .attr('height', (d, i, groups) => getBBox(groups[i]).height + (boxPadding.y * 2))
+            .attr('x', (d, i, groups) => getBBox(groups[i]).x - boxPadding.x)
+            .attr('y', (d, i, groups) => getBBox(groups[i]).y - boxPadding.y);
 
         if (!disabled) {
             nodes
@@ -297,21 +308,37 @@ export default class OrgChart extends React.PureComponent {
 
     render() {
         const { className } = this.props;
+
         const containerClassName = [
-            styles.container,
+            // for internal styling
+            styles.orgChart,
+
+            // global class name, for external override
+            'org-chart',
+
             className,
         ].join(' ');
+
+        const chartClassName = [
+            styles.chart,
+            'chart',
+        ].join(' ');
+
+        const infoIconClassName = [
+            styles.infoIcon,
+            'info-icon',
+            iconNames.info,
+        ].join(' ');
+
         return (
-            <div
-                className={containerClassName}
-            >
-                <svg
-                    className={styles.orgChart}
-                    ref={(elem) => { this.svg = elem; }}
-                />
+            <div className={containerClassName}>
                 <span
-                    className={`${styles.info} ${iconNames.info}`}
+                    className={infoIconClassName}
                     title="Use mouse to pan and zoom"
+                />
+                <svg
+                    className={chartClassName}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </div>
         );
