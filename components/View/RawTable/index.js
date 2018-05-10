@@ -15,21 +15,17 @@ const propTypeKey = PropTypes.oneOfType([
 const propTypes = {
     className: PropTypes.string,
 
-    headers: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string,
-            label: PropTypes.string,
-        }),
-    ).isRequired,
+    headers: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.string,
+        label: PropTypes.string,
+    })).isRequired,
 
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.oneOfType([
-                PropTypes.string,
-                PropTypes.number,
-            ]),
-        }),
-    ).isRequired,
+    data: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    })).isRequired,
 
     dataModifier: PropTypes.func,
 
@@ -116,9 +112,7 @@ export default class RawTable extends React.PureComponent {
         }
     }
 
-    getClassName = (props) => {
-        const { className } = props;
-
+    getClassName = (className) => {
         const classNames = [];
 
         // default className for global override
@@ -144,13 +138,12 @@ export default class RawTable extends React.PureComponent {
             highlightColumnKey,
             expandRowId,
             expandedRowModifier,
+            className,
         } = this.props;
 
-        const className = this.getClassName(this.props);
+        const tableClassName = this.getClassName(className);
         return (
-            <table
-                className={className}
-            >
+            <table className={tableClassName}>
                 <Headers
                     headers={this.state.headers}
                     headerModifier={headerModifier}

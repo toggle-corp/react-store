@@ -230,8 +230,13 @@ export default class OrgChart extends React.PureComponent {
                     .attr('transform', `translate(${x + left + (width / 2)}, ${top + rectWidth + y}) scale(${k})`);
             }))
             .append('g')
-            .attr('transform',
-                `translate(${this.x + left + (width / 2)}, ${top + rectWidth + this.y}) scale(${this.k})`);
+            .attr(
+                'transform',
+                `translate(
+                    ${this.x + left + (width / 2)},
+                    ${top + rectWidth + this.y}) scale(${this.k}
+                )`,
+            );
 
         const root = hierarchy(data, childAccessor);
 

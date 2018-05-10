@@ -55,13 +55,8 @@ export default class Row extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (hoverable, highlighted, className) => {
         const classNames = [];
-        const {
-            hoverable,
-            highlighted,
-            className,
-        } = props;
 
         // default className for global override
         classNames.push('row');
@@ -124,11 +119,16 @@ export default class Row extends React.PureComponent {
     }
 
     render() {
-        const { headersOrder } = this.props;
-        const className = this.getClassName(this.props);
+        const {
+            headersOrder,
+            hoverable,
+            highlighted,
+            className,
+        } = this.props;
+        const trClassName = this.getClassName(hoverable, highlighted, className);
 
         return (
-            <tr className={className}>
+            <tr className={trClassName}>
                 <List
                     data={headersOrder}
                     keyExtractor={this.keyExtractor}

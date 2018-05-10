@@ -5,7 +5,6 @@ import {
     isTruthy,
     listToMap,
 } from '../../../utils/common';
-
 import {
     selectInputOptionsPropTypes,
     selectInputOptionsDefaultProps,

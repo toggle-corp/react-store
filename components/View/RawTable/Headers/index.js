@@ -8,11 +8,9 @@ import Header from './Header';
 const propTypes = {
     className: PropTypes.string,
 
-    headers: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string,
-        }),
-    ).isRequired,
+    headers: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.string,
+    })).isRequired,
 
     onClick: PropTypes.func,
 
@@ -30,11 +28,8 @@ export default class Headers extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (className) => {
         const classNames = [];
-        const {
-            className,
-        } = props;
 
         // default className for global override
         classNames.push('headers');
@@ -78,7 +73,7 @@ export default class Headers extends React.Component {
     render() {
         const { headers } = this.props;
 
-        const className = this.getClassName(this.props);
+        const className = this.getClassName(this.props.className);
         return (
             <thead className={className}>
                 <tr>

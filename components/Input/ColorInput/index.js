@@ -78,7 +78,12 @@ class ColorInput extends React.PureComponent {
             parentRect = this.container.getBoundingClientRect();
         }
 
-        const offset = { top: 2, right: 0, bottom: 0, left: 0 };
+        const offset = {
+            top: 2,
+            right: 0,
+            bottom: 0,
+            left: 0,
+        };
         if (this.props.showHintAndError) {
             offset.top = 12;
         }

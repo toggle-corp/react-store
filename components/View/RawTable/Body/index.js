@@ -20,14 +20,12 @@ const propTypes = {
 
     className: PropTypes.string,
 
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.oneOfType([
-                PropTypes.string,
-                PropTypes.number,
-            ]),
-        }),
-    ).isRequired,
+    data: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    })).isRequired,
 
     dataModifier: PropTypes.func,
 
@@ -62,8 +60,6 @@ const defaultProps = {
     highlightCellKey: {},
     highlightRowKey: undefined,
     highlightColumnKey: undefined,
-    highlighted: false,
-    hoverable: false,
     onClick: undefined,
     expandRowId: undefined,
     expandedRowModifier: undefined,
@@ -73,9 +69,8 @@ export default class Body extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = (props) => {
+    getClassName = (className) => {
         const classNames = [];
-        const { className } = props;
 
         // default className for global override
         classNames.push('body');
@@ -152,7 +147,7 @@ export default class Body extends React.PureComponent {
     render() {
         const { data } = this.props;
 
-        const className = this.getClassName(this.props);
+        const className = this.getClassName(this.props.className);
 
         return (
             <tbody className={className}>

@@ -9,7 +9,6 @@ import styles from './styles.scss';
 
 /**
  * Iconleft is the name of ionicon in left of title button
- * MarginTop is extra top shift if required
  * showDropdown shows chevron on right of title button
  * */
 const propTypes = {
@@ -38,7 +37,6 @@ const defaultProps = {
     className: '',
     iconName: undefined,
     leftComponent: undefined,
-    marginTop: 0,
     hideDropdownIcon: false,
     title: '',
     dropdownClassName: '',
