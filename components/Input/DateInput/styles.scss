@@ -84,16 +84,6 @@ $width-date-picker-container-min: 208px;
         }
     }
 
-    &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
-        .input {
-            border-bottom-color: $color-text-disabled;
-        }
-    }
-
     &.invalid {
         .label {
             color: $color-warning;
@@ -111,6 +101,22 @@ $width-date-picker-container-min: 208px;
 
         .input {
             border-bottom-color: $color-danger;
+        }
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .input {
+            border-bottom-color: $color-separator;
+
+            .date-units {
+                .date-unit {
+                    color: $color-text-disabled;
+                }
+            }
         }
     }
 }
