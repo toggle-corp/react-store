@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from '../List';
+import ListView from '../List/ListView';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -71,7 +71,7 @@ export default class VerticalTabs extends React.PureComponent {
         const isActive = data === active;
         const className = this.getTabClassName(isActive);
         const onClick = () => { this.handleTabClick(data); };
-        const content = modifier ? modifier(data) : tabs[data];
+        const content = modifier ? modifier(data, tabs[data]) : tabs[data];
 
         return (
             <button
@@ -86,19 +86,16 @@ export default class VerticalTabs extends React.PureComponent {
     }
 
     render() {
-        const {
-            tabs,
-        } = this.props;
+        const { tabs } = this.props;
 
         const tabList = Object.keys(tabs);
         const className = this.getClassName();
         return (
-            <div className={className}>
-                <List
-                    data={tabList}
-                    modifier={this.renderTab}
-                />
-            </div>
+            <ListView
+                className={className}
+                data={tabList}
+                modifier={this.renderTab}
+            />
         );
     }
 }
