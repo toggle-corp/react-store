@@ -25,6 +25,116 @@ const defaultProps = {
     mode: 'dd-MM-yyyy',
 };
 
+const getStartEnd = (mode, matches) => {
+    let minStart;
+    let maxEnd;
+
+    matches.forEach((val) => {
+        const start = mode.indexOf(val);
+        if (start === -1) {
+            return;
+        }
+        const end = start + val.length;
+
+        if (start < minStart || minStart === undefined) {
+            minStart = start;
+        }
+        if (end > maxEnd || maxEnd === undefined) {
+            maxEnd = end;
+        }
+    });
+    return { start: minStart, end: maxEnd };
+};
+
+const breakFormat = (mode) => {
+    const dateIndices = getStartEnd(mode, ['yyyy', 'yy', 'MMM', 'MM', 'dd']);
+    const timeIndices = getStartEnd(mode, ['hh', 'mm', 'ss', 'tt']);
+
+    const partOfMode = (start, end) => mode.substring(start, end);
+
+    if (dateIndices.start === undefined && timeIndices.start === undefined) {
+        return [
+            { value: mode },
+        ];
+    } else if (dateIndices.start === undefined) {
+        return [
+            { value: partOfMode(0, timeIndices.start) },
+            { type: 'time', value: partOfMode(timeIndices.start, timeIndices.end) },
+            { value: partOfMode(timeIndices.end, mode.length) },
+        ].filter(a => a.value !== '');
+    } else if (timeIndices.start === undefined) {
+        return [
+            { value: partOfMode(0, dateIndices.start) },
+            { type: 'date', value: partOfMode(dateIndices.start, dateIndices.end) },
+            { value: partOfMode(dateIndices.end, mode.length) },
+        ].filter(a => a.value !== '');
+    } else if (dateIndices.start < timeIndices.start) {
+        return [
+            { value: partOfMode(0, dateIndices.start) },
+            { type: 'date', value: partOfMode(dateIndices.start, dateIndices.end) },
+            { value: partOfMode(dateIndices.end, timeIndices.start) },
+            { type: 'time', value: partOfMode(timeIndices.start, timeIndices.end) },
+            { value: partOfMode(timeIndices.end, mode.length) },
+        ].filter(a => a.value !== '');
+    }
+    return [
+        { value: partOfMode(0, timeIndices.start) },
+        { type: 'time', value: partOfMode(timeIndices.start, timeIndices.end) },
+        { value: partOfMode(timeIndices.end, dateIndices.start) },
+        { type: 'date', value: partOfMode(dateIndices.start, dateIndices.end) },
+        { value: partOfMode(dateIndices.end, mode.length) },
+    ].filter(a => a.value !== '');
+};
+
+const MONTHS = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+const padding = (number, length, str = '0') => (
+    String(number).padStart(length, str)
+);
+
+const insertValues = (formatList, date) => (
+    formatList.map((format) => {
+        if (format.type === 'date') {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+
+            const newFormat = { ...format };
+            newFormat.value = newFormat.value
+                .replace('yyyy', year)
+                .replace('yy', date.getFullYear() % 100)
+                .replace('MMM', MONTHS[date.getMonth()])
+                .replace('MM', padding(month, 2))
+                .replace('dd', padding(day, 2));
+            return newFormat;
+        } else if (format.type === 'time') {
+            const ttIndex = format.value.indexOf('tt');
+
+            const originalHour = date.getHours();
+
+            const hour = ttIndex >= 0
+                ? ((originalHour - 1) % 12) + 1
+                : originalHour;
+            const amPm = originalHour >= 12 ? 'PM' : 'AM';
+            const minute = date.getMinutes();
+            const second = date.getSeconds();
+
+            const newFormat = { ...format };
+            newFormat.value = newFormat.value
+                .replace('hh', padding(hour, 2))
+                .replace('mm', padding(minute, 2))
+                .replace('ss', padding(second, 2))
+                .replace('tt', amPm);
+            return newFormat;
+        }
+        return format;
+    })
+);
+
+
 /**
  * Show timestamp in Human Readable Format
  */
@@ -32,118 +142,47 @@ export default class FormattedDate extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static MONTHS = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
+    // returns string
+    static format = (date, mode) => (
+        insertValues(breakFormat(mode), date)
+            .map(e => e.value)
+            .join('')
+    );
 
-    static format = (date, mode) => {
-        const year = date.getFullYear();
-        const month = (`0${date.getMonth() + 1}`).slice(-2);
-        const monthHR = FormattedDate.MONTHS[date.getMonth()];
-        const day = (`0${date.getDate()}`).slice(-2);
-        const hour = (`0${date.getHours()}`).slice(-2);
-        const minute = (`0${date.getMinutes()}`).slice(-2);
-
-        let fDate;
-
-        switch (mode) {
-            case 'yyyy-MM-dd':
-                fDate = `${year}-${month}-${day}`;
-                break;
-            case 'dd-MM-yyyy':
-                fDate = `${day}-${month}-${year}`;
-                break;
-            case 'dd-MM-yyyy hh:mm':
-                fDate = `${day}-${month}-${year} ${hour}:${minute}`;
-                break;
-            case 'MM-dd-yyyy':
-                fDate = `${month}-${day}-${year}`;
-                break;
-            case 'MM-dd-yyyy hh:mm':
-                fDate = `${month}-${day}-${year} ${hour}:${minute}`;
-                break;
-            case 'hh:mm tt': {
-                const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
-                fDate = `${hours}:${minute} ${amPm}`;
-                break;
-            } case 'MMM dd, yyyy':
-                // TODO: fix this
-                fDate = `${monthHR} ${day}, ${year}`;
-                break;
-            case 'MMM dd, yyyy hh:mm tt': {
-                const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
-                fDate = `${monthHR} ${day}, ${year} ${hours}:${minute} ${amPm}`;
-                break;
-            } case 'dd MMM, yyyy':
-                // TODO: fix this
-                fDate = `${day} ${monthHR}, ${year}`;
-                break;
-            default:
-                fDate = date.toLocaleDateString();
-        }
-
-        return fDate;
-    };
-
-    formatDate = (date, mode) => {
-        const year = date.getFullYear();
-        const month = (`0${date.getMonth() + 1}`).slice(-2);
-        const monthHR = FormattedDate.MONTHS[date.getMonth()];
-        const day = (`0${date.getDate()}`).slice(-2);
-        const hour = (`0${date.getHours()}`).slice(-2);
-        const minute = (`0${date.getMinutes()}`).slice(-2);
-
-        let fDate;
-        let fTime;
-
-        switch (mode) {
-            case 'yyyy-MM-dd':
-                fDate = `${year}-${month}-${day}`;
-                break;
-            case 'dd-MM-yyyy':
-                fDate = `${day}-${month}-${year}`;
-                break;
-            case 'dd-MM-yyyy hh:mm':
-                fDate = `${day}-${month}-${year}`;
-                fTime = `${hour}:${minute}`;
-                break;
-            case 'MM-dd-yyyy':
-                fDate = `${month}-${day}-${year}`;
-                break;
-            case 'MM-dd-yyyy hh:mm':
-                fDate = `${month}-${day}-${year}`;
-                fTime = `${hour}:${minute}`;
-                break;
-            case 'hh:mm tt': {
-                const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
-                fTime = `${hours}:${minute} ${amPm}`;
-                break;
-            } case 'MMM dd, yyyy':
-                // TODO: fix this
-                fDate = `${monthHR} ${day}, ${year}`;
-                break;
-            case 'MMM dd, yyyy hh:mm tt': {
-                const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
-                fDate = `${monthHR} ${day}, ${year}`;
-                fTime = `${hours}:${minute} ${amPm}`;
-                break;
-            } case 'dd MMM, yyyy':
-                // TODO: fix this
-                fDate = `${day} ${monthHR}, ${year}`;
-                break;
-            default:
-                fDate = date.toLocaleDateString();
-        }
-        return {
-            date: fDate,
-            time: fTime,
-        };
-    };
+    // returns list of elements
+    formatDate = (date, mode) => (
+        insertValues(breakFormat(mode), date)
+            .map((e, i) => {
+                const key = String(i);
+                if (e.type === 'date') {
+                    return (
+                        <span
+                            className="date"
+                            key={key}
+                        >
+                            {e.value}
+                        </span>
+                    );
+                } else if (e.type === 'time') {
+                    return (
+                        <span
+                            className="time"
+                            key={key}
+                        >
+                            {e.value}
+                        </span>
+                    );
+                }
+                return (
+                    <span
+                        className="separator"
+                        key={key}
+                    >
+                        {e.value}
+                    </span>
+                );
+            })
+    );
 
     render() {
         const {
@@ -166,20 +205,11 @@ export default class FormattedDate extends React.PureComponent {
             );
         }
 
-        const formattedDate = this.formatDate(new Date(date), mode);
-        const {
-            date: fDate,
-            time: fTime,
-        } = formattedDate;
-
-        const separator = ' ';
-
+        const children = this.formatDate(new Date(date), mode);
         return (
-            <div className={containerClassName}>
-                { fDate && <date>{fDate}</date> }
-                { fDate && fTime && separator }
-                { fTime && <time>{fTime}</time> }
-            </div>
+            <time className={containerClassName}>
+                { children }
+            </time>
         );
     }
 }
