@@ -1,5 +1,4 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/modal';
 
 $width-modal-small: 420px !default;
 
@@ -13,7 +12,7 @@ $width-modal-small: 420px !default;
     background-color: $color-foreground;
     width: $width-modal-medium;
     max-height: 96vh;
-    animation: fade-in-from-top .3s ease forwards;
+    animation: fade-in-from-top $duration-transition-medium ease forwards;
 }
 
 @keyframes fade-in-from-top {
