@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, {
+    PureComponent,
+} from 'react';
 import { PropTypes } from 'prop-types';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
@@ -6,7 +8,6 @@ import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
 
-import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
 
@@ -30,20 +31,18 @@ const propTypes = {
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
     data: [],
     colorScheme: schemeSet3,
     className: '',
-    loading: false,
 };
 
 
 @BoundError()
 @Responsive
-export default class PieChart extends Component {
+export default class PieChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -64,9 +63,7 @@ export default class PieChart extends Component {
             .attr('transform', `translate(${width / 2}, ${height / 2})`)
     )
 
-    arcs = (padRadius, innerRadius) => arc().padRadius(padRadius).innerRadius(innerRadius)
-    textArcs = (outerRadius, innerRadius) => arc().outerRadius(outerRadius).innerRadius(innerRadius)
-    midAngle = d => (d.startAngle + ((d.endAngle - d.startAngle) / 2))
+    midAngle = d => (d.startAngle + ((d.endAngle - d.startAngle) / 2));
 
     addPaths = (element, options) => {
         const { labelAccessor } = this.props;
@@ -77,7 +74,6 @@ export default class PieChart extends Component {
             arcs,
         } = options;
 
-        const that = this;
         element
             .selectAll('path')
             .data(pies)
@@ -90,13 +86,14 @@ export default class PieChart extends Component {
             .attr('d', arcs)
             .style('fill', d => colors(labelAccessor(d.data)))
             .attr('pointer-events', 'none')
-            .on('mouseover', function handle() {
-                that.arcTween(this, arcs, outerRadius, 0);
-                select(this).style('filter', 'url(#drop-shadow)');
+            .attr('cursor', 'pointer')
+            .on('mouseover', (d, i, nodes) => {
+                this.arcTween(nodes[i], arcs, outerRadius, 0);
+                select(nodes[i]).style('filter', 'url(#drop-shadow)');
             })
-            .on('mouseout', function handle() {
-                that.arcTween(this, arcs, outerRadius - 10, 150);
-                select(this).style('filter', 'none');
+            .on('mouseout', (d, i, nodes) => {
+                this.arcTween(nodes[i], arcs, outerRadius - 10, 150);
+                select(nodes[i]).style('filter', 'none');
             });
     }
 
@@ -264,12 +261,19 @@ export default class PieChart extends Component {
         const radius = Math.min(width, height) / 2;
         const outerRadius = radius * 0.8;
 
-        const colors = scaleOrdinal().range(this.props.colorScheme);
+        const colors = scaleOrdinal()
+            .range(this.props.colorScheme);
         const pies = pie()
             .sort(null)
             .value(this.props.valueAccessor);
-        const textArcs = this.textArcs(outerRadius, outerRadius);
-        const arcs = this.arcs(outerRadius, 0);
+
+        const textArcs = arc()
+            .outerRadius(outerRadius)
+            .innerRadius(outerRadius);
+        const arcs = arc()
+            .padRadius(outerRadius)
+            .innerRadius(0);
+
         const period = 200;
 
         const options = {
@@ -291,23 +295,19 @@ export default class PieChart extends Component {
     render() {
         const {
             className,
-            loading,
         } = this.props;
 
-        const containerStyle = `${styles.piechartContainer} ${className}`;
-        const pieChartStyle = `${styles.piechart}`;
+        const svgClassName = [
+            'piechart',
+            styles.piechart,
+            className,
+        ].join(' ');
 
         return (
-            <div
-                className={containerStyle}
-                ref={(el) => { this.container = el; }}
-            >
-                { loading && <LoadingAnimation /> }
-                <svg
-                    className={pieChartStyle}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={svgClassName}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }

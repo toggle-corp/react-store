@@ -1,12 +1,6 @@
 @import '../../../stylesheets/base';
 
-.piechart-container {
-    display: flex;
+.piechart {
     width: 100%;
     height: 100%;
-
-    .piechart {
-        flex: 1 1 auto;
-        filter: drop-shadow(0 3px 3px $color-shadow-light);
-    }
 }
