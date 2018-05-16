@@ -13,6 +13,11 @@ const propTypes = {
      */
     className: PropTypes.string,
 
+    /**
+     * Is input disabled?
+     */
+    disabled: PropTypes.bool,
+
     value: PropTypes.bool,
 
     /**
@@ -28,6 +33,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    disabled: false,
     value: false,
 };
 
@@ -51,6 +57,7 @@ class Checkbox extends React.PureComponent {
             label,
             className,
             value,
+            disabled,
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
@@ -60,6 +67,12 @@ class Checkbox extends React.PureComponent {
             value ? styles.checked : '',
             className,
         ];
+
+        if (disabled) {
+            classNames.push('disabled');
+            classNames.push(styles.disabled);
+        }
+
         const spanClassNames = [
             styles.checkmark,
             'checkmark',
@@ -86,6 +99,7 @@ class Checkbox extends React.PureComponent {
                     type="checkbox"
                     checked={value}
                     id={this.inputId}
+                    disabled={disabled}
                     {...otherProps}
                 />
                 <span className={labelClassNames.join(' ')}>

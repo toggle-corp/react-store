@@ -36,6 +36,7 @@ const TableHeaderPropTypes = PropTypes.arrayOf(
         defaultSortOrder: PropTypes.string,
         key: PropTypes.string,
         label: PropTypes.string,
+        labelModifier: PropTypes.func,
         modifier: PropTypes.func,
         order: PropTypes.number,
         sortable: PropTypes.bool,
@@ -295,9 +296,11 @@ export default class Table extends React.PureComponent {
     headerModifier = (header) => {
         const { activeSort } = this.state;
         const sortOrder = activeSort.key === header.key ? activeSort.order : '';
+        const label = header.labelModifier ? header.labelModifier() : header.label;
+
         return (
             <TableHeader
-                label={header.label}
+                label={label}
                 sortOrder={sortOrder}
                 sortable={header.sortable}
             />

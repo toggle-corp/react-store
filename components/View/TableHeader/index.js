@@ -7,7 +7,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    label: PropTypes.string,
+    label: PropTypes.node,
     sortOrder: PropTypes.string,
     sortable: PropTypes.bool,
 };
