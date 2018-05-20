@@ -26,4 +26,19 @@
             color: $color-accent;
         }
     }
+
+    &.disabled {
+        .checkmark {
+            color: $color-text-disabled;
+        }
+
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .input {
+            border-bottom-color: $color-separator;
+            color: $color-text-disabled;
+        }
+    }
 }

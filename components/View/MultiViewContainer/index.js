@@ -10,7 +10,10 @@ const propTypes = {
     activeClassName: PropTypes.string,
     containerClassName: PropTypes.string,
     useHash: PropTypes.bool,
-    active: PropTypes.string,
+    active: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 };
 
 const defaultProps = {
