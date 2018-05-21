@@ -113,11 +113,12 @@ class SelectInputWithList extends React.PureComponent {
         }
     }
 
-    getObjectFromValue = (options = emptyList, value) => (
-        options.filter(d => (
-            value.indexOf(d.key) !== -1
-        ))
-    )
+    getObjectFromValue = (options = emptyList, value) => {
+        const { keySelector } = this.props;
+        return options.filter(d => (
+            value.indexOf(keySelector(d)) !== -1
+        ));
+    }
 
     getClassName = () => {
         const { className } = this.props;
