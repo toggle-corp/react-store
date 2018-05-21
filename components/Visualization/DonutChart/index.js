@@ -2,15 +2,17 @@ import React, {
     PureComponent,
 } from 'react';
 import { PropTypes } from 'prop-types';
-import { schemeSet3 } from 'd3-scale-chromatic';
+import { schemeAccent } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
+import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
 
+import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 import styles from './styles.scss';
 
 /**
@@ -35,14 +37,15 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    colorScheme: schemeSet3,
+    colorScheme: schemeAccent,
     className: '',
+    loading: false,
 };
 
 
 @BoundError()
 @Responsive
-export default class PieChart extends PureComponent {
+export default class DonutChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -63,107 +66,33 @@ export default class PieChart extends PureComponent {
             .attr('transform', `translate(${width / 2}, ${height / 2})`)
     )
 
-    midAngle = d => (d.startAngle + ((d.endAngle - d.startAngle) / 2));
-
-    addPaths = (element, options) => {
-        const { labelAccessor } = this.props;
-        const {
-            outerRadius,
-            colors,
-            pies,
-            arcs,
-        } = options;
-
-        element
-            .selectAll('path')
-            .data(pies)
-            .enter()
-            .append('path')
-            .each((d) => {
-                // eslint-disable-next-line no-param-reassign
-                d.outerRadius = outerRadius - 10;
-            })
-            .attr('d', arcs)
-            .style('fill', d => colors(labelAccessor(d.data)))
-            .attr('pointer-events', 'none')
-            .attr('cursor', 'pointer')
-            .on('mouseover', (d, i, nodes) => {
-                this.arcTween(nodes[i], arcs, outerRadius, 0);
-                select(nodes[i]).style('filter', 'url(#drop-shadow)');
-            })
-            .on('mouseout', (d, i, nodes) => {
-                this.arcTween(nodes[i], arcs, outerRadius - 10, 150);
-                select(nodes[i]).style('filter', 'none');
-            });
+    save = () => {
+        const svg = select(this.svg);
+        const svgsaver = new SvgSaver();
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('donutchart', 'graph')}.svg`);
     }
 
-    addLabels = (element, options) => {
-        const { valueAccessor, labelAccessor } = this.props;
-        const {
-            radius,
-            pies,
-            textArcs,
-            period,
-        } = options;
 
-        element
-            .selectAll('text')
-            .data(pies)
-            .enter()
-            .append('text')
-            .attr('dy', '.35em')
-            .html(d => (`<tspan>${labelAccessor(d.data)} ${valueAccessor(d.data)}</tspan>`))
-            .attr('transform', (d) => {
-                const pos = textArcs.centroid(d);
-                pos[0] = radius * 0.8 * (this.midAngle(d) < Math.PI ? 1 : -1);
-                return `translate(${pos})`;
-            })
-            .style('visibility', 'hidden')
+    arch = (padRadius, innerRadius) =>
+        arc().padRadius(padRadius).innerRadius(innerRadius);
+
+
+    textArch = (outerRadius, innerRadius) =>
+        arc().outerRadius(outerRadius).innerRadius(innerRadius);
+
+    arcTween = (element, arcs, newRadius, delay) => (
+        select(element)
             .transition()
-            .delay((d, i) => i * period)
-            .style('visibility', 'visible')
-            .style('text-anchor', d => (this.midAngle(d) < Math.PI ? 'start' : 'end'))
-            .style('user-select', 'none');
-    }
-
-    addLines = (element, options) => {
-        const { labelAccessor } = this.props;
-        const {
-            radius,
-            outerRadius,
-            colors,
-            pies,
-            arcs,
-            textArcs,
-            period,
-        } = options;
-
-        element
-            .selectAll('polyline')
-            .data(pies)
-            .enter()
-            .append('polyline')
-            .each((d) => {
-                // eslint-disable-next-line no-param-reassign
-                d.outerRadius = outerRadius - 10;
+            .duration(delay)
+            .attrTween('d', (d) => {
+                const i = interpolateNumber(d.outerRadius, newRadius);
+                return function tween(t) {
+                    // eslint-disable-next-line no-param-reassign
+                    d.outerRadius = i(t);
+                    return arcs(d);
+                };
             })
-            .transition()
-            .delay((d, i) => i * period)
-            .attr('points', (d) => {
-                const pos = textArcs.centroid(d);
-                pos[0] = radius * 0.8 * (this.midAngle(d) < Math.PI ? 1 : -1);
-                return [arcs.centroid(d), textArcs.centroid(d), pos];
-            })
-            .style('fill', 'none')
-            .style('stroke-width', `${2}px`)
-            .style('stroke', d => colors(labelAccessor(d.data)));
-    }
-
-    redrawChart = () => {
-        const context = select(this.svg);
-        context.selectAll('*').remove();
-        this.drawChart();
-    }
+    );
 
     addTransition = (element, arcs, period) => {
         element
@@ -180,22 +109,7 @@ export default class PieChart extends PureComponent {
             })
             .transition()
             .attr('pointer-events', '');
-    }
-
-
-    arcTween = (element, arcs, newRadius, delay) => (
-        select(element)
-            .transition()
-            .duration(delay)
-            .attrTween('d', (d) => {
-                const i = interpolateNumber(d.outerRadius, newRadius);
-                return function tween(t) {
-                    // eslint-disable-next-line no-param-reassign
-                    d.outerRadius = i(t);
-                    return arcs(d);
-                };
-            })
-    )
+    };
 
     addDropShadow = (svg) => {
         const defs = svg.append('defs');
@@ -235,11 +149,75 @@ export default class PieChart extends PureComponent {
         feMerge
             .append('feMergeNode')
             .attr('in', 'SourceGraphic');
+    };
+
+    addPaths = (element, options) => {
+        const {
+            outerRadius,
+            innerRadius,
+            colors,
+            pies,
+            arcs,
+            valueAccessor,
+            labelAccessor,
+        } = options;
+
+        element
+            .selectAll('path')
+            .data(pies)
+            .enter()
+            .append('path')
+            .each((d) => {
+                // eslint-disable-next-line no-param-reassign
+                d.outerRadius = outerRadius - 10;
+            })
+            .attr('d', arcs)
+            .style('fill', d => colors(labelAccessor(d.data)))
+            .attr('cursor', 'pointer')
+            .attr('pointer-events', 'none')
+            .on('mouseenter', (node) => {
+                const label = labelAccessor(node.data);
+                const value = valueAccessor(node.data);
+                const nodeColor = colors(label);
+
+                element
+                    .append('circle')
+                    .attr('class', 'tooltip-circle')
+                    .attr('r', innerRadius - 10)
+                    .style('fill', nodeColor);
+
+                element
+                    .append('text')
+                    .attr('class', 'tooltip-circle')
+                    .style('text-anchor', 'middle')
+                    .text(`${label} ${value}`)
+                    .style('fill', getColorOnBgColor(nodeColor))
+                    .style('font-size', '2em');
+            })
+            .on('mouseover', (d, i, nodes) => {
+                this.arcTween(nodes[i], arcs, outerRadius, 0);
+                select(nodes[i]).style('filter', 'url(#drop-shadow)');
+            })
+            .on('mouseout', (d, i, nodes) => {
+                element
+                    .selectAll('.tooltip-circle')
+                    .remove();
+                this.arcTween(nodes[i], arcs, outerRadius - 10, 150);
+                select(nodes[i]).style('filter', 'none');
+            });
+    };
+
+    redrawChart = () => {
+        const context = select(this.svg);
+        context.selectAll('*').remove();
+        this.drawChart();
     }
 
     drawChart = () => {
         const {
             boundingClientRect,
+            labelAccessor,
+            valueAccessor,
             data,
         } = this.props;
 
@@ -255,40 +233,35 @@ export default class PieChart extends PureComponent {
 
         const context = this.setContext(data, width, height);
         const slices = context.append('g').attr('class', 'slices');
-        const labels = context.append('g').attr('class', 'labels');
-        const lines = context.append('g').attr('class', 'lines');
 
         const radius = Math.min(width, height) / 2;
         const outerRadius = radius * 0.8;
+        const innerRadius = outerRadius - (outerRadius / 3);
 
-        const colors = scaleOrdinal()
-            .range(this.props.colorScheme);
+        const colors = scaleOrdinal().range(this.props.colorScheme);
         const pies = pie()
             .sort(null)
-            .value(this.props.valueAccessor);
+            .value(valueAccessor);
 
-        const textArcs = arc()
-            .outerRadius(outerRadius)
-            .innerRadius(outerRadius);
-        const arcs = arc()
-            .padRadius(outerRadius)
-            .innerRadius(0);
-
+        const textArcs = this.textArch(outerRadius, innerRadius);
+        const arcs = this.arch(outerRadius, innerRadius);
         const period = 200;
 
         const options = {
             radius,
             outerRadius,
+            innerRadius,
             colors,
             pies,
             arcs,
             textArcs,
             period,
+            labelAccessor,
+            valueAccessor,
         };
+
         this.addDropShadow(select(this.svg));
         this.addPaths(slices, options);
-        this.addLabels(labels, options);
-        this.addLines(lines, options);
         this.addTransition(slices, arcs, period);
     }
 
@@ -298,8 +271,8 @@ export default class PieChart extends PureComponent {
         } = this.props;
 
         const svgClassName = [
-            'piechart',
-            styles.piechart,
+            'donutchart',
+            styles.donutchart,
             className,
         ].join(' ');
 
