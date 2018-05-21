@@ -252,6 +252,33 @@ export const listToMap = (list = [], keySelector, modifier) => (
     )
 );
 
+export const mapToList = (obj = {}, modifier) => (
+    Object.keys(obj).reduce(
+        (acc, key) => {
+            const elem = obj[key];
+            return [
+                ...acc,
+                modifier ? modifier(elem, key) : elem,
+            ];
+        },
+        [],
+    )
+);
+
+export const mapToMap = (obj = {}, keySelector, modifier) => (
+    Object.keys(obj).reduce(
+        (acc, k) => {
+            const elem = obj[k];
+            const key = keySelector ? keySelector(k, elem) : k;
+            if (isTruthy(key)) {
+                acc[key] = modifier ? modifier(elem, key) : elem;
+            }
+            return acc;
+        },
+        {},
+    )
+);
+
 export const groupList = (list = [], keySelector, modifier) => (
     list.reduce(
         (acc, elem) => {
@@ -396,14 +423,14 @@ export const getLinkedListNode = (linkedList, n, selector) => {
     return newList;
 };
 
-export const unique = (object, value) => {
+export const unique = (object, getValue) => {
     const memory = {};
     const newArr = [];
     object.forEach((o) => {
-        const id = value(o);
+        const id = getValue ? getValue(o) : o;
         if (!memory[id]) {
             memory[id] = true;
-            newArr.push(o);
+            newArr.push(id);
         }
     });
     // for efficiency
