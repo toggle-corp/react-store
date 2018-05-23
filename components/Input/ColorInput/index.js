@@ -153,6 +153,7 @@ class ColorInput extends React.PureComponent {
                     />
                 </button>
                 {
+                    /* FIXME: Use HintAndError component */
                     showHintAndError && [
                         !error && hint && (
                             <p

@@ -24,15 +24,18 @@
         }
 
         &.error {
+            /*
             .input {
                 border-bottom-color: $color-danger;
             }
+            */
 
             .label {
                 color: $color-danger;
             }
         }
 
+        /*
         &.disabled {
             .label {
                 color: $color-text-disabled;
@@ -43,6 +46,7 @@
                 color: $color-text-disabled;
             }
         }
+        */
     }
 
     %base {
