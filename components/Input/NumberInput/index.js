@@ -127,6 +127,7 @@ class NumberInput extends React.PureComponent {
         let numberPart = stringifiedV;
         // extract sign if there is a sign
         if (stringifiedV[0] === '-' || stringifiedV[0] === '+') {
+            // eslint-disable-next-line prefer-destructuring
             signPart = stringifiedV[0];
             numberPart = stringifiedV.substr(1);
         }
