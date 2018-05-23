@@ -291,14 +291,17 @@ test('get element around', () => {
 });
 
 test('should get unique elements in array', () => {
+    expect(unique([], d => d)).toEqual([]);
+
     const before = ['Apple', 'Ball', 'Cat', 'Dog', 'Ball', 'Elephant', 'Fish', 'Apple'];
     const after = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
-    const beforeObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }, { id: 1, name: 'Apple' }];
-    const afterObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }];
-    const uniqueArray = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
     expect(unique(before, d => d)).toEqual(after);
-    expect(unique([], d => d)).toEqual([]);
+
+    const beforeObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }, { id: 1, name: 'Apple' }];
+    const afterObjectArray = [1, 2];
     expect(unique(beforeObjectArray, d => d.id)).toEqual(afterObjectArray);
+
+    const uniqueArray = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
     expect(unique(uniqueArray, d => d)).toEqual(uniqueArray);
 });
 
