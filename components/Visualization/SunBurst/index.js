@@ -6,9 +6,10 @@ import { select, event } from 'd3-selection';
 import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
-import { scaleLinear, schemeCategory20c, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
+import { schemePaired } from 'd3-scale-chromatic';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
@@ -58,7 +59,7 @@ const propTypes = {
 
 const defaultProps = {
     childrenAccessor: d => d.children,
-    colorScheme: schemeCategory20c,
+    colorScheme: schemePaired,
     showLabels: true,
     showTooltip: true,
     className: '',
