@@ -42,7 +42,6 @@ const defaultProps = {
     emptyComponent: defaultEmptyComponent,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class ListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

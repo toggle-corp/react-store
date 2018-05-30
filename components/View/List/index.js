@@ -22,12 +22,15 @@ const propTypes = {
     keyExtractor: PropTypes.func,
     /* component to be shown as item in list */
     modifier: PropTypes.func,
+
+    renderer: PropTypes.func,
 };
 
 const defaultProps = {
     data: [],
     modifier: undefined,
     keyExtractor: undefined,
+    renderer: undefined,
 };
 
 class List extends React.Component {
@@ -39,12 +42,26 @@ class List extends React.Component {
             data,
             keyExtractor,
             modifier,
+            renderer: Renderer,
+            rendererClassName,
         } = this.props;
 
         const key = (keyExtractor && keyExtractor(datum, i)) || datum;
 
         if (modifier) {
             return modifier(key, datum, i, data);
+        }
+
+        if (Renderer) {
+            return (
+                <Renderer
+                    className={rendererClassName}
+                    key={key}
+                    datum={datum}
+                    index={i}
+                    data={data}
+                />
+            );
         }
 
         // If there is no modifier, then return a ListItem
