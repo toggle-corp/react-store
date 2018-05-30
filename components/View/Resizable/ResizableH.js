@@ -32,7 +32,7 @@ export default class ResizableH extends React.PureComponent {
     )
 
     static resizeContainers = (leftContainer, rightContainer, newWidth) => { // PROPS
-        if (newWidth !== 0 && leftContainer && rightContainer) {
+        if (newWidth >= 0 && leftContainer && rightContainer) {
             // eslint-disable-next-line no-param-reassign
             leftContainer.style.width = `${newWidth}px`;
             // eslint-disable-next-line no-param-reassign
