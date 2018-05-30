@@ -78,11 +78,11 @@ class Numeral extends React.PureComponent {
 
     static getNormalizedNumber({
         value,
-        showSign,
-        normal,
-        precision,
-        showSeparator,
-        separator,
+        showSign = false,
+        normal = false,
+        precision = undefined,
+        showSeparator = true,
+        separator = ',',
     }) {
         // Only use absolute part if showSign is true (sign are added later)
         let number = isTruthy(showSign) ? Math.abs(value) : value;
