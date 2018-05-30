@@ -34,15 +34,12 @@ const propTypes = {
     data: propTypeData,
     /* Component to show when data is empty */
     emptyComponent: PropTypes.func,
-
-    renderer: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     data: [],
     emptyComponent: defaultEmptyComponent,
-    renderer: undefined,
 };
 
 export default class ListView extends React.Component {
