@@ -200,6 +200,7 @@ class SelectInputWithList extends React.PureComponent {
                 {!hideRemoveFromListButton &&
                     <DangerButton
                         onClick={() => this.handleListItemRemove(key)}
+                        title="Remove"
                         className={`${additionalStyle} ${styles.removeButton}`}
                         smallHorizontalPadding
                         smallVerticalPadding
