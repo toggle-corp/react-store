@@ -34,38 +34,73 @@ export default class FixedTabs extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static getNewHash = (tabs, defaultHash) => {
+        if (defaultHash) {
+            return `#/${defaultHash}`;
+        }
+        const keys = Object.keys(tabs);
+        if (keys.length > 0) {
+            return `#/${keys[0]}`;
+        }
+        return undefined;
+    }
+
     constructor(props) {
         super(props);
 
         this.state = {
             hash: props.useHash ? this.getHash() : undefined,
         };
-
-        if (props.defaultHash && !window.location.hash) {
-            window.location.replace(`#/${props.defaultHash}`);
-        }
     }
 
     componentDidMount() {
-        window.addEventListener('hashchange', this.handleHashChange);
+        const { useHash } = this.props;
+
+        if (useHash) {
+            window.addEventListener('hashchange', this.handleHashChange);
+            this.initializeHash(this.props);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
-        const { useHash: newUseHash } = nextProps;
-        const { useHash: oldUseHash } = this.props;
+        const {
+            tabs: oldTabs,
+            useHash: oldUseHash,
+        } = this.props;
+        const {
+            tabs: newTabs,
+            defaultHash: newDefaultHash,
+            useHash: newUseHash,
+        } = nextProps;
 
-        if (newUseHash !== oldUseHash) {
+        if (oldUseHash !== newUseHash) {
             if (newUseHash) {
-                this.setState({ hash: this.getHash() });
                 window.addEventListener('hashchange', this.handleHashChange);
-            } else {
+                this.initializeHash(nextProps);
+            } else if (oldUseHash) {
                 window.removeEventListener('hashchange', this.handleHashChange);
+                this.setState({ hash: undefined });
             }
+        } else if (newUseHash && oldTabs !== newTabs) {
+            this.initializeHash(nextProps);
         }
     }
 
     componentWillUnmount() {
         window.removeEventListener('hashchange', this.handleHashChange);
+    }
+
+    initializeHash = ({ tabs, defaultHash }) => {
+        const { hash } = this.state;
+        if (!hash || !tabs[hash]) {
+            const hash = FixedTabs.getNewHash(
+                tabs,
+                defaultHash,
+            );
+            if (hash) {
+                window.location.replace(hash);
+            }
+        }
     }
 
     getHash = () => (
