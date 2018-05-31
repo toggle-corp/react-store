@@ -105,7 +105,7 @@ const insertValues = (formatList, date) => (
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
             const day = date.getDate();
-            const weekName= DAYS[date.getDay()];
+            const weekName = DAYS[date.getDay()];
 
             const newFormat = { ...format };
             newFormat.value = newFormat.value

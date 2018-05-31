@@ -58,7 +58,7 @@ export default class FixedTabs extends React.PureComponent {
 
         if (useHash) {
             window.addEventListener('hashchange', this.handleHashChange);
-            this.initializeHash(this.props);
+            this.initializeHash(this.props.tabs, this.props.defaultHash);
         }
     }
 
@@ -69,38 +69,24 @@ export default class FixedTabs extends React.PureComponent {
         } = this.props;
         const {
             tabs: newTabs,
-            defaultHash: newDefaultHash,
             useHash: newUseHash,
         } = nextProps;
 
         if (oldUseHash !== newUseHash) {
             if (newUseHash) {
                 window.addEventListener('hashchange', this.handleHashChange);
-                this.initializeHash(nextProps);
+                this.initializeHash(nextProps.tabs, nextProps.defaultHash);
             } else if (oldUseHash) {
                 window.removeEventListener('hashchange', this.handleHashChange);
                 this.setState({ hash: undefined });
             }
         } else if (newUseHash && oldTabs !== newTabs) {
-            this.initializeHash(nextProps);
+            this.initializeHash(nextProps.tabs, nextProps.defaultHash);
         }
     }
 
     componentWillUnmount() {
         window.removeEventListener('hashchange', this.handleHashChange);
-    }
-
-    initializeHash = ({ tabs, defaultHash }) => {
-        const { hash } = this.state;
-        if (!hash || !tabs[hash]) {
-            const hash = FixedTabs.getNewHash(
-                tabs,
-                defaultHash,
-            );
-            if (hash) {
-                window.location.replace(hash);
-            }
-        }
     }
 
     getHash = () => (
@@ -131,6 +117,19 @@ export default class FixedTabs extends React.PureComponent {
         }
 
         return classNames.join(' ');
+    }
+
+    initializeHash = (tabs, defaultHash) => {
+        const { hash } = this.state;
+        if (!hash || !tabs[hash]) {
+            const newHash = FixedTabs.getNewHash(
+                tabs,
+                defaultHash,
+            );
+            if (newHash) {
+                window.location.replace(newHash);
+            }
+        }
     }
 
     handleHashChange = () => {
