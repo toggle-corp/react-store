@@ -1,6 +1,7 @@
 @import '../../../stylesheets/base';
 
 $color-bar-hovered: $color-primary !default;
+$color-bar-selected: $color-accent !default;
 
 .bar-chart {
     display: flex;

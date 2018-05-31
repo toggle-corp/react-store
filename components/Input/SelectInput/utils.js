@@ -164,6 +164,7 @@ export const renderClearButton = p => (
             title="Clear selected option(s)"
             disabled={p.parent.props.disabled}
             type="button"
+            tabIndex="-1"
         >
             <span className={iconNames.close} />
         </button>
