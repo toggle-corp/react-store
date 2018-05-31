@@ -9,33 +9,10 @@ import FaramElement from '../../Input/Faram/FaramElement';
 import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * Key selector function
-     * should return key from provided row data
-     */
     keySelector: PropTypes.func,
-
-    /**
-     * String to show in case of error
-     */
-    error: PropTypes.string,
-
-    /**
-     * Hint text
-     */
-    hint: PropTypes.string,
-
-    showHintAndError: PropTypes.bool,
-
-    disabled: PropTypes.bool,
-
-    onChange: PropTypes.func,
-
-    /**
-     * Value selector function
-     * should return value from provided row data
-     */
     labelSelector: PropTypes.func,
+    disabled: PropTypes.bool,
+    onChange: PropTypes.func,
 
     label: PropTypes.oneOfType([
         PropTypes.string,
@@ -50,9 +27,11 @@ const propTypes = {
     hideRemoveFromListButton: PropTypes.bool,
 
     className: PropTypes.string,
-    /**
-     * Options to be shown
-     */
+    listClassName: PropTypes.string,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    listProps: PropTypes.object,
+
     options: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.oneOfType([
@@ -66,12 +45,11 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    listClassName: '',
+    listProps: {},
     keySelector: d => (d || {}).key,
     labelSelector: d => (d || {}).label,
-    error: '',
-    hint: '',
     onChange: undefined,
-    showHintAndError: true,
     options: [],
     value: [],
     label: '',
@@ -181,33 +159,47 @@ class SelectInputWithList extends React.PureComponent {
         const {
             disabled,
             hideRemoveFromListButton,
+            labelSelector,
         } = this.props;
-        let additionalStyle = '';
+
+        const selectedItemClassName = [
+            styles.selectedItem,
+            'selected-item',
+        ].join(' ');
+
+        const labelClassName = [
+            styles.selectedItemLabel,
+            'label'
+        ].join(' ');
+
+        const removeButtonClassNames = [
+            styles.removeButton,
+            'remove-button',
+        ];
         if (disabled) {
-            additionalStyle = styles.disabled;
+            removeButtonClassNames.push(styles.disabled);
         }
 
         return (
             <div
-                className={styles.selectedItem}
+                className={selectedItemClassName}
                 key={key}
             >
-                <span
-                    className={styles.selectedItemLabel}
-                >
-                    {this.props.labelSelector(data)}
+                <span className={labelClassName}>
+                    {labelSelector(data)}
                 </span>
-                {!hideRemoveFromListButton &&
-                    <DangerButton
-                        onClick={() => this.handleListItemRemove(key)}
-                        title="Remove"
-                        className={`${additionalStyle} ${styles.removeButton}`}
-                        smallHorizontalPadding
-                        smallVerticalPadding
-                        transparent
-                    >
-                        <span className={iconNames.close} />
-                    </DangerButton>
+                {
+                    !hideRemoveFromListButton && (
+                        <DangerButton
+                            onClick={() => this.handleListItemRemove(key)}
+                            title="Remove"
+                            className={removeButtonClassNames.join(' ')}
+                            smallHorizontalPadding
+                            smallVerticalPadding
+                            transparent
+                            iconName={iconNames.close}
+                        />
+                    )
                 }
             </div>
         );
@@ -217,71 +209,45 @@ class SelectInputWithList extends React.PureComponent {
         const {
             className, // eslint-disable-line no-unused-vars
             disabled,
-            error,
-            hint,
             keySelector,
             label,
             labelSelector,
             onChange, // eslint-disable-line no-unused-vars
             options,
-            showHintAndError,
             value,
+            listProps,
+            listClassName,
             ...otherProps
         } = this.props;
 
-        const {
-            objectValues,
-        } = this.state;
+        const { objectValues } = this.state;
+
+        const listClassNames = [
+            listClassName,
+            styles.list,
+            'list',
+        ];
 
         return (
             <div className={this.getClassName()}>
                 <MultiSelectInput
                     className={`${styles.input} input`}
                     disabled={disabled}
-                    error={error}
                     keySelector={keySelector}
                     label={label}
                     labelSelector={labelSelector}
                     onChange={this.handleSelectInputChange}
                     options={options}
-                    showHintAndError={false}
                     value={value}
                     {...otherProps}
                 />
                 <ListView
-                    className={`${styles.list} list`}
+                    className={listClassNames.join(' ')}
                     data={objectValues}
                     modifier={this.renderSelectedItem}
                     keyExtractor={keySelector}
+                    {...listProps}
                 />
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} empty`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
             </div>
         );
     }
