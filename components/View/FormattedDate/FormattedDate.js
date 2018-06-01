@@ -47,8 +47,8 @@ const getStartEnd = (mode, matches) => {
 };
 
 const breakFormat = (mode) => {
-    const dateIndices = getStartEnd(mode, ['yyyy', 'yy', 'MMM', 'MM', 'dd']);
-    const timeIndices = getStartEnd(mode, ['hh', 'mm', 'ss', 'tt']);
+    const dateIndices = getStartEnd(mode, ['yyyy', 'yy', 'MMM', 'MM', 'dd', 'EEE']);
+    const timeIndices = getStartEnd(mode, ['hh', 'mm', 'ss', 'aaa']);
 
     const partOfMode = (start, end) => mode.substring(start, end);
 
@@ -91,6 +91,10 @@ const MONTHS = [
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
+const DAYS = [
+    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
+];
+
 const padding = (number, length, str = '0') => (
     String(number).padStart(length, str)
 );
@@ -101,6 +105,7 @@ const insertValues = (formatList, date) => (
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
             const day = date.getDate();
+            const weekName = DAYS[date.getDay()];
 
             const newFormat = { ...format };
             newFormat.value = newFormat.value
@@ -108,10 +113,11 @@ const insertValues = (formatList, date) => (
                 .replace('yy', date.getFullYear() % 100)
                 .replace('MMM', MONTHS[date.getMonth()])
                 .replace('MM', padding(month, 2))
+                .replace('EEE', weekName)
                 .replace('dd', padding(day, 2));
             return newFormat;
         } else if (format.type === 'time') {
-            const ttIndex = format.value.indexOf('tt');
+            const ttIndex = format.value.indexOf('aaa');
 
             const originalHour = date.getHours();
 
@@ -127,7 +133,7 @@ const insertValues = (formatList, date) => (
                 .replace('hh', padding(hour, 2))
                 .replace('mm', padding(minute, 2))
                 .replace('ss', padding(second, 2))
-                .replace('tt', amPm);
+                .replace('aaa', amPm);
             return newFormat;
         }
         return format;

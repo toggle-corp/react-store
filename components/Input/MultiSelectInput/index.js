@@ -401,6 +401,7 @@ class MultiSelectInput extends React.PureComponent {
         return (
             <Button
                 transparent
+                tabIndex="-1"
                 className={className}
                 onClick={this.handleClearButtonClick}
                 title={tooltipText}
@@ -432,6 +433,7 @@ class MultiSelectInput extends React.PureComponent {
         return (
             <Button
                 transparent
+                tabIndex="-1"
                 className={className}
                 onClick={this.handleSelectAllButtonClick}
                 title={tooltipText}

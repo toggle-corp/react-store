@@ -22,7 +22,7 @@ const defaultProps = {
     modifier: undefined,
 };
 
-export default class VerticalTabs extends React.PureComponent {
+export default class VerticalTabs extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

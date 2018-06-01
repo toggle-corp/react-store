@@ -42,32 +42,31 @@ const defaultProps = {
     emptyComponent: defaultEmptyComponent,
 };
 
-export default class ListView extends React.Component {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const ListView = (props) => {
+    const {
+        className,
+        data,
+        emptyComponent: EmptyComponent,
 
-    render() {
-        const {
-            className,
-            data,
-            emptyComponent: EmptyComponent,
+        ...otherProps
+    } = props;
 
-            ...otherProps
-        } = this.props;
+    return (
+        <div className={`${styles.listView} list-view ${className}`}>
+            {
+                data.length === 0 ? (
+                    <EmptyComponent />
+                ) : (
+                    <List
+                        data={data}
+                        {...otherProps}
+                    />
+                )
+            }
+        </div>
+    );
+};
+ListView.propTypes = propTypes;
+ListView.defaultProps = defaultProps;
 
-        return (
-            <div className={`${styles.listView} list-view ${className}`}>
-                {
-                    data.length === 0 ? (
-                        <EmptyComponent />
-                    ) : (
-                        <List
-                            data={data}
-                            {...otherProps}
-                        />
-                    )
-                }
-            </div>
-        );
-    }
-}
+export default ListView;

@@ -169,7 +169,7 @@ class SelectInputWithList extends React.PureComponent {
 
         const labelClassName = [
             styles.selectedItemLabel,
-            'label'
+            'label',
         ].join(' ');
 
         const removeButtonClassNames = [

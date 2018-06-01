@@ -206,6 +206,7 @@ export const leftPad = (number, length, pad = '0') => {
 };
 
 // TODO: write test
+// Here month starts from 1 (not zero)
 export const getNumDaysInMonthX = (year, month) => (
     (year && month) ? new Date(year, month, 0).getDate() : 32
 );
@@ -593,17 +594,17 @@ export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
 export const compareLength = comparision(x => x.length, (a, b) => (a - b));
 export const compareStringByWordCount = comparision(x => x.split(/\s+/).length, (a, b) => a - b);
 
-export const getObjectChildren = (object, keys, defaultValue = undefined) => {
+export const getObjectChildren = (object, keys) => {
     // object: object, keys: (string | number | undefined)[], defaultValue: any,
     // ): any => {
     const key = keys[0];
     if (!object || !key || !object[key]) {
-        return defaultValue;
+        return undefined;
     }
     if (keys.length === 1) {
         return object[key];
     }
-    return getObjectChildren(object[key], keys.slice(1), defaultValue);
+    return getObjectChildren(object[key], keys.slice(1));
 };
 
 export const checkVersion = (oldVersionId, newVersionId) => ({
