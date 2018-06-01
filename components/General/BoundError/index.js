@@ -23,8 +23,12 @@ export default ErrorComponent => (WrappedComponent) => {
             };
         }
 
-        componentDidCatch() {
+        componentDidCatch(error, errorInfo) {
             this.setState({ hasError: true });
+
+            if (ErrorComponent.handleException) {
+                ErrorComponent.handleException(error, errorInfo);
+            }
         }
 
         render() {
@@ -44,7 +48,6 @@ export default ErrorComponent => (WrappedComponent) => {
             }
 
             const defaultErrorText = '(x_x)';
-
             return (
                 <div>
                     { defaultErrorText }
