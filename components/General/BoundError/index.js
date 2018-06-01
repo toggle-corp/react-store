@@ -1,9 +1,6 @@
 import React from 'react';
-import Raven from 'raven-js';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-
-import PrimaryButton from '../../Action/Button';
 
 const propTypes = {
     forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
@@ -28,9 +25,9 @@ export default ErrorComponent => (WrappedComponent) => {
 
         componentDidCatch(error, errorInfo) {
             this.setState({ hasError: true });
-            if (Raven.isSetup()) {
-                // NOTE: Only in development error report will be applied twice
-                Raven.captureException(error, { extra: errorInfo });
+
+            if (ErrorComponent.handleException) {
+                ErrorComponent.handleException(error, errorInfo);
             }
         }
 
@@ -51,16 +48,9 @@ export default ErrorComponent => (WrappedComponent) => {
             }
 
             const defaultErrorText = '(x_x)';
-
-            // FIXME: style
             return (
                 <div>
                     { defaultErrorText }
-                    <PrimaryButton
-                        onClick={() => Raven.lastEventId() && Raven.showReportDialog()}
-                    >
-                        Report
-                    </PrimaryButton>
                 </div>
             );
         }
