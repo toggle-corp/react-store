@@ -15,10 +15,10 @@ const defaultProps = {
     defaultHash: undefined,
 };
 
-const getHashFromBrowser = () => window.location.hash.substr(2);
+// NOTE: hash should be similar to '#/metadata'
 const setHashToBrowser = hash => window.location.replace(hash);
-// FIXME: may be use this function instead
-// hash => window.location.replace(`#/${hash}`);
+// NOTE: receives data similar to '#/metadata'
+const getHashFromBrowser = () => window.location.hash.substr(2);
 
 export default class HashManager extends React.PureComponent {
     static propTypes = propTypes;

@@ -81,20 +81,15 @@ export default class FixedTabs extends React.Component {
             replaceHistory,
         } = this.props;
 
-        // FIXME: maybe onClick should be called for useHash condition as well
-        if (!useHash) {
-            onClick(key);
-            return;
-        }
-
-        if (replaceHistory) {
-            // FIXME: maybe only use replace(key)
+        if (useHash && replaceHistory) {
             window.location.replace(`#/${key}`);
             e.preventDefault();
         }
+
+        onClick(key);
     }
 
-    renderTab = (key, data) => {
+    renderTab = (_, data) => {
         const {
             active,
             tabs,
