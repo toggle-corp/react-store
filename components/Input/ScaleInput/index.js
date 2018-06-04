@@ -24,8 +24,7 @@ const defaultProps = {
     readOnly: false,
 };
 
-@FaramElement('input')
-export default class ScaleInput extends React.PureComponent {
+class ScaleInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -142,3 +141,5 @@ export default class ScaleInput extends React.PureComponent {
         );
     }
 }
+
+export default FaramElement('input')(ScaleInput);
