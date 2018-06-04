@@ -5,7 +5,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string,
+    className: PropTypes.string.isRequired,
 };
 
 const defaultProps = {

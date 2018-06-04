@@ -5,104 +5,13 @@
 // TODO: Move FormattedDate.format to utils and remove this import
 import FormattedDate from '../components/View/FormattedDate/FormattedDate';
 
+// STRING
+
+// Match two strings
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
     ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
 );
-
-// get numbers from start to end
-// ex: getNumber(2, 6) = [2, 3, 4, 5]
-export const getNumbers = (start, end) => {
-    const list = [];
-    for (let i = start; i < end; i += 1) {
-        list.push(i);
-    }
-    return list;
-};
-
-export const getRandomFromList = (items = []) => (
-    items[Math.floor(Math.random() * items.length)]
-);
-
-export const isFalsy = val => (
-    val === undefined || val === null || Number.isNaN(val) || val === false
-);
-
-export const isTruthy = val => !isFalsy(val);
-
-export const isEmpty = val => val === undefined || val === '';
-
-export const isInteger = value => (
-    typeof value === 'number' && value % 1 === 0
-);
-
-
-export const isFalsyOrEmptyOrZero = val => (
-    isFalsy(val) || val.length === 0 || val === 0 || val === '0'
-);
-
-// added by @frozenhelium
-export const isEqualAndTruthy = (a, b) => (
-    isTruthy(a) && (a === b)
-);
-
-export const isDifferentAndTruthy = (a, b) => (
-    isTruthy(a) && (a !== b)
-);
-
-export const getKeyByValue = (object, value) => (
-    Object.keys(object).find(key => object[key] === value)
-);
-
-// Check if object is empty (or undefined)
-export const isObjectEmpty = (obj) => {
-    // Check if obj is defined, has keys and is object: else return true
-    if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
-        // If obj is object and has keys, check their values
-        const innerEmpty = Object.values(obj).reduce((a, b) => (
-            a && isFalsyOrEmptyOrZero(b)
-        ), true);
-
-        // If inner is not empty, then return false else return true
-        if (!innerEmpty) {
-            return false;
-        }
-    }
-    return true;
-};
-
-export const isObject = item => (
-    typeof item === 'object' && !Array.isArray(item) && item !== null
-);
-
-export const bound = (value, a, b) => {
-    const min = Math.min(a, b);
-    const max = Math.max(a, b);
-    return Math.max(min, Math.min(max, value));
-};
-
-export const normalize = (value, max, min) => (
-    (value - min) / (max - min)
-);
-
-export const randomString = (length = 8) => {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < length; i += 1) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-
-    /*
-     * -------------------------------------------------
-     * better Algorithm, but not supported by enzyme :(
-     * -------------------------------------------------
-
-    const randomValues = new Uint8Array(length);
-    window.crypto.getRandomValues(randomValues);
-    return Array.from(randomValues, v => v.toString(36)).join('').substring(0, 8);
-    */
-};
 
 /**
  * Format text, extracted from pdfs,
@@ -124,6 +33,34 @@ export const formatPdfText = text => (
         .replace(/-\?/gi, '-')
         .trim()
 );
+
+/*
+ * Convert camel case to kebab case
+ * eg: camelToDash -> camel-to-dash
+ */
+export const camelToDash = str => str
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => `-${letter.toLowerCase()}`);
+
+/*
+ * Convert camel case to normal case
+ * eg: camelToDash -> camel to dash
+ */
+export const camelToNormal = str => str
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => ` ${letter.toLowerCase()}`);
+
+
+export const splitInWhitespace = (string = '') => (
+    string.match(/\S+/g) || []
+);
+
+export const trimWhitespace = (string = '') => (
+    splitInWhitespace(string).join(' ')
+);
+
+
+// DATE
 
 /**
 * Extract Date from timestamp
@@ -163,6 +100,73 @@ export const getDateDifferenceHumanReadable = (a, b) => {
     return `After ${days}`;
 };
 
+// TODO: write test
+// Here month starts from 1 (not zero)
+export const getNumDaysInMonthX = (year, month) => (
+    (year && month) ? new Date(year, month, 0).getDate() : 32
+);
+
+// TODO: write test
+export const getNumDaysInMonth = date => (
+    date ? (
+        getNumDaysInMonthX(date.getFullYear(), date.getMonth() + 1)
+    ) : 32
+);
+
+export const encodeDate = date => FormattedDate.format(date, 'yyyy-MM-dd');
+
+export const decodeDate = (value) => {
+    // Let's assume that the value is in local time zone
+
+    if (!value) {
+        return undefined;
+    }
+
+    // Check if value is timestamp number or ISO string with time information
+    // In both case, new Date assumes local time zone
+    if (typeof value === 'number' || value.indexOf('T') >= 0) {
+        return new Date(value);
+    }
+
+    // In case of ISO string with no time information, new Date assumes
+    // UTC timezone. So first split it manually, and feed them separately
+    // so they will be processed as local time zone.
+    const splits = value.split('-');
+    return new Date(splits[0], splits[1] - 1, splits[2]);
+};
+
+export const MIN_YEAR = 1990;
+
+export const isDateValuesComplete = ({ yearValue, monthValue, dayValue }) => (
+    // Complete if all values are undefined or none are
+    (dayValue && monthValue && yearValue) ||
+    (!dayValue && !monthValue && !yearValue)
+);
+
+export const getErrorForDateValues = ({ yearValue, monthValue, dayValue }) => {
+    if (!isDateValuesComplete({ yearValue, monthValue, dayValue })) {
+        return 'Date values incomplete';
+    }
+
+    if (yearValue < MIN_YEAR) {
+        return 'Year should be greater than or equal to 1990';
+    }
+
+    if (monthValue < 1 || monthValue > 12) {
+        return 'Month should be between 1 and 12';
+    }
+
+    const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
+    if (dayValue < 1 || dayValue > maxNumberOfDays) {
+        return 'Invalid day for this month';
+    }
+
+    return undefined;
+};
+
+
+// NUMBER
+
 export const addSeparator = (num, separator = ',') => {
     const nStr = String(num);
     const x = nStr.split('.');
@@ -198,46 +202,169 @@ export const formattedNormalize = (number) => {
     };
 };
 
-
 export const leftPad = (number, length, pad = '0') => {
     const numStr = String(number);
     return numStr.length >= length ? numStr :
         new Array((length - numStr.length) + 1).join(pad) + numStr;
 };
 
-// TODO: write test
-// Here month starts from 1 (not zero)
-export const getNumDaysInMonthX = (year, month) => (
-    (year && month) ? new Date(year, month, 0).getDate() : 32
+// CREATORS
+
+// get numbers from start to end
+// ex: getNumber(2, 6) = [2, 3, 4, 5]
+export const getNumbers = (start, end) => {
+    const list = [];
+    for (let i = start; i < end; i += 1) {
+        list.push(i);
+    }
+    return list;
+};
+
+export const randomString = (length = 8) => {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < length; i += 1) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+
+    /*
+     * -------------------------------------------------
+     * better Algorithm, but not supported by enzyme :(
+     * -------------------------------------------------
+
+    const randomValues = new Uint8Array(length);
+    window.crypto.getRandomValues(randomValues);
+    return Array.from(randomValues, v => v.toString(36)).join('').substring(0, 8);
+    */
+};
+
+
+// ACCESSOR
+
+export const getKeyByValue = (object, value) => (
+    Object.keys(object).find(key => object[key] === value)
 );
 
-// TODO: write test
-export const getNumDaysInMonth = date => (
-    date ? (
-        getNumDaysInMonthX(date.getFullYear(), date.getMonth() + 1)
-    ) : 32
+// get random item from the list
+// ex: getRandomFromList([1, 2, 3, 4]);
+export const getRandomFromList = (items = []) => (
+    items[Math.floor(Math.random() * items.length)]
 );
 
-export const encodeDate = date => FormattedDate.format(date, 'yyyy-MM-dd');
+export const getElementAround = (list, currentIndex) => {
+    if (currentIndex + 1 < list.length) {
+        return list[currentIndex + 1];
+    } else if (currentIndex - 1 >= 0) {
+        return list[currentIndex - 1];
+    }
+    return null;
+};
 
-export const decodeDate = (value) => {
-    // Let's assume that the value is in local time zone
+export const getLinkedListNode = (linkedList, n, selector) => {
+    let newList = linkedList;
+    for (let i = 0; i < n; i += 1) {
+        newList = selector(newList, i);
+    }
+    return newList;
+};
 
-    if (!value) {
+export const getObjectChildren = (object, keys) => {
+    // object: object, keys: (string | number | undefined)[], defaultValue: any,
+    // ): any => {
+    const key = keys[0];
+    if (!object || !key || !object[key]) {
         return undefined;
     }
-
-    // Check if value is timestamp number or ISO string with time information
-    // In both case, new Date assumes local time zone
-    if (typeof value === 'number' || value.indexOf('T') >= 0) {
-        return new Date(value);
+    if (keys.length === 1) {
+        return object[key];
     }
+    return getObjectChildren(object[key], keys.slice(1));
+};
 
-    // In case of ISO string with no time information, new Date assumes
-    // UTC timezone. So first split it manually, and feed them separately
-    // so they will be processed as local time zone.
-    const splits = value.split('-');
-    return new Date(splits[0], splits[1] - 1, splits[2]);
+// CHECKER
+
+export const isFalsy = val => (
+    val === undefined || val === null || Number.isNaN(val) || val === false
+);
+
+export const isTruthy = val => !isFalsy(val);
+
+export const isEmpty = val => val === undefined || val === '';
+
+export const isInteger = value => (
+    typeof value === 'number' && value % 1 === 0
+);
+
+export const isFalsyOrEmptyOrZero = val => (
+    isFalsy(val) || val.length === 0 || val === 0 || val === '0'
+);
+
+// added by @frozenhelium
+export const isEqualAndTruthy = (a, b) => (
+    isTruthy(a) && (a === b)
+);
+
+export const isDifferentAndTruthy = (a, b) => (
+    isTruthy(a) && (a !== b)
+);
+
+// NOTE: also assumes mutated data
+export const isArrayEqual = (array1, array2) => (
+    array1.length === array2.length && array1.every((d, i) => d === array2[i])
+);
+
+// Check if object is empty (or undefined)
+export const isObjectEmpty = (obj) => {
+    // Check if obj is defined, has keys and is object: else return true
+    if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
+        // If obj is object and has keys, check their values
+        const innerEmpty = Object.values(obj).reduce((a, b) => (
+            a && isFalsyOrEmptyOrZero(b)
+        ), true);
+
+        // If inner is not empty, then return false else return true
+        if (!innerEmpty) {
+            return false;
+        }
+    }
+    return true;
+};
+
+export const isObject = item => (
+    typeof item === 'object' && !Array.isArray(item) && item !== null
+);
+
+
+// MATHS
+
+export const bound = (value, a, b) => {
+    const min = Math.min(a, b);
+    const max = Math.max(a, b);
+    return Math.max(min, Math.min(max, value));
+};
+
+export const normalize = (value, max, min) => (
+    (value - min) / (max - min)
+);
+
+// TRANSFORM
+
+export const unique = (object, getValue) => {
+    const memory = {};
+    const newArr = [];
+    object.forEach((o) => {
+        const id = getValue ? getValue(o) : o;
+        if (!memory[id]) {
+            memory[id] = true;
+            newArr.push(id);
+        }
+    });
+    // for efficiency
+    if (newArr.length === object.length) {
+        return object;
+    }
+    return newArr;
 };
 
 export const listToMap = (list = [], keySelector, modifier) => (
@@ -296,23 +423,7 @@ export const groupList = (list = [], keySelector, modifier) => (
     )
 );
 
-
-/*
- * Convert camel case to kebab case
- * eg: camelToDash -> camel-to-dash
- */
-export const camelToDash = str => str
-    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
-    .replace(/([A-Z])/g, ([letter]) => `-${letter.toLowerCase()}`);
-
-/*
- * Convert camel case to normal case
- * eg: camelToDash -> camel to dash
- */
-export const camelToNormal = str => str
-    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
-    .replace(/([A-Z])/g, ([letter]) => ` ${letter.toLowerCase()}`);
-
+// ROUTE
 
 /**
  * get location from pathname
@@ -352,6 +463,8 @@ export const reverseRoute = (route, params) => {
 
     return paths.join('/');
 };
+
+// COLOR
 
 export const getContrastYIQ = (hexColor) => {
     const r = parseInt(hexColor.substr(1, 2), 16);
@@ -397,6 +510,42 @@ export const getHexFromRgb = (rgb) => {
     return `#${out}`;
 };
 
+export const isValidHexColor = (value) => {
+    const colorHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+    return colorHex.test(value);
+};
+
+// COMPARISION
+
+const comparision = (extractor, func) => (x, y, direction = 1) => {
+    const a = extractor(x);
+    const b = extractor(y);
+    if (a === b) {
+        return 0;
+    } else if (isFalsy(a)) {
+        return -1;
+    } else if (isFalsy(b)) {
+        return 1;
+    }
+    return direction * func(a, b);
+};
+
+// NOTE: func is never called for boolean
+export const compareBoolean = comparision(x => x, () => null);
+export const compareString = comparision(x => x, (a, b) => a.localeCompare(b));
+export const compareNumber = comparision(x => x, (a, b) => (a - b));
+export const compareDate = comparision(x => x, (a, b) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getTime() - dateB.getTime();
+});
+
+export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
+export const compareLength = comparision(x => x.length, (a, b) => (a - b));
+export const compareStringByWordCount = comparision(x => x.split(/\s+/).length, (a, b) => a - b);
+
+
+// FILE
 
 export const getStandardFilename = (title, type, date = undefined) => {
     const dateToUse = date || new Date();
@@ -407,53 +556,7 @@ export const getStandardFilename = (title, type, date = undefined) => {
     return `${y}${m}${d} ${title} ${type}`;
 };
 
-export const getElementAround = (list, currentIndex) => {
-    if (currentIndex + 1 < list.length) {
-        return list[currentIndex + 1];
-    } else if (currentIndex - 1 >= 0) {
-        return list[currentIndex - 1];
-    }
-    return null;
-};
-
-export const getLinkedListNode = (linkedList, n, selector) => {
-    let newList = linkedList;
-    for (let i = 0; i < n; i += 1) {
-        newList = selector(newList, i);
-    }
-    return newList;
-};
-
-export const unique = (object, getValue) => {
-    const memory = {};
-    const newArr = [];
-    object.forEach((o) => {
-        const id = getValue ? getValue(o) : o;
-        if (!memory[id]) {
-            memory[id] = true;
-            newArr.push(id);
-        }
-    });
-    // for efficiency
-    if (newArr.length === object.length) {
-        return object;
-    }
-    return newArr;
-};
-
-export const isValidHexColor = (value) => {
-    const colorHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
-    return colorHex.test(value);
-};
-
-export const splitInWhitespace = (string = '') => (
-    string.match(/\S+/g) || []
-);
-
-export const trimWhitespace = (string = '') => (
-    splitInWhitespace(string).join(' ')
-);
-
+// BOUNDING
 
 export const calcFloatingRect = (
     boundingRect,
@@ -518,6 +621,8 @@ export const getRatingForContentInString = (content = '', str) => (
     content.toLowerCase().indexOf(str.toLowerCase())
 );
 
+// MISC
+
 export const findDifferenceInObject = (o, n) => {
     const allKeys = new Set([
         ...Object.keys(o),
@@ -533,80 +638,8 @@ export const findDifferenceInObject = (o, n) => {
     return changes;
 };
 
-// NOTE: also assumes mutated data
-export const isArrayEqual = (array1, array2) => (
-    array1.length === array2.length && array1.every((d, i) => d === array2[i])
-);
-
-const comparision = (extractor, func) => (x, y, direction = 1) => {
-    const a = extractor(x);
-    const b = extractor(y);
-    if (a === b) {
-        return 0;
-    } else if (isFalsy(a)) {
-        return -1;
-    } else if (isFalsy(b)) {
-        return 1;
-    }
-    return direction * func(a, b);
-};
-
-export const MIN_YEAR = 1990;
-
-export const isDateValuesComplete = ({ yearValue, monthValue, dayValue }) => (
-    // Complete if all values are undefined or none are
-    (dayValue && monthValue && yearValue) ||
-    (!dayValue && !monthValue && !yearValue)
-);
-
-export const getErrorForDateValues = ({ yearValue, monthValue, dayValue }) => {
-    if (!isDateValuesComplete({ yearValue, monthValue, dayValue })) {
-        return 'Date values incomplete';
-    }
-
-    if (yearValue < MIN_YEAR) {
-        return 'Year should be greater than or equal to 1990';
-    }
-
-    if (monthValue < 1 || monthValue > 12) {
-        return 'Month should be between 1 and 12';
-    }
-
-    const maxNumberOfDays = getNumDaysInMonthX(yearValue, monthValue);
-    if (dayValue < 1 || dayValue > maxNumberOfDays) {
-        return 'Invalid day for this month';
-    }
-
-    return undefined;
-};
-
-// NOTE: func is never called for boolean
-export const compareBoolean = comparision(x => x, () => null);
-export const compareString = comparision(x => x, (a, b) => a.localeCompare(b));
-export const compareNumber = comparision(x => x, (a, b) => (a - b));
-export const compareDate = comparision(x => x, (a, b) => {
-    const dateA = new Date(a);
-    const dateB = new Date(b);
-    return dateA.getTime() - dateB.getTime();
-});
-
-export const compareStringAsNumber = comparision(x => +x, (a, b) => a - b);
-export const compareLength = comparision(x => x.length, (a, b) => (a - b));
-export const compareStringByWordCount = comparision(x => x.split(/\s+/).length, (a, b) => a - b);
-
-export const getObjectChildren = (object, keys) => {
-    // object: object, keys: (string | number | undefined)[], defaultValue: any,
-    // ): any => {
-    const key = keys[0];
-    if (!object || !key || !object[key]) {
-        return undefined;
-    }
-    if (keys.length === 1) {
-        return object[key];
-    }
-    return getObjectChildren(object[key], keys.slice(1));
-};
-
+// should check if new object should be set
+// and should the message of overriden shown
 export const checkVersion = (oldVersionId, newVersionId) => ({
     shouldSetValue: isFalsy(oldVersionId) || oldVersionId < newVersionId,
     isValueOverriden: isTruthy(oldVersionId) && oldVersionId < newVersionId,
