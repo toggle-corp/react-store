@@ -42,31 +42,33 @@ const defaultProps = {
     emptyComponent: defaultEmptyComponent,
 };
 
-const ListView = (props) => {
-    const {
-        className,
-        data,
-        emptyComponent: EmptyComponent,
+// eslint-disable-next-line react/prefer-stateless-function
+export default class ListView extends React.Component {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
-        ...otherProps
-    } = props;
+    render() {
+        const {
+            className,
+            data,
+            emptyComponent: EmptyComponent,
 
-    return (
-        <div className={`${styles.listView} list-view ${className}`}>
-            {
-                data.length === 0 ? (
-                    <EmptyComponent />
-                ) : (
-                    <List
-                        data={data}
-                        {...otherProps}
-                    />
-                )
-            }
-        </div>
-    );
-};
-ListView.propTypes = propTypes;
-ListView.defaultProps = defaultProps;
+            ...otherProps
+        } = this.props;
 
-export default ListView;
+        return (
+            <div className={`${styles.listView} list-view ${className}`}>
+                {
+                    data.length === 0 ? (
+                        <EmptyComponent />
+                    ) : (
+                        <List
+                            data={data}
+                            {...otherProps}
+                        />
+                    )
+                }
+            </div>
+        );
+    }
+}
