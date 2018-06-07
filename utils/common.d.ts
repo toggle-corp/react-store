@@ -1,3 +1,5 @@
+export declare function getHexFromString(value: string): string;
+
 export declare function isTruthy(value: any): boolean;
 export declare function isFalsy(value: any): boolean;
 export declare function randomString(value?: number): string;
