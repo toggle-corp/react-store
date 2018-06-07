@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import HashManager from '../../General/HashManager';
 import List from '../List';
+
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
     active: PropTypes.string,
     children: PropTypes.node,
+    className: PropTypes.string,
     defaultHash: PropTypes.string,
     onClick: PropTypes.func,
     replaceHistory: PropTypes.bool,
@@ -30,68 +32,17 @@ const defaultProps = {
     modifier: undefined,
 };
 
-export default class FixedTabs extends React.PureComponent {
+
+export default class FixedTabs extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getNewHash = (tabs, defaultHash) => {
-        if (defaultHash) {
-            return `#/${defaultHash}`;
-        }
-        const keys = Object.keys(tabs);
-        if (keys.length > 0) {
-            return `#/${keys[0]}`;
-        }
-        return undefined;
-    }
-
     constructor(props) {
         super(props);
-
         this.state = {
-            hash: props.useHash ? this.getHash() : undefined,
+            hash: undefined,
         };
     }
-
-    componentDidMount() {
-        const { useHash } = this.props;
-
-        if (useHash) {
-            window.addEventListener('hashchange', this.handleHashChange);
-            this.initializeHash(this.props.tabs, this.props.defaultHash);
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            tabs: oldTabs,
-            useHash: oldUseHash,
-        } = this.props;
-        const {
-            tabs: newTabs,
-            useHash: newUseHash,
-        } = nextProps;
-
-        if (oldUseHash !== newUseHash) {
-            if (newUseHash) {
-                window.addEventListener('hashchange', this.handleHashChange);
-                this.initializeHash(nextProps.tabs, nextProps.defaultHash);
-            } else if (oldUseHash) {
-                window.removeEventListener('hashchange', this.handleHashChange);
-                this.setState({ hash: undefined });
-            }
-        } else if (newUseHash && oldTabs !== newTabs) {
-            this.initializeHash(nextProps.tabs, nextProps.defaultHash);
-        }
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('hashchange', this.handleHashChange);
-    }
-
-    getHash = () => (
-        window.location.hash.substr(2)
-    )
 
     getClassName = () => {
         const { className } = this.props;
@@ -119,21 +70,8 @@ export default class FixedTabs extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    initializeHash = (tabs, defaultHash) => {
-        const { hash } = this.state;
-        if (!hash || !tabs[hash]) {
-            const newHash = FixedTabs.getNewHash(
-                tabs,
-                defaultHash,
-            );
-            if (newHash) {
-                window.location.replace(newHash);
-            }
-        }
-    }
-
-    handleHashChange = () => {
-        this.setState({ hash: this.getHash() });
+    handleHashChange = (hash) => {
+        this.setState({ hash });
     }
 
     handleTabClick = (key, e) => {
@@ -143,18 +81,15 @@ export default class FixedTabs extends React.PureComponent {
             replaceHistory,
         } = this.props;
 
-        if (!useHash) {
-            onClick(key);
-            return;
-        }
-
-        if (replaceHistory) {
+        if (useHash && replaceHistory) {
             window.location.replace(`#/${key}`);
             e.preventDefault();
         }
+
+        onClick(key);
     }
 
-    renderTab = (key, data) => {
+    renderTab = (_, data) => {
         const {
             active,
             tabs,
@@ -205,12 +140,21 @@ export default class FixedTabs extends React.PureComponent {
     render() {
         const {
             tabs,
+            useHash,
+            defaultHash,
         } = this.props;
 
+        // FIXME: generate tabList when tabs change
         const tabList = Object.keys(tabs);
         const className = this.getClassName();
         return (
             <div className={className}>
+                <HashManager
+                    tabs={tabs}
+                    useHash={useHash}
+                    defaultHash={defaultHash}
+                    onHashChange={this.handleHashChange}
+                />
                 <List
                     data={tabList}
                     modifier={this.renderTab}

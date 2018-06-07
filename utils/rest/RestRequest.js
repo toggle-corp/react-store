@@ -51,6 +51,7 @@ export default class RestRequest {
             }
         };
 
+        // Log warning about undeclared success, failure, and fatal callback
         if (!success) {
             createWarningFn('No success callback defined')();
         }
@@ -71,6 +72,8 @@ export default class RestRequest {
         this.url = url;
         this.params = params;
 
+        // NOTE: postLoad Fn is callbed before
+        // Inject postLoad on success, failure, and fatal functions
         this.success = (...attrs) => {
             postLoadFn();
             successFn(...attrs);
@@ -260,11 +263,12 @@ export default class RestRequest {
 
     /* Stop any retry action */
     stop = () => {
+        // NOTE: fetch is not really aborted, just ignored
+
         clearTimeout(this.retryId);
         clearTimeout(this.pollId);
         this.pollCount = 1;
         this.retryCount = 1;
         this.aborted = true;
-        // NOTE: fetch is not really aborted, just ignored
     }
 }
