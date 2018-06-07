@@ -38,3 +38,7 @@ export declare function getObjectChildren(
     // FIXME: handle undefined in reverseRoute
     keys: (undefined| number | string)[],
 ): (any | undefined);
+
+export declare function isObjectEmpty(
+    obj: object | undefined,
+): boolean;
