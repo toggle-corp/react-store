@@ -3,11 +3,12 @@ import React, {
     Fragment,
 } from 'react';
 import { select, event } from 'd3-selection';
-import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
+import { scaleOrdinal } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
+import { schemePaired } from 'd3-scale-chromatic';
 
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
@@ -48,7 +49,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    colorScheme: schemeCategory20c,
+    colorScheme: schemePaired,
     showLabels: true,
     showTooltip: true,
     className: '',
