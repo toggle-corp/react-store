@@ -26,7 +26,7 @@ export default ErrorComponent => (WrappedComponent) => {
         componentDidCatch(error, errorInfo) {
             this.setState({ hasError: true });
 
-            if (ErrorComponent.handleException) {
+            if (ErrorComponent && ErrorComponent.handleException) {
                 ErrorComponent.handleException(error, errorInfo);
             }
         }
