@@ -117,6 +117,7 @@ export default class Faram extends React.PureComponent {
 
     handleSubmitClick = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         this.submit();
 
         // NOTE: Returning false will not submit the form & redirect
