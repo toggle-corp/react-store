@@ -19,10 +19,7 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    data: PropTypes.arrayOf(PropTypes.shape({
-        value: PropTypes.number.isRequired,
-        label: PropTypes.number.isRequired,
-    })),
+    data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     fill: PropTypes.bool,
     lineColor: PropTypes.string,
@@ -150,7 +147,6 @@ export default class SparkLines extends PureComponent {
                 .style('fill', 'url(#areaGradient)')
                 .attr('d', areas);
         }
-
 
         group
             .append('path')
