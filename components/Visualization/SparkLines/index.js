@@ -41,10 +41,10 @@ const defaultProps = {
     fill: false,
     className: '',
     margins: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
+        top: 4,
+        right: 4,
+        bottom: 4,
+        left: 4,
     },
 };
 
@@ -142,14 +142,15 @@ export default class SparkLines extends PureComponent {
 
         if (fill) {
             this.addAreaGradients();
+
+            group
+                .attr('class', 'spark-lines')
+                .append('path')
+                .datum(data)
+                .style('fill', 'url(#areaGradient)')
+                .attr('d', areas);
         }
 
-        group
-            .attr('class', 'spark-lines')
-            .append('path')
-            .datum(data)
-            .style('fill', 'url(#areaGradient)')
-            .attr('d', areas);
 
         group
             .append('path')
