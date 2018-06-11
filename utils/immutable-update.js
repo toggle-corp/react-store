@@ -82,4 +82,15 @@ update.extend('$unset', (keysToRemove, original) => {
     return copy;
 });
 
+update.extend('$toggleElement', (value, object) => {
+    const index = object.indexOf(value);
+    if (index >= 0) {
+        const newObject = [...object];
+        newObject.splice(index, 1);
+        return newObject;
+    }
+
+    return [...object, value];
+});
+
 export default update;
