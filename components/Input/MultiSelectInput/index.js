@@ -124,6 +124,10 @@ const getInputPlaceholder = (props) => {
     if (value.length === 1) {
         const key = value[0];
         const option = options.find(o => keySelector(o) === key);
+        if (!option) {
+            // FIXME: better error message
+            return 'ERROR';
+        }
         return labelSelector(option);
     } else if (value.length > 0) {
         return `${value.length} selected`;

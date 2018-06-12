@@ -38,7 +38,7 @@ export default class RestRequest {
     }
 
     constructor(
-        url, params, success, failure, fatal, abort, preLoad, postLoad,
+        url, params, success, failure, fatal, abort, preLoad, postLoad, afterLoad,
         retryTime = -1, maxRetryTime = -1, decay = -1, maxRetryAttempts = -1,
         pollTime = -1, maxPollAttempts = -1, shouldPoll,
         delay = 0,
@@ -68,6 +68,7 @@ export default class RestRequest {
         const abortFn = abort || createWarningFn('No abort callback defined');
         const preLoadFn = preLoad || noop;
         const postLoadFn = postLoad || noop;
+        const afterLoadFn = afterLoad || noop;
 
         this.url = url;
         this.params = params;
@@ -77,14 +78,17 @@ export default class RestRequest {
         this.success = (...attrs) => {
             postLoadFn();
             successFn(...attrs);
+            afterLoadFn();
         };
         this.failure = (...attrs) => {
             postLoadFn();
             failureFn(...attrs);
+            afterLoadFn();
         };
         this.fatal = (...attrs) => {
             postLoadFn();
             fatalFn(...attrs);
+            afterLoadFn();
         };
 
         // NOTE: postLoad in not called on abort,
@@ -92,6 +96,7 @@ export default class RestRequest {
         this.abort = abortFn;
         this.preLoad = preLoadFn;
         this.postLoad = postLoadFn;
+        this.afterLoad = afterLoadFn;
 
         this.retryTime = retryTime;
         this.decay = decay;
