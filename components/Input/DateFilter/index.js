@@ -13,6 +13,8 @@ import ModalHeader from '../../View/Modal/Header';
 import ModalBody from '../../View/Modal/Body';
 import ModalFooter from '../../View/Modal/Footer';
 
+import { encodeDate } from '../../../utils/common';
+
 import styles from './styles.scss';
 
 
@@ -243,7 +245,7 @@ class DateFilter extends React.PureComponent {
     handleEndDateChange = (timestamp) => {
         const endDate = new Date(timestamp);
         endDate.setDate(endDate.getDate() + 1);
-        this.setState({ endDate: endDate.getTime() });
+        this.setState({ endDate: encodeDate(endDate) });
     }
 
     render() {
@@ -269,12 +271,12 @@ class DateFilter extends React.PureComponent {
         if (endDate) {
             endDateToDisplay = new Date(endDate);
             endDateToDisplay.setDate(endDateToDisplay.getDate() - 1);
-            endDateToDisplay = endDateToDisplay.getTime();
+            endDateToDisplay = encodeDate(endDateToDisplay);
         }
 
         if (startDate && endDate) {
             const startStr = DateFilter.dateToStr(startDate);
-            const endStr = DateFilter.dateToStr(endDateToDisplay);
+            const endStr = DateFilter.dateToStr(endDate);
             const customLabel = `${startStr} to ${endStr}`;
             options = [
                 ...options,
