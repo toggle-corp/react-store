@@ -46,6 +46,11 @@ export default class RestBuilder {
         return this;
     }
 
+    afterLoad(fn) {
+        this.afterLoadFn = fn;
+        return this;
+    }
+
     pollTime(val) {
         this.pollTimeVal = val;
         return this;
@@ -96,6 +101,7 @@ export default class RestBuilder {
             this.abortFn,
             this.preLoadFn,
             this.postLoadFn,
+            this.afterLoadFn,
             this.retryTimeVal,
             this.maxRetryTimeVal,
             this.decayVal,
