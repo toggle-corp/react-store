@@ -1,5 +1,7 @@
 import React from 'react';
 import { select } from 'd3-selection';
+import { schemeSet3 } from 'd3-scale-chromatic';
+import { scaleOrdinal } from 'd3-scale';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
 import { max } from 'd3-array';
@@ -39,6 +41,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
@@ -47,20 +50,19 @@ const defaultProps = {
     barColor: '#1693A5',
     className: '',
     margins: {
-        top: 50,
-        right: 50,
-        bottom: 100,
-        left: 100,
+        top: 24,
+        right: 24,
+        bottom: 24,
+        left: 72,
     },
+    colorScheme: schemeSet3,
 };
 /**
  * A horizontal bar graph shows categorical data with rectangular bars with length proportional
  * to values they represent.
  */
 
-@BoundError()
-@Responsive
-export default class HorizontalBar extends React.PureComponent {
+class HorizontalBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -194,7 +196,6 @@ export default class HorizontalBar extends React.PureComponent {
         const xAxis = axisBottom(x);
         const yAxis = axisLeft(y);
 
-        const textColor = getColorOnBgColor(barColor);
 
         group
             .append('g')
@@ -230,13 +231,16 @@ export default class HorizontalBar extends React.PureComponent {
             .append('g')
             .attr('class', 'bar');
 
+        const colors = scaleOrdinal()
+            .range(this.props.colorScheme);
+
         const bars = groups
             .append('rect')
             .style('cursor', 'pointer')
             .attr('x', 0)
             .attr('y', d => y(labelAccessor(d)))
             .attr('height', y.bandwidth())
-            .attr('fill', barColor)
+            .attr('fill', d => colors(labelAccessor(d)))
             .on('mouseover', handleMouseOver)
             .on('mouseout', handleMouseOut);
 
@@ -245,6 +249,8 @@ export default class HorizontalBar extends React.PureComponent {
             .duration(750)
             .attr('width', d => x(valueAccessor(d)));
 
+        // const textColor = getColorOnBgColor(barColor);
+
         groups
             .append('text')
             .attr('x', d => x(valueAccessor(d)) - 3)
@@ -252,7 +258,7 @@ export default class HorizontalBar extends React.PureComponent {
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .text(d => valueAccessor(d))
-            .style('fill', textColor);
+            .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))));
     }
 
     render() {
@@ -270,3 +276,5 @@ export default class HorizontalBar extends React.PureComponent {
         );
     }
 }
+
+export default BoundError()(Responsive(HorizontalBar))

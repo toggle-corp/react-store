@@ -7,11 +7,13 @@ import { select } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
+import { transition } from 'd3-transition';
 
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
+const dummy = transition;
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -40,9 +42,7 @@ const defaultProps = {
 };
 
 
-@BoundError()
-@Responsive
-export default class PieChart extends PureComponent {
+class PieChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -112,7 +112,7 @@ export default class PieChart extends PureComponent {
             .enter()
             .append('text')
             .attr('dy', '.35em')
-            .html(d => (`<tspan>${labelAccessor(d.data)} ${valueAccessor(d.data)}</tspan>`))
+            .html(d => (`<tspan>${labelAccessor(d.data)}</tspan>`))
             .attr('transform', (d) => {
                 const pos = textArcs.centroid(d);
                 pos[0] = radius * 0.8 * (this.midAngle(d) < Math.PI ? 1 : -1);
@@ -252,6 +252,8 @@ export default class PieChart extends PureComponent {
         }
 
         const { width, height } = boundingClientRect;
+        this.svg.style.width = `${width}px`;
+        this.svg.style.height = `${height}px`;
 
         const context = this.setContext(data, width, height);
         const slices = context.append('g').attr('class', 'slices');
@@ -311,3 +313,5 @@ export default class PieChart extends PureComponent {
         );
     }
 }
+
+export default BoundError()(Responsive(PieChart))

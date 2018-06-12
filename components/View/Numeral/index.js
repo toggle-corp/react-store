@@ -83,17 +83,18 @@ class Numeral extends React.PureComponent {
         precision = undefined,
         showSeparator = true,
         separator = ',',
+        lang = 'np',
     }) {
         // Only use absolute part if showSign is true (sign are added later)
         let number = isTruthy(showSign) ? Math.abs(value) : value;
 
         // Get normalize-suffix and reduce the number
-        let normalizedSuffix;
+        let normalizeSuffix;
 
         if (normal) {
-            const { number: num, normalizedSuffix: norm } = formattedNormalize(number);
+            const { number: num, normalizeSuffix: norm } = formattedNormalize(number, lang);
             number = num;
-            normalizedSuffix = norm;
+            normalizeSuffix = norm;
         }
 
         // Convert number to fixed precision
@@ -106,7 +107,7 @@ class Numeral extends React.PureComponent {
             number = addSeparator(number, separator);
         }
 
-        return { number, normalizedSuffix };
+        return { number, normalizeSuffix };
     }
 
     static renderText(props) {
@@ -120,17 +121,18 @@ class Numeral extends React.PureComponent {
             suffix,
             value,
             invalidText,
+            lang,
         } = { ...defaultProps, ...props };
 
         if (isFalsy(value)) {
             return invalidText;
         }
 
-        const { number, normalizedSuffix } = Numeral.getNormalizedNumber({
-            value, showSign, normal, precision, showSeparator, separator,
+        const { number, normalizeSuffix } = Numeral.getNormalizedNumber({
+            value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
-        return `${prefix || ''}${number}${normalizedSuffix || ''}${suffix || ''}`;
+        return `${prefix || ''}${number}${normalizeSuffix || ''}${suffix || ''}`;
     }
 
     render() {
@@ -144,6 +146,7 @@ class Numeral extends React.PureComponent {
             showSign,
             suffix,
             value,
+            lang,
         } = this.props;
 
         if (isFalsy(value)) {
@@ -156,8 +159,8 @@ class Numeral extends React.PureComponent {
             );
         }
 
-        const { number, normalizedSuffix } = Numeral.getNormalizedNumber({
-            value, showSign, normal, precision, showSeparator, separator,
+        const { number, normalizeSuffix } = Numeral.getNormalizedNumber({
+            value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
         return (
@@ -180,9 +183,9 @@ class Numeral extends React.PureComponent {
                     {number}
                 </span>
                 {
-                    isTruthy(normalizedSuffix) && (
+                    isTruthy(normalizeSuffix) && (
                         <span className="normalized-suffix">
-                            {normalizedSuffix}
+                            {normalizeSuffix}
                         </span>
                     )
                 }

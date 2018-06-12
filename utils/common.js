@@ -179,23 +179,43 @@ export const addSeparator = (num, separator = ',') => {
     return x1 + x2;
 };
 
-export const formattedNormalize = (number) => {
+export const formattedNormalize = (number, lang = 'np') => {
     let normalizeSuffix;
     let normalizedNumber = number;
     const digits = Math.log10(Math.abs(number));
 
-    // something like foreach here
-
-    if (digits >= 9) {
-        normalizeSuffix = 'Ar';
-        normalizedNumber /= 1000000000;
-    } else if (digits >= 7) {
-        normalizeSuffix = 'Cr';
-        normalizedNumber /= 10000000;
-    } else if (digits >= 5) {
-        normalizeSuffix = 'Lac';
-        normalizedNumber /= 100000;
+    switch(lang) {
+        case 'np': {
+            if (digits >= 9) {
+                normalizeSuffix = 'Ar';
+                normalizedNumber /= 1000000000;
+            } else if (digits >= 7) {
+                normalizeSuffix = 'Cr';
+                normalizedNumber /= 10000000;
+            } else if (digits >= 5) {
+                normalizeSuffix = 'Lac';
+                normalizedNumber /= 100000;
+            }
+            break;
+        }
+        case 'en': {
+            if (digits >= 9) {
+                normalizeSuffix = 'B';
+                normalizedNumber /= 1000000000;
+            } else if (digits >= 6) {
+                normalizeSuffix = 'M';
+                normalizedNumber /= 1000000;
+            } else if (digits >= 3) {
+                normalizeSuffix = 'K';
+                normalizedNumber /= 1000;
+            }
+            break;
+        }
+        default: 
+            console.warn('Unrecognized langugage', language);
+            break;
     }
+
     return {
         number: normalizedNumber,
         normalizeSuffix,
