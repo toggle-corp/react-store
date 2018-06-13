@@ -22,7 +22,7 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     fill: PropTypes.bool,
-    lineColor: PropTypes.string,
+    // lineColor: PropTypes.string,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -34,7 +34,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    lineColor: '#40FEA1',
+    // lineColor: '#40FEA1',
     fill: false,
     className: '',
     margins: {
@@ -66,6 +66,7 @@ export default class SparkLines extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('sparklines', 'graph')}.svg`);
     }
 
+    /*
     addAreaGradients = () => {
         const { lineColor } = this.props;
 
@@ -89,12 +90,13 @@ export default class SparkLines extends PureComponent {
             .attr('stop-color', lineColor)
             .attr('stop-opacity', 0.1);
     }
+    */
 
     drawChart = () => {
         const {
             data,
             boundingClientRect,
-            lineColor,
+            // lineColor,
             margins,
             fill,
             valueAccessor,
@@ -137,22 +139,23 @@ export default class SparkLines extends PureComponent {
             .x((d, i) => scaleX(i))
             .y(d => scaleY(valueAccessor(d)));
 
+        group.attr('class', 'spark-lines');
         if (fill) {
-            this.addAreaGradients();
-
-            group
-                .attr('class', 'spark-lines')
-                .append('path')
+            // this.addAreaGradients();
+            group.append('path')
+                .attr('class', 'fill')
                 .datum(data)
-                .style('fill', 'url(#areaGradient)')
+                // .style('fill', 'url(#areaGradient)')
+                .style('stroke-width', 2)
                 .attr('d', areas);
         }
 
         group
             .append('path')
+            .attr('class', 'line')
             .datum(data)
             .attr('d', lines)
-            .style('stroke', lineColor)
+            // .style('stroke', lineColor)
             .style('fill', 'none')
             .style('stroke-width', 2);
     }
