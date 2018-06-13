@@ -184,7 +184,7 @@ export const formattedNormalize = (number, lang = 'np') => {
     let normalizedNumber = number;
     const digits = Math.log10(Math.abs(number));
 
-    switch(lang) {
+    switch (lang) {
         case 'np': {
             if (digits >= 9) {
                 normalizeSuffix = 'Ar';
@@ -211,8 +211,8 @@ export const formattedNormalize = (number, lang = 'np') => {
             }
             break;
         }
-        default: 
-            console.warn('Unrecognized langugage', language);
+        default:
+            console.warn('Unrecognized langugage', lang);
             break;
     }
 
