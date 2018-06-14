@@ -244,10 +244,10 @@ export default class RestRequest {
         if (response.ok) {
             // NOTE: clear out old retryCount
             this.retryCount = 1;
-            if (this.shouldPoll && this.shouldPoll(responseBody)) {
+            if (this.shouldPoll && this.shouldPoll(responseBody, response.status)) {
                 this.poll();
             } else {
-                this.success(responseBody);
+                this.success(responseBody, response.status);
             }
             return;
         }
@@ -256,13 +256,13 @@ export default class RestRequest {
         const is5xxError = Math.floor(response.status / 100) === 5;
         // Only retry on 5xx errors
         if (!is5xxError) {
-            this.failure(responseBody);
+            this.failure(responseBody, response.status);
             return;
         }
 
         const retrySuccessful = this.retry();
         if (!retrySuccessful) {
-            this.failure(responseBody);
+            this.failure(responseBody, response.status);
         }
     }
 
