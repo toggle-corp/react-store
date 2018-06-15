@@ -1,17 +1,20 @@
 import React from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
-import { scaleOrdinal } from 'd3-scale';
-import { scaleLinear, scaleBand } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleBand } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
 import { max } from 'd3-array';
+import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
+
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+
+const dummy = transition;
 
 
 /**
@@ -32,7 +35,7 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
-    barColor: PropTypes.string,
+    valueLabelAccessor: PropTypes.func,
     showGridLines: PropTypes.bool,
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -46,8 +49,8 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    valueLabelAccessor: undefined,
     showGridLines: true,
-    barColor: '#1693A5',
     className: '',
     margins: {
         top: 24,
@@ -57,11 +60,11 @@ const defaultProps = {
     },
     colorScheme: schemeSet3,
 };
+
 /**
  * A horizontal bar graph shows categorical data with rectangular bars with length proportional
  * to values they represent.
  */
-
 class HorizontalBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -128,17 +131,17 @@ class HorizontalBar extends React.PureComponent {
             .attr('in', 'SourceGraphic');
     }
 
-    addLines = (func, scale, length) => func(scale)
+    addLines = (func, scale, length, format) => func(scale)
         .tickSize(-length)
         .tickPadding(10)
-        .tickFormat('')
+        .tickFormat(format)
 
     addGrid = (svg, xscale, yscale, height, width) => {
         svg
             .append('g')
             .attr('class', styles.grid)
             .attr('transform', `translate(0, ${height})`)
-            .call(this.addLines(axisBottom, xscale, height));
+            .call(this.addLines(axisBottom, xscale, height, this.props.valueLabelAccessor));
 
         svg
             .append('g')
@@ -151,8 +154,8 @@ class HorizontalBar extends React.PureComponent {
             data,
             boundingClientRect,
             valueAccessor,
+            valueLabelAccessor,
             labelAccessor,
-            barColor,
             showGridLines,
             margins,
         } = this.props;
@@ -193,20 +196,6 @@ class HorizontalBar extends React.PureComponent {
             .domain(data.map(d => labelAccessor(d)))
             .padding(0.2);
 
-        const xAxis = axisBottom(x);
-        const yAxis = axisLeft(y);
-
-
-        group
-            .append('g')
-            .attr('class', styles.xAxis)
-            .attr('transform', `translate(0, ${height})`)
-            .call(xAxis);
-
-        group
-            .append('g')
-            .attr('class', styles.yAxis)
-            .call(yAxis);
 
         this.addShadow(group);
 
@@ -257,7 +246,8 @@ class HorizontalBar extends React.PureComponent {
             .attr('y', d => y(labelAccessor(d)) + (y.bandwidth() / 2))
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
-            .text(d => valueAccessor(d))
+            .text(d => (
+                valueLabelAccessor ? valueLabelAccessor(valueAccessor(d)) : valueAccessor(d)))
             .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))));
     }
 
@@ -277,4 +267,4 @@ class HorizontalBar extends React.PureComponent {
     }
 }
 
-export default BoundError()(Responsive(HorizontalBar))
+export default BoundError()(Responsive(HorizontalBar));
