@@ -13,6 +13,7 @@ import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
+
 const dummy = transition;
 
 /**
@@ -98,7 +99,7 @@ class PieChart extends PureComponent {
     }
 
     addLabels = (element, options) => {
-        const { valueAccessor, labelAccessor } = this.props;
+        const { labelAccessor } = this.props;
         const {
             radius,
             pies,
@@ -314,4 +315,4 @@ class PieChart extends PureComponent {
     }
 }
 
-export default BoundError()(Responsive(PieChart))
+export default BoundError()(Responsive(PieChart));

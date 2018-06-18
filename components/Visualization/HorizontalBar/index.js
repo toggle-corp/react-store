@@ -211,6 +211,20 @@ class HorizontalBar extends React.PureComponent {
 
         if (showGridLines) {
             this.addGrid(group, x, y, height, width);
+        } else {
+            const xAxis = axisBottom(x);
+            const yAxis = axisLeft(y);
+
+            group
+                .append('g')
+                .attr('class', styles.xAxis)
+                .attr('transform', `translate(0, ${height})`)
+                .call(xAxis);
+
+            group
+                .append('g')
+                .attr('class', styles.yAxis)
+                .call(yAxis);
         }
 
         const groups = group
