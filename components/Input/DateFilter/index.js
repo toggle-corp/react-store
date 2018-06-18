@@ -154,8 +154,8 @@ class DateFilter extends React.PureComponent {
         }
 
         return {
-            startDate,
-            endDate,
+            startDate: encodeDate(new Date(startDate)),
+            endDate: encodeDate(new Date(endDate)),
         };
     }
 
