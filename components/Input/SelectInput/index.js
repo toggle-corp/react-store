@@ -66,7 +66,7 @@ const defaultProps = {
     optionLabelSelector: undefined,
     options: [],
     optionsClassName: undefined,
-    placeholder: undefined,
+    placeholder: 'Select an option',
     renderEmpty: undefined,
     showHintAndError: true,
     showLabel: true,
@@ -105,13 +105,11 @@ const filterAndSortOptions = ({
 
     const rate = getRatingForContentInString;
     newOptions.sort((a, b) => (
-        rate(value, labelSelector(a))
-        - rate(value, labelSelector(b))
+        rate(value, labelSelector(a)) - rate(value, labelSelector(b))
     ));
 
     return newOptions;
 };
-
 
 class SelectInput extends React.PureComponent {
     static propTypes = propTypes;
@@ -121,10 +119,10 @@ class SelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            showOptions: false,
-            inputValue: getInputValue(props),
             displayOptions: props.options,
             inputInFocus: props.autoFocus,
+            inputValue: getInputValue(props),
+            showOptions: false,
         };
 
         this.container = React.createRef();
@@ -160,6 +158,7 @@ class SelectInput extends React.PureComponent {
 
     getClassName = () => {
         const {
+            error,
             className,
             disabled,
         } = this.props;
@@ -186,12 +185,17 @@ class SelectInput extends React.PureComponent {
             classNames.push('disabled');
         }
 
+        if (error) {
+            classNames.push(styles.error);
+            classNames.push('error');
+        }
+
         if (inputInFocus) {
             classNames.push(styles.inputInFocus);
             classNames.push('input-in-focus');
         }
 
-        if (inputValue && inputValue.length > 0) {
+        if (inputValue && inputValue.length !== 0) {
             classNames.push(styles.filled);
             classNames.push('filled');
         }
@@ -420,18 +424,18 @@ class SelectInput extends React.PureComponent {
 
     render() {
         const {
-            label,
-            showLabel,
-            title,
-            showHintAndError,
             error,
             hint,
+            keySelector,
+            label,
             labelSelector,
             optionLabelSelector,
-            keySelector,
-            renderEmpty,
-            value,
             optionsClassName,
+            renderEmpty,
+            showHintAndError,
+            showLabel,
+            title,
+            value,
         } = this.props;
 
         const {
@@ -450,29 +454,29 @@ class SelectInput extends React.PureComponent {
                 title={title}
             >
                 <Label
-                    text={label}
-                    show={showLabel}
                     className={styles.label}
+                    show={showLabel}
+                    text={label}
                 />
                 <InputAndActions />
-                <Options
-                    labelSelector={labelSelector}
-                    optionLabelSelector={optionLabelSelector}
-                    keySelector={keySelector}
-                    renderEmpty={renderEmpty}
-                    className={optionsClassName}
-                    data={displayOptions}
-                    show={showOptions}
-                    onOptionClick={this.handleOptionClick}
-                    onBlur={this.handleOptionsBlur}
-                    onInvalidate={this.handleOptionsInvalidate}
-                    parentContainer={container}
-                    value={value}
-                />
                 <HintAndError
                     show={showHintAndError}
                     error={error}
                     hint={hint}
+                />
+                <Options
+                    className={optionsClassName}
+                    data={displayOptions}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    onBlur={this.handleOptionsBlur}
+                    onInvalidate={this.handleOptionsInvalidate}
+                    onOptionClick={this.handleOptionClick}
+                    optionLabelSelector={optionLabelSelector}
+                    parentContainer={container}
+                    renderEmpty={renderEmpty}
+                    show={showOptions}
+                    value={value}
                 />
             </div>
         );

@@ -7,19 +7,24 @@ import FaramElement from '../../Input/Faram/FaramElement';
 import Label from '../Label';
 import HintAndError from '../HintAndError';
 import Button from '../../Action/Button';
+import DangerButton from '../../Action/Button/DangerButton';
 import Options from './Options';
 
 import {
     listToMap,
     caseInsensitiveSubmatch,
-    calcFloatingPositionInMainWindow,
     getRatingForContentInString,
 } from '../../../utils/common';
+
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '../../../utils/bounds';
 
 import styles from './styles.scss';
 
 export const emptyList = [];
-
 export const numberOrStringPropType = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -27,6 +32,7 @@ export const numberOrStringPropType = PropTypes.oneOfType([
 export const keyPropType = numberOrStringPropType;
 
 export const propTypes = {
+    autoFocus: PropTypes.bool,
     className: PropTypes.string,
     clearable: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -44,11 +50,12 @@ export const propTypes = {
     renderEmpty: PropTypes.func,
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
-    value: PropTypes.arrayOf(keyPropType),
     title: PropTypes.string,
+    value: PropTypes.arrayOf(keyPropType),
 };
 
 export const defaultProps = {
+    autoFocus: undefined,
     className: '',
     clearable: false,
     disabled: false,
@@ -66,18 +73,25 @@ export const defaultProps = {
     renderEmpty: () => 'No option available',
     showHintAndError: true,
     showLabel: true,
-    value: emptyList,
     title: undefined,
+    value: emptyList,
 };
 
-const filterAndSortOptions = (options, value, labelSelector) => {
+const filterAndSortOptions = ({
+    options,
+    value,
+    labelSelector,
+}) => {
     const newOptions = options.filter(
-        option => caseInsensitiveSubmatch(labelSelector(option), value),
+        option => caseInsensitiveSubmatch(
+            labelSelector(option),
+            value,
+        ),
     );
 
+    const rate = getRatingForContentInString;
     newOptions.sort((a, b) => (
-        getRatingForContentInString(value, labelSelector(a))
-            - getRatingForContentInString(value, labelSelector(b))
+        rate(value, labelSelector(a)) - rate(value, labelSelector(b))
     ));
 
     return newOptions;
@@ -144,51 +158,67 @@ class MultiSelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
+            displayOptions: props.options,
+            inputInFocus: props.autoFocus,
             inputValue: '',
             placeholder: getInputPlaceholder(props),
-            displayOptions: props.options,
             showOptions: false,
         };
+
+        this.container = React.createRef();
+        this.input = React.createRef();
     }
 
     componentWillMount() {
-        const { valid, value } = validateValue(this.props);
+        const {
+            valid,
+            value,
+        } = validateValue(this.props);
+
+        const { onChange } = this.props;
+
         if (!valid) {
-            this.props.onChange(value);
+            onChange(value);
         }
     }
 
     componentDidMount() {
-        if (this.container) {
-            this.boundingClientRect = this.container.getBoundingClientRect();
-        } else {
-            // NOTE: timeout
-            // should have a clearTimeout
-            setTimeout(() => {
-                this.boundingClientRect = this.container.getBoundingClientRect();
-            }, 0);
+        const { current: container } = this.container;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
         }
     }
 
     componentWillReceiveProps(nextProps) {
+        const {
+            value: newValue,
+            placeholder: newPlaceholder,
+            options: newOptions,
+            onChange,
+        } = nextProps;
+
         const {
             value: oldValue,
             placeholder: oldPlaceholder,
             options: oldOptions,
         } = this.props;
 
-        const areValuesEqual = nextProps.value === oldValue;
-        const areOptionsEqual = nextProps.options === oldOptions;
+        const areValuesEqual = newValue === oldValue;
+        const areOptionsEqual = newOptions === oldOptions;
 
         if (!areValuesEqual || !areOptionsEqual) {
-            const { valid, value } = validateValue(nextProps);
+            const {
+                valid,
+                value,
+            } = validateValue(nextProps);
+
             if (!valid) {
-                nextProps.onChange(value);
+                onChange(value);
                 return;
             }
         }
 
-        const arePlaceholdersEqual = nextProps.placeholder === oldPlaceholder;
+        const arePlaceholdersEqual = newPlaceholder === oldPlaceholder;
 
         if (!areValuesEqual || !arePlaceholdersEqual) {
             const placeholder = getInputPlaceholder(nextProps);
@@ -197,11 +227,10 @@ class MultiSelectInput extends React.PureComponent {
 
         if (!areOptionsEqual) {
             const { inputValue } = this.state;
-            const displayOptions = filterAndSortOptions(
-                nextProps.options,
-                inputValue,
-                nextProps.labelSelector,
-            );
+            const displayOptions = filterAndSortOptions({
+                ...nextProps,
+                value: inputValue,
+            });
             this.setState({ displayOptions });
         }
     }
@@ -213,9 +242,15 @@ class MultiSelectInput extends React.PureComponent {
             clearable,
             className,
             value,
+            options,
+            hideClearButton,
+            hideSelectAllButton,
         } = this.props;
 
-        const { showOptions } = this.state;
+        const {
+            showOptions,
+            inputInFocus,
+        } = this.state;
 
         const classNames = [
             className,
@@ -223,41 +258,83 @@ class MultiSelectInput extends React.PureComponent {
             styles.multiSelectInput,
         ];
 
+        if (showOptions) {
+            classNames.push(styles.showOptions);
+            classNames.push('show-options');
+        }
+
         if (disabled) {
             classNames.push('disabled');
             classNames.push(styles.disabled);
         }
 
+        if (inputInFocus) {
+            classNames.push(styles.inputInFocus);
+            classNames.push('input-in-focus');
+        }
+
         if (error) {
-            classNames.push('error');
             classNames.push(styles.error);
+            classNames.push('error');
+        }
+
+        if (hideClearButton) {
+            classNames.push(styles.hideClearButton);
+            classNames.push('hide-clear-button');
+        }
+
+        if (hideSelectAllButton) {
+            classNames.push(styles.hideSelectAllButton);
+            classNames.push('hide-select-all-button');
         }
 
         if (clearable) {
             classNames.push('clearable');
         }
 
-        if (showOptions) {
-            classNames.push('options-shown');
-            classNames.push(styles.optionsShown);
+        if (value.length !== 0) {
+            classNames.push(styles.filled);
+            classNames.push('filled');
         }
 
-        if (value && value.length !== 0) {
-            classNames.push('filled');
-            classNames.push(styles.filled);
+        if (value.length === options.length) {
+            classNames.push(styles.completelyFilled);
+            classNames.push('completely-filled');
         }
 
         return classNames.join(' ');
     };
 
+    toggleDropdown = () => {
+        const { current: container } = this.container;
+        const { current: input } = this.input;
+        const { options } = this.props;
+        const { showOptions } = this.state;
+
+        if (showOptions) {
+            this.handleOptionsBlur();
+        } else {
+            if (input) {
+                input.select();
+            }
+
+            if (container) {
+                this.boundingClientRect = container.getBoundingClientRect();
+            }
+        }
+
+        this.setState({
+            displayOptions: options,
+            showOptions: !showOptions,
+        });
+    }
+
     handleInputValueChange = (e) => {
         const { value } = e.target;
-        const {
-            options,
-            labelSelector,
-        } = this.props;
-
-        const displayOptions = filterAndSortOptions(options, value, labelSelector);
+        const displayOptions = filterAndSortOptions({
+            ...this.props,
+            value,
+        });
 
         this.setState({
             displayOptions,
@@ -266,42 +343,51 @@ class MultiSelectInput extends React.PureComponent {
         });
     }
 
-    handleInputClick = () => {
-        if (this.container) {
-            this.boundingClientRect = this.container.getBoundingClientRect();
-        }
-
-        if (this.input) {
-            this.input.select();
-        }
-
-        const { options } = this.props;
-        this.setState({
-            // reset options
-            displayOptions: options,
-            showOptions: true,
-        });
+    handleInputFocus = () => {
+        this.setState({ inputInFocus: true });
     }
 
-    handleOptionContainerInvalidate = (optionsContainer) => {
-        const containerRect = optionsContainer.getBoundingClientRect();
+    handleInputBlur = () => {
+        this.setState({ inputInFocus: false });
+    }
+
+    handleInputClick = () => {
+        this.toggleDropdown();
+    }
+
+    handleOptionsInvalidate = (optionsContainer) => {
+        const contentRect = optionsContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
-        if (this.container) {
-            parentRect = this.container.getBoundingClientRect();
+        const { current: container } = this.container;
+
+        if (container) {
+            parentRect = container.getBoundingClientRect();
         }
 
-        const offset = { top: 0, bottom: 0, left: 0, right: 0 };
-        if (this.props.showHintAndError) {
+        const { showHintAndError } = this.props;
+
+        const offset = { ...defaultOffset };
+        if (showHintAndError) {
             offset.top = 12;
         }
 
         const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
+            calcFloatPositionInMainWindow({
+                parentRect,
+                contentRect,
+                offset,
+                limit: {
+                    ...defaultLimit,
+                    minW: parentRect.width,
+                    maxW: parentRect.width,
+                },
+            })
         );
-        return optionsContainerPosition;
-    }
 
-    handleOptionContainerBlur = () => {
+        return optionsContainerPosition;
+    };
+
+    handleOptionsBlur = () => {
         const { options } = this.props;
 
         this.setState({
@@ -349,38 +435,59 @@ class MultiSelectInput extends React.PureComponent {
     renderActions = () => {
         const ClearButton = this.renderClearButton;
         const SelectAllButton = this.renderSelectAllButton;
-        const dropdownClassName = [
-            'dropdown-icon',
-            styles.dropdownIcon,
-            iconNames.arrowDropdown,
-        ].join(' ');
+
+        const className = `
+            actions
+            ${styles.actions}
+        `;
+        const dropdownButtonClassName = `
+            dropdown-button
+            ${styles.dropdownButton}
+        `;
 
         return (
-            <div className={`actions ${styles.actions}`}>
+            <div className={className}>
                 <SelectAllButton />
                 <ClearButton />
-                <span className={dropdownClassName} />
+                <Button
+                    tabIndex="-1"
+                    iconName={iconNames.arrowDropdown}
+                    className={dropdownButtonClassName}
+                    onClick={this.handleDropdownButtonClick}
+                    transparent
+                />
             </div>
         );
     }
 
     renderInput = () => {
-        const { disabled } = this.props;
+        const {
+            disabled,
+            autoFocus,
+        } = this.props;
+
         const {
             inputValue,
             placeholder,
         } = this.state;
 
-        const className = `input ${styles.input}`;
+        const className = `
+            input
+            ${styles.input}
+        `;
 
         return (
             <input
                 className={className}
                 disabled={disabled}
+                onBlur={this.handleInputBlur}
                 onChange={this.handleInputValueChange}
                 onClick={this.handleInputClick}
+                onFocus={this.handleInputFocus}
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus={autoFocus}
                 placeholder={placeholder}
-                ref={(el) => { this.input = el; }}
+                ref={this.input}
                 type="text"
                 value={inputValue}
             />
@@ -400,10 +507,13 @@ class MultiSelectInput extends React.PureComponent {
         }
 
         const tooltipText = 'Clear selected option(s)';
-        const className = `clear-button ${styles.clearButton}`;
+        const className = `
+            clear-button
+            ${styles.clearButton}
+        `;
 
         return (
-            <Button
+            <DangerButton
                 transparent
                 tabIndex="-1"
                 className={className}
@@ -432,7 +542,10 @@ class MultiSelectInput extends React.PureComponent {
         }
 
         const tooltipText = 'Select all options';
-        const className = `select-all-button ${styles.selectAllButton}`;
+        const className = `
+            select-all-button
+            ${styles.selectAllButton}
+        `;
 
         return (
             <Button
@@ -448,10 +561,25 @@ class MultiSelectInput extends React.PureComponent {
         );
     }
 
-    render() {
-        const className = this.getClassName();
+    renderInputAndActions = () => {
         const InputElement = this.renderInput;
         const Actions = this.renderActions;
+
+        const className = `
+            input-and-actions
+            ${styles.inputAndActions}
+        `;
+
+        return (
+            <div className={className}>
+                <InputElement />
+                <Actions />
+            </div>
+        );
+    }
+
+    render() {
+        const className = this.getClassName();
 
         const {
             error,
@@ -463,8 +591,8 @@ class MultiSelectInput extends React.PureComponent {
             renderEmpty,
             showHintAndError,
             showLabel,
-            value,
             title,
+            value,
         } = this.props;
 
         const {
@@ -472,10 +600,12 @@ class MultiSelectInput extends React.PureComponent {
             showOptions,
         } = this.state;
 
+        const { current: container } = this.container;
+        const InputAndActions = this.renderInputAndActions;
         return (
             <div
-                ref={(el) => { this.container = el; }}
                 className={className}
+                ref={this.container}
                 title={title}
             >
                 <Label
@@ -483,10 +613,7 @@ class MultiSelectInput extends React.PureComponent {
                     show={showLabel}
                     text={label}
                 />
-                <div className={`input-wrapper ${styles.inputWrapper}`}>
-                    <InputElement />
-                    <Actions />
-                </div>
+                <InputAndActions />
                 <HintAndError
                     show={showHintAndError}
                     error={error}
@@ -497,11 +624,11 @@ class MultiSelectInput extends React.PureComponent {
                     data={displayOptions}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
-                    onBlur={this.handleOptionContainerBlur}
-                    onInvalidate={this.handleOptionContainerInvalidate}
+                    onBlur={this.handleOptionsBlur}
+                    onInvalidate={this.handleOptionsInvalidate}
                     onOptionClick={this.handleOptionClick}
                     optionsClassName={optionsClassName}
-                    parentContainer={this.container}
+                    parentContainer={container}
                     renderEmpty={renderEmpty}
                     show={showOptions}
                 />

@@ -2,8 +2,8 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-$width-dropdown-icon: 10px;
-$width-clear-icon: 14px;
+$width-dropdown-button: 10px;
+$width-clear-button: 14px;
 
 .select-input {
     .input-and-actions {
@@ -11,7 +11,7 @@ $width-clear-icon: 14px;
 
         .input {
             @extend %input-base;
-            width: calc(100% - #{$width-dropdown-icon + $spacing-small});
+            width: calc(100% - #{$width-dropdown-button + $spacing-small});
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -51,7 +51,7 @@ $width-clear-icon: 14px;
             .input-and-actions {
                 &:hover {
                     .input {
-                        width: calc(100% - #{$width-dropdown-icon + $width-clear-icon + $spacing-small});
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-small});
                     }
 
                     .actions {
@@ -65,8 +65,22 @@ $width-clear-icon: 14px;
 
         &.show-options,
         &.input-in-focus {
+            .label {
+                color: $color-accent;
+            }
+
             .input-and-actions {
                 border-bottom: $width-separator-medium solid $color-accent;
+            }
+        }
+
+        &.error {
+            .label {
+                color: $color-danger;
+            }
+
+            .input-and-actions {
+                border-bottom: $width-separator-medium solid $color-danger;
             }
         }
     }
