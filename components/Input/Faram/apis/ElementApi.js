@@ -25,6 +25,7 @@ export default class ElementApi {
         [key]: val,
     })
 
+    // PRIVATE
     getNewError = (oldError, key, err) => ({
         ...oldError,
         $internal: undefined,
@@ -61,9 +62,10 @@ export default class ElementApi {
 
     // PUBLIC
     getCalculatedProps = (faramIdentifier, elementType, action) => {
-        const calculator = this[`${elementType}Handler`];
-        if (calculator) {
-            const values = calculator(faramIdentifier, elementType, action);
+        // For faramElement of type 'type', a typeHandler will be applicable
+        const handler = this[`${elementType}Handler`];
+        if (handler) {
+            const values = handler(faramIdentifier, elementType, action);
             return values;
         }
         console.error(`I do not have handler for ${elementType}`);

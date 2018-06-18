@@ -53,10 +53,11 @@ const FaramElement = elementType => (WrappedComponent) => {
 
             const faramIdentifier = faramElementName || faramElementIndex;
             if (faramElement || isTruthy(faramIdentifier) || isTruthy(faramAction)) {
-                return {
+                const values = {
                     ...api.getCalculatedProps(faramIdentifier, elementType, faramAction),
                     ...otherProps,
                 };
+                return values;
             }
 
             // Set reference

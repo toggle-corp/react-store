@@ -24,6 +24,7 @@ const propTypes = {
     modifier: PropTypes.func,
 
     renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
 };
 
 const defaultProps = {
@@ -31,6 +32,7 @@ const defaultProps = {
     modifier: undefined,
     keyExtractor: undefined,
     renderer: undefined,
+    rendererClassName: undefined,
 };
 
 class List extends React.Component {
@@ -50,9 +52,7 @@ class List extends React.Component {
 
         if (modifier) {
             return modifier(key, datum, i, data);
-        }
-
-        if (Renderer) {
+        } else if (Renderer) {
             return (
                 <Renderer
                     className={rendererClassName}
@@ -63,7 +63,6 @@ class List extends React.Component {
                 />
             );
         }
-
         // If there is no modifier, then return a ListItem
         return (
             <ListItem key={key}>
@@ -74,10 +73,7 @@ class List extends React.Component {
 
     render() {
         const { data } = this.props;
-
-        return data.map(
-            (datum, i) => this.renderListItem(datum, i),
-        );
+        return data.map(this.renderListItem);
     }
 }
 

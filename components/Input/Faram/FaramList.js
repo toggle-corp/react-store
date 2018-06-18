@@ -7,7 +7,7 @@ import FaramContext from './FaramContext';
 import ElementListApi from './apis/ElementListApi';
 
 const propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     onChange: PropTypes.func,
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -21,6 +21,7 @@ const defaultProps = {
     error: {},
     disabled: false,
     changeDelay: undefined,
+    children: null,
 };
 
 
