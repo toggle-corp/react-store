@@ -9,19 +9,28 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
-    options: PropTypes.object,
+    options: PropTypes.array,
     value: PropTypes.string,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    keySelector: PropTypes.func,
+    labelSelector: PropTypes.func,
+    colorSelector: PropTypes.func,
+    isDefaultSelector: PropTypes.func,
 };
 const defaultProps = {
     className: '',
-    options: {},
+    options: [],
     value: undefined,
     onChange: () => {},
     disabled: false,
     readOnly: false,
+
+    keySelector: option => option.key,
+    labelSelector: option => option.label,
+    colorSelector: option => option.color,
+    isDefaultSelector: option => !!option.default,
 };
 
 class ScaleInput extends React.PureComponent {
@@ -35,7 +44,7 @@ class ScaleInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.options !== this.props.options) {
-            this.checkAndSetDefaultValue(nextProps);
+            this.checkAndSetDefaultValue(nextProps.options, nextProps.value);
         }
     }
 
@@ -81,10 +90,15 @@ class ScaleInput extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    checkAndSetDefaultValue = ({ options, value, onChange }) => {
-        const defaultValue = Object.entries(options).find(o => o[1].default);
-        if (!value && defaultValue) {
-            onChange(defaultValue[0]);
+    checkAndSetDefaultValue = (options, value) => {
+        const {
+            onChange,
+            isDefaultSelector,
+            keySelector,
+        } = this.props;
+        const defaultOption = options.find(option => isDefaultSelector(option));
+        if (!value && defaultOption) {
+            onChange(keySelector(defaultOption));
         }
     }
 
@@ -99,27 +113,32 @@ class ScaleInput extends React.PureComponent {
         }
     }
 
-    renderOption = (k, valueKey) => {
+    renderOption = (k, option) => {
         const {
-            options,
             disabled,
             readOnly,
+            colorSelector,
+            keySelector,
+            labelSelector,
         } = this.props;
-        const data = options[valueKey];
+
+        const key = keySelector(option);
+        const color = colorSelector(option);
+        const label = labelSelector(option);
 
         const style = {
-            backgroundColor: data.color,
+            backgroundColor: color,
         };
 
-        const className = this.getOptionClassName(valueKey);
+        const className = this.getOptionClassName(key);
 
         return (
             <button
-                onClick={() => { this.handleOptionClick(valueKey); }}
+                onClick={() => { this.handleOptionClick(key); }}
                 type="button"
-                key={valueKey}
+                key={key}
                 className={className}
-                title={data.title}
+                title={label}
                 disabled={disabled || readOnly}
                 style={style}
             />
@@ -129,12 +148,11 @@ class ScaleInput extends React.PureComponent {
     render() {
         const { options } = this.props;
         const className = this.getClassName();
-        const optionKeys = Object.keys(options);
 
         return (
             <div className={className}>
                 <List
-                    data={optionKeys}
+                    data={options}
                     modifier={this.renderOption}
                 />
             </div>

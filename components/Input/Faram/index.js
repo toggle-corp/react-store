@@ -64,7 +64,7 @@ export default class Faram extends React.PureComponent {
         const { onChange, computeSchema, value } = props;
         const newValue = computeOutputs(value, computeSchema);
         if (onChange && newValue !== value) {
-            onChange(newValue, props.error, true);
+            onChange(newValue, props.error, { isComputed: true });
         }
     }
 
@@ -124,11 +124,11 @@ export default class Faram extends React.PureComponent {
         return false;
     }
 
-    handleFormChange = (value, error) => {
+    handleFormChange = (value, error, info) => {
         const { onChange, computeSchema } = this.props;
         if (onChange) {
             const newValue = computeOutputs(value, computeSchema);
-            onChange(newValue, error, false);
+            onChange(newValue, error, { ...info, isComputed: false });
         }
     }
 
