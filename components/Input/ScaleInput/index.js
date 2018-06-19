@@ -39,7 +39,7 @@ class ScaleInput extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.checkAndSetDefaultValue(props);
+        this.checkAndSetDefaultValue(props.options, props.value);
     }
 
     componentWillReceiveProps(nextProps) {

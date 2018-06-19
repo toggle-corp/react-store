@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ListView from '../List/ListView';
+import List from '../List';
 import GridItem from './GridItem';
+
+import styles from './styles.scss';
 
 const propTypes = {
     // className: PropTypes.string,
@@ -85,6 +87,7 @@ export default class GridViewLayout extends React.PureComponent {
 
     render() {
         const {
+            className: classNameFromProps,
             data,
             layoutSelector,
             keySelector,
@@ -94,20 +97,35 @@ export default class GridViewLayout extends React.PureComponent {
         } = this.props;
 
         const { bounds } = this.state;
+        const className = `
+            ${classNameFromProps}
+            ${styles.gridViewLayout}
+            'grid-view-layout'
+        `;
+
+        const style = {
+            width: `${bounds.width}px`,
+            height: `${bounds.height}px`,
+        };
+
 
         return (
-            <ListView
-                style={{ ...bounds }}
-                data={data}
-                renderer={GridItem}
-                rendererClassName={itemClassName}
-                rendererParams={{
-                    layoutSelector,
-                    headerModifier: itemHeaderModifier,
-                    contentModifier: itemContentModifier,
-                }}
-                keyExtractor={keySelector}
-            />
+            <div
+                className={className}
+                style={style}
+            >
+                <List
+                    data={data}
+                    renderer={GridItem}
+                    rendererClassName={itemClassName}
+                    rendererParams={{
+                        layoutSelector,
+                        headerModifier: itemHeaderModifier,
+                        contentModifier: itemContentModifier,
+                    }}
+                    keyExtractor={keySelector}
+                />
+            </div>
         );
     }
 }
