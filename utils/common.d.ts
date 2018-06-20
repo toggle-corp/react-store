@@ -1,4 +1,9 @@
 export declare function getHexFromString(value: string): string;
+export declare function getRgbFromHex(value: string): {
+    r: number;
+    g: number;
+    b: number;
+};
 
 export declare function isTruthy(value: any): boolean;
 export declare function isFalsy(value: any): boolean;
@@ -44,3 +49,10 @@ export declare function getObjectChildren(
 export declare function isObjectEmpty(
     obj: object | undefined,
 ): boolean;
+
+
+export declare function getColorOnBgColor(
+    hexColor: string,
+    colorOnLight?: string,
+    colorOnDark?: string,
+): string;
