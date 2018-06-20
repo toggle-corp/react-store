@@ -65,13 +65,6 @@ import {
     schemeYlOrRd,
 } from 'd3-scale-chromatic';
 
-import {
-    schemeCategory10,
-    schemeCategory20,
-    schemeCategory20b,
-    schemeCategory20c,
-} from 'd3-scale';
-
 const categoricalColors = {
     schemeaccent: schemeAccent,
     schemedark: schemeDark2,
@@ -81,10 +74,6 @@ const categoricalColors = {
     schemeset1: schemeSet1,
     schemeset2: schemeSet2,
     schemeset3: schemeSet3,
-    schemecategory10: schemeCategory10,
-    schemecategory20: schemeCategory20,
-    schemecategory20b: schemeCategory20b,
-    schemecategory20c: schemeCategory20c,
 };
 
 const NUM_CATEGORIES_PER_SCHEME = 8;
@@ -158,10 +147,11 @@ export const singleColors = [
     '#E68310', '#008695', '#CF1C90', '#f97b72', '#4b4b8f', '#A5AA99',
 ];
 
-export const categoricalColorNames = () => Object.keys(categoricalColors);
-export const divergingColorNames = () => Object.keys(divergingColors);
-export const sequentialColorNames = () => Object.keys(sequentialColors);
-export const getCategoryColorScheme = name => categoricalColors[name];
+export const getCategoricalColorNames = () => Object.keys(categoricalColors);
+export const getDivergingColorNames = () => Object.keys(divergingColors);
+export const getSequentialColorNames = () => Object.keys(sequentialColors);
+export const getCategoricalColorScheme = name => categoricalColors[name];
 export const getDivergingColorScheme = name => divergingColors[name];
 export const getSequentialColorScheme = name => sequentialColors[name];
 export const getCategoryForContinuousColorScheme = name => categoryForContinuousColors[name];
+

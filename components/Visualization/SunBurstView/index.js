@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import { range } from 'd3-array';
 
 import SunBurst from '../SunBurst';
-import ColorPallete from '../ColorPallete';
+import ColorPalette from '../ColorPalette';
 import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
@@ -12,7 +12,7 @@ import DangerButton from '../../Action/Button/DangerButton';
 import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+import { getCategoricalColorNames, getCategoricalColorScheme } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
 
@@ -48,12 +48,12 @@ export default class SunBurstView extends PureComponent {
         };
 
         this.categories = [];
-        this.colors = categoricalColorNames()
+        this.colors = getCategoricalColorNames()
             .map(color => (
                 {
                     title: color,
                     id: color,
-                    image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
+                    image: <ColorPalette colorScheme={getCategoricalColorScheme(color)} />,
                 }));
     }
 
@@ -79,7 +79,7 @@ export default class SunBurstView extends PureComponent {
     }
 
     handleSelection = (data) => {
-        const colors = getCategoryColorScheme(data);
+        const colors = getCategoricalColorScheme(data);
         this.categories = range(1, colors.length + 1)
             .map(item => ({ title: item, key: item }));
 

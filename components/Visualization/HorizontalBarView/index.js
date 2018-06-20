@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 
 import HorizontalBar from '../HorizontalBar';
 import FullScreen from '../FullScreen';
-import ColorPallete from '../ColorPallete';
+import ColorPalette from '../ColorPalette';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -46,7 +46,7 @@ export default class HorizontalBarView extends PureComponent {
         this.colors = singleColors.map(color => ({
             id: color,
             title: color,
-            image: <ColorPallete colorScheme={[color]} />,
+            image: <ColorPalette colorScheme={[color]} />,
         }));
     }
 

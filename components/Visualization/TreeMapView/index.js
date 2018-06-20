@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 
 import TreeMap from '../TreeMap';
 import FullScreen from '../FullScreen';
-import ColorPallete from '../ColorPallete';
+import ColorPalette from '../ColorPalette';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -11,7 +11,7 @@ import DangerButton from '../../Action/Button/DangerButton';
 import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
-import { categoricalColorNames, getCategoryColorScheme } from '../../../utils/ColorScheme';
+import { getCategoricalColorNames, getCategoricalColorScheme } from '../../../utils/ColorScheme';
 
 import styles from './styles.scss';
 
@@ -41,11 +41,11 @@ export default class TreeMapView extends PureComponent {
             colorScheme: undefined,
         };
         this.selectedColorScheme = 'schemepaired';
-        this.colors = categoricalColorNames()
+        this.colors = getCategoricalColorNames()
             .map(color => ({
                 id: color,
                 title: color,
-                image: <ColorPallete colorScheme={getCategoryColorScheme(color)} />,
+                image: <ColorPalette colorScheme={getCategoricalColorScheme(color)} />,
             }));
     }
 
@@ -71,7 +71,7 @@ export default class TreeMapView extends PureComponent {
 
     handleSelection = (data) => {
         this.selectedColorScheme = data;
-        const colors = getCategoryColorScheme(data);
+        const colors = getCategoricalColorScheme(data);
         this.setState({
             colorScheme: colors,
         });
