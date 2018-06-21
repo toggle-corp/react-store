@@ -9,7 +9,6 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import {
     getColorOnBgColor,
@@ -77,9 +76,8 @@ const defaultProps = {
 };
 
 const rectWidth = 30;
-@BoundError()
-@Responsive
-export default class Organigram extends PureComponent {
+
+class Organigram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -359,3 +357,5 @@ export default class Organigram extends PureComponent {
         );
     }
 }
+
+export default Responsive(Organigram);

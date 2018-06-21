@@ -10,7 +10,6 @@ import { interpolateNumber } from 'd3-interpolate';
 import { transition } from 'd3-transition';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
 
@@ -315,4 +314,4 @@ class PieChart extends PureComponent {
     }
 }
 
-export default BoundError()(Responsive(PieChart));
+export default Responsive(PieChart);

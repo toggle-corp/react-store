@@ -13,7 +13,6 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Float from '../../View/Float';
 
 import {
@@ -54,9 +53,8 @@ const defaultProps = {
         left: 40,
     },
 };
-@BoundError()
-@Responsive
-export default class StackedBarChart extends PureComponent {
+
+class StackedBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -259,3 +257,5 @@ export default class StackedBarChart extends PureComponent {
         );
     }
 }
+
+export default Responsive(StackedBarChart);

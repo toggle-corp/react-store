@@ -14,7 +14,6 @@ import { brushY, brushSelection } from 'd3-brush';
 import { line } from 'd3';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
@@ -53,9 +52,7 @@ const defaultProps = {
     },
 };
 
-@BoundError()
-@Responsive
-export default class ParallelCoordinates extends PureComponent {
+class ParallelCoordinates extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -271,3 +268,5 @@ export default class ParallelCoordinates extends PureComponent {
         );
     }
 }
+
+export default Responsive(ParallelCoordinates);

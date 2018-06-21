@@ -31,7 +31,6 @@ import { areaLabel } from 'd3-area-label';
 import { axisBottom } from 'd3-axis';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Float from '../../View/Float';
 
 import {
@@ -74,9 +73,7 @@ const defaultProps = {
     },
 };
 
-@BoundError()
-@Responsive
-export default class StreamGraph extends PureComponent {
+class StreamGraph extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -342,3 +339,5 @@ export default class StreamGraph extends PureComponent {
         );
     }
 }
+
+export default Responsive(StreamGraph);
