@@ -88,13 +88,15 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
     }
 
+    const ForwardedComponent = React.forwardRef((props, ref) => (
+        <FaramElementHOC
+            {...props}
+            forwardedRef={ref}
+        />
+    ));
+
     return hoistNonReactStatics(
-        React.forwardRef((props, ref) => (
-            <FaramElementHOC
-                {...props}
-                forwardedRef={ref}
-            />
-        )),
+        ForwardedComponent,
         WrappedComponent,
     );
 };

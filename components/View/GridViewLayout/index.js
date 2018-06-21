@@ -85,6 +85,12 @@ export default class GridViewLayout extends React.PureComponent {
         }
     }
 
+    renderParams = () => ({
+        layoutSelector: this.props.layoutSelector,
+        headerModifier: this.props.itemHeaderModifier,
+        contentModifier: this.props.itemContentModifier,
+    })
+
     render() {
         const {
             className: classNameFromProps,
@@ -116,14 +122,10 @@ export default class GridViewLayout extends React.PureComponent {
             >
                 <List
                     data={data}
+                    keyExtractor={keySelector}
                     renderer={GridItem}
                     rendererClassName={itemClassName}
-                    rendererParams={{
-                        layoutSelector,
-                        headerModifier: itemHeaderModifier,
-                        contentModifier: itemContentModifier,
-                    }}
-                    keyExtractor={keySelector}
+                    rendererParams={this.renderParams}
                 />
             </div>
         );

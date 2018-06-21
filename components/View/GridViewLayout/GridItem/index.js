@@ -21,10 +21,8 @@ export default class GridItem extends React.PureComponent {
         const {
             datum,
             data,
-            params,
+            headerModifier,
         } = this.props;
-
-        const { headerModifier } = params;
         return headerModifier(datum, data);
     }
 
@@ -32,19 +30,16 @@ export default class GridItem extends React.PureComponent {
         const {
             datum,
             data,
-            params,
+            contentModifier,
         } = this.props;
 
-        const { contentModifier } = params;
         return contentModifier(datum, data);
     }
 
     render() {
         const {
             className: classNameFromProps,
-            params: {
-                layoutSelector,
-            },
+            layoutSelector,
             data,
             datum,
         } = this.props;
