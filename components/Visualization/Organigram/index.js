@@ -37,7 +37,10 @@ const propTypes = {
     idAccessor: PropTypes.func,
     /* handle selection of nodes */
     onSelection: PropTypes.func,
-    nodeSize: PropTypes.arrayOf(PropTypes.number),
+    nodeSize: PropTypes.shape({
+        nodeWidth: PropTypes.number,
+        nodeHeight: PropTypes.number,
+    }),
     /* if true no click events on nodes */
     disabled: PropTypes.bool,
     /* default color for nodes */
@@ -62,7 +65,10 @@ const defaultProps = {
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
     onSelection: () => {},
-    nodeSize: [150, 300],
+    nodeSize: {
+        nodeWidth: 150,
+        nodeHeight: 300,
+    },
     disabled: false,
     fillColor: '#ffffff',
     selectColor: '#afeeee',
@@ -87,6 +93,7 @@ class Organigram extends PureComponent {
     }
     state = {
         selected: this.props.value,
+        nodeSize: this.props.nodeSize,
     };
 
     componentDidMount() {
@@ -97,6 +104,11 @@ class Organigram extends PureComponent {
         if (this.props.value !== nextProps.value) {
             this.setState({
                 selected: nextProps.value,
+            });
+        }
+        if (this.props.nodeSize !== nextProps.nodeSize) {
+            this.setState({
+                nodeSize: nextProps.nodeSize,
             });
         }
     }
@@ -247,7 +259,6 @@ class Organigram extends PureComponent {
             boundingClientRect,
             childrenAccessor,
             labelAccessor,
-            nodeSize,
             disabled,
             margins,
         } = this.props;
@@ -269,11 +280,18 @@ class Organigram extends PureComponent {
 
         addDropShadow(select(this.svg));
         const group = setContext(width, height, margins);
-        const treemap = tree()
-            .nodeSize(nodeSize)
-            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
-
         const root = hierarchy(data, childrenAccessor);
+
+        const widthPerTreeLeaves = width / root.leaves().length || 0;
+        const heightPerTreeDepth = height / root.height || 0;
+        const { nodeWidth, nodeHeight } = this.state.nodeSize;
+        const calculatedWidth = widthPerTreeLeaves < nodeWidth ?
+            nodeWidth : widthPerTreeLeaves;
+        const calculatedHeight = heightPerTreeDepth < nodeHeight ?
+            nodeHeight : heightPerTreeDepth - rectWidth;
+        const treemap = tree()
+            .nodeSize([calculatedWidth, calculatedHeight])
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1));
         const treeData = treemap(root);
         const links = treeData.links();
         const points = treeData.descendants();
@@ -321,7 +339,17 @@ class Organigram extends PureComponent {
 
         node
             .selectAll('.box')
-            .attr('width', (d, i, nodes) => select(nodes[i]).node().parentNode.getBBox().width + boxPadding)
+            .attr('width', (d, i, nodes) => {
+                const textWidth = select(nodes[i]).node().parentNode.getBBox().width + boxPadding;
+                if (this.state.nodeSize[0] < textWidth) {
+                    const newNodeSize = [...this.state.nodeSize];
+                    newNodeSize[0] = textWidth;
+                    this.setState({
+                        nodeSize: newNodeSize,
+                    });
+                }
+                return textWidth;
+            })
             .attr('height', (d, i, nodes) => select(nodes[i]).node().parentNode.getBBox().height + boxPadding)
             .attr('x', (d, i, nodes) => select(nodes[i]).node().parentNode.getBBox().x - (boxPadding / 2))
             .attr('y', (d, i, nodes) => select(nodes[i]).node().parentNode.getBBox().y - (boxPadding / 2));
