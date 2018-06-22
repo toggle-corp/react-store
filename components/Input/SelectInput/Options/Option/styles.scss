@@ -1,0 +1,19 @@
+@import '../../../../../stylesheets/base';
+@import '../../../../../stylesheets/button-base';
+
+.option {
+    @extend %button-base;
+    display: block;
+    cursor: pointer;
+    padding: $spacing-small $spacing-small-alt;
+    width: 100%;
+    text-align: left;
+
+    &:hover {
+        background-color: get-hover-color($color-foreground);
+    }
+
+    &.active {
+        @include background-color($color-accent);
+    }
+}

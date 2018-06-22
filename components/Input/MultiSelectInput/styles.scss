@@ -2,91 +2,116 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
+$width-dropdown-button: 10px;
+$width-clear-button: 14px;
+$width-select-all-button: 14px;
+
 .multi-select-input {
-    .input-wrapper {
+    .input-and-actions {
         position: relative;
 
         .input {
             @extend %input-base;
-            @extend %input-border;
+            width: calc(100% - #{$width-dropdown-button + $spacing-small});
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
         .actions {
+            display: flex;
             position: absolute;
-            top: 50%;
-            right: $spacing-small;
-            transform: translateY(-50%);
+            top: $spacing-extra-small;
+            right: 0;
+            align-items: center;
+            height: calc(100% - #{$spacing-extra-small * 2});
 
-            %action-button {
+            %button {
+                display: inline-block;
                 transition: $duration-transition-medium opacity ease-in-out;
-                opacity: 0;
-                padding: $spacing-extra-small-alt $spacing-small;
+                padding: $spacing-extra-small-alt;
             }
 
             .clear-button {
-                @extend %action-button;
-
-                &:hover {
-                    color: $color-danger;
-                }
+                @extend %button;
+                opacity: 0;
             }
 
             .select-all-button {
-                @extend %action-button;
+                @extend %button;
+                opacity: 0;
+            }
 
+            .dropdown-button {
+                @extend %button;
+            }
+        }
+    }
+
+    &:not(.disabled) {
+        .input-and-actions {
+            @extend %input-border;
+        }
+
+        &.filled:not(.hide-clear-button) {
+            .input-and-actions {
                 &:hover {
-                    color: $color-info;
-                }
-            }
+                    .input {
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-small});
+                    }
 
-            .dropdown-icon {
-                transform: none;
-                transition: $duration-transition-medium transform ease-in-out;
-            }
-        }
-
-        &:hover {
-            .actions {
-                .clear-button,
-                .select-all-button {
-                    opacity: 1;
+                    .actions {
+                        .clear-button {
+                            opacity: 1;
+                        }
+                    }
                 }
             }
         }
-    }
 
-    &.options-shown {
-        .label {
-            color: $color-accent;
-        }
+        &:not(.completely-filled) {
+            &:not(.hide-select-all-button) {
+                .input-and-actions {
+                    &:hover {
+                        .input {
+                            width: calc(100% - #{$width-dropdown-button + $width-select-all-button + $spacing-small});
+                        }
 
-        .input-wrapper {
-            .actions {
-                .dropdown-icon {
-                    transform: rotate(180deg);
+                        .actions {
+                            .select-all-button {
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.filled:not(.hide-select-all-button):not(.hide-clear-button) {
+                &:hover {
+                    .input {
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $width-select-all-button + $spacing-small});
+                    }
                 }
             }
         }
-    }
 
-    &.error {
-        .input-wrapper {
-            .input {
-                border-bottom-color: $color-danger;
+        &.show-options,
+        &.input-in-focus {
+            .label {
+                color: $color-accent;
+            }
+
+            .input-and-actions {
+                border-bottom: $width-separator-medium solid $color-accent;
             }
         }
 
-        .label {
-            color: $color-danger;
-        }
-    }
+        &.error {
+            .label {
+                color: $color-danger;
+            }
 
-    &.filled {
-        .input-wrapper {
-            .input::placeholder {
-                color: $color-text;
+            .input-and-actions {
+                border-bottom: $width-separator-medium solid $color-danger;
             }
         }
     }
@@ -96,18 +121,17 @@
             color: $color-text-disabled;
         }
 
-        .input-wrapper {
-            .input {
-                border-bottom-color: $color-separator;
-                color: $color-text-disabled;
+        .input-and-actions {
+            border-bottom: $width-separator-medium solid $color-separator;
 
-                &::placeholder {
-                    color: $color-text-disabled;
-                }
+            .input {
+                color: $color-text-disabled;
             }
 
             .actions {
-                color: $color-text-disabled;
+                .dropdown-button {
+                    color: $color-text-disabled;
+                }
             }
         }
     }

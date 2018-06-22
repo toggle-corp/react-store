@@ -1,124 +1,88 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/input-label';
+@import '../../../stylesheets/input-base';
+@import '../../../stylesheets/input-border';
 
-%default-input-style {
-    outline: none;
-    border: 0;
-    background-color: transparent;
-    font-family: inherit;
-    font-size: inherit;
-}
+$width-dropdown-button: 10px;
+$width-clear-button: 14px;
 
-.single-select-input {
-    .label {
-        @extend %input-label;
-    }
-
-    .input-wrapper {
+.select-input {
+    .input-and-actions {
         position: relative;
 
         .input {
-            @extend %default-input-style;
-            border-bottom: $width-separator-medium solid $color-separator-alt;
-            padding: $spacing-extra-small 0;
-            width: 100%;
-            overflow: hidden;
+            @extend %input-base;
+            width: calc(100% - #{$width-dropdown-button + $spacing-small});
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: $color-text;
-
-            &::placeholder {
-                color: $color-text-placeholder;
-            }
-
-            &:hover {
-                border-bottom-color: $color-separator-hover;
-            }
-
-            &:focus {
-                border-bottom-color: $color-accent;
-            }
         }
 
         .actions {
+            display: flex;
             position: absolute;
-            top: 50%;
-            right: $spacing-small;
-            transform: translateY(-50%);
+            top: $spacing-extra-small;
+            right: 0;
+            align-items: center;
+            height: calc(100% - #{$spacing-extra-small * 2});
+
+            %button {
+                display: inline-block;
+                transition: $duration-transition-medium opacity ease-in-out;
+                padding: $spacing-extra-small-alt;
+            }
 
             .clear-button {
-                @extend %default-input-style;
-                display: none;
-                margin: 0;
-                cursor: pointer;
-                padding: 0 $spacing-small;
-                color: $color-text-placeholder;
-                font-size: $font-size-medium;
+                @extend %button;
+                opacity: 0;
+            }
 
+            .dropdown-button {
+                @extend %button;
+            }
+        }
+
+    }
+
+    &:not(.disabled) {
+        .input-and-actions {
+            @extend %input-border;
+        }
+
+        &.filled {
+            .input-and-actions {
                 &:hover {
-                    color: $color-danger;
-                }
-            }
+                    .input {
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-small});
+                    }
 
-            .dropdown-icon {
-                transform: none;
-                transition: .2s transform ease-in-out;
-            }
-        }
-
-        &:hover {
-            .actions {
-                .clear-button {
-                    display: inline-block;
+                    .actions {
+                        .clear-button {
+                            opacity: 1;
+                        }
+                    }
                 }
             }
         }
-    }
 
-    &.options-shown {
-        .label {
-            color: $color-accent;
-        }
-
-        .input-wrapper {
-            .actions {
-                .dropdown-icon {
-                    transform: rotate(180deg);
-                }
+        &.show-options,
+        &.input-in-focus {
+            .label {
+                color: $color-accent;
             }
-        }
-    }
 
-    &.error {
-        .input-wrapper {
-            .input {
-                border-bottom-color: $color-danger;
+            .input-and-actions {
+                border-bottom: $width-separator-medium solid $color-accent;
             }
         }
 
-        .label {
-            color: $color-danger;
+        &.error {
+            .label {
+                color: $color-danger;
+            }
+
+            .input-and-actions {
+                border-bottom: $width-separator-medium solid $color-danger;
+            }
         }
-    }
-
-    %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
-    }
-
-    .hint {
-        @extend %base;
-        color: $color-text-label;
-    }
-
-    .error {
-        @extend %base;
-        color: $color-danger;
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
     }
 
     &.disabled {
@@ -126,14 +90,17 @@
             color: $color-text-disabled;
         }
 
-        .input-wrapper {
+        .input-and-actions {
+            border-bottom: $width-separator-medium solid $color-separator;
+
             .input {
-                border-bottom-color: $color-separator;
                 color: $color-text-disabled;
             }
 
             .actions {
-                color: $color-text-disabled;
+                .dropdown-button {
+                    color: $color-text-disabled;
+                }
             }
         }
     }

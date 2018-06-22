@@ -441,6 +441,7 @@ class DateInput extends React.PureComponent {
                     className={clearButtonClassName}
                     type="button"
                     onClick={this.handleClearButtonClick}
+                    title="Clear date"
                 >
                     <span className={iconNames.closeRound} />
                 </button>
@@ -448,6 +449,7 @@ class DateInput extends React.PureComponent {
                     onClick={this.handleTodayButtonClick}
                     className={styles.button}
                     type="button"
+                    title="Set date to today"
                 >
                     <span className={iconNames.clock} />
                 </button>
@@ -455,6 +457,7 @@ class DateInput extends React.PureComponent {
                     onClick={this.handleCalendarButtonClick}
                     className={styles.button}
                     type="button"
+                    title="Open date picker"
                 >
                     <span className={iconNames.calendar} />
                 </button>
