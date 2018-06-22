@@ -627,7 +627,7 @@ class MultiSelectInput extends React.PureComponent {
                     onBlur={this.handleOptionsBlur}
                     onInvalidate={this.handleOptionsInvalidate}
                     onOptionClick={this.handleOptionClick}
-                    optionsClassName={optionsClassName}
+                    className={optionsClassName}
                     parentContainer={container}
                     renderEmpty={renderEmpty}
                     show={showOptions}
