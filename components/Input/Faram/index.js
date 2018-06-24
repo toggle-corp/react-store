@@ -21,6 +21,7 @@ const propTypes = {
 
     /* schema for validation */
     schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    /* schema for calculation */
     computeSchema: PropTypes.objectOf(PropTypes.any),
     /* fn to be called when value of any element change */
     onChange: PropTypes.func,
@@ -53,6 +54,46 @@ const defaultProps = {
     error: {},
 };
 
+const checkAndUpdateOutputs = (value, error, computeSchema, onChange) => {
+    const newValue = computeOutputs(value, computeSchema);
+    if (onChange && newValue !== value) {
+        onChange(newValue, error, { isComputed: true });
+    }
+    return newValue;
+};
+
+const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) => {
+    const errors = accumulateErrors(value, schema);
+    const hasErrors = analyzeErrors(errors);
+
+    if (hasErrors) {
+        onValidationFailure(errors);
+    } else {
+        const values = accumulateValues(
+            value,
+            schema,
+            { noUndefined: true },
+        );
+        onValidationSuccess(values);
+    }
+};
+
+export const faram = ({
+    value,
+    error,
+    schema,
+    computeSchema,
+    onChange,
+    onValidationFailure,
+    onValidationSuccess,
+}) => {
+    // NOTE: doesn't use computed value as new Value
+    // NOTE: Faram may not be mounted so we need to trigger computation here
+    checkAndUpdateOutputs(value, error, computeSchema, onChange);
+
+    handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
+};
+
 /*
  * Form Component for field validations and values aggregation
  */
@@ -60,43 +101,21 @@ export default class Faram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static checkAndUpdateOutputs = (props) => {
-        const { onChange, computeSchema, value } = props;
-        const newValue = computeOutputs(value, computeSchema);
-        if (onChange && newValue !== value) {
-            onChange(newValue, props.error, { isComputed: true });
-        }
-    }
-
     constructor(props) {
         super(props);
-        Faram.checkAndUpdateOutputs(props);
+        const { value, error, computeSchema, onChange } = this.props;
+        checkAndUpdateOutputs(value, error, computeSchema, onChange);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.computeSchema !== this.props.computeSchema) {
-            Faram.checkAndUpdateOutputs(nextProps);
+            const { value, error, computeSchema, onChange } = nextProps;
+            checkAndUpdateOutputs(value, error, computeSchema, onChange);
         }
     }
 
     componentWillUnmount() {
         clearTimeout(this.changeTimeout);
-    }
-
-    handleSubmit = () => {
-        const errors = accumulateErrors(this.props.value, this.props.schema);
-        const hasErrors = analyzeErrors(errors);
-
-        if (hasErrors) {
-            this.props.onValidationFailure(errors);
-        } else {
-            const values = accumulateValues(
-                this.props.value,
-                this.props.schema,
-                { noUndefined: true },
-            );
-            this.props.onValidationSuccess(values);
-        }
     }
 
     // Submit using ref
@@ -105,10 +124,14 @@ export default class Faram extends React.PureComponent {
             return;
         }
 
-        // Add some delay in submission as well
         clearTimeout(this.changeTimeout);
+
+        // Add some delay in submission
         this.changeTimeout = setTimeout(
-            this.handleSubmit,
+            () => {
+                const { value, schema, onValidationFailure, onValidationSuccess } = this.props;
+                handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
+            },
             this.props.changeDelay,
         );
     }
