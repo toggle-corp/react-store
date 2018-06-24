@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import SelectInput from '../../Input/SelectInput';
 import { iconNames } from '../../../constants';
 
 import styles from './styles.scss';
@@ -12,6 +13,10 @@ const propTypes = {
     maxItemsPerPage: PropTypes.number,
     onPageClick: PropTypes.func.isRequired,
     totalCapacity: PropTypes.number,
+    onItemsPerPageChange: PropTypes.func,
+    options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    showInfo: PropTypes.bool,
+    showItemsPerPageChange: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -20,6 +25,15 @@ const defaultProps = {
     itemsCount: 0,
     maxItemsPerPage: 10,
     totalCapacity: 7,
+    onItemsPerPageChange: () => {},
+    options: [
+        { label: '25', key: 25 },
+        { label: '50', key: 50 },
+        { label: '75', key: 75 },
+        { label: '100', key: 100 },
+    ],
+    showInfo: true,
+    showItemsPerPageChange: true,
 };
 
 function range(start, end) {
@@ -177,21 +191,85 @@ export default class Pager extends React.PureComponent {
     render() {
         const {
             activePage,
-            className,
+            className: classNameFromProps,
             itemsCount,
             maxItemsPerPage,
             totalCapacity,
         } = this.props;
 
-        const numPages = Math.ceil(itemsCount / maxItemsPerPage);
+        let numPages = Math.ceil(itemsCount / maxItemsPerPage);
+        if (numPages <= 0) {
+            numPages = 1;
+        }
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.pager}
+            'pager'
+        `;
+
+        const offset = (activePage - 1) * maxItemsPerPage;
+        const perPageTitle = 'per page';
+        const showingTitle = 'Showing';
+        const ofTitle = 'of';
+        const rangeIndicator = '-';
+
+        const itemsOnPage = Math.min(
+            maxItemsPerPage,
+            itemsCount - ((activePage - 1) * maxItemsPerPage),
+        );
+        const currentItemsStart = itemsOnPage > 0 ? offset + 1 : offset;
+        const currentItemsEnd = offset + itemsOnPage;
+
+        let pages;
+        if (numPages > 0) {
+            pages = this.pagination(totalCapacity, activePage, numPages);
+        }
 
         return (
-            <div className={`${styles.pager} ${className} ${styles.pager}`}>
-                <div className={`${styles.pageList} ${styles.pageList}`}>
-                    {
-                        numPages > 0 &&
-                        this.pagination(totalCapacity, activePage, numPages)
-                    }
+            <div className={className}>
+                {
+                    this.props.showItemsPerPageChange &&
+                    <div className={styles.itemsPerPage}>
+                        <SelectInput
+                            className={styles.input}
+                            hideClearButton
+                            showLabel={false}
+                            showHintAndError={false}
+                            options={this.props.options}
+                            value={this.props.maxItemsPerPage}
+                            onChange={this.props.onItemsPerPageChange}
+                        />
+                        <div className={styles.perPage}>
+                            { perPageTitle }
+                        </div>
+                    </div>
+                }
+                {
+                    this.props.showInfo &&
+                    <div className={styles.currentRangeInformation}>
+                        <div className={styles.showing}>
+                            { showingTitle }
+                        </div>
+                        <div className={styles.currentItemsStart}>
+                            { currentItemsStart }
+                        </div>
+                        <div className={styles.rangeIndicator}>
+                            { rangeIndicator }
+                        </div>
+                        <div className={styles.currentItemsEnd}>
+                            { currentItemsEnd }
+                        </div>
+                        <div className={styles.of}>
+                            { ofTitle }
+                        </div>
+                        <div className={styles.itemCount}>
+                            {itemsCount}
+                        </div>
+                    </div>
+                }
+                <div className={styles.pageList}>
+                    { pages }
                 </div>
             </div>
         );

@@ -1,7 +1,66 @@
 @import '../../../stylesheets/base';
 
+$width-item-per-page-input: 48px;
+
 .pager {
+    display: flex;
+    align-items: baseline;
+
+    .items-per-page {
+        display: flex;
+        align-items: baseline;
+        flex-shrink: 0;
+        padding: 0 $spacing-small;
+
+        .input {
+            width: $width-item-per-page-input;
+            font-family: $font-family-monospace;
+
+            :global {
+                input {
+                    text-align: right;
+                }
+            }
+        }
+
+        .per-page {
+            padding: 0 $spacing-small;
+        }
+    }
+
+    .current-range-information {
+        display: flex;
+        flex-shrink: 0;
+        padding: 0 $spacing-small;
+
+        .showing {
+            padding-right: $spacing-small;
+        }
+
+        .current-items-start {
+            font-family: $font-family-monospace;
+        }
+
+        .range-indicator {
+            padding: 0 $spacing-extra-small;
+        }
+
+        .current-items-end {
+            font-family: $font-family-monospace;
+        }
+
+        .of {
+            padding: 0 $spacing-small;
+        }
+
+        .item-count {
+            font-family: $font-family-monospace;
+        }
+    }
+
     .page-list {
+        padding: 0 $spacing-small;
+
         .paginate-btn {
             display: inline-flex;
             align-items: center;
