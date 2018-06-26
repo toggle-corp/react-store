@@ -40,7 +40,6 @@ export default class GridItem extends React.PureComponent {
         const {
             className: classNameFromProps,
             layoutSelector,
-            data,
             datum,
         } = this.props;
 
@@ -52,7 +51,7 @@ export default class GridItem extends React.PureComponent {
 
         const Header = this.renderHeader;
         const Content = this.renderContent;
-        const layout = layoutSelector(datum, data);
+        const layout = layoutSelector(datum);
         const style = {
             width: layout.width,
             height: layout.height,

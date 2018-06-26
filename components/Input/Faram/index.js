@@ -78,7 +78,7 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
     }
 };
 
-export const faram = ({
+export const detachedFaram = ({
     value,
     error,
     schema,

@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import React from 'react';
 
 import List from '../List';
@@ -15,40 +15,19 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    // className: '',
 };
 
 export default class GridViewLayout extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            bounds: {},
-        };
-    }
-
-    componentDidMount() {
-        this.calculateBounds(this.props);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.calculateBounds(nextProps, this.props);
-    }
-
-    getBounds = () => {
-        const {
-            data,
-            layoutSelector,
-        } = this.props;
-
+    static getBounds = (data, layoutSelector) => {
         let maxW = 0;
         let maxH = 0;
 
         data.forEach((datum) => {
-            const layout = layoutSelector(datum, data);
+            const layout = layoutSelector(datum);
 
             const w = layout.left + layout.width;
             const h = layout.top + layout.height;
@@ -68,20 +47,46 @@ export default class GridViewLayout extends React.PureComponent {
         };
     }
 
-    calculateBounds = (nextProps, currentProps = {}) => {
+    static getSortedData = (data, layoutSelector) => (
+        data.sort((foo, bar) => {
+            const fooLayout = layoutSelector(foo);
+            const barLayout = layoutSelector(bar);
+            const distA = (fooLayout.top ** 2) + (fooLayout.left ** 2);
+            const distB = (barLayout.top ** 2) + (barLayout.left ** 2);
+            return distA - distB;
+        })
+    )
+
+    constructor(props) {
+        super(props);
+
+        this.bounds = {};
+        this.data = [];
+    }
+
+    componentWillMount() {
+        const { data, layoutSelector } = this.props;
+        this.bounds = GridViewLayout.getBounds(data, layoutSelector);
+        this.data = GridViewLayout.getSortedData(data, layoutSelector);
+    }
+
+    componentWillReceiveProps(nextProps) {
         const {
-            bounds: newBounds,
             layoutSelector: newLayoutSelector,
+            data: newData,
         } = nextProps;
 
         const {
-            bounds: oldBounds,
             layoutSelector: oldLayoutSelector,
-        } = currentProps;
+            data: oldData,
+        } = this.props;
 
-        if (newBounds !== oldBounds || newLayoutSelector !== oldLayoutSelector) {
-            const bounds = this.getBounds();
-            this.setState({ bounds });
+        if (
+            newLayoutSelector !== oldLayoutSelector ||
+            newData !== oldData
+        ) {
+            this.bounds = GridViewLayout.getBounds(newData, newLayoutSelector);
+            this.data = GridViewLayout.getSortedData(newData, newLayoutSelector);
         }
     }
 
@@ -102,7 +107,6 @@ export default class GridViewLayout extends React.PureComponent {
             itemClassName,
         } = this.props;
 
-        const { bounds } = this.state;
         const className = `
             ${classNameFromProps}
             ${styles.gridViewLayout}
@@ -110,10 +114,9 @@ export default class GridViewLayout extends React.PureComponent {
         `;
 
         const style = {
-            width: `${bounds.width}px`,
-            height: `${bounds.height}px`,
+            width: `${this.bounds.width}px`,
+            height: `${this.bounds.height}px`,
         };
-
 
         return (
             <div
@@ -121,7 +124,7 @@ export default class GridViewLayout extends React.PureComponent {
                 style={style}
             >
                 <List
-                    data={data}
+                    data={this.data}
                     keyExtractor={keySelector}
                     renderer={GridItem}
                     rendererClassName={itemClassName}
