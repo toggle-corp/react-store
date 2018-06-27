@@ -4,7 +4,7 @@ import { interpolateGnBu, interpolateRdBu } from 'd3-scale-chromatic';
 
 import CorrelationMatrix from '../CorrelationMatrix';
 import FullScreen from '../FullScreen';
-import ColorPallete from '../ColorPallete';
+import ColorPalette from '../ColorPalette';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
@@ -13,8 +13,8 @@ import LoadingAnimation from '../../View/LoadingAnimation';
 
 import iconNames from '../../../constants/iconNames';
 import {
-    divergingColorNames,
-    sequentialColorNames,
+    getDivergingColorNames,
+    getSequentialColorNames,
     getDivergingColorScheme,
     getSequentialColorScheme,
     getCategoryForContinuousColorScheme,
@@ -57,12 +57,12 @@ export default class CorrelationMatrixView extends PureComponent {
         };
 
         this.selectedColorScheme = undefined;
-        this.colors = sequentialColorNames()
-            .concat(divergingColorNames())
+        this.colors = getSequentialColorNames()
+            .concat(getDivergingColorNames())
             .map(color => ({
                 id: color,
                 title: color,
-                image: <ColorPallete colorScheme={getCategoryForContinuousColorScheme(color)} />,
+                image: <ColorPalette colorScheme={getCategoryForContinuousColorScheme(color)} />,
             }));
     }
 

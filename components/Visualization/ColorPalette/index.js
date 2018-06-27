@@ -15,7 +15,7 @@ const defaultProps = {
     align: 'horizontal',
 };
 
-export default class ColorPallete extends PureComponent {
+export default class ColorPalette extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

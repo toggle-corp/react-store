@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { PropTypes } from 'prop-types';
 
 import OrgChart from '../OrgChart';
-import ColorPallete from '../ColorPallete';
+import ColorPalette from '../ColorPalette';
 import FullScreen from '../FullScreen';
 
 import SelectInput from '../../Input/SelectInput';
@@ -49,7 +49,7 @@ export default class OrgChartView extends PureComponent {
         this.colors = singleColors.map(color => ({
             id: color,
             title: color,
-            image: <ColorPallete colorScheme={[color]} />,
+            image: <ColorPalette colorScheme={[color]} />,
         }));
     }
 
