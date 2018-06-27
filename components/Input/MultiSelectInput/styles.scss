@@ -52,20 +52,29 @@ $width-select-all-button: 14px;
             @extend %input-border;
         }
 
-        &.filled:not(.hide-clear-button) {
+        &.filled {
             .input-and-actions {
-                &:hover {
-                    .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
-                    }
+                .input::placeholder {
+                    color: $color-text;
+                }
+            }
 
-                    .actions {
-                        .clear-button {
-                            opacity: 1;
+            &:not(.hide-clear-button) {
+                .input-and-actions {
+                    &:hover {
+                        .input {
+                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                        }
+
+                        .actions {
+                            .clear-button {
+                                opacity: 1;
+                            }
                         }
                     }
                 }
             }
+
         }
 
         &:not(.completely-filled) {
