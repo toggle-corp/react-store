@@ -1,4 +1,5 @@
 import React, {
+    Fragment,
     PureComponent,
 } from 'react';
 import { PropTypes } from 'prop-types';
@@ -11,8 +12,9 @@ import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import BoundError from '../../General/BoundError';
+import Float from '../../View/Float';
 
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 /**
@@ -31,6 +33,7 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
+    labelModifier: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
 };
@@ -39,6 +42,7 @@ const defaultProps = {
     data: [],
     colorScheme: schemeAccent,
     className: '',
+    labelModifier: undefined,
     loading: false,
 };
 
@@ -72,10 +76,8 @@ export default class DonutChart extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('donutchart', 'graph')}.svg`);
     }
 
-
     arch = (padRadius, innerRadius) =>
         arc().padRadius(padRadius).innerRadius(innerRadius);
-
 
     textArch = (outerRadius, innerRadius) =>
         arc().outerRadius(outerRadius).innerRadius(innerRadius);
@@ -154,13 +156,16 @@ export default class DonutChart extends PureComponent {
     addPaths = (element, options) => {
         const {
             outerRadius,
-            innerRadius,
             colors,
             pies,
             arcs,
+        } = options;
+
+        const {
             valueAccessor,
             labelAccessor,
-        } = options;
+            labelModifier,
+        } = this.props;
 
         element
             .selectAll('path')
@@ -175,34 +180,25 @@ export default class DonutChart extends PureComponent {
             .style('fill', d => colors(labelAccessor(d.data)))
             .attr('cursor', 'pointer')
             .attr('pointer-events', 'none')
-            .on('mouseenter', (node) => {
-                const label = labelAccessor(node.data);
-                const value = valueAccessor(node.data);
-                const nodeColor = colors(label);
-
-                element
-                    .append('circle')
-                    .attr('class', 'tooltip-circle')
-                    .attr('r', innerRadius - 10)
-                    .style('fill', nodeColor);
-
-                element
-                    .append('text')
-                    .attr('class', 'tooltip-circle')
-                    .style('text-anchor', 'middle')
-                    .text(`${label} ${value}`)
-                    .style('fill', getColorOnBgColor(nodeColor))
-                    .style('font-size', '2em');
-            })
             .on('mouseover', (d, i, nodes) => {
                 this.arcTween(nodes[i], arcs, outerRadius, 0);
                 select(nodes[i]).style('filter', 'url(#drop-shadow)');
             })
+            .on('mousemove', (d) => {
+                const label = labelAccessor(d.data);
+                const value = valueAccessor(d.data);
+                const textLabel = labelModifier ? labelModifier(label, value) : `${label} ${value}`;
+
+                select(this.tooltip)
+                    .html(`<span>${textLabel}</span>`)
+                    .style('display', 'inline-block')
+                    .style('top', `${event.pageY - 30}px`)
+                    .style('left', `${event.pageX + 20}px`);
+            })
             .on('mouseout', (d, i, nodes) => {
-                element
-                    .selectAll('.tooltip-circle')
-                    .remove();
                 this.arcTween(nodes[i], arcs, outerRadius - 10, 150);
+                select(this.tooltip)
+                    .style('display', 'none');
                 select(nodes[i]).style('filter', 'none');
             });
     };
@@ -216,7 +212,6 @@ export default class DonutChart extends PureComponent {
     drawChart = () => {
         const {
             boundingClientRect,
-            labelAccessor,
             valueAccessor,
             data,
         } = this.props;
@@ -256,8 +251,6 @@ export default class DonutChart extends PureComponent {
             arcs,
             textArcs,
             period,
-            labelAccessor,
-            valueAccessor,
         };
 
         this.addDropShadow(select(this.svg));
@@ -277,10 +270,18 @@ export default class DonutChart extends PureComponent {
         ].join(' ');
 
         return (
-            <svg
-                className={svgClassName}
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <Fragment>
+                <Float>
+                    <div
+                        ref={(el) => { this.tooltip = el; }}
+                        className={styles.donutTooltip}
+                    />
+                </Float>
+                <svg
+                    className={svgClassName}
+                    ref={(elem) => { this.svg = elem; }}
+                />
+            </Fragment>
         );
     }
 }
