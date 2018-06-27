@@ -65,7 +65,7 @@ export default class Options extends React.PureComponent {
                 key={key}
                 optionKey={key}
                 onClick={onOptionClick}
-                active={isActive}
+                isActive={isActive}
             >
                 { label }
             </Option>
