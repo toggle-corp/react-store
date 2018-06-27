@@ -41,11 +41,17 @@ const propTypes = {
         value: PropTypes.string,
         score: PropTypes.number,
     })),
+    selectedData: PropTypes.shape({
+        value: PropTypes.string,
+        score: PropTypes.number,
+    }),
     idAccessor: PropTypes.func.isRequired,
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
+    scaleFactor: PropTypes.number,
+    onHover: PropTypes.func,
     className: PropTypes.string,
-    colorScheme: PropTypes.arrayOf(PropTypes.string),
+    colorScheme: PropTypes.func,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -62,8 +68,15 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
+    selectedData: {
+        score: 10,
+        value: 'gold',
+        cluster: 0,
+    },
     groupAccessor: d => d.cluster,
     valueAccessor: d => d.score,
+    scaleFactor: 2,
+    onHover: () => true,
     className: '',
     colorScheme: interpolateRainbow,
 };
@@ -85,15 +98,29 @@ class ClusterForceLayout extends PureComponent {
         this.redrawChart();
     }
 
+    onMouseOver = (d) => {
+        this.props.onHover(d);
+        select(this.style)
+            .style('display', 'block');
+    }
+
+    onMouseMove = (d) => {
+        select(this.tooltip)
+            .html(`<span class=${styles.id}>${d.id}</span>
+            <span class=${styles.score}>${d.radius}</span>`)
+            .style('display', 'block')
+            .style('top', `${event.pageY - 50}px`)
+            .style('left', `${event.pageX - 30}px`);
+    }
+
+    onMouseOut = () => {
+        select(this.tooltip)
+            .style('display', 'none');
+    }
+
     getMaxNode = (data, valueAccessor) => data.reduce((previous, current) => (
         valueAccessor(current) > valueAccessor(previous) ? current : previous
     ))
-
-    save = () => {
-        const svgsaver = new SvgSaver();
-        const svg = select(this.svg);
-        svgsaver.asSvg(svg.node(), `${getStanadardFilename('clustergraph', 'graph')}.svg`);
-    }
 
     dragstarted = (d) => {
         if (!event.active) this.simulation.alphaTarget(0.3).restart();
@@ -112,6 +139,12 @@ class ClusterForceLayout extends PureComponent {
         d.fy = null; // eslint-disable-line no-param-reassign
     }
 
+    save = () => {
+        const svgsaver = new SvgSaver();
+        const svg = select(this.svg);
+        svgsaver.asSvg(svg.node(), `${getStanadardFilename('clustergraph', 'graph')}.svg`);
+    }
+
     drawChart = () => {
         const {
             data,
@@ -119,6 +152,8 @@ class ClusterForceLayout extends PureComponent {
             groupAccessor,
             boundingClientRect,
             valueAccessor,
+            selectedData,
+            scaleFactor,
             colorScheme,
             margins,
         } = this.props;
@@ -151,7 +186,7 @@ class ClusterForceLayout extends PureComponent {
         const clusters = [];
         const nodes = data.map((node) => {
             const group = groupAccessor(node);
-            const radius = valueAccessor(node);
+            const radius = valueAccessor(node) * scaleFactor;
             const element = {
                 id: idAccessor(node),
                 radius,
@@ -196,10 +231,24 @@ class ClusterForceLayout extends PureComponent {
             .enter()
             .append('circle')
             .style('fill', d => (color(d.group / noOfClusters)))
+            .each((d) => {
+                if (selectedData.value === d.id) {
+                    select(this.tooltip)
+                        .style('display', 'block')
+                        .html(`<span class=${styles.id}>${d.id}</span>
+                             <span class=${styles.score}>${d.radius}</span>`)
+                        .style('display', 'block')
+                        .style('top', `${d.y - 50}px`)
+                        .style('left', `${d.x - 30}px`);
+                }
+            })
             .call(drag()
                 .on('start', this.dragstarted)
                 .on('drag', this.dragged)
-                .on('end', this.dragended));
+                .on('end', this.dragended))
+            .on('mouseover', this.onMouseOver)
+            .on('mousemove', this.onMouseMove)
+            .on('mouseout', this.onMouseOut);
 
         // ramp up collision strength to provide smooth transition
         const transitionTime = 3000;
