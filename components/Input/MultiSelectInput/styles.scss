@@ -12,7 +12,7 @@ $width-select-all-button: 14px;
 
         .input {
             @extend %input-base;
-            width: calc(100% - #{$width-dropdown-button + $spacing-small});
+            width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -56,7 +56,7 @@ $width-select-all-button: 14px;
             .input-and-actions {
                 &:hover {
                     .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-small});
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
                     }
 
                     .actions {
@@ -73,7 +73,7 @@ $width-select-all-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-select-all-button + $spacing-small});
+                            width: calc(100% - #{$width-dropdown-button + $width-select-all-button + $spacing-extra-small});
                         }
 
                         .actions {
@@ -88,7 +88,7 @@ $width-select-all-button: 14px;
             &.filled:not(.hide-select-all-button):not(.hide-clear-button) {
                 &:hover {
                     .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $width-select-all-button + $spacing-small});
+                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $width-select-all-button + $spacing-extra-small});
                     }
                 }
             }

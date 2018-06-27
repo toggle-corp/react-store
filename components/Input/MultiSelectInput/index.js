@@ -355,6 +355,10 @@ class MultiSelectInput extends React.PureComponent {
         this.toggleDropdown();
     }
 
+    handleDropdownButtonClick = () => {
+        this.toggleDropdown();
+    }
+
     handleOptionsInvalidate = (optionsContainer) => {
         const contentRect = optionsContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
