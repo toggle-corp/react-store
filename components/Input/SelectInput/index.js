@@ -18,7 +18,6 @@ import {
 } from '../../../utils/common';
 
 import Options from './Options';
-
 import styles from './styles.scss';
 
 const propTypeKey = PropTypes.oneOfType([
@@ -161,6 +160,7 @@ class SelectInput extends React.PureComponent {
             error,
             className,
             disabled,
+            hideClearButton,
         } = this.props;
 
         const {
@@ -193,6 +193,11 @@ class SelectInput extends React.PureComponent {
         if (inputInFocus) {
             classNames.push(styles.inputInFocus);
             classNames.push('input-in-focus');
+        }
+
+        if (hideClearButton) {
+            classNames.push(styles.hideClearButton);
+            classNames.push('hide-clear-button');
         }
 
         if (inputValue && inputValue.length !== 0) {
