@@ -161,6 +161,7 @@ const wrapViz = (WrappedComponent) => {
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
+                            label="Colorscheme"
                             labelSelector={d => d.title}
                             optionLabelSelector={d => d.image}
                             optionsClassName={styles.selectInputOptions}
@@ -171,12 +172,14 @@ const wrapViz = (WrappedComponent) => {
                             value={this.state.colorSchemeName}
                         />
                         <AccentButton
+                            title="Download diagram"
                             onClick={handleSave}
                             iconName={iconNames.download}
                             transparent
                         />
                         { !fullScreen &&
                             <AccentButton
+                                title="Show on fullscreen"
                                 onClick={setFullScreen}
                                 iconName={iconNames.expand}
                                 transparent
@@ -184,6 +187,7 @@ const wrapViz = (WrappedComponent) => {
                         }
                         { fullScreen &&
                             <DangerButton
+                                title="Close fullscreen"
                                 onClick={removeFullScreen}
                                 iconName={iconNames.close}
                                 transparent
