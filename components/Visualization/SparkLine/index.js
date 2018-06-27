@@ -10,7 +10,6 @@ import {
 } from 'd3-shape';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
@@ -57,10 +56,7 @@ const defaultProps = {
     },
 };
 
-
-@BoundError()
-@Responsive
-export default class SparkLine extends React.PureComponent {
+class SparkLine extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -158,3 +154,5 @@ export default class SparkLine extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(SparkLine);

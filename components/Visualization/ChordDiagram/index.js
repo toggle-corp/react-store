@@ -11,7 +11,6 @@ import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Float from '../../View/Float';
 import { saveSvg, getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
@@ -66,9 +65,8 @@ const defaultProps = {
  * radially around a circle with the relationships between the data points typically drawn as arcs
  * connecting the data.
  */
-@BoundError()
-@Responsive
-export default class ChordDiagram extends PureComponent {
+
+class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -332,3 +330,5 @@ export default class ChordDiagram extends PureComponent {
         );
     }
 }
+
+export default Responsive(ChordDiagram);

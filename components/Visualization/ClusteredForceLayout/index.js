@@ -24,7 +24,6 @@ import {
 } from 'd3-force';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Float from '../../View/Float';
 import {
     getStandardFilename,
@@ -74,9 +73,7 @@ const defaultProps = {
     circleRadiusExtent: [5, 10],
 };
 
-@BoundError()
-@Responsive
-export default class ClusteredForceLayout extends PureComponent {
+class ClusteredForceLayout extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -456,3 +453,5 @@ export default class ClusteredForceLayout extends PureComponent {
         );
     }
 }
+
+export default Responsive(ClusteredForceLayout);

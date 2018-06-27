@@ -9,7 +9,6 @@ import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 
 // FIXME: don't use globals
@@ -73,10 +72,7 @@ const defaultProps = {
  * Represents the  network of nodes in force layout with many-body force.
  */
 
-
-@BoundError()
-@Responsive
-export default class ForceDirectedGraph extends React.PureComponent {
+class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -363,3 +359,5 @@ export default class ForceDirectedGraph extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(ForceDirectedGraph);

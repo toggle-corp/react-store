@@ -8,7 +8,6 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import styles from './styles.scss';
 
@@ -60,9 +59,7 @@ const defaultProps = {
  * CollapsibleTree is a tree diagram showing the hierarchical structure of the data.
  */
 
-@BoundError()
-@Responsive
-export default class CollapsibleTree extends React.PureComponent {
+class CollapsibleTree extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -336,3 +333,5 @@ export default class CollapsibleTree extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(CollapsibleTree);

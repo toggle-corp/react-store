@@ -9,7 +9,6 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
 import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
@@ -64,9 +63,7 @@ const defaultProps = {
     },
 };
 
-@BoundError()
-@Responsive
-export default class Sankey extends PureComponent {
+class Sankey extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -282,3 +279,5 @@ export default class Sankey extends PureComponent {
         );
     }
 }
+
+export default Responsive(Sankey);

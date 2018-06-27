@@ -12,7 +12,6 @@ import { select, mouse } from 'd3-selection';
 import { extent, bisector } from 'd3-array';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
@@ -56,10 +55,7 @@ const defaultProps = {
     showArea: false,
 };
 
-
-@BoundError()
-@Responsive
-export default class TimeSeries extends React.PureComponent {
+class TimeSeries extends React.PureComponent {
     static defaultProps = defaultProps;
     static propTypes = propTypes;
 
@@ -277,3 +273,5 @@ export default class TimeSeries extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(TimeSeries);

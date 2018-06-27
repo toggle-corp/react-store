@@ -6,7 +6,6 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import update from '../../../utils/immutable-update';
 import {
     getStandardFilename,
@@ -82,9 +81,8 @@ const defaultProps = {
 };
 
 const rectWidth = 30;
-@BoundError()
-@Responsive
-export default class OrgChart extends React.PureComponent {
+
+class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -349,3 +347,5 @@ export default class OrgChart extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(OrgChart);

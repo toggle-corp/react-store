@@ -8,14 +8,12 @@ import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import styles from './styles.scss';
 
 import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
 const dummy = transition;
-
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -281,4 +279,4 @@ class HorizontalBar extends React.PureComponent {
     }
 }
 
-export default BoundError()(Responsive(HorizontalBar));
+export default Responsive(HorizontalBar);

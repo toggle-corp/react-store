@@ -7,7 +7,6 @@ import { extent } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import styles from './styles.scss';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 import LoadingAnimation from '../../View/LoadingAnimation';
@@ -63,9 +62,7 @@ const defaultProps = {
  * clustering.
  */
 
-@BoundError()
-@Responsive
-export default class Dendrogram extends React.PureComponent {
+class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -237,3 +234,5 @@ export default class Dendrogram extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(Dendrogram);

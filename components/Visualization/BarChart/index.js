@@ -7,7 +7,6 @@ import { select } from 'd3-selection';
 import { max, min } from 'd3-array';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
@@ -95,9 +94,7 @@ const defaultProps = {
 };
 
 
-@BoundError()
-@Responsive
-export default class BarChart extends React.PureComponent {
+class BarChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -284,3 +281,5 @@ export default class BarChart extends React.PureComponent {
         );
     }
 }
+
+export default Responsive(BarChart);

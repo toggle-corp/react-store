@@ -11,7 +11,6 @@ import { interpolateNumber } from 'd3-interpolate';
 import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import Float from '../../View/Float';
 
 import { getStandardFilename } from '../../../utils/common';
@@ -46,10 +45,7 @@ const defaultProps = {
     loading: false,
 };
 
-
-@BoundError()
-@Responsive
-export default class DonutChart extends PureComponent {
+class DonutChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -285,3 +281,5 @@ export default class DonutChart extends PureComponent {
         );
     }
 }
+
+export default Responsive(DonutChart);

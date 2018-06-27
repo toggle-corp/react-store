@@ -12,7 +12,6 @@ import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 import {
     getStandardFilename,
     getColorOnBgColor,
@@ -80,9 +79,7 @@ const transitionDuration = 750;
  * in hierarchy.
  * */
 
-@BoundError()
-@Responsive
-export default class SunBurst extends PureComponent {
+class SunBurst extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -379,3 +376,5 @@ export default class SunBurst extends PureComponent {
         );
     }
 }
+
+export default Responsive(SunBurst);

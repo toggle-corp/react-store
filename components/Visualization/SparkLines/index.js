@@ -8,7 +8,6 @@ import { PropTypes } from 'prop-types';
 import { line, area } from 'd3-shape';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import BoundError from '../../General/BoundError';
 
 import { getStandardFilename } from '../../../utils/common';
 
@@ -45,10 +44,7 @@ const defaultProps = {
     },
 };
 
-
-@BoundError()
-@Responsive
-export default class SparkLines extends PureComponent {
+class SparkLines extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -185,3 +181,5 @@ export default class SparkLines extends PureComponent {
         );
     }
 }
+
+export default Responsive(SparkLines);
