@@ -246,7 +246,11 @@ export default class RestRequest {
 
         let responseBody;
         try {
-            responseBody = await response.json();
+            responseBody = await response.text();
+            if (responseBody.length > 0) {
+                responseBody = JSON.parse(responseBody);
+            }
+
             if (this.aborted) {
                 this.abort();
                 return;
