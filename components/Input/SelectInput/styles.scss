@@ -11,7 +11,7 @@ $width-clear-button: 14px;
 
         .input {
             @extend %input-base;
-            width: calc(100% - #{$width-dropdown-button + $spacing-small});
+            width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -47,16 +47,19 @@ $width-clear-button: 14px;
             @extend %input-border;
         }
 
-        &.filled {
-            .input-and-actions {
-                &:hover {
-                    .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-small});
-                    }
 
-                    .actions {
-                        .clear-button {
-                            opacity: 1;
+        &:not(.hide-clear-button) {
+            &.filled {
+                .input-and-actions {
+                    &:hover {
+                        .input {
+                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                        }
+
+                        .actions {
+                            .clear-button {
+                                opacity: 1;
+                            }
                         }
                     }
                 }
