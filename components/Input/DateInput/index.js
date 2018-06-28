@@ -60,6 +60,9 @@ class DateInput extends React.PureComponent {
         monthValue,
         yearValue,
     }) => {
+        if (!yearValue && !monthValue && !dayValue) {
+            return undefined;
+        }
         const yearStr = yearValue ? leftPad(yearValue, 4) : '';
         const monthStr = monthValue ? leftPad(monthValue, 2) : '';
         const dayStr = dayValue ? leftPad(dayValue, 2) : '';
