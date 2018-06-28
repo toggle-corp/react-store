@@ -190,46 +190,39 @@ export default class Pager extends React.PureComponent {
 
     render() {
         const {
-            activePage,
+            activePage: activePageProps,
             className: classNameFromProps,
             itemsCount,
             maxItemsPerPage,
             totalCapacity,
         } = this.props;
 
-        let numPages = Math.ceil(itemsCount / maxItemsPerPage);
-        if (numPages <= 0) {
-            numPages = 1;
-        }
-
         const className = `
             ${classNameFromProps}
             ${styles.pager}
             'pager'
         `;
-
-        const offset = (activePage - 1) * maxItemsPerPage;
         const perPageTitle = 'per page';
         const showingTitle = 'Showing';
         const ofTitle = 'of';
         const rangeIndicator = '-';
 
-        const itemsOnPage = Math.min(
-            maxItemsPerPage,
-            itemsCount - ((activePage - 1) * maxItemsPerPage),
-        );
+        // NOTE: activePage can never be 0
+        const activePage = Math.max(activePageProps, 1);
+        // NOTE: number of pages can never be 0
+        const numPages = Math.max(Math.ceil(itemsCount / maxItemsPerPage), 1);
+
+        const offset = (activePage - 1) * maxItemsPerPage;
+        const itemsOnPage = Math.min(maxItemsPerPage, itemsCount - offset);
+
         const currentItemsStart = itemsOnPage > 0 ? offset + 1 : offset;
         const currentItemsEnd = offset + itemsOnPage;
 
-        let pages;
-        if (numPages > 0) {
-            pages = this.pagination(totalCapacity, activePage, numPages);
-        }
+        const pages = this.pagination(totalCapacity, activePage, numPages);
 
         return (
             <div className={className}>
-                {
-                    this.props.showItemsPerPageChange &&
+                { this.props.showItemsPerPageChange &&
                     <div className={styles.itemsPerPage}>
                         <SelectInput
                             className={styles.input}
@@ -245,8 +238,7 @@ export default class Pager extends React.PureComponent {
                         </div>
                     </div>
                 }
-                {
-                    this.props.showInfo &&
+                { this.props.showInfo &&
                     <div className={styles.currentRangeInformation}>
                         <div className={styles.showing}>
                             { showingTitle }
