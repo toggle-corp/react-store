@@ -90,10 +90,11 @@ export default class GridViewLayout extends React.PureComponent {
         }
     }
 
-    renderParams = () => ({
+    renderParams = (key, datum) => ({
         layoutSelector: this.props.layoutSelector,
         headerModifier: this.props.itemHeaderModifier,
         contentModifier: this.props.itemContentModifier,
+        datum,
     })
 
     render() {

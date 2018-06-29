@@ -64,9 +64,6 @@ class List extends React.Component {
                 <Renderer
                     className={rendererClassName}
                     key={key}
-                    datum={datum}
-                    index={i}
-                    data={data}
                     {...extraProps}
                 />
             );

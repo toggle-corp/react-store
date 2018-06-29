@@ -5,7 +5,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
     datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -20,20 +19,18 @@ export default class GridItem extends React.PureComponent {
     renderHeader = () => {
         const {
             datum,
-            data,
             headerModifier,
         } = this.props;
-        return headerModifier(datum, data);
+        return headerModifier(datum);
     }
 
     renderContent = () => {
         const {
             datum,
-            data,
             contentModifier,
         } = this.props;
 
-        return contentModifier(datum, data);
+        return contentModifier(datum);
     }
 
     render() {
