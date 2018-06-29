@@ -66,18 +66,38 @@ update.extend(
         return newArr;
     },
 );
+
 update.extend(
     '$autoPush',
     (value, object) => (object || []).concat(value.length ? value : []),
 );
+
 update.extend(
     '$autoUnshift',
     (value, object) => (value.length ? value : []).concat(object || []),
 );
+
 update.extend('$unset', (keysToRemove, original) => {
     const copy = { ...original };
     keysToRemove.forEach((key) => {
         delete copy[key];
+    });
+    return copy;
+});
+
+update.extend('$setIfDefined', (value, original) => {
+    if (value === undefined) {
+        return original;
+    }
+    return value;
+});
+
+update.extend('$mergeIfDefined', (obj, original) => {
+    const copy = { ...original };
+    Object.keys(obj).forEach((key) => {
+        if (obj[key] !== undefined) {
+            copy[key] = obj[key];
+        }
     });
     return copy;
 });
