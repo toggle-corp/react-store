@@ -83,23 +83,37 @@ class ForceDirectedGraph extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
         this.state = {
             value: 5,
         };
+
+        this.container = React.createRef();
+        this.svg = React.createRef();
     }
 
     componentDidMount() {
-        this.renderChart();
         this.updateData(this.props);
+        this.init();
+        this.renderChart();
     }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.data !== this.props.data) {
             this.updateData(nextProps);
+            this.init();
+            this.renderChart();
         }
+
+        // if (nextProps.boundingClientRect !== this.props.boundingClientRect) {
+        //     this.init();
+        //     this.renderChart();
+        // }
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        // this.init();
+        // this.renderChart();
     }
 
     updateData(props) {
@@ -107,37 +121,266 @@ class ForceDirectedGraph extends React.PureComponent {
     }
 
     save = () => {
-        const svg = select(this.svg);
+        const { current: svgEl } = this.svg;
+        const svg = select(svgEl);
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
     }
 
-    handleChange = (eve) => {
+    handleChange = (e) => {
         this.setState({
-            value: eve.target.value,
+            value: e.target.value,
         });
         this.updateData(this.props);
     }
 
+    init = () => {
+        const { current: container } = this.container;
+        const { current: svgEl } = this.svg;
+
+        if (!container || !svgEl) {
+            return;
+        }
+
+        const svg = select(svgEl);
+        svg.selectAll('*').remove();
+
+        const {
+            boundingClientRect,
+            margins,
+            colorScheme,
+            valueAccessor,
+        } = this.props;
+
+        const {
+            width: widthFromProps,
+            height: heightFromProps,
+        } = boundingClientRect;
+
+        if (!widthFromProps) {
+            return;
+        }
+
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        const width = widthFromProps - left - right;
+        const height = heightFromProps - top - bottom;
+
+        const radius = Math.min(width, height) / 2;
+
+        select(container)
+            .selectAll('.tooltip')
+            .remove();
+
+        this.tooltip = select(container)
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('display', 'none')
+            .style('z-index', 10);
+
+        const { value } = this.state;
+
+        this.distance = scaleLinear()
+            .domain([1, 10])
+            .range([1, radius / 2]);
+
+        this.group = svg
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .append('g')
+            .attr('transform', `translate(${left}, ${top})`);
+
+        this.color = scaleOrdinal().range(colorScheme);
+        this.minmax = extent(this.data.links, valueAccessor);
+        this.scaledValues = scaleLinear().domain(this.minmax).range([1, 3]);
+
+        this.voronois = voronoi()
+            .x(d => d.x)
+            .y(d => d.y)
+            .extent([[-10, -10], [width + 10, height + 10]]);
+
+        const link = forceLink()
+            .id(d => this.props.idAccessor(d))
+            .distance(this.distance(value));
+        const charge = forceManyBody();
+        const center = forceCenter(width / 2, height / 2);
+
+        this.simulation = forceSimulation()
+            .force('link', link)
+            .force('charge', charge)
+            .force('center', center);
+    }
+
+    ticked = () => {
+        const {
+            boundingClientRect,
+            margins,
+            circleRadius,
+            useVoronoi,
+        } = this.props;
+
+        const {
+            width: widthFromProps,
+            height: heightFromProps,
+        } = boundingClientRect;
+
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        const width = widthFromProps - left - right;
+        const height = heightFromProps - top - bottom;
+
+        this.nodes.each((d) => {
+            // eslint-disable-next-line no-param-reassign
+            d.x = Math.max(circleRadius, Math.min(width - circleRadius, d.x));
+
+            // eslint-disable-next-line no-param-reassign
+            d.y = Math.max(circleRadius, Math.min(height - circleRadius, d.y));
+        });
+
+        this.links
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
+
+        if (useVoronoi) {
+            this.nodes
+                .attr('transform', d => `translate(${d.x}, ${d.y})`)
+                .attr('clip-path', d => `url(#clip-${d.index})`);
+
+            const clip = this.group
+                .selectAll('clipPath')
+                .data(
+                    this.recenterVoronoi(this.nodes.data()),
+                    d => d.data.index,
+                );
+
+            clip
+                .enter()
+                .append('clipPath')
+                .attr('id', d => `clip-${d.data.index}`)
+                .attr('class', 'clip');
+
+            clip
+                .exit()
+                .remove();
+
+            clip
+                .selectAll('path')
+                .remove();
+            clip
+                .append('path')
+                .attr('d', d => `M${d.join(',')}Z`);
+        } else {
+            this.nodes.attr('transform', d => `translate(${d.x}, ${d.y})`);
+        }
+    };
+
+    recenterVoronoi = (nodes) => {
+        const shapes = [];
+        this.voronois.polygons(nodes).forEach((d) => {
+            if (!d.length) return;
+            const n = [];
+            d.forEach((c) => {
+                n.push([c[0] - d.data.x, c[1] - d.data.y]);
+            });
+            n.data = d.data;
+            shapes.push(n);
+        });
+        return shapes;
+    };
+
+    mouseOverCircle = (d) => {
+        const {
+            onMouseOver,
+            idAccessor,
+        } = this.props;
+
+        const id = idAccessor(d);
+
+        if (onMouseOver) {
+            onMouseOver(d);
+        }
+
+        this.tooltip.html(`
+            <span class="name">
+                ${id}
+            </span>
+        `);
+
+        return this.tooltip
+            .transition()
+            .duration(100)
+            .style('display', 'inline-block');
+    }
+
+    mouseMoveCircle = () => (
+        this.tooltip
+            .style('top', `${event.pageY - 30}px`)
+            .style('left', `${event.pageX + 20}px`)
+    )
+
+    mouseOutCircle = (d) => {
+        const { onMouseOut } = this.props;
+
+        if (onMouseOut) {
+            onMouseOut(d);
+        }
+
+        return this.tooltip
+            .transition()
+            .duration(100)
+            .style('display', 'none');
+    }
+
+    hideTooltip = () => {
+        this.tooltip.transition().style('display', 'none');
+    };
+
+    dragstarted = (d) => {
+        this.hideTooltip();
+        if (!event.active) {
+            this.simulation.alphaTarget(0.3).restart();
+        }
+        d.fx = d.x; // eslint-disable-line no-param-reassign
+        d.fy = d.y; // eslint-disable-line no-param-reassign
+    };
+
+    dragged = (d) => {
+        this.hideTooltip();
+        d.fx = event.x; // eslint-disable-line no-param-reassign
+        d.fy = event.y; // eslint-disable-line no-param-reassign
+    };
+
+    dragended = (d) => {
+        this.hideTooltip();
+        if (!event.active) {
+            this.simulation.alphaTarget(0);
+        }
+
+        d.fx = null; // eslint-disable-line no-param-reassign
+        d.fy = null; // eslint-disable-line no-param-reassign
+    };
+
     renderChart() {
         const {
             boundingClientRect,
-            idAccessor,
             groupAccessor,
             valueAccessor,
             circleRadius,
-            colorScheme,
             useVoronoi,
-            margins,
         } = this.props;
         const { data } = this;
-
-        const svg = select(this.svg);
-        svg.selectAll('*').remove();
-
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
 
         if (!boundingClientRect.width) {
             return;
@@ -147,217 +390,56 @@ class ForceDirectedGraph extends React.PureComponent {
             return;
         }
 
-        let { width, height } = boundingClientRect;
-        const {
-            top,
-            right,
-            bottom,
-            left,
-        } = margins;
-
-        const tooltip = select(this.container)
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('display', 'none')
-            .style('z-index', 10);
-
-        width = width - left - right;
-        height = height - top - bottom;
-
-        const radius = Math.min(width, height) / 2;
-
-        const distance = scaleLinear()
-            .domain([1, 10])
-            .range([1, radius / 2]);
-
-        const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
-            .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
-
-        const color = scaleOrdinal().range(colorScheme);
-
-        const minmax = extent(data.links, valueAccessor);
-        const scaledValues = scaleLinear().domain(minmax).range([1, 3]);
-
-        const voronois = voronoi()
-            .x(d => d.x)
-            .y(d => d.y)
-            .extent([[-10, -10], [width + 10, height + 10]]);
-
-        const recenterVoronoi = (nodes) => {
-            const shapes = [];
-            voronois.polygons(nodes).forEach((d) => {
-                if (!d.length) return;
-                const n = [];
-                d.forEach((c) => {
-                    n.push([c[0] - d.data.x, c[1] - d.data.y]);
-                });
-                n.data = d.data;
-                shapes.push(n);
-            });
-            return shapes;
-        };
-
-        const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idAccessor(d)).distance(distance(this.state.value)))
-            .force('charge', forceManyBody())
-            .force('center', forceCenter(width / 2, height / 2));
-
-        const hideTooltip = () => {
-            tooltip.transition().style('display', 'none');
-        };
-
-        const dragstarted = (d) => {
-            hideTooltip();
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x; // eslint-disable-line no-param-reassign
-            d.fy = d.y; // eslint-disable-line no-param-reassign
-        };
-
-        const dragged = (d) => {
-            hideTooltip();
-            d.fx = event.x; // eslint-disable-line no-param-reassign
-            d.fy = event.y; // eslint-disable-line no-param-reassign
-        };
-
-        const dragended = (d) => {
-            hideTooltip();
-            if (!event.active) {
-                simulation.alphaTarget(0);
-            }
-
-            d.fx = null; // eslint-disable-line no-param-reassign
-            d.fy = null; // eslint-disable-line no-param-reassign
-        };
-
-        const mouseOverCircle = (d) => {
-            const { onMouseOver } = this.props;
-            const id = idAccessor(d);
-
-            if (onMouseOver) {
-                onMouseOver(id);
-            }
-
-            tooltip.html(`<span class="name">${id}</span>`);
-            return tooltip
-                .transition()
-                .duration(100)
-                .style('display', 'inline-block');
-        };
-
-        const mouseMoveCircle = () => (
-            tooltip
-                .style('top', `${event.pageY - 30}px`)
-                .style('left', `${event.pageX + 20}px`)
-        );
-
-        const mouseOutCircle = (d) => {
-            const { onMouseOut } = this.props;
-            const id = idAccessor(d);
-
-            if (onMouseOut) {
-                onMouseOut(id);
-            }
-
-            return tooltip
-                .transition()
-                .duration(100)
-                .style('display', 'none');
-        };
-
-        const link = group
+        this.links = this.group
             .append('g')
             .attr('class', 'links')
             .selectAll('line')
             .data(data.links)
             .enter()
             .append('line')
-            .attr('stroke-width', d => scaledValues(valueAccessor(d)));
+            .attr('stroke-width', d => this.scaledValues(valueAccessor(d)));
 
-        const node = group
+        this.nodes = this.group
             .selectAll('.nodes')
             .data(data.nodes)
             .enter()
             .append('g')
             .attr('class', 'nodes')
-            .call(drag()
-                .on('start', dragstarted)
-                .on('drag', dragged)
-                .on('end', dragended))
-            .on('mouseover', mouseOverCircle)
-            .on('mousemove', mouseMoveCircle)
-            .on('mouseout', mouseOutCircle);
+            .call(
+                drag()
+                    .on('start', this.dragstarted)
+                    .on('drag', this.dragged)
+                    .on('end', this.dragended),
+            )
+            .on('mouseover', this.mouseOverCircle)
+            .on('mousemove', this.mouseMoveCircle)
+            .on('mouseout', this.mouseOutCircle);
 
         if (useVoronoi) {
-            node
+            this.nodes
                 .append('circle')
                 .attr('class', 'circle')
                 .attr('r', circleRadius)
-                .attr('fill', d => color(groupAccessor(d)));
+                .attr('fill', d => this.color(groupAccessor(d)));
 
-            node
+            this.nodes
                 .append('circle')
                 .attr('r', 3)
                 .attr('fill', 'black');
         } else {
-            node
+            this.nodes
                 .append('circle')
                 .attr('r', 5)
-                .attr('fill', d => color(groupAccessor(d)));
+                .attr('fill', d => this.color(groupAccessor(d)));
         }
 
-        const ticked = () => {
-            node.each((d) => {
-                d.x = Math.max(circleRadius, Math.min(width - circleRadius, d.x)); // eslint-disable-line
-                d.y = Math.max(circleRadius, Math.min(height - circleRadius, d.y)); // eslint-disable-line
-            });
+        this.simulation
+            .nodes(this.data.nodes)
+            .on('tick', this.ticked);
 
-            link
-                .attr('x1', d => d.source.x)
-                .attr('y1', d => d.source.y)
-                .attr('x2', d => d.target.x)
-                .attr('y2', d => d.target.y);
-
-            if (useVoronoi) {
-                node
-                    .attr('transform', d => `translate(${d.x}, ${d.y})`)
-                    .attr('clip-path', d => `url(#clip-${d.index})`);
-
-                const clip = group
-                    .selectAll('clipPath')
-                    .data(recenterVoronoi(node.data()), d => d.data.index);
-
-                clip
-                    .enter()
-                    .append('clipPath')
-                    .attr('id', d => `clip-${d.data.index}`)
-                    .attr('class', 'clip');
-
-                clip
-                    .exit()
-                    .remove();
-
-                clip
-                    .selectAll('path')
-                    .remove();
-                clip
-                    .append('path')
-                    .attr('d', d => `M${d.join(',')}Z`);
-            } else {
-                node
-                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
-            }
-        };
-
-        simulation
-            .nodes(data.nodes)
-            .on('tick', ticked);
-
-        simulation
+        this.simulation
             .force('link')
-            .links(data.links);
+            .links(this.data.links);
     }
 
     render() {
@@ -372,7 +454,7 @@ class ForceDirectedGraph extends React.PureComponent {
         return (
             <div
                 className={className}
-                ref={(el) => { this.container = el; }}
+                ref={this.container}
             >
                 <input
                     className="input-slider"
@@ -386,7 +468,7 @@ class ForceDirectedGraph extends React.PureComponent {
                 />
                 <svg
                     className="force-directed-graph"
-                    ref={(elem) => { this.svg = elem; }}
+                    ref={this.svg}
                 />
             </div>
         );
