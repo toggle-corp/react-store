@@ -41,7 +41,10 @@ const propTypes = {
     circleRadius: PropTypes.number,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    onClusterSizeChange: PropTypes.func,
+    clusterSize: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -64,6 +67,8 @@ const defaultProps = {
     useVoronoi: true,
     className: '',
     colorScheme: schemePaired,
+    onClusterSizeChange: () => {},
+    clusterSize: 5,
     margins: {
         top: 0,
         right: 0,
@@ -84,36 +89,38 @@ class ForceDirectedGraph extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            value: 5,
-        };
-
         this.container = React.createRef();
         this.svg = React.createRef();
     }
 
     componentDidMount() {
         this.updateData(this.props);
-        this.init();
+        this.init(this.props);
         this.renderChart();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
+        const {
+            data: oldData,
+            boundingClientRect: oldBoundingClientRect,
+            clusterSize: oldClusterSize,
+        } = this.props;
+
+        const {
+            data: newData,
+            boundingClientRect: newBoundingClientRect,
+            clusterSize: newClusterSize,
+        } = nextProps;
+
+        const dataChanged = newData !== oldData;
+        const boundingClientRectChanged = newBoundingClientRect !== oldBoundingClientRect;
+        const clusterSize = newClusterSize !== oldClusterSize;
+
+        if (dataChanged || boundingClientRectChanged || clusterSize) {
             this.updateData(nextProps);
-            this.init();
+            this.init(nextProps);
             this.renderChart();
         }
-
-        // if (nextProps.boundingClientRect !== this.props.boundingClientRect) {
-        //     this.init();
-        //     this.renderChart();
-        // }
-    }
-
-    componentDidUpdate() {
-        // this.init();
-        // this.renderChart();
     }
 
     updateData(props) {
@@ -127,14 +134,7 @@ class ForceDirectedGraph extends React.PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
     }
 
-    handleChange = (e) => {
-        this.setState({
-            value: e.target.value,
-        });
-        this.updateData(this.props);
-    }
-
-    init = () => {
+    init = (props) => {
         const { current: container } = this.container;
         const { current: svgEl } = this.svg;
 
@@ -150,7 +150,8 @@ class ForceDirectedGraph extends React.PureComponent {
             margins,
             colorScheme,
             valueAccessor,
-        } = this.props;
+            clusterSize,
+        } = props;
 
         const {
             width: widthFromProps,
@@ -183,8 +184,6 @@ class ForceDirectedGraph extends React.PureComponent {
             .style('display', 'none')
             .style('z-index', 10);
 
-        const { value } = this.state;
-
         this.distance = scaleLinear()
             .domain([1, 10])
             .range([1, radius / 2]);
@@ -206,7 +205,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         const link = forceLink()
             .id(d => this.props.idAccessor(d))
-            .distance(this.distance(value));
+            .distance(this.distance(clusterSize));
         const charge = forceManyBody();
         const center = forceCenter(width / 2, height / 2);
 
@@ -372,6 +371,13 @@ class ForceDirectedGraph extends React.PureComponent {
         d.fy = null; // eslint-disable-line no-param-reassign
     };
 
+    handleClusterSizeInputChange = (e) => {
+        const { value } = e.target;
+        const { onClusterSizeChange } = this.props;
+
+        onClusterSizeChange(value);
+    }
+
     renderChart() {
         const {
             boundingClientRect,
@@ -443,13 +449,15 @@ class ForceDirectedGraph extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const {
+            className: classNameFromProps,
+            clusterSize,
+        } = this.props;
+
         const className = `
             force-directed-graph-container
             ${classNameFromProps}
         `;
-
-        const { value } = this.state;
 
         return (
             <div
@@ -462,8 +470,8 @@ class ForceDirectedGraph extends React.PureComponent {
                     type="range"
                     min="1"
                     max="10"
-                    value={value}
-                    onChange={this.handleChange}
+                    value={clusterSize}
+                    onChange={this.handleClusterSizeInputChange}
                     step="1"
                 />
                 <svg
