@@ -281,6 +281,50 @@ export const getElementAround = (list, currentIndex) => {
     return null;
 };
 
+export const getDefinedElementAround = (list, currentIndex) => {
+    let i;
+    let j;
+    for (i = currentIndex - 1; i >= 0; i -= 1) {
+        if (list[i] !== undefined) {
+            break;
+        }
+    }
+    for (j = currentIndex + 1; j < list.length; j += 1) {
+        if (list[j] !== undefined) {
+            break;
+        }
+    }
+
+    if (i < 0 && j >= list.length) {
+        // console.warn('none');
+        return undefined;
+    } else if (i < 0 && j < list.length) {
+        // console.warn('none on left');
+        return list[j];
+    } else if (j >= list.length && i >= 0) {
+        // console.warn('none on right');
+        return list[i];
+    }
+
+    const iDist = currentIndex - i;
+    const jDist = j - currentIndex;
+
+    if (jDist > iDist) {
+        return list[i];
+    }
+    return list[j];
+};
+
+/*
+console.log(getDefinedElementAround([undefined, undefined, 1, undefined], 2) === undefined);
+console.log(getDefinedElementAround([undefined, 0, 1, undefined], 2) === 0);
+console.log(getDefinedElementAround([0, undefined, 1, undefined], 2) === 0);
+console.log(getDefinedElementAround([0, undefined, 1, undefined, 3], 2) === 3);
+console.log(getDefinedElementAround([0, undefined, 1, undefined, undefined, 3], 2) === 0);
+console.log(getDefinedElementAround([undefined, undefined, 1, 0], 2) === 0);
+*/
+
+
 export const getLinkedListNode = (linkedList, n, selector) => {
     let newList = linkedList;
     for (let i = 0; i < n; i += 1) {

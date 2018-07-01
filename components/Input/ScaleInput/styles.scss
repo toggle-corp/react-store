@@ -22,6 +22,11 @@ $height-value-active: 30px;
         width: $width-value;
         height: $height-value;
 
+        &:focus {
+            // FIXME: this is a hack (scale has mostly dark colors similar to primary color)
+            @include outline-button($color-primary);
+        }
+
         &.active {
             width: $width-value-active;
             height: $height-value-active;

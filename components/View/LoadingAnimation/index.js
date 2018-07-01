@@ -66,18 +66,17 @@ export default class LoadingAnimation extends React.PureComponent {
         const iconClassName = `
             ${iconNames.loading}
             ${styles.icon}
+            loading-icon
         `;
 
         return (
             <div className={className}>
                 <span className={iconClassName} />
-                {
-                    message && (
-                        <span className={styles.message}>
-                            {message}
-                        </span>
-                    )
-                }
+                { message && (
+                    <span className={styles.message}>
+                        {message}
+                    </span>
+                )}
             </div>
         );
     }

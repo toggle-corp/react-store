@@ -24,6 +24,10 @@ const propTypes = {
     modifier: PropTypes.func,
 
     renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    rendererParams: PropTypes.func,
 };
 
 const defaultProps = {
@@ -31,6 +35,8 @@ const defaultProps = {
     modifier: undefined,
     keyExtractor: undefined,
     renderer: undefined,
+    rendererClassName: undefined,
+    rendererParams: undefined,
 };
 
 class List extends React.Component {
@@ -44,26 +50,24 @@ class List extends React.Component {
             modifier,
             renderer: Renderer,
             rendererClassName,
+            rendererParams,
         } = this.props;
 
         const key = (keyExtractor && keyExtractor(datum, i)) || datum;
 
         if (modifier) {
             return modifier(key, datum, i, data);
-        }
+        } else if (Renderer) {
+            const extraProps = rendererParams ? rendererParams(key, datum, i, data) : undefined;
 
-        if (Renderer) {
             return (
                 <Renderer
                     className={rendererClassName}
                     key={key}
-                    datum={datum}
-                    index={i}
-                    data={data}
+                    {...extraProps}
                 />
             );
         }
-
         // If there is no modifier, then return a ListItem
         return (
             <ListItem key={key}>
@@ -74,10 +78,7 @@ class List extends React.Component {
 
     render() {
         const { data } = this.props;
-
-        return data.map(
-            (datum, i) => this.renderListItem(datum, i),
-        );
+        return data.map(this.renderListItem);
     }
 }
 

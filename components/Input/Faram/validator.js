@@ -44,6 +44,7 @@ export const accumulateValues = (obj, schema, settings = { noUndefined: false })
                 values[fieldName] = value;
             }
         });
+        // FIXME: don't copy values if there is nothing to be cleared
         if (hasNoKeys(values)) {
             return settings.noUndefined ? emptyObject : undefined;
         }

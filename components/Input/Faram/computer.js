@@ -52,6 +52,9 @@ const computeOutputSettings = (obj, schema, data = []) => {
 const MAX_ITERATIONS = 100;
 
 const computeOutputs = (initialObj, schema) => {
+    if (!schema) {
+        return initialObj;
+    }
     let obj = initialObj;
     let finalObj = initialObj;
     let iteration = 0;

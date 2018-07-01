@@ -5,10 +5,12 @@ const propTypes = {
     load: PropTypes.func.isRequired,
     errorText: PropTypes.string,
     loadingText: PropTypes.string,
+    decorator: PropTypes.func,
 };
 const defaultProps = {
     errorText: 'Error while loading page.',
     loadingText: 'Loading...',
+    decorator: undefined,
 };
 
 // NOTE: Intentionally opted out of PureComponent
@@ -49,7 +51,15 @@ class Bundle extends React.Component {
             console.error('Bundle unmounted while loading Component.');
             return;
         }
-        this.setState({ BundledComponent: BundledComponent.default || BundledComponent });
+
+        let Component = BundledComponent.default || BundledComponent;
+        if (this.props.decorator) {
+            Component = this.props.decorator(Component);
+        }
+
+        this.setState({
+            BundledComponent: Component,
+        });
     }
 
     handleLoadError = (err) => {
@@ -70,15 +80,19 @@ class Bundle extends React.Component {
     render() {
         const {
             load, // eslint-disable-line no-unused-vars
+            decorator, // eslint-disable-line no-unused-vars
             errorText,
             loadingText,
             ...otherProps
         } = this.props;
-        const { BundledComponent, failed } = this.state;
-        const Loading = this.renderLoading;
+        const {
+            BundledComponent,
+            failed,
+        } = this.state;
 
         if (!BundledComponent) {
             const message = failed ? errorText : loadingText;
+            const Loading = this.renderLoading;
             return <Loading text={message} />;
         }
 

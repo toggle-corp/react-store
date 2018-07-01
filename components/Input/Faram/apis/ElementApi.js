@@ -25,6 +25,7 @@ export default class ElementApi {
         [key]: val,
     })
 
+    // PRIVATE
     getNewError = (oldError, key, err) => ({
         ...oldError,
         $internal: undefined,
@@ -32,38 +33,58 @@ export default class ElementApi {
     });
 
     // PRIVATE
-    createOnChange = faramIdentifier => (value, error) => {
+    getNewInfo = (key, val, infoFromInput, infoFromProps) => {
+        const faramElementName = (infoFromInput && infoFromInput.faramElementName) || [];
+        const firstRun = faramElementName.length === 0;
+
+        if (firstRun) {
+            return {
+                ...(infoFromInput || infoFromProps),
+                faramElementName: [key],
+                faramElementValue: val,
+            };
+        }
+        return {
+            ...infoFromInput,
+            faramElementName: [key, ...infoFromInput.faramElementName],
+        };
+    }
+
+    // PRIVATE
+    createOnChange = (faramIdentifier, faramInfo) => (value, error, info) => {
         if (!this.props.onChange) {
             return;
         }
 
         const newValue = this.getNewValue(this.props.value, faramIdentifier, value);
         const newError = this.getNewError(this.props.error, faramIdentifier, error);
+        const newInfo = this.getNewInfo(faramIdentifier, value, info, faramInfo);
 
         // NOTE: Save these values in this.props so that above
         // destructuring keeps working before setProps is
         // again called.
         this.props.value = newValue;
         this.props.error = newError;
-        this.props.onChange(newValue, newError);
+        this.props.onChange(newValue, newError, newInfo);
     }
 
     // PRIVATE
-    getOnChange = (faramIdentifier) => {
+    getOnChange = (faramIdentifier, faramInfo) => {
         if (this.changeHandlers[faramIdentifier]) {
             return this.changeHandlers[faramIdentifier];
         }
 
-        const handler = this.createOnChange(faramIdentifier);
+        const handler = this.createOnChange(faramIdentifier, faramInfo);
         this.changeHandlers[faramIdentifier] = handler;
         return handler;
     }
 
     // PUBLIC
-    getCalculatedProps = (faramIdentifier, elementType, action) => {
-        const calculator = this[`${elementType}Handler`];
-        if (calculator) {
-            const values = calculator(faramIdentifier, elementType, action);
+    getCalculatedProps = ({ faramIdentifier, elementType, faramAction, faramInfo }) => {
+        // For faramElement of type 'type', a typeHandler will be applicable
+        const handler = this[`${elementType}Handler`];
+        if (handler) {
+            const values = handler({ faramIdentifier, elementType, faramAction, faramInfo });
             return values;
         }
         console.error(`I do not have handler for ${elementType}`);
@@ -72,25 +93,25 @@ export default class ElementApi {
 
     // Handlers
 
-    inputHandler = (faramIdentifier) => {
+    inputHandler = ({ faramIdentifier, faramInfo }) => {
         const calculatedProps = {
             value: this.getValue(faramIdentifier),
             error: this.getError(faramIdentifier),
-            onChange: this.getOnChange(faramIdentifier),
+            onChange: this.getOnChange(faramIdentifier, faramInfo),
             disabled: this.isDisabled(),
             changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;
     }
 
-    outputHandler = (faramIdentifier) => {
+    outputHandler = ({ faramIdentifier }) => {
         const calculatedProps = {
             value: this.getValue(faramIdentifier),
         };
         return calculatedProps;
     }
 
-    errorIndicatorHandler = (faramIdentifier) => {
+    errorIndicatorHandler = ({ faramIdentifier }) => {
         const calculatedProps = {
             hasError: analyzeErrors(this.getError(faramIdentifier)),
         };

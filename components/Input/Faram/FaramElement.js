@@ -21,6 +21,7 @@ const propTypes = {
     forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
     faramAction: PropTypes.string,
     faramElement: PropTypes.bool,
+    faramInfo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -29,6 +30,7 @@ const defaultProps = {
     forwardedRef: undefined,
     faramAction: undefined,
     faramElement: false,
+    faramInfo: undefined,
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
@@ -44,6 +46,7 @@ const FaramElement = elementType => (WrappedComponent) => {
                 faramElementIndex,
                 faramAction,
                 faramElement,
+                faramInfo,
                 ...otherProps
             } = this.props;
 
@@ -53,10 +56,16 @@ const FaramElement = elementType => (WrappedComponent) => {
 
             const faramIdentifier = faramElementName || faramElementIndex;
             if (faramElement || isTruthy(faramIdentifier) || isTruthy(faramAction)) {
-                return {
-                    ...api.getCalculatedProps(faramIdentifier, elementType, faramAction),
+                const values = {
+                    ...api.getCalculatedProps({
+                        faramIdentifier,
+                        elementType,
+                        faramAction,
+                        faramInfo,
+                    }),
                     ...otherProps,
                 };
+                return values;
             }
 
             // Set reference
@@ -79,13 +88,15 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
     }
 
+    const ForwardedComponent = React.forwardRef((props, ref) => (
+        <FaramElementHOC
+            {...props}
+            forwardedRef={ref}
+        />
+    ));
+
     return hoistNonReactStatics(
-        React.forwardRef((props, ref) => (
-            <FaramElementHOC
-                {...props}
-                forwardedRef={ref}
-            />
-        )),
+        ForwardedComponent,
         WrappedComponent,
     );
 };

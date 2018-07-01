@@ -12,7 +12,7 @@ const defaultEmptyComponent = () => {
 
     return (
         <p className={classNames.join(' ')}>
-            Nothing here
+            Nothing Here
         </p>
     );
 };

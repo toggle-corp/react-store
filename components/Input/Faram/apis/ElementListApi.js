@@ -57,8 +57,8 @@ export default class ElementListApi extends ElementApi {
     }
 
     // PRIVATE
-    getOnClick = (faramIdentifier, elementType, action) => {
-        switch (action) {
+    getOnClick = ({ faramIdentifier, faramAction }) => {
+        switch (faramAction) {
             case 'add':
                 return this.add;
             case 'remove':
@@ -70,10 +70,10 @@ export default class ElementListApi extends ElementApi {
 
     // Handlers
 
-    actionHandler = (faramIdentifier, elementType, action) => {
+    actionHandler = ({ faramIdentifier, faramAction }) => {
         const calculatedProps = {
             disabled: this.isDisabled(),
-            onClick: this.getOnClick(faramIdentifier, elementType, action),
+            onClick: this.getOnClick({ faramIdentifier, faramAction }),
             changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;

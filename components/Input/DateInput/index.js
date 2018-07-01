@@ -60,6 +60,9 @@ class DateInput extends React.PureComponent {
         monthValue,
         yearValue,
     }) => {
+        if (!yearValue && !monthValue && !dayValue) {
+            return undefined;
+        }
         const yearStr = yearValue ? leftPad(yearValue, 4) : '';
         const monthStr = monthValue ? leftPad(monthValue, 2) : '';
         const dayStr = dayValue ? leftPad(dayValue, 2) : '';
@@ -442,6 +445,7 @@ class DateInput extends React.PureComponent {
                     type="button"
                     onClick={this.handleClearButtonClick}
                     title="Clear date"
+                    tabIndex="-1"
                 >
                     <span className={iconNames.closeRound} />
                 </button>
@@ -450,6 +454,7 @@ class DateInput extends React.PureComponent {
                     className={styles.button}
                     type="button"
                     title="Set date to today"
+                    tabIndex="-1"
                 >
                     <span className={iconNames.clock} />
                 </button>
@@ -458,6 +463,7 @@ class DateInput extends React.PureComponent {
                     className={styles.button}
                     type="button"
                     title="Open date picker"
+                    tabIndex="-1"
                 >
                     <span className={iconNames.calendar} />
                 </button>

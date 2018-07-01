@@ -42,7 +42,9 @@ export default class MultiViewContainer extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('hashchange', this.handleHashChange);
+        if (this.props.useHash) {
+            window.addEventListener('hashchange', this.handleHashChange);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -144,7 +146,7 @@ export default class MultiViewContainer extends React.Component {
         let isActive;
 
         if (useHash) {
-            isActive = this.getHash() === String(key);
+            isActive = this.state.hash === String(key);
         } else {
             isActive = String(active) === String(key);
         }

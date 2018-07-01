@@ -41,6 +41,7 @@ const propTypes = {
             label: PropTypes.string,
         }),
     ),
+    faramElementName: PropTypes.string,
 };
 
 const defaultProps = {
@@ -55,6 +56,7 @@ const defaultProps = {
     label: '',
     hideRemoveFromListButton: false,
     disabled: false,
+    faramElementName: undefined,
 };
 
 const emptyList = [];
@@ -217,6 +219,8 @@ class SelectInputWithList extends React.PureComponent {
             value,
             listProps,
             listClassName,
+            faramElementName, // eslint-disable-line no-unused-vars
+
             ...otherProps
         } = this.props;
 
