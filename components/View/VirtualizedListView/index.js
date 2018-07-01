@@ -15,11 +15,24 @@ const propTypeData = PropTypes.arrayOf(
 const propTypes = {
     className: PropTypes.string,
     data: propTypeData,
+
+    keyExtractor: PropTypes.func,
+    modifier: PropTypes.func,
+
+    renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
+
+    rendererParams: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     data: [],
+    modifier: undefined,
+    keyExtractor: undefined,
+    renderer: undefined,
+    rendererClassName: undefined,
+    rendererParams: undefined,
 };
 
 export default class VirtualizedListView extends React.Component {
@@ -74,9 +87,43 @@ export default class VirtualizedListView extends React.Component {
         }
     }
 
+    renderItem = (datum, i) => {
+        const {
+            data,
+            keyExtractor,
+            modifier,
+            renderer: Renderer,
+            rendererClassName: rendererClassNameFromProps,
+            rendererParams,
+        } = this.props;
+
+        const key = (keyExtractor && keyExtractor(datum, i)) || datum;
+
+        if (modifier) {
+            return modifier(key, datum, i, data);
+        } else if (Renderer) {
+            const extraProps = rendererParams
+                ? rendererParams(key, datum, i, data)
+                : undefined;
+            const rendererClassName = `
+                ${rendererClassNameFromProps}
+                ${styles.item}
+            `;
+
+            return (
+                <Renderer
+                    className={rendererClassName}
+                    key={key}
+                    {...extraProps}
+                />
+            );
+        }
+        console.warn('Must provide either renderer or modifier');
+        return null;
+    }
+
     renderItems = () => {
         const {
-            modifier,
             data,
             itemHeight,
         } = this.props;
@@ -106,7 +153,7 @@ export default class VirtualizedListView extends React.Component {
         );
 
         for (let i = startIndex; i < endIndex; i += 1) {
-            items.push(modifier(data[i], i));
+            items.push(this.renderItem(data[i], i));
         }
 
         items.push(
@@ -123,13 +170,12 @@ export default class VirtualizedListView extends React.Component {
 
     render() {
         const {
-            data,
             className: classNameFromProps,
         } = this.props;
 
         const className = `
             ${classNameFromProps}
-            ${styles.virutalizedListView}
+            ${styles.virtualizedListView}
             virtualized-list-view
         `;
 
