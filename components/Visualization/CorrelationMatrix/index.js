@@ -151,7 +151,7 @@ class CorrelationMatrix extends React.PureComponent {
             .range([0, height]);
 
         const colors = scaleSequential(colorScheme)
-            .domain([minValue, maxValue]);
+            .domain([Math.floor(minValue), Math.ceil(maxValue)]);
 
         const group = this.setContext(width, height, margins);
         const labels = group.append('g').attr('class', 'labels');
