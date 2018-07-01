@@ -22,7 +22,7 @@ const defaultProps = {
     data: [],
 };
 
-export default class ListView extends React.Component {
+export default class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -37,11 +37,9 @@ export default class ListView extends React.Component {
         this.container = React.createRef();
     }
 
-    componentWillMount() {
-        window.addEventListener('scroll', this.handleScroll, true);
-    }
-
     componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll, true);
+
         const { itemHeight } = this.props;
         const { current: container } = this.container;
 
@@ -67,7 +65,6 @@ export default class ListView extends React.Component {
         if (e.target === container) {
             const newOffset = Math.floor(container.scrollTop / itemHeight);
             if (newOffset !== offset) {
-                console.warn('scrollin');
                 clearTimeout(this.timeout);
 
                 this.timeout = setTimeout(() => {
@@ -94,22 +91,32 @@ export default class ListView extends React.Component {
         }
 
         const items = [];
-        const buffers = itemsPerPage;
+        const bufferSpace = itemsPerPage;
 
-        for (let i = 0; i < data.length; i += 1) {
-            if (i >= (offset - itemsPerPage) && i < (offset + (2 * itemsPerPage))) {
-                items.push(modifier(data[i]));
-            } else {
-                items.push(
-                    <div
-                        style={{
-                            height: `${itemHeight}px`,
-                        }}
-                    />,
-                );
-            }
+        const startIndex = Math.max(offset - bufferSpace, 0);
+        const endIndex = Math.min(offset + itemsPerPage + bufferSpace, data.length);
+
+        items.push(
+            <div
+                key="virtualized-list-item-start-div"
+                style={{
+                    height: `${itemHeight * startIndex}px`,
+                }}
+            />,
+        );
+
+        for (let i = startIndex; i < endIndex; i += 1) {
+            items.push(modifier(data[i], i));
         }
 
+        items.push(
+            <div
+                key="virtualized-list-item-end-div"
+                style={{
+                    height: `${itemHeight * (data.length - endIndex)}px`,
+                }}
+            />,
+        );
 
         return items;
     }
