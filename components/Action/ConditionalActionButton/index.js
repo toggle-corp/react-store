@@ -6,9 +6,24 @@ import Button from '../Button';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+    activeClassName: PropTypes.string,
+    condition: PropTypes.func,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+        PropTypes.array,
+        PropTypes.number,
+    ]),
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
+    className: '',
+    onClick: () => {},
+    value: {},
+    condition: () => false,
+    activeClassName: '',
 };
 
 class ConditionalActionButton extends React.PureComponent {
@@ -32,7 +47,6 @@ class ConditionalActionButton extends React.PureComponent {
             classNames.push(styles.active);
             classNames.push(activeClassName);
         }
-        console.warn(classNames);
         return classNames.join(' ');
     }
 
@@ -51,10 +65,11 @@ class ConditionalActionButton extends React.PureComponent {
 
     render() {
         const {
-            value,
-            className,
-            onClick,
-            condition,
+            value, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars
+            activeClassName, // eslint-disable-line no-unused-vars
+            onClick, // eslint-disable-line no-unused-vars
+            condition, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
