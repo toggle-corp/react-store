@@ -44,7 +44,13 @@ export const propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     labelSelector: PropTypes.func,
     onChange: PropTypes.func.isRequired,
-    options: PropTypes.arrayOf(PropTypes.object),
+    options: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.object,
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    ),
     optionsClassName: PropTypes.string,
     placeholder: PropTypes.string,
     renderEmpty: PropTypes.func,

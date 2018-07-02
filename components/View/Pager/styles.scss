@@ -45,6 +45,10 @@ $width-item-per-page-input: 48px;
             padding: 0 $spacing-extra-small;
         }
 
+        .item-title {
+            padding-left: $spacing-small;
+        }
+
         .current-items-end {
             font-family: $font-family-monospace;
         }

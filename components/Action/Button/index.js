@@ -76,6 +76,10 @@ const propTypes = {
     transparent: PropTypes.bool,
 
     type: PropTypes.string,
+    onClickParams: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.func,
+    ]),
 
     changeDelay: PropTypes.number,
 };
@@ -88,6 +92,7 @@ const defaultProps = {
     pending: false,
     iconName: undefined,
     onClick: () => {}, // no-op
+    onClickParams: {},
     children: undefined,
     smallHorizontalPadding: false,
     smallVerticalPadding: false,
