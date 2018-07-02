@@ -27,10 +27,6 @@ const ConfirmOnClick = (WrappedComponent) => {
             };
         }
 
-        componentWillUnmount() {
-            console.warn('Unmounting ConfirmOnClick');
-        }
-
         handleModalOpen = () => {
             this.setState({ showConfirm: true });
         }

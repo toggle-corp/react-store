@@ -1,0 +1,18 @@
+@import '../../../stylesheets/base';
+
+.virtualized-list-view {
+    padding: 0;
+
+    .item {
+        animation: fade-in $duration-transition-medium forwards;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
