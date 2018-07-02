@@ -1,7 +1,8 @@
 @import '../../../../../stylesheets/base';
 
 .row {
-    background-color: $color-background-row-alt;
+    @extend %background-alternating-row;
+    transition: $duration-transition-medium background-color ease-in-out, $duration-transition-medium color ease-in-out;
 
     &.hoverable {
         &:hover {
@@ -12,9 +13,5 @@
 
     &.highlighted {
         @include background-color($color-accent);
-    }
-
-    &:nth-child(odd) {
-        background-color: $color-background-row;
     }
 }
