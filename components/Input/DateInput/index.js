@@ -125,7 +125,7 @@ class DateInput extends React.PureComponent {
             };
 
             if (!getErrorForDateValues(newState)) {
-                this.setState(newState, this.validate);
+                this.setState(newState, () => this.validate(false));
             }
         }
     }
@@ -182,9 +182,9 @@ class DateInput extends React.PureComponent {
     processValue = (value) => {
         if (value) {
             const dates = value.split('-');
-            const y = dates[0];
-            const m = dates[1];
-            const d = dates[2];
+            const y = String(+dates[0]);
+            const m = String(+dates[1]);
+            const d = String(+dates[2]);
 
             return { d, m, y };
         }
