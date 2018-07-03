@@ -45,24 +45,31 @@ export default class VirtualizedListView extends React.Component {
         this.state = {
             itemsPerPage: undefined,
             offset: 0,
+            itemHeight: undefined,
         };
 
         this.container = React.createRef();
+        this.item = React.createRef();
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
 
-        const { itemHeight } = this.props;
         const { current: container } = this.container;
+        const { current: item } = this.item;
 
-        if (container) {
-            const bcr = container.getBoundingClientRect();
-            const itemsPerPage = Math.ceil(bcr.height / itemHeight);
+        const itemBCR = item.getBoundingClientRect();
+        const itemHeight = itemBCR.height;
 
-            // eslint-disable-next-line react/no-did-mount-set-state
-            this.setState({ itemsPerPage });
-        }
+        const containerBCR = container.getBoundingClientRect();
+        const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+
+
+        // eslint-disable-next-line react/no-did-mount-set-state
+        this.setState({
+            itemsPerPage,
+            itemHeight,
+        });
     }
 
     componentWillUnmount() {
@@ -70,19 +77,21 @@ export default class VirtualizedListView extends React.Component {
     }
 
     handleScroll = (e) => {
-        const { itemHeight } = this.props;
-        const { current: container } = this.container;
+        const { itemHeight } = this.state;
 
-        const { offset } = this.state;
+        if (itemHeight) {
+            const { current: container } = this.container;
+            const { offset } = this.state;
 
-        if (e.target === container) {
-            const newOffset = Math.floor(container.scrollTop / itemHeight);
-            if (newOffset !== offset) {
-                clearTimeout(this.timeout);
+            if (e.target === container) {
+                const newOffset = Math.floor(container.scrollTop / itemHeight);
+                if (newOffset !== offset) {
+                    clearTimeout(this.timeout);
 
-                this.timeout = setTimeout(() => {
-                    this.setState({ offset: newOffset });
-                }, 200);
+                    this.timeout = setTimeout(() => {
+                        this.setState({ offset: newOffset });
+                    }, 200);
+                }
             }
         }
     }
@@ -118,20 +127,27 @@ export default class VirtualizedListView extends React.Component {
                 />
             );
         }
+
         console.warn('Must provide either renderer or modifier');
         return null;
     }
 
     renderItems = () => {
-        const {
-            data,
-            itemHeight,
-        } = this.props;
+        const { data } = this.props;
 
         const {
             itemsPerPage,
             offset,
+            itemHeight,
         } = this.state;
+
+        if (itemHeight === undefined) {
+            return (
+                <div ref={this.item}>
+                    { this.renderItem(data[0], 0) }
+                </div>
+            );
+        }
 
         if (!itemsPerPage) {
             return null;
