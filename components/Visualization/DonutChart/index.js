@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { PropTypes } from 'prop-types';
 import { schemeAccent } from 'd3-scale-chromatic';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
@@ -42,7 +42,6 @@ const defaultProps = {
     colorScheme: schemeAccent,
     className: '',
     labelModifier: undefined,
-    loading: false,
 };
 
 class DonutChart extends PureComponent {
@@ -59,10 +58,10 @@ class DonutChart extends PureComponent {
 
     setContext = (data, width, height) => (
         select(this.svg)
-            .datum(data)
-            .append('g')
             .attr('width', width)
             .attr('height', height)
+            .datum(data)
+            .append('g')
             .attr('transform', `translate(${width / 2}, ${height / 2})`)
     )
 
