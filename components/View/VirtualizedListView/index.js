@@ -145,9 +145,11 @@ export default class VirtualizedListView extends React.Component {
 
         items.push(
             <div
+                className={styles.virtualDiv}
                 key="virtualized-list-item-start-div"
                 style={{
                     height: `${itemHeight * startIndex}px`,
+                    backgroundSize: `100% ${itemHeight * 2}px`,
                 }}
             />,
         );
@@ -158,9 +160,11 @@ export default class VirtualizedListView extends React.Component {
 
         items.push(
             <div
+                className={styles.virtualDiv}
                 key="virtualized-list-item-end-div"
                 style={{
                     height: `${itemHeight * (data.length - endIndex)}px`,
+                    backgroundSize: `100% ${itemHeight * 2}px`,
                 }}
             />,
         );

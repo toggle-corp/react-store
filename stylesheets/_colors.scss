@@ -145,3 +145,13 @@ $color-grid-path: #e8e8e8 !default;
 $color-axis-path: #d3d3d3 !default;
 $color-links: #f0f0f0 !default;
 $color-background-overlay: rgba(0, 0, 0, .7) !default;
+
+body {
+    --color-foreground: $color-foreground;
+    --color-foreground-alt: $color-foreground-alt;
+    --color-background: $color-background;
+    --color-background-alt: $color-background-alt;
+    --color-background-row: $color-background-row;
+    --color-background-row-alt: $color-background-row-alt;
+    --color-accent: $color-accent;
+}

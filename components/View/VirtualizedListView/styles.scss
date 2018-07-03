@@ -3,6 +3,16 @@
 .virtualized-list-view {
     padding: 0;
 
+    .virtual-div {
+        background: linear-gradient(
+            to bottom,
+            $color-background-row,
+            $color-background-row 50%,
+            $color-background-row-alt 50%,
+            $color-background-row-alt
+        );
+    }
+
     .item {
         animation: fade-in $duration-transition-medium forwards;
     }
