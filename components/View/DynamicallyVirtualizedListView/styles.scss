@@ -1,0 +1,28 @@
+@import '../../../stylesheets/base';
+
+.dynamically-virtualized-list-view {
+    overflow: auto;
+
+    .virtual-div {
+        background: linear-gradient(
+            to bottom,
+            $color-background-row,
+            $color-background-row 50%,
+            $color-background-row-alt 50%,
+            $color-background-row-alt
+        );
+    }
+
+    .item {
+        animation: fade-in $duration-transition-medium forwards;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
