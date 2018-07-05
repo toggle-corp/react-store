@@ -64,7 +64,7 @@ const defaultProps = {
     onChange: () => {},
     optionLabelSelector: undefined,
     options: [],
-    optionsClassName: undefined,
+    optionsClassName: '',
     placeholder: 'Select an option',
     renderEmpty: undefined,
     showHintAndError: true,

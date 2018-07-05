@@ -16,7 +16,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: undefined,
+    className: '',
     label: '',
     value: undefined,
     options: [],

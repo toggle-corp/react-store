@@ -31,7 +31,7 @@ const defaultProps = {
     modifier: undefined,
     keyExtractor: undefined,
     renderer: undefined,
-    rendererClassName: undefined,
+    rendererClassName: '',
     rendererParams: undefined,
 };
 

@@ -111,16 +111,20 @@ export default class ElementApi {
         return calculatedProps;
     }
 
-    errorIndicatorHandler = ({ faramIdentifier }) => {
+    errorMessageHandler = () => {
         const calculatedProps = {
-            hasError: analyzeErrors(this.getError(faramIdentifier)),
+            errors: this.getInternalError(),
         };
         return calculatedProps;
     }
 
-    errorMessageHandler = () => {
+    // NOTE: different from 'errorMessage'
+    // sends the overall error tree instead of $internal
+    errorIndicatorHandler = ({ faramIdentifier }) => {
+        const errors = this.getError(faramIdentifier);
         const calculatedProps = {
-            errors: this.getInternalError(),
+            hasError: analyzeErrors(errors),
+            errors,
         };
         return calculatedProps;
     }
