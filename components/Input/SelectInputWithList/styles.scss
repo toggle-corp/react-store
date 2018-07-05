@@ -4,8 +4,18 @@
     display: flex;
     flex-direction: column;
 
-    .input {
+    .header-container {
+        display: flex;
+        align-items: flex-start;
         flex-shrink: 0;
+
+        .input {
+            flex-grow: 1;
+
+            &.has-top-right-child {
+                padding-left: $spacing-small;
+            }
+        }
     }
 
     .list {
@@ -24,10 +34,17 @@
             }
 
             .remove-button {
+                display: none;
                 flex-shrink: 0;
 
                 &.disabled {
                     color: $color-text-label;
+                }
+            }
+
+            &:hover {
+                .remove-button {
+                    display: block;
                 }
             }
         }
