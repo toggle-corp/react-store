@@ -11,7 +11,7 @@ import { keys } from 'd3-collection';
 import { extent } from 'd3-array';
 import { axisLeft } from 'd3-axis';
 import { brushY, brushSelection } from 'd3-brush';
-import { line } from 'd3';
+import { line } from 'd3-shape';
 
 import Responsive from '../../General/Responsive';
 

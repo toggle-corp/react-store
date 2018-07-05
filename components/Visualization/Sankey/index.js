@@ -7,7 +7,6 @@ import { extent } from 'd3-array';
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
-import LoadingAnimation from '../../View/LoadingAnimation';
 import Responsive from '../../General/Responsive';
 
 import { getStandardFilename } from '../../../utils/common';
@@ -35,7 +34,6 @@ const propTypes = {
     fontSizeExtent: PropTypes.arrayOf(PropTypes.number),
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    loading: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -54,7 +52,6 @@ const defaultProps = {
     colorScheme: schemePaired,
     fontSizeExtent: [14, 30],
     className: '',
-    loading: false,
     margins: {
         top: 0,
         right: 0,
@@ -262,20 +259,19 @@ class Sankey extends PureComponent {
     render() {
         const {
             className,
-            loading,
         } = this.props;
 
+        const svgClassName = [
+            'sankey',
+            styles.sankey,
+            className,
+        ].join(' ');
+
         return (
-            <div
-                className={`${styles['sankey-container']} ${className}`}
-                ref={(el) => { this.container = el; }}
-            >
-                { loading && <LoadingAnimation /> }
-                <svg
-                    className={styles.sankey}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={svgClassName}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
