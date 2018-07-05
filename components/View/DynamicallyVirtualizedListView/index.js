@@ -36,6 +36,9 @@ const defaultProps = {
     rendererParams: undefined,
 };
 
+// Inital assumption for the height of each item
+const DEFAULT_ITEM_HEIGHT = 18;
+
 export default class DynamicallyVirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -49,14 +52,11 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         };
 
         this.itemHeights = {};
-        this.itemHeight = 18;
-
         this.container = React.createRef();
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-
         this.calculateContainerHeight();
     }
 
@@ -64,34 +64,67 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
+    getTotalHeight = (data) => {
+        let totalHeight = 0;
+
+        data.forEach((datum, i) => {
+            totalHeight += this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
+        });
+
+        return totalHeight;
+    }
+
+    getOffset = (data) => {
+        let { containerScrollTop } = this.state;
+        let offset = 0;
+
+        for (offset = 0; offset < data.length; offset += 1) {
+            if (containerScrollTop > 0) {
+                containerScrollTop -= this.itemHeights[offset] || DEFAULT_ITEM_HEIGHT;
+            } else {
+                break;
+            }
+        }
+
+        return offset;
+    };
+
     calculateContainerHeight = () => {
         const { current: container } = this.container;
+
         if (container) {
             const containerBCR = container.getBoundingClientRect();
+            const { height: containerHeight } = containerBCR;
+            const { containerHeight: containerHeightFromState } = this.state;
 
-            if (containerBCR.height !== this.state.containerHeight) {
+            if (containerHeight !== containerHeightFromState) {
                 this.setState({ containerHeight: containerBCR.height });
             }
 
-            console.warn('container height', containerBCR);
+            this.itemsPerPage = Math.ceil(containerHeight / DEFAULT_ITEM_HEIGHT);
         }
     }
 
     handleScroll = (e) => {
-        if (!this.itemHeight) {
+        if (!this.state.containerHeight) {
+            return;
+        }
+
+        if (this.ignoreScrollEvent) {
+            this.ignoreScrollEvent = false;
             return;
         }
 
         const { current: container } = this.container;
-        const { offset } = this.state;
+        const { containerScrollTop } = this.state;
 
         if (e.target === container) {
-            const newOffset = Math.floor(container.scrollTop / this.itemHeight);
-            if (newOffset !== offset) {
+            const { scrollTop: newContainerScrollTop } = container;
+            if (containerScrollTop !== newContainerScrollTop) {
                 clearTimeout(this.timeout);
 
                 this.timeout = setTimeout(() => {
-                    this.setState({ offset: newOffset });
+                    this.setState({ containerScrollTop: container.scrollTop });
                 }, 200);
             }
         }
@@ -146,60 +179,87 @@ export default class DynamicallyVirtualizedListView extends React.Component {
 
     renderItems = () => {
         const { data } = this.props;
-
-        const {
-            containerHeight,
-            offset,
-        } = this.state;
+        const { containerHeight } = this.state;
 
         if (!containerHeight) {
             this.calculateContainerHeight();
             return null;
         }
 
-        const bufferSpace = this.itemsPerPage;
+        if (data.length === 0) {
+            return null;
+        }
+
+        this.ignoreScrollEvent = true;
+        const offset = this.getOffset(data);
+
         const items = [];
+        const numberOfBufferedItems = 10;
+        const renderStartIndex = Math.max(offset - numberOfBufferedItems, 0);
 
-        const startIndex = Math.max(offset - bufferSpace, 0);
-        let endIndex = Math.min(offset + this.itemsPerPage + bufferSpace, data.length);
-
-        console.warn(offset, bufferSpace);
-        console.warn(startIndex, endIndex, bufferSpace, containerHeight, this.itemHeight);
+        let topVirtualContainerHeight = 0;
+        for (let i = 0; i < renderStartIndex; i += 1) {
+            topVirtualContainerHeight += this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
+        }
 
         items.push(
             <div
                 className={styles.virtualDiv}
                 key="virtualized-list-item-start-div"
-                style={{
-                    height: `${this.itemHeight * startIndex}px`,
-                    backgroundSize: `100% ${this.itemHeight * 2}px`,
-                }}
+                style={{ height: `${topVirtualContainerHeight}px` }}
             />,
         );
 
-        for (let i = startIndex; i < endIndex; i += 1) {
-            const item = this.renderItem(data[i], i);
+        let currentRenderHeight = 0;
+        let renderHeightUptoFirst = 0;
 
-            if (!this.itemHeights[i]) {
-                const itemSize = getRenderedSize(item);
-                this.itemHeights[i] = itemSize.height;
-                this.updateItemHeight();
-                endIndex = Math.min(offset + this.itemsPerPage + bufferSpace, data.length);
+        let i;
+        // keep rendering untill the container is filled up to end
+        for (i = renderStartIndex; currentRenderHeight < containerHeight; i += 1) {
+            if (i >= data.length) {
+                break;
             }
 
+            if (i === offset) {
+                renderHeightUptoFirst = currentRenderHeight;
+            }
+
+            const item = this.renderItem(data[i], i);
+
+            const itemSize = getRenderedSize(item);
+            this.itemHeights[i] = itemSize.height;
+
+            currentRenderHeight += this.itemHeights[i];
             items.push(item);
+        }
+
+        const renderEndIndex = Math.min(i + numberOfBufferedItems, data.length);
+
+        // render buffer space
+        for (; i < renderEndIndex; i += 1) {
+            const item = this.renderItem(data[i], i);
+
+            const itemSize = getRenderedSize(item);
+            this.itemHeights[i] = itemSize.height;
+
+            items.push(item);
+        }
+
+        let bottomVirtualContainerHeight = 0;
+        for (let j = i; j < data.length; j += 1) {
+            bottomVirtualContainerHeight += this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
         }
 
         items.push(
             <div
                 className={styles.virtualDiv}
                 key="virtualized-list-item-end-div"
-                style={{
-                    height: `${this.itemHeight * (data.length - endIndex)}px`,
-                    backgroundSize: `100% ${this.itemHeight * 2}px`,
-                }}
+                style={{ height: `${bottomVirtualContainerHeight}px` }}
             />,
         );
+
+        const { current: container } = this.container;
+        container.scrollTop += renderHeightUptoFirst;
 
         return items;
     }

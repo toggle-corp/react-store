@@ -123,7 +123,6 @@ export default class VirtualizedListView extends React.Component {
                 const newOffset = Math.floor(container.scrollTop / itemHeight);
                 if (newOffset !== offset) {
                     window.cancelIdleCallback(this.idleCallback);
-
                     this.idleCallback = window.requestIdleCallback(() => {
                         this.setState({ offset: newOffset });
                     }, { timeout: MAX_IDLE_TIMEOUT });

@@ -4,17 +4,15 @@
     overflow: auto;
 
     .virtual-div {
-        background: linear-gradient(
-            to bottom,
-            $color-background-row,
-            $color-background-row 50%,
-            $color-background-row-alt 50%,
-            $color-background-row-alt
-        );
-    }
+        $stripe-size: $spacing-small;
 
-    .item {
-        animation: fade-in $duration-transition-medium forwards;
+        background: repeating-linear-gradient(
+            45deg,
+            $color-background-row,
+            $color-background-row $stripe-size,
+            $color-background-row-alt $stripe-size,
+            $color-background-row-alt 2 * $stripe-size
+        );
     }
 }
 
