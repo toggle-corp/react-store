@@ -7,11 +7,13 @@ const propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
     confirmationMessage: PropTypes.string.isRequired,
+    confirmationTitle: PropTypes.string,
 };
 
 const defaultProps = {
     onClick: () => {},
     disabled: false,
+    confirmationTitle: undefined,
 };
 
 const ConfirmOnClick = (WrappedComponent) => {
@@ -43,6 +45,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                 disabled,
                 onClick, // eslint-disable-line no-unused-vars
                 confirmationMessage,
+                confirmationTitle,
                 ...otherProps
             } = this.props;
             const { showConfirm } = this.state;
@@ -58,6 +61,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                         <Confirm
                             show
                             onClose={this.handleModalClose}
+                            title={confirmationTitle}
                         >
                             <p>
                                 {confirmationMessage}
