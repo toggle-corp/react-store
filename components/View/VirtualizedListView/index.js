@@ -54,8 +54,6 @@ const defaultProps = {
     emptyComponent: DefaultEmptyComponent,
 };
 
-const MAX_IDLE_TIMEOUT = 200;
-
 export default class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -122,10 +120,11 @@ export default class VirtualizedListView extends React.Component {
             if (e.target === container) {
                 const newOffset = Math.floor(container.scrollTop / itemHeight);
                 if (newOffset !== offset) {
-                    window.cancelIdleCallback(this.idleCallback);
-                    this.idleCallback = window.requestIdleCallback(() => {
+                    clearTimeout(this.timeout);
+
+                    this.timeout = setTimeout(() => {
                         this.setState({ offset: newOffset });
-                    }, { timeout: MAX_IDLE_TIMEOUT });
+                    }, 200);
                 }
             }
         }
