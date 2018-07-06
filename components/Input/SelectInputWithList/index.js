@@ -42,8 +42,7 @@ const propTypes = {
             label: PropTypes.string,
         }),
     ),
-    faramElementName: PropTypes.string,
-    topRightChild: PropTypes.node,
+    topRightChild: PropTypes.func,
 };
 
 const defaultProps = {
@@ -60,7 +59,6 @@ const defaultProps = {
     hideRemoveFromListButton: false,
     topRightChild: undefined,
     disabled: false,
-    faramElementName: undefined,
 };
 
 const emptyList = [];
@@ -211,18 +209,6 @@ class SelectInputWithList extends React.PureComponent {
         );
     }
 
-    renderTopRightChild = () => {
-        const {
-            topRightChild,
-        } = this.props;
-
-        if (!topRightChild) {
-            return null;
-        }
-
-        return topRightChild;
-    }
-
     render() {
         const {
             className, // eslint-disable-line no-unused-vars
@@ -236,8 +222,7 @@ class SelectInputWithList extends React.PureComponent {
             selectClassName,
             listProps,
             listClassName,
-            topRightChild,
-            faramElementName, // eslint-disable-line no-unused-vars
+            topRightChild: TopRightChild,
 
             ...otherProps
         } = this.props;
@@ -256,11 +241,9 @@ class SelectInputWithList extends React.PureComponent {
             'select',
         ];
 
-        if (topRightChild) {
+        if (TopRightChild) {
             selectClassNames.push(styles.hasTopRightChild);
         }
-
-        const TopRightChild = this.renderTopRightChild;
 
         return (
             <div className={this.getClassName()}>
@@ -276,7 +259,7 @@ class SelectInputWithList extends React.PureComponent {
                         value={value}
                         {...otherProps}
                     />
-                    <TopRightChild />
+                    {TopRightChild && <TopRightChild />}
                 </div>
                 <ListView
                     className={listClassNames.join(' ')}
