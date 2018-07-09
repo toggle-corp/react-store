@@ -9,6 +9,7 @@
     @include shadow-medium;
     @include background-color($color-foreground);
 
+    display: none;
     position: absolute;
     z-index: 10;
     padding: $spacing-small $spacing-medium-alt;

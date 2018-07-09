@@ -6,11 +6,13 @@
 
     .tab {
         @extend %button-base;
+        display: block;
         border-bottom: $width-separator-thin solid $color-separator;
         border-left: $width-separator-thick solid transparent;
         padding: $spacing-small $spacing-medium;
         width: 100%;
         text-align: left;
+        word-break: break-all;
         color: $color-text-label;
 
         &:hover {

@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ListView from '../List/ListView';
+import HashManager from '../../General/HashManager';
+import List from '../List';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -12,6 +14,9 @@ const propTypes = {
     onClick: PropTypes.func,
     active: PropTypes.string,
     modifier: PropTypes.func,
+    replaceHistory: PropTypes.bool,
+    useHash: PropTypes.bool,
+    defaultHash: PropTypes.string,
 };
 
 const defaultProps = {
@@ -20,11 +25,21 @@ const defaultProps = {
     tabs: {},
     onClick: () => {},
     modifier: undefined,
+    useHash: false,
+    replaceHistory: false,
+    defaultHash: undefined,
 };
 
 export default class VerticalTabs extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            hash: undefined,
+        };
+    }
 
     getClassName = () => {
         const { className } = this.props;
@@ -52,15 +67,30 @@ export default class VerticalTabs extends React.Component {
         return classNames.join(' ');
     }
 
-    handleTabClick = (key) => {
-        const { onClick } = this.props;
+    handleHashChange = (hash) => {
+        this.setState({ hash });
+    }
+
+    handleTabClick = (key, e) => {
+        const {
+            onClick,
+            useHash,
+            replaceHistory,
+        } = this.props;
+
+        if (useHash && replaceHistory) {
+            window.location.replace(`#/${key}`);
+            e.preventDefault();
+        }
+
         onClick(key);
     }
 
-    renderTab = (key, data) => {
+    renderTab = (_, data) => {
         const {
             active,
             tabs,
+            useHash,
             modifier,
         } = this.props;
 
@@ -68,34 +98,64 @@ export default class VerticalTabs extends React.Component {
             return null;
         }
 
-        const isActive = data === active;
-        const className = this.getTabClassName(isActive);
-        const onClick = () => { this.handleTabClick(data); };
+        const onClick = (e) => { this.handleTabClick(data, e); };
         const content = modifier ? modifier(data, tabs[data]) : tabs[data];
 
+        if (!useHash) {
+            const isActive = data === active;
+            const className = this.getTabClassName(isActive);
+
+            return (
+                <button
+                    className={className}
+                    key={data}
+                    onClick={onClick}
+                    type="button"
+                >
+                    { content }
+                </button>
+            );
+        }
+
+        const { hash } = this.state;
+
+        const isActive = hash === data;
+        const className = this.getTabClassName(isActive);
+
         return (
-            <button
+            <a
+                onClick={onClick}
+                href={`#/${data}`}
                 className={className}
                 key={data}
-                onClick={onClick}
-                type="button"
             >
                 { content }
-            </button>
+            </a>
         );
     }
 
     render() {
-        const { tabs } = this.props;
+        const {
+            tabs,
+            useHash,
+            defaultHash,
+        } = this.props;
 
         const tabList = Object.keys(tabs);
         const className = this.getClassName();
         return (
-            <ListView
-                className={className}
-                data={tabList}
-                modifier={this.renderTab}
-            />
+            <div className={className}>
+                <HashManager
+                    tabs={tabs}
+                    useHash={useHash}
+                    defaultHash={defaultHash}
+                    onHashChange={this.handleHashChange}
+                />
+                <List
+                    data={tabList}
+                    modifier={this.renderTab}
+                />
+            </div>
         );
     }
 }

@@ -9,13 +9,14 @@
         align-items: flex-end;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: 1px solid $color-separator;
+        border-bottom: $width-separator-thin solid $color-separator;
         background-color: $color-background-header;
         padding: $spacing-small $spacing-medium-alt;
 
         .left-content {
+            align-self: center;
+
             .heading {
-                align-self: center;
                 margin: 0;
                 margin-right: $spacing-medium;
                 text-transform: uppercase;
@@ -43,5 +44,7 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        background-color: $color-foreground-alt;
+        padding: $spacing-large;
     }
 }
