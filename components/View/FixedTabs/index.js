@@ -159,7 +159,7 @@ export default class FixedTabs extends React.Component {
                     data={tabList}
                     modifier={this.renderTab}
                 />
-                <div className={styles.void}>
+                <div className={styles.blank}>
                     { this.props.children }
                 </div>
             </div>
