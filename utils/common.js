@@ -588,6 +588,37 @@ export const isValidHexColor = (value) => {
     return colorHex.test(value);
 };
 
+// Convert a #ffffff hex string into an [r,g,b] array
+export const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) {
+        return undefined;
+    }
+    // eslint-disable-next-line no-unused-vars
+    const [_, r, g, b] = result;
+    return result ? [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)] : undefined;
+};
+
+// Inverse of the above
+export const rgbToHex = ([r, g, b]) => (
+    // eslint-disable-next-line no-bitwise
+    `#${((r << 16) + (g << 8) + b).toString(16).padStart(6, '0')}`
+);
+
+// Interpolates two [r,g,b] colors and returns an [r,g,b] of the result
+// Taken from the awesome ROT.js roguelike dev library at
+// https://github.com/ondras/rot.js
+export const interpolateRgb = (color1, color2, factor = 0.5) => {
+    const result = [];
+    for (let i = 0; i < 3; i += 1) {
+        result.push(
+            Math.round((factor * (color2[i] - color1[i])) + color1[i]),
+        );
+    }
+    return result;
+};
+
+
 // COMPARISION
 
 const comparision = (extractor, func) => (x, y, direction = 1) => {
