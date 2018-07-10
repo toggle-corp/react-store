@@ -161,7 +161,7 @@ const wrapViz = (WrappedComponent) => {
                         <SelectInput
                             clearable={false}
                             keySelector={d => d.title}
-                            label="Colorscheme"
+                            label="Color scheme"
                             labelSelector={d => d.title}
                             optionLabelSelector={d => d.image}
                             optionsClassName={styles.selectInputOptions}

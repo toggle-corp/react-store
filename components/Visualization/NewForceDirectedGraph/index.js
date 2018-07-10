@@ -2,7 +2,13 @@ import React from 'react';
 import { select, event } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
-import { forceSimulation, forceLink, forceManyBody, forceCenter } from 'd3-force';
+import {
+    forceSimulation,
+    forceLink,
+    forceManyBody,
+    forceCenter,
+    forceCollide,
+} from 'd3-force';
 import { drag } from 'd3-drag';
 import { extent } from 'd3-array';
 import { voronoi } from 'd3-voronoi';
@@ -21,7 +27,6 @@ import styles from './styles.scss';
  * groupAccessor: return the group which each nodes belong to.
  * valueAccessor: returns the value of each link.
  * useVoronoi: use Voronoi clipping for nodes.
- * circleRadius: The radius of the circle
  * colorScheme: the array of hex color values.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -36,9 +41,10 @@ const propTypes = {
         links: PropTypes.arrayOf(PropTypes.object),
     }),
     idAccessor: PropTypes.func.isRequired,
+    labelAccessor: PropTypes.func,
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
-    circleRadius: PropTypes.number,
+    radiusAccessor: PropTypes.func,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -61,9 +67,10 @@ const defaultProps = {
         links: [],
     },
     groupAccessor: d => d.index,
+    labelAccessor: d => d.label,
     valueAccessor: () => 1,
-    circleRadius: 30,
-    useVoronoi: true,
+    radiusAccessor: () => 30,
+    useVoronoi: false,
     className: '',
     colorScheme: schemePaired,
     onClusterSizeChange: () => {},
@@ -87,7 +94,7 @@ const deepCopy = data => (
 /**
  * Represents the  network of nodes in force layout with many-body force.
  */
-
+const circleRadius = 30;
 class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -109,7 +116,7 @@ class ForceDirectedGraph extends React.PureComponent {
             colorScheme,
             groupAccessor,
             valueAccessor,
-            circleRadius,
+            radiusAccessor,
             useVoronoi,
             clusterSize,
         } = this.props;
@@ -121,7 +128,7 @@ class ForceDirectedGraph extends React.PureComponent {
             colorScheme,
             groupAccessor,
             valueAccessor,
-            circleRadius,
+            radiusAccessor,
             useVoronoi,
             clusterSize,
             data: this.data,
@@ -145,7 +152,7 @@ class ForceDirectedGraph extends React.PureComponent {
             colorScheme,
             valueAccessor,
             groupAccessor,
-            circleRadius,
+            radiusAccessor,
             useVoronoi,
         } = nextProps;
 
@@ -161,7 +168,7 @@ class ForceDirectedGraph extends React.PureComponent {
                 idAccessor,
                 groupAccessor,
                 valueAccessor,
-                circleRadius,
+                radiusAccessor,
                 useVoronoi,
                 colorScheme,
                 clusterSize,
@@ -192,6 +199,7 @@ class ForceDirectedGraph extends React.PureComponent {
         },
         colorScheme,
         valueAccessor,
+        radiusAccessor,
         clusterSize,
         data,
         container,
@@ -199,6 +207,10 @@ class ForceDirectedGraph extends React.PureComponent {
     }) => {
         const minmax = extent(data.links, valueAccessor);
 
+        let radiusExtent = extent(data.nodes, radiusAccessor);
+        if (radiusExtent[0] === radiusExtent[1]) {
+            radiusExtent = [0, radiusExtent[0]];
+        }
         const width = widthFromProps - left - right;
         const height = heightFromProps - top - bottom;
         const radius = Math.min(width, height) / 2;
@@ -220,7 +232,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         this.color = scaleOrdinal().range(colorScheme);
         this.scaledValues = scaleLinear().domain(minmax).range([1, 3]);
-
+        this.scaledRadius = scaleLinear().domain(radiusExtent).range([15, 30]);
         this.voronois = voronoi()
             .x(d => d.x)
             .y(d => d.y)
@@ -229,7 +241,7 @@ class ForceDirectedGraph extends React.PureComponent {
         const link = forceLink()
             .id(d => idAccessor(d))
             .distance(distance(clusterSize));
-        const charge = forceManyBody();
+        const charge = forceManyBody().strength(-10);
         const center = forceCenter(width / 2, height / 2);
 
         this.simulation = forceSimulation()
@@ -242,7 +254,7 @@ class ForceDirectedGraph extends React.PureComponent {
         const {
             boundingClientRect,
             margins,
-            circleRadius,
+            radiusAccessor,
             useVoronoi,
         } = this.props;
 
@@ -262,10 +274,11 @@ class ForceDirectedGraph extends React.PureComponent {
         const height = heightFromProps - top - bottom;
 
         this.nodes.each((d) => {
+            const radius = this.scaledRadius(radiusAccessor(d));
             // eslint-disable-next-line no-param-reassign
-            d.x = Math.max(circleRadius, Math.min(width - circleRadius, d.x));
+            d.x = Math.max(radius, Math.min(width - radius, d.x));
             // eslint-disable-next-line no-param-reassign
-            d.y = Math.max(circleRadius, Math.min(height - circleRadius, d.y));
+            d.y = Math.max(radius, Math.min(height - radius, d.y));
         });
 
         this.links
@@ -324,10 +337,10 @@ class ForceDirectedGraph extends React.PureComponent {
     handleMouseOver = (d) => {
         const {
             onMouseOver,
-            idAccessor,
+            labelAccessor,
         } = this.props;
 
-        const id = idAccessor(d);
+        const title = labelAccessor(d);
 
         if (onMouseOver) {
             onMouseOver(d);
@@ -335,7 +348,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         this.tooltip.html(`
             <span class="name">
-                ${id}
+                ${title}
             </span>
         `);
 
@@ -408,7 +421,7 @@ class ForceDirectedGraph extends React.PureComponent {
         colorScheme,
         valueAccessor,
         groupAccessor,
-        circleRadius,
+        radiusAccessor,
         useVoronoi,
         data,
     }) => {
@@ -437,6 +450,7 @@ class ForceDirectedGraph extends React.PureComponent {
             margins,
             colorScheme,
             valueAccessor,
+            radiusAccessor,
             clusterSize,
             data,
             container,
@@ -482,7 +496,7 @@ class ForceDirectedGraph extends React.PureComponent {
         } else {
             this.nodes
                 .append('circle')
-                .attr('r', 5)
+                .attr('r', d => this.scaledRadius(radiusAccessor(d)))
                 .attr('fill', d => this.color(groupAccessor(d)));
         }
 
