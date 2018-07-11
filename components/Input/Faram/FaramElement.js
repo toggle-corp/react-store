@@ -50,6 +50,9 @@ const FaramElement = elementType => (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
+            // Set reference
+            otherProps.ref = forwardedRef;
+
             if (!api) {
                 return otherProps;
             }
@@ -67,9 +70,6 @@ const FaramElement = elementType => (WrappedComponent) => {
                 };
                 return values;
             }
-
-            // Set reference
-            otherProps.ref = forwardedRef;
 
             return otherProps;
         }
