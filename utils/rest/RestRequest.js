@@ -45,7 +45,8 @@ export default class RestRequest {
     ) {
         const createWarningFn = text => (response) => {
             const parameters = typeof params === 'function' ? params() : params;
-            console.warn(`${text} ${url}`, parameters);
+            const urlValues = typeof url === 'function' ? url() : url;
+            console.warn(`${text} ${urlValues}`, parameters);
             if (response) {
                 console.log(response);
             }
@@ -147,13 +148,13 @@ export default class RestRequest {
     /* Calculate the next retry time and call this.start again */
     retry = () => {
         if (this.maxRetryAttempts >= 0 && this.retryCount > this.maxRetryAttempts) {
-            console.warn(`Max no. of retries exceeded ${this.url}`, this.parameters);
+            console.warn(`Max no. of retries exceeded ${this.urlValue}`, this.parameters);
             return false;
         }
         const time = this.calculateRetryTime();
         if (time < 0) {
             // NOTE: this should never occur
-            console.warn(`Retry time is negative ${this.url}`, this.parameters);
+            console.warn(`Retry time is negative ${this.urlValue}`, this.parameters);
             return false;
         }
         this.retryId = setTimeout(this.internalStart, time);
@@ -167,7 +168,7 @@ export default class RestRequest {
             return false;
         }
         if (this.pollCount > this.maxPollAttempts) {
-            console.warn(`Max no. of polls exceeded ${this.url}`, this.parameters);
+            console.warn(`Max no. of polls exceeded ${this.urlValue}`, this.parameters);
             return false;
         }
         this.pollId = setTimeout(this.internalStart, this.pollTime);
@@ -187,6 +188,7 @@ export default class RestRequest {
     internalStart = async () => {
         // Parameters can be a key-value pair or a function that returns a key-value pair
         this.parameters = typeof this.params === 'function' ? this.params() : this.params;
+        this.urlValue = typeof this.url === 'function' ? this.url() : this.url;
 
         if (this.aborted) {
             this.abort();
@@ -196,10 +198,10 @@ export default class RestRequest {
         this.preLoad();
 
         // DEBUG:
-        console.log(`Fetching ${this.url}`, this.parameters);
+        console.log(`Fetching ${this.urlValue}`, this.parameters);
         let response;
         try {
-            response = await fetch(this.url, this.parameters);
+            response = await fetch(this.urlValue, this.parameters);
             if (this.aborted) {
                 this.abort();
                 return;
@@ -240,7 +242,7 @@ export default class RestRequest {
         }
 
         // DEBUG:
-        console.log(`Recieving ${this.url}`, responseBody);
+        console.log(`Recieving ${this.urlValue}`, responseBody);
         if (response.ok) {
             // NOTE: clear out old retryCount
             this.retryCount = 1;
