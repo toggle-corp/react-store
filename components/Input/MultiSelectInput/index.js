@@ -41,7 +41,7 @@ export const propTypes = {
     hideSelectAllButton: PropTypes.bool,
     hint: PropTypes.string,
     keySelector: PropTypes.func,
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     labelSelector: PropTypes.func,
     onChange: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.object),
