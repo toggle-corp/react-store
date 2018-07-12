@@ -147,15 +147,12 @@ class OrgChart extends React.PureComponent {
     };
 
     addSelection = (item) => {
-        const newSelection = {
-            name: this.props.labelAccessor(item.data),
-            id: this.props.idAccessor(item.data),
-        };
+        const newSelection = this.props.idAccessor(item.data);
 
         const settings = {
             $bulk: [
                 { $push: [newSelection] },
-                { $unique: selection => selection.id },
+                { $unique: selection => selection },
             ],
         };
         const selected = update(this.state.selected, settings);
@@ -176,8 +173,10 @@ class OrgChart extends React.PureComponent {
         this.props.onSelection(selected);
     }
 
-    findIndexInSelectedList = item =>
-        this.state.selected.findIndex(e => e.id === this.props.idAccessor(item));
+    findIndexInSelectedList = (item) => {
+        const itemId = this.props.idAccessor(item);
+        return this.state.selected.findIndex(e => e === itemId);
+    }
 
 
     isSelected = (item) => {

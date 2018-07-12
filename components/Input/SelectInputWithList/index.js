@@ -28,6 +28,7 @@ const propTypes = {
 
     className: PropTypes.string,
     listClassName: PropTypes.string,
+    selectClassName: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
     listProps: PropTypes.object,
@@ -41,12 +42,13 @@ const propTypes = {
             label: PropTypes.string,
         }),
     ),
-    faramElementName: PropTypes.string,
+    topRightChild: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     listClassName: '',
+    selectClassName: '',
     listProps: {},
     keySelector: d => (d || {}).key,
     labelSelector: d => (d || {}).label,
@@ -55,8 +57,8 @@ const defaultProps = {
     value: [],
     label: '',
     hideRemoveFromListButton: false,
+    topRightChild: undefined,
     disabled: false,
-    faramElementName: undefined,
 };
 
 const emptyList = [];
@@ -217,9 +219,10 @@ class SelectInputWithList extends React.PureComponent {
             onChange, // eslint-disable-line no-unused-vars
             options,
             value,
+            selectClassName,
             listProps,
             listClassName,
-            faramElementName, // eslint-disable-line no-unused-vars
+            topRightChild: TopRightChild,
 
             ...otherProps
         } = this.props;
@@ -232,19 +235,32 @@ class SelectInputWithList extends React.PureComponent {
             'list',
         ];
 
+        const selectClassNames = [
+            selectClassName,
+            styles.input,
+            'select',
+        ];
+
+        if (TopRightChild) {
+            selectClassNames.push(styles.hasTopRightChild);
+        }
+
         return (
             <div className={this.getClassName()}>
-                <MultiSelectInput
-                    className={`${styles.input} input`}
-                    disabled={disabled}
-                    keySelector={keySelector}
-                    label={label}
-                    labelSelector={labelSelector}
-                    onChange={this.handleSelectInputChange}
-                    options={options}
-                    value={value}
-                    {...otherProps}
-                />
+                <div className={styles.headerContainer}>
+                    <MultiSelectInput
+                        className={selectClassNames.join(' ')}
+                        disabled={disabled}
+                        keySelector={keySelector}
+                        label={label}
+                        labelSelector={labelSelector}
+                        onChange={this.handleSelectInputChange}
+                        options={options}
+                        value={value}
+                        {...otherProps}
+                    />
+                    {TopRightChild && <TopRightChild />}
+                </div>
                 <ListView
                     className={listClassNames.join(' ')}
                     data={objectValues}
