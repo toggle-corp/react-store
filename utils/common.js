@@ -10,7 +10,7 @@ import FormattedDate from '../components/View/FormattedDate/FormattedDate';
 // Match two strings
 export const caseInsensitiveSubmatch = (longText, shortText) => (
     !shortText ||
-    ((longText || '').toLowerCase()).includes((shortText || '').toLowerCase())
+    (String(longText || '').toLowerCase()).includes(String(shortText || '').toLowerCase())
 );
 
 /**

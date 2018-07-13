@@ -142,6 +142,7 @@ export default class VirtualizedListView extends React.Component {
         } = this.state;
 
         if (itemHeight === undefined) {
+            // FIXME: when data has no element, this still renders a component
             return (
                 <div ref={this.item}>
                     { this.renderItem(data[0], 0) }

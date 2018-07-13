@@ -58,9 +58,9 @@ const defaultProps = {
     error: undefined,
     hideClearButton: false,
     hint: undefined,
-    keySelector: d => (d || {}).key,
+    keySelector: (d = {}) => d.key,
     label: undefined,
-    labelSelector: d => (d || {}).label,
+    labelSelector: (d = {}) => d.label,
     onChange: () => {},
     optionLabelSelector: undefined,
     options: [],
@@ -153,6 +153,8 @@ class SelectInput extends React.PureComponent {
                 displayOptions: newOptions,
             });
         }
+
+        // FIXME: check if value is in options?
     }
 
     getClassName = () => {
