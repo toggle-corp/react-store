@@ -47,7 +47,6 @@ $width-clear-button: 14px;
             @extend %input-border;
         }
 
-
         &:not(.hide-clear-button) {
             &.filled {
                 .input-and-actions {

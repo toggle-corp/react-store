@@ -1,0 +1,39 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/input-base';
+@import '../../../stylesheets/input-border';
+
+.time-input {
+    .inputs {
+        display: flex;
+
+        .input {
+            @extend %input-base;
+            font-family: $font-family-monospace;
+        }
+    }
+
+    &:not(.disabled) {
+        .inputs {
+            @extend %input-border;
+        }
+
+        &.focused {
+            .inputs {
+                border-bottom-color: $color-accent;
+            }
+        }
+
+        &.invalid {
+            .inputs {
+                border-bottom-color: $color-warning;
+            }
+        }
+    }
+
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+    }
+}

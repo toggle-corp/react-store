@@ -119,7 +119,7 @@ class TextInput extends React.PureComponent {
         }
     }
 
-    getClassName() {
+    getClassName = () => {
         const {
             className,
             disabled,
