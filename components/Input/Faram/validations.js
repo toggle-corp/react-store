@@ -137,3 +137,33 @@ export const dateCondition = (value) => {
         message: error,
     };
 };
+
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
+const MIN_MINUTE = 0;
+const MAX_MINUTE = 59;
+const MIN_SECOND = 0;
+const MAX_SECOND = 59;
+const TIME_SEPARATOR = ':';
+
+export const timeCondition = (value) => {
+    const values = value.split(TIME_SEPARATOR);
+    const h = values[0];
+    const m = values[1];
+    const s = values[2];
+
+    let error;
+
+    if (h < MIN_HOUR || h > MAX_HOUR) {
+        error = `Hour must be between ${MIN_HOUR} and ${MAX_HOUR}`;
+    } else if (m < MIN_MINUTE || m > MAX_MINUTE) {
+        error = `Minute must be between ${MIN_MINUTE} and ${MAX_MINUTE}`;
+    } else if (s < MIN_SECOND || s > MAX_SECOND) {
+        error = `Second must be between ${MIN_SECOND} and ${MAX_SECOND}`;
+    }
+
+    return {
+        ok: !error,
+        message: error,
+    };
+};

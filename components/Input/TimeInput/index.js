@@ -70,19 +70,11 @@ const isValidTimeString = (value) => {
         s,
     } = values;
 
-    if (h < MIN_HOUR || h > MAX_HOUR) {
-        return false;
-    }
-
-    if (m < MIN_MINUTE || m > MAX_MINUTE) {
-        return false;
-    }
-
-    if (s < MIN_SECOND || s > MAX_SECOND) {
-        return false;
-    }
-
-    return true;
+    return !(
+        (h < MIN_HOUR || h > MAX_HOUR)
+        || (m < MIN_MINUTE || m > MAX_MINUTE)
+        || (s < MIN_SECOND || s > MAX_SECOND)
+    );
 };
 
 class TimeInput extends React.PureComponent {
