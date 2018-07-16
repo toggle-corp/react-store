@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Message from '../Message';
 import styles from './styles.scss';
 
 const DefaultEmptyComponent = () => {
-    const classNames = [
-        'empty',
-        styles.empty,
-    ];
+    const className = `
+        empty
+        ${styles.empty}
+    `;
+
+    const emptyText = 'Nothing here';
 
     return (
-        <p className={classNames.join(' ')}>
-            Nothing Here
-        </p>
+        <Message className={className}>
+            { emptyText }
+        </Message>
     );
 };
 
@@ -72,14 +75,14 @@ export default class VirtualizedListView extends React.Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-        this.calculateItemHeight();
+        this.setItemHeight();
     }
 
     componentDidUpdate() {
         const { itemHeight } = this.state;
 
         if (!itemHeight) {
-            this.calculateItemHeight();
+            this.setItemHeight();
         }
     }
 
@@ -87,7 +90,7 @@ export default class VirtualizedListView extends React.Component {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    calculateItemHeight = () => {
+    setItemHeight = () => {
         const { current: container } = this.container;
         const { current: item } = this.item;
         const { itemHeight: itemHeightFromState } = this.state;
