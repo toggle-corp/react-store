@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+    PureComponent,
+} from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { scaleOrdinal, scaleLinear, scaleBand } from 'd3-scale';
@@ -20,7 +22,6 @@ const dummy = transition;
  * data: the categorical data having values.
  * labelAccessor: returns the individual label from a unit data.
  * valueAccessor: return the value for the unit data.
- * barColor: the color for bars.
  * showGridLines: if true the gridlines are drawn.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -65,7 +66,7 @@ const defaultProps = {
  * A horizontal bar graph shows categorical data with rectangular bars with length proportional
  * to values they represent.
  */
-class HorizontalBar extends React.PureComponent {
+class HorizontalBar extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -77,11 +78,26 @@ class HorizontalBar extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
+    }
+
+    setContext = (width, height, margins) => {
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        return select(this.svg)
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .append('g')
+            .attr('transform', `translate(${left}, ${top})`);
     }
 
     save = () => {
@@ -143,12 +159,12 @@ class HorizontalBar extends React.PureComponent {
         .tickPadding(10)
         .tickFormat(format)
 
-    addGrid = (svg, xscale, yscale, height, width) => {
+    addGrid = (svg, xscale, yscale, height, width, tickFormat) => {
         svg
             .append('g')
             .attr('class', styles.grid)
             .attr('transform', `translate(0, ${height})`)
-            .call(this.addLines(axisBottom, xscale, height, this.props.valueLabelAccessor));
+            .call(this.addLines(axisBottom, xscale, height, tickFormat));
 
         svg
             .append('g')
@@ -156,12 +172,29 @@ class HorizontalBar extends React.PureComponent {
             .call(this.addLines(axisLeft, yscale, width));
     }
 
-    renderChart() {
+    handleMouseOver = (node) => {
+        select(node)
+            .style('filter', 'url(#drop-shadow)');
+    }
+
+    handleMouseOut = (node) => {
+        select(node)
+            .style('filter', 'none');
+    }
+
+    redrawChart = () => {
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
+        this.drawChart();
+    }
+
+    drawChart = () => {
         const {
             data,
             boundingClientRect,
             valueAccessor,
             valueLabelAccessor,
+            colorScheme,
             labelAccessor,
             showGridLines,
             margins,
@@ -185,19 +218,11 @@ class HorizontalBar extends React.PureComponent {
         if (width < 0) width = 0;
         if (height < 0) height = 0;
 
-        const svg = select(this.svg);
-        svg.select('*').remove();
-
-        const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
-            .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
+        const group = this.setContext(width, height, margins);
 
         const x = scaleLinear()
             .range([0, width])
             .domain([0, max(data, d => valueAccessor(d))]);
-
         const y = scaleBand()
             .rangeRound([height, 0])
             .domain(data.map(d => labelAccessor(d)))
@@ -206,18 +231,8 @@ class HorizontalBar extends React.PureComponent {
 
         this.addShadow(group);
 
-        function handleMouseOver() {
-            select(this)
-                .style('filter', 'url(#drop-shadow)');
-        }
-
-        function handleMouseOut() {
-            select(this)
-                .style('filter', 'none');
-        }
-
         if (showGridLines) {
-            this.addGrid(group, x, y, height, width);
+            this.addGrid(group, x, y, height, width, valueLabelAccessor);
         } else {
             const xAxis = axisBottom(x);
             const yAxis = axisLeft(y);
@@ -242,7 +257,7 @@ class HorizontalBar extends React.PureComponent {
             .attr('class', 'bar');
 
         const colors = scaleOrdinal()
-            .range(this.props.colorScheme);
+            .range(colorScheme);
 
         const bars = groups
             .append('rect')
@@ -251,15 +266,13 @@ class HorizontalBar extends React.PureComponent {
             .attr('y', d => y(labelAccessor(d)))
             .attr('height', y.bandwidth())
             .attr('fill', d => colors(labelAccessor(d)))
-            .on('mouseover', handleMouseOver)
-            .on('mouseout', handleMouseOut);
+            .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
+            .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
 
         bars
             .transition()
             .duration(750)
             .attr('width', d => x(valueAccessor(d)));
-
-        // const textColor = getColorOnBgColor(barColor);
 
         groups
             .append('text')
@@ -267,6 +280,9 @@ class HorizontalBar extends React.PureComponent {
             .attr('y', d => y(labelAccessor(d)) + (y.bandwidth() / 2))
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
+            .style('fill', 'none')
+            .transition()
+            .delay(750)
             .text(d => (
                 valueLabelAccessor ? valueLabelAccessor(valueAccessor(d)) : valueAccessor(d)))
             .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))));
@@ -274,16 +290,16 @@ class HorizontalBar extends React.PureComponent {
 
     render() {
         const { className } = this.props;
+        const svgClassName = [
+            'horizontal-bar',
+            styles.horizontalBar,
+            className,
+        ].join(' ');
         return (
-            <div
-                className={`${styles.horizontalBarContainer} ${className}`}
-                ref={(el) => { this.container = el; }}
-            >
-                <svg
-                    className={styles.horizontalbar}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={svgClassName}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
