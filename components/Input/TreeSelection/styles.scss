@@ -1,51 +1,54 @@
 @import '../../../stylesheets/base';
 
-:global {
-    .tree-node {
-        background-color: $color-foreground;
+.tree-node {
+    background-color: $color-foreground;
 
-        > .parent-node {
-            display: flex;
-            align-items: center;
-            padding: $spacing-small;
+    .drag-handle {
+        cursor: move;
+        padding: $spacing-extra-small $spacing-medium;
+        color: $color-text-label;
+    }
 
-            .drag-handle {
-                cursor: move;
-                padding: $spacing-extra-small $spacing-medium;
-                color: $color-text-label;
-            }
+    .parent-node {
+        display: flex;
+        align-items: center;
+        padding: $spacing-small;
 
-            .checkbox {
-                margin-right: $spacing-small;
-                background-color: transparent;
-                padding: $spacing-extra-small;
-                color: $color-accent;
-                font-size: $font-size-medium-alt;
 
-                &.unchecked {
-                    color: $color-text;
-                }
-            }
+        .checkbox {
+            margin-right: $spacing-small;
+            background-color: transparent;
+            padding: $spacing-extra-small;
+            color: $color-accent;
+            font-size: $font-size-medium-alt;
 
-            .node-title {
-                background-color: transparent;
-                padding: $spacing-extra-small;
-                text-transform: none;
-            }
-
-            .expand-arrow {
-                margin-left: $spacing-small;
-                padding: $spacing-extra-small;
-                color: $color-text-label;
-                font-size: $font-size-small;
+            &.unchecked {
+                color: $color-text;
             }
         }
 
-        > .tree-selection {
-            margin-left: $spacing-medium;
+        .node-title {
+            background-color: transparent;
+            padding: $spacing-extra-small;
+            text-transform: none;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        .expand-arrow {
+            margin-left: $spacing-small;
+            padding: $spacing-extra-small;
+            color: $color-text-label;
+            font-size: $font-size-small;
         }
     }
 
+    .tree-selection {
+        margin-left: $spacing-medium;
+    }
+}
+
+:global {
     body {
         >.tree-node {
             @include shadow-small;
