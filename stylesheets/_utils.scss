@@ -103,3 +103,7 @@
         @include background-color($color-background-row-alt);
     }
 }
+
+%empty-text {
+    color: $color-text-disabled;
+}

@@ -16,6 +16,17 @@
     .item {
         animation: fade-in $duration-transition-medium forwards;
     }
+
+    .empty {
+        @extend %empty-text;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 @keyframes fade-in {

@@ -1,7 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Message from '../Message';
 import styles from './styles.scss';
+
+const DefaultEmptyComponent = () => {
+    const className = `
+        empty
+        ${styles.empty}
+    `;
+
+    const emptyText = 'Nothing here';
+
+    return (
+        <Message className={className}>
+            { emptyText }
+        </Message>
+    );
+};
+
 
 const propTypeData = PropTypes.arrayOf(
     PropTypes.oneOfType([
@@ -23,6 +40,7 @@ const propTypes = {
     rendererClassName: PropTypes.string,
 
     rendererParams: PropTypes.func,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
@@ -33,7 +51,10 @@ const defaultProps = {
     renderer: undefined,
     rendererClassName: '',
     rendererParams: undefined,
+    emptyComponent: DefaultEmptyComponent,
 };
+
+const MAX_IDLE_TIMEOUT = 200;
 
 export default class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
@@ -54,26 +75,41 @@ export default class VirtualizedListView extends React.Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
+        this.setItemHeight();
+    }
 
-        const { current: container } = this.container;
-        const { current: item } = this.item;
+    componentDidUpdate() {
+        const { itemHeight } = this.state;
 
-        const itemBCR = item.getBoundingClientRect();
-        const itemHeight = itemBCR.height;
-
-        const containerBCR = container.getBoundingClientRect();
-        const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
-
-
-        // eslint-disable-next-line react/no-did-mount-set-state
-        this.setState({
-            itemsPerPage,
-            itemHeight,
-        });
+        if (!itemHeight) {
+            this.setItemHeight();
+        }
     }
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+    }
+
+    setItemHeight = () => {
+        const { current: container } = this.container;
+        const { current: item } = this.item;
+        const { itemHeight: itemHeightFromState } = this.state;
+
+        if (item) {
+            const itemBCR = item.getBoundingClientRect();
+            const itemHeight = itemBCR.height;
+
+            if (itemHeightFromState !== itemHeight) {
+                const containerBCR = container.getBoundingClientRect();
+                const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+
+                // eslint-disable-next-line react/no-did-mount-set-state
+                this.setState({
+                    itemsPerPage,
+                    itemHeight,
+                });
+            }
+        }
     }
 
     handleScroll = (e) => {
@@ -86,11 +122,11 @@ export default class VirtualizedListView extends React.Component {
             if (e.target === container) {
                 const newOffset = Math.floor(container.scrollTop / itemHeight);
                 if (newOffset !== offset) {
-                    clearTimeout(this.timeout);
+                    window.cancelIdleCallback(this.idleCallback);
 
-                    this.timeout = setTimeout(() => {
+                    this.idleCallback = window.requestIdleCallback(() => {
                         this.setState({ offset: newOffset });
-                    }, 200);
+                    }, { timeout: MAX_IDLE_TIMEOUT });
                 }
             }
         }
@@ -135,14 +171,17 @@ export default class VirtualizedListView extends React.Component {
     renderItems = () => {
         const { data } = this.props;
 
+        if (data.length === 0) {
+            return null;
+        }
+
         const {
             itemsPerPage,
             offset,
             itemHeight,
         } = this.state;
 
-        if (itemHeight === undefined) {
-            // FIXME: when data has no element, this still renders a component
+        if (!itemHeight) {
             return (
                 <div ref={this.item}>
                     { this.renderItem(data[0], 0) }
@@ -192,6 +231,8 @@ export default class VirtualizedListView extends React.Component {
     render() {
         const {
             className: classNameFromProps,
+            emptyComponent: EmptyComponent,
+            data,
         } = this.props;
 
         const className = `
@@ -208,6 +249,7 @@ export default class VirtualizedListView extends React.Component {
                 className={className}
             >
                 <Items />
+                { data.length === 0 && <EmptyComponent /> }
             </div>
         );
     }
