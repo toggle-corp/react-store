@@ -34,7 +34,7 @@ const defaultProps = {
 };
 
 const DragHandle = SortableHandle(() => (
-    <span className={`${iconNames.dragHandle} drag-handle`} />
+    <span className={`${iconNames.dragHandle} ${styles.dragHandle} drag-handle`} />
 ));
 
 
@@ -96,12 +96,18 @@ class TreeSelection extends React.PureComponent {
     // Based on selected values (true/false/'fuzzy'), get class-name
     // for checkbox
     getCheckBoxStyle = (selected) => {
+        const classNames = [
+            styles.checkbox,
+            'checkbox',
+        ];
         if (selected === 'fuzzy') {
-            return iconNames.checkboxBlank;
+            classNames.push(iconNames.checkboxBlank);
         } else if (selected) {
-            return iconNames.checkbox;
+            classNames.push(iconNames.checkbox);
+        } else {
+            classNames.push(iconNames.checkboxOutlineBlank);
         }
-        return `${iconNames.checkboxOutlineBlank} unchecked`;
+        return classNames.join(' ');
     }
 
     // Set selected state for a particular node where selected = true/false/'fuzzy'
@@ -189,8 +195,8 @@ class TreeSelection extends React.PureComponent {
     // End sortable stuffs
 
     renderNode = node => (
-        <div className="tree-node">
-            <div className="parent-node">
+        <div className={`${styles.treeNode} tree-node`}>
+            <div className={`${styles.parentNode} parent-node`}>
                 {node.draggable && <DragHandle />}
                 <Button
                     className={`${this.getCheckBoxStyle(node.selected)} checkbox`}
@@ -199,7 +205,7 @@ class TreeSelection extends React.PureComponent {
                 />
                 {node.nodes ? (
                     <Button
-                        className="node-title"
+                        className={`${styles.nodeTitle} node-title`}
                         onClick={() => this.handleToggleExpand(node.key)}
                         transparent
                     >
@@ -207,6 +213,7 @@ class TreeSelection extends React.PureComponent {
                         <span
                             className={
                                 `expand-arrow
+                                ${styles.expandArrow}
                                 ${this.state.expanded[node.key]
                                     ? iconNames.chevronUp
                                     : iconNames.chevronDown
@@ -215,7 +222,9 @@ class TreeSelection extends React.PureComponent {
                         />
                     </Button>
                 ) : (
-                    <span className="node-title">{node.title}</span>
+                    <span className={`${styles.nodeTitle} node-title`}>
+                        {node.title}
+                    </span>
                 )}
             </div>
 
@@ -231,9 +240,14 @@ class TreeSelection extends React.PureComponent {
     render() {
         const { className } = this.props;
         const { value } = this.state;
+        const classNames = [
+            className,
+            styles.treeSelection,
+            'tree-selection',
+        ];
 
         return (
-            <div className={`${className} tree-selection`}>
+            <div className={classNames.join(' ')}>
                 {value && (
                     <this.SortableTree
                         items={value}
