@@ -364,7 +364,8 @@ class SelectInput extends React.PureComponent {
     }
 
     renderActions = () => {
-        const ClearButton = this.renderClearButton;
+        const { disabled } = this.props;
+
         const className = `
             actions
             ${styles.actions}
@@ -374,6 +375,8 @@ class SelectInput extends React.PureComponent {
             ${styles.dropdownButton}
         `;
 
+        const ClearButton = this.renderClearButton;
+
         return (
             <div className={className}>
                 <ClearButton />
@@ -382,6 +385,7 @@ class SelectInput extends React.PureComponent {
                     iconName={iconNames.arrowDropdown}
                     className={dropdownButtonClassName}
                     onClick={this.handleDropdownButtonClick}
+                    disabled={disabled}
                     transparent
                 />
             </div>
