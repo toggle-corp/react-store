@@ -64,7 +64,7 @@ const getTimeValues = (value) => {
 };
 
 const getTimeString = (h, m, s) => (
-    `${h || '0'}${SEPARATOR}${m || '0'}${SEPARATOR}${s || '0'}`
+    `${h || '00'}${SEPARATOR}${m || '00'}${SEPARATOR}${s || '00'}`
 );
 
 const isValidTimeString = (value) => {
