@@ -5,6 +5,7 @@ import FaramElement from '../../Input/Faram/FaramElement';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -29,7 +30,7 @@ const defaultProps = {
     onChange: () => {},
     showLabel: true,
     showHintAndError: true,
-    value: '',
+    value: undefined,
     title: undefined,
 };
 
@@ -45,12 +46,16 @@ const SEPARATOR = ':';
 const PADDER = '00';
 
 const formatTimeValue = value => (
-    (PADDER + value || '').slice(-PADDER.length)
+    value === undefined || value === ''
+        ? undefined
+        : (PADDER + value).slice(-PADDER.length)
 );
 
 const getTimeValues = (value) => {
+    if (!value) {
+        return {};
+    }
     const values = value.split(SEPARATOR);
-
     return {
         h: formatTimeValue(values[0]),
         m: formatTimeValue(values[1]),
@@ -95,6 +100,7 @@ class TimeInput extends React.PureComponent {
             disabled,
             className,
             value,
+            error,
         } = this.props;
 
         const {
@@ -121,6 +127,11 @@ class TimeInput extends React.PureComponent {
         if (!isValidTimeString(value)) {
             classNames.push(styles.invalid);
             classNames.push('invalid');
+        }
+
+        if (error) {
+            classNames.push(styles.error);
+            classNames.push('error');
         }
 
         return classNames.join(' ');
@@ -199,8 +210,8 @@ class TimeInput extends React.PureComponent {
         const minutePlaceholder = 'mm';
 
         const {
-            h: hourValue,
-            m: minuteValue,
+            h: hourValue = '',
+            m: minuteValue = '',
         } = getTimeValues(value);
 
         return (

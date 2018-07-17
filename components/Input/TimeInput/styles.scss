@@ -28,6 +28,12 @@
                 border-bottom-color: $color-warning;
             }
         }
+
+        &.error {
+            .inputs {
+                border-bottom-color: $color-danger;
+            }
+        }
     }
 
 

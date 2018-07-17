@@ -437,8 +437,7 @@ class MultiSelectInput extends React.PureComponent {
     }
 
     renderActions = () => {
-        const ClearButton = this.renderClearButton;
-        const SelectAllButton = this.renderSelectAllButton;
+        const { disabled } = this.props;
 
         const className = `
             actions
@@ -448,6 +447,9 @@ class MultiSelectInput extends React.PureComponent {
             dropdown-button
             ${styles.dropdownButton}
         `;
+
+        const ClearButton = this.renderClearButton;
+        const SelectAllButton = this.renderSelectAllButton;
 
         return (
             <div className={className}>
@@ -459,6 +461,7 @@ class MultiSelectInput extends React.PureComponent {
                     className={dropdownButtonClassName}
                     onClick={this.handleDropdownButtonClick}
                     transparent
+                    disabled={disabled}
                 />
             </div>
         );
