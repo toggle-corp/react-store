@@ -30,6 +30,7 @@ const propTypes = {
         height: PropTypes.number,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
+    setSaveFunction: PropTypes.func,
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
     labelModifier: PropTypes.func,
@@ -39,6 +40,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     colorScheme: schemeAccent,
     className: '',
     labelModifier: undefined,
@@ -47,6 +49,13 @@ const defaultProps = {
 class DonutChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

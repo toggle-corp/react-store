@@ -50,6 +50,7 @@ const propTypes = {
             name: PropTypes.string,
         }),
     ).isRequired,
+    setSaveFunction: PropTypes.func,
     className: PropTypes.string,
     labelAccessor: PropTypes.func.isRequired,
     labelName: PropTypes.string.isRequired,
@@ -63,6 +64,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    setSaveFunction: () => {},
     className: '',
     colorScheme: schemeSet1,
     margins: {
@@ -76,6 +78,13 @@ const defaultProps = {
 class StreamGraph extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

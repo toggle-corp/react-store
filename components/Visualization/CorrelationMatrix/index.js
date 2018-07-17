@@ -35,6 +35,7 @@ const propTypes = {
         labels: PropTypes.arrayOf(PropTypes.string),
         values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     colorScheme: PropTypes.func,
     showLabels: PropTypes.bool,
     className: PropTypes.string,
@@ -47,6 +48,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    setSaveFunction: () => {},
     colorScheme: interpolateGnBu,
     showLabels: true,
     className: '',
@@ -66,6 +68,13 @@ const defaultProps = {
 class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

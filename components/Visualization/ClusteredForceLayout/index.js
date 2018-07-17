@@ -42,6 +42,7 @@ const propTypes = {
         links: PropTypes.arrayOf(PropTypes.object),
     }),
     idAccessor: PropTypes.func.isRequired,
+    setSaveFunction: PropTypes.func,
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
     className: PropTypes.string,
@@ -66,6 +67,7 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
+    setSaveFunction: () => {},
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
     className: '',
@@ -79,6 +81,9 @@ class ClusteredForceLayout extends PureComponent {
 
     constructor(props) {
         super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
         this.state = {
             value: 5,
         };

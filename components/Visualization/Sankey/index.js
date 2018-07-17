@@ -29,6 +29,7 @@ const propTypes = {
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
+    setSaveFunction: PropTypes.func,
     valueAccessor: PropTypes.func,
     labelAccessor: PropTypes.func,
     fontSizeExtent: PropTypes.arrayOf(PropTypes.number),
@@ -47,6 +48,7 @@ const defaultProps = {
         nodes: [],
         links: [],
     },
+    setSaveFunction: () => {},
     valueAccessor: d => d.value,
     labelAccessor: d => d.label,
     colorScheme: schemePaired,
@@ -63,6 +65,13 @@ const defaultProps = {
 class Sankey extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

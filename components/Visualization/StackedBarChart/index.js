@@ -31,6 +31,7 @@ const propTypes = {
             name: PropTypes.string,
         }),
     ).isRequired,
+    setSaveFunction: PropTypes.func,
     labelName: PropTypes.string.isRequired,
     labelAccessor: PropTypes.func.isRequired,
     className: PropTypes.string,
@@ -44,6 +45,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    setSaveFunction: () => {},
     className: '',
     colorScheme: schemePaired,
     margins: {
@@ -57,6 +59,13 @@ const defaultProps = {
 class StackedBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

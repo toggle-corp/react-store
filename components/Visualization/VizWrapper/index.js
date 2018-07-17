@@ -127,6 +127,14 @@ const wrapViz = (WrappedComponent) => {
             });
         }
 
+        setSaveFunction = (saveFn) => {
+            this.save = saveFn;
+        }
+
+        handleSave = () => {
+            this.save();
+        }
+
         removeFullScreen = () => {
             this.setState({
                 fullScreen: false,
@@ -150,10 +158,6 @@ const wrapViz = (WrappedComponent) => {
                 colorSchemeName: data,
                 colorScheme,
             });
-        }
-
-        handleSave = () => {
-            this.chart.wrappedComponent.save();
         }
 
         renderHeader = ({ fullScreen }) => {
@@ -260,7 +264,7 @@ const wrapViz = (WrappedComponent) => {
                                     <WrappedComponent
                                         className={styles.diagram}
                                         colorScheme={colorScheme}
-                                        ref={(instance) => { this.chart = instance; }}
+                                        setSaveFunction={this.setSaveFunction}
                                         {...otherProps}
                                     />
                                 </div>
@@ -270,7 +274,7 @@ const wrapViz = (WrappedComponent) => {
                                 <WrappedComponent
                                     className={styles.diagram}
                                     colorScheme={colorScheme}
-                                    ref={(instance) => { this.chart = instance; }}
+                                    setSaveFunction={this.setSaveFunction}
                                     {...otherProps}
                                 />
                             </div>
