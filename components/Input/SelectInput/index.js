@@ -13,6 +13,7 @@ import {
     defaultLimit,
 } from '../../../utils/bounds';
 import {
+    listToMap,
     caseInsensitiveSubmatch,
     getRatingForContentInString,
 } from '../../../utils/common';
@@ -110,6 +111,21 @@ const filterAndSortOptions = ({
     return newOptions;
 };
 
+// checks if value is contained in options
+const isValidValue = ({
+    value,
+    options,
+    keySelector,
+}) => {
+    const optionsMap = listToMap(
+        options,
+        keySelector,
+        () => true,
+    );
+
+    return optionsMap[value] !== undefined;
+};
+
 class SelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -128,6 +144,17 @@ class SelectInput extends React.PureComponent {
         this.input = React.createRef();
     }
 
+    componentWillMount() {
+        const {
+            value,
+            onChange,
+        } = this.props;
+
+        if (!isValidValue(this.props)) {
+            onChange(value);
+        }
+    }
+
     componentDidMount() {
         const { current: container } = this.container;
         if (container) {
@@ -139,22 +166,25 @@ class SelectInput extends React.PureComponent {
         const {
             value: newValue,
             options: newOptions,
+            onChange,
         } = nextProps;
 
-        const {
-            value: oldValue,
-            options: oldOptions,
-        } = this.props;
+        if (newValue !== undefined && !isValidValue(newValue)) {
+            onChange(undefined);
+        } else {
+            const {
+                value: oldValue,
+                options: oldOptions,
+            } = this.props;
 
-        if (oldValue !== newValue || oldOptions !== newOptions) {
-            // NOTE: filter will be cleared
-            this.setState({
-                inputValue: getInputValue(nextProps),
-                displayOptions: newOptions,
-            });
+            if (oldValue !== newValue || oldOptions !== newOptions) {
+                // NOTE: filter will be cleared
+                this.setState({
+                    inputValue: getInputValue(nextProps),
+                    displayOptions: newOptions,
+                });
+            }
         }
-
-        // FIXME: check if value is in options?
     }
 
     getClassName = () => {
