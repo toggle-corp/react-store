@@ -152,10 +152,17 @@ class SelectInput extends React.PureComponent {
         const {
             value,
             onChange,
+            keySelector,
         } = this.props;
 
-        if (!isValidValue(this.props)) {
-            onChange(value);
+        const isValueInvalid = !isValidValue({
+            value,
+            onChange,
+            keySelector,
+        });
+
+        if (isValueInvalid) {
+            onChange(undefined);
         }
     }
 
@@ -170,10 +177,17 @@ class SelectInput extends React.PureComponent {
         const {
             value: newValue,
             options: newOptions,
+            keySelector: newKeySelector,
             onChange,
         } = nextProps;
 
-        if (!isValidValue(newValue)) {
+        const isValueInvalid = !isValidValue({
+            value: newValue,
+            onChange,
+            keySelector: newKeySelector,
+        });
+
+        if (isValueInvalid) {
             onChange(undefined);
         } else {
             const {
