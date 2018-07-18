@@ -117,6 +117,10 @@ const isValidValue = ({
     options,
     keySelector,
 }) => {
+    if (value === undefined) {
+        return true;
+    }
+
     const optionsMap = listToMap(
         options,
         keySelector,
@@ -169,7 +173,7 @@ class SelectInput extends React.PureComponent {
             onChange,
         } = nextProps;
 
-        if (newValue !== undefined && !isValidValue(newValue)) {
+        if (!isValidValue(newValue)) {
             onChange(undefined);
         } else {
             const {
