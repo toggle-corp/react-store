@@ -17,6 +17,7 @@ const propTypes = {
     options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     showInfo: PropTypes.bool,
     showItemsPerPageChange: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -34,6 +35,7 @@ const defaultProps = {
     ],
     showInfo: true,
     showItemsPerPageChange: true,
+    disabled: false,
 };
 
 function range(start, end) {
@@ -108,7 +110,8 @@ export default class Pager extends React.PureComponent {
                 <button
                     key="prev"
                     onClick={() => this.props.onPageClick(active - 1)}
-                    disabled={active - 1 < startIndex}
+                    type="button"
+                    disabled={active - 1 < startIndex || this.props.disabled}
                     className={styles.paginateBtn}
                 >
                     <span className={iconNames.chevronLeft} />
@@ -158,8 +161,9 @@ export default class Pager extends React.PureComponent {
             (
                 <button
                     key="next"
+                    type="button"
                     onClick={() => this.props.onPageClick(active + 1)}
-                    disabled={active + 1 > lastIndex}
+                    disabled={active + 1 > lastIndex || this.props.disabled}
                     className={styles.paginateBtn}
                 >
                     <span className={iconNames.chevronRight} />
@@ -181,8 +185,10 @@ export default class Pager extends React.PureComponent {
     renderButton = index => (
         <button
             key={index}
+            type="button"
             onClick={() => this.props.onPageClick(index)}
             className={styles.paginateBtn}
+            disabled={this.props.disabled}
         >
             {index}
         </button>
@@ -232,6 +238,7 @@ export default class Pager extends React.PureComponent {
                             options={this.props.options}
                             value={this.props.maxItemsPerPage}
                             onChange={this.props.onItemsPerPageChange}
+                            disabled={this.props.disabled}
                         />
                         <div className={styles.perPage}>
                             { perPageTitle }
