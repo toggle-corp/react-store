@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import FaramContext from './FaramContext';
-import { isTruthy } from '../../../utils/common';
+import { isFalsy } from '../../../utils/common';
 
 
 /*
@@ -47,25 +47,23 @@ const FaramElement = elementType => (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
-            if (!api) {
+            const faramIdentifier = faramElementName || faramElementIndex;
+
+            if (!api || (!faramElement && isFalsy(faramIdentifier) && isFalsy(faramAction))) {
                 return otherProps;
             }
 
-            const faramIdentifier = faramElementName || faramElementIndex;
-            if (faramElement || isTruthy(faramIdentifier) || isTruthy(faramAction)) {
-                const values = {
-                    ...api.getCalculatedProps({
-                        faramIdentifier,
-                        elementType,
-                        faramAction,
-                        faramInfo,
-                    }),
-                    ...otherProps,
-                };
-                return values;
-            }
+            const newProps = api.getCalculatedProps({
+                faramIdentifier,
+                elementType,
+                faramAction,
+                faramInfo,
+            });
 
-            return otherProps;
+            return {
+                ...newProps,
+                ...otherProps,
+            };
         }
 
         renderWrappedComponent = ({ api } = {}) => {

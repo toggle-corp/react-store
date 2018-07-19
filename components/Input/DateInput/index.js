@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FloatingContainer from '../../View/FloatingContainer';
+import Delay from '../../General/Delay';
 import DatePicker from '../DatePicker';
 import { iconNames } from '../../../constants';
 
@@ -557,4 +558,4 @@ class DateInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(DateInput);
+export default FaramElement('input')(Delay(DateInput));

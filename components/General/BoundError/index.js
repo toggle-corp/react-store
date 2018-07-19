@@ -1,9 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 export default ErrorComponent => (WrappedComponent) => {
-    const Component = class extends React.PureComponent {
+    const BoundedComponent = class extends React.PureComponent {
         constructor(props) {
             super(props);
 
@@ -46,5 +45,5 @@ export default ErrorComponent => (WrappedComponent) => {
         }
     };
 
-    return hoistNonReactStatics(Component, WrappedComponent);
+    return hoistNonReactStatics(BoundedComponent, WrappedComponent);
 };

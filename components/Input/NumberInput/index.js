@@ -7,6 +7,7 @@ import {
     addSeparator,
 } from '../../../utils/common';
 import FaramElement from '../../Input/Faram/FaramElement';
+import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
@@ -62,7 +63,6 @@ const propTypes = {
     value: PropTypes.number,
     separator: PropTypes.string,
     selectOnFocus: PropTypes.bool,
-    changeDelay: PropTypes.number,
     title: PropTypes.string,
 };
 
@@ -81,7 +81,6 @@ const defaultProps = {
     value: undefined,
     separator: ',',
     selectOnFocus: false,
-    changeDelay: 400,
     title: undefined,
 };
 
@@ -162,27 +161,15 @@ class NumberInput extends React.PureComponent {
             isFocused: false,
             value: displayValue,
         };
-
-        this.pendingChange = false;
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
-            if (!this.pendingChange) {
-                const { displayValue } = NumberInput.calculateNewValues(
-                    nextProps.value,
-                    nextProps.separator,
-                );
-                this.setState({ value: displayValue });
-            } else {
-                console.warn('Not updating, as there is a pending change.');
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.changeTimeout) {
-            clearTimeout(this.changeTimeout);
+            const { displayValue } = NumberInput.calculateNewValues(
+                nextProps.value,
+                nextProps.separator,
+            );
+            this.setState({ value: displayValue });
         }
     }
 
@@ -228,9 +215,6 @@ class NumberInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        clearTimeout(this.changeTimeout);
-        this.pendingChange = true;
-
         const { separator } = this.props;
         const { value: val } = event.target;
 
@@ -240,15 +224,9 @@ class NumberInput extends React.PureComponent {
         );
         this.setState({ value: displayValue });
 
-        const { onChange, changeDelay } = this.props;
+        const { onChange } = this.props;
         if (onChange) {
-            this.changeTimeout = setTimeout(
-                () => {
-                    this.pendingChange = false;
-                    onChange(value);
-                },
-                changeDelay,
-            );
+            onChange(value);
         }
     }
 
@@ -281,7 +259,6 @@ class NumberInput extends React.PureComponent {
             onChange, // eslint-disable-line no-unused-vars
             onFocus, // eslint-disable-line no-unused-vars
             selectOnFocus, // eslint-disable-line no-unused-vars
-            changeDelay, // eslint-disable-line no-unused-vars
             className: propClassName, // eslint-disable-line no-unused-vars
 
             error,
@@ -325,4 +302,4 @@ class NumberInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(NumberInput);
+export default FaramElement('input')(Delay(NumberInput));

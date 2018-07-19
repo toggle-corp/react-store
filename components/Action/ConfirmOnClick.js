@@ -17,7 +17,7 @@ const defaultProps = {
 };
 
 const ConfirmOnClick = (WrappedComponent) => {
-    const Component = class extends React.PureComponent {
+    const ConfirmComponent = class extends React.PureComponent {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
@@ -73,6 +73,6 @@ const ConfirmOnClick = (WrappedComponent) => {
         }
     };
 
-    return Component;
+    return ConfirmComponent;
 };
 export default ConfirmOnClick;
