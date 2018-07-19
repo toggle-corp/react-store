@@ -11,7 +11,7 @@ const defaultProps = {
 };
 
 export default ErrorComponent => (WrappedComponent) => {
-    const Component = class extends React.PureComponent {
+    const BoundedComponent = class extends React.PureComponent {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
@@ -57,7 +57,7 @@ export default ErrorComponent => (WrappedComponent) => {
     };
 
     const ForwardedComponent = React.forwardRef((props, ref) => (
-        <Component
+        <BoundedComponent
             {...props}
             forwardedRef={ref}
         />

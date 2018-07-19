@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import FaramContext from './FaramContext';
-import { isTruthy } from '../../../utils/common';
+import { isFalsy } from '../../../utils/common';
 
 
 /*
@@ -53,25 +53,25 @@ const FaramElement = elementType => (WrappedComponent) => {
             // Set reference
             otherProps.ref = forwardedRef;
 
-            if (!api) {
+            const faramIdentifier = faramElementName || faramElementIndex;
+
+            if (!api || (!faramElement && isFalsy(faramIdentifier) && isFalsy(faramAction))) {
                 return otherProps;
             }
 
-            const faramIdentifier = faramElementName || faramElementIndex;
-            if (faramElement || isTruthy(faramIdentifier) || isTruthy(faramAction)) {
-                const values = {
-                    ...api.getCalculatedProps({
-                        faramIdentifier,
-                        elementType,
-                        faramAction,
-                        faramInfo,
-                    }),
-                    ...otherProps,
-                };
-                return values;
-            }
+            console.warn(faramElement, faramIdentifier);
 
-            return otherProps;
+            const newProps = api.getCalculatedProps({
+                faramIdentifier,
+                elementType,
+                faramAction,
+                faramInfo,
+            });
+
+            return {
+                ...newProps,
+                ...otherProps,
+            };
         }
 
         renderWrappedComponent = ({ api } = {}) => {
@@ -88,12 +88,29 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
     }
 
+    /*
     const ForwardedComponent = React.forwardRef((props, ref) => (
         <FaramElementHOC
             {...props}
             forwardedRef={ref}
         />
     ));
+    */
+
+    const name = WrappedComponent.displayName || WrappedComponent.name;
+
+    const forwardRef = (props, ref) => (
+        <Fragment>
+            <div> FE </div>
+            <FaramElementHOC
+                {...props}
+                forwardedRef={ref}
+            />
+        </Fragment>
+    );
+    forwardRef.displayName = `FaramElement(${name})`;
+
+    const ForwardedComponent = React.forwardRef(forwardRef);
 
     return hoistNonReactStatics(
         ForwardedComponent,
