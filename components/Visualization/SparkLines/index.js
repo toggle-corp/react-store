@@ -21,7 +21,6 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     fill: PropTypes.bool,
-    // lineColor: PropTypes.string,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -33,14 +32,13 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    // lineColor: '#40FEA1',
     fill: false,
     className: '',
     margins: {
-        top: 4,
-        right: 4,
-        bottom: 4,
-        left: 4,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
 
@@ -62,37 +60,10 @@ class SparkLines extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('sparklines', 'graph')}.svg`);
     }
 
-    /*
-    addAreaGradients = () => {
-        const { lineColor } = this.props;
-
-        const areaGradient = select(this.svg)
-            .append('defs')
-            .append('linearGradient')
-            .attr('id', 'areaGradient')
-            .attr('x1', '0%')
-            .attr('y1', '0%')
-            .attr('x2', '0%')
-            .attr('y2', '100%');
-
-        areaGradient
-            .append('stop')
-            .attr('offset', '0%')
-            .attr('stop-color', lineColor)
-            .attr('stop-opacity', 1);
-        areaGradient
-            .append('stop')
-            .attr('offset', '80%')
-            .attr('stop-color', lineColor)
-            .attr('stop-opacity', 0.1);
-    }
-    */
-
     drawChart = () => {
         const {
             data,
             boundingClientRect,
-            // lineColor,
             margins,
             fill,
             valueAccessor,
@@ -118,14 +89,17 @@ class SparkLines extends PureComponent {
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
             .append('g')
+            .attr('class', styles.sparkLine)
             .attr('transform', `translate(${left}, ${top})`);
 
         const scaleX = scaleLinear()
             .range([0, width])
             .domain([0, data.length - 1]);
+
         const scaleY = scaleLinear()
             .range([height, 0])
             .domain(extent(data.map(d => valueAccessor(d))));
+
         const areas = area()
             .x((d, i) => scaleX(i))
             .y0(height)
@@ -135,25 +109,19 @@ class SparkLines extends PureComponent {
             .x((d, i) => scaleX(i))
             .y(d => scaleY(valueAccessor(d)));
 
-        group.attr('class', 'spark-lines');
         if (fill) {
-            // this.addAreaGradients();
             group.append('path')
-                .attr('class', 'fill')
+                .attr('class', styles.area)
                 .datum(data)
-                // .style('fill', 'url(#areaGradient)')
-                .style('stroke-width', 2)
                 .attr('d', areas);
         }
 
         group
             .append('path')
-            .attr('class', 'line')
+            .attr('class', styles.path)
             .datum(data)
             .attr('d', lines)
-            // .style('stroke', lineColor)
-            .style('fill', 'none')
-            .style('stroke-width', 2);
+            .style('fill', 'none');
     }
 
     redrawChart = () => {
