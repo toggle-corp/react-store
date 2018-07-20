@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-:global .force-directed-graph-container {
+.force-directed-graph-container {
     display: flex;
     position: relative;
     width: 100%;
@@ -29,12 +29,17 @@
         stroke: $color-links;
     }
 
-    .nodes :hover {
-        opacity: 1;
-    }
-
     .circle {
         opacity: .6;
+    }
+
+    .nodes {
+        &:hover,
+        &.active-node {
+            .circle {
+                opacity: 1;
+            }
+        }
     }
 
     .input-slider {

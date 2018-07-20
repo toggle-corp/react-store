@@ -6,8 +6,11 @@ import ColorPalette from '../ColorPalette';
 
 import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
+import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
 import LoadingAnimation from '../../View/LoadingAnimation';
+
+import Label from '../../Input/Label';
 
 import iconNames from '../../../constants/iconNames';
 import {
@@ -44,9 +47,13 @@ const continuous = 'continuous';
 const discrete = 'discrete';
 
 const wrapViz = (WrappedComponent) => {
-    const Component = class extends React.PureComponent {
+    const WrapperComponent = class extends React.PureComponent {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
+        static keySelector = d => d.title;
+        static labelSelector = d => d.title;
+        static optionLabelSelector = d => d.image;
+
 
         constructor(props) {
             super(props);
@@ -60,14 +67,24 @@ const wrapViz = (WrappedComponent) => {
         }
 
         componentWillReceiveProps(newProps) {
-            if (newProps.colorScheme !== this.props.colorScheme) {
+            const {
+                colorScheme: oldColorScheme,
+                colorSchemeType: oldColorSchemeType,
+            } = this.props;
+
+            const {
+                colorScheme,
+                colorSchemeType,
+            } = newProps;
+
+            if (colorScheme !== oldColorScheme) {
                 this.setState({
-                    colorScheme: newProps.colorScheme,
+                    colorScheme,
                 });
             }
-            if (newProps.colorSchemeType !== this.props.colorSchemeType) {
+            if (colorSchemeType !== oldColorSchemeType) {
                 this.setState({
-                    colorSchemeType: newProps.colorSchemeType,
+                    colorSchemeType,
                     colorSchemeOptions: this.getColorSchemeValues(newProps.colorSchemeType),
                 });
             }
@@ -118,9 +135,11 @@ const wrapViz = (WrappedComponent) => {
 
         handleSelection = (data) => {
             let colorScheme;
-            if (this.state.colorSchemeType === continuous) {
+            const { colorSchemeType } = this.state;
+
+            if (colorSchemeType === continuous) {
                 colorScheme = getSequentialColorScheme(data) || getDivergingColorScheme(data);
-            } else if (this.state.colorSchemeType === discrete) {
+            } else if (colorSchemeType === discrete) {
                 colorScheme = getCategoricalColorScheme(data);
             } else {
                 colorScheme = getCategoricalColorScheme(data) ||
@@ -150,49 +169,63 @@ const wrapViz = (WrappedComponent) => {
                 removeFullScreen,
             } = this;
 
+            const {
+                colorSchemeName,
+                colorSchemeOptions,
+            } = this.state;
+
+            // FIXME: use strings
+            const colorSchemeLabelText = 'Color scheme';
+
             return (
                 <div className={styles.header}>
-                    <div className={styles.leftContent}>
-                        <span className={styles.heading}>
-                            {headerText}
-                        </span>
-                    </div>
+                    <h3 className={styles.heading}>
+                        {headerText}
+                    </h3>
                     <div className={styles.rightContent}>
-                        <SelectInput
-                            clearable={false}
-                            keySelector={d => d.title}
-                            label="Color scheme"
-                            labelSelector={d => d.title}
-                            optionLabelSelector={d => d.image}
-                            optionsClassName={styles.selectInputOptions}
-                            onChange={handleSelection}
-                            options={this.state.colorSchemeOptions}
-                            showHintAndError={false}
-                            className={styles.selectInput}
-                            value={this.state.colorSchemeName}
-                        />
-                        <AccentButton
-                            title="Download diagram"
-                            onClick={handleSave}
-                            iconName={iconNames.download}
-                            transparent
-                        />
-                        { !fullScreen &&
-                            <AccentButton
-                                title="Show on fullscreen"
-                                onClick={setFullScreen}
-                                iconName={iconNames.expand}
+                        <div className={styles.colorSchemeInputContainer}>
+                            <Label
+                                show
+                                text={colorSchemeLabelText}
+                                className={styles.colorSchemeLabel}
+                            />
+                            <SelectInput
+                                clearable={false}
+                                keySelector={WrapperComponent.keySelector}
+                                labelSelector={WrapperComponent.labelSelector}
+                                optionLabelSelector={WrapperComponent.optionLabelSelector}
+                                optionsClassName={styles.selectInputOptions}
+                                onChange={handleSelection}
+                                options={colorSchemeOptions}
+                                showHintAndError={false}
+                                showLabel={false}
+                                className={styles.selectInput}
+                                value={colorSchemeName}
+                            />
+                        </div>
+                        <div className={styles.actionButtons} >
+                            <PrimaryButton
+                                title="Download diagram"
+                                onClick={handleSave}
+                                iconName={iconNames.download}
                                 transparent
                             />
-                        }
-                        { fullScreen &&
-                            <DangerButton
-                                title="Close fullscreen"
-                                onClick={removeFullScreen}
-                                iconName={iconNames.close}
-                                transparent
-                            />
-                        }
+                            { fullScreen ? (
+                                <DangerButton
+                                    title="Close fullscreen"
+                                    onClick={removeFullScreen}
+                                    iconName={iconNames.close}
+                                    transparent
+                                />
+                            ) : (
+                                <AccentButton
+                                    title="Show on fullscreen"
+                                    onClick={setFullScreen}
+                                    iconName={iconNames.expand}
+                                    transparent
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             );
@@ -218,7 +251,7 @@ const wrapViz = (WrappedComponent) => {
             return (
                 <div className={`${styles.diagramView} ${className}`}>
                     { loading && <LoadingAnimation /> }
-                    <Header fullScreen={false} />
+                    <Header fullScreen={fullScreen} />
                     {
                         fullScreen ? (
                             <FullScreen className={styles.fullScreenContainer}>
@@ -248,7 +281,7 @@ const wrapViz = (WrappedComponent) => {
         }
     };
 
-    return Component;
+    return WrapperComponent;
 };
 
 export default wrapViz;

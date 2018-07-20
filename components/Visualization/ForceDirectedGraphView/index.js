@@ -103,9 +103,9 @@ export default class ForcedDirectedGraphView extends PureComponent {
         return (
             <div className={styles.header}>
                 <div className={styles.leftContent}>
-                    <span className={styles.heading}>
+                    <h3 className={styles.heading}>
                         {headerText}
-                    </span>
+                    </h3>
                 </div>
                 <div className={styles.rightContent}>
                     <SelectInput

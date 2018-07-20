@@ -45,6 +45,7 @@ const propTypes = {
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
     radiusAccessor: PropTypes.func,
+    hightlightClusterId: PropTypes.node,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -70,6 +71,7 @@ const defaultProps = {
     labelAccessor: d => d.label,
     valueAccessor: () => 1,
     radiusAccessor: () => 30,
+    hightlightClusterId: undefined,
     useVoronoi: false,
     className: '',
     colorScheme: schemePaired,
@@ -90,6 +92,28 @@ const deepCopy = data => (
     JSON.parse(JSON.stringify(data))
 );
 
+const removeClassName = (el, className) => {
+    const classNames = (el.getAttribute('class')).split(' ');
+    const classNameIndex = classNames.findIndex(d => d === className);
+
+    if (classNameIndex !== -1) {
+        classNames.splice(classNameIndex, 1);
+        const newClassName = classNames.join(' ');
+        el.setAttribute('class', newClassName);
+    }
+};
+
+const addClassName = (el, className) => {
+    if (className) {
+        const newClassName = [
+            el.getAttribute('class'),
+            className,
+        ].join(' ');
+
+        el.setAttribute('class', newClassName);
+    }
+};
+
 
 /**
  * Represents the  network of nodes in force layout with many-body force.
@@ -102,8 +126,8 @@ class ForceDirectedGraph extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.container = React.createRef();
-        this.svg = React.createRef();
+        this.containerRef = React.createRef();
+        this.svgRef = React.createRef();
     }
 
     componentDidMount() {
@@ -141,6 +165,7 @@ class ForceDirectedGraph extends React.PureComponent {
             boundingClientRect: oldBoundingClientRect,
             clusterSize: oldClusterSize,
             colorScheme: oldColorScheme,
+            hightlightClusterId: oldHighlightClusterId,
         } = this.props;
 
         const {
@@ -154,6 +179,7 @@ class ForceDirectedGraph extends React.PureComponent {
             groupAccessor,
             radiusAccessor,
             useVoronoi,
+            highlightClusterId: newHighlightClusterId,
         } = nextProps;
 
         if (
@@ -176,10 +202,32 @@ class ForceDirectedGraph extends React.PureComponent {
                 data: this.data,
             });
         }
+
+        const { current: container } = this.containerRef;
+        if (container) {
+            const activeNode = container.getElementsByClassName(styles.activeNode)[0];
+            if (activeNode) {
+                removeClassName(activeNode, styles.activeNode);
+            }
+        }
+
+        if (oldHighlightClusterId !== newHighlightClusterId) {
+            if (container) {
+                if (newHighlightClusterId) {
+                    const highlightNodeClassName = `nodes-${newHighlightClusterId}`;
+                    const newActiveNode = container
+                        .getElementsByClassName(highlightNodeClassName)[0];
+
+                    if (newActiveNode) {
+                        addClassName(newActiveNode, styles.activeNode);
+                    }
+                }
+            }
+        }
     }
 
     save = () => {
-        const { current: svgEl } = this.svg;
+        const { current: svgEl } = this.svgRef;
         const svg = select(svgEl);
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
@@ -220,7 +268,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         this.tooltip = select(container)
             .append('div')
-            .attr('class', 'tooltip')
+            .attr('class', styles.tooltip)
             .style('display', 'none')
             .style('z-index', 10);
 
@@ -425,8 +473,8 @@ class ForceDirectedGraph extends React.PureComponent {
         useVoronoi,
         data,
     }) => {
-        const { current: container } = this.container;
-        const { current: svg } = this.svg;
+        const { current: container } = this.containerRef;
+        const { current: svg } = this.svgRef;
 
         if (!container || !svg) {
             return;
@@ -437,7 +485,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .selectAll('*')
             .remove();
         select(container)
-            .selectAll('.tooltip')
+            .selectAll(styles.tooltip)
             .remove();
 
         if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
@@ -459,7 +507,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         this.links = this.group
             .append('g')
-            .attr('class', 'links')
+            .attr('class', styles.links)
             .selectAll('line')
             .data(data.links)
             .enter()
@@ -471,7 +519,20 @@ class ForceDirectedGraph extends React.PureComponent {
             .data(data.nodes)
             .enter()
             .append('g')
-            .attr('class', 'nodes')
+            .attr('class', (d) => {
+                const {
+                    label,
+                    group,
+                } = d;
+
+                const classNames = [
+                    styles.nodes,
+                    'nodes',
+                    `nodes-${label}-${group}`,
+                ];
+
+                return classNames.join(' ');
+            })
             .call(
                 drag()
                     .on('start', this.handleDragStart)
@@ -485,7 +546,7 @@ class ForceDirectedGraph extends React.PureComponent {
         if (useVoronoi) {
             this.nodes
                 .append('circle')
-                .attr('class', 'circle')
+                .attr('class', styles.circle)
                 .attr('r', circleRadius)
                 .attr('fill', d => this.color(groupAccessor(d)));
 
@@ -515,18 +576,29 @@ class ForceDirectedGraph extends React.PureComponent {
             clusterSize,
         } = this.props;
 
-        const className = `
-            force-directed-graph-container
+        const containerClassName = `
             ${classNameFromProps}
+            ${styles.forceDirectedGraphContainer}
+            force-directed-graph-container
+        `;
+
+        const inputSliderClassName = `
+            ${styles.inputSlider}
+            input-slider
+        `;
+
+        const svgClassName = `
+            ${styles.forceDirectedGraph}
+            force-directed-graph
         `;
 
         return (
             <div
-                className={className}
-                ref={this.container}
+                className={containerClassName}
+                ref={this.containerRef}
             >
                 <input
-                    className="input-slider"
+                    className={inputSliderClassName}
                     id="sliderinput"
                     type="range"
                     step="1"
@@ -536,8 +608,8 @@ class ForceDirectedGraph extends React.PureComponent {
                     onChange={this.handleClusterSizeInputChange}
                 />
                 <svg
-                    className="force-directed-graph"
-                    ref={this.svg}
+                    className={svgClassName}
+                    ref={this.svgRef}
                 />
             </div>
         );
