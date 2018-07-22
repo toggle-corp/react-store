@@ -2,7 +2,10 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
-import { select, event } from 'd3-selection';
+import {
+    select,
+    event,
+} from 'd3-selection';
 import { scaleOrdinal } from 'd3-scale';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
@@ -12,7 +15,12 @@ import { schemePaired } from 'd3-scale-chromatic';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
-import { saveSvg, getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+
+import {
+    saveSvg,
+    getStandardFilename,
+    getColorOnBgColor,
+} from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -68,6 +76,7 @@ const defaultProps = {
  * connecting the data.
  */
 
+const ribbonWidth = 24;
 class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -132,7 +141,7 @@ class ChordDiagram extends PureComponent {
 
     fade = (opacity) => {
         const { svg } = this;
-        return function dim(g, i) {
+        return (g, i) => {
             select(svg)
                 .selectAll('.ribbons path')
                 .filter(d => (d.source.index !== i && d.target.index !== i))
@@ -140,8 +149,10 @@ class ChordDiagram extends PureComponent {
         };
     }
 
-    mouseOverArc = (d, element) => {
-        const { labelsData } = this.props;
+    handleMouseOver = (element, d) => {
+        const {
+            labelsData,
+        } = this.props;
 
         select(element)
             .style('filter', 'url(#glow)');
@@ -152,13 +163,13 @@ class ChordDiagram extends PureComponent {
             .style('display', 'inline-block');
     }
 
-    mouseMoveArc = () => (
+    handleMouseMove = () => (
         select(this.tooltip)
             .style('top', `${event.pageY - 30}px`)
             .style('left', `${event.pageX + 20}px`)
     )
 
-    mouseOutArc = (element) => {
+    handleMouseOut = (element) => {
         select(element)
             .style('filter', null);
 
@@ -168,27 +179,32 @@ class ChordDiagram extends PureComponent {
     }
 
     addPaths = (element, arcs, colors) => {
-        const { showTooltip, showLabels, labelsData } = this.props;
+        const {
+            showTooltip,
+            showLabels,
+            labelsData,
+        } = this.props;
+
         const group = element
             .selectAll('g')
             .data(d => d.groups)
             .enter()
             .append('g')
             .on('mouseover', this.fade(0.1))
-            .on('mouseout', this.fade(1))
-            .style('cursor', 'pointer');
+            .on('mouseout', this.fade(1));
 
         const paths = group
             .append('path')
+            .attr('class', styles.path)
             .style('fill', d => colors(d.index))
-            .style('stroke', '#dcdcdc')
             .attr('d', arcs)
-            .each(function change(d, i) {
+            .each((d, i, nodes) => {
                 const firstArcSection = /(^.+?)L/;
-
-                let newArc = firstArcSection.exec(select(this).attr('d'))[1];
+                let newArc = firstArcSection.exec(select(nodes[i]).attr('d'))[1];
                 newArc.replace(/,/g, ' ');
-                if (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (180 * (Math.PI / 180))) {
+
+                if (d.endAngle > (90 * (Math.PI / 180)) &&
+                    d.startAngle < (180 * (Math.PI / 180))) {
                     const startLoc = /M(.*?)A/;
                     const middleLoc = /A(.*?),0/;
                     const endLoc = /,1,(.*?)$/;
@@ -199,6 +215,7 @@ class ChordDiagram extends PureComponent {
 
                     newArc = `M${newStart}A${middleSec},0,0,0,${newEnd}`;
                 }
+
                 element
                     .append('path')
                     .attr('class', 'hiddenArcs')
@@ -208,16 +225,16 @@ class ChordDiagram extends PureComponent {
             });
 
         if (showTooltip) {
-            const that = this;
             paths
-                .on('mouseover', function handle(d) {
-                    that.mouseOverArc(d, this);
+                .on('mouseover', (d, i, nodes) => {
+                    this.handleMouseOver(nodes[i], d);
                 })
-                .on('mousemove', this.mouseMoveArc)
-                .on('mouseout', function handle() {
-                    that.mouseOutArc(this);
+                .on('mousemove', this.handleMouseMove)
+                .on('mouseout', (d, i, nodes) => {
+                    this.handleMouseOut(nodes[i]);
                 });
         }
+
         if (showLabels) {
             this.addLabels(group, labelsData, paths, colors);
         }
@@ -227,7 +244,10 @@ class ChordDiagram extends PureComponent {
         const group = selection
             .append('text')
             .attr('pointer-events', 'none')
-            .attr('dy', d => (d.endAngle > (90 * (Math.PI / 180)) && d.startAngle < (180 * (Math.PI / 180)) ? -10 : 15));
+            .attr('dy', d => (
+                d.endAngle > (90 * (Math.PI / 180)) &&
+                d.startAngle < (180 * (Math.PI / 180)) ? -10 : 15
+            ));
 
         group
             .append('textPath')
@@ -238,10 +258,10 @@ class ChordDiagram extends PureComponent {
             .style('fill', d => getColorOnBgColor(colors(d.index)));
 
         group
-            .filter(function filtrate(d, i) {
+            .filter((d, i, nodes) => {
                 // eslint-disable-next-line no-underscore-dangle
-                return (((paths._groups[0][i].getTotalLength() / 2) - 30)
-                    < this.getComputedTextLength());
+                const pathLength = (paths._groups[0][i].getTotalLength() - (ribbonWidth * 2)) / 2;
+                return ((pathLength - 5) < nodes[i].getComputedTextLength());
             })
             .remove();
     }
@@ -253,8 +273,8 @@ class ChordDiagram extends PureComponent {
             .enter()
             .append('path')
             .attr('d', ribbons)
-            .style('fill', d => colors(d.source.index))
-            .style('stroke', '#dcdcdc');
+            .attr('class', styles.path)
+            .style('fill', d => colors(d.source.index));
     }
 
     redrawChart = () => {
@@ -288,7 +308,7 @@ class ChordDiagram extends PureComponent {
         height = height - top - bottom;
 
         const outerRadius = (Math.min(width, height) * 0.5);
-        let innerRadius = outerRadius - 24;
+        let innerRadius = outerRadius - ribbonWidth;
 
         if (innerRadius < 0) {
             innerRadius = 0;
@@ -308,8 +328,8 @@ class ChordDiagram extends PureComponent {
         const colors = scaleOrdinal().range(colorScheme);
 
         const context = this.setContext(width, height, margins, chords(data));
-        const chordsGroup = context.append('g').attr('class', 'chords');
-        const ribbonsGroup = context.append('g').attr('class', 'ribbons');
+        const chordsGroup = context.append('g').attr('class', `chords ${styles.chords}`);
+        const ribbonsGroup = context.append('g').attr('class', `ribbons ${styles.ribbons}`);
 
         this.addPaths(chordsGroup, arcs, colors);
         this.addRibbons(ribbonsGroup, ribbons, colors);
@@ -319,6 +339,7 @@ class ChordDiagram extends PureComponent {
     render() {
         const { className } = this.props;
         const chordStyle = [
+            'chord-diagram',
             styles.chordDiagram,
             className,
         ].join(' ');
