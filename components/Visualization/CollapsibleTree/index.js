@@ -1,6 +1,12 @@
 import React from 'react';
-import { select, event } from 'd3-selection';
-import { hierarchy, tree } from 'd3-hierarchy';
+import {
+    select,
+    event,
+} from 'd3-selection';
+import {
+    hierarchy,
+    tree,
+} from 'd3-hierarchy';
 import { scaleOrdinal } from 'd3-scale';
 import { easeSinInOut } from 'd3-ease';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -8,7 +14,10 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    isObjectEmpty,
+} from '../../../utils/common';
 import styles from './styles.scss';
 
 /**
@@ -50,10 +59,10 @@ const defaultProps = {
     nodeSize: [50, 300],
     className: '',
     margins: {
-        top: 20,
-        right: 50,
-        bottom: 20,
-        left: 100,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
 
@@ -87,15 +96,19 @@ class CollapsibleTree extends React.PureComponent {
             bottom,
             left,
         } = margins;
+
         const group = select(this.svg)
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
-            .call(zoom().on('zoom', () => {
-                const { x, y, k } = event.transform;
-                Object.assign(this, { x, y, k });
-                group
-                    .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
-            }))
+            .call(
+                zoom()
+                    .filter(() => event.ctrlKey)
+                    .on('zoom', () => {
+                        const { x, y, k } = event.transform;
+                        Object.assign(this, { x, y, k });
+                        group
+                            .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
+                    }))
             .append('g')
             .attr('transform', `translate(${left},${top + (height / 2)})`);
 
@@ -128,7 +141,7 @@ class CollapsibleTree extends React.PureComponent {
         this.root.x0 = height / 2;
         this.root.y0 = 0;
         this.colors = scaleOrdinal().range(colorScheme);
-        this.context = this.setContext(width, height, margins);
+        this.group = this.setContext(width, height, margins);
         this.duration = 0;
     }
 
@@ -289,7 +302,7 @@ class CollapsibleTree extends React.PureComponent {
         const nodes = treeData.descendants();
         const links = treeData.descendants().slice(1);
 
-        const group = this.context;
+        const group = this.group;
 
         this.addNodes(group, source, nodes);
         this.addLinks(group, source, links);
@@ -318,23 +331,24 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     redrawChart = () => {
-        const context = select(this.svg);
-        context.selectAll('*').remove();
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
         this.drawChart();
     }
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles.collapsibleTreeContainer} ${className}`;
-        const collapsibleStyle = `${styles.collapsibleTree}`;
+        const treeStyle = [
+            'collapsible-tree',
+            styles.collapsibleTree,
+            className,
+        ].join(' ');
 
         return (
-            <div className={containerStyle}>
-                <svg
-                    className={collapsibleStyle}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={treeStyle}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }
