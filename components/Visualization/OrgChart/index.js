@@ -45,8 +45,8 @@ const propTypes = {
     selectColor: PropTypes.string,
     /* the cluster minimum layout's node size */
     nodeSize: PropTypes.shape({
-        minNodeWidth: PropTypes.number,
-        minNodeHeight: PropTypes.number,
+        nodeWidth: PropTypes.number,
+        nodeHeight: PropTypes.number,
     }),
     /* additional class name for styling */
     className: PropTypes.string,
@@ -68,8 +68,8 @@ const defaultProps = {
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
     nodeSize: {
-        minNodeWidth: 150,
-        minNodeHeight: 50,
+        nodeWidth: 150,
+        nodeHeight: 50,
     },
     onSelection: () => [],
     disabled: false,
@@ -98,6 +98,7 @@ class OrgChart extends React.PureComponent {
         const { value = [] } = props;
         this.state = {
             selected: value,
+            nodeSize: this.props.nodeSize,
         };
     }
 
@@ -109,6 +110,9 @@ class OrgChart extends React.PureComponent {
         if (this.props.value !== nextProps.value) {
             const { value = [] } = nextProps;
             this.setState({ selected: value });
+        }
+        if (this.props.nodeSize !== nextProps.nodeSize) {
+            this.setState({ nodeSize: nextProps.nodeSize });
         }
     }
 
@@ -198,7 +202,6 @@ class OrgChart extends React.PureComponent {
             labelAccessor,
             disabled,
             fillColor,
-            nodeSize,
             selectColor,
             margins,
         } = this.props;
@@ -245,14 +248,14 @@ class OrgChart extends React.PureComponent {
 
         const widthPerTreeLeaves = width / root.leaves().length;
         const heightPerTreeDepth = height / root.height;
-        const { minNodeWidth, minNodeHeight } = nodeSize;
-        const nodeWidth = widthPerTreeLeaves < minNodeWidth ?
-            minNodeWidth : widthPerTreeLeaves;
-        const nodeHeight = heightPerTreeDepth < minNodeHeight ?
-            minNodeHeight : heightPerTreeDepth - rectWidth;
+        const { nodeWidth, nodeHeight } = this.state.nodeSize;
+        const calculatedWidth = widthPerTreeLeaves < nodeWidth ?
+            nodeWidth : widthPerTreeLeaves;
+        const calculatedHeight = heightPerTreeDepth < nodeHeight ?
+            nodeHeight : heightPerTreeDepth - rectWidth;
 
         const treemap = tree()
-            .nodeSize([nodeWidth, nodeHeight])
+            .nodeSize([calculatedWidth, calculatedHeight])
             .separation((a, b) => (a.parent === b.parent ? 1 : 1.25));
         const treeData = treemap(root);
         const link = linkVertical()
@@ -294,7 +297,17 @@ class OrgChart extends React.PureComponent {
         const getBBox = d => select(d).node().parentNode.getBBox();
         nodes
             .selectAll('rect')
-            .attr('width', (d, i, groups) => getBBox(groups[i]).width + (boxPadding.x * 2))
+            .attr('width', (d, i, groups) => {
+                const textWidth = getBBox(groups[i]).width + (boxPadding.x * 2);
+                if (this.state.nodeSize.nodeWidth < textWidth) {
+                    const newNodeSize = { ...this.state.nodeSize };
+                    newNodeSize.nodeWidth = textWidth;
+                    this.setState({
+                        nodeSize: newNodeSize,
+                    });
+                }
+                return textWidth;
+            })
             .attr('height', (d, i, groups) => getBBox(groups[i]).height + (boxPadding.y * 2))
             .attr('x', (d, i, groups) => getBBox(groups[i]).x - boxPadding.x)
             .attr('y', (d, i, groups) => getBBox(groups[i]).y - boxPadding.y);
