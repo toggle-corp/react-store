@@ -38,6 +38,11 @@ $radius-button-border: 2px !default;
         cursor: pointer;
     }
 
+    &:active {
+        @include shadow-button-active;
+        transform: translateY(1px);
+    }
+
     &:not(.transparent) {
         &:not(:disabled) {
             @include shadow-button;
