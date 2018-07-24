@@ -3,12 +3,14 @@
 .spark-lines {
     display: flex;
     flex: 1 1 auto;
+    cursor: pointer;
 
     .spark-line {
         .area {
             fill: $color-viz-blue;
+            stroke: none;
             stroke-width: 0;
-            fill-opacity: 0.5;
+            fill-opacity: 0.1;
         }
 
         .path {
@@ -16,6 +18,11 @@
             stroke-width: 2;
             stroke-linejoin: round;
             stroke-linecap: round;
+        }
+
+        .focus {
+            fill: $color-viz-blue;
+            stroke: $color-viz-grey;
         }
     }
 }
