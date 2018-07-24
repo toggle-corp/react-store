@@ -13,6 +13,7 @@ import {
     defaultLimit,
 } from '../../../utils/bounds';
 import {
+    listToMap,
     caseInsensitiveSubmatch,
     getRatingForContentInString,
 } from '../../../utils/common';
@@ -110,6 +111,25 @@ const filterAndSortOptions = ({
     return newOptions;
 };
 
+// checks if value is contained in options
+const isValidValue = ({
+    value,
+    options,
+    keySelector,
+}) => {
+    if (value === undefined) {
+        return true;
+    }
+
+    const optionsMap = listToMap(
+        options,
+        keySelector,
+        () => true,
+    );
+
+    return optionsMap[value] !== undefined;
+};
+
 class SelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -128,6 +148,24 @@ class SelectInput extends React.PureComponent {
         this.input = React.createRef();
     }
 
+    componentWillMount() {
+        const {
+            value,
+            onChange,
+            keySelector,
+        } = this.props;
+
+        const isValueInvalid = !isValidValue({
+            value,
+            onChange,
+            keySelector,
+        });
+
+        if (isValueInvalid) {
+            onChange(undefined);
+        }
+    }
+
     componentDidMount() {
         const { current: container } = this.container;
         if (container) {
@@ -139,22 +177,32 @@ class SelectInput extends React.PureComponent {
         const {
             value: newValue,
             options: newOptions,
+            keySelector: newKeySelector,
+            onChange,
         } = nextProps;
 
-        const {
-            value: oldValue,
-            options: oldOptions,
-        } = this.props;
+        const isValueInvalid = !isValidValue({
+            value: newValue,
+            onChange,
+            keySelector: newKeySelector,
+        });
 
-        if (oldValue !== newValue || oldOptions !== newOptions) {
-            // NOTE: filter will be cleared
-            this.setState({
-                inputValue: getInputValue(nextProps),
-                displayOptions: newOptions,
-            });
+        if (isValueInvalid) {
+            onChange(undefined);
+        } else {
+            const {
+                value: oldValue,
+                options: oldOptions,
+            } = this.props;
+
+            if (oldValue !== newValue || oldOptions !== newOptions) {
+                // NOTE: filter will be cleared
+                this.setState({
+                    inputValue: getInputValue(nextProps),
+                    displayOptions: newOptions,
+                });
+            }
         }
-
-        // FIXME: check if value is in options?
     }
 
     getClassName = () => {
