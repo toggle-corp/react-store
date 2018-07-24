@@ -28,6 +28,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    setSaveFunction: PropTypes.func,
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -43,6 +44,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     childrenAccessor: d => d.children,
     colorScheme: schemePaired,
     nodeSize: [50, 300],
@@ -65,6 +67,9 @@ class CollapsibleTree extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
         Object.assign(this, { x: 0, y: 0, k: 1 });
     }
 

@@ -35,6 +35,7 @@ const propTypes = {
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
+    setSaveFunction: PropTypes.func,
     idAccessor: PropTypes.func.isRequired,
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
@@ -55,6 +56,7 @@ const defaultProps = {
         nodes: [],
         links: [],
     },
+    setSaveFunction: () => {},
     groupAccessor: d => d.index,
     valueAccessor: () => 1,
     circleRadius: 30,
@@ -78,6 +80,9 @@ class ForceDirectedGraph extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
         this.state = {
             value: 5,
         };

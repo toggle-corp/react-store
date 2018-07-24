@@ -21,6 +21,8 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /* the function to pass save function to parent component */
+    setSaveFunction: PropTypes.func,
     /* the selected values (nodes) */
     value: PropTypes.array, // eslint-disable-line
     /* the hierarchical data to be visualized */
@@ -61,6 +63,7 @@ const defaultProps = {
     className: '',
     value: [],
     data: {},
+    setSaveFunction: () => {},
     childAccessor: d => d.children,
     labelAccessor: d => d.name,
     idAccessor: d => d.id,
@@ -88,6 +91,9 @@ class OrgChart extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
         Object.assign(this, { x: 0, y: 0, k: 1 });
         const { value = [] } = props;
         this.state = {

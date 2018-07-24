@@ -30,6 +30,7 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
@@ -47,6 +48,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     valueLabelAccessor: undefined,
     showGridLines: true,
     className: '',
@@ -66,6 +68,13 @@ const defaultProps = {
 class HorizontalBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.renderChart();

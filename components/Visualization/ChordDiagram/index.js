@@ -33,6 +33,7 @@ const propTypes = {
         height: PropTypes.number,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    setSaveFunction: PropTypes.func,
     labelsData: PropTypes.arrayOf(PropTypes.string).isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
@@ -48,6 +49,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     colorScheme: schemePaired,
     showLabels: true,
     showTooltip: true,
@@ -69,6 +71,13 @@ const defaultProps = {
 class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

@@ -29,6 +29,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    setSaveFunction: PropTypes.func,
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func,
@@ -45,6 +46,7 @@ const propTypes = {
 const defaultProps = {
     childrenAccessor: d => d.children,
     data: [],
+    setSaveFunction: () => {},
     valueAccessor: () => 1,
     colorScheme: schemePaired,
     className: '',
@@ -64,6 +66,13 @@ const defaultProps = {
 class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.renderChart();

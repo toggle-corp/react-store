@@ -28,6 +28,7 @@ const propTypes = {
             name: PropTypes.string,
         }).isRequired,
     ).isRequired,
+    setSaveFunction: PropTypes.func,
     labelName: PropTypes.string.isRequired,
     labelAccessor: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -42,6 +43,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     colorScheme: schemePaired,
     className: '',
     margins: {
@@ -55,6 +57,13 @@ const defaultProps = {
 class ParallelCoordinates extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

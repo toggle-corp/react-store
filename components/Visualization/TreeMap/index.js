@@ -34,6 +34,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    setSaveFunction: PropTypes.func,
     childrenAccessor: PropTypes.func,
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
@@ -50,6 +51,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     childrenAccessor: d => d.children,
     colorScheme: schemeSet3,
     zoomable: true,
@@ -69,6 +71,13 @@ const defaultProps = {
 class TreeMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.renderChart();

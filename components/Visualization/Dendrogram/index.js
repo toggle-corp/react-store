@@ -29,6 +29,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func,
@@ -45,6 +46,7 @@ const propTypes = {
 
 const defaultProps = {
     childrenAccessor: d => d.children,
+    setSaveFunction: () => {},
     valueAccessor: () => 1,
     colorScheme: schemePaired,
     className: '',
@@ -65,6 +67,13 @@ const defaultProps = {
 class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();

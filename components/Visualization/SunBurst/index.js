@@ -41,6 +41,7 @@ const propTypes = {
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     childrenAccessor: PropTypes.func,
     labelAccessor: PropTypes.func.isRequired,
     valueAccessor: PropTypes.func.isRequired,
@@ -57,6 +58,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    setSaveFunction: () => {},
     childrenAccessor: d => d.children,
     colorScheme: schemePaired,
     showLabels: true,
@@ -85,7 +87,9 @@ class SunBurst extends PureComponent {
 
     constructor(props) {
         super(props);
-
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
         this.scaleX = scaleLinear()
             .range([0, twoPi]);
     }

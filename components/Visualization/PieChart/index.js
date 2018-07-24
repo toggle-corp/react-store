@@ -28,6 +28,7 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     data: PropTypes.arrayOf(PropTypes.object),
     valueAccessor: PropTypes.func.isRequired,
     labelAccessor: PropTypes.func.isRequired,
@@ -37,6 +38,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    setSaveFunction: () => {},
     colorScheme: schemeSet3,
     className: '',
 };
@@ -45,6 +47,13 @@ const defaultProps = {
 class PieChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
 
     componentDidMount() {
         this.drawChart();
