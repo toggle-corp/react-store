@@ -763,3 +763,44 @@ export const saveSvg = (svgElement, name) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
 };
+
+export const getClassNameListAndIndex = (el, className) => {
+    const classNameList = (el.getAttribute('class')).split(' ');
+    const index = classNameList.findIndex(d => d === className);
+
+    return {
+        classNameList,
+        index,
+    };
+};
+
+export const addClassName = (el, className) => {
+    if (!className) {
+        return;
+    }
+
+    const {
+        classNameList: newClassNameList,
+        index: classNameIndex,
+    } = getClassNameListAndIndex(el, className);
+
+    // className already there
+    if (classNameIndex !== -1) {
+        return;
+    }
+
+    newClassNameList.push(className);
+    el.setAttribute('class', newClassNameList.join(' '));
+};
+
+export const removeClassName = (el, className) => {
+    const {
+        classNameList: newClassNameList,
+        index: classNameIndex,
+    } = getClassNameListAndIndex(el, className);
+
+    if (classNameIndex !== -1) {
+        newClassNameList.splice(classNameIndex, 1);
+        el.setAttribute('class', newClassNameList.join(' '));
+    }
+};

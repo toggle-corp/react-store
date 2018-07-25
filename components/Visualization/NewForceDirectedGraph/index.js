@@ -15,7 +15,12 @@ import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    isObjectEmpty,
+    addClassName,
+    removeClassName,
+} from '../../../utils/common';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -93,29 +98,6 @@ const defaultProps = {
 const deepCopy = data => (
     JSON.parse(JSON.stringify(data))
 );
-
-const removeClassName = (el, className) => {
-    const classNames = (el.getAttribute('class')).split(' ');
-    const classNameIndex = classNames.findIndex(d => d === className);
-
-    if (classNameIndex !== -1) {
-        classNames.splice(classNameIndex, 1);
-        const newClassName = classNames.join(' ');
-        el.setAttribute('class', newClassName);
-    }
-};
-
-const addClassName = (el, className) => {
-    if (className) {
-        const newClassName = [
-            el.getAttribute('class'),
-            className,
-        ].join(' ');
-
-        el.setAttribute('class', newClassName);
-    }
-};
-
 
 /**
  * Represents the  network of nodes in force layout with many-body force.
