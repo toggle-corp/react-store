@@ -1,61 +1,35 @@
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import List from '../List';
 import GridItem from './GridItem';
+import {
+    getLayoutBounds,
+    getSortedItems,
+} from '../../../utils/grid-layout';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    // className: PropTypes.string,
-    // renderer: PropTypes.func.isRequired,
-    // data: PropTypes.arrayOf(PropTypes.object),
-    // paramSelector: PropTypes.func,
-    // layoutSelector: PropTypes.func.isRequired,
+    className: PropTypes.string,
+    itemClassName: PropTypes.string,
+    data: PropTypes.arrayOf(PropTypes.object),
+    itemHeaderModifier: PropTypes.func.isRequired,
+    itemContentModifier: PropTypes.func.isRequired,
+    layoutSelector: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    // className: '',
+    className: '',
+    itemClassName: '',
+    data: [],
 };
+
 
 export default class GridViewLayout extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static getBounds = (data, layoutSelector) => {
-        let maxW = 0;
-        let maxH = 0;
-
-        data.forEach((datum) => {
-            const layout = layoutSelector(datum);
-
-            const w = layout.left + layout.width;
-            const h = layout.top + layout.height;
-
-            if (w > maxW) {
-                maxW = w;
-            }
-
-            if (h > maxH) {
-                maxH = h;
-            }
-        });
-
-        return {
-            width: maxW,
-            height: maxH,
-        };
-    }
-
-    static getSortedData = (data, layoutSelector) => (
-        data.sort((foo, bar) => {
-            const fooLayout = layoutSelector(foo);
-            const barLayout = layoutSelector(bar);
-            const distA = (fooLayout.top ** 2) + (fooLayout.left ** 2);
-            const distB = (barLayout.top ** 2) + (barLayout.left ** 2);
-            return distA - distB;
-        })
-    )
 
     constructor(props) {
         super(props);
@@ -65,9 +39,12 @@ export default class GridViewLayout extends React.PureComponent {
     }
 
     componentWillMount() {
-        const { data, layoutSelector } = this.props;
-        this.bounds = GridViewLayout.getBounds(data, layoutSelector);
-        this.data = GridViewLayout.getSortedData(data, layoutSelector);
+        const {
+            data,
+            layoutSelector,
+        } = this.props;
+        this.bounds = getLayoutBounds(data, layoutSelector);
+        this.data = getSortedItems(data, layoutSelector);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -85,26 +62,30 @@ export default class GridViewLayout extends React.PureComponent {
             newLayoutSelector !== oldLayoutSelector ||
             newData !== oldData
         ) {
-            this.bounds = GridViewLayout.getBounds(newData, newLayoutSelector);
-            this.data = GridViewLayout.getSortedData(newData, newLayoutSelector);
+            this.bounds = getLayoutBounds(newData, newLayoutSelector);
+            this.data = getSortedItems(newData, newLayoutSelector);
         }
     }
 
-    renderParams = (key, datum) => ({
-        layoutSelector: this.props.layoutSelector,
-        headerModifier: this.props.itemHeaderModifier,
-        contentModifier: this.props.itemContentModifier,
-        datum,
-    })
+    renderParams = (key, datum) => {
+        const {
+            layoutSelector,
+            itemHeaderModifier: headerModifier,
+            itemContentModifier: contentModifier,
+        } = this.props;
+
+        return {
+            layoutSelector,
+            headerModifier,
+            contentModifier,
+            datum,
+        };
+    }
 
     render() {
         const {
             className: classNameFromProps,
-            data,
-            layoutSelector,
             keySelector,
-            itemHeaderModifier,
-            itemContentModifier,
             itemClassName,
         } = this.props;
 

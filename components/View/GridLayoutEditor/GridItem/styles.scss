@@ -1,0 +1,19 @@
+@import '../../../../stylesheets/base';
+
+.grid-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+    border: $width-separator-thin solid transparent;
+    cursor: move;
+
+    &.moving {
+        z-index: 1;
+        border-color: $color-accent;
+    }
+
+    &.invalid {
+        border-color: $color-danger;
+    }
+}
