@@ -5,6 +5,59 @@
 // TODO: Move FormattedDate.format to utils and remove this import
 import FormattedDate from '../components/View/FormattedDate/FormattedDate';
 
+// CHECKER
+
+export const isFalsy = val => (
+    val === undefined || val === null || Number.isNaN(val) || val === false
+);
+
+export const isTruthy = val => !isFalsy(val);
+
+export const isEmpty = val => val === undefined || val === '';
+
+export const isInteger = value => (
+    typeof value === 'number' && value % 1 === 0
+);
+
+export const isFalsyOrEmptyOrZero = val => (
+    isFalsy(val) || val.length === 0 || val === 0 || val === '0'
+);
+
+// added by @frozenhelium
+export const isEqualAndTruthy = (a, b) => (
+    isTruthy(a) && (a === b)
+);
+
+export const isDifferentAndTruthy = (a, b) => (
+    isTruthy(a) && (a !== b)
+);
+
+// NOTE: also assumes mutated data
+export const isArrayEqual = (array1, array2) => (
+    array1.length === array2.length && array1.every((d, i) => d === array2[i])
+);
+
+// Check if object is empty (or undefined)
+export const isObjectEmpty = (obj) => {
+    // Check if obj is defined, has keys and is object: else return true
+    if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
+        // If obj is object and has keys, check their values
+        const innerEmpty = Object.values(obj).reduce((a, b) => (
+            a && isFalsyOrEmptyOrZero(b)
+        ), true);
+
+        // If inner is not empty, then return false else return true
+        if (!innerEmpty) {
+            return false;
+        }
+    }
+    return true;
+};
+
+export const isObject = item => (
+    typeof item === 'object' && !Array.isArray(item) && item !== null
+);
+
 // STRING
 
 // Match two strings
@@ -103,7 +156,7 @@ export const getDateDifferenceHumanReadable = (a, b) => {
 // TODO: write test
 // Here month starts from 1 (not zero)
 export const getNumDaysInMonthX = (year, month) => (
-    (year && month) ? new Date(year, month, 0).getDate() : 32
+    (isTruthy(year) && isTruthy(month)) ? new Date(year, month, 0).getDate() : 32
 );
 
 // TODO: write test
@@ -345,60 +398,6 @@ export const getObjectChildren = (object, keys) => {
     }
     return getObjectChildren(object[key], keys.slice(1));
 };
-
-// CHECKER
-
-export const isFalsy = val => (
-    val === undefined || val === null || Number.isNaN(val) || val === false
-);
-
-export const isTruthy = val => !isFalsy(val);
-
-export const isEmpty = val => val === undefined || val === '';
-
-export const isInteger = value => (
-    typeof value === 'number' && value % 1 === 0
-);
-
-export const isFalsyOrEmptyOrZero = val => (
-    isFalsy(val) || val.length === 0 || val === 0 || val === '0'
-);
-
-// added by @frozenhelium
-export const isEqualAndTruthy = (a, b) => (
-    isTruthy(a) && (a === b)
-);
-
-export const isDifferentAndTruthy = (a, b) => (
-    isTruthy(a) && (a !== b)
-);
-
-// NOTE: also assumes mutated data
-export const isArrayEqual = (array1, array2) => (
-    array1.length === array2.length && array1.every((d, i) => d === array2[i])
-);
-
-// Check if object is empty (or undefined)
-export const isObjectEmpty = (obj) => {
-    // Check if obj is defined, has keys and is object: else return true
-    if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
-        // If obj is object and has keys, check their values
-        const innerEmpty = Object.values(obj).reduce((a, b) => (
-            a && isFalsyOrEmptyOrZero(b)
-        ), true);
-
-        // If inner is not empty, then return false else return true
-        if (!innerEmpty) {
-            return false;
-        }
-    }
-    return true;
-};
-
-export const isObject = item => (
-    typeof item === 'object' && !Array.isArray(item) && item !== null
-);
-
 
 // MATHS
 
