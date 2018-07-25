@@ -42,10 +42,10 @@ const FaramElement = elementType => (WrappedComponent) => {
         calculateProps = (api) => {
             const {
                 forwardedRef,
+                faramElement,
                 faramElementName,
                 faramElementIndex,
                 faramAction,
-                faramElement,
                 faramInfo,
                 ...otherProps
             } = this.props;

@@ -24,8 +24,12 @@ export default class ElementListApi extends ElementApi {
     noOp = () => {};
 
     // PRIVATE
-    add = () => {
-        const newValue = [...this.props.value, undefined];
+    add = (faramInfo = {}) => {
+        let { newElement } = faramInfo;
+        if (newElement && typeof newElement === 'function') {
+            newElement = newElement(this.props.value);
+        }
+        const newValue = [...this.props.value, newElement];
         const newError = {
             ...this.props.error,
             $internal: undefined,
@@ -57,10 +61,10 @@ export default class ElementListApi extends ElementApi {
     }
 
     // PRIVATE
-    getOnClick = ({ faramIdentifier, faramAction }) => {
+    getOnClick = ({ faramIdentifier, faramAction, faramInfo }) => {
         switch (faramAction) {
             case 'add':
-                return this.add;
+                return () => this.add(faramInfo);
             case 'remove':
                 return () => this.remove(faramIdentifier);
             default:
@@ -70,10 +74,10 @@ export default class ElementListApi extends ElementApi {
 
     // Handlers
 
-    actionHandler = ({ faramIdentifier, faramAction }) => {
+    actionHandler = ({ faramIdentifier, faramAction, faramInfo }) => {
         const calculatedProps = {
             disabled: this.isDisabled(),
-            onClick: this.getOnClick({ faramIdentifier, faramAction }),
+            onClick: this.getOnClick({ faramIdentifier, faramAction, faramInfo }),
             changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;
