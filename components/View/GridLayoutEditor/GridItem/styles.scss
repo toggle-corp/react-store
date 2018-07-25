@@ -1,5 +1,8 @@
 @import '../../../../stylesheets/base';
 
+$width-resize-handle: 10px;
+$height-resize-handle: 10px;
+
 .grid-item {
     position: absolute;
     top: 0;
@@ -13,7 +16,29 @@
         border-color: $color-accent;
     }
 
+    &.resizing {
+        z-index: 1;
+        border-color: $color-accent;
+    }
+
     &.invalid {
         border-color: $color-danger;
+    }
+
+    .resize-handle {
+        display: block;
+        position: absolute;
+        right: $width-separator-medium;
+        bottom: $width-separator-medium;
+        border-right: $width-separator-medium solid $color-separator-alt;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
+        cursor: se-resize;
+        width: $width-resize-handle;
+        height: $height-resize-handle;
+
+        &:hover {
+            border-right-color: $color-accent;
+            border-bottom-color: $color-accent;
+        }
     }
 }

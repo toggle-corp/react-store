@@ -6,6 +6,9 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    headerModifier: PropTypes.func.isRequired,
+    contentModifier: PropTypes.func.isRequired,
+    layoutSelector: PropTypes.func.isRequired,
 };
 
 const defaultProps = {

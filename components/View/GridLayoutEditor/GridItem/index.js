@@ -42,6 +42,7 @@ export default class GridItem extends React.PureComponent {
 
         this.containerRef = React.createRef();
         this.isMouseDown = false;
+        this.isResizing = false;
     }
 
     componentWillMount() {
@@ -78,20 +79,22 @@ export default class GridItem extends React.PureComponent {
 
         window.addEventListener('mousemove', this.handleMouseMove);
         this.isMouseDown = true;
+        this.isMoving = true;
     }
 
     handleMouseUp = (e) => {
+        this.lastScreenX = e.screenX;
+        this.lastScreenY = e.screenY;
+
         if (!this.isMouseDown) {
             return;
         }
 
         this.isMouseDown = false;
 
-        this.lastScreenX = e.screenX;
-        this.lastScreenY = e.screenY;
-
         const { current: container } = this.containerRef;
         removeClassName(container, styles.moving);
+        removeClassName(container, styles.resizing);
 
         window.removeEventListener('mousemove', this.handleMouseMove);
 
@@ -116,6 +119,9 @@ export default class GridItem extends React.PureComponent {
             this.isLayoutValid = true;
             removeClassName(container, styles.invalid);
         }
+
+        this.isResizing = false;
+        this.isMoving = false;
     }
 
     handleMouseMove = (e) => {
@@ -126,11 +132,16 @@ export default class GridItem extends React.PureComponent {
         this.lastScreenY = e.screenY;
 
         const { layout } = this.state;
-        const newLayout = {
-            ...layout,
-            left: layout.left + dx,
-            top: layout.top + dy,
-        };
+
+        const newLayout = { ...layout };
+
+        if (this.isResizing) {
+            newLayout.width += dx;
+            newLayout.height += dy;
+        } else {
+            newLayout.left += dx;
+            newLayout.top += dy;
+        }
 
         this.setState({
             layout: newLayout,
@@ -151,6 +162,21 @@ export default class GridItem extends React.PureComponent {
         }
     }
 
+    handleResizeHandleMouseDown = (e) => {
+        e.stopPropagation();
+
+        this.lastScreenX = e.screenX;
+        this.lastScreenY = e.screenY;
+
+        const { current: container } = this.containerRef;
+        addClassName(container, styles.resizing);
+
+        window.addEventListener('mousemove', this.handleMouseMove);
+
+        this.isResizing = true;
+        this.isMouseDown = true;
+    }
+
     renderHeader = () => {
         const {
             datum,
@@ -169,6 +195,22 @@ export default class GridItem extends React.PureComponent {
         return contentModifier(datum);
     }
 
+    renderResizeHandle = () => {
+        const className = [
+            styles.resizeHandle,
+            'resize-handle',
+        ].join(' ');
+
+        return (
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+            <span
+                className={className}
+                onMouseDown={this.handleResizeHandleMouseDown}
+                onMouseUp={this.handleMouseUp}
+            />
+        );
+    }
+
     render() {
         const { className: classNameFromProps } = this.props;
         const { layout } = this.state;
@@ -181,6 +223,7 @@ export default class GridItem extends React.PureComponent {
 
         const Header = this.renderHeader;
         const Content = this.renderContent;
+        const ResizeHandle = this.renderResizeHandle;
 
         const style = {
             width: layout.width,
@@ -199,6 +242,7 @@ export default class GridItem extends React.PureComponent {
             >
                 <Header />
                 <Content />
+                <ResizeHandle />
             </div>
         );
     }
