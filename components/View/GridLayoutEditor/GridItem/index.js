@@ -31,7 +31,6 @@ const areLayoutsEqual = (l1, l2) => (
     && l1.height === l2.height
 );
 
-
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -61,6 +60,20 @@ export default class GridItem extends React.PureComponent {
         window.addEventListener('mouseup', this.handleMouseUp);
     }
 
+    componentDidMount() {
+        const { dragItemClassName } = this.props;
+        const { current: container } = this.containerRef;
+
+        const dragItem = container.getElementsByClassName(dragItemClassName)[0];
+
+        if (dragItem) {
+            this.dragItem = dragItem;
+            dragItem.addEventListener('mousedown', this.handleMouseDown);
+            dragItem.addEventListener('mouseup', this.handleMouseUp);
+            dragItem.style.cursor = 'move';
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: oldLayoutSelector,
@@ -84,6 +97,11 @@ export default class GridItem extends React.PureComponent {
     componentWillUnmount() {
         window.removeEventListener('mouseup', this.handleMouseUp);
         window.removeEventListener('mousemove', this.handleMouseMove);
+
+        if (this.dragItem) {
+            this.dragItem.removeEventListener('mousedown', this.handleMouseDown);
+            this.dragItem.removeEventListener('mouseup', this.handleMouseUp);
+        }
     }
 
     handleMouseDown = (e) => {
@@ -269,8 +287,6 @@ export default class GridItem extends React.PureComponent {
         const ResizeHandle = this.renderResizeHandle;
         const GhostItem = this.renderGhostItem;
 
-        // console.warn(this.minSize, this.props.minSizeSelector(this.props.datum));
-
         const style = {
             width: layout.width,
             height: layout.height,
@@ -287,8 +303,8 @@ export default class GridItem extends React.PureComponent {
                         className={className}
                         ref={this.containerRef}
                         style={style}
-                        onMouseDown={this.handleMouseDown}
-                        onMouseUp={this.handleMouseUp}
+                        // onMouseDown={this.handleMouseDown}
+                        // onMouseUp={this.handleMouseUp}
                     >
                         <Header />
                         <Content />

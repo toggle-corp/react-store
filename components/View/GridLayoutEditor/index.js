@@ -151,6 +151,7 @@ export default class GridLayoutEditor extends React.PureComponent {
             itemHeaderModifier: headerModifier,
             itemContentModifier: contentModifier,
             itemMinSizeSelector: minSizeSelector,
+            dragItemClassName,
         } = this.props;
 
         return {
@@ -161,9 +162,9 @@ export default class GridLayoutEditor extends React.PureComponent {
             datum,
             layoutValidator: this.handleItemLayoutValidation,
             onLayoutChange: this.handleLayoutChange,
+            dragItemClassName,
         };
     }
-
 
     render() {
         const {
