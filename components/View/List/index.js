@@ -39,7 +39,7 @@ const defaultProps = {
     rendererParams: undefined,
 };
 
-class List extends React.Component {
+export class NormalList extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -83,4 +83,4 @@ class List extends React.Component {
     }
 }
 
-export default FaramElement('list')(List);
+export default FaramElement('list')(NormalList);

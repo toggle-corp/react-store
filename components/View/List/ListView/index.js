@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from '../index';
+import FaramElement from '../../../Input/Faram/FaramElement';
+import { NormalList } from '../index';
 import styles from './styles.scss';
 
 const defaultEmptyComponent = () => {
@@ -43,7 +44,7 @@ const defaultProps = {
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
-export default class ListView extends React.Component {
+export class NormalListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -62,7 +63,7 @@ export default class ListView extends React.Component {
                     data.length === 0 ? (
                         <EmptyComponent />
                     ) : (
-                        <List
+                        <NormalList
                             data={data}
                             {...otherProps}
                         />
@@ -72,3 +73,5 @@ export default class ListView extends React.Component {
         );
     }
 }
+
+export default FaramElement('list')(NormalListView);

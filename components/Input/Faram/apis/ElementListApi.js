@@ -89,4 +89,18 @@ export default class ElementListApi extends ElementApi {
         };
         return calculatedProps;
     }
+
+    sortableListHandler = () => {
+        const calculatedProps = {
+            data: this.props.value,
+            onChange: (value) => {
+                // NOTE:
+                // return new sorted value
+                // clear error for all children
+                // return faramInfo as is
+                this.props.onChange(value, {}, this.props.info);
+            },
+        };
+        return calculatedProps;
+    }
 }
