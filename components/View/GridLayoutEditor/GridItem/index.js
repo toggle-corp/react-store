@@ -18,6 +18,7 @@ const propTypes = {
     contentModifier: PropTypes.func.isRequired,
     $itemKey: PropTypes.string.isRequired,
     onLayoutChange: PropTypes.func.isRequired,
+    dragItemClassName: PropTypes.string.isRequired,
 };
 
 const defaultProps = {

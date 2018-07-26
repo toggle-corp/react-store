@@ -9,6 +9,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     itemClassName: PropTypes.string,
+    dragItemClassName: PropTypes.string.isRequired,
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     layoutSelector: PropTypes.func.isRequired,
