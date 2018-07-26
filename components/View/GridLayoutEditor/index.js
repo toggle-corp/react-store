@@ -8,13 +8,23 @@ import { getLayoutBounds } from '../../../utils/grid-layout';
 import styles from './styles.scss';
 
 const propTypes = {
+    itemClassName: PropTypes.string,
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     layoutSelector: PropTypes.func.isRequired,
+    // minSizeSelector: PropTypes.func.isRequired,
     keySelector: PropTypes.func.isRequired,
+    itemHeaderModifier: PropTypes.func.isRequired,
+    itemContentModifier: PropTypes.func.isRequired,
+    onLayoutChange: PropTypes.func.isRequired,
+    gridSize: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+    }).isRequired,
 };
 
 const defaultProps = {
+    itemClassName: '',
     className: '',
     data: [],
 };
