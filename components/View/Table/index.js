@@ -100,7 +100,7 @@ const propTypes = {
 
     onDataSort: PropTypes.func,
 
-    emptyComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
