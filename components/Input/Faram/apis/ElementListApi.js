@@ -35,6 +35,12 @@ export default class ElementListApi extends ElementApi {
             $internal: undefined,
         };
 
+        // NOTE: Save these values in this.props so that above
+        // destructuring keeps working before setProps is
+        // again called.
+        this.props.value = newValue;
+        this.props.error = newError;
+
         this.props.onChange(newValue, newError);
     }
 
@@ -43,21 +49,46 @@ export default class ElementListApi extends ElementApi {
         const newValue = [...this.props.value];
         newValue.splice(index, 1);
 
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
-        };
+        console.warn(this.props.error);
 
-        delete newError[index];
+        console.warn('Delete', index);
 
-        for (let i = index + 1; i < this.props.value.length; i += 1) {
-            delete newError[i - 1];
-            if (isTruthy(newError[i])) {
-                newError[i - 1] = newError[i];
+        const newError = { ...this.props.error };
+
+        delete newError.$internal;
+
+        for (let i = index; i < this.props.value.length; i += 1) {
+            delete newError[i];
+            if (isTruthy(newError[i + 1])) {
+                newError[i] = newError[i + 1];
             }
         }
 
+        // NOTE: Save these values in this.props so that above
+        // destructuring keeps working before setProps is
+        // again called.
+        this.props.value = newValue;
+        this.props.error = newError;
+
         this.props.onChange(newValue, newError);
+    }
+
+    // PRIVATE
+    change = (value) => {
+        const newValue = value;
+        const newError = {};
+
+        // NOTE: Save these values in this.props so that above
+        // destructuring keeps working before setProps is
+        // again called.
+        this.props.value = newValue;
+        this.props.error = newError;
+
+        // NOTE:
+        // return new sorted value
+        // clear error for all children
+        // return faramInfo as is
+        this.props.onChange(newValue, newError, this.props.info);
     }
 
     // PRIVATE
@@ -93,13 +124,7 @@ export default class ElementListApi extends ElementApi {
     sortableListHandler = () => {
         const calculatedProps = {
             data: this.props.value,
-            onChange: (value) => {
-                // NOTE:
-                // return new sorted value
-                // clear error for all children
-                // return faramInfo as is
-                this.props.onChange(value, {}, this.props.info);
-            },
+            onChange: this.change,
         };
         return calculatedProps;
     }
