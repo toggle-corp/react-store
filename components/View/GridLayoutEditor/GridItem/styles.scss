@@ -7,17 +7,20 @@ $height-resize-handle: 10px;
     position: absolute;
     top: 0;
     left: 0;
-    user-select: none;
+    z-index: 1;
     border: $width-separator-thin solid transparent;
     cursor: move;
+    user-select: none;
 
     &.moving {
-        z-index: 1;
+        opacity: .6;
+        z-index: 10;
         border-color: $color-accent;
     }
 
     &.resizing {
-        z-index: 1;
+        opacity: .6;
+        z-index: 10;
         border-color: $color-accent;
     }
 
@@ -40,5 +43,20 @@ $height-resize-handle: 10px;
             border-right-color: $color-accent;
             border-bottom-color: $color-accent;
         }
+    }
+}
+
+.ghost-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: $duration-transition-medium all linear;
+    z-index: 0;
+    padding: $spacing-extra-small;
+
+    .inner {
+        background-color: $color-foreground-alt;
+        width: 100%;
+        height: 100%;
     }
 }

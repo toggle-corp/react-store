@@ -12,6 +12,7 @@ const propTypes = {
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     layoutSelector: PropTypes.func.isRequired,
+    // minSizeSelector: PropTypes.func.isRequired,
     keySelector: PropTypes.func.isRequired,
     itemHeaderModifier: PropTypes.func.isRequired,
     itemContentModifier: PropTypes.func.isRequired,

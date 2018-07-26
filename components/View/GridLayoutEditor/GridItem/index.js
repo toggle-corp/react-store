@@ -36,13 +36,15 @@ export default class GridItem extends React.PureComponent {
             layoutSelector,
         } = props;
 
+        const layout = layoutSelector(datum);
         this.state = {
-            layout: layoutSelector(datum),
+            layout,
         };
 
         this.containerRef = React.createRef();
         this.isMouseDown = false;
         this.isResizing = false;
+        this.lastValidLayout = layout;
     }
 
     componentWillMount() {
@@ -61,7 +63,9 @@ export default class GridItem extends React.PureComponent {
         } = nextProps;
 
         if (oldLayoutSelector !== newLayoutSelector || oldDatum !== newDatum) {
-            this.setState({ layout: newLayoutSelector(newDatum) });
+            const newLayout = newLayoutSelector(newDatum);
+            this.setState({ layout: newLayout });
+            this.lastValidLayout = newLayout;
         }
     }
 
@@ -108,13 +112,7 @@ export default class GridItem extends React.PureComponent {
 
             onLayoutChange($itemKey, layout);
         } else {
-            const {
-                layoutSelector,
-                datum,
-            } = this.props;
-
-            const oldLayout = layoutSelector(datum);
-            this.setState({ layout: oldLayout });
+            this.setState({ layout: this.lastValidLayout });
 
             this.isLayoutValid = true;
             removeClassName(container, styles.invalid);
@@ -155,6 +153,7 @@ export default class GridItem extends React.PureComponent {
 
         if (isLayoutValid($itemKey, newLayout)) {
             this.isLayoutValid = true;
+            this.lastValidLayout = newLayout;
             removeClassName(container, styles.invalid);
         } else {
             this.isLayoutValid = false;
@@ -211,6 +210,30 @@ export default class GridItem extends React.PureComponent {
         );
     }
 
+    renderGhostItem = () => {
+        const {
+            width,
+            height,
+            left,
+            top,
+        } = this.lastValidLayout;
+
+        const style = {
+            width,
+            height,
+            transform: `translate(${left}px, ${top}px)`,
+        };
+
+        return (
+            <div
+                style={style}
+                className={styles.ghostItem}
+            >
+                <div className={styles.inner} />
+            </div>
+        );
+    }
+
     render() {
         const { className: classNameFromProps } = this.props;
         const { layout } = this.state;
@@ -224,6 +247,7 @@ export default class GridItem extends React.PureComponent {
         const Header = this.renderHeader;
         const Content = this.renderContent;
         const ResizeHandle = this.renderResizeHandle;
+        const GhostItem = this.renderGhostItem;
 
         const style = {
             width: layout.width,
@@ -232,18 +256,23 @@ export default class GridItem extends React.PureComponent {
         };
 
         return (
-            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-            <div
-                className={className}
-                ref={this.containerRef}
-                style={style}
-                onMouseDown={this.handleMouseDown}
-                onMouseUp={this.handleMouseUp}
-            >
-                <Header />
-                <Content />
-                <ResizeHandle />
-            </div>
+            <React.Fragment>
+                {
+                    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+                    <div
+                        className={className}
+                        ref={this.containerRef}
+                        style={style}
+                        onMouseDown={this.handleMouseDown}
+                        onMouseUp={this.handleMouseUp}
+                    >
+                        <Header />
+                        <Content />
+                        <ResizeHandle />
+                    </div>
+                }
+                <GhostItem />
+            </React.Fragment>
         );
     }
 }
