@@ -12,6 +12,7 @@ const propTypes = {
     className: PropTypes.string,
     datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     layoutSelector: PropTypes.func.isRequired,
+    minSizeSelector: PropTypes.func.isRequired,
     layoutValidator: PropTypes.func.isRequired,
     headerModifier: PropTypes.func.isRequired,
     contentModifier: PropTypes.func.isRequired,
@@ -22,6 +23,13 @@ const propTypes = {
 const defaultProps = {
     className: '',
 };
+
+const areLayoutsEqual = (l1, l2) => (
+    l1.left === l2.left
+    && l1.top === l2.top
+    && l1.width === l2.width
+    && l1.height === l2.height
+);
 
 
 export default class GridItem extends React.PureComponent {
@@ -34,6 +42,7 @@ export default class GridItem extends React.PureComponent {
         const {
             datum,
             layoutSelector,
+            minSizeSelector,
         } = props;
 
         const layout = layoutSelector(datum);
@@ -45,6 +54,7 @@ export default class GridItem extends React.PureComponent {
         this.isMouseDown = false;
         this.isResizing = false;
         this.lastValidLayout = layout;
+        this.minSize = minSizeSelector(datum);
     }
 
     componentWillMount() {
@@ -60,12 +70,14 @@ export default class GridItem extends React.PureComponent {
         const {
             layoutSelector: newLayoutSelector,
             datum: newDatum,
+            minSizeSelector,
         } = nextProps;
 
         if (oldLayoutSelector !== newLayoutSelector || oldDatum !== newDatum) {
             const newLayout = newLayoutSelector(newDatum);
             this.setState({ layout: newLayout });
             this.lastValidLayout = newLayout;
+            this.minSize = minSizeSelector(newDatum);
         }
     }
 
@@ -134,30 +146,36 @@ export default class GridItem extends React.PureComponent {
         const newLayout = { ...layout };
 
         if (this.isResizing) {
-            newLayout.width += dx;
-            newLayout.height += dy;
+            if (newLayout.width + dx >= this.minSize.width) {
+                newLayout.width += dx;
+            }
+            if (newLayout.height + dy >= this.minSize.height) {
+                newLayout.height += dy;
+            }
         } else {
             newLayout.left += dx;
             newLayout.top += dy;
         }
 
-        this.setState({
-            layout: newLayout,
-        });
+        if (!areLayoutsEqual(layout, newLayout)) {
+            this.setState({
+                layout: newLayout,
+            });
 
-        const {
-            layoutValidator: isLayoutValid,
-            $itemKey,
-        } = this.props;
-        const { current: container } = this.containerRef;
+            const {
+                layoutValidator: isLayoutValid,
+                $itemKey,
+            } = this.props;
+            const { current: container } = this.containerRef;
 
-        if (isLayoutValid($itemKey, newLayout)) {
-            this.isLayoutValid = true;
-            this.lastValidLayout = newLayout;
-            removeClassName(container, styles.invalid);
-        } else {
-            this.isLayoutValid = false;
-            addClassName(container, styles.invalid);
+            if (isLayoutValid($itemKey, newLayout)) {
+                this.isLayoutValid = true;
+                this.lastValidLayout = newLayout;
+                removeClassName(container, styles.invalid);
+            } else {
+                this.isLayoutValid = false;
+                addClassName(container, styles.invalid);
+            }
         }
     }
 
@@ -221,6 +239,8 @@ export default class GridItem extends React.PureComponent {
         const style = {
             width,
             height,
+            minWidth: this.minSize.width,
+            minHeight: this.minSize.height,
             transform: `translate(${left}px, ${top}px)`,
         };
 
@@ -249,9 +269,13 @@ export default class GridItem extends React.PureComponent {
         const ResizeHandle = this.renderResizeHandle;
         const GhostItem = this.renderGhostItem;
 
+        // console.warn(this.minSize, this.props.minSizeSelector(this.props.datum));
+
         const style = {
             width: layout.width,
             height: layout.height,
+            minWidth: this.minSize.width,
+            minHeight: this.minSize.height,
             transform: `translate(${layout.left}px, ${layout.top}px)`,
         };
 

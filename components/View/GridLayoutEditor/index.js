@@ -12,7 +12,7 @@ const propTypes = {
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     layoutSelector: PropTypes.func.isRequired,
-    // minSizeSelector: PropTypes.func.isRequired,
+    itemMinSizeSelector: PropTypes.func.isRequired,
     keySelector: PropTypes.func.isRequired,
     itemHeaderModifier: PropTypes.func.isRequired,
     itemContentModifier: PropTypes.func.isRequired,
@@ -150,10 +150,12 @@ export default class GridLayoutEditor extends React.PureComponent {
             layoutSelector,
             itemHeaderModifier: headerModifier,
             itemContentModifier: contentModifier,
+            itemMinSizeSelector: minSizeSelector,
         } = this.props;
 
         return {
             layoutSelector,
+            minSizeSelector,
             headerModifier,
             contentModifier,
             datum,
