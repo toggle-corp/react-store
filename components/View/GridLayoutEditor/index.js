@@ -9,10 +9,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     itemClassName: PropTypes.string,
+    dragItemClassName: PropTypes.string.isRequired,
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     layoutSelector: PropTypes.func.isRequired,
-    // minSizeSelector: PropTypes.func.isRequired,
+    itemMinSizeSelector: PropTypes.func.isRequired,
     keySelector: PropTypes.func.isRequired,
     itemHeaderModifier: PropTypes.func.isRequired,
     itemContentModifier: PropTypes.func.isRequired,
@@ -150,18 +151,21 @@ export default class GridLayoutEditor extends React.PureComponent {
             layoutSelector,
             itemHeaderModifier: headerModifier,
             itemContentModifier: contentModifier,
+            itemMinSizeSelector: minSizeSelector,
+            dragItemClassName,
         } = this.props;
 
         return {
             layoutSelector,
+            minSizeSelector,
             headerModifier,
             contentModifier,
             datum,
             layoutValidator: this.handleItemLayoutValidation,
             onLayoutChange: this.handleLayoutChange,
+            dragItemClassName,
         };
     }
-
 
     render() {
         const {

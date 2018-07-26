@@ -9,17 +9,16 @@ $height-resize-handle: 10px;
     left: 0;
     z-index: 1;
     border: $width-separator-thin solid transparent;
-    cursor: move;
     user-select: none;
 
     &.moving {
-        opacity: .6;
+        opacity: .5;
         z-index: 10;
         border-color: $color-accent;
     }
 
     &.resizing {
-        opacity: .6;
+        opacity: .5;
         z-index: 10;
         border-color: $color-accent;
     }

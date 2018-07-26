@@ -49,10 +49,6 @@ export default class ElementListApi extends ElementApi {
         const newValue = [...this.props.value];
         newValue.splice(index, 1);
 
-        console.warn(this.props.error);
-
-        console.warn('Delete', index);
-
         const newError = { ...this.props.error };
 
         delete newError.$internal;

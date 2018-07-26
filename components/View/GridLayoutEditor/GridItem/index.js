@@ -12,17 +12,25 @@ const propTypes = {
     className: PropTypes.string,
     datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     layoutSelector: PropTypes.func.isRequired,
+    minSizeSelector: PropTypes.func.isRequired,
     layoutValidator: PropTypes.func.isRequired,
     headerModifier: PropTypes.func.isRequired,
     contentModifier: PropTypes.func.isRequired,
     $itemKey: PropTypes.string.isRequired,
     onLayoutChange: PropTypes.func.isRequired,
+    dragItemClassName: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
 };
 
+const areLayoutsEqual = (l1, l2) => (
+    l1.left === l2.left
+    && l1.top === l2.top
+    && l1.width === l2.width
+    && l1.height === l2.height
+);
 
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -34,6 +42,7 @@ export default class GridItem extends React.PureComponent {
         const {
             datum,
             layoutSelector,
+            minSizeSelector,
         } = props;
 
         const layout = layoutSelector(datum);
@@ -45,10 +54,25 @@ export default class GridItem extends React.PureComponent {
         this.isMouseDown = false;
         this.isResizing = false;
         this.lastValidLayout = layout;
+        this.minSize = minSizeSelector(datum);
     }
 
     componentWillMount() {
         window.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    componentDidMount() {
+        const { dragItemClassName } = this.props;
+        const { current: container } = this.containerRef;
+
+        const dragItem = container.getElementsByClassName(dragItemClassName)[0];
+
+        if (dragItem) {
+            this.dragItem = dragItem;
+            dragItem.addEventListener('mousedown', this.handleMouseDown);
+            dragItem.addEventListener('mouseup', this.handleMouseUp);
+            dragItem.style.cursor = 'move';
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -60,18 +84,25 @@ export default class GridItem extends React.PureComponent {
         const {
             layoutSelector: newLayoutSelector,
             datum: newDatum,
+            minSizeSelector,
         } = nextProps;
 
         if (oldLayoutSelector !== newLayoutSelector || oldDatum !== newDatum) {
             const newLayout = newLayoutSelector(newDatum);
             this.setState({ layout: newLayout });
             this.lastValidLayout = newLayout;
+            this.minSize = minSizeSelector(newDatum);
         }
     }
 
     componentWillUnmount() {
         window.removeEventListener('mouseup', this.handleMouseUp);
         window.removeEventListener('mousemove', this.handleMouseMove);
+
+        if (this.dragItem) {
+            this.dragItem.removeEventListener('mousedown', this.handleMouseDown);
+            this.dragItem.removeEventListener('mouseup', this.handleMouseUp);
+        }
     }
 
     handleMouseDown = (e) => {
@@ -134,30 +165,36 @@ export default class GridItem extends React.PureComponent {
         const newLayout = { ...layout };
 
         if (this.isResizing) {
-            newLayout.width += dx;
-            newLayout.height += dy;
+            if (newLayout.width + dx >= this.minSize.width) {
+                newLayout.width += dx;
+            }
+            if (newLayout.height + dy >= this.minSize.height) {
+                newLayout.height += dy;
+            }
         } else {
             newLayout.left += dx;
             newLayout.top += dy;
         }
 
-        this.setState({
-            layout: newLayout,
-        });
+        if (!areLayoutsEqual(layout, newLayout)) {
+            this.setState({
+                layout: newLayout,
+            });
 
-        const {
-            layoutValidator: isLayoutValid,
-            $itemKey,
-        } = this.props;
-        const { current: container } = this.containerRef;
+            const {
+                layoutValidator: isLayoutValid,
+                $itemKey,
+            } = this.props;
+            const { current: container } = this.containerRef;
 
-        if (isLayoutValid($itemKey, newLayout)) {
-            this.isLayoutValid = true;
-            this.lastValidLayout = newLayout;
-            removeClassName(container, styles.invalid);
-        } else {
-            this.isLayoutValid = false;
-            addClassName(container, styles.invalid);
+            if (isLayoutValid($itemKey, newLayout)) {
+                this.isLayoutValid = true;
+                this.lastValidLayout = newLayout;
+                removeClassName(container, styles.invalid);
+            } else {
+                this.isLayoutValid = false;
+                addClassName(container, styles.invalid);
+            }
         }
     }
 
@@ -221,6 +258,8 @@ export default class GridItem extends React.PureComponent {
         const style = {
             width,
             height,
+            minWidth: this.minSize.width,
+            minHeight: this.minSize.height,
             transform: `translate(${left}px, ${top}px)`,
         };
 
@@ -252,6 +291,8 @@ export default class GridItem extends React.PureComponent {
         const style = {
             width: layout.width,
             height: layout.height,
+            minWidth: this.minSize.width,
+            minHeight: this.minSize.height,
             transform: `translate(${layout.left}px, ${layout.top}px)`,
         };
 
@@ -263,8 +304,8 @@ export default class GridItem extends React.PureComponent {
                         className={className}
                         ref={this.containerRef}
                         style={style}
-                        onMouseDown={this.handleMouseDown}
-                        onMouseUp={this.handleMouseUp}
+                        // onMouseDown={this.handleMouseDown}
+                        // onMouseUp={this.handleMouseUp}
                     >
                         <Header />
                         <Content />

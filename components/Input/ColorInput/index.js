@@ -144,8 +144,9 @@ class ColorInput extends React.PureComponent {
                     )
                 }
                 <button
+                    type="button"
                     className={`${styles.colorBox} color-box`}
-                    onClick={() => this.handleColorBoxClick()}
+                    onClick={this.handleColorBoxClick}
                 >
                     <span
                         className={`${styles.color} color`}
