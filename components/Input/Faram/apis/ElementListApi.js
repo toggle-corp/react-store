@@ -42,10 +42,15 @@ export default class ElementListApi extends ElementApi {
         this.props.error = newError;
 
         this.props.onChange(newValue, newError);
+
+        const { callback } = faramInfo;
+        if (callback) {
+            callback(newElement, newValue);
+        }
     }
 
     // PRIVATE
-    remove = (index) => {
+    remove = (index, faramInfo = {}) => {
         const newValue = [...this.props.value];
         newValue.splice(index, 1);
 
@@ -67,6 +72,11 @@ export default class ElementListApi extends ElementApi {
         this.props.error = newError;
 
         this.props.onChange(newValue, newError);
+
+        const { callback } = faramInfo;
+        if (callback) {
+            callback(index, newValue);
+        }
     }
 
     // PRIVATE
@@ -93,7 +103,7 @@ export default class ElementListApi extends ElementApi {
             case 'add':
                 return () => this.add(faramInfo);
             case 'remove':
-                return () => this.remove(faramIdentifier);
+                return () => this.remove(faramIdentifier, faramInfo);
             default:
                 return this.noOp;
         }
