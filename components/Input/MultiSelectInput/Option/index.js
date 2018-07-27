@@ -79,7 +79,7 @@ export default class Option extends React.PureComponent {
         onClick(optionKey);
     }
 
-    handleFocus = () => {
+    handleMouseMove = () => {
         const {
             optionKey,
             onFocus,
@@ -89,13 +89,15 @@ export default class Option extends React.PureComponent {
         onFocus(optionKey);
     }
 
-    handleBlur = () => {
+    handleMouseLeave = () => {
         this.focusedByMouse = false;
     }
 
     scrollToFocus = () => {
         if (!this.focusedByMouse) {
-            this.ref.current.scrollIntoView();
+            this.ref.current.scrollIntoView({
+                block: 'nearest',
+            });
         }
     }
 
@@ -112,10 +114,8 @@ export default class Option extends React.PureComponent {
                 ref={this.ref}
                 className={className}
                 onClick={this.handleClick}
-                onMouseOver={this.handleFocus}
-                onMouseOut={this.handleBlur}
-                onFocus={this.handleFocus}
-                onBlur={this.handleBlur}
+                onMouseMove={this.handleMouseMove}
+                onMouseLeave={this.handleMouseLeave}
                 type="button"
             >
                 <Checkbox active={active} />
