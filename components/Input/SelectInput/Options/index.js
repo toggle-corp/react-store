@@ -17,10 +17,12 @@ const propTypes = {
     optionLabelSelector: PropTypes.func,
     renderEmpty: PropTypes.func,
     onOptionClick: PropTypes.func.isRequired,
+    onOptionFocus: PropTypes.func.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
+    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onBlur: PropTypes.func.isRequired,
     onInvalidate: PropTypes.func.isRequired,
 
@@ -32,6 +34,7 @@ const defaultProps = {
     className: '',
     show: false,
     data: [],
+    focusedKey: undefined,
     optionLabelSelector: undefined,
     renderEmpty: () => 'No option available',
     value: undefined,
@@ -48,7 +51,9 @@ export default class Options extends React.PureComponent {
             labelSelector,
             optionLabelSelector,
             onOptionClick,
+            onOptionFocus,
             value,
+            focusedKey,
         } = this.props;
 
         const key = keySelector(option);
@@ -59,6 +64,7 @@ export default class Options extends React.PureComponent {
         );
 
         const isActive = key === value;
+        const isFocused = key === focusedKey;
 
         return (
             <Option
@@ -66,6 +72,8 @@ export default class Options extends React.PureComponent {
                 optionKey={key}
                 onClick={onOptionClick}
                 isActive={isActive}
+                isFocused={isFocused}
+                onFocus={onOptionFocus}
             >
                 { label }
             </Option>
