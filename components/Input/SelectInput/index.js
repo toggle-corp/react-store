@@ -309,14 +309,6 @@ class SelectInput extends React.PureComponent {
         });
     }
 
-    handleInputClick = () => {
-        this.toggleDropdown();
-    }
-
-    handleInputFocus = () => {
-        this.setState({ inputInFocus: true });
-    }
-
     handleInputKeyDown = (e) => {
         const { focusedKey, displayOptions, showOptions } = this.state;
         const { keySelector } = this.props;
@@ -365,6 +357,14 @@ class SelectInput extends React.PureComponent {
             }
             this.setState({ focusedKey: newFocusedKey });
         }
+    }
+
+    handleInputClick = () => {
+        this.toggleDropdown();
+    }
+
+    handleInputFocus = () => {
+        this.setState({ inputInFocus: true });
     }
 
     handleInputBlur = () => {

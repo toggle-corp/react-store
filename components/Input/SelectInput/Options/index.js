@@ -71,9 +71,9 @@ export default class Options extends React.PureComponent {
                 key={key}
                 optionKey={key}
                 onClick={onOptionClick}
+                onFocus={onOptionFocus}
                 isActive={isActive}
                 isFocused={isFocused}
-                onFocus={onOptionFocus}
             >
                 { label }
             </Option>

@@ -20,14 +20,17 @@ const propTypes = {
     onBlur: PropTypes.func.isRequired,
     onInvalidate: PropTypes.func.isRequired,
     onOptionClick: PropTypes.func.isRequired,
+    onOptionFocus: PropTypes.func.isRequired,
     parentContainer: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     renderEmpty: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
+    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 const defaultProps = {
     className: '',
     parentContainer: undefined,
+    focusedKey: undefined,
 };
 
 export default class Options extends React.PureComponent {
@@ -74,11 +77,14 @@ export default class Options extends React.PureComponent {
             keySelector,
             labelSelector,
             onOptionClick,
+            onOptionFocus,
+            focusedKey,
         } = this.props;
 
         const key = keySelector(data);
         const label = labelSelector(data);
         const isActive = !!this.activeKeysMap[key];
+        const isFocused = key === focusedKey;
 
         return (
             <Option
@@ -86,7 +92,9 @@ export default class Options extends React.PureComponent {
                 optionKey={key}
                 optionLabel={label}
                 onClick={onOptionClick}
+                onFocus={onOptionFocus}
                 active={isActive}
+                focused={isFocused}
             />
         );
     }

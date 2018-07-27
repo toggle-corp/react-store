@@ -158,6 +158,7 @@ class MultiSelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
+            focusedKey: undefined,
             displayOptions: props.options,
             inputInFocus: props.autoFocus,
             inputValue: '',
@@ -308,7 +309,7 @@ class MultiSelectInput extends React.PureComponent {
     toggleDropdown = () => {
         const { current: container } = this.container;
         const { current: input } = this.input;
-        const { options } = this.props;
+        const { options, value } = this.props;
         const { showOptions } = this.state;
 
         if (showOptions) {
@@ -326,6 +327,7 @@ class MultiSelectInput extends React.PureComponent {
         this.setState({
             displayOptions: options,
             showOptions: !showOptions,
+            focusedKey: undefined,
         });
     }
 
@@ -340,7 +342,58 @@ class MultiSelectInput extends React.PureComponent {
             displayOptions,
             inputValue: value,
             showOptions: true,
+            focusedKey: undefined,
         });
+    }
+
+    handleInputKeyDown = (e) => {
+        const { focusedKey, displayOptions, showOptions } = this.state;
+        const { keySelector } = this.props;
+
+        if (displayOptions.length === 0) {
+            return;
+        }
+
+        if (e.keyCode === 13 && focusedKey) {
+            this.handleOptionClick(focusedKey);
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        }
+
+        if ((e.keyCode === 9 || e.keyCode === 27) && showOptions) {
+            this.toggleDropdown();
+            return;
+        }
+
+        if (e.keyCode !== 40 && e.keyCode !== 38) {
+            return;
+        }
+
+        if (!showOptions) {
+            this.toggleDropdown();
+            return;
+        }
+
+        const index = displayOptions.findIndex(o => keySelector(o) === focusedKey);
+        let newFocusedKey;
+
+        if (e.keyCode === 40) {
+            if (index < displayOptions.length) {
+                newFocusedKey = keySelector(displayOptions[index + 1]);
+            }
+            this.setState({ focusedKey: newFocusedKey });
+            return;
+        }
+
+        if (e.keyCode === 38) {
+            if (index === -1) {
+                newFocusedKey = keySelector(displayOptions[displayOptions.length - 1]);
+            } else if (index > 0) {
+                newFocusedKey = keySelector(displayOptions[index - 1]);
+            }
+            this.setState({ focusedKey: newFocusedKey });
+        }
     }
 
     handleInputFocus = () => {
@@ -420,6 +473,10 @@ class MultiSelectInput extends React.PureComponent {
         onChange(newValue);
     }
 
+    handleOptionFocus = (focusedKey) => {
+        this.setState({ focusedKey });
+    }
+
     handleSelectAllButtonClick = () => {
         const {
             options,
@@ -491,6 +548,7 @@ class MultiSelectInput extends React.PureComponent {
                 onChange={this.handleInputValueChange}
                 onClick={this.handleInputClick}
                 onFocus={this.handleInputFocus}
+                onKeyDown={this.handleInputKeyDown}
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={autoFocus}
                 placeholder={placeholder}
@@ -605,6 +663,7 @@ class MultiSelectInput extends React.PureComponent {
         const {
             displayOptions,
             showOptions,
+            focusedKey,
         } = this.state;
 
         const { current: container } = this.container;
@@ -634,10 +693,12 @@ class MultiSelectInput extends React.PureComponent {
                     onBlur={this.handleOptionsBlur}
                     onInvalidate={this.handleOptionsInvalidate}
                     onOptionClick={this.handleOptionClick}
+                    onOptionFocus={this.handleOptionFocus}
                     className={optionsClassName}
                     parentContainer={container}
                     renderEmpty={renderEmpty}
                     show={showOptions}
+                    focusedKey={focusedKey}
                 />
             </div>
         );
