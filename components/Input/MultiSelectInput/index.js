@@ -471,6 +471,7 @@ class MultiSelectInput extends React.PureComponent {
             value,
             onChange,
         } = this.props;
+        const { current: input } = this.input;
 
         const newValue = [...value];
         const optionIndex = newValue.findIndex(d => d === key);
@@ -481,7 +482,10 @@ class MultiSelectInput extends React.PureComponent {
             newValue.splice(optionIndex, 1);
         }
 
-        onChange(newValue);
+        input.select();
+        this.setState({ focusedKey: key }, () => {
+            onChange(newValue);
+        });
     }
 
     handleOptionFocus = (focusedKey) => {
