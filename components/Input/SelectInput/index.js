@@ -317,6 +317,7 @@ class SelectInput extends React.PureComponent {
         // 9: Tab
         // 27: Escape
         // 13: Enter
+        // 32: Space
         // 38: Down
         // 40: Up
 
@@ -328,8 +329,13 @@ class SelectInput extends React.PureComponent {
         }
 
         // List of special keys, we are going to handle
-        const specialKeys = [40, 38, 13];
+        const specialKeys = [40, 38, 13, 32];
         if (displayOptions.length === 0 || specialKeys.indexOf(e.keyCode) === -1) {
+            return;
+        }
+
+        // Handle space and enter keys only if an option is focused
+        if ((e.keyCode === 13 || e.keyCode === 32) && !focusedKey) {
             return;
         }
 
@@ -344,8 +350,9 @@ class SelectInput extends React.PureComponent {
             return;
         }
 
-        // If enter was pressed, select the focused option
-        if (e.keyCode === 13 && focusedKey) {
+        if (e.keyCode === 13 || e.keyCode === 32) {
+            e.stopPropagation();
+            e.preventDefault();
             this.handleOptionClick(focusedKey);
             return;
         }
