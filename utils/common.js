@@ -430,6 +430,20 @@ export const unique = (object, getValue) => {
     return newArr;
 };
 
+export const findDuplicates = (list = [], keySelector) => {
+    const counts = list.reduce(
+        (acc, item) => {
+            const key = keySelector(item);
+            if (isTruthy(key) && key !== '') {
+                acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
+            }
+            return acc;
+        },
+        {},
+    );
+    return Object.keys(counts).filter(key => counts[key] > 1);
+};
+
 export const listToMap = (list = [], keySelector, modifier) => (
     list.reduce(
         (acc, elem) => {
