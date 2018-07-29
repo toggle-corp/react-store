@@ -30,7 +30,11 @@ export default ErrorComponent => (WrappedComponent) => {
             }
 
             if (ErrorComponent) {
-                return <ErrorComponent />;
+                return (
+                    <ErrorComponent
+                        {...otherProps}
+                    />
+                );
             }
 
             const defaultErrorText = '(x_x)';
