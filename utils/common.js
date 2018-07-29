@@ -42,8 +42,8 @@ export const isObjectEmpty = (obj) => {
     // Check if obj is defined, has keys and is object: else return true
     if (obj && Object.keys(obj).length !== 0 && obj.constructor === Object) {
         // If obj is object and has keys, check their values
-        const innerEmpty = Object.values(obj).reduce((a, b) => (
-            a && isFalsyOrEmptyOrZero(b)
+        const innerEmpty = Object.keys(obj).reduce((a, k) => (
+            a && isFalsyOrEmptyOrZero(obj[k])
         ), true);
 
         // If inner is not empty, then return false else return true
