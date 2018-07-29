@@ -162,12 +162,14 @@ class HorizontalBar extends PureComponent {
     addGrid = (svg, xscale, yscale, height, width, tickFormat) => {
         svg
             .append('g')
+            .attr('id', 'xaxis')
             .attr('class', styles.grid)
             .attr('transform', `translate(0, ${height})`)
             .call(this.addLines(axisBottom, xscale, height, tickFormat));
 
         svg
             .append('g')
+            .attr('id', 'yaxis')
             .attr('class', styles.grid)
             .call(this.addLines(axisLeft, yscale, width));
     }
@@ -239,15 +241,43 @@ class HorizontalBar extends PureComponent {
 
             group
                 .append('g')
+                .attr('id', 'xaxis')
                 .attr('class', styles.xAxis)
                 .attr('transform', `translate(0, ${height})`)
                 .call(xAxis);
 
             group
                 .append('g')
+                .attr('id', 'yaxis')
                 .attr('class', styles.yAxis)
                 .call(yAxis);
         }
+
+        const xTicks = svg
+            .select('#xaxis')
+            .selectAll('.tick');
+
+
+        const tickNodes = xTicks.nodes();
+
+        for (let j = 0; j < tickNodes.length; j += 1) {
+            const current = tickNodes[j];
+            let next = tickNodes[j + 1];
+            if (!current || !next || !current.getBoundingClientRect ||
+                !next.getBoundingClientRect) {
+                break;
+            }
+            while (current.getBoundingClientRect().right > next.getBoundingClientRect().left) {
+                select(current).remove();
+                j += 1;
+                next = tickNodes[j + 1];
+                if (!next) {
+                    break;
+                }
+            }
+        }
+
+        console.warn('go go go');
 
         const groups = group
             .selectAll('.bar')
