@@ -37,6 +37,7 @@ const propTypes = {
     labelAccessor: PropTypes.func.isRequired,
     valueLabelAccessor: PropTypes.func,
     showGridLines: PropTypes.bool,
+    tiltLabels: PropTypes.bool,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -53,6 +54,7 @@ const defaultProps = {
     valueLabelAccessor: undefined,
     showGridLines: true,
     className: '',
+    tiltLabels: false,
     margins: {
         top: 24,
         right: 24,
@@ -200,6 +202,7 @@ class HorizontalBar extends PureComponent {
             labelAccessor,
             showGridLines,
             margins,
+            tiltLabels,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -253,31 +256,16 @@ class HorizontalBar extends PureComponent {
                 .call(yAxis);
         }
 
-        const xTicks = svg
-            .select('#xaxis')
-            .selectAll('.tick');
-
-
-        const tickNodes = xTicks.nodes();
-
-        for (let j = 0; j < tickNodes.length; j += 1) {
-            const current = tickNodes[j];
-            let next = tickNodes[j + 1];
-            if (!current || !next || !current.getBoundingClientRect ||
-                !next.getBoundingClientRect) {
-                break;
-            }
-            while (current.getBoundingClientRect().right > next.getBoundingClientRect().left) {
-                select(current).remove();
-                j += 1;
-                next = tickNodes[j + 1];
-                if (!next) {
-                    break;
-                }
-            }
+        if (tiltLabels) {
+            group
+                .select('#xaxis')
+                .selectAll('text')
+                .attr('y', 0)
+                .attr('x', 9)
+                .attr('dy', '0.35em')
+                .attr('transform', 'rotate(-45)')
+                .style('text-anchor', 'end');
         }
-
-        console.warn('go go go');
 
         const groups = group
             .selectAll('.bar')
