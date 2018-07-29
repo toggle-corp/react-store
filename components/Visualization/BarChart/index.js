@@ -130,8 +130,8 @@ class BarChart extends React.PureComponent {
     }
 
     onMouseOver = (d) => {
-        this.tooltipDiv.setTooltip(this.props.tooltipRender(d));
-        this.tooltipDiv.show();
+        this.tooltip.setTooltip(this.props.tooltipRender(d));
+        this.tooltip.show();
     }
 
     onMouseMove = (d) => {
@@ -141,7 +141,7 @@ class BarChart extends React.PureComponent {
         const xPoint = this.scaleX(d[xKey]) + (this.scaleX.bandwidth() * 0.5);
         const yPoint = d[yKey] > 0 ? this.scaleY(d[yKey]) : this.scaleY(0);
 
-        this.tooltipDiv.move({
+        this.tooltip.move({
             x: xPoint + x,
             y: y + yPoint,
             orentation: 'top',
@@ -151,7 +151,7 @@ class BarChart extends React.PureComponent {
     }
 
     onMouseOut = () => {
-        this.tooltipDiv.hide();
+        this.tooltip.hide();
     }
 
     setData = (newData) => {
@@ -275,7 +275,7 @@ class BarChart extends React.PureComponent {
                         ref={(svg) => { this.svg = svg; }}
                         className="svg"
                     />
-                    <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
+                    <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
                 </div>
             </div>
         );

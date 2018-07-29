@@ -82,7 +82,7 @@ class TimeSeries extends React.PureComponent {
     }
 
     onMouseEnter = (overLayLine, overLayCircle) => {
-        this.tooltipDiv.show();
+        this.tooltip.show();
         overLayCircle
             .style('opacity', 1);
         overLayLine
@@ -90,7 +90,7 @@ class TimeSeries extends React.PureComponent {
     }
 
     onMouseLeave = (overLayLine, overLayCircle) => {
-        this.tooltipDiv.hide();
+        this.tooltip.hide();
         overLayCircle
             .style('opacity', 0);
         overLayLine
@@ -120,8 +120,8 @@ class TimeSeries extends React.PureComponent {
         const xPoint = this.scaleX(d[xKey] || 0);
         const yPoint = this.scaleY(d[yKey] || 0);
 
-        this.tooltipDiv.setTooltip(tooltipRender(d));
-        this.tooltipDiv.move({
+        this.tooltip.setTooltip(tooltipRender(d));
+        this.tooltip.move({
             x: xPoint + x,
             y: y + yPoint,
             orentation: 'right',
@@ -268,7 +268,7 @@ class TimeSeries extends React.PureComponent {
         return (
             <div className={`${className} ${styles.timeSeries}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
-                <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
+                <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
             </div>
         );
     }
