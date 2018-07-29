@@ -18,7 +18,6 @@ import { isTruthy } from '../../../utils/common';
 const propTypes = {
     faramElementName: PropTypes.string,
     faramElementIndex: PropTypes.number,
-    forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
     faramAction: PropTypes.string,
     faramElement: PropTypes.bool,
     faramInfo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -27,7 +26,6 @@ const propTypes = {
 const defaultProps = {
     faramElementName: undefined,
     faramElementIndex: undefined,
-    forwardedRef: undefined,
     faramAction: undefined,
     faramElement: false,
     faramInfo: undefined,
@@ -41,7 +39,6 @@ const FaramElement = elementType => (WrappedComponent) => {
 
         calculateProps = (api) => {
             const {
-                forwardedRef,
                 faramElement,
                 faramElementName,
                 faramElementIndex,
@@ -49,9 +46,6 @@ const FaramElement = elementType => (WrappedComponent) => {
                 faramInfo,
                 ...otherProps
             } = this.props;
-
-            // Set reference
-            otherProps.ref = forwardedRef;
 
             if (!api) {
                 return otherProps;
@@ -88,15 +82,8 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
     }
 
-    const ForwardedComponent = React.forwardRef((props, ref) => (
-        <FaramElementHOC
-            {...props}
-            forwardedRef={ref}
-        />
-    ));
-
     return hoistNonReactStatics(
-        ForwardedComponent,
+        FaramElementHOC,
         WrappedComponent,
     );
 };
