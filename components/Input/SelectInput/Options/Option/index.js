@@ -29,6 +29,7 @@ export default class Option extends React.PureComponent {
     constructor(props) {
         super(props);
         this.ref = React.createRef();
+        this.focusedByMouse = undefined;
     }
 
     componentDidMount() {

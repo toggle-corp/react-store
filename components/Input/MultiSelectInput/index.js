@@ -309,7 +309,7 @@ class MultiSelectInput extends React.PureComponent {
     toggleDropdown = () => {
         const { current: container } = this.container;
         const { current: input } = this.input;
-        const { options, value } = this.props;
+        const { options } = this.props;
         const { showOptions } = this.state;
 
         if (showOptions) {
@@ -388,8 +388,6 @@ class MultiSelectInput extends React.PureComponent {
         }
 
         if (e.keyCode === 13 || e.keyCode === 32) {
-            e.stopPropagation();
-            e.preventDefault();
             this.handleOptionClick(focusedKey);
             return;
         }

@@ -351,8 +351,6 @@ class SelectInput extends React.PureComponent {
         }
 
         if (e.keyCode === 13 || e.keyCode === 32) {
-            e.stopPropagation();
-            e.preventDefault();
             this.handleOptionClick(focusedKey);
             return;
         }
