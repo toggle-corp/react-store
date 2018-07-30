@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FaramElement from '../../Input/Faram/FaramElement';
+import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
@@ -64,8 +65,6 @@ const propTypes = {
 
     selectOnFocus: PropTypes.bool,
 
-    changeDelay: PropTypes.number,
-
     title: PropTypes.string,
 };
 
@@ -83,7 +82,6 @@ const defaultProps = {
     showHintAndError: true,
     value: '',
     selectOnFocus: false,
-    changeDelay: 200,
     title: undefined,
 };
 
@@ -94,29 +92,7 @@ class TextInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { value } = props;
-        this.state = {
-            isFocused: false,
-            value,
-        };
-
-        this.pendingChange = false;
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
-            if (!this.pendingChange) {
-                this.setState({ value: nextProps.value });
-            } else {
-                console.warn('TextInput: not updating, as there is a pending change.');
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.changeTimeout) {
-            clearTimeout(this.changeTimeout);
-        }
+        this.state = { isFocused: false };
     }
 
     getClassName = () => {
@@ -155,25 +131,11 @@ class TextInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        clearTimeout(this.changeTimeout);
-        this.pendingChange = true;
-
         const { value } = event.target;
-        this.setState({ value });
-
-        const {
-            onChange,
-            changeDelay,
-        } = this.props;
+        const { onChange } = this.props;
 
         if (onChange) {
-            this.changeTimeout = setTimeout(
-                () => {
-                    this.pendingChange = false;
-                    onChange(value);
-                },
-                changeDelay,
-            );
+            onChange(value);
         }
     }
 
@@ -205,12 +167,10 @@ class TextInput extends React.PureComponent {
     render() {
         const {
             // skip prop injection
-            value: propValue, // eslint-disable-line no-unused-vars
             onBlur, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars
             onFocus, // eslint-disable-line no-unused-vars
             selectOnFocus, // eslint-disable-line no-unused-vars
-            changeDelay, // eslint-disable-line no-unused-vars
             className: dummy, // eslint-disable-line no-unused-vars
 
             error,
@@ -222,7 +182,6 @@ class TextInput extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const { value = '' } = this.state;
         const className = this.getClassName();
 
         return (
@@ -240,7 +199,6 @@ class TextInput extends React.PureComponent {
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
-                    value={value}
                     {...otherProps}
                 />
                 <HintAndError
@@ -253,4 +211,4 @@ class TextInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(TextInput);
+export default FaramElement('input')(Delay(TextInput));

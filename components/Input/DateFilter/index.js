@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import FaramElement from '../../Input/Faram/FaramElement';
 
@@ -287,52 +287,54 @@ class DateFilter extends React.PureComponent {
         const selectInputValue = value && (
             value.type === 'custom' ? 'custom-range' : value.type
         );
-        return ([
-            <SelectInput
-                key="select-input"
-                onChange={this.handleChange}
-                options={options}
-                placeholder={placeholder}
-                className={DateFilter.getClassName(className, value)}
-                value={selectInputValue}
-                {...otherProps}
-            />,
-            modalShown && (
-                <Modal
-                    key="modal"
-                    closeOnEscape
-                    onClose={this.closeModal}
-                    className={styles.modal}
-                >
-                    <ModalHeader title="Select date range" />
-                    <ModalBody>
-                        <DateInput
-                            label="Start date"
-                            onChange={this.handleStartDateChange}
-                            value={startDate}
-                        />
-                        <DateInput
-                            label="End date"
-                            onChange={this.handleEndDateChange}
-                            value={endDateToDisplay}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <DangerButton
-                            onClick={this.closeModal}
-                            autoFocus
+        return (
+            <Fragment>
+                <SelectInput
+                    onChange={this.handleChange}
+                    options={options}
+                    placeholder={placeholder}
+                    className={DateFilter.getClassName(className, value)}
+                    value={selectInputValue}
+                    {...otherProps}
+                />
+                {
+                    modalShown && (
+                        <Modal
+                            closeOnEscape
+                            onClose={this.closeModal}
+                            className={styles.modal}
                         >
-                            Close
-                        </DangerButton>
-                        <PrimaryButton
-                            onClick={this.setCustomDate}
-                        >
-                            Apply
-                        </PrimaryButton>
-                    </ModalFooter>
-                </Modal>
-            ),
-        ]);
+                            <ModalHeader title="Select date range" />
+                            <ModalBody>
+                                <DateInput
+                                    label="Start date"
+                                    onChange={this.handleStartDateChange}
+                                    value={startDate}
+                                />
+                                <DateInput
+                                    label="End date"
+                                    onChange={this.handleEndDateChange}
+                                    value={endDateToDisplay}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <DangerButton
+                                    onClick={this.closeModal}
+                                    autoFocus
+                                >
+                                    Close
+                                </DangerButton>
+                                <PrimaryButton
+                                    onClick={this.setCustomDate}
+                                >
+                                    Apply
+                                </PrimaryButton>
+                            </ModalFooter>
+                        </Modal>
+                    )
+                }
+            </Fragment>
+        );
     }
 }
 
