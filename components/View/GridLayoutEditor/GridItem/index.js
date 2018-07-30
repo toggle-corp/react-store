@@ -34,6 +34,8 @@ const areLayoutsEqual = (l1, l2) => (
     && l1.height === l2.height
 );
 
+const SCROLL_TIMEOUT = 60;
+
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -141,12 +143,14 @@ export default class GridItem extends React.PureComponent {
             newLayout.top += scroll.dy;
         }
 
-
         this.setState({ layout: newLayout });
         this.testLayoutValidity(newLayout);
 
         if (this.keepScrollingParentContainer) {
-            this.scrollTimeout = setTimeout(() => this.scrollParentContainer(dx, dy), 100);
+            this.scrollTimeout = setTimeout(
+                () => this.scrollParentContainer(dx, dy),
+                SCROLL_TIMEOUT,
+            );
         }
     }
 
