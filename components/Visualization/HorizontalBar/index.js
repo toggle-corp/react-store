@@ -303,7 +303,15 @@ class HorizontalBar extends PureComponent {
             .delay(750)
             .text(d => (
                 valueLabelAccessor ? valueLabelAccessor(valueAccessor(d)) : valueAccessor(d)))
-            .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))));
+            .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))))
+            .style('visibility', 'hidden')
+            .on('end', (d, i, nodes) => {
+                const barWidth = bars.nodes()[i].width.baseVal.value || 0;
+                const textWidth = nodes[i].getComputedTextLength() || 0;
+                const visibility = textWidth > barWidth ? 'hidden' : 'visible';
+                select(nodes[i])
+                    .style('visibility', visibility);
+            });
     }
 
     render() {
