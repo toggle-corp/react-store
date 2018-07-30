@@ -2,19 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-const propTypes = {
-    forwardedRef: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-};
-
-const defaultProps = {
-    forwardedRef: undefined,
-};
-
 export default ErrorComponent => (WrappedComponent) => {
     const Component = class extends React.PureComponent {
-        static propTypes = propTypes;
-        static defaultProps = defaultProps;
-
         constructor(props) {
             super(props);
 
@@ -32,14 +21,11 @@ export default ErrorComponent => (WrappedComponent) => {
         }
 
         render() {
-            const { forwardedRef, ...otherProps } = this.props;
+            const { ...otherProps } = this.props;
 
             if (!this.state.hasError) {
                 return (
-                    <WrappedComponent
-                        ref={forwardedRef}
-                        {...otherProps}
-                    />
+                    <WrappedComponent {...otherProps} />
                 );
             }
 
@@ -56,12 +42,5 @@ export default ErrorComponent => (WrappedComponent) => {
         }
     };
 
-    const ForwardedComponent = React.forwardRef((props, ref) => (
-        <Component
-            {...props}
-            forwardedRef={ref}
-        />
-    ));
-
-    return hoistNonReactStatics(ForwardedComponent, WrappedComponent);
+    return hoistNonReactStatics(Component, WrappedComponent);
 };

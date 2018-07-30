@@ -82,17 +82,19 @@ class SparkLine extends React.PureComponent {
     }
 
     onMouseOver = (label) => {
-        this.tooltipDiv.setTooltip(label);
-        this.tooltipDiv.show();
+        this.tooltip.setTooltip(label);
+        this.tooltip.show();
     }
 
     onMouseMove = () => {
-        this.tooltipDiv.move();
+        this.tooltip.move();
     }
 
     onMouseOut = () => {
-        this.tooltipDiv.hide();
+        this.tooltip.hide();
     }
+
+    setTooltip = (tooltip) => { this.tooltip = tooltip; }
 
     updateRender() {
         const { right, top, left, bottom } = this.props.margins;
@@ -149,7 +151,8 @@ class SparkLine extends React.PureComponent {
         return (
             <div className={`${className} ${styles.sparkLines}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
-                <Tooltip ref={(div) => { this.tooltipDiv = div; }} />
+                <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
+                <Tooltip setTooltipApi={this.setTooltip} />
             </div>
         );
     }

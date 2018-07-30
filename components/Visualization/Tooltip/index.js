@@ -12,11 +12,13 @@ const propTypes = {
         PropTypes.node,
     ]),
     className: PropTypes.string,
+    setTooltipApi: PropTypes.func,
 };
 
 const defaultProps = {
     initialChildren: undefined,
     className: '',
+    setTooltipApi: undefined,
 };
 
 
@@ -37,6 +39,21 @@ export default class Tooltip extends React.PureComponent {
         this.state = {
             children: props.initialChildren,
         };
+
+        if (props.setTooltipApi) {
+            props.setTooltipApi({
+                show: this.show,
+                setTooltip: this.setTooltip,
+                hide: this.hide,
+                move: this.move,
+            });
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.setTooltipApi) {
+            this.props.setTooltipApi(undefined);
+        }
     }
 
     getd3Tooltip = () => select(this.divContainer)

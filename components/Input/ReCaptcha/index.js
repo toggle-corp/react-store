@@ -21,6 +21,8 @@ const propTypes = {
 
     showHintAndError: PropTypes.bool,
     error: PropTypes.string,
+
+    setResetFunction: PropTypes.func,
 };
 
 const defaultProps = {
@@ -37,6 +39,8 @@ const defaultProps = {
 
     showHintAndError: true,
     error: '',
+
+    setResetFunction: undefined,
 };
 
 class ReCaptcha extends Component {
@@ -50,6 +54,10 @@ class ReCaptcha extends Component {
 
         const ready = ReCaptcha.isReady();
         this.state = { ready };
+
+        if (props.setResetFunction) {
+            props.setResetFunction(this.reset);
+        }
     }
 
     componentWillMount() {
@@ -58,6 +66,9 @@ class ReCaptcha extends Component {
 
     componentWillUnmount() {
         clearTimeout(this.readyCheck);
+        if (this.props.setResetFunction) {
+            this.props.setResetFunction(undefined);
+        }
     }
 
     pollForReadyState = () => {

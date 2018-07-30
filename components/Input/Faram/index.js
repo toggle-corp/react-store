@@ -38,6 +38,9 @@ const propTypes = {
     disabled: PropTypes.bool,
     /* Delay every input component in form */
     changeDelay: PropTypes.number,
+
+    /* Submit method setter to use externally */
+    setSubmitFunction: PropTypes.func,
 };
 
 const noOp = () => {};
@@ -52,6 +55,7 @@ const defaultProps = {
     computeSchema: {},
     value: {},
     error: {},
+    setSubmitFunction: undefined,
 };
 
 const checkAndUpdateOutputs = (value, error, computeSchema, onChange) => {
@@ -105,6 +109,10 @@ export default class Faram extends React.PureComponent {
         super(props);
         const { value, error, computeSchema, onChange } = this.props;
         checkAndUpdateOutputs(value, error, computeSchema, onChange);
+
+        if (props.setSubmitFunction) {
+            props.setSubmitFunction(this.submit);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -116,9 +124,12 @@ export default class Faram extends React.PureComponent {
 
     componentWillUnmount() {
         clearTimeout(this.changeTimeout);
+        if (this.props.setSubmitFunction) {
+            this.props.setSubmitFunction(undefined);
+        }
     }
 
-    // Submit using ref
+    // Submit method to call externally
     submit = () => {
         if (this.props.disabled) {
             return;
