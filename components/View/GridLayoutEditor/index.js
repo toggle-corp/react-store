@@ -68,6 +68,8 @@ const doesIntersect = (l1, l2) => (
     && l1.height + l1.top > l2.top
 );
 
+const SCROLL_THRESHOLD = 20;
+
 export default class GridLayoutEditor extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -83,6 +85,7 @@ export default class GridLayoutEditor extends React.PureComponent {
 
         this.bounds = {};
         this.layouts = getLayouts(data, keySelector, layoutSelector);
+        this.containerRef = React.createRef();
     }
 
     componentWillMount() {
@@ -114,10 +117,24 @@ export default class GridLayoutEditor extends React.PureComponent {
         }
     }
 
+    scrollContainer = (dx, dy) => {
+        const { current: container } = this.containerRef;
+
+        const scrollDy = dy < 0 && container.scrollTop + dy < 0 ? container.scrollTop : dy;
+        const scrollDx = dx < 0 && container.scrollLeft + dx < 0 ? container.scrollLeft : dx;
+
+        container.scrollTop += scrollDy;
+        container.scrollLeft += scrollDx;
+
+        return {
+            dx: scrollDx,
+            dy: scrollDy,
+        };
+    }
+
     handleItemLayoutValidation = (key, newLayout) => {
         const { gridSize } = this.props;
-        const layoutKeyList = (Object.keys(this.layouts)).filter(d => d !== key);
-
+        const layoutKeyList = Object.keys(this.layouts).filter(d => d !== key);
 
         if (newLayout.left < 0 || newLayout.top < 0) {
             return false;
@@ -146,6 +163,28 @@ export default class GridLayoutEditor extends React.PureComponent {
         onLayoutChange(key, snapLayout(layout, gridSize));
     }
 
+    handleContainerScrollTest = (e, dx, dy) => {
+        const { current: container } = this.containerRef;
+        const bcr = container.getBoundingClientRect();
+
+        let horizontal = 0;
+        let vertical = 0;
+
+        if (bcr.width + bcr.left < e.screenX + SCROLL_THRESHOLD && dx > 0) {
+            horizontal = 1;
+        } else if (bcr.left + SCROLL_THRESHOLD > e.clientY && bcr.left < e.clientY && dx < 0) {
+            horizontal = -1;
+        }
+
+        if (bcr.height + bcr.top < e.screenY + SCROLL_THRESHOLD && dy > 0) {
+            vertical = 1;
+        } else if (bcr.top + SCROLL_THRESHOLD > e.clientY && bcr.top < e.clientY && dy < 0) {
+            vertical = -1;
+        }
+
+        return { horizontal, vertical };
+    }
+
     renderParams = (key, datum) => {
         const {
             layoutSelector,
@@ -162,8 +201,11 @@ export default class GridLayoutEditor extends React.PureComponent {
             contentModifier,
             datum,
             layoutValidator: this.handleItemLayoutValidation,
+            parentContainerScrollTester: this.handleContainerScrollTest,
             onLayoutChange: this.handleLayoutChange,
             dragItemClassName,
+            onMove: this.handleItemMove,
+            parentContainerScrollFunction: this.scrollContainer,
         };
     }
 
@@ -182,29 +224,38 @@ export default class GridLayoutEditor extends React.PureComponent {
             'grid-layout-editor'
         `;
 
+        const superContainerStyle = {
+            backgroundSize: `${gridSize.width}px ${gridSize.height}px`,
+        };
+
         const {
             width,
             height,
         } = this.bounds;
 
-        const style = {
+        const containerStyle = {
             width: `${width}px`,
             height: `${height}px`,
-            backgroundSize: `${gridSize.width}px ${gridSize.height}px`,
         };
 
         return (
             <div
+                ref={this.containerRef}
                 className={className}
-                style={style}
+                style={superContainerStyle}
             >
-                <List
-                    data={data}
-                    keyExtractor={keySelector}
-                    renderer={GridItem}
-                    rendererClassName={itemClassName}
-                    rendererParams={this.renderParams}
-                />
+                <div
+                    className={styles.container}
+                    style={containerStyle}
+                >
+                    <List
+                        data={data}
+                        keyExtractor={keySelector}
+                        renderer={GridItem}
+                        rendererClassName={itemClassName}
+                        rendererParams={this.renderParams}
+                    />
+                </div>
             </div>
         );
     }

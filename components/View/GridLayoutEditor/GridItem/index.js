@@ -19,6 +19,8 @@ const propTypes = {
     $itemKey: PropTypes.string.isRequired,
     onLayoutChange: PropTypes.func.isRequired,
     dragItemClassName: PropTypes.string.isRequired,
+    parentContainerScrollTester: PropTypes.func.isRequired,
+    parentContainerScrollFunction: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -96,6 +98,8 @@ export default class GridItem extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        clearTimeout(this.scrollTimeout);
+
         window.removeEventListener('mouseup', this.handleMouseUp);
         window.removeEventListener('mousemove', this.handleMouseMove);
 
@@ -105,9 +109,50 @@ export default class GridItem extends React.PureComponent {
         }
     }
 
+    testLayoutValidity = (newLayout) => {
+        const {
+            $itemKey,
+            layoutValidator: isLayoutValid,
+        } = this.props;
+
+        const { current: container } = this.containerRef;
+        if (isLayoutValid($itemKey, newLayout)) {
+            this.isLayoutValid = true;
+            this.lastValidLayout = newLayout;
+            removeClassName(container, styles.invalid);
+        } else {
+            this.isLayoutValid = false;
+            addClassName(container, styles.invalid);
+        }
+    }
+
+    scrollParentContainer = (dx, dy) => {
+        const { parentContainerScrollFunction: scrollParentContainer } = this.props;
+        const { layout } = this.state;
+
+        const scroll = scrollParentContainer(dx, dy);
+        const newLayout = { ...layout };
+
+        if (this.isResizing) {
+            newLayout.width += scroll.dx;
+            newLayout.height += scroll.dy;
+        } else {
+            newLayout.left += scroll.dx;
+            newLayout.top += scroll.dy;
+        }
+
+
+        this.setState({ layout: newLayout });
+        this.testLayoutValidity(newLayout);
+
+        if (this.keepScrollingParentContainer) {
+            this.scrollTimeout = setTimeout(() => this.scrollParentContainer(dx, dy), 100);
+        }
+    }
+
     handleMouseDown = (e) => {
-        this.lastScreenX = e.screenX;
-        this.lastScreenY = e.screenY;
+        this.lastScreenX = e.clientX;
+        this.lastScreenY = e.clientY;
 
         const { current: container } = this.containerRef;
         addClassName(container, styles.moving);
@@ -118,8 +163,9 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleMouseUp = (e) => {
-        this.lastScreenX = e.screenX;
-        this.lastScreenY = e.screenY;
+        this.lastScreenX = e.clientX;
+        this.lastScreenY = e.clientY;
+        this.keepScrollingParentContainer = false;
 
         if (!this.isMouseDown) {
             return;
@@ -154,11 +200,11 @@ export default class GridItem extends React.PureComponent {
     }
 
     handleMouseMove = (e) => {
-        const dx = e.screenX - this.lastScreenX;
-        const dy = e.screenY - this.lastScreenY;
+        const dx = e.clientX - this.lastScreenX;
+        const dy = e.clientY - this.lastScreenY;
 
-        this.lastScreenX = e.screenX;
-        this.lastScreenY = e.screenY;
+        this.lastScreenX = e.clientX;
+        this.lastScreenY = e.clientY;
 
         const { layout } = this.state;
 
@@ -177,23 +223,23 @@ export default class GridItem extends React.PureComponent {
         }
 
         if (!areLayoutsEqual(layout, newLayout)) {
-            this.setState({
-                layout: newLayout,
-            });
+            this.setState({ layout: newLayout });
+            this.testLayoutValidity(newLayout);
 
             const {
-                layoutValidator: isLayoutValid,
-                $itemKey,
+                parentContainerScrollTester: testParentContainerScroll,
             } = this.props;
-            const { current: container } = this.containerRef;
 
-            if (isLayoutValid($itemKey, newLayout)) {
-                this.isLayoutValid = true;
-                this.lastValidLayout = newLayout;
-                removeClassName(container, styles.invalid);
+            const scroll = testParentContainerScroll(e, dx, dy);
+
+            const scrollDx = scroll.horizontal ? dx : 0;
+            const scrollDy = scroll.vertical ? dy : 0;
+
+            if (scroll.horizontal || scroll.vertical) {
+                this.keepScrollingParentContainer = true;
+                this.scrollParentContainer(scrollDx, scrollDy);
             } else {
-                this.isLayoutValid = false;
-                addClassName(container, styles.invalid);
+                this.keepScrollingParentContainer = false;
             }
         }
     }
@@ -201,8 +247,8 @@ export default class GridItem extends React.PureComponent {
     handleResizeHandleMouseDown = (e) => {
         e.stopPropagation();
 
-        this.lastScreenX = e.screenX;
-        this.lastScreenY = e.screenY;
+        this.lastScreenX = e.clientX;
+        this.lastScreenY = e.clientY;
 
         const { current: container } = this.containerRef;
         addClassName(container, styles.resizing);
