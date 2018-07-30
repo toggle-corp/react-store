@@ -4,6 +4,7 @@ import React from 'react';
 import List from '../List';
 import GridItem from './GridItem';
 import { getLayoutBounds } from '../../../utils/grid-layout';
+import { listToMap } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -29,6 +30,13 @@ const defaultProps = {
     className: '',
     data: [],
 };
+
+const areLayoutsEqual = (l1, l2) => (
+    l1.left === l2.left
+    && l1.top === l2.top
+    && l1.width === l2.width
+    && l1.height === l2.height
+);
 
 const reduceLayout = (layout, gridSize) => ({
     left: Math.round(layout.left / gridSize.width),
@@ -69,6 +77,7 @@ const doesIntersect = (l1, l2) => (
 );
 
 const SCROLL_THRESHOLD = 20;
+const SCROLL_TIMEOUT_DURATION = 200;
 
 export default class GridLayoutEditor extends React.PureComponent {
     static propTypes = propTypes;
@@ -100,21 +109,50 @@ export default class GridLayoutEditor extends React.PureComponent {
         const {
             layoutSelector: newLayoutSelector,
             data: newData,
-            keySelector,
+            keySelector: newKeySelector,
         } = nextProps;
 
         const {
             layoutSelector: oldLayoutSelector,
             data: oldData,
+            keySelector: oldKeySelector,
         } = this.props;
 
         if (
-            newLayoutSelector !== oldLayoutSelector
+            newKeySelector !== oldKeySelector
+            || newLayoutSelector !== oldLayoutSelector
             || newData !== oldData
         ) {
             this.bounds = getLayoutBounds(newData, newLayoutSelector);
-            this.layouts = getLayouts(newData, keySelector, newLayoutSelector);
+            this.layouts = getLayouts(newData, newKeySelector, newLayoutSelector);
+
+            if (newData.length > oldData.length) {
+                const oldDataMap = listToMap(oldData, oldKeySelector);
+                const newItems = newData.filter(d => oldDataMap[newKeySelector(d)] === undefined);
+
+                if (newItems.length > 0) {
+                    const item = newItems[0];
+                    const itemKey = newKeySelector(item);
+                    const newItemLayout = this.fixItemLayout(itemKey);
+                    const layoutChanged = !areLayoutsEqual(newItemLayout, this.layouts[itemKey]);
+
+                    if (layoutChanged) {
+                        const { current: container } = this.containerRef;
+
+                        this.scrollTimeout = setTimeout(() => {
+                            container.scrollTop = (newItemLayout.top + newItemLayout.height);
+                            // container.scrollLeft = newItemLayout.left;
+                        }, SCROLL_TIMEOUT_DURATION);
+
+                        this.handleLayoutChange(itemKey, newItemLayout);
+                    }
+                }
+            }
         }
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.scrollTimeout);
     }
 
     scrollContainer = (dx, dy) => {
@@ -130,6 +168,35 @@ export default class GridLayoutEditor extends React.PureComponent {
             dx: scrollDx,
             dy: scrollDy,
         };
+    }
+
+    fixItemLayout = (key) => {
+        const { gridSize } = this.props;
+        const compareLayouts = (k1, k2) => {
+            const l1 = this.layouts[k1];
+            const l2 = this.layouts[k2];
+
+            return ((l1.top + l1.height) - (l2.top + l2.height)
+                || (l1.left + l1.width) - (l2.left + l2.width));
+        };
+
+        const layoutKeyList = Object.keys(this.layouts)
+            .filter(d => d !== key)
+            .sort(compareLayouts);
+
+        const newLayout = { ...this.layouts[key] };
+
+        for (let i = 0; i < layoutKeyList.length; i += 1) {
+            const currentLayout = this.layouts[layoutKeyList[i]];
+            if (doesIntersect(
+                reduceLayout(currentLayout, gridSize),
+                reduceLayout(newLayout, gridSize),
+            )) {
+                newLayout.top = currentLayout.top + currentLayout.height;
+            }
+        }
+
+        return newLayout;
     }
 
     handleItemLayoutValidation = (key, newLayout) => {

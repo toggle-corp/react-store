@@ -49,7 +49,7 @@ $height-resize-handle: 10px;
     position: absolute;
     top: 0;
     left: 0;
-    transition: $duration-transition-medium all linear;
+    transition: $duration-transition-fast all linear;
     z-index: 0;
     padding: $spacing-extra-small;
 
