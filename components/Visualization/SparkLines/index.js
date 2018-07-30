@@ -1,5 +1,6 @@
 import React, {
     PureComponent,
+    Fragment,
 } from 'react';
 import {
     select,
@@ -16,6 +17,7 @@ import {
     area,
 } from 'd3-shape';
 import SvgSaver from 'svgsaver';
+import Float from '../../View/Float';
 import Responsive from '../../General/Responsive';
 
 import { getStandardFilename } from '../../../utils/common';
@@ -29,9 +31,9 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
     xValueAccessor: PropTypes.func.isRequired,
-    xValueModifier: PropTypes.func,
     yValueAccessor: PropTypes.func.isRequired,
-    yValueModifier: PropTypes.func,
+    xLabelModifier: PropTypes.func,
+    yLabelModifier: PropTypes.func,
     onHover: PropTypes.func,
     fill: PropTypes.bool,
     className: PropTypes.string,
@@ -47,16 +49,18 @@ const defaultProps = {
     data: [],
     fill: true,
     onHover: () => {},
-    xValueModifier: d => d,
-    yValueModifier: d => d,
+    xLabelModifier: d => d,
+    yLabelModifier: d => d,
     className: '',
     margins: {
-        top: 5,
-        right: 5,
-        bottom: 5,
-        left: 5,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
+
+const circleRadius = 5;
 
 class SparkLines extends PureComponent {
     static propTypes = propTypes;
@@ -80,6 +84,8 @@ class SparkLines extends PureComponent {
         const {
             data,
             onHover,
+            xLabelModifier,
+            yLabelModifier,
         } = this.props;
         const {
             scaleX,
@@ -96,6 +102,24 @@ class SparkLines extends PureComponent {
         onHover(d);
         focus
             .attr('transform', `translate(${scaleX(xValue(d))}, ${scaleY(yValue(d))})`);
+
+        const { top, left } = focus.node().getBoundingClientRect();
+        const xLabel = xLabelModifier(xValue(d));
+        const yLabel = yLabelModifier(yValue(d));
+
+        select(this.tooltip)
+            .html(`<span class=${styles.yvalue}>${yLabel}</span>
+                   <span class=${styles.xvalue}>${xLabel}</span>`)
+            .style('top', () => {
+                const { height } = this.tooltip.getBoundingClientRect();
+                return `${top - height - circleRadius}px`;
+            })
+            .style('left', () => {
+                const { width } = this.tooltip.getBoundingClientRect();
+                return `${left - (width / 2)}px`;
+            })
+            .transition()
+            .style('display', 'inline-block');
     }
 
     drawChart = () => {
@@ -105,9 +129,7 @@ class SparkLines extends PureComponent {
             margins,
             fill,
             xValueAccessor,
-            xValueModifier,
             yValueAccessor,
-            yValueModifier,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -123,19 +145,21 @@ class SparkLines extends PureComponent {
             left,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
+        const marginForCircle = 2 * circleRadius;
+
+        width = width - left - right - marginForCircle;
+        height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+            .attr('width', width + left + right + marginForCircle)
+            .attr('height', height + top + bottom + marginForCircle)
             .append('g')
             .attr('class', styles.sparkLine)
-            .attr('transform', `translate(${left}, ${top})`);
+            .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
 
 
-        this.xValue = d => xValueModifier(xValueAccessor(d));
-        this.yValue = d => yValueModifier(yValueAccessor(d));
+        this.xValue = d => xValueAccessor(d);
+        this.yValue = d => yValueAccessor(d);
 
         this.bisectXValue = bisector(this.xValue).left;
 
@@ -177,7 +201,7 @@ class SparkLines extends PureComponent {
 
         focus
             .append('circle')
-            .attr('r', 5);
+            .attr('r', circleRadius);
 
         group
             .append('rect')
@@ -188,7 +212,11 @@ class SparkLines extends PureComponent {
             .attr('height', height + top + bottom)
             .attr('transform', `translate(${left}, ${top})`)
             .on('mouseover', () => focus.style('display', null))
-            .on('mouseout', () => focus.style('display', 'none'))
+            .on('mouseout', () => {
+                focus.style('display', 'none');
+                select(this.tooltip)
+                    .style('display', 'none');
+            })
             .on('mousemove', (d, i, nodes) => this.handleMouseMove(nodes[0], focus));
     }
 
@@ -210,10 +238,18 @@ class SparkLines extends PureComponent {
         ].join(' ');
 
         return (
-            <svg
-                ref={(element) => { this.svg = element; }}
-                className={sparkLinesStyle}
-            />
+            <Fragment>
+                <svg
+                    ref={(element) => { this.svg = element; }}
+                    className={sparkLinesStyle}
+                />
+                <Float>
+                    <div
+                        ref={(elem) => { this.tooltip = elem; }}
+                        className={styles.tooltip}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }

@@ -26,3 +26,23 @@
         }
     }
 }
+
+.tooltip {
+    @include shadow-medium;
+
+    display: block;
+    position: fixed;
+    z-index: 10;
+    background-color: $color-foreground;
+    padding: $spacing-small $spacing-medium-alt;
+    color: $color-text;
+    pointer-events: none;
+
+    .yvalue {
+        display: block;
+    }
+
+    .xvalue {
+        display: block;
+    }
+}
