@@ -23,8 +23,8 @@ export const getLayoutBounds = (data, layoutSelector) => {
     };
 };
 
-export const getSortedItems = (data, layoutSelector) => (
-    data.sort((foo, bar) => {
+export const getSortedItems = (data = [], layoutSelector) => (
+    [...data].sort((foo, bar) => {
         const fooLayout = layoutSelector(foo);
         const barLayout = layoutSelector(bar);
         const distA = (fooLayout.top ** 2) + (fooLayout.left ** 2);

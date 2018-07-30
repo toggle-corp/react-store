@@ -58,9 +58,9 @@ const getTimeValues = (value) => {
     }
     const values = value.split(SEPARATOR);
     return {
-        h: formatTimeValue(values[0]),
-        m: formatTimeValue(values[1]),
-        s: formatTimeValue(values[2]),
+        h: values[0],
+        m: values[1],
+        s: values[2],
     };
 };
 
@@ -167,7 +167,11 @@ class TimeInput extends React.PureComponent {
             s,
         } = values;
 
-        const newValue = getTimeString(h, m, s);
+        const newValue = getTimeString(
+            formatTimeValue(h),
+            formatTimeValue(m),
+            formatTimeValue(s),
+        );
 
         if (newValue !== valueFromProps) {
             onChange(newValue);
@@ -187,7 +191,11 @@ class TimeInput extends React.PureComponent {
             s,
         } = values;
 
-        const newValue = getTimeString(h, m, s);
+        const newValue = getTimeString(
+            formatTimeValue(h),
+            formatTimeValue(m),
+            formatTimeValue(s),
+        );
 
         if (newValue !== valueFromProps) {
             onChange(newValue);

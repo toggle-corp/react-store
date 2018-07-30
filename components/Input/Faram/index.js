@@ -51,7 +51,7 @@ const defaultProps = {
     onValidationFailure: noOp,
     onValidationSuccess: noOp,
     disabled: false,
-    changeDelay: 100, // ms
+    changeDelay: 200, // ms
     computeSchema: {},
     value: {},
     error: {},

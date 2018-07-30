@@ -88,7 +88,7 @@ export default class RawTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getSortedHeaders = headers => (
+    static getSortedHeaders = (headers = []) => (
         [...headers].sort((a, b) => (a.order - b.order))
     )
 

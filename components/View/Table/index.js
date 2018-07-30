@@ -269,7 +269,7 @@ export default class Table extends React.PureComponent {
         };
     });
 
-    getSortedData = (headers, data, activeSort) => {
+    getSortedData = (headers, data = [], activeSort) => {
         if (isFalsy(activeSort) || !activeSort.key) {
             return data;
         }

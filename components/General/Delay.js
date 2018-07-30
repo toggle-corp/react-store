@@ -10,7 +10,8 @@ const propTypes = {
 
 const defaultProps = {
     value: undefined,
-    changeDelay: 200,
+    onChange: undefined,
+    changeDelay: 100,
 };
 
 export default (WrappedComponent) => {
