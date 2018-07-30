@@ -150,6 +150,8 @@ class TimeSeries extends React.PureComponent {
         return values;
     }
 
+    setTooltip = (tooltip) => { this.tooltip = tooltip; }
+
     updateRender() {
         const { right, top, left, bottom } = this.props.margins;
         const { height, width } = this.props.boundingClientRect;
@@ -268,7 +270,7 @@ class TimeSeries extends React.PureComponent {
         return (
             <div className={`${className} ${styles.timeSeries}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
-                <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
+                <Tooltip setTooltipApi={this.setTooltip} />
             </div>
         );
     }

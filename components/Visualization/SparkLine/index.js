@@ -94,6 +94,8 @@ class SparkLine extends React.PureComponent {
         this.tooltip.hide();
     }
 
+    setTooltip = (tooltip) => { this.tooltip = tooltip; }
+
     updateRender() {
         const { right, top, left, bottom } = this.props.margins;
         const { height, width } = this.props.boundingClientRect;
@@ -150,6 +152,7 @@ class SparkLine extends React.PureComponent {
             <div className={`${className} ${styles.sparkLines}`} >
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
+                <Tooltip setTooltipApi={this.setTooltip} />
             </div>
         );
     }

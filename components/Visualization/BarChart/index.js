@@ -162,6 +162,8 @@ class BarChart extends React.PureComponent {
         });
     }
 
+    setTooltip = (tooltip) => { this.tooltip = tooltip; }
+
     updateRender() {
         const { right, top, left, bottom } = this.props.margins;
         const { height, width } = this.props.boundingClientRect;
@@ -275,7 +277,7 @@ class BarChart extends React.PureComponent {
                         ref={(svg) => { this.svg = svg; }}
                         className="svg"
                     />
-                    <Tooltip setTooltipApi={(tooltip) => { this.tooltip = tooltip; }} />
+                    <Tooltip setTooltipApi={this.setTooltip} />
                 </div>
             </div>
         );
