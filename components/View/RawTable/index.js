@@ -44,6 +44,9 @@ const propTypes = {
 
     onBodyClick: PropTypes.func,
 
+    onBodyHover: PropTypes.func,
+    onBodyHoverOut: PropTypes.func,
+
     onHeaderClick: PropTypes.func,
 
     highlightCellKey: PropTypes.shape({
@@ -63,6 +66,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     onBodyClick: undefined,
+    onBodyHover: undefined,
+    onBodyHoverOut: undefined,
     onHeaderClick: undefined,
     dataModifier: undefined,
     headerModifier: undefined,
@@ -139,6 +144,8 @@ export default class RawTable extends React.PureComponent {
             keyExtractor,
             onHeaderClick,
             onBodyClick,
+            onBodyHover,
+            onBodyHoverOut,
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
@@ -175,6 +182,8 @@ export default class RawTable extends React.PureComponent {
                                 headersOrder={this.state.headersOrder}
                                 keyExtractor={keyExtractor}
                                 onClick={onBodyClick}
+                                onHover={onBodyHover}
+                                onHoverOut={onBodyHoverOut}
                                 highlightCellKey={highlightCellKey}
                                 highlightRowKey={highlightRowKey}
                                 highlightColumnKey={highlightColumnKey}

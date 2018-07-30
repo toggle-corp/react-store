@@ -98,6 +98,9 @@ const propTypes = {
 
     onBodyClick: PropTypes.func,
 
+    onBodyHover: PropTypes.func,
+    onBodyHoverOut: PropTypes.func,
+
     onDataSort: PropTypes.func,
 
     emptyComponent: PropTypes.func,
@@ -111,6 +114,8 @@ const defaultProps = {
     highlightColumnKey: undefined,
     highlightRowKey: undefined,
     onBodyClick: undefined,
+    onBodyHover: undefined,
+    onBodyHoverOut: undefined,
     onDataSort: undefined,
     emptyComponent: undefined,
     expandRowId: undefined,
@@ -315,6 +320,8 @@ export default class Table extends React.PureComponent {
             highlightRowKey,
             highlightColumnKey,
             onBodyClick,
+            onBodyHover,
+            onBodyHoverOut,
             onDataSort,
             emptyComponent,
             expandRowId,
@@ -339,6 +346,8 @@ export default class Table extends React.PureComponent {
                 highlightRowKey={highlightRowKey}
                 highlightColumnKey={highlightColumnKey}
                 onBodyClick={onBodyClick}
+                onBodyHover={onBodyHover}
+                onBodyHoverOut={onBodyHoverOut}
                 onDataSort={onDataSort}
                 emptyComponent={emptyComponent}
                 expandRowId={expandRowId}
