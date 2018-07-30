@@ -3,7 +3,7 @@ import update from '../../../utils/immutable-update';
 const emptyObject = {};
 const emptyList = [];
 
-const computeOutputSettings = (obj, schema, data = []) => {
+const computeOutputSettings = (obj, schema, dataList = []) => {
     const { fields, member } = schema;
 
     if (fields) {
@@ -12,15 +12,19 @@ const computeOutputSettings = (obj, schema, data = []) => {
         Object.keys(fields).forEach((fieldName) => {
             const childSchema = fields[fieldName];
             const isComputer = typeof childSchema === 'function';
+            const newDataList = [
+                ...dataList,
+                (obj || emptyObject)[fieldName],
+            ];
             let subSettings;
 
             if (isComputer) {
-                subSettings = { $set: childSchema(...data) };
+                subSettings = { $set: childSchema(...newDataList) };
             } else {
                 subSettings = computeOutputSettings(
                     (obj || emptyObject)[fieldName],
                     childSchema,
-                    [...data, (obj || emptyObject)[fieldName]],
+                    newDataList,
                 );
             }
 
@@ -37,7 +41,7 @@ const computeOutputSettings = (obj, schema, data = []) => {
             const itemSettings = computeOutputSettings(
                 arrayItem,
                 member,
-                [...data, arrayItem],
+                [...dataList, arrayItem],
             );
 
             settings[index] = itemSettings;
