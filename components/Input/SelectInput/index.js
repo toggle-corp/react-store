@@ -118,6 +118,7 @@ class SelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
+            focusedKey: undefined,
             displayOptions: props.options,
             inputInFocus: props.autoFocus,
             inputValue: getInputValue(props),
@@ -267,7 +268,7 @@ class SelectInput extends React.PureComponent {
     toggleDropdown = () => {
         const { current: container } = this.container;
         const { current: input } = this.input;
-        const { options } = this.props;
+        const { options, value } = this.props;
         const { showOptions } = this.state;
 
         if (showOptions) {
@@ -285,6 +286,7 @@ class SelectInput extends React.PureComponent {
         this.setState({
             displayOptions: options,
             showOptions: !showOptions,
+            focusedKey: value,
         });
     }
 
@@ -303,7 +305,74 @@ class SelectInput extends React.PureComponent {
             displayOptions,
             inputValue: value,
             showOptions: true,
+            focusedKey: undefined,
         });
+    }
+
+    handleInputKeyDown = (e) => {
+        const { focusedKey, displayOptions, showOptions } = this.state;
+        const { keySelector } = this.props;
+
+        // Keycodes:
+        // 9: Tab
+        // 27: Escape
+        // 13: Enter
+        // 32: Space
+        // 38: Down
+        // 40: Up
+
+        // If tab or escape was pressed and dropdown is being shown,
+        // hide the dropdown.
+        if ((e.keyCode === 9 || e.keyCode === 27) && showOptions) {
+            this.toggleDropdown();
+            return;
+        }
+
+        // List of special keys, we are going to handle
+        const specialKeys = [40, 38, 13, 32];
+        if (displayOptions.length === 0 || specialKeys.indexOf(e.keyCode) === -1) {
+            return;
+        }
+
+        // Handle space and enter keys only if an option is focused
+        if ((e.keyCode === 13 || e.keyCode === 32) && !focusedKey) {
+            return;
+        }
+
+        // First, disable default behaviour for these keys
+        e.stopPropagation();
+        e.preventDefault();
+
+        // If any of the special keys was pressed but the dropdown is currently hidden,
+        // show the dropdown.
+        if (!showOptions) {
+            this.toggleDropdown();
+            return;
+        }
+
+        if (e.keyCode === 13 || e.keyCode === 32) {
+            this.handleOptionClick(focusedKey);
+            return;
+        }
+
+        // For up and down key, find which option is currently focused
+        const index = displayOptions.findIndex(o => keySelector(o) === focusedKey);
+
+        // And then calculate new option to focus
+        let newFocusedKey;
+        if (e.keyCode === 40) {
+            if (index < displayOptions.length) {
+                newFocusedKey = keySelector(displayOptions[index + 1]);
+            }
+        } else if (e.keyCode === 38) {
+            if (index === -1) {
+                newFocusedKey = keySelector(displayOptions[displayOptions.length - 1]);
+            } else if (index > 0) {
+                newFocusedKey = keySelector(displayOptions[index - 1]);
+            }
+        }
+
+        this.setState({ focusedKey: newFocusedKey });
     }
 
     handleInputClick = () => {
@@ -332,6 +401,10 @@ class SelectInput extends React.PureComponent {
         if (optionKey !== value) {
             onChange(optionKey);
         }
+    }
+
+    handleOptionFocus = (focusedKey) => {
+        this.setState({ focusedKey });
     }
 
     renderClearButton = () => {
@@ -421,6 +494,7 @@ class SelectInput extends React.PureComponent {
                     onChange={this.handleInputChange}
                     onClick={this.handleInputClick}
                     onFocus={this.handleInputFocus}
+                    onKeyDown={this.handleInputKeyDown}
                     // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus={autoFocus}
                     placeholder={placeholder}
@@ -452,6 +526,7 @@ class SelectInput extends React.PureComponent {
         const {
             displayOptions,
             showOptions,
+            focusedKey,
         } = this.state;
 
         const InputAndActions = this.renderInputAndActions;
@@ -483,11 +558,13 @@ class SelectInput extends React.PureComponent {
                     onBlur={this.handleOptionsBlur}
                     onInvalidate={this.handleOptionsInvalidate}
                     onOptionClick={this.handleOptionClick}
+                    onOptionFocus={this.handleOptionFocus}
                     optionLabelSelector={optionLabelSelector}
                     parentContainer={container}
                     renderEmpty={renderEmpty}
                     show={showOptions}
                     value={value}
+                    focusedKey={focusedKey}
                 />
             </div>
         );

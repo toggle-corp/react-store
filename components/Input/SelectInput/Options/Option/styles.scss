@@ -9,7 +9,7 @@
     width: 100%;
     text-align: left;
 
-    &:hover {
+    &.focused {
         background-color: get-hover-color($color-foreground);
     }
 
