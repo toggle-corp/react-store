@@ -114,18 +114,32 @@ export default class GridItem extends React.PureComponent {
     testLayoutValidity = (newLayout) => {
         const {
             $itemKey,
-            layoutValidator: isLayoutValid,
+            layoutValidator,
         } = this.props;
 
         const { current: container } = this.containerRef;
-        if (isLayoutValid($itemKey, newLayout)) {
+
+        const { isLayoutValid, newPossibleLayout } =
+            layoutValidator($itemKey, newLayout, this.isResizing);
+
+        if (isLayoutValid) {
             this.isLayoutValid = true;
             this.lastValidLayout = newLayout;
             removeClassName(container, styles.invalid);
-        } else {
-            this.isLayoutValid = false;
-            addClassName(container, styles.invalid);
+            return;
         }
+
+        if (newPossibleLayout) {
+            const { isLayoutValid: isNewLayoutValid } =
+                layoutValidator($itemKey, newPossibleLayout, this.isResizing);
+
+            if (isNewLayoutValid) {
+                this.lastValidLayout = newPossibleLayout;
+            }
+        }
+
+        this.isLayoutValid = false;
+        addClassName(container, styles.invalid);
     }
 
     scrollParentContainer = (dx, dy) => {
@@ -183,18 +197,16 @@ export default class GridItem extends React.PureComponent {
 
         window.removeEventListener('mousemove', this.handleMouseMove);
 
+        const {
+            onLayoutChange,
+            $itemKey,
+        } = this.props;
+
         if (this.isLayoutValid) {
-            const {
-                onLayoutChange,
-                $itemKey,
-            } = this.props;
-
             const { layout } = this.state;
-
             onLayoutChange($itemKey, layout);
         } else {
-            this.setState({ layout: this.lastValidLayout });
-
+            onLayoutChange($itemKey, this.lastValidLayout);
             this.isLayoutValid = true;
             removeClassName(container, styles.invalid);
         }

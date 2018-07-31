@@ -76,6 +76,32 @@ const doesIntersect = (l1, l2) => (
     && l1.height + l1.top > l2.top
 );
 
+const resolveIntersect = (l1, l2, forResize) => {
+    const dx1 = (l1.left + l1.width) - l2.left;
+    const dx2 = (l2.left + l2.width) - l1.left;
+    const dx = (dx1 < dx2) ? -dx1 : dx2;
+
+    const dy1 = (l1.top + l1.height) - l2.top;
+    const dy2 = (l2.top + l2.height) - l1.top;
+    const dy = (dy1 < dy2) ? -dy1 : dy2;
+
+    if (Math.abs(dx) < Math.abs(dy)) {
+        return {
+            width: forResize ? l1.width + dx : l1.width,
+            height: l1.height,
+            left: forResize ? l1.left : l1.left + dx,
+            top: l1.top,
+        };
+    }
+
+    return {
+        width: l1.width,
+        height: forResize ? l1.height + dy : l1.height,
+        left: l1.left,
+        top: forResize ? l1.top : l1.top + dy,
+    };
+};
+
 const SCROLL_THRESHOLD = 20;
 const SCROLL_TIMEOUT_DURATION = 200;
 
@@ -199,7 +225,7 @@ export default class GridLayoutEditor extends React.PureComponent {
         return newLayout;
     }
 
-    handleItemLayoutValidation = (key, newLayout) => {
+    handleItemLayoutValidation = (key, newLayout, forResize) => {
         const { gridSize } = this.props;
         const layoutKeyList = Object.keys(this.layouts).filter(d => d !== key);
 
@@ -208,17 +234,24 @@ export default class GridLayoutEditor extends React.PureComponent {
         }
 
         let isLayoutValid = true;
+        let newPossibleLayout;
         for (let i = 0; i < layoutKeyList.length; i += 1) {
+            const otherLayout = this.layouts[layoutKeyList[i]];
             if (doesIntersect(
-                reduceLayout(this.layouts[layoutKeyList[i]], gridSize),
                 reduceLayout(newLayout, gridSize),
+                reduceLayout(otherLayout, gridSize),
             )) {
                 isLayoutValid = false;
+                newPossibleLayout = resolveIntersect(
+                    snapLayout(newLayout, gridSize),
+                    snapLayout(otherLayout, gridSize),
+                    forResize,
+                );
                 break;
             }
         }
 
-        return isLayoutValid;
+        return { isLayoutValid, newPossibleLayout };
     }
 
     handleLayoutChange = (key, layout) => {
