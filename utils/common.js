@@ -500,6 +500,16 @@ export const groupList = (list = [], keySelector, modifier) => (
     )
 );
 
+export const removeKey = (obj, key) => {
+    if (!obj || !(key in obj)) {
+        return obj;
+    }
+
+    const newObj = { ...obj };
+    delete newObj[key];
+    return newObj;
+};
+
 // ROUTE
 
 /**
