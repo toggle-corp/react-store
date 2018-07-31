@@ -5,13 +5,14 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    show: PropTypes.bool.isRequired,
+    show: PropTypes.bool,
     text: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     text: '',
+    show: false,
 };
 
 export default class Label extends React.PureComponent {

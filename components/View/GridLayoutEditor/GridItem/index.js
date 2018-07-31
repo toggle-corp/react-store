@@ -183,17 +183,18 @@ export default class GridItem extends React.PureComponent {
 
         window.removeEventListener('mousemove', this.handleMouseMove);
 
+        const {
+            onLayoutChange,
+            $itemKey,
+        } = this.props;
+
+        const { layout } = this.state;
+
         if (this.isLayoutValid) {
-            const {
-                onLayoutChange,
-                $itemKey,
-            } = this.props;
-
-            const { layout } = this.state;
-
             onLayoutChange($itemKey, layout);
         } else {
-            this.setState({ layout: this.lastValidLayout });
+            // this.setState({ layout: this.lastValidLayout });
+            onLayoutChange($itemKey, this.lastValidLayout);
 
             this.isLayoutValid = true;
             removeClassName(container, styles.invalid);
