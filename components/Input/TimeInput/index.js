@@ -15,6 +15,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
     label: PropTypes.string,
@@ -29,6 +30,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     disabled: false,
+    readOnly: false,
     error: '',
     hint: '',
     label: '',
@@ -101,6 +103,7 @@ class TimeInput extends React.PureComponent {
     getClassName = () => {
         const {
             disabled,
+            readOnly,
             className,
             value,
             error,
@@ -126,6 +129,11 @@ class TimeInput extends React.PureComponent {
         if (disabled) {
             classNames.push(styles.disabled);
             classNames.push('disabled');
+        }
+
+        if (readOnly) {
+            classNames.push(styles.readOnly);
+            classNames.push('read-only');
         }
 
         const isInvalid = !isValidTimeString(value, separator);

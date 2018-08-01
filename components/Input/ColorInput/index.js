@@ -46,6 +46,9 @@ const propTypes = {
     showLabel: PropTypes.bool,
 
     showHintAndError: PropTypes.bool,
+
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -55,6 +58,8 @@ const defaultProps = {
     error: '',
     hint: '',
     showHintAndError: true,
+    disabled: false,
+    readOnly: false,
 };
 
 class ColorInput extends React.PureComponent {
@@ -127,9 +132,19 @@ class ColorInput extends React.PureComponent {
             showHintAndError,
             error,
             hint,
+            disabled,
+            readOnly,
         } = this.props;
 
         const { showColorPicker } = this.state;
+        const buttonClassNames = [
+            styles.colorBox,
+            'color-box',
+        ];
+
+        if (disabled) {
+            buttonClassNames.push(styles.disabled);
+        }
 
         return (
             <div
@@ -145,8 +160,9 @@ class ColorInput extends React.PureComponent {
                 }
                 <button
                     type="button"
-                    className={`${styles.colorBox} color-box`}
+                    className={buttonClassNames.join(' ')}
                     onClick={this.handleColorBoxClick}
+                    disabled={disabled || readOnly}
                 >
                     <span
                         className={`${styles.color} color`}

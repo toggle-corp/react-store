@@ -19,8 +19,20 @@
             min-height: $font-size-medium;
         }
 
+        &.disabled {
+            cursor: default;
+
+            .color {
+                filter: grayscale(100%);
+            }
+        }
+
         &:hover {
             border-bottom-color: $color-separator-hover;
+        }
+
+        &:focus {
+            border-bottom-color: $color-accent;
         }
 
         &.error {

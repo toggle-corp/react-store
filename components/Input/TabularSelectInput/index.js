@@ -225,7 +225,11 @@ class TabularSelectInput extends React.PureComponent {
     }
 
     createTableHeaders = (tableHeaders) => {
-        const { hideRemoveFromListButton } = this.props;
+        const {
+            hideRemoveFromListButton,
+            disabled,
+        } = this.props;
+
         if (hideRemoveFromListButton) {
             return tableHeaders;
         }
@@ -242,6 +246,7 @@ class TabularSelectInput extends React.PureComponent {
                         iconName={iconNames.delete}
                         smallVerticalPadding
                         transparent
+                        disabled={disabled}
                     />
                 ),
             },

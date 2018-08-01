@@ -28,8 +28,9 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool,
-    error: PropTypes.string,
+    readOnly: PropTypes.bool,
     hint: PropTypes.string,
+    error: PropTypes.string,
     label: PropTypes.string,
     onChange: PropTypes.func,
     showLabel: PropTypes.bool,
@@ -48,8 +49,9 @@ const defaultProps = {
     onChange: () => {},
     showLabel: true,
     separator: '-',
-    showHintAndError: true,
+    readOnly: false,
     value: undefined,
+    showHintAndError: true,
     title: undefined,
 };
 
@@ -127,6 +129,7 @@ class DateInput extends React.PureComponent {
             value,
             error,
             separator,
+            readOnly,
         } = this.props;
 
         const {
@@ -160,6 +163,11 @@ class DateInput extends React.PureComponent {
         if (error) {
             classNames.push(styles.error);
             classNames.push('error');
+        }
+
+        if (readOnly) {
+            classNames.push('read-only');
+            classNames.push(styles.readOnly);
         }
 
         return classNames.join(' ');
@@ -277,14 +285,12 @@ class DateInput extends React.PureComponent {
         } = this.props;
 
         const oldValue = decodeDate(valueFromProps, separator);
-
         const { y, m, d } = {
             ...oldValue,
             ...valueToOverride,
         };
 
         const newValue = encodeDate({ y, m, d }, separator);
-
         if (newValue !== valueFromProps) {
             onChange(newValue);
         }

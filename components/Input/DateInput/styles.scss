@@ -73,11 +73,11 @@ $width-date-input: 180px;
         }
     }
 
-    &.disabled {
+    &.disabled,
+    &.readOnly {
         .input {
             border-bottom-color: $color-separator;
         }
-
         .label {
             color: $color-text-disabled;
         }
