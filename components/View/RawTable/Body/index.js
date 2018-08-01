@@ -50,6 +50,9 @@ const propTypes = {
     keyExtractor: PropTypes.func.isRequired,
 
     onClick: PropTypes.func,
+
+    onHover: PropTypes.func,
+    onHoverOut: PropTypes.func,
 };
 
 const defaultProps = {
@@ -61,6 +64,8 @@ const defaultProps = {
     highlightRowKey: undefined,
     highlightColumnKey: undefined,
     onClick: undefined,
+    onHover: undefined,
+    onHoverOut: undefined,
     expandRowId: undefined,
     expandedRowModifier: undefined,
 };
@@ -94,6 +99,13 @@ export default class Body extends React.PureComponent {
         }
     }
 
+    handleRowHover = (rowKey, cellKey, e) => {
+        const { onHover } = this.props;
+        if (onHover) {
+            onHover(rowKey, cellKey, e);
+        }
+    }
+
     renderRow = (key, rowData) => {
         const {
             areCellsHoverable,
@@ -105,6 +117,7 @@ export default class Body extends React.PureComponent {
             expandRowId,
             expandedRowModifier,
             headersOrder,
+            onHoverOut,
         } = this.props;
 
         let cellKey;
@@ -124,6 +137,8 @@ export default class Body extends React.PureComponent {
                 highlighted={isEqualAndTruthy(key, highlightRowKey)}
                 hoverable={areRowsHoverable}
                 onClick={this.handleRowClick}
+                onHover={this.handleRowHover}
+                onHoverOut={onHoverOut}
                 rowData={rowData}
             />
         );

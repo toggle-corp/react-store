@@ -51,7 +51,7 @@ const propTypes = {
     groupAccessor: PropTypes.func,
     valueAccessor: PropTypes.func,
     radiusAccessor: PropTypes.func,
-    hightlightClusterId: PropTypes.node,
+    highlightClusterId: PropTypes.node,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -78,7 +78,7 @@ const defaultProps = {
     labelAccessor: d => d.label,
     valueAccessor: () => 1,
     radiusAccessor: () => 30,
-    hightlightClusterId: undefined,
+    highlightClusterId: undefined,
     useVoronoi: false,
     className: '',
     colorScheme: schemePaired,
@@ -152,7 +152,7 @@ class ForceDirectedGraph extends React.PureComponent {
             boundingClientRect: oldBoundingClientRect,
             clusterSize: oldClusterSize,
             colorScheme: oldColorScheme,
-            hightlightClusterId: oldHighlightClusterId,
+            highlightClusterId: oldHighlightClusterId,
         } = this.props;
 
         const {
@@ -507,15 +507,16 @@ class ForceDirectedGraph extends React.PureComponent {
             .enter()
             .append('g')
             .attr('class', (d) => {
+                // FIXME: Donot do this, use keySelector
                 const {
-                    label,
+                    id,
                     group,
                 } = d;
 
                 const classNames = [
                     styles.nodes,
                     'nodes',
-                    `nodes-${label}-${group}`,
+                    `nodes-${id}-${group}`,
                 ];
 
                 return classNames.join(' ');

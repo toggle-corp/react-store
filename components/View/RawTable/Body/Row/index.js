@@ -28,6 +28,8 @@ const propTypes = {
     hoverable: PropTypes.bool,
 
     onClick: PropTypes.func,
+    onHover: PropTypes.func,
+    onHoverOut: PropTypes.func,
 
     rowData: PropTypes.shape({
         dummy: PropTypes.string,
@@ -48,6 +50,8 @@ const defaultProps = {
     highlighted: false,
     hoverable: false,
     onClick: undefined,
+    onHover: undefined,
+    onHoverOut: undefined,
 };
 
 
@@ -89,6 +93,17 @@ export default class Row extends React.PureComponent {
         }
     }
 
+    handleCellHover = (key, e) => {
+        const {
+            onHover,
+            uniqueKey,
+        } = this.props;
+
+        if (onHover) {
+            onHover(uniqueKey, key, e);
+        }
+    }
+
     keyExtractor = header => header;
 
     renderCell = (key) => {
@@ -97,6 +112,7 @@ export default class Row extends React.PureComponent {
             dataModifier,
             highlightCellKey,
             highlightColumnKey,
+            onHoverOut,
             rowData,
         } = this.props;
 
@@ -109,6 +125,8 @@ export default class Row extends React.PureComponent {
                 key={key}
                 uniqueKey={key}
                 onClick={this.handleCellClick}
+                onHover={this.handleCellHover}
+                onHoverOut={onHoverOut}
                 hoverable={areCellsHoverable}
                 highlighted={isEqualAndTruthy(key, highlightCellKey)}
                 columnHighlighted={isEqualAndTruthy(key, highlightColumnKey)}

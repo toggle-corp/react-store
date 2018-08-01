@@ -13,6 +13,8 @@ const propTypes = {
     columnHighlighted: PropTypes.bool,
     hoverable: PropTypes.bool,
     onClick: PropTypes.func,
+    onHover: PropTypes.func,
+    onHoverOut: PropTypes.func,
     uniqueKey: PropTypes.string.isRequired,
 };
 
@@ -22,6 +24,8 @@ const defaultProps = {
     columnHighlighted: false,
     hoverable: false,
     onClick: undefined,
+    onHover: undefined,
+    onHoverOut: undefined,
     children: '-',
 };
 
@@ -69,6 +73,17 @@ export default class Cell extends React.PureComponent {
         }
     }
 
+    handleHover = (e) => {
+        const {
+            onHover,
+            uniqueKey,
+        } = this.props;
+
+        if (onHover) {
+            onHover(uniqueKey, e);
+        }
+    }
+
     render() {
         const {
             hoverable,
@@ -76,7 +91,9 @@ export default class Cell extends React.PureComponent {
             className,
             columnHighlighted,
             uniqueKey,
+            onHoverOut,
         } = this.props;
+
         const tdClassName = this.getClassName(
             hoverable,
             highlighted,
@@ -90,6 +107,10 @@ export default class Cell extends React.PureComponent {
                 className={tdClassName}
                 role="gridcell"
                 onClick={this.handleClick}
+                onFocus={() => {}}
+                onBlur={() => {}}
+                onMouseOver={this.handleHover}
+                onMouseOut={onHoverOut}
             >
                 { this.props.children }
             </td>

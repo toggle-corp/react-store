@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {
+    Fragment,
+} from 'react';
 
 import { isArrayEqual } from '../../../utils/common';
 
@@ -42,6 +44,9 @@ const propTypes = {
 
     onBodyClick: PropTypes.func,
 
+    onBodyHover: PropTypes.func,
+    onBodyHoverOut: PropTypes.func,
+
     onHeaderClick: PropTypes.func,
 
     highlightCellKey: PropTypes.shape({
@@ -54,11 +59,15 @@ const propTypes = {
     highlightRowKey: propTypeKey,
 
     onDataSort: PropTypes.func,
+
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     onBodyClick: undefined,
+    onBodyHover: undefined,
+    onBodyHoverOut: undefined,
     onHeaderClick: undefined,
     dataModifier: undefined,
     headerModifier: undefined,
@@ -71,6 +80,8 @@ const defaultProps = {
 
     expandRowId: undefined,
     expandedRowModifier: undefined,
+
+    emptyComponent: undefined,
 };
 
 export default class RawTable extends React.PureComponent {
@@ -133,35 +144,54 @@ export default class RawTable extends React.PureComponent {
             keyExtractor,
             onHeaderClick,
             onBodyClick,
+            onBodyHover,
+            onBodyHoverOut,
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
             expandRowId,
             expandedRowModifier,
+            emptyComponent: EmptyComponent,
             className,
         } = this.props;
 
         const tableClassName = this.getClassName(className);
+        const emptyClassName = [
+            'empty',
+            styles.empty,
+        ];
+
         return (
-            <table className={tableClassName}>
-                <Headers
-                    headers={this.state.headers}
-                    headerModifier={headerModifier}
-                    onClick={onHeaderClick}
-                />
-                <Body
-                    data={data}
-                    dataModifier={dataModifier}
-                    expandedRowModifier={expandedRowModifier}
-                    headersOrder={this.state.headersOrder}
-                    keyExtractor={keyExtractor}
-                    onClick={onBodyClick}
-                    highlightCellKey={highlightCellKey}
-                    highlightRowKey={highlightRowKey}
-                    highlightColumnKey={highlightColumnKey}
-                    expandRowId={expandRowId}
-                />
-            </table>
+            <Fragment>
+                {
+                    data.length === 0 && EmptyComponent ? (
+                        <EmptyComponent
+                            className={emptyClassName}
+                        />
+                    ) :
+                        <table className={tableClassName}>
+                            <Headers
+                                headers={this.state.headers}
+                                headerModifier={headerModifier}
+                                onClick={onHeaderClick}
+                            />
+                            <Body
+                                data={data}
+                                dataModifier={dataModifier}
+                                expandedRowModifier={expandedRowModifier}
+                                headersOrder={this.state.headersOrder}
+                                keyExtractor={keyExtractor}
+                                onClick={onBodyClick}
+                                onHover={onBodyHover}
+                                onHoverOut={onBodyHoverOut}
+                                highlightCellKey={highlightCellKey}
+                                highlightRowKey={highlightRowKey}
+                                highlightColumnKey={highlightColumnKey}
+                                expandRowId={expandRowId}
+                            />
+                        </table>
+                }
+            </Fragment>
         );
     }
 }
