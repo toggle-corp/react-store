@@ -1,0 +1,24 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/input-base';
+
+.list-selection {
+    .label {
+        padding-bottom: $spacing-extra-small-alt;
+    }
+
+    .item {
+        padding: $spacing-extra-small-alt 0;
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+    }
+
+    &.error {
+        .label {
+            color: $color-danger;
+        }
+    }
+}

@@ -273,6 +273,7 @@ export default class GridLayoutEditor extends React.PureComponent {
             dragItemClassName,
             onMove: this.handleItemMove,
             parentContainerScrollFunction: this.scrollContainer,
+            $itemKey: key,
         };
     }
 
