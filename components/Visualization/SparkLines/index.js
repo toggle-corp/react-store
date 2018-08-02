@@ -1,12 +1,23 @@
 import React, {
     PureComponent,
+    Fragment,
 } from 'react';
-import { select } from 'd3-selection';
-import { extent } from 'd3-array';
+import {
+    select,
+    mouse,
+} from 'd3-selection';
+import {
+    extent,
+    bisector,
+} from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 import { PropTypes } from 'prop-types';
-import { line, area } from 'd3-shape';
+import {
+    line,
+    area,
+} from 'd3-shape';
 import SvgSaver from 'svgsaver';
+import Float from '../../View/Float';
 import Responsive from '../../General/Responsive';
 
 import { getStandardFilename } from '../../../utils/common';
@@ -19,9 +30,12 @@ const propTypes = {
         height: PropTypes.number,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
-    valueAccessor: PropTypes.func.isRequired,
+    xValueAccessor: PropTypes.func.isRequired,
+    yValueAccessor: PropTypes.func.isRequired,
+    xLabelModifier: PropTypes.func,
+    yLabelModifier: PropTypes.func,
+    onHover: PropTypes.func,
     fill: PropTypes.bool,
-    // lineColor: PropTypes.string,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -33,16 +47,20 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
-    // lineColor: '#40FEA1',
-    fill: false,
+    fill: true,
+    onHover: () => {},
+    xLabelModifier: d => d,
+    yLabelModifier: d => d,
     className: '',
     margins: {
-        top: 4,
-        right: 4,
-        bottom: 4,
-        left: 4,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
+
+const circleRadius = 5;
 
 class SparkLines extends PureComponent {
     static propTypes = propTypes;
@@ -62,40 +80,56 @@ class SparkLines extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('sparklines', 'graph')}.svg`);
     }
 
-    /*
-    addAreaGradients = () => {
-        const { lineColor } = this.props;
+    handleMouseMove = (element, focus) => {
+        const {
+            data,
+            onHover,
+            xLabelModifier,
+            yLabelModifier,
+        } = this.props;
+        const {
+            scaleX,
+            scaleY,
+            xValue,
+            yValue,
+            bisectXValue,
+        } = this;
+        const x0 = scaleX.invert(mouse(element)[0]);
+        const i = bisectXValue(data, x0, 1);
+        const d0 = data[i - 1];
+        const d1 = data[i];
+        const d = x0 - xValue(d0) > xValue(d1) - x0 ? d1 : d0;
+        onHover(d);
+        focus
+            .attr('transform', `translate(${scaleX(xValue(d))}, ${scaleY(yValue(d))})`);
 
-        const areaGradient = select(this.svg)
-            .append('defs')
-            .append('linearGradient')
-            .attr('id', 'areaGradient')
-            .attr('x1', '0%')
-            .attr('y1', '0%')
-            .attr('x2', '0%')
-            .attr('y2', '100%');
+        const { top, left } = focus.node().getBoundingClientRect();
+        const xLabel = xLabelModifier(xValue(d));
+        const yLabel = yLabelModifier(yValue(d));
 
-        areaGradient
-            .append('stop')
-            .attr('offset', '0%')
-            .attr('stop-color', lineColor)
-            .attr('stop-opacity', 1);
-        areaGradient
-            .append('stop')
-            .attr('offset', '80%')
-            .attr('stop-color', lineColor)
-            .attr('stop-opacity', 0.1);
+        select(this.tooltip)
+            .html(`<span class=${styles.yvalue}>${yLabel}</span>
+                   <span class=${styles.xvalue}>${xLabel}</span>`)
+            .style('top', () => {
+                const { height } = this.tooltip.getBoundingClientRect();
+                return `${top - height - circleRadius}px`;
+            })
+            .style('left', () => {
+                const { width } = this.tooltip.getBoundingClientRect();
+                return `${left - (width / 2)}px`;
+            })
+            .transition()
+            .style('display', 'inline-block');
     }
-    */
 
     drawChart = () => {
         const {
             data,
             boundingClientRect,
-            // lineColor,
             margins,
             fill,
-            valueAccessor,
+            xValueAccessor,
+            yValueAccessor,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -111,49 +145,79 @@ class SparkLines extends PureComponent {
             left,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
+        const marginForCircle = 2 * circleRadius;
+
+        width = width - left - right - marginForCircle;
+        height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+            .attr('width', width + left + right + marginForCircle)
+            .attr('height', height + top + bottom + marginForCircle)
             .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
+            .attr('class', styles.sparkLine)
+            .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
 
-        const scaleX = scaleLinear()
+
+        this.xValue = d => xValueAccessor(d);
+        this.yValue = d => yValueAccessor(d);
+
+        this.bisectXValue = bisector(this.xValue).left;
+
+        this.scaleX = scaleLinear()
             .range([0, width])
-            .domain([0, data.length - 1]);
-        const scaleY = scaleLinear()
+            .domain(extent(data.map(d => this.xValue(d))));
+
+        this.scaleY = scaleLinear()
             .range([height, 0])
-            .domain(extent(data.map(d => valueAccessor(d))));
+            .domain(extent(data.map(d => this.yValue(d))));
+
         const areas = area()
-            .x((d, i) => scaleX(i))
+            .x(d => this.scaleX(this.xValue(d)))
             .y0(height)
-            .y1(d => scaleY(valueAccessor(d)));
+            .y1(d => this.scaleY(this.yValue(d)));
 
         const lines = line()
-            .x((d, i) => scaleX(i))
-            .y(d => scaleY(valueAccessor(d)));
+            .x(d => this.scaleX(this.xValue(d)))
+            .y(d => this.scaleY(this.yValue(d)));
 
-        group.attr('class', 'spark-lines');
         if (fill) {
-            // this.addAreaGradients();
             group.append('path')
-                .attr('class', 'fill')
+                .attr('class', styles.area)
                 .datum(data)
-                // .style('fill', 'url(#areaGradient)')
-                .style('stroke-width', 2)
                 .attr('d', areas);
         }
 
         group
             .append('path')
-            .attr('class', 'line')
+            .attr('class', styles.path)
             .datum(data)
             .attr('d', lines)
-            // .style('stroke', lineColor)
+            .style('fill', 'none');
+
+        const focus = group
+            .append('g')
+            .attr('class', styles.focus)
+            .style('display', 'none');
+
+        focus
+            .append('circle')
+            .attr('r', circleRadius);
+
+        group
+            .append('rect')
+            .attr('class', 'overlay')
             .style('fill', 'none')
-            .style('stroke-width', 2);
+            .style('pointer-events', 'all')
+            .attr('width', width + left + right)
+            .attr('height', height + top + bottom)
+            .attr('transform', `translate(${left}, ${top})`)
+            .on('mouseover', () => focus.style('display', null))
+            .on('mouseout', () => {
+                focus.style('display', 'none');
+                select(this.tooltip)
+                    .style('display', 'none');
+            })
+            .on('mousemove', (d, i, nodes) => this.handleMouseMove(nodes[0], focus));
     }
 
     redrawChart = () => {
@@ -174,10 +238,18 @@ class SparkLines extends PureComponent {
         ].join(' ');
 
         return (
-            <svg
-                ref={(element) => { this.svg = element; }}
-                className={sparkLinesStyle}
-            />
+            <Fragment>
+                <svg
+                    ref={(element) => { this.svg = element; }}
+                    className={sparkLinesStyle}
+                />
+                <Float>
+                    <div
+                        ref={(elem) => { this.tooltip = elem; }}
+                        className={styles.tooltip}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }
