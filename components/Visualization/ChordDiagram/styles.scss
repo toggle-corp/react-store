@@ -3,10 +3,24 @@
 .chord-diagram {
     display: flex;
     flex: 1 1 auto;
+
+    .chords {
+        .path {
+            cursor: pointer;
+            stroke: #dcdcdc;
+        }
+    }
+
+    .ribbons {
+        .path {
+            stroke: #dcdcdc;
+        }
+    }
 }
 
 .tooltip {
     @include shadow-medium;
+
     display: none;
     position: fixed;
     z-index: 10;
