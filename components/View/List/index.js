@@ -64,7 +64,6 @@ export class NormalList extends React.Component {
                 <Renderer
                     className={rendererClassName}
                     key={key}
-                    $itemKey={key}
                     {...extraProps}
                 />
             );
