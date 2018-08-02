@@ -109,7 +109,7 @@ const validateValue = (prop) => {
     const optionsMap = listToMap(
         options,
         keySelector,
-        () => true,
+        (element, key) => key,
     );
 
     value.forEach((v) => {
