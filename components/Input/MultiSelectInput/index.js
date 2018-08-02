@@ -40,10 +40,9 @@ export const propTypes = {
     hideClearButton: PropTypes.bool,
     hideSelectAllButton: PropTypes.bool,
     hint: PropTypes.string,
-    keySelector: PropTypes.func,
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     labelSelector: PropTypes.func,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
     options: PropTypes.arrayOf(PropTypes.object),
     optionsClassName: PropTypes.string,
     placeholder: PropTypes.string,
@@ -150,7 +149,7 @@ const getInputPlaceholder = (props) => {
     return placeholder;
 };
 
-class MultiSelectInput extends React.PureComponent {
+export class NormalMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -725,4 +724,4 @@ class MultiSelectInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(MultiSelectInput);
+export default FaramElement('input')(NormalMultiSelectInput);
