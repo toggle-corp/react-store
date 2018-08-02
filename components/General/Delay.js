@@ -4,13 +4,12 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const propTypes = {
     value: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
+    onChange: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
     changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
     value: undefined,
-    onChange: undefined,
     changeDelay: 200,
 };
 
@@ -58,10 +57,6 @@ export default (WrappedComponent) => {
 
             this.pendingChange = true;
             this.setState({ value });
-
-            if (!onChange) {
-                return;
-            }
 
             this.changeTimeout = setTimeout(
                 () => {
