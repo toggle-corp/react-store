@@ -157,13 +157,13 @@ class Button extends React.PureComponent {
         }
     }
 
-    handleClick = () => {
+    handleClick = (e) => {
         clearTimeout(this.changeTimeout);
         this.pendingChange = true;
         this.changeTimeout = setTimeout(
             () => {
                 this.pendingChange = false;
-                this.props.onClick();
+                this.props.onClick(e);
             },
             this.props.changeDelay,
         );

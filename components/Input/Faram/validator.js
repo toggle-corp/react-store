@@ -15,41 +15,52 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
-export const accumulateValues = (obj, schema, settings = { noUndefined: false }) => {
+export const accumulateValues = (obj, schema, settings = {}) => {
+    const {
+        noFalsyValues = false,
+        falsyValue = undefined,
+    } = settings;
+
     // NOTE: if schema is array, the object is the node element
     const { member, fields } = schema;
-    const schemaForLeaf = Array.isArray(schema);
-    const schemaForArray = !!member;
-    const schemaForObject = !!fields;
+    const isSchemaForLeaf = Array.isArray(schema);
+    const isSchemaForArray = !!member;
+    const isSchemaForObject = !!fields;
 
-    if (schemaForLeaf) {
+    if (isSchemaForLeaf) {
+        if (isFalsy(obj) && !noFalsyValues) {
+            return falsyValue;
+        }
         return obj;
-    } else if (schemaForArray) {
+    } else if (isSchemaForArray) {
         const safeObj = obj || emptyArray;
         const values = [];
         safeObj.forEach((element) => {
-            const value = accumulateValues(element, member);
+            const value = accumulateValues(element, member, settings);
             values.push(value);
         });
         if (hasNoValues(values)) {
-            return settings.noUndefined ? emptyArray : undefined;
+            return noFalsyValues ? emptyArray : falsyValue;
         }
         return values;
-    } else if (schemaForObject) {
+    } else if (isSchemaForObject) {
         const safeObj = obj || emptyObject;
         const values = {};
         Object.keys(fields).forEach((fieldName) => {
-            const value = accumulateValues(safeObj[fieldName], fields[fieldName]);
+            const value = accumulateValues(safeObj[fieldName], fields[fieldName], settings);
             if (value !== undefined) {
                 values[fieldName] = value;
             }
         });
         // FIXME: don't copy values if there is nothing to be cleared
         if (hasNoKeys(values)) {
-            return settings.noUndefined ? emptyObject : undefined;
+            return noFalsyValues ? emptyObject : falsyValue;
         }
         return values;
     }
+
+    // FIXME: throw error
+    console.error('Schema is invalid at:', schema);
     return undefined;
 };
 
