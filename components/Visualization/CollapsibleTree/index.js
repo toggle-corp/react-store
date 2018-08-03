@@ -125,7 +125,7 @@ class CollapsibleTree extends React.PureComponent {
             margins,
         } = this.props;
 
-        let { width, height } = boundingClientRect;
+        const { width, height } = boundingClientRect;
         const {
             top,
             right,
@@ -133,15 +133,15 @@ class CollapsibleTree extends React.PureComponent {
             left,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
+        this.width = width - left - right;
+        this.height = height - top - bottom;
 
         this.trees = tree().nodeSize(nodeSize);
         this.root = hierarchy(data, childrenAccessor);
         this.root.x0 = height / 2;
         this.root.y0 = 0;
         this.colors = scaleOrdinal().range(colorScheme);
-        this.group = this.setContext(width, height, margins);
+        this.group = this.setContext(this.width, this.height, margins);
         this.duration = 0;
     }
 
@@ -221,6 +221,20 @@ class CollapsibleTree extends React.PureComponent {
             .attr('y', -12) // d => (d.children || d.childrens ? 16 : 0))
             .attr('text-anchor', 'middle') // d => (d.children ? 'end' : 'start'))
             .text(d => labelAccessor(d.data));
+
+
+        group
+            .select('text')
+            .call((d) => {
+                const { margins } = this.props;
+                const {
+                    top,
+                    left,
+                } = margins;
+                const rootTextLength = d.node().getComputedTextLength() || 1;
+                group
+                    .attr('transform', `translate(${left + rootTextLength}, ${top + (this.height / 2)})`);
+            });
 
         const nodeUpdate = nodeEnter.merge(node);
 
@@ -302,10 +316,8 @@ class CollapsibleTree extends React.PureComponent {
         const nodes = treeData.descendants();
         const links = treeData.descendants().slice(1);
 
-        const group = this.group;
-
-        this.addNodes(group, source, nodes);
-        this.addLinks(group, source, links);
+        this.addNodes(this.group, source, nodes);
+        this.addLinks(this.group, source, links);
         nodes.forEach((d) => {
             d.x0 = d.x; // eslint-disable-line no-param-reassign
             d.y0 = d.y; // eslint-disable-line no-param-reassign
@@ -319,6 +331,11 @@ class CollapsibleTree extends React.PureComponent {
         } = this.props;
 
         if (!boundingClientRect.width) {
+            return;
+        }
+
+        if (boundingClientRect.width === 0 ||
+            boundingClientRect.height === 0) {
             return;
         }
 
