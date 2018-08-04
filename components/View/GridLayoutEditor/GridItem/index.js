@@ -10,17 +10,22 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    dragItemClassName: PropTypes.string.isRequired,
+
+    itemKey: PropTypes.string.isRequired,
     datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
     layoutSelector: PropTypes.func.isRequired,
     minSizeSelector: PropTypes.func.isRequired,
+
     layoutValidator: PropTypes.func.isRequired,
+    onLayoutChange: PropTypes.func.isRequired,
+
     headerModifier: PropTypes.func.isRequired,
     contentModifier: PropTypes.func.isRequired,
-    $itemKey: PropTypes.string.isRequired,
-    onLayoutChange: PropTypes.func.isRequired,
-    dragItemClassName: PropTypes.string.isRequired,
-    parentContainerScrollTester: PropTypes.func.isRequired,
-    parentContainerScrollFunction: PropTypes.func.isRequired,
+
+    getParentScrollInfo: PropTypes.func.isRequired,
+    scrollParentContainer: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -34,7 +39,9 @@ const areLayoutsEqual = (l1, l2) => (
     && l1.height === l2.height
 );
 
-const SCROLL_TIMEOUT = 60;
+
+const SCROLL_DISTANCE = 16;
+const SCROLL_INTERVAL = 30;
 
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -59,6 +66,7 @@ export default class GridItem extends React.PureComponent {
         this.isResizing = false;
         this.lastValidLayout = layout;
         this.minSize = minSizeSelector(datum);
+        this.scrollInterval = undefined;
     }
 
     componentWillMount() {
@@ -100,8 +108,7 @@ export default class GridItem extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        clearTimeout(this.scrollTimeout);
-
+        clearInterval(this.scrollInterval);
         window.removeEventListener('mouseup', this.handleMouseUp);
         window.removeEventListener('mousemove', this.handleMouseMove);
 
@@ -113,14 +120,14 @@ export default class GridItem extends React.PureComponent {
 
     testLayoutValidity = (newLayout) => {
         const {
-            $itemKey,
+            itemKey,
             layoutValidator,
         } = this.props;
 
         const { current: container } = this.containerRef;
 
         const { isLayoutValid, newPossibleLayout } =
-            layoutValidator($itemKey, newLayout, this.isResizing);
+            layoutValidator(itemKey, newLayout, this.isResizing);
 
         if (isLayoutValid) {
             this.isLayoutValid = true;
@@ -131,7 +138,7 @@ export default class GridItem extends React.PureComponent {
 
         if (newPossibleLayout) {
             const { isLayoutValid: isNewLayoutValid } =
-                layoutValidator($itemKey, newPossibleLayout, this.isResizing);
+                layoutValidator(itemKey, newPossibleLayout, this.isResizing);
 
             if (isNewLayoutValid) {
                 this.lastValidLayout = newPossibleLayout;
@@ -142,35 +149,14 @@ export default class GridItem extends React.PureComponent {
         addClassName(container, styles.invalid);
     }
 
-    scrollParentContainer = (dx, dy) => {
-        const { parentContainerScrollFunction: scrollParentContainer } = this.props;
-        const { layout } = this.state;
-
-        const scroll = scrollParentContainer(dx, dy);
-        const newLayout = { ...layout };
-
-        if (this.isResizing) {
-            newLayout.width += scroll.dx;
-            newLayout.height += scroll.dy;
-        } else {
-            newLayout.left += scroll.dx;
-            newLayout.top += scroll.dy;
-        }
-
-        this.setState({ layout: newLayout });
-        this.testLayoutValidity(newLayout);
-
-        if (this.keepScrollingParentContainer) {
-            this.scrollTimeout = setTimeout(
-                () => this.scrollParentContainer(dx, dy),
-                SCROLL_TIMEOUT,
-            );
-        }
-    }
-
     handleMouseDown = (e) => {
         this.lastScreenX = e.clientX;
         this.lastScreenY = e.clientY;
+
+        const scroll = this.props.getParentScrollInfo();
+        const { layout } = this.state;
+        this.initialDx = (scroll.left + e.clientX) - layout.left;
+        this.initialDy = (scroll.top + e.clientY) - layout.top;
 
         const { current: container } = this.containerRef;
         addClassName(container, styles.moving);
@@ -183,7 +169,7 @@ export default class GridItem extends React.PureComponent {
     handleMouseUp = (e) => {
         this.lastScreenX = e.clientX;
         this.lastScreenY = e.clientY;
-        this.keepScrollingParentContainer = false;
+        clearInterval(this.scrollInterval);
 
         if (!this.isMouseDown) {
             return;
@@ -199,14 +185,14 @@ export default class GridItem extends React.PureComponent {
 
         const {
             onLayoutChange,
-            $itemKey,
+            itemKey,
         } = this.props;
 
         if (this.isLayoutValid) {
             const { layout } = this.state;
-            onLayoutChange($itemKey, layout);
+            onLayoutChange(itemKey, layout);
         } else {
-            onLayoutChange($itemKey, this.lastValidLayout);
+            onLayoutChange(itemKey, this.lastValidLayout);
             this.isLayoutValid = true;
             removeClassName(container, styles.invalid);
         }
@@ -218,46 +204,62 @@ export default class GridItem extends React.PureComponent {
     handleMouseMove = (e) => {
         const dx = e.clientX - this.lastScreenX;
         const dy = e.clientY - this.lastScreenY;
-
         this.lastScreenX = e.clientX;
         this.lastScreenY = e.clientY;
 
-        const { layout } = this.state;
+        // sx and sy represents by how much
+        // the layout exceeds the current scroll area.
+        const { sx, sy, scroll } = this.calcBoundsExcess();
 
+        // We need to update position/size
+        // either if sx/sy is zero or if mouse movement
+        // is in opposite direction of sx/sy.
+
+        // If it's in the same direction (sx * dx > 0), we let
+        // the scrollLayout function to handle the layout update.
+        const updateX = (sx * dx <= 0 && dx);
+        const updateY = (sy * dy <= 0 && dy);
+
+        // New width/height or left/top.
+        // We take the initial distance of mouse from the layout
+        // and maintain that relative distance.
+        const newX = (scroll.left + e.clientX) - this.initialDx;
+        const newY = (scroll.top + e.clientY) - this.initialDy;
+
+        const { layout } = this.state;
         const newLayout = { ...layout };
 
+        // Resize or move as required
         if (this.isResizing) {
-            if (newLayout.width + dx >= this.minSize.width) {
-                newLayout.width += dx;
+            if (updateX) {
+                newLayout.width = newX;
             }
-            if (newLayout.height + dy >= this.minSize.height) {
-                newLayout.height += dy;
+            if (updateY) {
+                newLayout.height = newY;
             }
         } else {
-            newLayout.left += dx;
-            newLayout.top += dy;
+            if (updateX) {
+                newLayout.left = newX;
+            }
+            if (updateY) {
+                newLayout.top = newY;
+            }
         }
 
+        // If a new layout was calculated, update it.
         if (!areLayoutsEqual(layout, newLayout)) {
             this.setState({ layout: newLayout });
             this.testLayoutValidity(newLayout);
-
-            const {
-                parentContainerScrollTester: testParentContainerScroll,
-            } = this.props;
-
-            const scroll = testParentContainerScroll(e, dx, dy);
-
-            const scrollDx = scroll.horizontal ? dx : 0;
-            const scrollDy = scroll.vertical ? dy : 0;
-
-            if (scroll.horizontal || scroll.vertical) {
-                this.keepScrollingParentContainer = true;
-                this.scrollParentContainer(scrollDx, scrollDy);
-            } else {
-                this.keepScrollingParentContainer = false;
-            }
         }
+
+        // Finally, we start the scrollLayout logic to happen at certain
+        // intervals. This is becasue: if the mouseMove and mouseUp events
+        // both are not called after this point,
+        // then the mouse has probably moved outside the container and is stationary
+        // which means we need to continuously scroll the container, updating the layout's
+        // position/size at the same time.
+        clearInterval(this.scrollInterval);
+        this.scrollInterval = setInterval(this.scrollLayout, SCROLL_INTERVAL);
     }
 
     handleResizeHandleMouseDown = (e) => {
@@ -266,6 +268,11 @@ export default class GridItem extends React.PureComponent {
         this.lastScreenX = e.clientX;
         this.lastScreenY = e.clientY;
 
+        const scroll = this.props.getParentScrollInfo();
+        const { layout } = this.state;
+        this.initialDx = (scroll.left + e.clientX) - layout.width;
+        this.initialDy = (scroll.top + e.clientY) - layout.height;
+
         const { current: container } = this.containerRef;
         addClassName(container, styles.resizing);
 
@@ -273,6 +280,79 @@ export default class GridItem extends React.PureComponent {
 
         this.isResizing = true;
         this.isMouseDown = true;
+    }
+
+    calcBoundsExcess = () => {
+        // Calculate if current layout exceeds the bounds
+        // of current scroll area of parent container.
+        // If so, return the scroll distance in that direction.
+        // We use fake and static SCROLL_DISTANCE instead of actual
+        // bounds to keep constant velocity while scrolling.
+
+        const scroll = this.props.getParentScrollInfo();
+        const { layout } = this.state;
+
+        const {
+            left,
+            top,
+            width,
+            height,
+        } = layout;
+
+        const {
+            left: scrollLeft,
+            top: scrollTop,
+            width: scrollWidth,
+            height: scrollHeight,
+        } = scroll;
+
+        const right = left + width;
+        const bottom = top + height;
+        const scrollRight = scrollLeft + scrollWidth;
+        const scrollBottom = scrollTop + scrollHeight;
+
+        let sx = 0;
+        if (right > scrollRight) {
+            sx = SCROLL_DISTANCE;
+        } else if (left < scrollLeft && scrollLeft > 0) {
+            sx = -SCROLL_DISTANCE;
+        }
+
+        let sy = 0;
+        if (bottom > scrollBottom) {
+            sy = SCROLL_DISTANCE;
+        } else if (top < scrollTop && scrollTop > 0) {
+            sy = -SCROLL_DISTANCE;
+        }
+
+        return { sx, sy, scroll };
+    }
+
+    scrollLayout = () => {
+        // Update layout position/size and scroll the parent
+        // container based on how much the layout has exceeded
+        // the bounds of container.
+
+        const { sx, sy } = this.calcBoundsExcess();
+        if (!sx && !sy) {
+            return;
+        }
+
+        const layout = { ...this.state.layout };
+        if (this.isResizing) {
+            if (layout.width + sx >= this.minSize.width) {
+                layout.width += sx;
+            }
+            if (layout.height + sy >= this.minSize.height) {
+                layout.height += sy;
+            }
+        } else {
+            layout.left += sx;
+            layout.top += sy;
+        }
+        this.setState({ layout });
+        this.testLayoutValidity(layout);
+        this.props.scrollParentContainer(sx, sy);
     }
 
     renderHeader = () => {

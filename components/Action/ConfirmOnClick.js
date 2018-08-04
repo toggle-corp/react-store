@@ -34,6 +34,9 @@ const ConfirmOnClick = (WrappedComponent) => {
         }
 
         handleModalClose = (confirm) => {
+            // Only call `onClick` after setting the state,
+            // in order to prevent error which can occur if
+            // this component is unmounted by `onClick` event handler.
             this.setState(
                 { showConfirm: false },
                 () => {
