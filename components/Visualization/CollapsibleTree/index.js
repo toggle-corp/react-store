@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+    Fragment,
+} from 'react';
 import {
     select,
     event,
@@ -18,13 +20,15 @@ import {
     getStandardFilename,
     isObjectEmpty,
 } from '../../../utils/common';
+import iconNames from '../../../constants/iconNames';
+
 import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -38,8 +42,8 @@ const propTypes = {
         name: PropTypes.string,
     }),
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func.isRequired,
+    childrenSelector: PropTypes.func,
+    labelSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     nodeSize: PropTypes.arrayOf(PropTypes.number),
     className: PropTypes.string,
@@ -54,7 +58,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     colorScheme: schemePaired,
     nodeSize: [50, 300],
     className: '',
@@ -118,7 +122,7 @@ class CollapsibleTree extends React.PureComponent {
     setupChart = () => {
         const {
             data,
-            childrenAccessor,
+            childrenSelector,
             boundingClientRect,
             colorScheme,
             nodeSize,
@@ -137,7 +141,7 @@ class CollapsibleTree extends React.PureComponent {
         this.height = height - top - bottom;
 
         this.trees = tree().nodeSize(nodeSize);
-        this.root = hierarchy(data, childrenAccessor);
+        this.root = hierarchy(data, childrenSelector);
         this.root.x0 = height / 2;
         this.root.y0 = 0;
         this.colors = scaleOrdinal().range(colorScheme);
@@ -152,10 +156,10 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     topicColors = (node) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         let color = this.colors(0);
         if (node.depth === 0 || node.depth === 1) {
-            color = this.colors(labelAccessor(node.data));
+            color = this.colors(labelSelector(node.data));
         } else {
             color = this.topicColors(node.parent);
         }
@@ -184,7 +188,7 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     addNodes = (group, source, nodes) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
 
         let i = 0;
         const node = group
@@ -220,7 +224,7 @@ class CollapsibleTree extends React.PureComponent {
             .attr('x', 0)
             .attr('y', -12) // d => (d.children || d.childrens ? 16 : 0))
             .attr('text-anchor', 'middle') // d => (d.children ? 'end' : 'start'))
-            .text(d => labelAccessor(d.data));
+            .text(d => labelSelector(d.data));
 
 
         group
@@ -231,9 +235,16 @@ class CollapsibleTree extends React.PureComponent {
                     top,
                     left,
                 } = margins;
+                const {
+                    x = 0,
+                    y = 0,
+                    k = 1,
+                } = this;
                 const rootTextLength = d.node().getComputedTextLength() || 1;
+                const translateX = x < rootTextLength ? rootTextLength : 0;
                 group
-                    .attr('transform', `translate(${left + rootTextLength}, ${top + (this.height / 2)})`);
+                    .transition()
+                    .attr('transform', `translate(${x + left + translateX}, ${y + top + (this.height / 2)}) scale(${k})`);
             });
 
         const nodeUpdate = nodeEnter.merge(node);
@@ -362,10 +373,16 @@ class CollapsibleTree extends React.PureComponent {
         ].join(' ');
 
         return (
-            <svg
-                className={treeStyle}
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <Fragment>
+                <svg
+                    className={treeStyle}
+                    ref={(elem) => { this.svg = elem; }}
+                />
+                <span
+                    className={`${styles.info} ${iconNames.info}`}
+                    title="Use Ctrl + mouse to pan and zoom"
+                />
+            </Fragment>
         );
     }
 }
