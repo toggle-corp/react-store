@@ -34,10 +34,14 @@ const ConfirmOnClick = (WrappedComponent) => {
         }
 
         handleModalClose = (confirm) => {
-            if (confirm) {
-                this.props.onClick();
-            }
-            this.setState({ showConfirm: false });
+            this.setState(
+                { showConfirm: false },
+                () => {
+                    if (confirm) {
+                        this.props.onClick();
+                    }
+                },
+            );
         }
 
         render() {
