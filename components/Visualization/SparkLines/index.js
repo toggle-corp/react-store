@@ -97,7 +97,7 @@ class SparkLines extends PureComponent {
         const x0 = scaleX.invert(mouse(element)[0]);
         const i = bisectXValue(data, x0, 1);
         const d0 = data[i - 1];
-        const d1 = data[i];
+        const d1 = data[i] || d0;
         const d = x0 - xValue(d0) > xValue(d1) - x0 ? d1 : d0;
         onHover(d);
         focus
@@ -105,7 +105,7 @@ class SparkLines extends PureComponent {
             .attr('transform', `translate(${scaleX(xValue(d))}, ${scaleY(yValue(d))})`);
 
         focus
-            .select('.line')
+            .select('.crosshair')
             .attr('transform', `translate(${scaleX(xValue(d))}, ${0})`);
 
         const { top, left } = focus.node().getBoundingClientRect();
@@ -206,7 +206,7 @@ class SparkLines extends PureComponent {
 
         focus
             .append('line')
-            .attr('class', `line ${styles.line}`)
+            .attr('class', `crosshair ${styles.line}`)
             .attr('y1', 0)
             .attr('y2', this.height);
 
@@ -227,6 +227,7 @@ class SparkLines extends PureComponent {
             .on('mouseout', () => {
                 focus.style('display', 'none');
                 select(this.tooltip)
+                    .transition()
                     .style('display', 'none');
             })
             .on('mousemove', (d, i, nodes) => this.handleMouseMove(nodes[0], focus));
