@@ -5,3 +5,11 @@
     display: flex;
     flex: 1 1 auto;
 }
+
+.info {
+    position: absolute;
+    top: $spacing-small;
+    right: $spacing-small;
+    cursor: pointer;
+    color: $color-accent;
+}
