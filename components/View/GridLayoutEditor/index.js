@@ -137,12 +137,15 @@ export default class GridLayoutEditor extends React.PureComponent {
                     const layoutChanged = !areLayoutsEqual(newItemLayout, this.layouts[itemKey]);
 
                     if (layoutChanged) {
-                        const { current: container } = this.containerRef;
-
-                        this.scrollTimeout = setTimeout(() => {
-                            container.scrollTop = (newItemLayout.top + newItemLayout.height);
-                            // container.scrollLeft = newItemLayout.left;
-                        }, SCROLL_TIMEOUT_DURATION);
+                        clearTimeout(this.scrollTimeout);
+                        this.scrollTimeout = setTimeout(
+                            () => {
+                                const { current: container } = this.containerRef;
+                                container.scrollTop = (newItemLayout.top + newItemLayout.height);
+                                // container.scrollLeft = newItemLayout.left;
+                            },
+                            SCROLL_TIMEOUT_DURATION,
+                        );
 
                         this.handleLayoutChange(itemKey, newItemLayout);
                     }
@@ -188,10 +191,11 @@ export default class GridLayoutEditor extends React.PureComponent {
 
         for (let i = 0; i < layoutKeyList.length; i += 1) {
             const currentLayout = this.layouts[layoutKeyList[i]];
-            if (doesIntersect(
+            const intersects = doesIntersect(
                 reduceLayout(currentLayout, gridSize),
                 reduceLayout(newLayout, gridSize),
-            )) {
+            );
+            if (intersects) {
                 newLayout.top = currentLayout.top + currentLayout.height;
             }
         }
@@ -199,9 +203,10 @@ export default class GridLayoutEditor extends React.PureComponent {
         return newLayout;
     }
 
-    handleItemLayoutValidation = (key, newLayout) => {
+    itemLayoutValidation = (key, newLayout) => {
         const { gridSize } = this.props;
-        const layoutKeyList = Object.keys(this.layouts).filter(d => d !== key);
+        const layoutKeyList = Object.keys(this.layouts)
+            .filter(d => d !== key);
 
         if (newLayout.left < 0 || newLayout.top < 0) {
             return false;
@@ -209,10 +214,12 @@ export default class GridLayoutEditor extends React.PureComponent {
 
         let isLayoutValid = true;
         for (let i = 0; i < layoutKeyList.length; i += 1) {
-            if (doesIntersect(
-                reduceLayout(this.layouts[layoutKeyList[i]], gridSize),
+            const currentLayout = this.layouts[layoutKeyList[i]];
+            const intersects = doesIntersect(
+                reduceLayout(currentLayout, gridSize),
                 reduceLayout(newLayout, gridSize),
-            )) {
+            );
+            if (intersects) {
                 isLayoutValid = false;
                 break;
             }
@@ -230,7 +237,7 @@ export default class GridLayoutEditor extends React.PureComponent {
         onLayoutChange(key, snapLayout(layout, gridSize));
     }
 
-    handleContainerScrollTest = (e, dx, dy) => {
+    containerScrollTester = (e, dx, dy) => {
         const { current: container } = this.containerRef;
         const bcr = container.getBoundingClientRect();
 
@@ -267,8 +274,9 @@ export default class GridLayoutEditor extends React.PureComponent {
             headerModifier,
             contentModifier,
             datum,
-            layoutValidator: this.handleItemLayoutValidation,
-            parentContainerScrollTester: this.handleContainerScrollTest,
+            layoutValidator: this.itemLayoutValidation,
+            parentContainerScrollTester: this.containerScrollTester,
+
             onLayoutChange: this.handleLayoutChange,
             dragItemClassName,
             onMove: this.handleItemMove,
