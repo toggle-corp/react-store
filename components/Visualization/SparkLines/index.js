@@ -101,7 +101,12 @@ class SparkLines extends PureComponent {
         const d = x0 - xValue(d0) > xValue(d1) - x0 ? d1 : d0;
         onHover(d);
         focus
+            .select('.circle')
             .attr('transform', `translate(${scaleX(xValue(d))}, ${scaleY(yValue(d))})`);
+
+        focus
+            .select('.line')
+            .attr('transform', `translate(${scaleX(xValue(d))}, ${0})`);
 
         const { top, left } = focus.node().getBoundingClientRect();
         const xLabel = xLabelModifier(xValue(d));
@@ -136,7 +141,7 @@ class SparkLines extends PureComponent {
             return;
         }
 
-        let { width, height } = boundingClientRect;
+        const { width, height } = boundingClientRect;
 
         const {
             top,
@@ -147,12 +152,12 @@ class SparkLines extends PureComponent {
 
         const marginForCircle = 2 * circleRadius;
 
-        width = width - left - right - marginForCircle;
-        height = height - top - bottom - marginForCircle;
+        this.width = width - left - right - marginForCircle;
+        this.height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', width + left + right + marginForCircle)
-            .attr('height', height + top + bottom + marginForCircle)
+            .attr('width', this.width + left + right + marginForCircle)
+            .attr('height', this.height + top + bottom + marginForCircle)
             .append('g')
             .attr('class', styles.sparkLine)
             .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
@@ -164,16 +169,16 @@ class SparkLines extends PureComponent {
         this.bisectXValue = bisector(this.xValue).left;
 
         this.scaleX = scaleLinear()
-            .range([0, width])
+            .range([0, this.width])
             .domain(extent(data.map(d => this.xValue(d))));
 
         this.scaleY = scaleLinear()
-            .range([height, 0])
+            .range([this.height, 0])
             .domain(extent(data.map(d => this.yValue(d))));
 
         const areas = area()
             .x(d => this.scaleX(this.xValue(d)))
-            .y0(height)
+            .y0(this.height)
             .y1(d => this.scaleY(this.yValue(d)));
 
         const lines = line()
@@ -200,7 +205,14 @@ class SparkLines extends PureComponent {
             .style('display', 'none');
 
         focus
+            .append('line')
+            .attr('class', `line ${styles.line}`)
+            .attr('y1', 0)
+            .attr('y2', this.height);
+
+        focus
             .append('circle')
+            .attr('class', 'circle')
             .attr('r', circleRadius);
 
         group
@@ -208,8 +220,8 @@ class SparkLines extends PureComponent {
             .attr('class', 'overlay')
             .style('fill', 'none')
             .style('pointer-events', 'all')
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+            .attr('width', this.width + left + right)
+            .attr('height', this.height + top + bottom)
             .attr('transform', `translate(${left}, ${top})`)
             .on('mouseover', () => focus.style('display', null))
             .on('mouseout', () => {

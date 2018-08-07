@@ -23,6 +23,10 @@
         .focus {
             fill: $color-viz-blue;
             stroke: $color-viz-grey;
+
+            .line {
+                stroke: $color-viz-orange;
+            }
         }
     }
 }
