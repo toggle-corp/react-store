@@ -231,10 +231,10 @@ export default class GridItem extends React.PureComponent {
 
         // Resize or move as required
         if (this.isResizing) {
-            if (updateX) {
+            if (updateX && newX >= this.minSize.width) {
                 newLayout.width = newX;
             }
-            if (updateY) {
+            if (updateY && newY >= this.minSize.height) {
                 newLayout.height = newY;
             }
         } else {
