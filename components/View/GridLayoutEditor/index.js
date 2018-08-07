@@ -76,8 +76,31 @@ const doesIntersect = (l1, l2) => (
     && l1.height + l1.top > l2.top
 );
 
-const SCROLL_THRESHOLD = 20;
-const SCROLL_TIMEOUT_DURATION = 200;
+const resolveIntersect = (l1, l2, forResize) => {
+    const dx1 = (l1.left + l1.width) - l2.left;
+    const dx2 = (l2.left + l2.width) - l1.left;
+    const dx = (dx1 < dx2) ? -dx1 : dx2;
+
+    const dy1 = (l1.top + l1.height) - l2.top;
+    const dy2 = (l2.top + l2.height) - l1.top;
+    const dy = (dy1 < dy2) ? -dy1 : dy2;
+
+    if (Math.abs(dx) < Math.abs(dy)) {
+        return {
+            width: forResize ? l1.width + dx : l1.width,
+            height: l1.height,
+            left: forResize ? l1.left : l1.left + dx,
+            top: l1.top,
+        };
+    }
+
+    return {
+        width: l1.width,
+        height: forResize ? l1.height + dy : l1.height,
+        left: l1.left,
+        top: forResize ? l1.top : l1.top + dy,
+    };
+};
 
 export default class GridLayoutEditor extends React.PureComponent {
     static propTypes = propTypes;
@@ -137,13 +160,6 @@ export default class GridLayoutEditor extends React.PureComponent {
                     const layoutChanged = !areLayoutsEqual(newItemLayout, this.layouts[itemKey]);
 
                     if (layoutChanged) {
-                        const { current: container } = this.containerRef;
-
-                        this.scrollTimeout = setTimeout(() => {
-                            container.scrollTop = (newItemLayout.top + newItemLayout.height);
-                            // container.scrollLeft = newItemLayout.left;
-                        }, SCROLL_TIMEOUT_DURATION);
-
                         this.handleLayoutChange(itemKey, newItemLayout);
                     }
                 }
@@ -153,21 +169,6 @@ export default class GridLayoutEditor extends React.PureComponent {
 
     componentWillUnmount() {
         clearTimeout(this.scrollTimeout);
-    }
-
-    scrollContainer = (dx, dy) => {
-        const { current: container } = this.containerRef;
-
-        const scrollDy = dy < 0 && container.scrollTop + dy < 0 ? container.scrollTop : dy;
-        const scrollDx = dx < 0 && container.scrollLeft + dx < 0 ? container.scrollLeft : dx;
-
-        container.scrollTop += scrollDy;
-        container.scrollLeft += scrollDx;
-
-        return {
-            dx: scrollDx,
-            dy: scrollDy,
-        };
     }
 
     fixItemLayout = (key) => {
@@ -199,7 +200,7 @@ export default class GridLayoutEditor extends React.PureComponent {
         return newLayout;
     }
 
-    handleItemLayoutValidation = (key, newLayout) => {
+    handleItemLayoutValidation = (key, newLayout, forResize) => {
         const { gridSize } = this.props;
         const layoutKeyList = Object.keys(this.layouts).filter(d => d !== key);
 
@@ -208,17 +209,24 @@ export default class GridLayoutEditor extends React.PureComponent {
         }
 
         let isLayoutValid = true;
+        let newPossibleLayout;
         for (let i = 0; i < layoutKeyList.length; i += 1) {
+            const otherLayout = this.layouts[layoutKeyList[i]];
             if (doesIntersect(
-                reduceLayout(this.layouts[layoutKeyList[i]], gridSize),
                 reduceLayout(newLayout, gridSize),
+                reduceLayout(otherLayout, gridSize),
             )) {
                 isLayoutValid = false;
+                newPossibleLayout = resolveIntersect(
+                    snapLayout(newLayout, gridSize),
+                    snapLayout(otherLayout, gridSize),
+                    forResize,
+                );
                 break;
             }
         }
 
-        return isLayoutValid;
+        return { isLayoutValid, newPossibleLayout };
     }
 
     handleLayoutChange = (key, layout) => {
@@ -230,26 +238,34 @@ export default class GridLayoutEditor extends React.PureComponent {
         onLayoutChange(key, snapLayout(layout, gridSize));
     }
 
-    handleContainerScrollTest = (e, dx, dy) => {
-        const { current: container } = this.containerRef;
-        const bcr = container.getBoundingClientRect();
+    calcScrollInfo = () => ({
+        left: this.containerRef.current.scrollLeft,
+        top: this.containerRef.current.scrollTop,
+        width: this.containerRef.current.offsetWidth,
+        height: this.containerRef.current.offsetHeight,
+    })
 
-        let horizontal = 0;
-        let vertical = 0;
+    scrollContainer = (dx, dy) => {
+        const container = this.containerRef.current;
+        container.scrollLeft += dx;
+        container.scrollTop += dy;
 
-        if (bcr.width + bcr.left < e.screenX + SCROLL_THRESHOLD && dx > 0) {
-            horizontal = 1;
-        } else if (bcr.left + SCROLL_THRESHOLD > e.clientY && bcr.left < e.clientY && dx < 0) {
-            horizontal = -1;
-        }
+        // In case we have scrolled beyond the size of the container,
+        // update the size of the container.
+        const child = container.firstChild;
+        const width = Math.max(
+            parseInt(child.style.width, 10),
+            container.scrollLeft + container.offsetWidth,
+        );
+        const height = Math.max(
+            parseInt(child.style.height, 10),
+            container.scrollTop + container.offsetHeight,
+        );
 
-        if (bcr.height + bcr.top < e.screenY + SCROLL_THRESHOLD && dy > 0) {
-            vertical = 1;
-        } else if (bcr.top + SCROLL_THRESHOLD > e.clientY && bcr.top < e.clientY && dy < 0) {
-            vertical = -1;
-        }
-
-        return { horizontal, vertical };
+        child.style.width = `${width}px`;
+        child.style.height = `${height}px`;
+        this.bounds.width = width;
+        this.bounds.height = height;
     }
 
     renderParams = (key, datum) => {
@@ -262,18 +278,26 @@ export default class GridLayoutEditor extends React.PureComponent {
         } = this.props;
 
         return {
+            datum,
+            itemKey: key,
+            dragItemClassName,
+
+            // Selectors
             layoutSelector,
             minSizeSelector,
+
+            // Modifiers
             headerModifier,
             contentModifier,
-            datum,
+
+            // Layout handling methods
             layoutValidator: this.handleItemLayoutValidation,
-            parentContainerScrollTester: this.handleContainerScrollTest,
             onLayoutChange: this.handleLayoutChange,
-            dragItemClassName,
             onMove: this.handleItemMove,
-            parentContainerScrollFunction: this.scrollContainer,
-            $itemKey: key,
+
+            // Scroll related methods
+            getParentScrollInfo: this.calcScrollInfo,
+            scrollParentContainer: this.scrollContainer,
         };
     }
 
