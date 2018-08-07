@@ -5,8 +5,8 @@ export declare function getRgbFromHex(value: string): {
     b: number;
 };
 
-export declare function isTruthy(value: any): boolean;
-export declare function isFalsy(value: any): boolean;
+export declare function isTruthy(value: any): value is {};
+export declare function isFalsy(value: any): value is undefined;
 export declare function randomString(value?: number): string;
 
 interface ComparisionOutput<T> {
