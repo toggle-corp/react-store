@@ -15,7 +15,7 @@
 
         .path {
             stroke: $color-viz-blue;
-            stroke-width: 2;
+            stroke-width: 1;
             stroke-linejoin: round;
             stroke-linecap: round;
         }
@@ -23,6 +23,10 @@
         .focus {
             fill: $color-viz-blue;
             stroke: $color-viz-grey;
+
+            .line {
+                stroke: $color-viz-grey;
+            }
         }
     }
 }

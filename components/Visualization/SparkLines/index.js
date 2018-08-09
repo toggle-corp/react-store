@@ -53,9 +53,9 @@ const defaultProps = {
     yLabelModifier: d => d,
     className: '',
     margins: {
-        top: 0,
+        top: 2,
         right: 0,
-        bottom: 0,
+        bottom: 2,
         left: 0,
     },
 };
@@ -97,11 +97,16 @@ class SparkLines extends PureComponent {
         const x0 = scaleX.invert(mouse(element)[0]);
         const i = bisectXValue(data, x0, 1);
         const d0 = data[i - 1];
-        const d1 = data[i];
+        const d1 = data[i] || d0;
         const d = x0 - xValue(d0) > xValue(d1) - x0 ? d1 : d0;
         onHover(d);
         focus
+            .select('.circle')
             .attr('transform', `translate(${scaleX(xValue(d))}, ${scaleY(yValue(d))})`);
+
+        focus
+            .select('.crosshair')
+            .attr('transform', `translate(${scaleX(xValue(d))}, ${0})`);
 
         const { top, left } = focus.node().getBoundingClientRect();
         const xLabel = xLabelModifier(xValue(d));
@@ -118,8 +123,7 @@ class SparkLines extends PureComponent {
                 const { width } = this.tooltip.getBoundingClientRect();
                 return `${left - (width / 2)}px`;
             })
-            .transition()
-            .style('display', 'inline-block');
+            .style('opacity', '1');
     }
 
     drawChart = () => {
@@ -136,7 +140,7 @@ class SparkLines extends PureComponent {
             return;
         }
 
-        let { width, height } = boundingClientRect;
+        const { width, height } = boundingClientRect;
 
         const {
             top,
@@ -147,12 +151,12 @@ class SparkLines extends PureComponent {
 
         const marginForCircle = 2 * circleRadius;
 
-        width = width - left - right - marginForCircle;
-        height = height - top - bottom - marginForCircle;
+        this.width = width - left - right - marginForCircle;
+        this.height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', width + left + right + marginForCircle)
-            .attr('height', height + top + bottom + marginForCircle)
+            .attr('width', this.width + left + right + marginForCircle)
+            .attr('height', this.height + top + bottom + marginForCircle)
             .append('g')
             .attr('class', styles.sparkLine)
             .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
@@ -164,16 +168,16 @@ class SparkLines extends PureComponent {
         this.bisectXValue = bisector(this.xValue).left;
 
         this.scaleX = scaleLinear()
-            .range([0, width])
+            .range([0, this.width])
             .domain(extent(data.map(d => this.xValue(d))));
 
         this.scaleY = scaleLinear()
-            .range([height, 0])
+            .range([this.height, 0])
             .domain(extent(data.map(d => this.yValue(d))));
 
         const areas = area()
             .x(d => this.scaleX(this.xValue(d)))
-            .y0(height)
+            .y0(this.height)
             .y1(d => this.scaleY(this.yValue(d)));
 
         const lines = line()
@@ -200,7 +204,14 @@ class SparkLines extends PureComponent {
             .style('display', 'none');
 
         focus
+            .append('line')
+            .attr('class', `crosshair ${styles.line}`)
+            .attr('y1', 0)
+            .attr('y2', this.height);
+
+        focus
             .append('circle')
+            .attr('class', 'circle')
             .attr('r', circleRadius);
 
         group
@@ -208,14 +219,14 @@ class SparkLines extends PureComponent {
             .attr('class', 'overlay')
             .style('fill', 'none')
             .style('pointer-events', 'all')
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
+            .attr('width', this.width + left + right)
+            .attr('height', this.height + top + bottom)
             .attr('transform', `translate(${left}, ${top})`)
             .on('mouseover', () => focus.style('display', null))
             .on('mouseout', () => {
                 focus.style('display', 'none');
                 select(this.tooltip)
-                    .style('display', 'none');
+                    .style('opacity', '0');
             })
             .on('mousemove', (d, i, nodes) => this.handleMouseMove(nodes[0], focus));
     }
