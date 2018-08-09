@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import MultiSelectInput from '../../Input/MultiSelectInput';
-import DangerButton from '../../Action/Button/DangerButton';
+import DismissableListItem from '../../Action/DismissableListItem';
+import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
-import { iconNames } from '../../../../../constants';
 import FaramElement from '../../Input/Faram/FaramElement';
 
 import styles from './styles.scss';
@@ -120,21 +120,20 @@ class SelectInputWithList extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    handleSelectInputChange = (values) => {
+    getListItemParams = (key, datum) => {
         const {
-            onChange,
-            options,
+            labelSelector,
         } = this.props;
 
-        const objectValues = this.getObjectFromValue(options, values);
-        this.setState({ objectValues });
-
-        if (onChange) {
-            onChange(values);
-        }
+        return {
+            value: labelSelector(datum),
+            itemKey: key,
+            onDismiss: this.handleItemDismiss,
+            className: styles.listItem,
+        };
     }
 
-    handleListItemRemove = (key) => {
+    handleItemDismiss = (key) => {
         const {
             onChange,
             value,
@@ -159,54 +158,18 @@ class SelectInputWithList extends React.PureComponent {
         }
     }
 
-    renderSelectedItem = (key, data) => {
+    handleSelectInputChange = (values) => {
         const {
-            disabled,
-            hideRemoveFromListButton,
-            labelSelector,
+            onChange,
+            options,
         } = this.props;
 
-        const selectedItemClassName = [
-            styles.selectedItem,
-            'selected-item',
-        ].join(' ');
+        const objectValues = this.getObjectFromValue(options, values);
+        this.setState({ objectValues });
 
-        const labelClassName = [
-            styles.selectedItemLabel,
-            'label',
-        ].join(' ');
-
-        const removeButtonClassNames = [
-            styles.removeButton,
-            'remove-button',
-        ];
-        if (disabled) {
-            removeButtonClassNames.push(styles.disabled);
+        if (onChange) {
+            onChange(values);
         }
-
-        return (
-            <div
-                className={selectedItemClassName}
-                key={key}
-            >
-                <span className={labelClassName}>
-                    {labelSelector(data)}
-                </span>
-                {
-                    !hideRemoveFromListButton && (
-                        <DangerButton
-                            onClick={() => this.handleListItemRemove(key)}
-                            title="Remove"
-                            className={removeButtonClassNames.join(' ')}
-                            smallHorizontalPadding
-                            smallVerticalPadding
-                            transparent
-                            iconName={iconNames.close}
-                        />
-                    )
-                }
-            </div>
-        );
     }
 
     render() {
@@ -223,6 +186,7 @@ class SelectInputWithList extends React.PureComponent {
             listProps,
             listClassName,
             topRightChild: TopRightChild,
+            hideRemoveFromListButton,
 
             ...otherProps
         } = this.props;
@@ -245,6 +209,8 @@ class SelectInputWithList extends React.PureComponent {
             selectClassNames.push(styles.hasTopRightChild);
         }
 
+        const Item = hideRemoveFromListButton ? ListItem : DismissableListItem;
+
         return (
             <div className={this.getClassName()}>
                 <div className={styles.headerContainer}>
@@ -264,7 +230,8 @@ class SelectInputWithList extends React.PureComponent {
                 <ListView
                     className={listClassNames.join(' ')}
                     data={objectValues}
-                    modifier={this.renderSelectedItem}
+                    renderer={Item}
+                    rendererParams={this.getListItemParams}
                     keyExtractor={keySelector}
                     {...listProps}
                 />

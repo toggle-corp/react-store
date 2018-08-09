@@ -11,10 +11,7 @@
 
         .input {
             flex-grow: 1;
-
-            &.has-top-right-child {
-                padding-left: $spacing-small;
-            }
+            padding: 0 $spacing-small;
         }
     }
 
@@ -22,31 +19,8 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .selected-item {
-            @extend %background-alternating-row;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: $spacing-small;
-
-            .selected-item-label {
-                flex-grow: 1;
-            }
-
-            .remove-button {
-                display: none;
-                flex-shrink: 0;
-
-                &.disabled {
-                    color: $color-text-label;
-                }
-            }
-
-            &:hover {
-                .remove-button {
-                    display: block;
-                }
-            }
+        .list-item {
+            padding: $spacing-extra-small $spacing-small;
         }
     }
 

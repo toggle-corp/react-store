@@ -17,12 +17,16 @@ const propTypes = {
      * Options
      */
     mode: PropTypes.string,
+
+    emptyComponent: PropTypes.function,
 };
 
 const defaultProps = {
     className: '',
     date: undefined,
     mode: 'dd-MM-yyyy',
+
+    emptyComponent: () => '-',
 };
 
 const getStartEnd = (mode, matches) => {
@@ -195,6 +199,7 @@ export default class FormattedDate extends React.PureComponent {
             date,
             mode,
             className,
+            emptyComponent: Empty,
         } = this.props;
 
         const containerClassName = [
@@ -206,7 +211,7 @@ export default class FormattedDate extends React.PureComponent {
         if (!date) {
             return (
                 <div className={containerClassName}>
-                    -
+                    <Empty />
                 </div>
             );
         }
