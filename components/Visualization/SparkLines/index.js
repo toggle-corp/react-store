@@ -53,9 +53,9 @@ const defaultProps = {
     yLabelModifier: d => d,
     className: '',
     margins: {
-        top: 0,
+        top: 2,
         right: 0,
-        bottom: 0,
+        bottom: 2,
         left: 0,
     },
 };
@@ -123,8 +123,7 @@ class SparkLines extends PureComponent {
                 const { width } = this.tooltip.getBoundingClientRect();
                 return `${left - (width / 2)}px`;
             })
-            .transition()
-            .style('display', 'inline-block');
+            .style('opacity', '1');
     }
 
     drawChart = () => {
@@ -227,8 +226,7 @@ class SparkLines extends PureComponent {
             .on('mouseout', () => {
                 focus.style('display', 'none');
                 select(this.tooltip)
-                    .transition()
-                    .style('display', 'none');
+                    .style('opacity', '0');
             })
             .on('mousemove', (d, i, nodes) => this.handleMouseMove(nodes[0], focus));
     }
