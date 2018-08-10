@@ -20,8 +20,8 @@ const dummy = transition;
 /**
  * boundingClientRect: the width and height of the container.
  * data: the categorical data having values.
- * labelAccessor: returns the individual label from a unit data.
- * valueAccessor: return the value for the unit data.
+ * labelSelector: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
  * showGridLines: if true the gridlines are drawn.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -33,9 +33,9 @@ const propTypes = {
     }).isRequired,
     setSaveFunction: PropTypes.func,
     data: PropTypes.arrayOf(PropTypes.object),
-    valueAccessor: PropTypes.func.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
-    valueLabelAccessor: PropTypes.func,
+    valueSelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
+    valueLabelSelector: PropTypes.func,
     showGridLines: PropTypes.bool,
     tiltLabels: PropTypes.bool,
     className: PropTypes.string,
@@ -51,7 +51,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
-    valueLabelAccessor: undefined,
+    valueLabelSelector: undefined,
     showGridLines: true,
     className: '',
     tiltLabels: false,
@@ -196,10 +196,10 @@ class HorizontalBar extends PureComponent {
         const {
             data,
             boundingClientRect,
-            valueAccessor,
-            valueLabelAccessor,
+            valueSelector,
+            valueLabelSelector,
             colorScheme,
-            labelAccessor,
+            labelSelector,
             showGridLines,
             margins,
             tiltLabels,
@@ -227,17 +227,17 @@ class HorizontalBar extends PureComponent {
 
         const x = scaleLinear()
             .range([0, width])
-            .domain([0, max(data, d => valueAccessor(d))]);
+            .domain([0, max(data, d => valueSelector(d))]);
         const y = scaleBand()
             .rangeRound([height, 0])
-            .domain(data.map(d => labelAccessor(d)))
+            .domain(data.map(d => labelSelector(d)))
             .padding(0.2);
 
 
         this.addShadow(group);
 
         if (showGridLines) {
-            this.addGrid(group, x, y, height, width, valueLabelAccessor);
+            this.addGrid(group, x, y, height, width, valueLabelSelector);
         } else {
             const xAxis = axisBottom(x);
             const yAxis = axisLeft(y);
@@ -281,29 +281,29 @@ class HorizontalBar extends PureComponent {
             .append('rect')
             .style('cursor', 'pointer')
             .attr('x', 0)
-            .attr('y', d => y(labelAccessor(d)))
+            .attr('y', d => y(labelSelector(d)))
             .attr('height', y.bandwidth())
-            .attr('fill', d => colors(labelAccessor(d)))
+            .attr('fill', d => colors(labelSelector(d)))
             .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
             .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
 
         bars
             .transition()
             .duration(750)
-            .attr('width', d => x(valueAccessor(d)));
+            .attr('width', d => x(valueSelector(d)));
 
         groups
             .append('text')
-            .attr('x', d => x(valueAccessor(d)) - 3)
-            .attr('y', d => y(labelAccessor(d)) + (y.bandwidth() / 2))
+            .attr('x', d => x(valueSelector(d)) - 3)
+            .attr('y', d => y(labelSelector(d)) + (y.bandwidth() / 2))
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .style('fill', 'none')
             .transition()
             .delay(750)
             .text(d => (
-                valueLabelAccessor ? valueLabelAccessor(valueAccessor(d)) : valueAccessor(d)))
-            .style('fill', d => getColorOnBgColor(colors(labelAccessor(d))))
+                valueLabelSelector ? valueLabelSelector(valueSelector(d)) : valueSelector(d)))
+            .style('fill', d => getColorOnBgColor(colors(labelSelector(d))))
             .style('visibility', 'hidden')
             .on('end', (d, i, nodes) => {
                 const barWidth = bars.nodes()[i].width.baseVal.value || 0;

@@ -18,8 +18,8 @@ const dummy = transition;
 /**
  * boundingClientRect: the width and height of the container.
  * data: the data to use to plot pie chart.
- * valueAccessor: return the value for the unit data.
- * labelAccessor: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: array of hex color values.
  * className: additional class name for styling.
  */
@@ -30,8 +30,8 @@ const propTypes = {
     }).isRequired,
     setSaveFunction: PropTypes.func,
     data: PropTypes.arrayOf(PropTypes.object),
-    valueAccessor: PropTypes.func.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
+    valueSelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
 };
@@ -75,7 +75,7 @@ class PieChart extends PureComponent {
     midAngle = d => (d.startAngle + ((d.endAngle - d.startAngle) / 2));
 
     addPaths = (element, options) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         const {
             outerRadius,
             colors,
@@ -93,7 +93,7 @@ class PieChart extends PureComponent {
                 d.outerRadius = outerRadius - 10;
             })
             .attr('d', arcs)
-            .style('fill', d => colors(labelAccessor(d.data)))
+            .style('fill', d => colors(labelSelector(d.data)))
             .attr('pointer-events', 'none')
             .attr('cursor', 'pointer')
             .on('mouseover', (d, i, nodes) => {
@@ -107,7 +107,7 @@ class PieChart extends PureComponent {
     }
 
     addLabels = (element, options) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         const {
             radius,
             pies,
@@ -121,7 +121,7 @@ class PieChart extends PureComponent {
             .enter()
             .append('text')
             .attr('dy', '.35em')
-            .html(d => (`<tspan>${labelAccessor(d.data)}</tspan>`))
+            .html(d => (`<tspan>${labelSelector(d.data)}</tspan>`))
             .attr('transform', (d) => {
                 const pos = textArcs.centroid(d);
                 pos[0] = radius * 0.8 * (this.midAngle(d) < Math.PI ? 1 : -1);
@@ -136,7 +136,7 @@ class PieChart extends PureComponent {
     }
 
     addLines = (element, options) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         const {
             radius,
             outerRadius,
@@ -165,7 +165,7 @@ class PieChart extends PureComponent {
             })
             .style('fill', 'none')
             .style('stroke-width', `${2}px`)
-            .style('stroke', d => colors(labelAccessor(d.data)));
+            .style('stroke', d => colors(labelSelector(d.data)));
     }
 
     redrawChart = () => {
@@ -250,6 +250,8 @@ class PieChart extends PureComponent {
         const {
             boundingClientRect,
             data,
+            valueSelector,
+            colorScheme,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -271,10 +273,10 @@ class PieChart extends PureComponent {
         const outerRadius = radius * 0.8;
 
         const colors = scaleOrdinal()
-            .range(this.props.colorScheme);
+            .range(colorScheme);
         const pies = pie()
             .sort(null)
-            .value(this.props.valueAccessor);
+            .value(valueSelector);
 
         const textArcs = arc()
             .outerRadius(outerRadius)

@@ -9,14 +9,12 @@ import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -30,9 +28,9 @@ const propTypes = {
         name: PropTypes.string,
     }),
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func.isRequired,
-    valueAccessor: PropTypes.func,
+    childrenSelector: PropTypes.func,
+    labelSelector: PropTypes.func.isRequired,
+    valueSelector: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -44,10 +42,10 @@ const propTypes = {
 };
 
 const defaultProps = {
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     data: [],
     setSaveFunction: () => {},
-    valueAccessor: () => 1,
+    valueSelector: () => 1,
     colorScheme: schemePaired,
     className: '',
     margins: {
@@ -92,9 +90,9 @@ class RadialDendrogram extends React.PureComponent {
         const {
             data,
             boundingClientRect,
-            childrenAccessor,
-            valueAccessor,
-            labelAccessor,
+            childrenSelector,
+            valueSelector,
+            labelSelector,
             colorScheme,
             margins,
         } = this.props;
@@ -127,7 +125,7 @@ class RadialDendrogram extends React.PureComponent {
         function topicColors(node) {
             let color = colors(0);
             if (node.depth === 0 || node.depth === 1) {
-                color = colors(labelAccessor(node.data));
+                color = colors(labelSelector(node.data));
             } else {
                 color = topicColors(node.parent);
             }
@@ -147,8 +145,8 @@ class RadialDendrogram extends React.PureComponent {
             .size([360, radius - leafTextWidth])
             .separation((a, b) => ((a.parent === b.parent ? 1 : 2) / a.depth));
 
-        const root = hierarchy(data, childrenAccessor)
-            .sum(valueAccessor);
+        const root = hierarchy(data, childrenSelector)
+            .sum(valueSelector);
         trees(root);
 
         const minmax = extent(root.descendants(), d => d.value);
@@ -202,20 +200,24 @@ class RadialDendrogram extends React.PureComponent {
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)
-            .text(d => labelAccessor(d.data));
+            .text(d => labelSelector(d.data));
     }
 
     render() {
+        const {
+            className,
+        } = this.props;
+
+        const radialDendrogramStyle = [
+            'radial-dendrogram',
+            styles.radialDendrogram,
+            className,
+        ].join(' ');
         return (
-            <div
-                className={`radialdendrogram-container ${this.props.className}`}
-                ref={(el) => { this.container = el; }}
-            >
-                <svg
-                    className="radialdendrogram"
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={radialDendrogramStyle}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }

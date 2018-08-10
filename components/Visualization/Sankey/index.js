@@ -1,11 +1,19 @@
-import React, { PureComponent } from 'react';
+import React, {
+    PureComponent,
+} from 'react';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { schemePaired } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
 import { extent } from 'd3-array';
-import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
-import { scaleLinear, scaleOrdinal } from 'd3-scale';
+import {
+    sankey,
+    sankeyLinkHorizontal,
+} from 'd3-sankey';
+import {
+    scaleLinear,
+    scaleOrdinal,
+} from 'd3-scale';
 
 import Responsive from '../../General/Responsive';
 
@@ -15,8 +23,8 @@ import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the data to use to plot pie chart.
- * valueAccessor: return the value for the unit data.
- * labelAccessor: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: array of hex color values.
  * className: additional class name for styling.
  */
@@ -30,8 +38,8 @@ const propTypes = {
         links: PropTypes.arrayOf(PropTypes.object),
     }),
     setSaveFunction: PropTypes.func,
-    valueAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func,
+    valueSelector: PropTypes.func,
+    labelSelector: PropTypes.func,
     fontSizeExtent: PropTypes.arrayOf(PropTypes.number),
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
@@ -49,8 +57,8 @@ const defaultProps = {
         links: [],
     },
     setSaveFunction: () => {},
-    valueAccessor: d => d.value,
-    labelAccessor: d => d.label,
+    valueSelector: d => d.value,
+    labelSelector: d => d.label,
     colorScheme: schemePaired,
     fontSizeExtent: [14, 30],
     className: '',
@@ -97,13 +105,13 @@ class Sankey extends PureComponent {
     }
 
     getFontSize = (d) => {
-        const { valueAccessor } = this.props;
-        return Math.floor(this.dynamicFontSize(valueAccessor(d)));
+        const { valueSelector } = this.props;
+        return Math.floor(this.dynamicFontSize(valueSelector(d)));
     }
 
     updateRangeFontData = (nodes) => {
-        const { valueAccessor } = this.props;
-        this.dynamicFontSize.domain(extent(nodes, d => valueAccessor(d)));
+        const { valueSelector } = this.props;
+        this.dynamicFontSize.domain(extent(nodes, d => valueSelector(d)));
     }
 
     dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
@@ -121,7 +129,7 @@ class Sankey extends PureComponent {
     }
 
     addLinks = (element, data, colors) => {
-        const { labelAccessor, valueAccessor } = this.props;
+        const { labelSelector, valueSelector } = this.props;
 
         const links = element
             .selectAll('.link')
@@ -133,7 +141,7 @@ class Sankey extends PureComponent {
             .attr('d', sankeyLinkHorizontal())
             .style('cursor', 'pointer')
             .style('stroke-width', d => Math.max(1, d.width))
-            .style('stroke', d => colors(labelAccessor(d.source)))
+            .style('stroke', d => colors(labelSelector(d.source)))
             .style('stroke-opacity', 0.3)
             .sort((a, b) => b.width - a.width)
             .on('mouseover', (d, i, nodes) => {
@@ -145,11 +153,11 @@ class Sankey extends PureComponent {
 
         links
             .append('title')
-            .text(d => `${labelAccessor(d.source)} → ${labelAccessor(d.target)}\n${valueAccessor(d)}`);
+            .text(d => `${labelSelector(d.source)} → ${labelSelector(d.target)}\n${valueSelector(d)}`);
     }
 
     addNodes = (element, data, colors, width) => {
-        const { labelAccessor, valueAccessor } = this.props;
+        const { labelSelector, valueSelector } = this.props;
         const nodes = element
             .selectAll('.node')
             .data(data)
@@ -164,12 +172,12 @@ class Sankey extends PureComponent {
             .attr('y', d => d.y0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
-            .style('fill', d => colors(labelAccessor(d) || '#d3d3d3'))
+            .style('fill', d => colors(labelSelector(d) || '#d3d3d3'))
             .style('opacity', 0.8)
             .style('stroke', '#d3d3d3')
             .style('cursor', 'pointer')
             .append('text')
-            .text(d => `${labelAccessor(d)} ${valueAccessor(d)}`);
+            .text(d => `${labelSelector(d)} ${valueSelector(d)}`);
 
         nodes
             .append('text')
@@ -177,7 +185,7 @@ class Sankey extends PureComponent {
             .attr('y', d => ((d.y1 + d.y0) / 2))
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
-            .text(d => labelAccessor(d))
+            .text(d => labelSelector(d))
             .style('font-size', d => this.getFontSize(d))
             .filter(d => d.x0 < width / 2)
             .attr('x', d => d.x1 + 6)
@@ -185,7 +193,7 @@ class Sankey extends PureComponent {
 
         nodes
             .append('title')
-            .text(d => `${labelAccessor(d)}\n${valueAccessor(d)}`);
+            .text(d => `${labelSelector(d)}\n${valueSelector(d)}`);
 
         const links = select(this.svg)
             .selectAll('.link');

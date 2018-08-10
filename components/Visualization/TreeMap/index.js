@@ -18,9 +18,9 @@ import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
- * valueAccessor: return the value for the unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
  * colorScheme: PropTypes.arrayOf(PropTypes.string),
  * zoomable: if true the treemap can be zoomed in.(show child elements).
  * className: additional class name for styling.
@@ -35,9 +35,9 @@ const propTypes = {
         name: PropTypes.string,
     }),
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    valueAccessor: PropTypes.func.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
+    childrenSelector: PropTypes.func,
+    valueSelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     zoomable: PropTypes.bool,
     className: PropTypes.string,
@@ -52,7 +52,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     colorScheme: schemeSet3,
     zoomable: true,
     className: '',
@@ -96,10 +96,10 @@ class TreeMap extends React.PureComponent {
     renderChart = () => {
         const {
             data,
-            childrenAccessor,
+            childrenSelector,
             boundingClientRect,
-            valueAccessor,
-            labelAccessor,
+            valueSelector,
+            labelSelector,
             colorScheme,
             zoomable,
             margins,
@@ -163,15 +163,15 @@ class TreeMap extends React.PureComponent {
             .round(true)
             .padding(d => d.height);
 
-        const root = hierarchy(data, childrenAccessor)
-            .sum(d => valueAccessor(d));
+        const root = hierarchy(data, childrenSelector)
+            .sum(d => valueSelector(d));
 
         treemaps(root);
 
         function getColorShades(value) {
-            const color = hsl(colors(labelAccessor(value.parent.data)));
-            color.s = saturations(labelAccessor(value.data));
-            color.l = lightness(labelAccessor(value.data));
+            const color = hsl(colors(labelSelector(value.parent.data)));
+            color.s = saturations(labelSelector(value.data));
+            color.l = lightness(labelSelector(value.data));
             return color;
         }
 
@@ -198,7 +198,7 @@ class TreeMap extends React.PureComponent {
         }
 
         function name(d) {
-            return d.parent ? `${name(d.parent)}/${labelAccessor(d.data)}` : '';
+            return d.parent ? `${name(d.parent)}/${labelSelector(d.data)}` : '';
         }
 
         function rect(shape) {
@@ -250,12 +250,12 @@ class TreeMap extends React.PureComponent {
                 .attr('class', 'child')
                 .call(rect)
                 .append('title')
-                .text(t => `${labelAccessor(t.data)}\n${valueAccessor(t.data)}`);
+                .text(t => `${labelSelector(t.data)}\n${valueSelector(t.data)}`);
 
             children
                 .append('text')
                 .attr('class', 'child-text')
-                .text(t => `${labelAccessor(t.data)}`)
+                .text(t => `${labelSelector(t.data)}`)
                 .call(childText);
 
             group2
@@ -267,7 +267,7 @@ class TreeMap extends React.PureComponent {
                 .append('text')
                 .attr('class', 'parent-text')
                 .attr('dy', '.75em')
-                .text(t => `${labelAccessor(t.data)}`)
+                .text(t => `${labelSelector(t.data)}`)
                 .call(parentText);
 
             group2
@@ -358,20 +358,20 @@ class TreeMap extends React.PureComponent {
                 .attr('id', d => d.data.name)
                 .attr('width', d => d.x1 - d.x0)
                 .attr('height', d => d.y1 - d.y0)
-                .attr('fill', d => colors(labelAccessor(d.parent.data)));
+                .attr('fill', d => colors(labelSelector(d.parent.data)));
 
             cell.append('text')
                 .attr('x', d => (d.x1 - d.x0) / 2)
                 .attr('y', d => (d.y1 - d.y0) / 2)
                 .attr('text-anchor', 'middle')
                 .attr('class', 'text-label')
-                .text(d => labelAccessor(d.data))
-                .style('fill', d => getColorOnBgColor(colors(labelAccessor(d.parent.data))))
+                .text(d => labelSelector(d.data))
+                .style('fill', d => getColorOnBgColor(colors(labelSelector(d.parent.data))))
                 .style('opacity', visibility);
 
             cell
                 .append('title')
-                .text(d => `${labelAccessor(d.data)}\n${formats(valueAccessor(d.data))}`);
+                .text(d => `${labelSelector(d.data)}\n${formats(valueSelector(d.data))}`);
         }
     }
 

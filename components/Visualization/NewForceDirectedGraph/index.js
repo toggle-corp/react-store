@@ -22,15 +22,13 @@ import {
     removeClassName,
 } from '../../../utils/common';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the object containing array of nodes and links.
- * idAccessor: returns the id of each node.
- * groupAccessor: return the group which each nodes belong to.
- * valueAccessor: returns the value of each link.
+ * idSelector: returns the id of each node.
+ * groupSelector: return the group which each nodes belong to.
+ * valueSelector: returns the value of each link.
  * useVoronoi: use Voronoi clipping for nodes.
  * colorScheme: the array of hex color values.
  * className: additional class name for styling.
@@ -46,11 +44,11 @@ const propTypes = {
         links: PropTypes.arrayOf(PropTypes.object),
     }),
     setSaveFunction: PropTypes.func,
-    idAccessor: PropTypes.func.isRequired,
-    labelAccessor: PropTypes.func,
-    groupAccessor: PropTypes.func,
-    valueAccessor: PropTypes.func,
-    radiusAccessor: PropTypes.func,
+    idSelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func,
+    groupSelector: PropTypes.func,
+    valueSelector: PropTypes.func,
+    radiusSelector: PropTypes.func,
     highlightClusterId: PropTypes.node,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
@@ -74,10 +72,10 @@ const defaultProps = {
         links: [],
     },
     setSaveFunction: () => {},
-    groupAccessor: d => d.index,
-    labelAccessor: d => d.label,
-    valueAccessor: () => 1,
-    radiusAccessor: () => 30,
+    groupSelector: d => d.index,
+    labelSelector: d => d.label,
+    valueSelector: () => 1,
+    radiusSelector: () => 30,
     highlightClusterId: undefined,
     useVoronoi: false,
     className: '',
@@ -122,24 +120,24 @@ class ForceDirectedGraph extends React.PureComponent {
 
         const {
             boundingClientRect,
-            idAccessor,
+            idSelector,
             margins,
             colorScheme,
-            groupAccessor,
-            valueAccessor,
-            radiusAccessor,
+            groupSelector,
+            valueSelector,
+            radiusSelector,
             useVoronoi,
             clusterSize,
         } = this.props;
 
         this.renderChart({
             boundingClientRect,
-            idAccessor,
+            idSelector,
             margins,
             colorScheme,
-            groupAccessor,
-            valueAccessor,
-            radiusAccessor,
+            groupSelector,
+            valueSelector,
+            radiusSelector,
             useVoronoi,
             clusterSize,
             data: this.data,
@@ -159,12 +157,12 @@ class ForceDirectedGraph extends React.PureComponent {
             data,
             boundingClientRect,
             clusterSize,
-            idAccessor,
+            idSelector,
             margins,
             colorScheme,
-            valueAccessor,
-            groupAccessor,
-            radiusAccessor,
+            valueSelector,
+            groupSelector,
+            radiusSelector,
             useVoronoi,
             highlightClusterId: newHighlightClusterId,
         } = nextProps;
@@ -178,10 +176,10 @@ class ForceDirectedGraph extends React.PureComponent {
             this.data = deepCopy(nextProps.data);
             this.renderChart({
                 boundingClientRect,
-                idAccessor,
-                groupAccessor,
-                valueAccessor,
-                radiusAccessor,
+                idSelector,
+                groupSelector,
+                valueSelector,
+                radiusSelector,
                 useVoronoi,
                 colorScheme,
                 clusterSize,
@@ -225,7 +223,7 @@ class ForceDirectedGraph extends React.PureComponent {
             width: widthFromProps,
             height: heightFromProps,
         },
-        idAccessor,
+        idSelector,
         margins: {
             top,
             right,
@@ -233,16 +231,16 @@ class ForceDirectedGraph extends React.PureComponent {
             left,
         },
         colorScheme,
-        valueAccessor,
-        radiusAccessor,
+        valueSelector,
+        radiusSelector,
         clusterSize,
         data,
         container,
         svg,
     }) => {
-        const minmax = extent(data.links, valueAccessor);
+        const minmax = extent(data.links, valueSelector);
 
-        let radiusExtent = extent(data.nodes, radiusAccessor);
+        let radiusExtent = extent(data.nodes, radiusSelector);
         if (radiusExtent[0] === radiusExtent[1]) {
             radiusExtent = [0, radiusExtent[0]];
         }
@@ -274,7 +272,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .extent([[-10, -10], [width + 10, height + 10]]);
 
         const link = forceLink()
-            .id(d => idAccessor(d))
+            .id(d => idSelector(d))
             .distance(distance(clusterSize));
         const charge = forceManyBody().strength(-10);
         const center = forceCenter(width / 2, height / 2);
@@ -289,7 +287,7 @@ class ForceDirectedGraph extends React.PureComponent {
         const {
             boundingClientRect,
             margins,
-            radiusAccessor,
+            radiusSelector,
             useVoronoi,
         } = this.props;
 
@@ -309,7 +307,7 @@ class ForceDirectedGraph extends React.PureComponent {
         const height = heightFromProps - top - bottom;
 
         this.nodes.each((d) => {
-            const radius = this.scaledRadius(radiusAccessor(d));
+            const radius = this.scaledRadius(radiusSelector(d));
             // eslint-disable-next-line no-param-reassign
             d.x = Math.max(radius, Math.min(width - radius, d.x));
             // eslint-disable-next-line no-param-reassign
@@ -372,10 +370,10 @@ class ForceDirectedGraph extends React.PureComponent {
     handleMouseOver = (d) => {
         const {
             onMouseOver,
-            labelAccessor,
+            labelSelector,
         } = this.props;
 
-        const title = labelAccessor(d);
+        const title = labelSelector(d);
 
         if (onMouseOver) {
             onMouseOver(d);
@@ -451,12 +449,12 @@ class ForceDirectedGraph extends React.PureComponent {
     renderChart = ({
         boundingClientRect,
         clusterSize,
-        idAccessor,
+        idSelector,
         margins,
         colorScheme,
-        valueAccessor,
-        groupAccessor,
-        radiusAccessor,
+        valueSelector,
+        groupSelector,
+        radiusSelector,
         useVoronoi,
         data,
     }) => {
@@ -481,11 +479,11 @@ class ForceDirectedGraph extends React.PureComponent {
 
         this.init({
             boundingClientRect,
-            idAccessor,
+            idSelector,
             margins,
             colorScheme,
-            valueAccessor,
-            radiusAccessor,
+            valueSelector,
+            radiusSelector,
             clusterSize,
             data,
             container,
@@ -499,7 +497,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .data(data.links)
             .enter()
             .append('line')
-            .attr('stroke-width', d => this.scaledValues(valueAccessor(d)));
+            .attr('stroke-width', d => this.scaledValues(valueSelector(d)));
 
         this.nodes = this.group
             .selectAll('.nodes')
@@ -536,7 +534,7 @@ class ForceDirectedGraph extends React.PureComponent {
                 .append('circle')
                 .attr('class', styles.circle)
                 .attr('r', circleRadius)
-                .attr('fill', d => this.color(groupAccessor(d)));
+                .attr('fill', d => this.color(groupSelector(d)));
 
             this.nodes
                 .append('circle')
@@ -545,8 +543,8 @@ class ForceDirectedGraph extends React.PureComponent {
         } else {
             this.nodes
                 .append('circle')
-                .attr('r', d => this.scaledRadius(radiusAccessor(d)))
-                .attr('fill', d => this.color(groupAccessor(d)));
+                .attr('r', d => this.scaledRadius(radiusSelector(d)))
+                .attr('fill', d => this.color(groupSelector(d)));
         }
 
         this.simulation

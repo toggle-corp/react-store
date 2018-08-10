@@ -17,9 +17,9 @@ import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the object containing array of nodes and links.
- * idAccessor: returns the id of each node.
- * groupAccessor: return the group which each nodes belong to.
- * valueAccessor: returns the value of each link.
+ * idSelector: returns the id of each node.
+ * groupSelector: return the group which each nodes belong to.
+ * valueSelector: returns the value of each link.
  * useVoronoi: use Voronoi clipping for nodes.
  * circleRadius: The radius of the circle
  * colorScheme: the array of hex color values.
@@ -36,9 +36,9 @@ const propTypes = {
         links: PropTypes.arrayOf(PropTypes.object),
     }),
     setSaveFunction: PropTypes.func,
-    idAccessor: PropTypes.func.isRequired,
-    groupAccessor: PropTypes.func,
-    valueAccessor: PropTypes.func,
+    idSelector: PropTypes.func.isRequired,
+    groupSelector: PropTypes.func,
+    valueSelector: PropTypes.func,
     circleRadius: PropTypes.number,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
@@ -57,8 +57,8 @@ const defaultProps = {
         links: [],
     },
     setSaveFunction: () => {},
-    groupAccessor: d => d.index,
-    valueAccessor: () => 1,
+    groupSelector: d => d.index,
+    valueSelector: () => 1,
     circleRadius: 30,
     useVoronoi: true,
     className: '',
@@ -122,9 +122,9 @@ class ForceDirectedGraph extends React.PureComponent {
     renderChart() {
         const {
             boundingClientRect,
-            idAccessor,
-            groupAccessor,
-            valueAccessor,
+            idSelector,
+            groupSelector,
+            valueSelector,
             circleRadius,
             colorScheme,
             useVoronoi,
@@ -176,7 +176,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         const color = scaleOrdinal().range(colorScheme);
 
-        const minmax = extent(data.links, valueAccessor);
+        const minmax = extent(data.links, valueSelector);
         const scaledValues = scaleLinear().domain(minmax).range([1, 3]);
 
         const voronois = voronoi()
@@ -199,7 +199,7 @@ class ForceDirectedGraph extends React.PureComponent {
         }
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idAccessor(d)).distance(distance(this.state.value)))
+            .force('link', forceLink().id(d => idSelector(d)).distance(distance(this.state.value)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
@@ -228,7 +228,7 @@ class ForceDirectedGraph extends React.PureComponent {
         }
 
         function mouseOverCircle(d) {
-            tooltip.html(`<span class="name">${idAccessor(d)}</span>`);
+            tooltip.html(`<span class="name">${idSelector(d)}</span>`);
             return tooltip
                 .transition()
                 .duration(100)
@@ -255,7 +255,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .data(data.links)
             .enter()
             .append('line')
-            .attr('stroke-width', d => scaledValues(valueAccessor(d)));
+            .attr('stroke-width', d => scaledValues(valueSelector(d)));
 
         const node = group
             .selectAll('.nodes')
@@ -276,7 +276,7 @@ class ForceDirectedGraph extends React.PureComponent {
                 .append('circle')
                 .attr('class', 'circle')
                 .attr('r', circleRadius)
-                .attr('fill', d => color(groupAccessor(d)));
+                .attr('fill', d => color(groupSelector(d)));
 
             node
                 .append('circle')
@@ -286,7 +286,7 @@ class ForceDirectedGraph extends React.PureComponent {
             node
                 .append('circle')
                 .attr('r', 5)
-                .attr('fill', d => color(groupAccessor(d)));
+                .attr('fill', d => color(groupSelector(d)));
         }
 
         function ticked() {

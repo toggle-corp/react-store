@@ -7,7 +7,10 @@ import {
     event,
 } from 'd3-selection';
 import { scaleOrdinal } from 'd3-scale';
-import { chord, ribbon } from 'd3-chord';
+import {
+    chord,
+    ribbon,
+} from 'd3-chord';
 import { arc } from 'd3-shape';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
@@ -42,6 +45,7 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     setSaveFunction: PropTypes.func,
+    labelModifier: PropTypes.func,
     labelsData: PropTypes.arrayOf(PropTypes.string).isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
@@ -58,6 +62,7 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
+    labelModifier: d => d,
     colorScheme: schemePaired,
     showLabels: true,
     showTooltip: true,
@@ -151,6 +156,7 @@ class ChordDiagram extends PureComponent {
 
     handleMouseOver = (element, d) => {
         const {
+            labelModifier,
             labelsData,
         } = this.props;
 
@@ -158,7 +164,7 @@ class ChordDiagram extends PureComponent {
             .style('filter', 'url(#glow)');
 
         return select(this.tooltip)
-            .html(`<span class=${styles.name}>${labelsData[d.index]}</span>`)
+            .html(`<span class=${styles.label}>${labelModifier(labelsData[d.index]) || ''}</span>`)
             .transition()
             .style('display', 'inline-block');
     }

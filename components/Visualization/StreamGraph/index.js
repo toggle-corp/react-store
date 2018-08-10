@@ -52,7 +52,7 @@ const propTypes = {
     ).isRequired,
     setSaveFunction: PropTypes.func,
     className: PropTypes.string,
-    labelAccessor: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     labelName: PropTypes.string.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     margins: PropTypes.shape({
@@ -122,13 +122,13 @@ class StreamGraph extends PureComponent {
 
         const {
             data,
-            labelAccessor,
+            labelSelector,
         } = this.props;
 
         const mouseXpos = mouse(nodes[i])[0];
         const xValue = Math.floor(x.invert(mouseXpos));
 
-        const labelData = data.filter(row => labelAccessor(row) === xValue)[0] || [];
+        const labelData = data.filter(row => labelSelector(row) === xValue)[0] || [];
         let out = `<span>${xValue}</span>`;
         labels.forEach((label) => {
             const value = labelData[label] || 0;
@@ -184,7 +184,7 @@ class StreamGraph extends PureComponent {
             margins,
             data,
             labelName,
-            labelAccessor,
+            labelSelector,
             colorScheme,
         } = this.props;
 
@@ -210,7 +210,7 @@ class StreamGraph extends PureComponent {
             .attr('transform', `translate(${left}, ${top})`);
 
         this.labels = keys(data[0]).filter(d => d !== labelName);
-        const values = data.map(d => labelAccessor(d));
+        const values = data.map(d => labelSelector(d));
 
         this.series = stack()
             .keys(this.labels)
@@ -234,7 +234,7 @@ class StreamGraph extends PureComponent {
             .range(colorScheme);
 
         this.size = area()
-            .x(d => this.x(labelAccessor(d.data)))
+            .x(d => this.x(labelSelector(d.data)))
             .y0(d => this.y(d[0]))
             .y1(d => this.y(d[1]))
             .curve(curveBasis);
