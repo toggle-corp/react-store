@@ -76,9 +76,18 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
         const values = accumulateValues(
             value,
             schema,
-            { noUndefined: true },
+            { noFalsyValues: true },
         );
-        onValidationSuccess(values);
+
+        const valuesWithNull = accumulateValues(
+            value,
+            schema,
+            {
+                noFalsyValues: false,
+                falsyValue: null,
+            },
+        );
+        onValidationSuccess(valuesWithNull, values);
     }
 };
 
