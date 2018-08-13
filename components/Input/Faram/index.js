@@ -202,3 +202,4 @@ export default class Faram extends React.PureComponent {
 }
 
 export * from './validations';
+export { createBooleanFold, createBooleanUnfold } from './apis/utils';

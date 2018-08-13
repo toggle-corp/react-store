@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
@@ -21,6 +21,10 @@ const propTypes = {
     faramAction: PropTypes.string,
     faramElement: PropTypes.bool,
     faramInfo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
+    faramFoldKey: PropTypes.string,
+    faramFold: PropTypes.func,
+    faramUnfold: PropTypes.func,
 };
 
 const defaultProps = {
@@ -29,6 +33,9 @@ const defaultProps = {
     faramAction: undefined,
     faramElement: false,
     faramInfo: undefined,
+    faramFoldKey: undefined,
+    faramFold: undefined,
+    faramUnfold: undefined,
 };
 
 const FaramElement = elementType => (WrappedComponent) => {
@@ -44,6 +51,9 @@ const FaramElement = elementType => (WrappedComponent) => {
                 faramElementIndex,
                 faramAction,
                 faramInfo,
+                faramFoldKey,
+                faramFold,
+                faramUnfold,
                 ...otherProps
             } = this.props;
 
@@ -53,11 +63,17 @@ const FaramElement = elementType => (WrappedComponent) => {
                 return otherProps;
             }
 
+            const foldInfo = {
+                key: faramFoldKey,
+                fold: faramFold,
+                unfold: faramUnfold,
+            };
             const newProps = api.getCalculatedProps({
                 faramIdentifier,
                 elementType,
                 faramAction,
                 faramInfo,
+                foldInfo,
             });
 
             return {

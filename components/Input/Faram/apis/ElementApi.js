@@ -9,7 +9,16 @@ export default class ElementApi {
         this.props = { ...props };
     }
 
-    getValue = faramIdentifier => (this.props.value || {})[faramIdentifier];
+    getValue = (faramIdentifier, foldInfo) => {
+        const value = (this.props.value || {})[faramIdentifier];
+        if (!foldInfo.key || !foldInfo.unfold) {
+            return value;
+        }
+
+        const foldKey = foldInfo.key;
+        const foldValue = (this.props.value || {})[foldKey];
+        return value.map(v => foldInfo.unfold(v, foldValue, foldKey));
+    }
 
     getError = faramIdentifier => (this.props.error || {})[faramIdentifier];
 
@@ -20,10 +29,22 @@ export default class ElementApi {
     getChangeDelay = () => this.props.changeDelay;
 
     // PRIVATE
-    getNewValue = (oldValue, key, val) => ({
-        ...oldValue,
-        [key]: val,
-    })
+    getNewValue = (oldValue, key, val, foldInfo) => {
+        if (!foldInfo.key || !foldInfo.fold) {
+            return {
+                ...oldValue,
+                [key]: val,
+            };
+        }
+
+        const foldKey = foldInfo.key;
+        const foldResult = foldInfo.fold(val, oldValue[foldKey], foldKey);
+        return {
+            ...oldValue,
+            [key]: foldResult.newValue || val,
+            [foldKey]: foldResult.foldValue,
+        };
+    }
 
     // PRIVATE
     getNewError = (oldError, key, err) => ({
@@ -51,12 +72,12 @@ export default class ElementApi {
     }
 
     // PRIVATE
-    createOnChange = (faramIdentifier, faramInfo) => (value, error, info) => {
+    createOnChange = (faramIdentifier, faramInfo, foldInfo) => (value, error, info) => {
         if (!this.props.onChange) {
             return;
         }
 
-        const newValue = this.getNewValue(this.props.value, faramIdentifier, value);
+        const newValue = this.getNewValue(this.props.value, faramIdentifier, value, foldInfo);
         const newError = this.getNewError(this.props.error, faramIdentifier, error);
         const newInfo = this.getNewInfo(faramIdentifier, value, info, faramInfo);
 
@@ -69,22 +90,34 @@ export default class ElementApi {
     }
 
     // PRIVATE
-    getOnChange = (faramIdentifier, faramInfo) => {
+    getOnChange = (faramIdentifier, faramInfo, foldInfo) => {
         if (this.changeHandlers[faramIdentifier]) {
             return this.changeHandlers[faramIdentifier];
         }
 
-        const handler = this.createOnChange(faramIdentifier, faramInfo);
+        const handler = this.createOnChange(faramIdentifier, faramInfo, foldInfo);
         this.changeHandlers[faramIdentifier] = handler;
         return handler;
     }
 
     // PUBLIC
-    getCalculatedProps = ({ faramIdentifier, elementType, faramAction, faramInfo }) => {
+    getCalculatedProps = ({
+        faramIdentifier,
+        elementType,
+        faramAction,
+        faramInfo,
+        foldInfo,
+    }) => {
         // For faramElement of type 'type', a typeHandler will be applicable
         const handler = this[`${elementType}Handler`];
         if (handler) {
-            const values = handler({ faramIdentifier, elementType, faramAction, faramInfo });
+            const values = handler({
+                faramIdentifier,
+                elementType,
+                faramAction,
+                faramInfo,
+                foldInfo,
+            });
             return values;
         }
         console.error(`I do not have handler for ${elementType}`);
@@ -93,20 +126,20 @@ export default class ElementApi {
 
     // Handlers
 
-    inputHandler = ({ faramIdentifier, faramInfo }) => {
+    inputHandler = ({ faramIdentifier, faramInfo, foldInfo }) => {
         const calculatedProps = {
-            value: this.getValue(faramIdentifier),
+            value: this.getValue(faramIdentifier, foldInfo),
             error: this.getError(faramIdentifier),
-            onChange: this.getOnChange(faramIdentifier, faramInfo),
+            onChange: this.getOnChange(faramIdentifier, faramInfo, foldInfo),
             disabled: this.isDisabled(),
             changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;
     }
 
-    outputHandler = ({ faramIdentifier }) => {
+    outputHandler = ({ faramIdentifier, foldInfo }) => {
         const calculatedProps = {
-            value: this.getValue(faramIdentifier),
+            value: this.getValue(faramIdentifier, foldInfo),
         };
         return calculatedProps;
     }
