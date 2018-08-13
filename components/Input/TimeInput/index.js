@@ -20,6 +20,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
     value: PropTypes.string,
     title: PropTypes.string,
+    separator: PropTypes.string,
 };
 
 const defaultProps = {
@@ -30,6 +31,7 @@ const defaultProps = {
     label: '',
     onChange: () => {},
     showLabel: true,
+    separator: ':',
     showHintAndError: true,
     value: undefined,
     title: undefined,
@@ -212,6 +214,7 @@ class TimeInput extends React.PureComponent {
             title,
             disabled,
             value,
+            separator,
         } = this.props;
 
         const className = this.getClassName();
@@ -247,6 +250,9 @@ class TimeInput extends React.PureComponent {
                         value={hourValue}
                         onChange={this.handleHourInputChange}
                     />
+                    <div className={styles.separator}>
+                        {separator}
+                    </div>
                     <input
                         onFocus={this.handleMinuteInputFocus}
                         onBlur={this.handleMinuteInputBlur}
