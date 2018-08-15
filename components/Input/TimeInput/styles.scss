@@ -5,10 +5,15 @@
 .time-input {
     .inputs {
         display: flex;
+        align-items: center;
 
         .input {
             @extend %input-base;
             font-family: $font-family-monospace;
+        }
+
+        .separator {
+            padding: 0 $spacing-extra-small;
         }
     }
 
