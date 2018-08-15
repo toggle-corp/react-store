@@ -1,7 +1,7 @@
 @import '../../../stylesheets/base';
 
 .virtualized-list-view {
-    overflow: auto;
+    padding: 0;
 
     .virtual-div {
         background: linear-gradient(
