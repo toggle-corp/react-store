@@ -39,6 +39,9 @@ const defaultProps = {
 // Inital assumption for the height of each item
 const DEFAULT_ITEM_HEIGHT = 18;
 
+const MAX_IDLE_TIMEOUT = 200;
+
+
 // el = React element
 // container = DOM element
 const getRenderedBoundingClientRect = (el, container) => {
@@ -51,7 +54,6 @@ const getRenderedBoundingClientRect = (el, container) => {
     return bcr;
 };
 
-// eslint-disable-next-line
 export default class DynamicallyVirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -78,6 +80,7 @@ export default class DynamicallyVirtualizedListView extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        window.cancelIdleCallback(this.idleCallback);
     }
 
     getOffset = (dataLength) => {
@@ -130,12 +133,10 @@ export default class DynamicallyVirtualizedListView extends React.Component {
             return;
         }
 
-        clearTimeout(this.timeout);
-
-        this.timeout = setTimeout(
-            () => { this.setState({ containerScrollTop: container.scrollTop }); },
-            200,
-        );
+        window.cancelIdleCallback(this.idleCallback);
+        this.idleCallback = window.requestIdleCallback(() => {
+            this.setState({ containerScrollTop: container.scrollTop });
+        }, { timeout: MAX_IDLE_TIMEOUT });
     }
 
     renderItem = (datum, i) => {
