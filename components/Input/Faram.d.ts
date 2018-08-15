@@ -32,7 +32,7 @@ interface FaramProps {
     computeSchema?: object;
     onChange(value: FaramValues, error: FaramErrors): void;
     onValidationFailure(error: FaramErrors): void;
-    onValidationSuccess(value: FaramValues): void;
+    onValidationSuccess(valueWithNull: FaramValues, value: FaramValues): void;
     value?: FaramValues;
     error?: FaramErrors;
     disabled?: boolean;
