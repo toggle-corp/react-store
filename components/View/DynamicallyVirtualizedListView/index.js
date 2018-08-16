@@ -24,6 +24,9 @@ const propTypes = {
     rendererClassName: PropTypes.string,
 
     rendererParams: PropTypes.func,
+
+    defaultItemHeight: PropTypes.number,
+    maxIdleTimeout: PropTypes.number,
 };
 
 const defaultProps = {
@@ -34,23 +37,18 @@ const defaultProps = {
     renderer: undefined,
     rendererClassName: '',
     rendererParams: undefined,
+
+    defaultItemHeight: 18,
+    maxIdleTimeout: 200,
 };
 
-// Inital assumption for the height of each item
-const DEFAULT_ITEM_HEIGHT = 18;
-
-const MAX_IDLE_TIMEOUT = 200;
-
-
-// el = React element
-// container = DOM element
-const getRenderedBoundingClientRect = (el, container) => {
+const getRenderedBoundingClientRect = (reactElement, domElement) => {
     const template = document.createElement('template');
-    template.innerHTML = ReactDOMServer.renderToStaticMarkup(el);
+    template.innerHTML = ReactDOMServer.renderToStaticMarkup(reactElement);
     const domEl = template.content.firstChild;
-    container.appendChild(domEl);
+    domElement.appendChild(domEl);
     const bcr = domEl.getBoundingClientRect();
-    container.removeChild(domEl);
+    domElement.removeChild(domEl);
     return bcr;
 };
 
@@ -67,6 +65,7 @@ export default class DynamicallyVirtualizedListView extends React.Component {
 
         this.itemHeights = {};
         this.containerRef = React.createRef();
+        this.ignoreScrollEvent = false;
     }
 
     componentDidMount() {
@@ -82,20 +81,6 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         window.removeEventListener('scroll', this.handleScroll, true);
         window.cancelIdleCallback(this.idleCallback);
     }
-
-    getOffset = (dataLength) => {
-        let { containerScrollTop } = this.state;
-
-        let offset;
-        for (offset = 0; offset < dataLength; offset += 1) {
-            if (containerScrollTop > 0) {
-                containerScrollTop -= this.itemHeights[offset] || DEFAULT_ITEM_HEIGHT;
-            } else {
-                break;
-            }
-        }
-        return offset;
-    };
 
     calculateContainerHeight = () => {
         const { current: container } = this.containerRef;
@@ -134,9 +119,12 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         }
 
         window.cancelIdleCallback(this.idleCallback);
-        this.idleCallback = window.requestIdleCallback(() => {
-            this.setState({ containerScrollTop: container.scrollTop });
-        }, { timeout: MAX_IDLE_TIMEOUT });
+        this.idleCallback = window.requestIdleCallback(
+            () => {
+                this.setState({ containerScrollTop: container.scrollTop });
+            },
+            { timeout: this.props.maxIdleTimeout },
+        );
     }
 
     renderItem = (datum, i) => {
@@ -175,7 +163,10 @@ export default class DynamicallyVirtualizedListView extends React.Component {
     }
 
     renderItems = () => {
-        const { data } = this.props;
+        const {
+            data,
+            defaultItemHeight,
+        } = this.props;
         const { containerHeight } = this.state;
 
         if (!containerHeight || data.length === 0) {
@@ -192,9 +183,9 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         let renderStartIndex = 0;
 
         for (let i = 0; i < data.length; i += 1) {
-            topVirtualContainerHeight += this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
+            topVirtualContainerHeight += this.itemHeights[i] || defaultItemHeight;
             if (topVirtualContainerHeight > container.scrollTop) {
-                topVirtualContainerHeight -= this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
+                topVirtualContainerHeight -= this.itemHeights[i] || defaultItemHeight;
                 renderStartIndex = i;
                 break;
             }
@@ -212,7 +203,7 @@ export default class DynamicallyVirtualizedListView extends React.Component {
         let currentRenderHeight = topVirtualContainerHeight - container.scrollTop;
         let lastRenderIndex;
 
-        // keep rendering untill the container is filled up to end
+        // keep rendering until the container is filled up to end
         for (
             let i = renderStartIndex;
             currentRenderHeight < containerHeight && i < data.length;
@@ -222,14 +213,14 @@ export default class DynamicallyVirtualizedListView extends React.Component {
             const itemBCR = getRenderedBoundingClientRect(item, container);
             this.itemHeights[i] = itemBCR.height;
 
-            currentRenderHeight += this.itemHeights[i] || DEFAULT_ITEM_HEIGHT;
+            currentRenderHeight += this.itemHeights[i] || defaultItemHeight;
             items.push(item);
             lastRenderIndex = i;
         }
 
         let bottomVirtualContainerHeight = 0;
         for (let j = lastRenderIndex + 1; j < data.length; j += 1) {
-            bottomVirtualContainerHeight += this.itemHeights[j] || DEFAULT_ITEM_HEIGHT;
+            bottomVirtualContainerHeight += this.itemHeights[j] || defaultItemHeight;
         }
 
         items.push(
