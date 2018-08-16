@@ -484,6 +484,11 @@ export const mapToMap = (obj = {}, keySelector, modifier) => (
     )
 );
 
+export const pick = (obj, keys) => keys.reduce(
+    (acc, key) => ({ ...acc, [key]: obj[key] }),
+    {},
+);
+
 export const groupList = (list = [], keySelector, modifier) => (
     list.reduce(
         (acc, elem) => {

@@ -33,13 +33,7 @@ $height-value-active: 30px;
         }
     }
 
-    &.disabled {
-        .value {
-            cursor: default;
-            filter: grayscale(100%);
-        }
-    }
-
+    &.disabled,
     &.read-only {
         .value {
             cursor: default;
