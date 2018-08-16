@@ -9,7 +9,7 @@ const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
+    onChange: PropTypes.func,
 };
 
 const defaultProps = {
