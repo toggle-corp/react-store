@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
+import { RestRequest } from '#rsu/rest';
+
 const propTypes = {
     /*
      * any react child component
@@ -52,9 +54,34 @@ export default class PrivateRoute extends React.PureComponent {
         // NOTE: props contain params to be sent to child only
 
         if (PrivateRoute.shouldRedirect(authenticated, invertBehavior)) {
+            const from = props.location || PrivateRoute.defaultLocation;
+            let search;
+
+            if (authenticated) {
+                // We are authenticated and redirecting from a login page.
+                // In this case, check if there is a `next` param in url
+                // and redirect to `next` if there is.
+
+                const searchString = from.search.replace('?', '');
+                const queryParams = RestRequest.parseUrlParams(searchString);
+                if (queryParams.next) {
+                    const params = {
+                        pathname: queryParams.next,
+                        from,
+                    };
+                    return <Redirect to={params} />;
+                }
+            } else {
+                // We are not authenticated and redirecting to a login page.
+                // In this case, add `next` param to the login url so that
+                // user can come back to current page.
+                search = `?next=${from.pathname}`;
+            }
+
             const params = {
                 pathname: redirectLink,
-                from: props.location || PrivateRoute.defaultLocation,
+                search,
+                from,
             };
             return <Redirect to={params} />;
         }
