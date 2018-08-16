@@ -113,7 +113,7 @@ export default (WrappedComponent) => {
                 settings[index] = {
                     sortOrder: { $set: order },
                     sortable: { $set: !!column.comparator },
-                    onHeaderClick: { $set: this.handleHeaderClick },
+                    onSortClick: { $set: this.handleHeaderClick },
                 };
             });
 
