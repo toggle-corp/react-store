@@ -192,8 +192,8 @@ export const MIN_YEAR = 1990;
 
 export const isDateValuesComplete = ({ yearValue, monthValue, dayValue }) => (
     // Complete if all values are undefined or none are
-    (dayValue && monthValue && yearValue) ||
-    (!dayValue && !monthValue && !yearValue)
+    (isTruthy(dayValue) && isTruthy(monthValue) && isTruthy(yearValue)) ||
+    (isFalsy(dayValue) && isFalsy(monthValue) && isFalsy(yearValue))
 );
 
 export const getErrorForDateValues = ({ yearValue, monthValue, dayValue }) => {
@@ -276,6 +276,9 @@ export const formattedNormalize = (number, lang = 'np') => {
 };
 
 export const leftPad = (number, length, pad = '0') => {
+    if (number === '' || number === undefined) {
+        return '';
+    }
     const numStr = String(number);
     return numStr.length >= length ? numStr :
         new Array((length - numStr.length) + 1).join(pad) + numStr;

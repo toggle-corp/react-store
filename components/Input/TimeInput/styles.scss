@@ -3,44 +3,66 @@
 @import '../../../stylesheets/input-border';
 
 .time-input {
-    .inputs {
+    min-width: $width-input-min;
+
+    .input {
         display: flex;
         align-items: center;
 
-        .input {
-            @extend %input-base;
-            font-family: $font-family-monospace;
+        .units {
+            display: flex;
+            flex-grow: 1;
+            $width-input-spinner: 16px;
+
+            .unit {
+                @extend %input-base;
+                width: calc(2ch + #{$width-input-spinner});
+                font-family: $font-family-monospace;
+            }
+
+            .separator {
+                flex-shrink: 0;
+                padding-right: $spacing-small;
+            }
         }
 
-        .separator {
-            padding: 0 $spacing-extra-small;
+        .action-buttons {
+            @include transition-medium;
+            display: inline;
+            flex-shrink: 0;
+            opacity: 0;
+        }
+
+        &:hover {
+            .action-buttons {
+                opacity: 1;
+            }
         }
     }
 
     &:not(.disabled) {
-        .inputs {
+        .input {
             @extend %input-border;
         }
 
         &.focused {
-            .inputs {
+            .input {
                 border-bottom-color: $color-accent;
             }
         }
 
         &.invalid {
-            .inputs {
+            .input {
                 border-bottom-color: $color-warning;
             }
         }
 
         &.error {
-            .inputs {
+            .input {
                 border-bottom-color: $color-danger;
             }
         }
     }
-
 
     &.disabled {
         .label {

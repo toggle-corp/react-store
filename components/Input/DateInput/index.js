@@ -1,151 +1,138 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramElement from '../../Input/Faram/FaramElement';
 import FloatingContainer from '../../View/FloatingContainer';
 import Delay from '../../General/Delay';
 import DatePicker from '../DatePicker';
-import { iconNames } from '../../../constants';
+
+import HintAndError from '../HintAndError';
+import Label from '../Label';
+import DigitalInput from '../DigitalInput';
 
 import {
-    getNumDaysInMonthX,
-    leftPad,
-    decodeDate,
     getErrorForDateValues,
-    MIN_YEAR,
+    getNumDaysInMonthX,
+    decodeDate as decodeAsDate,
 } from '../../../utils/common';
-
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
 
-import FaramElement from '../../Input/Faram/FaramElement';
-
-import HintAndError from '../HintAndError';
-import Label from '../Label';
+import ActionButtons from './ActionButtons';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    showLabel: PropTypes.bool,
-    label: PropTypes.string,
     disabled: PropTypes.bool,
-    hint: PropTypes.string,
     error: PropTypes.string,
-    value: PropTypes.string,
+    hint: PropTypes.string,
+    label: PropTypes.string,
     onChange: PropTypes.func,
+    showLabel: PropTypes.bool,
     showHintAndError: PropTypes.bool,
+    value: PropTypes.string,
     title: PropTypes.string,
+    separator: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    showLabel: true,
-    label: '',
-    hint: '',
-    error: '',
     disabled: false,
-    value: undefined,
-    onChange: undefined,
+    error: '',
+    hint: '',
+    label: '',
+    onChange: () => {},
+    showLabel: true,
+    separator: '-',
     showHintAndError: true,
+    value: undefined,
     title: undefined,
+};
+
+const MIN_YEAR = 1900;
+const MAX_YEAR = 9999;
+const MIN_MONTH = 1;
+const MAX_MONTH = 12;
+const MIN_DAY = 1;
+const STEP = 1;
+
+const createDate = (y, m, d) => {
+    if (getErrorForDateValues({ yearValue: y, monthValue: m, dayValue: d })) {
+        return undefined;
+    }
+    return new Date(y, m - 1, d);
+};
+
+
+// y, m, d is string
+const encodeDate = ({ y, m, d }, separator) => {
+    const year = y || '';
+    const month = m || '';
+    const day = d || '';
+    if (year === '' && month === '' && day === '') {
+        return undefined;
+    }
+    return `${year}${separator}${month}${separator}${day}`;
+};
+
+// value is string
+const decodeDate = (value, separator) => {
+    if (!value) {
+        return {};
+    }
+    const values = value.split(separator);
+    return {
+        y: values[0],
+        m: values[1],
+        d: values[2],
+    };
+};
+
+// value is string
+const isValidDateString = (value, separator) => {
+    if (value === '' || value === undefined) {
+        return true;
+    }
+    const { y, m, d } = decodeDate(value, separator);
+
+    return !getErrorForDateValues({ yearValue: +y, monthValue: +m, dayValue: +d });
 };
 
 class DateInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static encodeDateValues = ({
-        dayValue,
-        monthValue,
-        yearValue,
-    }) => {
-        if (!yearValue && !monthValue && !dayValue) {
-            return undefined;
-        }
-        const yearStr = yearValue ? leftPad(yearValue, 4) : '';
-        const monthStr = monthValue ? leftPad(monthValue, 2) : '';
-        const dayStr = dayValue ? leftPad(dayValue, 2) : '';
-        return `${yearStr}-${monthStr}-${dayStr}`;
-    }
-
-    static decodeDateValues = ({
-        dayValue,
-        monthValue,
-        yearValue,
-    }) => {
-        if (!dayValue || !monthValue || !yearValue) {
-            return undefined;
-        }
-
-        if (getErrorForDateValues({ yearValue, monthValue, dayValue })) {
-            return undefined;
-        }
-
-        return new Date(
-            yearValue,
-            monthValue - 1,
-            dayValue,
-        );
-    }
-
     constructor(props) {
         super(props);
 
-        const { value } = this.props;
-        const { d, m, y } = this.processValue(value);
-
         this.state = {
+            yearInputFocused: false,
+            monthInputFocused: false,
+            dayInputFocused: false,
             showDatePicker: false,
-            dayValue: d,
-            monthValue: m,
-            yearValue: y,
-            isDayInputFocused: false,
-            isMonthInputFocused: false,
-            isYearInputFocused: false,
         };
 
+        this.containerRef = React.createRef();
         this.boundingClientRect = {};
-    }
-
-    componentWillMount() {
-        this.validate(false);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { value: oldValue } = this.props;
-        const { value: newValue } = nextProps;
-        const { d, m, y } = this.processValue(newValue);
-
-        if (this.currentValue !== newValue && oldValue !== newValue) {
-            const newState = {
-                dayValue: d,
-                monthValue: m,
-                yearValue: y,
-            };
-
-            if (!getErrorForDateValues(newState)) {
-                this.setState(newState, () => this.validate(false));
-            }
-        }
     }
 
     getClassName = () => {
         const {
-            className,
-            error,
             disabled,
+            className,
+            value,
+            error,
+            separator,
         } = this.props;
 
         const {
-            isInvalid,
-            isDayInputFocused,
-            isMonthInputFocused,
-            isYearInputFocused,
-            showDatePicker,
+            yearInputFocused,
+            monthInputFocused,
+            dayInputFocused,
         } = this.state;
-
 
         const classNames = [
             className,
@@ -153,124 +140,100 @@ class DateInput extends React.PureComponent {
             styles.dateInput,
         ];
 
-        if (isInvalid) {
-            classNames.push('invalid');
-            classNames.push(styles.invalid);
-        }
-
-        if (error) {
-            classNames.push('error');
-            classNames.push(styles.error);
-        }
-
-        const isFocused = isDayInputFocused
-            || isMonthInputFocused
-            || isYearInputFocused
-            || showDatePicker;
-        if (isFocused) {
-            classNames.push('focused');
+        if (yearInputFocused || monthInputFocused || dayInputFocused) {
             classNames.push(styles.focused);
+            classNames.push('input-focused');
         }
 
         if (disabled) {
-            classNames.push('disabled');
             classNames.push(styles.disabled);
+            classNames.push('disabled');
+        }
+
+        const isInvalid = !isValidDateString(value, separator);
+        if (isInvalid) {
+            classNames.push(styles.invalid);
+            classNames.push('invalid');
+        }
+
+        if (error) {
+            classNames.push(styles.error);
+            classNames.push('error');
         }
 
         return classNames.join(' ');
     }
 
-    processValue = (value) => {
-        if (value) {
-            const dates = value.split('-');
-            const y = String(+dates[0]);
-            const m = String(+dates[1]);
-            const d = String(+dates[2]);
-
-            return { d, m, y };
-        }
-
-        return {
-            d: undefined,
-            m: undefined,
-            y: undefined,
-        };
+    handleYearInputFocus = () => {
+        this.setState({ yearInputFocused: true });
     }
 
-    validate = (callOnChange = true) => {
-        const { onChange } = this.props;
-        const value = DateInput.encodeDateValues(this.state);
-        const isDateValid = !getErrorForDateValues(this.state);
-
-        // DateInput value should be of format yyyy-MM-dd
-        this.currentValue = value;
-        if (callOnChange) {
-            onChange(value);
-        }
-        this.setState({ isInvalid: !isDateValid });
+    handleYearInputBlur = () => {
+        this.setState({ yearInputFocused: false });
     }
 
-    handleDayInputFocus = () => { this.setState({ isDayInputFocused: true }); }
-    handleDayInputBlur = () => { this.setState({ isDayInputFocused: false }); }
-    handleMonthInputFocus = () => { this.setState({ isMonthInputFocused: true }); }
-    handleMonthInputBlur = () => { this.setState({ isMonthInputFocused: false }); }
-    handleYearInputFocus = () => { this.setState({ isYearInputFocused: true }); }
-    handleYearInputBlur = () => { this.setState({ isYearInputFocused: false }); }
-
-    handleDayChange = (e) => {
-        this.setState(
-            { dayValue: e.target.value && parseInt(e.target.value, 10) },
-            this.validate,
-        );
+    handleMonthInputFocus = () => {
+        this.setState({ monthInputFocused: true });
     }
 
-    handleMonthChange = (e) => {
-        this.setState(
-            { monthValue: e.target.value && parseInt(e.target.value, 10) },
-            this.validate,
-        );
+    handleMonthInputBlur = () => {
+        this.setState({ monthInputFocused: false });
     }
 
-    handleYearChange = (e) => {
-        this.setState(
-            { yearValue: e.target.value && parseInt(e.target.value, 10) },
-            this.validate,
-        );
+    handleDayInputFocus = () => {
+        this.setState({ dayInputFocused: true });
+    }
+
+    handleDayInputBlur = () => {
+        this.setState({ dayInputFocused: false });
+    }
+
+    handleYearInputChange = (y) => {
+        this.handleChange({ y });
+    }
+
+    handleMonthInputChange = (m) => {
+        this.handleChange({ m });
+    }
+
+    handleDayInputChange = (d) => {
+        this.handleChange({ d });
     }
 
     handleClearButtonClick = () => {
-        // FIXME: possibly redundant
-        this.setState({
-            dayValue: undefined,
-            monthValue: undefined,
-            yearValue: undefined,
-        }, this.validate);
+        this.handleChange({
+            y: undefined,
+            m: undefined,
+            d: undefined,
+        });
     }
 
     handleTodayButtonClick = () => {
-        const today = new Date();
-
-        // FIXME: possibly redundant
-        this.setState({
-            dayValue: today.getDate(),
-            monthValue: today.getMonth() + 1,
-            yearValue: today.getFullYear(),
-        }, this.validate);
+        const date = new Date();
+        this.handleChange({
+            y: String(date.getFullYear()),
+            m: String(date.getMonth() + 1),
+            d: String(date.getDate()),
+        });
     }
 
     handleCalendarButtonClick = () => {
-        if (this.container) {
-            this.boundingClientRect = this.container.getBoundingClientRect();
-        }
+        const { current: container } = this.containerRef;
+        this.boundingClientRect = container.getBoundingClientRect();
         this.setState({ showDatePicker: true });
+    }
+
+    handleDatePickerBlur = () => {
+        this.setState({ showDatePicker: false });
     }
 
     handleDatePickerInvalidate = (datePickerContainer) => {
         const contentRect = datePickerContainer.getBoundingClientRect();
-        let parentRect = this.boundingClientRect;
-        if (this.container) {
-            parentRect = this.container.getBoundingClientRect();
-        }
+
+        const { current: container } = this.containerRef;
+        const parentRect = container
+            ? container.getBoundingClientRect()
+            : this.boundingClientRect;
 
         const { showHintAndError } = this.props;
         const offset = { ...defaultOffset };
@@ -278,233 +241,57 @@ class DateInput extends React.PureComponent {
             offset.top = 12;
         }
 
-        const optionsContainerPosition = (
-            calcFloatPositionInMainWindow({
-                parentRect,
-                contentRect,
-                offset,
-                limit: {
-                    ...defaultLimit,
-                    minW: parentRect.width,
-                },
-            })
-        );
+        const optionsContainerPosition = calcFloatPositionInMainWindow({
+            parentRect,
+            contentRect,
+            offset,
+            limit: {
+                ...defaultLimit,
+                minW: parentRect.width,
+            },
+        });
 
         return optionsContainerPosition;
     }
 
-    handleDatePickerBlur = () => {
-        this.setState({ showDatePicker: false });
-    }
-
     handleDatePickerDatePick = (timestamp) => {
-        const newDate = decodeDate(timestamp);
-        const currentDate = DateInput.decodeDateValues(this.state);
-
+        const newDate = decodeAsDate(timestamp);
         this.setState(
             { showDatePicker: false },
             () => {
-                const eitherDateIsDefined = !!newDate || !!currentDate;
-                const isNewDateUndefined = !newDate;
-                const isCurrentDateUndefined = !currentDate;
-                if (
-                    eitherDateIsDefined && (
-                        isNewDateUndefined ||
-                        isCurrentDateUndefined ||
-                        newDate.getTime() !== currentDate.getTime()
-                    )
-                ) {
-                    this.setState({
-                        dayValue: newDate.getDate(),
-                        monthValue: newDate.getMonth() + 1,
-                        yearValue: newDate.getFullYear(),
-                    }, this.validate);
-                }
+                this.handleChange({
+                    y: String(newDate.getFullYear()),
+                    m: String(newDate.getMonth() + 1),
+                    d: String(newDate.getDate()),
+                });
             },
         );
     }
 
-    renderDateUnit = ({
-        unitClassName,
-        placeholder,
-        min = 1,
-        max,
-        onChange,
-        value = '',
-        onFocus,
-        onBlur,
-    }) => {
+    handleChange = (valueToOverride) => {
         const {
-            disabled,
+            onChange,
+            value: valueFromProps,
+            separator,
         } = this.props;
 
-        const classNames = [
-            unitClassName,
-            'date-unit',
-            styles.dateUnit,
-        ];
+        const oldValue = decodeDate(valueFromProps, separator);
 
-        return (
-            <input
-                disabled={disabled}
-                min={min}
-                max={max}
-                placeholder={placeholder}
-                className={classNames.join(' ')}
-                type="number"
-                onChange={onChange}
-                value={value}
-                onFocus={onFocus}
-                onBlur={onBlur}
-            />
-        );
-    };
+        const { y, m, d } = {
+            ...oldValue,
+            ...valueToOverride,
+        };
 
-    renderDayUnit = () => {
-        const DateUnit = this.renderDateUnit;
-        const {
-            yearValue,
-            monthValue,
-            dayValue,
-        } = this.state;
-        const maxDay = getNumDaysInMonthX(yearValue, monthValue);
+        const newValue = encodeDate({ y, m, d }, separator);
 
-        return (
-            <DateUnit
-                max={maxDay}
-                placeholder="dd"
-                unitClassName={styles.dayUnit}
-                value={dayValue}
-                onChange={this.handleDayChange}
-                onFocus={this.handleDayInputFocus}
-                onBlur={this.handleDayInputBlur}
-            />
-        );
-    };
-
-    renderMonthUnit = () => {
-        const DateUnit = this.renderDateUnit;
-        const maxMonth = 12;
-        const { monthValue } = this.state;
-
-        return (
-            <DateUnit
-                max={maxMonth}
-                placeholder="mm"
-                unitClassName={styles.monthUnit}
-                value={monthValue}
-                onChange={this.handleMonthChange}
-                onFocus={this.handleMonthInputFocus}
-                onBlur={this.handleMonthInputBlur}
-            />
-        );
-    };
-
-    renderYearUnit = () => {
-        const DateUnit = this.renderDateUnit;
-        const minYear = MIN_YEAR;
-        const { yearValue } = this.state;
-
-        return (
-            <DateUnit
-                placeholder="yyyy"
-                unitClassName={styles.yearUnit}
-                min={minYear}
-                value={yearValue}
-                onChange={this.handleYearChange}
-                onFocus={this.handleYearInputFocus}
-                onBlur={this.handleYearInputBlur}
-            />
-        );
-    };
-
-    renderActionButtons = () => {
-        const { disabled } = this.props;
-
-        if (disabled) {
-            return null;
+        if (newValue !== valueFromProps) {
+            onChange(newValue);
         }
-
-        const classNames = [
-            'action-buttons',
-            styles.actionButtons,
-        ];
-
-        const clearButtonClassName = [
-            'button',
-            styles.button,
-            'clear',
-            styles.clear,
-        ].join(' ');
-
-        return (
-            <div
-                className={classNames.join(' ')}
-            >
-                <button
-                    className={clearButtonClassName}
-                    type="button"
-                    onClick={this.handleClearButtonClick}
-                    title="Clear date"
-                    tabIndex="-1"
-                >
-                    <span className={iconNames.closeRound} />
-                </button>
-                <button
-                    onClick={this.handleTodayButtonClick}
-                    className={styles.button}
-                    type="button"
-                    title="Set date to today"
-                    tabIndex="-1"
-                >
-                    <span className={iconNames.clock} />
-                </button>
-                <button
-                    onClick={this.handleCalendarButtonClick}
-                    className={styles.button}
-                    type="button"
-                    title="Open date picker"
-                    tabIndex="-1"
-                >
-                    <span className={iconNames.calendar} />
-                </button>
-            </div>
-        );
     }
 
-    renderInput = () => {
-        const classNames = [
-            'input',
-            styles.input,
-        ];
-        classNames.push('input');
-        classNames.push(styles.input);
-
-        const DayUnit = this.renderDayUnit;
-        const MonthUnit = this.renderMonthUnit;
-        const YearUnit = this.renderYearUnit;
-        const ActionButtons = this.renderActionButtons;
-
-        return (
-            <div className={classNames.join(' ')} >
-                <div className={styles.dateUnits}>
-                    <DayUnit />
-                    <MonthUnit />
-                    <YearUnit />
-                </div>
-                <ActionButtons />
-            </div>
-        );
-    }
-
-    renderDatePicker = () => {
-        const { showDatePicker } = this.state;
-
-        if (!showDatePicker) {
-            return null;
-        }
-
-        const date = DateInput.decodeDateValues(this.state);
+    renderDatePicker = ({ y, m, d }) => {
+        const date = createDate(+y, +m, +d);
+        const datetime = date && date.getTime();
 
         return (
             <FloatingContainer
@@ -514,7 +301,7 @@ class DateInput extends React.PureComponent {
                 onInvalidate={this.handleDatePickerInvalidate}
             >
                 <DatePicker
-                    value={date && date.getTime()}
+                    value={datetime}
                     onChange={this.handleDatePickerDatePick}
                 />
             </FloatingContainer>
@@ -523,36 +310,104 @@ class DateInput extends React.PureComponent {
 
     render() {
         const {
-            showLabel,
-            label,
-            hint,
             error,
+            hint,
+            label,
+            showLabel,
             showHintAndError,
             title,
+            disabled,
+            value,
+            separator,
         } = this.props;
-        const className = this.getClassName();
+        const { showDatePicker } = this.state;
 
-        const InputElement = this.renderInput;
+        const className = this.getClassName();
+        const yearPlaceholder = 'yyyy';
+        const monthPlaceholder = 'mm';
+        const dayPlaceholder = 'dd';
+
+        const {
+            y: yearValue = '',
+            m: monthValue = '',
+            d: dayValue = '',
+        } = decodeDate(value, separator);
+
         const FloatingDatePicker = this.renderDatePicker;
 
         return (
             <div
-                ref={(el) => { this.container = el; }}
-                className={className}
+                ref={this.containerRef}
                 title={title}
+                className={className}
             >
                 <Label
                     className={styles.label}
                     show={showLabel}
                     text={label}
                 />
-                <InputElement />
+                <div className={styles.input}>
+                    <div className={styles.units}>
+                        <DigitalInput
+                            onFocus={this.handleDayInputFocus}
+                            onBlur={this.handleDayInputBlur}
+                            className={styles.dayUnit}
+                            padLength={2}
+                            min={MIN_DAY}
+                            max={getNumDaysInMonthX(+yearValue, +monthValue)}
+                            step={STEP}
+                            placeholder={dayPlaceholder}
+                            disabled={disabled}
+                            value={dayValue}
+                            onChange={this.handleDayInputChange}
+                        />
+                        <DigitalInput
+                            onFocus={this.handleMonthInputFocus}
+                            onBlur={this.handleMonthInputBlur}
+                            className={styles.monthUnit}
+                            padLength={2}
+                            min={MIN_MONTH}
+                            max={MAX_MONTH}
+                            step={STEP}
+                            placeholder={monthPlaceholder}
+                            disabled={disabled}
+                            value={monthValue}
+                            onChange={this.handleMonthInputChange}
+                        />
+                        <DigitalInput
+                            onFocus={this.handleYearInputFocus}
+                            onBlur={this.handleYearInputBlur}
+                            className={styles.yearUnit}
+                            padLength={4}
+                            min={MIN_YEAR}
+                            max={MAX_YEAR}
+                            step={STEP}
+                            placeholder={yearPlaceholder}
+                            disabled={disabled}
+                            value={yearValue}
+                            onChange={this.handleYearInputChange}
+                        />
+                    </div>
+                    <ActionButtons
+                        className={styles.actionButtons}
+                        disabled={disabled}
+                        onClearButtonClick={this.handleClearButtonClick}
+                        onTodayButtonClick={this.handleTodayButtonClick}
+                        onCalendarButtonClick={this.handleCalendarButtonClick}
+                    />
+                </div>
                 <HintAndError
                     show={showHintAndError}
                     hint={hint}
                     error={error}
                 />
-                <FloatingDatePicker />
+                { showDatePicker &&
+                    <FloatingDatePicker
+                        y={yearValue}
+                        m={monthValue}
+                        d={dayValue}
+                    />
+                }
             </div>
         );
     }

@@ -116,7 +116,9 @@ export default class DayPicker extends React.PureComponent {
         const newValue = new Date(year, month - 1, value);
 
         if (onChange) {
-            onChange(newValue.getTime());
+            const oldTimestamp = value && new Date(value).getTime();
+            const newTimestamp = newValue.getTime();
+            onChange(newTimestamp, oldTimestamp !== newTimestamp);
         }
     }
 
