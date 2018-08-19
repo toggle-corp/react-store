@@ -222,6 +222,7 @@ test('left padding in number', () => {
     expect(leftPad(121, 2, 'x')).toEqual('121');
     expect(leftPad(121, 4, 'x')).toEqual('x121');
     expect(leftPad(121, 4)).toEqual('0121');
+    expect(leftPad(12221, 4)).toEqual('12221');
 });
 
 test('camel case to kebab case', () => {

@@ -1,0 +1,18 @@
+@import '../../../../stylesheets/base';
+
+.button {
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: $spacing-extra-small $spacing-small;
+    color: $color-text-label;
+
+    &:hover {
+        color: $color-accent;
+
+        &.clear {
+            color: $color-danger;
+        }
+    }
+}

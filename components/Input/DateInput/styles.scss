@@ -1,5 +1,6 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/input-base';
+@import '../../../stylesheets/input-border';
 
 $width-date-picker-container-min: 208px;
 
@@ -13,52 +14,30 @@ $width-date-picker-container-min: 208px;
     .input {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        border-bottom: $width-separator-medium solid $color-separator-alt;
 
-        .date-units {
+        .units {
+            display: flex;
+            flex-grow: 1;
             $width-input-spinner: 16px;
 
-            .date-unit {
+            .day-unit, .month-unit {
                 @extend %input-base;
-                text-align: right;
+                width: calc(2ch + #{$width-input-spinner});
                 font-family: $font-family-monospace;
             }
 
-            .day-unit {
-                width: calc(2ch + #{$width-input-spinner});
-            }
-
-            .month-unit {
-                width: calc(2ch + #{$width-input-spinner});
-            }
-
             .year-unit {
+                @extend %input-base;
                 width: calc(4ch + #{$width-input-spinner});
+                font-family: $font-family-monospace;
             }
         }
 
         .action-buttons {
             @include transition-medium;
             display: inline;
+            flex-shrink: 0;
             opacity: 0;
-
-            .button {
-                outline: 0;
-                border: 0;
-                background-color: transparent;
-                cursor: pointer;
-                padding: $spacing-extra-small $spacing-small;
-                color: $color-text-label;
-
-                &:hover {
-                    color: $color-accent;
-
-                    &.clear {
-                        color: $color-danger;
-                    }
-                }
-            }
         }
 
         &:hover {
@@ -68,39 +47,27 @@ $width-date-picker-container-min: 208px;
         }
     }
 
-    &:hover {
+    &:not(.disabled) {
         .input {
-            border-bottom-color: $color-separator-hover;
-        }
-    }
-
-    &.focused {
-        .label {
-            color: $color-accent;
+            @extend %input-border;
         }
 
-        .input {
-            border-bottom-color: $color-accent;
-        }
-    }
-
-    &.invalid {
-        .label {
-            color: $color-warning;
+        &.focused {
+            .input {
+                border-bottom-color: $color-accent;
+            }
         }
 
-        .input {
-            border-bottom-color: $color-warning;
-        }
-    }
-
-    &.error {
-        .label {
-            color: $color-danger;
+        &.invalid {
+            .input {
+                border-bottom-color: $color-warning;
+            }
         }
 
-        .input {
-            border-bottom-color: $color-danger;
+        &.error {
+            .input {
+                border-bottom-color: $color-danger;
+            }
         }
     }
 
@@ -108,16 +75,5 @@ $width-date-picker-container-min: 208px;
         .label {
             color: $color-text-disabled;
         }
-
-        .input {
-            border-bottom-color: $color-separator;
-
-            .date-units {
-                .date-unit {
-                    color: $color-text-disabled;
-                }
-            }
-        }
     }
 }
-
