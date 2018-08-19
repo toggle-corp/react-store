@@ -11,6 +11,7 @@ import Label from '../Label';
 import DigitalInput from '../DigitalInput';
 
 import {
+    leftPad,
     getErrorForDateValues,
     getNumDaysInMonthX,
     decodeDate as decodeAsDate,
@@ -211,9 +212,9 @@ class DateInput extends React.PureComponent {
     handleTodayButtonClick = () => {
         const date = new Date();
         this.handleChange({
-            y: String(date.getFullYear()),
-            m: String(date.getMonth() + 1),
-            d: String(date.getDate()),
+            y: leftPad(String(date.getFullYear()), 4).slice(-4),
+            m: leftPad(String(date.getMonth() + 1), 2).slice(-2),
+            d: leftPad(String(date.getDate()), 2).slice(-2),
         });
     }
 
@@ -260,9 +261,9 @@ class DateInput extends React.PureComponent {
             { showDatePicker: false },
             () => {
                 this.handleChange({
-                    y: String(newDate.getFullYear()),
-                    m: String(newDate.getMonth() + 1),
-                    d: String(newDate.getDate()),
+                    y: leftPad(String(newDate.getFullYear()), 4).slice(-4),
+                    m: leftPad(String(newDate.getMonth() + 1), 2).slice(-2),
+                    d: leftPad(String(newDate.getDate()), 2).slice(-2),
                 });
             },
         );
@@ -275,14 +276,18 @@ class DateInput extends React.PureComponent {
             separator,
         } = this.props;
 
+        console.warn(valueToOverride);
+
         const oldValue = decodeDate(valueFromProps, separator);
 
         const { y, m, d } = {
             ...oldValue,
             ...valueToOverride,
         };
+        console.warn(y, m, d);
 
         const newValue = encodeDate({ y, m, d }, separator);
+        console.warn(oldValue, newValue);
 
         if (newValue !== valueFromProps) {
             onChange(newValue);

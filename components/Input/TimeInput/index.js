@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { leftPad } from '../../../utils/common';
 import FaramElement from '../../Input/Faram/FaramElement';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
-
 import DigitalInput from '../DigitalInput';
+
 import ActionButtons from './ActionButtons';
 import styles from './styles.scss';
 
@@ -175,8 +176,8 @@ class TimeInput extends React.PureComponent {
     handleTodayButtonClick = () => {
         const date = new Date();
         this.handleChange({
-            h: String(date.getHours()),
-            m: String(date.getMinutes()),
+            h: leftPad(String(date.getHours()), 2).slice(-2),
+            m: leftPad(String(date.getMinutes()), 2).slice(-2),
         });
     }
 
