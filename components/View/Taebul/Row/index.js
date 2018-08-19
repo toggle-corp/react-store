@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import ListView from '../../List/ListView';
 
-import MuxedCell from './MuxedCell';
+import Cell from '../Cell';
 
 const propTypes = {
     className: PropTypes.string,
@@ -26,19 +26,24 @@ export default class Row extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    muxedCellRendererParams = (columnKey, column) => {
+    cellRendererParams = (columnKey, column) => {
         const {
             datum,
             datumKey,
         } = this.props;
-        const { cellRendererParams } = column;
+
+        const {
+            cellRendererParams,
+            cellRenderer,
+        } = column;
 
         return {
             columnKey,
             column,
             datumKey,
             datum,
-            cellRendererParams,
+            rendererParams: cellRendererParams,
+            renderer: cellRenderer,
         };
     }
 
@@ -54,8 +59,8 @@ export default class Row extends React.PureComponent {
                 className={className}
                 data={columns}
                 keyExtractor={columnKeySelector}
-                renderer={MuxedCell}
-                rendererParams={this.muxedCellRendererParams}
+                renderer={Cell}
+                rendererParams={this.cellRendererParams}
             />
         );
     }

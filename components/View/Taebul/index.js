@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 
 import ListView from '../List/ListView';
 
+import Header from './Header';
 import Row from './Row';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     rowClassName: PropTypes.string,
-
-    headerRendererParams: PropTypes.func,
-    headerRenderer: PropTypes.func.isRequired,
 
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -22,7 +20,7 @@ const defaultProps = {
     className: '',
     rowClassName: '',
 
-    headerRendererParams: () => {},
+    // headerRendererParams: () => {},
 
     data: [],
     columns: [],
@@ -36,11 +34,17 @@ export default class Taebul extends React.PureComponent {
     static columnKeySelector = column => column.key;
 
     headerRendererParams = (columnKey, column) => {
-        const { headerRendererParams } = this.props;
-        return headerRendererParams({
+        const {
+            headerRenderer,
+            headerRendererParams,
+        } = column;
+
+        return {
             column,
             columnKey,
-        });
+            rendererParams: headerRendererParams,
+            renderer: headerRenderer,
+        };
     }
 
     rowRendererParams = (datumKey, datum) => {
@@ -57,7 +61,6 @@ export default class Taebul extends React.PureComponent {
         const {
             data,
             columns,
-            headerRenderer,
             keySelector,
             className: classNameFromProps,
             rowClassName: rowClassNameFromProps,
@@ -72,7 +75,7 @@ export default class Taebul extends React.PureComponent {
                     className={styles.head}
                     data={columns}
                     keyExtractor={Taebul.columnKeySelector}
-                    renderer={headerRenderer}
+                    renderer={Header}
                     rendererParams={this.headerRendererParams}
                 />
                 <ListView
