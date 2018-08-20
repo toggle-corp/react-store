@@ -39,8 +39,8 @@ export default class Row extends React.PureComponent {
 
         return {
             columnKey,
-            column,
             datumKey,
+            column,
             datum,
             rendererParams: cellRendererParams,
             renderer: cellRenderer,

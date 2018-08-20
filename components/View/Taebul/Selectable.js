@@ -46,7 +46,6 @@ export default (WrappedComponent) => {
                     settings[index] = { _isSelected: { $set: true } };
                 }
             });
-            console.warn(update(data, settings));
             return update(data, settings);
         })
 
@@ -70,7 +69,6 @@ export default (WrappedComponent) => {
                 };
             }
             const newSettings = update(settings, updateSettings);
-            console.warn(newSettings);
             onChange(newSettings);
         }
 
@@ -80,12 +78,21 @@ export default (WrappedComponent) => {
                     key: '_select',
                     title: '',
 
+                    headerRendererParams: () => ({ className: selectClassName }),
+                    headerRenderer: ({ className }) => (
+                        <div className={className}>
+                            Select
+                        </div>
+                    ),
+
                     cellRendererParams: ({ datum, datumKey }) => ({
+                        label: '',
                         // eslint-disable-next-line no-underscore-dangle
                         value: datum._isSelected,
                         className: selectClassName,
                         onChange: value => this.handleSelectableClick(datumKey, value),
                     }),
+
                     cellRenderer: Checkbox,
                 }],
             };

@@ -13,18 +13,14 @@ const propTypes = {
 
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    keySelector: PropTypes.func,
+    keySelector: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
     rowClassName: '',
-
-    // headerRendererParams: () => {},
-
     data: [],
     columns: [],
-    keySelector: datum => datum.key,
 };
 
 export default class Taebul extends React.PureComponent {
@@ -40,20 +36,20 @@ export default class Taebul extends React.PureComponent {
         } = column;
 
         return {
-            column,
             columnKey,
-            rendererParams: headerRendererParams,
+            column,
             renderer: headerRenderer,
+            rendererParams: headerRendererParams,
         };
     }
 
     rowRendererParams = (datumKey, datum) => {
         const { columns } = this.props;
         return {
-            columnKeySelector: Taebul.columnKeySelector,
-            columns,
             datum,
             datumKey,
+            columnKeySelector: Taebul.columnKeySelector,
+            columns,
         };
     }
 

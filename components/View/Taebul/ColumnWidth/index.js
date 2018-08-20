@@ -7,6 +7,38 @@ import { isFalsy } from '../../../../utils/common';
 
 import styles from './styles.scss';
 
+class ResizableHeader extends React.PureComponent {
+    handleSeparatorMouseDown = (e) => {
+        const {
+            _columnKey: columnKey,
+            _onSeparatorMouseDown: onSeparatorMouseDown,
+        } = this.props;
+        onSeparatorMouseDown(e, columnKey);
+    }
+
+    render() {
+        const {
+            _columnKey: columnKey,
+            _headerRenderer: Header,
+            _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
+            ...otherProps
+        } = this.props;
+
+        return (
+            <div className={styles.newHeader}>
+                <div className={styles.originalHeaderContainer}>
+                    <Header {...otherProps} />
+                </div>
+                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+                <div
+                    onMouseDown={this.handleSeparatorMouseDown}
+                    className={styles.separator}
+                />
+            </div>
+        );
+    }
+}
+
 const propTypes = {
     columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -19,14 +51,16 @@ const defaultProps = {
 };
 
 export default (WrappedComponent) => {
+    // eslint-disable-next-line react/no-multi-comp
     const ColumnWidthComponent = class extends React.PureComponent {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
+        static columnKeySelector = column => column.key;
+
         constructor(props) {
             super(props);
 
-            this.originalHeaderRenderers = {};
             this.resizingColumnKey = undefined;
         }
 
@@ -55,33 +89,12 @@ export default (WrappedComponent) => {
             window.removeEventListener('mousemove', this.handleMouseMove);
         }
 
-        handleSeparatorMouseDown = (columnKey, e) => {
+        handleSeparatorMouseDown = (e, columnKey) => {
             this.resizingColumnKey = columnKey;
             this.startMouseX = e.clientX;
             this.lastMouseX = e.clientX;
             window.addEventListener('mousemove', this.handleMouseMove);
             window.addEventListener('mouseup', this.handleMouseUp);
-        }
-
-        renderHeader = (p) => {
-            const { columnKey } = p;
-            const OriginalHeader = this.originalHeaderRenderers[columnKey];
-
-            return (
-                <div className={styles.newHeader}>
-                    <div className={styles.originalHeaderContainer}>
-                        <OriginalHeader
-                            columnKey={columnKey}
-                            {...p}
-                        />
-                    </div>
-                    {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-                    <div
-                        onMouseDown={(e) => { this.handleSeparatorMouseDown(columnKey, e); }}
-                        className={styles.separator}
-                    />
-                </div>
-            );
         }
 
         render() {
@@ -93,23 +106,38 @@ export default (WrappedComponent) => {
 
             const { columnWidths } = settings;
 
-            const newColumns = columns.map((column) => {
-                this.originalHeaderRenderers[column.key] = column.headerRenderer;
+            const updateSettings = {};
+            columns.forEach((column, i) => {
+                // NOTE: column key is assumed to be column.key
+                const columnKey = column.key;
 
-                if (
-                    (settings[column.key] || {}).headerStyle
-                    && (settings[column.key] || {}).cellStyle
-                ) {
-                    return column;
+                const {
+                    [column.key]: {
+                        headerStyle,
+                        cellStyle,
+                    } = {},
+                } = settings;
+
+                if (headerStyle && cellStyle) {
+                    return;
                 }
 
-                return ({
-                    ...column,
-                    headerRenderer: this.renderHeader,
-                    headerStyle: { width: columnWidths[column.key] },
-                    cellStyle: { width: columnWidths[column.key] },
-                });
+                updateSettings[i] = {
+                    headerRendererParams: {
+                        $set: (...params) => ({
+                            ...column.headerRendererParams(...params),
+                            _columnKey: columnKey,
+                            _headerRenderer: column.headerRenderer,
+                            _onSeparatorMouseDown: this.handleSeparatorMouseDown,
+                        }),
+                    },
+                    headerRenderer: { $set: ResizableHeader },
+                    headerStyle: { $set: { width: columnWidths[columnKey] } },
+                    cellStyle: { $set: { width: columnWidths[columnKey] } },
+                };
             });
+
+            const newColumns = update(columns, updateSettings);
 
             return (
                 <WrappedComponent

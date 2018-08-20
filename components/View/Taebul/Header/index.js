@@ -24,19 +24,17 @@ export default class Header extends React.PureComponent {
             column,
             rendererParams,
             renderer: Children,
-            ...otherProps
         } = this.props;
 
-        const params = rendererParams({ columnKey, column });
+        const params = rendererParams ? rendererParams({ columnKey, column }) : {};
         const { headerStyle } = column;
 
         return (
             <div
-                className={className}
                 style={headerStyle}
+                className={className}
             >
                 <Children
-                    {...otherProps}
                     {...params}
                 />
             </div>

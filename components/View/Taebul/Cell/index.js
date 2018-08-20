@@ -16,15 +16,16 @@ export default class Cell extends React.PureComponent {
     render() {
         const {
             className,
+            datumKey,
             datum,
+            columnKey,
             column,
             rendererParams,
             renderer: Children,
-            ...otherProps
         } = this.props;
 
+        const params = rendererParams({ datum, column, datumKey, columnKey });
         const { cellStyle } = column;
-        const params = rendererParams({ datum, column });
 
         return (
             <div
@@ -32,7 +33,6 @@ export default class Cell extends React.PureComponent {
                 className={className}
             >
                 <Children
-                    {...otherProps}
                     {...params}
                 />
             </div>
