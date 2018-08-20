@@ -106,17 +106,14 @@ export default (WrappedComponent) => {
             onChange(newSettings);
         }
 
-        modifyColumns = memoize((columns = [], selectClassName, keySelector) => {
+        modifyColumns = memoize((columns = [], data = [], selectClassName, keySelector) => {
             const settings = {
                 $unshift: [{
                     key: '_select',
                     title: '',
 
                     headerRendererParams: (params) => {
-                        const {
-                            settings: settingsFromProps,
-                            data,
-                        } = params;
+                        const { settings: settingsFromProps } = params;
 
                         const { selectedKeys } = settingsFromProps;
 
@@ -200,6 +197,7 @@ export default (WrappedComponent) => {
             );
             const newColumns = this.modifyColumns(
                 columns,
+                data,
                 selectClassName,
                 keySelector,
             );
