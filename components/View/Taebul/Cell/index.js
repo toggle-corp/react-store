@@ -16,6 +16,7 @@ export default class Cell extends React.PureComponent {
     render() {
         const {
             className,
+            settings,
             datumKey,
             datum,
             columnKey,
@@ -24,7 +25,7 @@ export default class Cell extends React.PureComponent {
             renderer: Children,
         } = this.props;
 
-        const params = rendererParams({ datum, column, datumKey, columnKey });
+        const params = rendererParams({ datum, column, datumKey, columnKey, settings });
         const { cellStyle } = column;
 
         return (

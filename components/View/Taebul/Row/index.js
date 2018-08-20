@@ -14,12 +14,14 @@ const propTypes = {
     ]).isRequired,
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     columnKeySelector: PropTypes.func.isRequired,
+    settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     columns: [],
     datum: {},
+    settings: {},
 };
 
 export default class Row extends React.PureComponent {
@@ -30,6 +32,7 @@ export default class Row extends React.PureComponent {
         const {
             datum,
             datumKey,
+            settings,
         } = this.props;
 
         const {
@@ -44,6 +47,7 @@ export default class Row extends React.PureComponent {
             datum,
             rendererParams: cellRendererParams,
             renderer: cellRenderer,
+            settings,
         };
     }
 

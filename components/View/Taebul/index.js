@@ -14,6 +14,7 @@ const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     keySelector: PropTypes.func.isRequired,
+    settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -21,6 +22,7 @@ const defaultProps = {
     rowClassName: '',
     data: [],
     columns: [],
+    settings: {},
 };
 
 export default class Taebul extends React.PureComponent {
@@ -30,6 +32,7 @@ export default class Taebul extends React.PureComponent {
     static columnKeySelector = column => column.key;
 
     headerRendererParams = (columnKey, column) => {
+        const { data, settings } = this.props;
         const {
             headerRenderer,
             headerRendererParams,
@@ -38,18 +41,21 @@ export default class Taebul extends React.PureComponent {
         return {
             columnKey,
             column,
+            data,
             renderer: headerRenderer,
             rendererParams: headerRendererParams,
+            settings,
         };
     }
 
     rowRendererParams = (datumKey, datum) => {
-        const { columns } = this.props;
+        const { columns, settings } = this.props;
         return {
             datum,
             datumKey,
             columnKeySelector: Taebul.columnKeySelector,
             columns,
+            settings,
         };
     }
 

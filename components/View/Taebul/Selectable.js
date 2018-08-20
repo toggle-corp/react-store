@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
 
+import AccentButton from '../../Action/Button/AccentButton';
 import Checkbox from '../../Input/Checkbox';
+
 import update from '../../../utils/immutable-update';
+import { iconNames } from '../../../constants';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -72,18 +75,98 @@ export default (WrappedComponent) => {
             onChange(newSettings);
         }
 
-        modifyColumns = memoize((columns = [], selectClassName) => {
+        handleUnselectAllClick = () => {
+            const {
+                settings,
+                onChange,
+            } = this.props;
+            const updateSettings = {
+                selectedKeys: { $set: {} },
+            };
+            const newSettings = update(settings, updateSettings);
+            onChange(newSettings);
+        }
+
+        handleSelectAllClick = () => {
+            const {
+                settings,
+                onChange,
+                data,
+                keySelector,
+            } = this.props;
+            const updateSettings = {
+                selectedKeys: { $auto: {
+                } },
+            };
+            data.forEach((datum) => {
+                const key = keySelector(datum);
+                updateSettings.selectedKeys.$auto[key] = { $set: true };
+            });
+            const newSettings = update(settings, updateSettings);
+            onChange(newSettings);
+        }
+
+        modifyColumns = memoize((columns = [], selectClassName, keySelector) => {
             const settings = {
                 $unshift: [{
                     key: '_select',
                     title: '',
 
-                    headerRendererParams: () => ({ className: selectClassName }),
-                    headerRenderer: ({ className }) => (
-                        <div className={className}>
-                            Select
-                        </div>
-                    ),
+                    headerRendererParams: (params) => {
+                        const {
+                            settings: settingsFromProps,
+                            data,
+                        } = params;
+
+                        const { selectedKeys } = settingsFromProps;
+
+                        const isEverySelected = selectedKeys
+                            ? data.every(datum => selectedKeys[keySelector(datum)])
+                            : false;
+
+                        const isNoneSelected = selectedKeys
+                            ? data.every(datum => !selectedKeys[keySelector(datum)])
+                            : true;
+
+                        return {
+                            className: selectClassName,
+                            isEverySelected,
+                            isNoneSelected,
+                            onUnselectAllClick: this.handleUnselectAllClick,
+                            onSelectAllClick: this.handleSelectAllClick,
+                        };
+                    },
+
+                    headerRenderer: ({
+                        className,
+                        isEverySelected,
+                        onUnselectAllClick,
+                        onSelectAllClick,
+                        isNoneSelected,
+                    }) => {
+                        let buttonClassName;
+                        let buttonAction;
+                        if (isEverySelected) {
+                            buttonClassName = iconNames.checkbox;
+                            buttonAction = onUnselectAllClick;
+                        } else if (isNoneSelected) {
+                            buttonClassName = iconNames.checkboxOutlineBlank;
+                            buttonAction = onSelectAllClick;
+                        } else {
+                            buttonClassName = iconNames.checkboxBlank;
+                            buttonAction = onUnselectAllClick;
+                        }
+
+                        return (
+                            <div className={className}>
+                                <AccentButton
+                                    className={buttonClassName}
+                                    onClick={buttonAction}
+                                    transparent
+                                />
+                            </div>
+                        );
+                    },
 
                     cellRendererParams: ({ datum, datumKey }) => ({
                         label: '',
@@ -118,6 +201,7 @@ export default (WrappedComponent) => {
             const newColumns = this.modifyColumns(
                 columns,
                 selectClassName,
+                keySelector,
             );
 
             return (
