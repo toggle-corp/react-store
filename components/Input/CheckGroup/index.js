@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import ListView from '../../View/List/ListView';
 import Checkbox from '../Checkbox';
@@ -115,4 +115,4 @@ class CheckGroup extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(CheckGroup);
+export default FaramInputElement(CheckGroup);

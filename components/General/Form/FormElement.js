@@ -1,19 +1,12 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import FaramContext from './FaramContext';
+import FormContext from './FormContext';
 import { isFalsy } from '../../../utils/common';
 
-
-/*
- * FaramElementHOC
- *
- * Transforms a component that has `onChange` and `value`
- * props to a consumer of FaramContext and auto connect the
- * input `faramElementName` field of the form data.
- */
-
+// FIXME: remove usage of faramAction
+// FIXME: rename elementType to faramElementType
 
 const propTypes = {
     faramElementName: PropTypes.string,
@@ -31,9 +24,10 @@ const defaultProps = {
     faramInfo: undefined,
 };
 
-const FaramElement = elementType => (WrappedComponent) => {
-    // NOTE: FaramElementHOC must not be a PureComponent
-    class FaramElementHOC extends React.Component {
+export default elementType => (WrappedComponent) => {
+    // NOTE: FormElement must not be a PureComponent?
+    // FIXME: Why?
+    class FormElement extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
@@ -60,6 +54,7 @@ const FaramElement = elementType => (WrappedComponent) => {
                 faramInfo,
             });
 
+            // FIXME: should otherProps override newProps?
             return {
                 ...newProps,
                 ...otherProps,
@@ -68,22 +63,21 @@ const FaramElement = elementType => (WrappedComponent) => {
 
         renderWrappedComponent = ({ api } = {}) => {
             const newProps = this.calculateProps(api);
+
             return <WrappedComponent {...newProps} />;
         }
 
         render() {
             return (
-                <FaramContext.Consumer>
+                <FormContext.Consumer>
                     {this.renderWrappedComponent}
-                </FaramContext.Consumer>
+                </FormContext.Consumer>
             );
         }
     }
 
     return hoistNonReactStatics(
-        FaramElementHOC,
+        FormElement,
         WrappedComponent,
     );
 };
-
-export default FaramElement;

@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 
-import FaramElement from './FaramElement';
-import FaramContext from './FaramContext';
-import ElementListApi from './apis/ElementListApi';
+import { FaramInputElement } from '../FaramElements';
+import FormContext from '../Form/FormContext';
+
+import FaramListApi from './FaramListApi';
 
 const propTypes = {
     children: PropTypes.node,
@@ -29,7 +30,7 @@ class FaramList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    api = new ElementListApi();
+    api = new FaramListApi();
 
     render() {
         const { children } = this.props;
@@ -50,14 +51,16 @@ class FaramList extends React.PureComponent {
             changeDelay,
         });
 
+        // Context Provider is pure so we need to pass new object
+        // as value everytime.
+        const providerValue = { api: this.api };
+
         return (
-            // Context Provider is pure so we need to pass new object
-            // as value everytime.
-            <FaramContext.Provider value={{ api: this.api }}>
+            <FormContext.Provider value={providerValue}>
                 { children }
-            </FaramContext.Provider>
+            </FormContext.Provider>
         );
     }
 }
 
-export default FaramElement('input')(FaramList);
+export default FaramInputElement(FaramList);

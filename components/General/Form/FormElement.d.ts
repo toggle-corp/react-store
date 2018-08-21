@@ -1,11 +1,12 @@
 import * as React from 'react';
 
 export interface ExternalProps {
+    forwardedRef?: any;
     faramElementName?: string;
     faramElementIndex?: number;
-    forwardedRef?: any;
-    faramAction?: string;
     faramElement?: boolean;
+    faramAction?: string;
+    faramInfo?: any;
 }
 
 export interface InjectedProps {

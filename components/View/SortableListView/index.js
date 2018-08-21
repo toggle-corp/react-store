@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramSortableListElement } from '../../General/FaramElements';
 import ListView from './ListView';
 
 const propTypes = {
@@ -54,4 +54,4 @@ export class NormalSortableListView extends React.Component {
     }
 }
 
-export default FaramElement('sortableList')(NormalSortableListView);
+export default FaramSortableListElement(NormalSortableListView);

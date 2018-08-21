@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import FaramElement from '../Input/Faram/FaramElement';
+import { FaramInputElement } from '../General/FaramElements';
 import { listToMap } from '../../utils/common';
 
 const propTypes = {
@@ -90,7 +90,7 @@ export default (WrappedComponent) => {
         }
     };
 
-    const ComplementedFaramComponent = FaramElement('input')(ComplementedComponent);
+    const ComplementedFaramComponent = FaramInputElement(ComplementedComponent);
 
     return hoistNonReactStatics(ComplementedFaramComponent, WrappedComponent);
 };

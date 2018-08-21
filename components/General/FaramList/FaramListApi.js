@@ -1,27 +1,16 @@
-import { isTruthy } from '../../../../utils/common';
+import { isTruthy } from '../../../utils/common';
 
-import ElementApi from './ElementApi';
+import FaramGroupApi from '../FaramGroup/FaramGroupApi';
 
-/*
- * ElementListApi
- *
- * Instance of this is passed with FaramContext
- * and is used by context provider to control all
- * input children.
- */
+const noOp = () => {};
 
-export default class ElementListApi extends ElementApi {
-    getValue = faramIdentifier => (this.props.value || [])[faramIdentifier];
-
+export default class FaramListApi extends FaramGroupApi {
     // PRIVATE
     getNewValue = (oldValue, key, val) => {
         const newValue = [...oldValue];
         newValue[key] = val;
         return newValue;
     }
-
-    // PRIVATE
-    noOp = () => {};
 
     // PRIVATE
     add = (faramInfo = {}) => {
@@ -105,7 +94,7 @@ export default class ElementListApi extends ElementApi {
             case 'remove':
                 return () => this.remove(faramIdentifier, faramInfo);
             default:
-                return this.noOp;
+                return noOp;
         }
     }
 

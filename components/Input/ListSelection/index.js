@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '../../View/List/ListView';
-import FaramElement from '../Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Checkbox from '../Checkbox';
 
 import Label from '../Label';
@@ -151,4 +151,4 @@ export class NormalListSelection extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(NormalListSelection);
+export default FaramInputElement(NormalListSelection);

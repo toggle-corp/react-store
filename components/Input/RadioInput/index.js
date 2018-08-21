@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '../../View/List/ListView';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import Option from './Option';
 import styles from './styles.scss';
@@ -112,4 +112,4 @@ class RadioInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(RadioInput);
+export default FaramInputElement(RadioInput);

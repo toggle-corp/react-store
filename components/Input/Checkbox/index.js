@@ -3,7 +3,7 @@ import React from 'react';
 
 import { iconNames } from '../../../constants';
 import { randomString } from '../../../utils/common';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import styles from './styles.scss';
 
@@ -110,4 +110,4 @@ class Checkbox extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Checkbox);
+export default FaramInputElement(Checkbox);

@@ -5,4 +5,4 @@
 Collection of commonly used react components.
 
 #### Repo currently using react store
-- [deeper](https://github.com/eoglethorpe/deeper/)
+- [deeper](https://github.com/the-deep/client/)

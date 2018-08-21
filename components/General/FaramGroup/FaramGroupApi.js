@@ -1,15 +1,14 @@
-import { analyzeErrors } from '../validator';
+import FormElementApi from '../Form/FormElementApi';
 
+import { analyzeErrors } from '../Faram/validator';
 
-export default class ElementApi {
+export default class FaramGroupApi extends FormElementApi {
     changeHandlers = {};
     propsCalculators = {};
 
-    setProps = (props) => {
-        this.props = { ...props };
-    }
-
-    getValue = faramIdentifier => (this.props.value || {})[faramIdentifier];
+    getValue = faramIdentifier => (
+        this.props.value ? this.props.value[faramIdentifier] : undefined
+    );
 
     getError = faramIdentifier => (this.props.error || {})[faramIdentifier];
 
@@ -19,20 +18,17 @@ export default class ElementApi {
 
     getChangeDelay = () => this.props.changeDelay;
 
-    // PRIVATE
     getNewValue = (oldValue, key, val) => ({
         ...oldValue,
         [key]: val,
     })
 
-    // PRIVATE
     getNewError = (oldError, key, err) => ({
         ...oldError,
         $internal: undefined,
         [key]: err,
     });
 
-    // PRIVATE
     getNewInfo = (key, val, infoFromInput, infoFromProps) => {
         const faramElementName = (infoFromInput && infoFromInput.faramElementName) || [];
         const firstRun = faramElementName.length === 0;
@@ -50,7 +46,6 @@ export default class ElementApi {
         };
     }
 
-    // PRIVATE
     createOnChange = (faramIdentifier, faramInfo) => (value, error, info) => {
         if (!this.props.onChange) {
             return;
@@ -68,7 +63,6 @@ export default class ElementApi {
         this.props.onChange(newValue, newError, newInfo);
     }
 
-    // PRIVATE
     getOnChange = (faramIdentifier, faramInfo) => {
         if (this.changeHandlers[faramIdentifier]) {
             return this.changeHandlers[faramIdentifier];
@@ -79,19 +73,7 @@ export default class ElementApi {
         return handler;
     }
 
-    // PUBLIC
-    getCalculatedProps = ({ faramIdentifier, elementType, faramAction, faramInfo }) => {
-        // For faramElement of type 'type', a typeHandler will be applicable
-        const handler = this[`${elementType}Handler`];
-        if (handler) {
-            const values = handler({ faramIdentifier, elementType, faramAction, faramInfo });
-            return values;
-        }
-        console.error(`I do not have handler for ${elementType}`);
-        return undefined;
-    }
-
-    // Handlers
+    // HANDLERS
 
     inputHandler = ({ faramIdentifier, faramInfo }) => {
         const calculatedProps = {
@@ -129,4 +111,3 @@ export default class ElementApi {
         return calculatedProps;
     }
 }
-

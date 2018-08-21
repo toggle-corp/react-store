@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { leftPad } from '../../../utils/common';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
@@ -283,4 +283,4 @@ class TimeInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Delay(TimeInput));
+export default FaramInputElement(Delay(TimeInput));

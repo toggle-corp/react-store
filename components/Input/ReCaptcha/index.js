@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -187,4 +187,4 @@ class ReCaptcha extends Component {
     }
 }
 
-export default FaramElement('input')(ReCaptcha);
+export default FaramInputElement(ReCaptcha);

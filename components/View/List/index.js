@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramListElement } from '../../General/FaramElements';
 import ListItem from './ListItem';
 
 const propTypeData = PropTypes.arrayOf(
@@ -82,4 +82,4 @@ export class NormalList extends React.Component {
     }
 }
 
-export default FaramElement('list')(NormalList);
+export default FaramListElement(NormalList);

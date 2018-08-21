@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import FaramElement from '../../Input/Faram/FaramElement';
+
+import { FaramActionElement } from '../../General/FaramElements';
 
 /*
 eslint css-modules/no-unused-class: [
@@ -218,4 +219,4 @@ class Button extends React.PureComponent {
     }
 }
 
-export default FaramElement('action')(Button);
+export default FaramActionElement(Button);

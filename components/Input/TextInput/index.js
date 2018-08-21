@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
@@ -211,4 +211,4 @@ class TextInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Delay(TextInput));
+export default FaramInputElement(Delay(TextInput));
