@@ -87,8 +87,8 @@ export default class FaramListApi extends FaramGroupApi {
     }
 
     // PRIVATE
-    getOnClick = ({ faramIdentifier, faramAction, faramInfo }) => {
-        switch (faramAction) {
+    getOnClick = ({ faramIdentifier, faramInfo }) => {
+        switch (faramInfo.action) {
             case 'add':
                 return () => this.add(faramInfo);
             case 'remove':
@@ -100,10 +100,10 @@ export default class FaramListApi extends FaramGroupApi {
 
     // Handlers
 
-    actionHandler = ({ faramIdentifier, faramAction, faramInfo }) => {
+    actionHandler = ({ faramIdentifier, faramInfo }) => {
         const calculatedProps = {
             disabled: this.isDisabled(),
-            onClick: this.getOnClick({ faramIdentifier, faramAction, faramInfo }),
+            onClick: this.getOnClick({ faramIdentifier, faramInfo }),
             changeDelay: this.getChangeDelay(),
         };
         return calculatedProps;

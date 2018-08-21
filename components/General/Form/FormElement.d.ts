@@ -5,7 +5,6 @@ export interface ExternalProps {
     faramElementName?: string;
     faramElementIndex?: number;
     faramElement?: boolean;
-    faramAction?: string;
     faramInfo?: any;
 }
 

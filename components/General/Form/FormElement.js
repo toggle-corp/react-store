@@ -3,15 +3,12 @@ import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import FormContext from './FormContext';
-import { isFalsy } from '../../../utils/common';
 
-// FIXME: remove usage of faramAction
 // FIXME: rename elementType to faramElementType
 
 const propTypes = {
     faramElementName: PropTypes.string,
     faramElementIndex: PropTypes.number,
-    faramAction: PropTypes.string,
     faramElement: PropTypes.bool,
     faramInfo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
@@ -19,7 +16,6 @@ const propTypes = {
 const defaultProps = {
     faramElementName: undefined,
     faramElementIndex: undefined,
-    faramAction: undefined,
     faramElement: false,
     faramInfo: undefined,
 };
@@ -31,26 +27,29 @@ export default elementType => (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        calculateProps = (api) => {
+        static calculateProps = (api, props) => {
             const {
                 faramElement,
                 faramElementName,
                 faramElementIndex,
-                faramAction,
                 faramInfo,
                 ...otherProps
-            } = this.props;
+            } = props;
 
             const faramIdentifier = faramElementName || faramElementIndex;
 
-            if (!api || (!faramElement && isFalsy(faramIdentifier) && isFalsy(faramAction))) {
+            const shouldInject = api && api.shouldInject({
+                faramElement,
+                faramIdentifier,
+                faramInfo,
+            });
+            if (!shouldInject) {
                 return otherProps;
             }
 
             const newProps = api.getCalculatedProps({
                 faramIdentifier,
                 elementType,
-                faramAction,
                 faramInfo,
             });
 
@@ -62,7 +61,7 @@ export default elementType => (WrappedComponent) => {
         }
 
         renderWrappedComponent = ({ api } = {}) => {
-            const newProps = this.calculateProps(api);
+            const newProps = FormElement.calculateProps(api, this.props);
 
             return <WrappedComponent {...newProps} />;
         }
