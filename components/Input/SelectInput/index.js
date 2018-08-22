@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { iconNames } from '../../../constants';
 import DangerButton from '../../Action/Button/DangerButton';
 import Button from '../../Action/Button';
-import FaramElement from '../Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Label from '../Label';
 import HintAndError from '../HintAndError';
 import {
@@ -571,4 +571,4 @@ class SelectInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(SelectInput);
+export default FaramInputElement(SelectInput);

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { iconNames } from '../../../constants';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import Label from '../Label';
 import HintAndError from '../HintAndError';
@@ -724,4 +724,4 @@ export class NormalMultiSelectInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(NormalMultiSelectInput);
+export default FaramInputElement(NormalMultiSelectInput);

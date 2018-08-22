@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramOutputElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 import {
@@ -201,4 +201,4 @@ class Numeral extends React.PureComponent {
     }
 }
 
-export default FaramElement('output')(Numeral);
+export default FaramOutputElement(Numeral);

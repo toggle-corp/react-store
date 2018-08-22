@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ExternalProps } from '../Input/Faram/FaramElement';
+import { ExternalProps } from '../General/Form/FormElement';
 
 interface RendererProps<T> {
     className: string;

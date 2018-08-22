@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import FloatingContainer from '../../View/FloatingContainer';
 import Delay from '../../General/Delay';
 import DatePicker from '../DatePicker';
@@ -418,4 +418,4 @@ class DateInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Delay(DateInput));
+export default FaramInputElement(Delay(DateInput));

@@ -6,7 +6,7 @@ import {
     isFalsy,
     addSeparator,
 } from '../../../utils/common';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';
@@ -302,4 +302,4 @@ class NumberInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Delay(NumberInput));
+export default FaramInputElement(Delay(NumberInput));

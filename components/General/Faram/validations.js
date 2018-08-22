@@ -1,7 +1,3 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
-
 import {
     isFalsy,
     isTruthy,
@@ -9,7 +5,7 @@ import {
     splitInWhitespace,
     getErrorForDateValues,
 } from '../../../utils/common';
-import urlRegex from './regexForWeburl';
+import urlRegex from '../../../utils/regexForWeburl';
 
 
 export const lessThanCondition = n => (value) => {

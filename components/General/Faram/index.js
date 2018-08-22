@@ -10,8 +10,10 @@ import {
     analyzeErrors,
 } from './validator';
 import computeOutputs from './computer';
-import FaramGroup from './FaramGroup';
+import FaramGroup from '../FaramGroup';
 import styles from './styles.scss';
+
+const noOp = () => {};
 
 const propTypes = {
     /* class name for styling */
@@ -43,8 +45,6 @@ const propTypes = {
     setSubmitFunction: PropTypes.func,
 };
 
-const noOp = () => {};
-
 const defaultProps = {
     className: '',
     onChange: noOp,
@@ -60,7 +60,7 @@ const defaultProps = {
 
 const checkAndUpdateOutputs = (value, error, computeSchema, onChange) => {
     const newValue = computeOutputs(value, computeSchema);
-    if (onChange && newValue !== value) {
+    if (newValue !== value) {
         onChange(newValue, error, { isComputed: true });
     }
     return newValue;
@@ -89,22 +89,6 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
         );
         onValidationSuccess(valuesWithNull, values);
     }
-};
-
-export const detachedFaram = ({
-    value,
-    error,
-    schema,
-    computeSchema,
-    onChange,
-    onValidationFailure,
-    onValidationSuccess,
-}) => {
-    // NOTE: doesn't use computed value as new Value
-    // NOTE: Faram may not be mounted so we need to trigger computation here
-    checkAndUpdateOutputs(value, error, computeSchema, onChange);
-
-    handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
 };
 
 /*
@@ -169,10 +153,8 @@ export default class Faram extends React.PureComponent {
 
     handleFormChange = (value, error, info) => {
         const { onChange, computeSchema } = this.props;
-        if (onChange) {
-            const newValue = computeOutputs(value, computeSchema);
-            onChange(newValue, error, { ...info, isComputed: false });
-        }
+        const newValue = computeOutputs(value, computeSchema);
+        onChange(newValue, error, { ...info, isComputed: false });
     }
 
     render() {
@@ -200,5 +182,21 @@ export default class Faram extends React.PureComponent {
         );
     }
 }
+
+export const detachedFaram = ({
+    value,
+    error,
+    schema,
+    computeSchema,
+    onChange,
+    onValidationFailure,
+    onValidationSuccess,
+}) => {
+    // NOTE: doesn't use computed value as new Value
+    // NOTE: Faram may not be mounted so we need to trigger computation here
+    const newValue = checkAndUpdateOutputs(value, error, computeSchema, onChange);
+
+    handleSubmit(newValue, schema, onValidationFailure, onValidationSuccess);
+};
 
 export * from './validations';

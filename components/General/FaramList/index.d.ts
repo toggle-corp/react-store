@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FaramErrors, FaramValues } from '../Faram';
-
-import { ExternalProps } from './FaramElement';
+import { ExternalProps } from '../Form/FormElement';
 
 interface FaramProps {
     children: React.ReactNode;
@@ -12,7 +11,6 @@ interface FaramProps {
     changeDelay?: number;
 }
 
-declare class FaramGroup extends React.PureComponent<FaramProps & ExternalProps, any> {
+declare class List extends React.PureComponent<FaramProps & ExternalProps, any> {
 }
-
-export default FaramGroup;
+export default List;

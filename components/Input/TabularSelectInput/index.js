@@ -3,7 +3,7 @@ import React from 'react';
 
 import { listToMap } from '../../../utils/common';
 import { iconNames } from '../../../constants';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import DangerButton from '../../Action/Button/DangerButton';
 import MultiSelectInput from '../../Input/MultiSelectInput';
@@ -385,4 +385,4 @@ class TabularSelectInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(TabularSelectInput);
+export default FaramInputElement(TabularSelectInput);

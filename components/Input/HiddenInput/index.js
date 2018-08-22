@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -49,4 +49,4 @@ class HiddenInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(HiddenInput);
+export default FaramInputElement(HiddenInput);

@@ -1,24 +1,14 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import FaramContext from './FaramContext';
-import { isFalsy } from '../../../utils/common';
+import FormContext from './FormContext';
 
-
-/*
- * FaramElementHOC
- *
- * Transforms a component that has `onChange` and `value`
- * props to a consumer of FaramContext and auto connect the
- * input `faramElementName` field of the form data.
- */
-
+// FIXME: rename elementType to faramElementType
 
 const propTypes = {
     faramElementName: PropTypes.string,
     faramElementIndex: PropTypes.number,
-    faramAction: PropTypes.string,
     faramElement: PropTypes.bool,
     faramInfo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
@@ -26,40 +16,44 @@ const propTypes = {
 const defaultProps = {
     faramElementName: undefined,
     faramElementIndex: undefined,
-    faramAction: undefined,
     faramElement: false,
     faramInfo: undefined,
 };
 
-const FaramElement = elementType => (WrappedComponent) => {
-    // NOTE: FaramElementHOC must not be a PureComponent
-    class FaramElementHOC extends React.Component {
+export default elementType => (WrappedComponent) => {
+    // NOTE: FormElement must not be a PureComponent?
+    // FIXME: Why?
+    class FormElement extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        calculateProps = (api) => {
+        static calculateProps = (api, props) => {
             const {
                 faramElement,
                 faramElementName,
                 faramElementIndex,
-                faramAction,
                 faramInfo,
                 ...otherProps
-            } = this.props;
+            } = props;
 
             const faramIdentifier = faramElementName || faramElementIndex;
 
-            if (!api || (!faramElement && isFalsy(faramIdentifier) && isFalsy(faramAction))) {
+            const shouldInject = api && api.shouldInject({
+                faramElement,
+                faramIdentifier,
+                faramInfo,
+            });
+            if (!shouldInject) {
                 return otherProps;
             }
 
             const newProps = api.getCalculatedProps({
                 faramIdentifier,
                 elementType,
-                faramAction,
                 faramInfo,
             });
 
+            // FIXME: should otherProps override newProps?
             return {
                 ...newProps,
                 ...otherProps,
@@ -67,23 +61,22 @@ const FaramElement = elementType => (WrappedComponent) => {
         }
 
         renderWrappedComponent = ({ api } = {}) => {
-            const newProps = this.calculateProps(api);
+            const newProps = FormElement.calculateProps(api, this.props);
+
             return <WrappedComponent {...newProps} />;
         }
 
         render() {
             return (
-                <FaramContext.Consumer>
+                <FormContext.Consumer>
                     {this.renderWrappedComponent}
-                </FaramContext.Consumer>
+                </FormContext.Consumer>
             );
         }
     }
 
     return hoistNonReactStatics(
-        FaramElementHOC,
+        FormElement,
         WrappedComponent,
     );
 };
-
-export default FaramElement;

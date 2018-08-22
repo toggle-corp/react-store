@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramErrorMessageElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -56,4 +56,4 @@ class NonFieldErrors extends React.PureComponent {
     }
 }
 
-export default FaramElement('errorMessage')(NonFieldErrors);
+export default FaramErrorMessageElement(NonFieldErrors);

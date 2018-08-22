@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import styles from './styles.scss';
@@ -238,4 +238,4 @@ class TextArea extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(Delay(TextArea));
+export default FaramInputElement(Delay(TextArea));

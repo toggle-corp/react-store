@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
@@ -338,4 +338,4 @@ class DateFilter extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(DateFilter);
+export default FaramInputElement(DateFilter);

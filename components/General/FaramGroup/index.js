@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { FaramInputElement } from '../FaramElements';
+import FormContext from '../Form/FormContext';
 
-import FaramElement from './FaramElement';
-import FaramContext from './FaramContext';
-import ElementGroupApi from './apis/ElementGroupApi';
+import FaramGroupApi from './FaramGroupApi';
 
 const propTypes = {
     children: PropTypes.node.isRequired,
@@ -28,7 +28,7 @@ class FaramGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    api = new ElementGroupApi();
+    api = new FaramGroupApi();
 
     render() {
         const {
@@ -48,14 +48,16 @@ class FaramGroup extends React.PureComponent {
             changeDelay,
         });
 
+        // Context Provider is pure so we need to pass new object
+        // as value everytime.
+        const providerValue = { api: this.api };
+
         return (
-            // Context Provider is pure so we need to pass new object
-            // as value everytime.
-            <FaramContext.Provider value={{ api: this.api }}>
+            <FormContext.Provider value={providerValue}>
                 { children }
-            </FaramContext.Provider>
+            </FormContext.Provider>
         );
     }
 }
 
-export default FaramElement('input')(FaramGroup);
+export default FaramInputElement(FaramGroup);

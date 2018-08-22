@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FaramElement from '../Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import List from '../../View/List';
 
 import styles from './styles.scss';
@@ -160,4 +160,4 @@ class ScaleInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(ScaleInput);
+export default FaramInputElement(ScaleInput);

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../../Input/Faram/FaramElement';
+import { FaramListElement } from '../../../General/FaramElements';
 import { NormalList } from '../index';
 import styles from './styles.scss';
 
@@ -74,4 +74,4 @@ export class NormalListView extends React.Component {
     }
 }
 
-export default FaramElement('list')(NormalListView);
+export default FaramListElement(NormalListView);

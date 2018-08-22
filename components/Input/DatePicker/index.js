@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import DayPicker from './DayPicker';
 import MonthPicker from './MonthPicker';
@@ -138,4 +138,4 @@ class DatePicker extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(DatePicker);
+export default FaramInputElement(DatePicker);

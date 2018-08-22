@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 import SelectInput from '../SelectInput';
 
 const propTypes = {
@@ -98,4 +98,4 @@ class RangeFilter extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(RangeFilter);
+export default FaramInputElement(RangeFilter);

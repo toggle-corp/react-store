@@ -6,7 +6,7 @@ import {
     randomString,
     calcFloatingPositionInMainWindow,
 } from '../../../utils/common';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import FloatingContainer from '../../View/FloatingContainer';
 
@@ -201,4 +201,4 @@ class ColorInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(ColorInput);
+export default FaramInputElement(ColorInput);

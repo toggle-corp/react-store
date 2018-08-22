@@ -4,7 +4,7 @@ import MultiSelectInput from '../../Input/MultiSelectInput';
 import DismissableListItem from '../../Action/DismissableListItem';
 import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import styles from './styles.scss';
 
@@ -240,4 +240,4 @@ class SelectInputWithList extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(SelectInputWithList);
+export default FaramInputElement(SelectInputWithList);

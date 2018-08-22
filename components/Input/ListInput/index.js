@@ -3,7 +3,7 @@ import React from 'react';
 import Button from '../../Action/Button';
 import ListView from '../../View/List/ListView';
 import iconNames from '../../../constants/iconNames';
-import FaramElement from '../../Input/Faram/FaramElement';
+import { FaramInputElement } from '../../General/FaramElements';
 
 import styles from './styles.scss';
 
@@ -91,4 +91,4 @@ class ListInput extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(ListInput);
+export default FaramInputElement(ListInput);
