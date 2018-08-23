@@ -10,6 +10,7 @@ import {
 import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
 import { FaramInputElement } from '../../General/FaramElements';
+import Select from './Select';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -264,3 +265,4 @@ class TreeSelection extends React.PureComponent {
 }
 
 export default FaramInputElement(TreeSelection);
+export const TreeSelectionWithSelectors = FaramInputElement(Select(TreeSelection));
