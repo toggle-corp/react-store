@@ -6,7 +6,10 @@ import Confirm from '../View/Modal/Confirm';
 const propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
-    confirmationMessage: PropTypes.string.isRequired,
+    confirmationMessage: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+    ]).isRequired,
     confirmationTitle: PropTypes.string,
 };
 
