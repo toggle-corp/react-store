@@ -28,32 +28,16 @@ export default elementType => (WrappedComponent) => {
         static defaultProps = defaultProps;
 
         static calculateProps = (api, props) => {
-            const {
-                faramElement,
-                faramElementName,
-                faramElementIndex,
-                faramInfo,
-                ...otherProps
-            } = props;
-
-            const faramIdentifier = faramElementName || faramElementIndex;
-
-            const shouldInject = api && api.shouldInject({
-                faramElement,
-                faramIdentifier,
-                faramInfo,
-            });
-            if (!shouldInject) {
+            const { inject, apiProps, otherProps } = api
+                ? api.inspect(elementType, props)
+                : { inject: false, apiProps: undefined, otherProps: props };
+            if (!inject) {
                 return otherProps;
             }
 
-            const newProps = api.getCalculatedProps({
-                faramIdentifier,
-                elementType,
-                faramInfo,
-            });
+            const newProps = api.getCalculatedProps(apiProps);
 
-            // FIXME: should otherProps override newProps?
+            // NOTE: user can still override the calculated props, if need be
             return {
                 ...newProps,
                 ...otherProps,

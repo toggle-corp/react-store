@@ -3,9 +3,18 @@ export default class FormElementApi {
         this.props = { ...props };
     }
 
-    shouldInject = ({ faramElement, faramIdentifier, faramInfo }) => (
-        faramElement || faramIdentifier || faramInfo
-    )
+    inspect = (
+        elementType,
+        { faramElement, faramElementName, faramElementIndex, faramInfo, ...otherProps },
+    ) => ({
+        inject: faramElement || faramElementName || faramElementIndex || faramInfo,
+        apiProps: {
+            faramIdentifier: faramElementName || faramElementIndex,
+            elementType,
+            faramInfo,
+        },
+        otherProps,
+    })
 
     // NOTE: get handler function from elementType dynamically
     getCalculatedProps = ({ faramIdentifier, elementType, faramInfo }) => {
