@@ -13,6 +13,7 @@ const propTypes = {
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    keySelector: PropTypes.func,
     changeDelay: PropTypes.number,
 };
 
@@ -23,6 +24,7 @@ const defaultProps = {
     disabled: false,
     changeDelay: undefined,
     children: null,
+    keySelector: d => d.key,
 };
 
 
@@ -41,6 +43,7 @@ class FaramList extends React.PureComponent {
             disabled,
             onChange,
             changeDelay,
+            keySelector,
         } = this.props;
 
         this.api.setProps({
@@ -49,6 +52,7 @@ class FaramList extends React.PureComponent {
             disabled,
             onChange,
             changeDelay,
+            keySelector,
         });
 
         // Context Provider is pure so we need to pass new object

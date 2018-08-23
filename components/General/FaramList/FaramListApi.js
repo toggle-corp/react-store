@@ -12,6 +12,15 @@ export default class FaramListApi extends FaramGroupApi {
         return newValue;
     }
 
+    getError = (faramIdentifier) => {
+        const val = this.getValue(faramIdentifier);
+        const index = val ? this.props.keySelector(val) : undefined;
+
+        return this.props.error
+            ? this.props.error[index]
+            : undefined;
+    }
+
     // PRIVATE
     add = (faramInfo = {}) => {
         let { newElement } = faramInfo;
@@ -19,18 +28,8 @@ export default class FaramListApi extends FaramGroupApi {
             newElement = newElement(this.props.value);
         }
         const newValue = [...this.props.value, newElement];
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
-        };
 
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-
-        this.props.onChange(newValue, newError);
+        this.props.onChange(newValue);
 
         const { callback } = faramInfo;
         if (callback) {
@@ -43,24 +42,7 @@ export default class FaramListApi extends FaramGroupApi {
         const newValue = [...this.props.value];
         newValue.splice(index, 1);
 
-        const newError = { ...this.props.error };
-
-        delete newError.$internal;
-
-        for (let i = index; i < this.props.value.length; i += 1) {
-            delete newError[i];
-            if (isTruthy(newError[i + 1])) {
-                newError[i] = newError[i + 1];
-            }
-        }
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-
-        this.props.onChange(newValue, newError);
+        this.props.onChange(newValue);
 
         const { callback } = faramInfo;
         if (callback) {
@@ -71,19 +53,12 @@ export default class FaramListApi extends FaramGroupApi {
     // PRIVATE
     change = (value) => {
         const newValue = value;
-        const newError = {};
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
 
         // NOTE:
         // return new sorted value
         // clear error for all children
         // return faramInfo as is
-        this.props.onChange(newValue, newError, this.props.info);
+        this.props.onChange(newValue, this.props.info);
     }
 
     // PRIVATE
@@ -112,6 +87,7 @@ export default class FaramListApi extends FaramGroupApi {
     listHandler = () => {
         const calculatedProps = {
             data: this.props.value,
+            keyExtractor: this.props.keySelector,
         };
         return calculatedProps;
     }
@@ -120,6 +96,7 @@ export default class FaramListApi extends FaramGroupApi {
         const calculatedProps = {
             data: this.props.value,
             onChange: this.change,
+            keyExtractor: this.props.keySelector,
         };
         return calculatedProps;
     }

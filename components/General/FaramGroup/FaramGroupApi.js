@@ -6,28 +6,40 @@ export default class FaramGroupApi extends FormElementApi {
     changeHandlers = {};
     propsCalculators = {};
 
+    setProps = (props) => {
+        this.props = {
+            ...props,
+            onChange: (value, info) => {
+                // NOTE: Save these values in this.props so that above
+                // destructuring keeps working before setProps is
+                // again called.
+                this.value = value;
+
+                props.onChange(value, info);
+            },
+        };
+    }
+
     getValue = faramIdentifier => (
         this.props.value ? this.props.value[faramIdentifier] : undefined
-    );
+    )
 
-    getError = faramIdentifier => (this.props.error || {})[faramIdentifier];
+    getError = faramIdentifier => (
+        this.props.error ? this.props.error[faramIdentifier] : undefined
+    )
 
-    getInternalError = () => (this.props.error || {}).$internal;
-
-    isDisabled = () => this.props.disabled;
+    getInternalError = () => (
+        this.props.error ? this.props.error.$internal : undefined
+    )
 
     getChangeDelay = () => this.props.changeDelay;
+
+    isDisabled = () => this.props.disabled;
 
     getNewValue = (oldValue, key, val) => ({
         ...oldValue,
         [key]: val,
     })
-
-    getNewError = (oldError, key, err) => ({
-        ...oldError,
-        $internal: undefined,
-        [key]: err,
-    });
 
     getNewInfo = (key, val, infoFromInput, infoFromProps) => {
         const faramElementName = (infoFromInput && infoFromInput.faramElementName) || [];
@@ -46,21 +58,15 @@ export default class FaramGroupApi extends FormElementApi {
         };
     }
 
-    createOnChange = (faramIdentifier, faramInfo) => (value, error, info) => {
+    createOnChange = (faramIdentifier, faramInfo) => (value, info) => {
         if (!this.props.onChange) {
             return;
         }
 
         const newValue = this.getNewValue(this.props.value, faramIdentifier, value);
-        const newError = this.getNewError(this.props.error, faramIdentifier, error);
         const newInfo = this.getNewInfo(faramIdentifier, value, info, faramInfo);
 
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-        this.props.onChange(newValue, newError, newInfo);
+        this.props.onChange(newValue, newInfo);
     }
 
     getOnChange = (faramIdentifier, faramInfo) => {

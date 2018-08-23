@@ -7,6 +7,7 @@ import React from 'react';
 import {
     accumulateValues,
     accumulateErrors,
+    accumulateDifferentialErrors,
     analyzeErrors,
 } from './validator';
 import computeOutputs from './computer';
@@ -51,19 +52,11 @@ const defaultProps = {
     onValidationFailure: noOp,
     onValidationSuccess: noOp,
     disabled: false,
-    changeDelay: 200, // ms
+    changeDelay: 300, // ms
     computeSchema: {},
     value: {},
     error: {},
     setSubmitFunction: undefined,
-};
-
-const checkAndUpdateOutputs = (value, error, computeSchema, onChange) => {
-    const newValue = computeOutputs(value, computeSchema);
-    if (newValue !== value) {
-        onChange(newValue, error, { isComputed: true });
-    }
-    return newValue;
 };
 
 const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) => {
@@ -72,24 +65,27 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
 
     if (hasErrors) {
         onValidationFailure(errors);
-    } else {
-        const values = accumulateValues(
-            value,
-            schema,
-            { noFalsyValues: true },
-        );
-
-        const valuesWithNull = accumulateValues(
-            value,
-            schema,
-            {
-                noFalsyValues: false,
-                falsyValue: null,
-            },
-        );
-        onValidationSuccess(valuesWithNull, values);
+        return value;
     }
+
+    const values = accumulateValues(
+        value,
+        schema,
+        { noFalsyValues: true },
+    );
+
+    const valuesWithNull = accumulateValues(
+        value,
+        schema,
+        {
+            noFalsyValues: false,
+            falsyValue: null,
+        },
+    );
+    onValidationSuccess(valuesWithNull, values);
+    return values;
 };
+
 
 /*
  * Form Component for field validations and values aggregation
@@ -98,45 +94,53 @@ export default class Faram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-        const { value, error, computeSchema, onChange } = this.props;
-        checkAndUpdateOutputs(value, error, computeSchema, onChange);
-
-        if (props.setSubmitFunction) {
-            props.setSubmitFunction(this.submit);
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.computeSchema !== this.props.computeSchema) {
-            const { value, error, computeSchema, onChange } = nextProps;
-            checkAndUpdateOutputs(value, error, computeSchema, onChange);
+    componentWillMount() {
+        const { setSubmitFunction } = this.props;
+        if (setSubmitFunction) {
+            setSubmitFunction(this.submit);
         }
     }
 
     componentWillUnmount() {
         clearTimeout(this.changeTimeout);
-        if (this.props.setSubmitFunction) {
-            this.props.setSubmitFunction(undefined);
+        const { setSubmitFunction } = this.props;
+        if (setSubmitFunction) {
+            setSubmitFunction(undefined);
         }
     }
 
-    // Submit method to call externally
+    // NOTE:
+    // Submit method that can be called externally
+    // Use detachedFaram instead of calling submit externally
     submit = () => {
-        if (this.props.disabled) {
+        clearTimeout(this.changeTimeout);
+
+        const {
+            disabled,
+            changeDelay,
+        } = this.props;
+
+        if (disabled) {
             return;
         }
 
-        clearTimeout(this.changeTimeout);
-
-        // Add some delay in submission
+        // Add some delay to submit
         this.changeTimeout = setTimeout(
             () => {
-                const { value, schema, onValidationFailure, onValidationSuccess } = this.props;
-                handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
+                const {
+                    value,
+                    schema,
+                    onValidationFailure,
+                    onValidationSuccess,
+                } = this.props;
+                this.lastValue = handleSubmit(
+                    value,
+                    schema,
+                    onValidationFailure,
+                    onValidationSuccess,
+                );
             },
-            this.props.changeDelay,
+            changeDelay,
         );
     }
 
@@ -145,22 +149,43 @@ export default class Faram extends React.PureComponent {
     handleSubmitClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
+
         this.submit();
 
-        // NOTE: Returning false will not submit the form & redirect
+        // NOTE: Returning false will not submit & redirect
         return false;
     }
 
-    handleFormChange = (value, error, info) => {
-        const { onChange, computeSchema } = this.props;
+    handleFormChange = (value, info) => {
+        const {
+            onChange,
+            computeSchema,
+            schema,
+            value: oldValue,
+            error: oldError,
+        } = this.props;
+
         const newValue = computeOutputs(value, computeSchema);
-        onChange(newValue, error, { ...info, isComputed: false });
+        const newError = accumulateDifferentialErrors(
+            oldValue,
+            newValue,
+            oldError,
+            schema,
+        );
+
+        // FIXME:
+        // this.valueSent = newValue;
+        onChange(newValue, newError, info);
     }
 
     render() {
         const {
             children,
             className,
+            value,
+            error,
+            disabled,
+            changeDelay,
         } = this.props;
 
         return (
@@ -171,10 +196,10 @@ export default class Faram extends React.PureComponent {
             >
                 <FaramGroup
                     onChange={this.handleFormChange}
-                    value={this.props.value}
-                    error={this.props.error}
-                    disabled={this.props.disabled}
-                    changeDelay={this.props.changeDelay}
+                    value={value}
+                    error={error}
+                    disabled={disabled}
+                    changeDelay={changeDelay}
                 >
                     {children}
                 </FaramGroup>
@@ -185,18 +210,16 @@ export default class Faram extends React.PureComponent {
 
 export const detachedFaram = ({
     value,
-    error,
     schema,
-    computeSchema,
-    onChange,
+    // computeSchema,
+    // onChange,
     onValidationFailure,
     onValidationSuccess,
 }) => {
-    // NOTE: doesn't use computed value as new Value
     // NOTE: Faram may not be mounted so we need to trigger computation here
-    const newValue = checkAndUpdateOutputs(value, error, computeSchema, onChange);
+    // handleValueChange(value, schema, computeSchema, onChange);
 
-    handleSubmit(newValue, schema, onValidationFailure, onValidationSuccess);
+    handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
 };
 
 export * from './validations';

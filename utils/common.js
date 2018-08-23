@@ -763,6 +763,40 @@ export const findDifferenceInObject = (o, n) => {
     return changes;
 };
 
+export const findDifferenceInList = (listA, listB, keySelector) => {
+    const modified = [];
+    const added = [];
+    const removed = [];
+    const unmodified = [];
+
+    const mapA = listToMap(listA, keySelector, e => e);
+    listB.forEach((elem) => {
+        const key = keySelector(elem);
+        if (mapA[key] === undefined) {
+            added.push(elem);
+        } else if (mapA[key] !== elem) {
+            modified.push({ old: mapA[key], new: elem });
+        } else {
+            unmodified.push(elem);
+        }
+    });
+
+    const mapB = listToMap(listB, keySelector, e => e);
+    listA.forEach((elem) => {
+        const key = keySelector(elem);
+        if (mapB[key] === undefined) {
+            removed.push(elem);
+        }
+    });
+
+    return {
+        added,
+        modified,
+        removed,
+        unmodified,
+    };
+};
+
 // should check if new object should be set
 // and should the message of overriden shown
 export const checkVersion = (oldVersionId, newVersionId) => ({
