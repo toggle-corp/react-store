@@ -14,6 +14,7 @@ const propTypes = {
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
     keySelector: PropTypes.func,
+    readOnly: PropTypes.bool,
     changeDelay: PropTypes.number,
 };
 
@@ -22,6 +23,7 @@ const defaultProps = {
     value: [],
     error: {},
     disabled: false,
+    readOnly: false,
     changeDelay: undefined,
     children: null,
     keySelector: d => d.key,
@@ -42,6 +44,7 @@ class FaramList extends React.PureComponent {
             error,
             disabled,
             onChange,
+            readOnly,
             changeDelay,
             keySelector,
         } = this.props;
@@ -51,6 +54,7 @@ class FaramList extends React.PureComponent {
             error,
             disabled,
             onChange,
+            readOnly,
             changeDelay,
             keySelector,
         });

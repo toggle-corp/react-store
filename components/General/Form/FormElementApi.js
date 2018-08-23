@@ -3,31 +3,30 @@ export default class FormElementApi {
         this.props = { ...props };
     }
 
-    inspect = (
-        elementType,
-        { faramElement, faramElementName, faramElementIndex, faramInfo, ...otherProps },
-    ) => ({
-        inject: faramElement || faramElementName || faramElementIndex || faramInfo,
-        apiProps: {
-            faramIdentifier: faramElementName || faramElementIndex,
-            elementType,
-            faramInfo,
-        },
-        otherProps,
-    })
+    // eslint-disable-next-line class-methods-use-this
+    getHandler() {
+        return {};
+    }
 
-    // NOTE: get handler function from elementType dynamically
-    getCalculatedProps = ({ faramIdentifier, elementType, faramInfo }) => {
-        const getPropsForType = this[`${elementType}Handler`];
-        if (getPropsForType) {
-            return getPropsForType({
-                elementType,
-                faramIdentifier,
-                faramInfo,
-            });
+    getCalculatedProps = (elementType, props) => {
+        const { getPropsFromApi, calculateElementProps } = this.handlers[elementType] || {};
+        if (!getPropsFromApi || !calculateElementProps) {
+            // console.error(`FormElement: Handler not registered for: ${elementType}`);
+            return { otherProps: props };
         }
-        console.error(`FormElement: Handler not registered for: ${elementType}`);
-        return undefined;
+
+        const { apiProps, otherProps } = getPropsFromApi(props);
+        // apiProps should be undefined when apiProps cannot be calculated
+        // by getPropsFromApi method, but it still strips known keys from input props
+        if (!apiProps) {
+            return { otherProps };
+        }
+
+        const injectedProps = calculateElementProps(apiProps);
+        return {
+            injectedProps,
+            otherProps,
+        };
     }
 }
 

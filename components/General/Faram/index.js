@@ -39,6 +39,8 @@ const propTypes = {
     error: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     /* Disable all elements in form */
     disabled: PropTypes.bool,
+    /* Set elements to readonly in form */
+    readOnly: PropTypes.bool,
     /* Delay every input component in form */
     changeDelay: PropTypes.number,
 
@@ -52,7 +54,8 @@ const defaultProps = {
     onValidationFailure: noOp,
     onValidationSuccess: noOp,
     disabled: false,
-    changeDelay: 300, // ms
+    readOnly: false,
+    changeDelay: 100, // ms
     computeSchema: {},
     value: {},
     error: {},
@@ -144,8 +147,6 @@ export default class Faram extends React.PureComponent {
         );
     }
 
-    // Submit using submit button
-
     handleSubmitClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -173,8 +174,6 @@ export default class Faram extends React.PureComponent {
             schema,
         );
 
-        // FIXME:
-        // this.valueSent = newValue;
         onChange(newValue, newError, info);
     }
 
@@ -185,6 +184,7 @@ export default class Faram extends React.PureComponent {
             value,
             error,
             disabled,
+            readOnly,
             changeDelay,
         } = this.props;
 
@@ -199,6 +199,7 @@ export default class Faram extends React.PureComponent {
                     value={value}
                     error={error}
                     disabled={disabled}
+                    readOnly={readOnly}
                     changeDelay={changeDelay}
                 >
                     {children}
