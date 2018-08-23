@@ -18,7 +18,7 @@ const propTypes = {
      */
     mode: PropTypes.string,
 
-    emptyComponent: PropTypes.function,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {

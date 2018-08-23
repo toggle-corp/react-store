@@ -78,17 +78,41 @@ export default class RestRequest {
         // Inject postLoad on success, failure, and fatal functions
         this.success = (...attrs) => {
             postLoadFn();
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             successFn(...attrs);
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             afterLoadFn();
         };
         this.failure = (...attrs) => {
             postLoadFn();
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             failureFn(...attrs);
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             afterLoadFn();
         };
         this.fatal = (...attrs) => {
             postLoadFn();
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             fatalFn(...attrs);
+            if (this.aborted) {
+                this.abort();
+                return;
+            }
             afterLoadFn();
         };
 
