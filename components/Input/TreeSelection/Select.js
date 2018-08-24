@@ -11,17 +11,12 @@ const selectors = {
 export default (WrappedComponent) => {
     class SelectedComponent extends React.PureComponent {
         static calcNewData = (data, props) => {
-            const selectedData = Object.keys(selectors)
+            const newData = Object.keys(selectors)
                 .filter(s => props[s])
                 .reduce((acc, selector) => ({
                     ...acc,
                     [selectors[selector]]: props[selector](data),
-                }), {});
-
-            const newData = {
-                ...data,
-                ...selectedData,
-            };
+                }), { ...data });
 
             if (newData.nodes) {
                 newData.nodes =
@@ -32,13 +27,13 @@ export default (WrappedComponent) => {
         }
 
         calcProps = () => {
-            const data = this.props.value;
+            const { data } = this.props;
             const newData =
                 data.map(datum => SelectedComponent.calcNewData(datum, this.props));
 
             return {
                 ...this.props,
-                value: newData,
+                data: newData,
             };
         }
 

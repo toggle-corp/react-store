@@ -11,18 +11,20 @@ import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
 import { FaramInputElement } from '../../General/FaramElements';
 import Select from './Select';
+import SeparateDataValue from './SeparateDataValue';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
+
+
+const noOp = () => undefined;
 
 const propTypes = {
     className: PropTypes.string,
     value: PropTypes.arrayOf(PropTypes.shape({
         key: PropTypes.string,
         title: PropTypes.string,
-        selected: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-        nodes: PropTypes.arrayOf(PropTypes.object), // Children nodes
+        nodes: PropTypes.arrayOf(PropTypes.object),
+        selected: PropTypes.bool,
         draggable: PropTypes.bool,
     })),
     onChange: PropTypes.func,
@@ -30,7 +32,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    onChange: undefined,
+    onChange: noOp,
     value: [],
 };
 
@@ -40,7 +42,7 @@ const DragHandle = SortableHandle(() => (
 
 
 // Get cumulative selected state from a list of nodes
-function getSelectedState(nodes) {
+const getSelectedState = (nodes) => {
     let selected = true;
 
     // If any one child is in fuzzy state, we are in fuzzy state
@@ -60,20 +62,15 @@ function getSelectedState(nodes) {
     }
 
     return selected;
-}
+};
 
-
-// Update selected state of a node based on its
-// children recursively
-function updateNodeState(node) {
-    const nodes = node.nodes && node.nodes.map(n => updateNodeState(n));
-
-    return {
-        ...node,
-        nodes,
-        selected: nodes ? getSelectedState(nodes) : node.selected,
-    };
-}
+// Set selected state for a particular node where selected = true/false/'fuzzy'
+// and do it for all the children.
+const setNodeSelection = (node, selected) => ({
+    ...node,
+    nodes: node.nodes && node.nodes.map(n => setNodeSelection(n, selected)),
+    selected,
+});
 
 class TreeSelection extends React.PureComponent {
     static propTypes = propTypes;
@@ -84,14 +81,7 @@ class TreeSelection extends React.PureComponent {
 
         this.state = {
             expanded: {},
-            value: this.createValue(props.value),
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.state.value) {
-            this.setState({ value: this.createValue(nextProps.value) });
-        }
     }
 
     // Based on selected values (true/false/'fuzzy'), get class-name
@@ -111,17 +101,6 @@ class TreeSelection extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    // Set selected state for a particular node where selected = true/false/'fuzzy'
-    // and do it for all the children
-    // Immutable operation: so returns new object
-    setNodeSelection = (node, selected) => ({
-        ...node,
-        nodes: node.nodes && node.nodes.map(n => this.setNodeSelection(n, selected)),
-        selected,
-    })
-
-    createValue = value => value.map(v => updateNodeState(v))
-
     // Toggle expand state of a node
     handleToggleExpand = (key) => {
         const expanded = { ...this.state.expanded };
@@ -131,13 +110,11 @@ class TreeSelection extends React.PureComponent {
 
     // Handle toggling the state of checkbox including its children
     handleCheckBox = (key) => {
-        const value = [...this.state.value];
+        const value = [...this.props.value];
 
         const index = value.findIndex(v => v.key === key);
         const state = !value[index].selected;
-        value[index] = this.setNodeSelection(value[index], state);
-
-        this.setState({ value });
+        value[index] = setNodeSelection(value[index], state);
 
         if (this.props.onChange) {
             this.props.onChange(value);
@@ -147,7 +124,7 @@ class TreeSelection extends React.PureComponent {
     // Update the children nodes
     // Change may include selected state and order of the children
     handleChildrenChange = (key, nodes) => {
-        const value = [...this.state.value];
+        const value = [...this.props.value];
         const index = value.findIndex(v => v.key === key);
         const selected = getSelectedState(nodes);
 
@@ -159,7 +136,6 @@ class TreeSelection extends React.PureComponent {
         };
 
         value[index] = nodeValue;
-        this.setState({ value });
 
         if (this.props.onChange) {
             this.props.onChange(value);
@@ -169,11 +145,7 @@ class TreeSelection extends React.PureComponent {
     // Start sortable stuffs
 
     handleSortEnd = ({ oldIndex, newIndex }) => {
-        const value = arrayMove(this.state.value, oldIndex, newIndex);
-        this.setState({
-            value,
-        });
-
+        const value = arrayMove(this.props.value, oldIndex, newIndex);
         if (this.props.onChange) {
             this.props.onChange(value);
         }
@@ -236,11 +208,10 @@ class TreeSelection extends React.PureComponent {
                 />
             )}
         </div>
-    );
+    )
 
     render() {
-        const { className } = this.props;
-        const { value } = this.state;
+        const { className, value } = this.props;
         const classNames = [
             className,
             styles.treeSelection,
@@ -249,20 +220,20 @@ class TreeSelection extends React.PureComponent {
 
         return (
             <div className={classNames.join(' ')}>
-                {value && (
-                    <this.SortableTree
-                        items={value}
-                        onSortEnd={this.handleSortEnd}
-                        lockAxis="y"
-                        lockToContainerEdges
-                        useDragHandle
-                        lockOffset="0%"
-                    />
-                )}
+                <this.SortableTree
+                    items={value}
+                    onSortEnd={this.handleSortEnd}
+                    lockAxis="y"
+                    lockToContainerEdges
+                    useDragHandle
+                    lockOffset="0%"
+                />
             </div>
         );
     }
 }
 
 export default FaramInputElement(TreeSelection);
-export const TreeSelectionWithSelectors = FaramInputElement(Select(TreeSelection));
+export const SeparatedTreeSelection = FaramInputElement(SeparateDataValue(TreeSelection));
+export const TreeSelectionWithSelectors =
+    FaramInputElement(Select(SeparateDataValue(TreeSelection)));

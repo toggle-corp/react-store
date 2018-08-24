@@ -21,10 +21,6 @@
             padding: $spacing-extra-small;
             color: $color-accent;
             font-size: $font-size-medium-alt;
-
-            &.unchecked {
-                color: $color-text;
-            }
         }
 
         .node-title {
@@ -45,13 +41,5 @@
 
     .tree-selection {
         margin-left: $spacing-medium;
-    }
-}
-
-:global {
-    body {
-        >.tree-node {
-            @include shadow-small;
-        }
     }
 }
