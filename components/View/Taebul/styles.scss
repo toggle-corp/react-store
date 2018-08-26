@@ -1,0 +1,17 @@
+@import '../../../stylesheets/base';
+
+.taebul {
+    .head {
+        display: flex;
+        border-bottom: $width-separator-medium solid $color-separator;
+    }
+
+    .body {
+        padding: 0;
+
+        .row {
+            display: flex;
+            border-bottom: $width-separator-thin solid $color-separator;
+        }
+    }
+}

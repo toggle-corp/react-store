@@ -1,0 +1,18 @@
+@import '../../../../stylesheets/base';
+
+.new-header {
+    display: flex;
+
+    .original-header-container {
+        flex-grow: 1;
+    }
+
+    .separator {
+        align-self: center;
+        flex-shrink: 0;
+        border-left: $width-separator-medium solid $color-separator-alt;
+        cursor: col-resize;
+        padding: 0 $spacing-small;
+        height: $font-size-medium;
+    }
+}
