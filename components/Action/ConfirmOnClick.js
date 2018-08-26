@@ -8,7 +8,7 @@ const propTypes = {
     disabled: PropTypes.bool,
     confirmationMessage: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.object,
+        PropTypes.node,
     ]).isRequired,
     confirmationTitle: PropTypes.string,
 };
@@ -59,6 +59,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                 ...otherProps
             } = this.props;
             const { showConfirm } = this.state;
+            const isConfirmationMessageNode = React.isValidElement(confirmationMessage);
 
             return (
                 <Fragment>
@@ -73,9 +74,15 @@ const ConfirmOnClick = (WrappedComponent) => {
                             onClose={this.handleModalClose}
                             title={confirmationTitle}
                         >
-                            <p>
-                                {confirmationMessage}
-                            </p>
+                            {
+                                isConfirmationMessageNode ?
+                                    confirmationMessage
+                                    : (
+                                        <p>
+                                            {confirmationMessage}
+                                        </p>
+                                    )
+                            }
                         </Confirm>
                     }
                 </Fragment>
