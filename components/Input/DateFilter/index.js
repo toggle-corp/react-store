@@ -257,7 +257,6 @@ class DateFilter extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-
         const {
             modalShown,
             startDate,
