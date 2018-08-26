@@ -1,4 +1,6 @@
 import {
+    isObject,
+    isList,
     isFalsy,
     isTruthy,
     findDifferenceInList,
@@ -6,12 +8,6 @@ import {
 
 const emptyObject = {};
 const emptyArray = [];
-
-const isList = item => Array.isArray(item);
-
-const isObject = item => (
-    typeof item === 'object' && !isList(item) && item !== null
-);
 
 const hasNoKeys = obj => (
     isFalsy(obj) || Object.keys(obj).length === 0
@@ -97,7 +93,7 @@ export const accumulateErrors = (obj, schema = {}) => {
     }
     if (schemaForArray) {
         const safeObj = obj || emptyArray;
-        safeObj.forEach((element, i) => {
+        safeObj.forEach((element) => {
             const fieldError = accumulateErrors(element, member);
             if (fieldError) {
                 const index = keySelector(element);

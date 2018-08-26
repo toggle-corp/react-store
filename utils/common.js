@@ -54,8 +54,10 @@ export const isObjectEmpty = (obj) => {
     return true;
 };
 
+export const isList = item => Array.isArray(item);
+
 export const isObject = item => (
-    typeof item === 'object' && !Array.isArray(item) && item !== null
+    typeof item === 'object' && !isList(item) && item !== null
 );
 
 // STRING

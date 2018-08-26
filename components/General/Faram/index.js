@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import {
     accumulateValues,
@@ -62,6 +63,8 @@ const defaultProps = {
     setSubmitFunction: undefined,
 };
 
+// TODO: memoizing accumulateErrors, analyzeErrors, accumulateValues
+// should be done later
 const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) => {
     const errors = accumulateErrors(value, schema);
     const hasErrors = analyzeErrors(errors);
@@ -89,6 +92,33 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
     return values;
 };
 
+const memoizedComputeOutputs = memoize(computeOutputs);
+
+const handleChange = ({
+    value,
+    info,
+    onChange,
+    computeSchema,
+    schema,
+    oldValue,
+    oldError,
+}) => {
+    const newValue = memoizedComputeOutputs(value, computeSchema);
+
+    if (oldValue === newValue) {
+        return;
+    }
+
+    const newError = accumulateDifferentialErrors(
+        oldValue,
+        newValue,
+        oldError,
+        schema,
+    );
+
+    onChange(newValue, newError, info);
+};
+
 
 /*
  * Form Component for field validations and values aggregation
@@ -102,6 +132,47 @@ export default class Faram extends React.PureComponent {
         if (setSubmitFunction) {
             setSubmitFunction(this.submit);
         }
+
+        const {
+            onChange,
+            computeSchema,
+            schema,
+            value,
+            error,
+        } = this.props;
+
+        handleChange({
+            value,
+            info: { computed: true },
+            onChange,
+            computeSchema,
+            schema,
+            oldValue: value,
+            oldError: error,
+        });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            value: newValue,
+            computeSchema: newComputeSchema,
+            schema: newSchema,
+            onChange,
+        } = nextProps;
+        const {
+            value: oldValue,
+            error: oldError,
+        } = this.props;
+
+        handleChange({
+            value: newValue,
+            info: { computed: true },
+            onChange,
+            computeSchema: newComputeSchema,
+            schema: newSchema,
+            oldValue,
+            oldError,
+        });
     }
 
     componentWillUnmount() {
@@ -136,7 +207,7 @@ export default class Faram extends React.PureComponent {
                     onValidationFailure,
                     onValidationSuccess,
                 } = this.props;
-                this.lastValue = handleSubmit(
+                handleSubmit(
                     value,
                     schema,
                     onValidationFailure,
@@ -166,15 +237,15 @@ export default class Faram extends React.PureComponent {
             error: oldError,
         } = this.props;
 
-        const newValue = computeOutputs(value, computeSchema);
-        const newError = accumulateDifferentialErrors(
-            oldValue,
-            newValue,
-            oldError,
+        handleChange({
+            value,
+            info,
+            onChange,
+            computeSchema,
             schema,
-        );
-
-        onChange(newValue, newError, info);
+            oldValue,
+            oldError,
+        });
     }
 
     render() {

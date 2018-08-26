@@ -78,7 +78,7 @@ export default class FaramGroupApi extends FormElementApi {
                 // NOTE: Save these values in this.props so that above
                 // destructuring keeps working before setProps is
                 // again called.
-                this.value = value;
+                this.props.value = value;
 
                 props.onChange(value, info);
             },
