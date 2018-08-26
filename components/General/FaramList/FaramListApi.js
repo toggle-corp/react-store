@@ -1,126 +1,87 @@
-import { isTruthy } from '../../../utils/common';
-
 import FaramGroupApi from '../FaramGroup/FaramGroupApi';
 
-const noOp = () => {};
+const emptyArray = [];
 
 export default class FaramListApi extends FaramGroupApi {
-    // PRIVATE
-    getNewValue = (oldValue, key, val) => {
-        const newValue = [...oldValue];
-        newValue[key] = val;
-        return newValue;
+    onClickMemory = {}
+
+    constructor(props) {
+        super(props);
+        this.handlers = this.getHandler();
     }
 
-    // PRIVATE
-    add = (faramInfo = {}) => {
-        let { newElement } = faramInfo;
-        if (newElement && typeof newElement === 'function') {
-            newElement = newElement(this.props.value);
-        }
-        const newValue = [...this.props.value, newElement];
-        const newError = {
-            ...this.props.error,
-            $internal: undefined,
+    getHandler() {
+        return {
+            ...super.getHandler(),
+            action: {
+                getPropsFromApi: ({ faramElementName, faramAction, ...otherProps }) => ({
+                    apiProps: faramElementName !== undefined && faramAction
+                        ? { faramElementName, faramAction }
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: ({ faramElementName, faramAction }) => ({
+                    disabled: this.isDisabled() || this.isReadOnly(),
+                    changeDelay: this.getChangeDelay(),
+                    onClick: this.getOnClick(faramElementName, faramAction),
+                }),
+            },
+            list: {
+                getPropsFromApi: ({ faramElement, ...otherProps }) => ({
+                    apiProps: faramElement
+                        ? {}
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: () => ({
+                    data: this.props.value,
+                    keyExtractor: this.props.keySelector,
+                }),
+            },
+            sortableList: {
+                getPropsFromApi: ({ faramElement, ...otherProps }) => ({
+                    apiProps: faramElement
+                        ? {}
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: () => ({
+                    data: this.props.value,
+                    onChange: this.props.onChange,
+                    keyExtractor: this.props.keySelector,
+                }),
+            },
         };
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-
-        this.props.onChange(newValue, newError);
-
-        const { callback } = faramInfo;
-        if (callback) {
-            callback(newElement, newValue);
-        }
     }
 
-    // PRIVATE
-    remove = (index, faramInfo = {}) => {
-        const newValue = [...this.props.value];
-        newValue.splice(index, 1);
-
-        const newError = { ...this.props.error };
-
-        delete newError.$internal;
-
-        for (let i = index; i < this.props.value.length; i += 1) {
-            delete newError[i];
-            if (isTruthy(newError[i + 1])) {
-                newError[i] = newError[i + 1];
-            }
-        }
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-
-        this.props.onChange(newValue, newError);
-
-        const { callback } = faramInfo;
-        if (callback) {
-            callback(index, newValue);
-        }
+    // override FaramGroupApi
+    getNewValue = (key, oldValue, newValue) => {
+        const result = [...oldValue];
+        result[key] = newValue;
+        return result;
     }
 
-    // PRIVATE
-    change = (value) => {
-        const newValue = value;
-        const newError = {};
-
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-
-        // NOTE:
-        // return new sorted value
-        // clear error for all children
-        // return faramInfo as is
-        this.props.onChange(newValue, newError, this.props.info);
+    getError = (faramElementName) => {
+        const val = this.getValue(faramElementName);
+        const index = val ? this.props.keySelector(val) : undefined;
+        return this.props.error
+            ? this.props.error[index]
+            : undefined;
     }
 
-    // PRIVATE
-    getOnClick = ({ faramIdentifier, faramInfo }) => {
-        switch (faramInfo.action) {
-            case 'add':
-                return () => this.add(faramInfo);
-            case 'remove':
-                return () => this.remove(faramIdentifier, faramInfo);
-            default:
-                return noOp;
+    // NOTE: memoized
+    // NOTE: faramAction shouldn't change
+    getOnClick = (faramElementName, faramAction) => {
+        if (this.onClickMemory[faramElementName]) {
+            return this.onClickMemory[faramElementName];
         }
-    }
 
-    // Handlers
-
-    actionHandler = ({ faramIdentifier, faramInfo }) => {
-        const calculatedProps = {
-            disabled: this.isDisabled(),
-            onClick: this.getOnClick({ faramIdentifier, faramInfo }),
-            changeDelay: this.getChangeDelay(),
+        const newOnClick = () => {
+            const newValue = faramAction(this.props.value || emptyArray, faramElementName);
+            // Button doesn't have children, so no need to propagate faramInfo
+            this.props.onChange(newValue);
         };
-        return calculatedProps;
-    }
-
-    listHandler = () => {
-        const calculatedProps = {
-            data: this.props.value,
-        };
-        return calculatedProps;
-    }
-
-    sortableListHandler = () => {
-        const calculatedProps = {
-            data: this.props.value,
-            onChange: this.change,
-        };
-        return calculatedProps;
+        this.onClickMemory[faramElementName] = newOnClick;
+        return newOnClick;
     }
 }

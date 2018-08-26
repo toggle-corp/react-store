@@ -1,11 +1,13 @@
-import { isFalsy, isTruthy } from '../../../utils/common';
+import {
+    isObject,
+    isList,
+    isFalsy,
+    isTruthy,
+    findDifferenceInList,
+} from '../../../utils/common';
 
 const emptyObject = {};
 const emptyArray = [];
-
-const isObject = item => (
-    typeof item === 'object' && !Array.isArray(item) && item !== null
-);
 
 const hasNoKeys = obj => (
     isFalsy(obj) || Object.keys(obj).length === 0
@@ -15,7 +17,7 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
-export const accumulateValues = (obj, schema, settings = {}) => {
+export const accumulateValues = (obj, schema = {}, settings = {}) => {
     const {
         noFalsyValues = false,
         falsyValue = undefined,
@@ -23,7 +25,7 @@ export const accumulateValues = (obj, schema, settings = {}) => {
 
     // NOTE: if schema is array, the object is the node element
     const { member, fields } = schema;
-    const isSchemaForLeaf = Array.isArray(schema);
+    const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = !!member;
     const isSchemaForObject = !!fields;
 
@@ -59,16 +61,15 @@ export const accumulateValues = (obj, schema, settings = {}) => {
         return values;
     }
 
-    // FIXME: throw error
-    console.error('Schema is invalid at:', schema);
+    console.error('Accumulate Value: Schema is invalid for ', schema);
     return undefined;
 };
 
-export const accumulateErrors = (obj, schema) => {
+export const accumulateErrors = (obj, schema = {}) => {
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, validation } = schema;
-    const schemaForLeaf = Array.isArray(schema);
-    const schemaForArray = !!member;
+    const { member, fields, validation, keySelector } = schema;
+    const schemaForLeaf = isList(schema);
+    const schemaForArray = !!member && !!keySelector;
     const schemaForObject = !!fields;
 
     if (schemaForLeaf) {
@@ -92,12 +93,14 @@ export const accumulateErrors = (obj, schema) => {
     }
     if (schemaForArray) {
         const safeObj = obj || emptyArray;
-        safeObj.forEach((element, i) => {
+        safeObj.forEach((element) => {
             const fieldError = accumulateErrors(element, member);
             if (fieldError) {
-                errors[i] = fieldError;
+                const index = keySelector(element);
+                errors[index] = fieldError;
             }
         });
+        return hasNoKeys(errors) ? undefined : errors;
     } else if (schemaForObject) {
         const safeObj = obj || emptyObject;
         Object.keys(fields).forEach((fieldName) => {
@@ -106,8 +109,108 @@ export const accumulateErrors = (obj, schema) => {
                 errors[fieldName] = fieldError;
             }
         });
+        return hasNoKeys(errors) ? undefined : errors;
     }
-    return hasNoKeys(errors) ? undefined : errors;
+
+    console.error('Accumulate Error: Schema is invalid for ', schema);
+    return undefined;
+};
+
+export const accumulateDifferentialErrors = (
+    oldObj, newObj, oldError, schema = {},
+) => {
+    if (oldObj === newObj) {
+        return oldError;
+    }
+    // NOTE: if schema is array, the object is the node element
+    const { member, fields, validation, keySelector } = schema;
+    const schemaForLeaf = isList(schema);
+    const schemaForArray = !!member && !!keySelector;
+    const schemaForObject = !!fields;
+
+    if (schemaForLeaf) {
+        let error;
+        schema.every((rule) => {
+            const { ok, message } = rule(newObj);
+            if (!ok) {
+                error = message;
+            }
+            return ok;
+        });
+        return error;
+    }
+
+    const errors = {};
+    if (validation) {
+        const validationErrors = validation(newObj);
+        if (validationErrors.length > 0) {
+            errors.$internal = validationErrors;
+        }
+    }
+
+    if (schemaForArray) {
+        const safeOldObj = oldObj || emptyArray;
+        const safeNewObj = newObj || emptyArray;
+        const safeOldError = oldError || emptyObject;
+
+        const {
+            unmodified,
+            modified,
+        } = findDifferenceInList(safeOldObj, safeNewObj, keySelector);
+
+        /*
+        added.forEach((e) => {
+            const fieldError = accumulateErrors(e, member);
+            if (fieldError) {
+                const index = keySelector(e);
+                errors[index] = fieldError;
+            }
+        });
+        */
+
+        unmodified.forEach((e) => {
+            const index = keySelector(e);
+            errors[index] = safeOldError[index];
+        });
+
+        modified.forEach((e) => {
+            const index = keySelector(e.new);
+            const fieldError = accumulateDifferentialErrors(
+                e.old,
+                e.new,
+                safeOldError[index],
+                member,
+            );
+            if (fieldError) {
+                errors[index] = fieldError;
+            }
+        });
+
+        return hasNoKeys(errors) ? undefined : errors;
+    } else if (schemaForObject) {
+        const safeOldObj = oldObj || emptyObject;
+        const safeNewObj = newObj || emptyObject;
+        const safeOldError = oldError || emptyObject;
+        Object.keys(fields).forEach((fieldName) => {
+            if (safeOldObj[fieldName] === safeNewObj[fieldName] && safeOldError[fieldName]) {
+                errors[fieldName] = safeOldError[fieldName];
+                return;
+            }
+            const fieldError = accumulateDifferentialErrors(
+                safeOldObj[fieldName],
+                safeNewObj[fieldName],
+                safeOldError[fieldName],
+                fields[fieldName],
+            );
+            if (fieldError) {
+                errors[fieldName] = fieldError;
+            }
+        });
+        return hasNoKeys(errors) ? undefined : errors;
+    }
+
+    console.error('Accumulate Differential Error: Schema is invalid for ', schema);
+    return undefined;
 };
 
 export const analyzeErrors = (errors) => {
@@ -130,3 +233,4 @@ export const analyzeErrors = (errors) => {
         return isTruthy(subErrors);
     });
 };
+

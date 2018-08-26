@@ -3,111 +3,147 @@ import FormElementApi from '../Form/FormElementApi';
 import { analyzeErrors } from '../Faram/validator';
 
 export default class FaramGroupApi extends FormElementApi {
-    changeHandlers = {};
-    propsCalculators = {};
+    onChangeMemory = {};
 
-    getValue = faramIdentifier => (
-        this.props.value ? this.props.value[faramIdentifier] : undefined
-    );
+    constructor() {
+        super();
+        this.handlers = this.getHandler();
+    }
 
-    getError = faramIdentifier => (this.props.error || {})[faramIdentifier];
+    getHandler() {
+        return {
+            ...super.getHandler(),
+            input: {
+                getPropsFromApi: ({ faramElementName, faramInfo, ...otherProps }) => ({
+                    apiProps: faramElementName
+                        ? { faramElementName, faramInfo }
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: ({ faramElementName, faramInfo }) => ({
+                    value: this.getValue(faramElementName),
+                    error: this.getError(faramElementName),
+                    onChange: this.getOnChange(faramElementName, faramInfo),
+                    disabled: this.isDisabled(),
+                    readOnly: this.isReadOnly(),
+                    changeDelay: this.getChangeDelay(),
+                }),
+            },
+            output: {
+                getPropsFromApi: ({ faramElementName, ...otherProps }) => ({
+                    apiProps: faramElementName
+                        ? { faramElementName }
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: ({ faramElementName }) => ({
+                    value: this.getValue(faramElementName),
+                }),
+            },
+            errorMessage: {
+                getPropsFromApi: ({ faramElement, ...otherProps }) => ({
+                    apiProps: faramElement
+                        ? {}
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: () => ({
+                    errors: this.getInternalError(),
+                }),
+            },
+            errorIndicator: {
+                getPropsFromApi: ({ faramElementName, ...otherProps }) => ({
+                    apiProps: faramElementName
+                        ? { faramElementName }
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: ({ faramElementName }) => {
+                    const errors = this.getError(faramElementName);
+                    const calculatedProps = {
+                        hasError: analyzeErrors(errors),
+                        errors,
+                    };
+                    return calculatedProps;
+                },
+            },
+        };
+    }
 
-    getInternalError = () => (this.props.error || {}).$internal;
+    // overrides FormElementApi
+    setProps = (props) => {
+        this.props = {
+            ...props,
+            onChange: (value, info) => {
+                // NOTE: Save these values in this.props so that above
+                // destructuring keeps working before setProps is
+                // again called.
+                this.props.value = value;
 
-    isDisabled = () => this.props.disabled;
+                props.onChange(value, info);
+            },
+        };
+    }
+
+    getValue = faramElementName => (
+        this.props.value ? this.props.value[faramElementName] : undefined
+    )
+
+    getError = faramElementName => (
+        this.props.error ? this.props.error[faramElementName] : undefined
+    )
+
+    getInternalError = () => (
+        this.props.error ? this.props.error.$internal : undefined
+    )
 
     getChangeDelay = () => this.props.changeDelay;
 
-    getNewValue = (oldValue, key, val) => ({
+    isReadOnly = () => this.props.isReadOnly;
+
+    isDisabled = () => this.props.disabled;
+
+    // helper for getOnChange
+    getNewValue = (key, oldValue, newValue) => ({
         ...oldValue,
-        [key]: val,
+        [key]: newValue,
     })
 
-    getNewError = (oldError, key, err) => ({
-        ...oldError,
-        $internal: undefined,
-        [key]: err,
-    });
-
-    getNewInfo = (key, val, infoFromInput, infoFromProps) => {
-        const faramElementName = (infoFromInput && infoFromInput.faramElementName) || [];
+    // helper for getOnChange
+    getNewInfo = (key, value, info, infoFromProps) => {
+        const faramElementName = (info && info.faramElementName) || [];
         const firstRun = faramElementName.length === 0;
 
         if (firstRun) {
             return {
-                ...(infoFromInput || infoFromProps),
+                ...(info || infoFromProps),
                 faramElementName: [key],
-                faramElementValue: val,
+                faramElementValue: value,
             };
         }
         return {
-            ...infoFromInput,
-            faramElementName: [key, ...infoFromInput.faramElementName],
+            ...info,
+            faramElementName: [key, ...info.faramElementName],
         };
     }
 
-    createOnChange = (faramIdentifier, faramInfo) => (value, error, info) => {
-        if (!this.props.onChange) {
-            return;
+    // NOTE: memoized
+    // NOTE: faramInfo shouldn't change
+    getOnChange = (faramElementName, faramInfo) => {
+        if (this.onChangeMemory[faramElementName]) {
+            return this.onChangeMemory[faramElementName];
         }
 
-        const newValue = this.getNewValue(this.props.value, faramIdentifier, value);
-        const newError = this.getNewError(this.props.error, faramIdentifier, error);
-        const newInfo = this.getNewInfo(faramIdentifier, value, info, faramInfo);
+        const newOnChange = (value, info) => {
+            if (!this.props.onChange) {
+                return;
+            }
 
-        // NOTE: Save these values in this.props so that above
-        // destructuring keeps working before setProps is
-        // again called.
-        this.props.value = newValue;
-        this.props.error = newError;
-        this.props.onChange(newValue, newError, newInfo);
-    }
-
-    getOnChange = (faramIdentifier, faramInfo) => {
-        if (this.changeHandlers[faramIdentifier]) {
-            return this.changeHandlers[faramIdentifier];
-        }
-
-        const handler = this.createOnChange(faramIdentifier, faramInfo);
-        this.changeHandlers[faramIdentifier] = handler;
-        return handler;
-    }
-
-    // HANDLERS
-
-    inputHandler = ({ faramIdentifier, faramInfo }) => {
-        const calculatedProps = {
-            value: this.getValue(faramIdentifier),
-            error: this.getError(faramIdentifier),
-            onChange: this.getOnChange(faramIdentifier, faramInfo),
-            disabled: this.isDisabled(),
-            changeDelay: this.getChangeDelay(),
+            const newValue = this.getNewValue(faramElementName, this.props.value, value);
+            const newInfo = this.getNewInfo(faramElementName, value, info, faramInfo);
+            this.props.onChange(newValue, newInfo);
         };
-        return calculatedProps;
-    }
-
-    outputHandler = ({ faramIdentifier }) => {
-        const calculatedProps = {
-            value: this.getValue(faramIdentifier),
-        };
-        return calculatedProps;
-    }
-
-    errorMessageHandler = () => {
-        const calculatedProps = {
-            errors: this.getInternalError(),
-        };
-        return calculatedProps;
-    }
-
-    // NOTE: different from 'errorMessage'
-    // sends the overall error tree instead of $internal
-    errorIndicatorHandler = ({ faramIdentifier }) => {
-        const errors = this.getError(faramIdentifier);
-        const calculatedProps = {
-            hasError: analyzeErrors(errors),
-            errors,
-        };
-        return calculatedProps;
+        this.onChangeMemory[faramElementName] = newOnChange;
+        return newOnChange;
     }
 }
