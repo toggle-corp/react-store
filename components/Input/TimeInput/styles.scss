@@ -2,10 +2,13 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
+$width-time-input: 120px;
+
 .time-input {
-    min-width: $width-input-min;
+    min-width: $width-time-input;
 
     .input {
+        @extend %input-border;
         display: flex;
         align-items: center;
 
@@ -41,10 +44,6 @@
     }
 
     &:not(.disabled) {
-        .input {
-            @extend %input-border;
-        }
-
         &.focused {
             .input {
                 border-bottom-color: $color-accent;
@@ -65,6 +64,10 @@
     }
 
     &.disabled {
+        .input {
+            border-bottom-color: $color-separator;
+        }
+
         .label {
             color: $color-text-disabled;
         }

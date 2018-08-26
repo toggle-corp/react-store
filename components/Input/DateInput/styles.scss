@@ -3,15 +3,17 @@
 @import '../../../stylesheets/input-border';
 
 $width-date-picker-container-min: 208px;
+$width-date-input: 180px;
 
 .date-picker-container {
     min-width: $width-date-picker-container-min;
 }
 
 .date-input {
-    min-width: $width-input-min;
+    min-width: $width-date-input;
 
     .input {
+        @extend %input-border;
         display: flex;
         align-items: center;
 
@@ -72,6 +74,10 @@ $width-date-picker-container-min: 208px;
     }
 
     &.disabled {
+        .input {
+            border-bottom-color: $color-separator;
+        }
+
         .label {
             color: $color-text-disabled;
         }
