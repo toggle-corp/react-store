@@ -3,28 +3,32 @@ import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { pick } from '../../../utils/common';
 
-const emptyList = [];
+const emptyObject = {};
 
 const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    value: PropTypes.arrayOf(PropTypes.object),
+    value: PropTypes.objectOf(PropTypes.shape({
+        selected: PropTypes.oneOf([true, false, 'fuzzy']),
+        nodes: PropTypes.objectOf(PropTypes.object),
+    })),
     onChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    value: [],
+    data: [],
+    value: {},
 };
 
-const mergeDataValue = (data, value) => {
+const mergeDataValue = (data = {}, value = {}) => {
     const newValue = {
         ...data,
-        ...value,
+        selected: value.selected || false,
     };
 
     if (newValue.nodes) {
-        newValue.nodes = newValue.nodes.map((_, i) => mergeDataValue(
-            (data.nodes || emptyList)[i],
-            (value.nodes || emptyList)[i],
+        newValue.nodes = newValue.nodes.map(datum => mergeDataValue(
+            datum,
+            (value.nodes || emptyObject)[datum.key],
         ));
     }
 
@@ -32,10 +36,13 @@ const mergeDataValue = (data, value) => {
 };
 
 
-const pickRecursive = (mergedDataValue, keys) => {
-    const pickedData = pick(mergeDataValue, keys);
+const pickRecursive = (obj, keys) => {
+    const pickedData = pick(obj, keys);
     if (pickedData.nodes) {
-        pickedData.nodes = pickedData.map(d => pickRecursive(d, keys));
+        pickedData.nodes = pickedData.nodes.reduce((acc, d) => ({
+            ...acc,
+            [d.key]: pickRecursive(d, keys),
+        }), {});
     }
     return pickedData;
 };
@@ -47,15 +54,24 @@ export default (WrappedComponent) => {
 
         handleChange = (value) => {
             const { onChange } = this.props;
-            onChange(pickRecursive(value, ['key', 'selected', 'nodes']));
+            const newValue = value.reduce((acc, d) => ({
+                ...acc,
+                [d.key]: pickRecursive(d, ['selected', 'nodes']),
+            }), {});
+            onChange(newValue);
         }
 
         calcProps = () => {
             const { value, data, ...otherProps } = this.props;
 
+            const newValue = data.map(datum => mergeDataValue(
+                datum,
+                (value || emptyObject)[datum.key],
+            ));
+
             return {
                 ...otherProps,
-                value: { ...data, ...value },
+                value: newValue,
                 onChange: this.handleChange,
             };
         }

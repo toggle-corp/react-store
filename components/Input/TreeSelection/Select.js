@@ -28,7 +28,7 @@ export default (WrappedComponent) => {
 
         calcProps = () => {
             const { data } = this.props;
-            const newData =
+            const newData = data &&
                 data.map(datum => SelectedComponent.calcNewData(datum, this.props));
 
             return {

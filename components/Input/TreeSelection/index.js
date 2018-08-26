@@ -24,7 +24,7 @@ const propTypes = {
         key: PropTypes.string,
         title: PropTypes.string,
         nodes: PropTypes.arrayOf(PropTypes.object),
-        selected: PropTypes.bool,
+        selected: PropTypes.oneOf([true, false, 'fuzzy']),
         draggable: PropTypes.bool,
     })),
     onChange: PropTypes.func,
@@ -153,7 +153,7 @@ class TreeSelection extends React.PureComponent {
 
     SortableNode = SortableElement(({ value }) => this.renderNode(value))
 
-    SortableTree = SortableContainer(({ items }) => (
+    SortableTree = SortableContainer(({ items = [] }) => (
         <div>
             {items.map((node, index) => (
                 <this.SortableNode
