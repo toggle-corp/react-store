@@ -6,4 +6,4 @@ export const FaramErrorMessageElement = FormElement('errorMessage');
 export const FaramErrorIndicatorElement = FormElement('errorIndicator');
 export const FaramActionElement = FormElement('action');
 export const FaramListElement = FormElement('list');
-export const FaramSortaleListElement = FormElement('sortableList');
+export const FaramSortableListElement = FormElement('sortableList');
