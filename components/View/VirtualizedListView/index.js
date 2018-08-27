@@ -88,6 +88,7 @@ export default class VirtualizedListView extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        window.cancelIdleCallback(this.idleCallback);
     }
 
     setItemHeight = () => {

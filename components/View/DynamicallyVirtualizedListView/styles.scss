@@ -1,0 +1,30 @@
+@import '../../../stylesheets/base';
+
+.dynamically-virtualized-list-view {
+    overflow: auto;
+
+    .virtual-div {
+        $stripe-size: $spacing-small;
+
+        background: repeating-linear-gradient(
+            45deg,
+            $color-background-row,
+            $color-background-row $stripe-size,
+            $color-background-row-alt $stripe-size,
+            $color-background-row-alt 2 * $stripe-size
+        );
+    }
+
+    .item {
+        animation: fade-in $duration-transition-medium forwards;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
