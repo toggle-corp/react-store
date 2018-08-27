@@ -60,6 +60,15 @@ export const isObject = item => (
     typeof item === 'object' && !isList(item) && item !== null
 );
 
+export const removeKey = (obj, key) => {
+    if (!obj || !(key in obj)) {
+        return obj;
+    }
+    const newObj = { ...obj };
+    delete newObj[key];
+    return newObj;
+};
+
 // STRING
 
 // Match two strings

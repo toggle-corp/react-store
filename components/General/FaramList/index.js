@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 
-import { FaramInputElement } from '../FaramElements';
+import { FaramListInputElement } from '../FaramElements';
 import FormContext from '../Form/FormContext';
 
 import FaramListApi from './FaramListApi';
@@ -71,4 +71,4 @@ class FaramList extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(FaramList);
+export default FaramListInputElement(FaramList);

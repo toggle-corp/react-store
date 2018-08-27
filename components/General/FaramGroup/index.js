@@ -65,3 +65,4 @@ class FaramGroup extends React.PureComponent {
 }
 
 export default FaramInputElement(FaramGroup);
+export * from './utils';
