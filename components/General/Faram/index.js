@@ -103,10 +103,11 @@ const handleChange = ({
     schema,
     oldValue,
     oldError,
+    force,
 }) => {
     const newValue = memoizedComputeOutputs(value, computeSchema);
 
-    if (oldValue === newValue) {
+    if (!force && value === newValue) {
         return;
     }
 
@@ -246,6 +247,7 @@ export default class Faram extends React.PureComponent {
             schema,
             oldValue,
             oldError,
+            force: true,
         });
     }
 
