@@ -76,8 +76,12 @@ export default class FaramListApi extends FaramGroupApi {
             return this.onClickMemory[faramElementName];
         }
 
-        const newOnClick = () => {
-            const newValue = faramAction(this.props.value || emptyArray, faramElementName);
+        const newOnClick = (clickParams) => {
+            const newValue = faramAction(
+                this.props.value || emptyArray,
+                faramElementName,
+                clickParams,
+            );
             // Button doesn't have children, so no need to propagate faramInfo
             this.props.onChange(newValue);
         };
