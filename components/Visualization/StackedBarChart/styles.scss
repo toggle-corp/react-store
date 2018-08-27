@@ -1,8 +1,8 @@
 @import '../../../stylesheets/base';
 
 .barchart {
-    width: 100%;
-    height: 100%;
+    display: flex;
+    flex: 1 1 auto;
 
     .y-axis path {
         stroke: $color-axis-path;

@@ -1,11 +1,15 @@
+
 @import '../../../stylesheets/base';
 
-.collapsible-tree-container {
+.collapsible-tree {
     display: flex;
-    width: 100%;
-    height: 100%;
+    flex: 1 1 auto;
+}
 
-    .collapsible-tree {
-        flex: 1 1 auto;
-    }
+.info {
+    position: absolute;
+    top: $spacing-small;
+    right: $spacing-small;
+    cursor: pointer;
+    color: $color-accent;
 }

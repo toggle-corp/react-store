@@ -30,11 +30,11 @@ const propTypes = {
     /* the selected values (nodes) */
     value: PropTypes.string,
     /* the accessor function to return array of data representing the children */
-    childrenAccessor: PropTypes.func,
+    childrenSelector: PropTypes.func,
     /* access the individual label of each data element */
-    labelAccessor: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     /* access the id of each data element */
-    idAccessor: PropTypes.func,
+    idSelector: PropTypes.func.isRequired,
     /* handle selection of nodes */
     onSelection: PropTypes.func,
     nodeSize: PropTypes.arrayOf(PropTypes.number),
@@ -58,9 +58,8 @@ const propTypes = {
 const defaultProps = {
     data: [],
     value: undefined,
-    childrenAccessor: d => d.children,
-    labelAccessor: d => d.name,
-    idAccessor: d => d.id,
+    childrenSelector: d => d.children,
+    labelSelector: d => d.name,
     onSelection: () => {},
     nodeSize: [150, 300],
     disabled: false,
@@ -183,9 +182,9 @@ class Organigram extends PureComponent {
     }
 
     addSelection = (data) => {
-        const { idAccessor } = this.props;
+        const { idSelector } = this.props;
 
-        const newSelection = idAccessor(data);
+        const newSelection = idSelector(data);
         this.setState({
             selected: newSelection,
         });
@@ -201,29 +200,7 @@ class Organigram extends PureComponent {
         });
     }
 
-    isSelected = data => this.props.idAccessor(data) === this.state.selected;
-
-    calculateBounds = () => {
-        const {
-            margins,
-            boundingClientRect,
-        } = this.props;
-
-        const {
-            width,
-            height,
-        } = boundingClientRect;
-
-        const {
-            top,
-            right,
-            bottom,
-            left,
-        } = margins;
-
-        this.width = width - left - right;
-        this.height = height - top - bottom;
-    }
+    isSelected = data => this.props.idSelector(data) === this.state.selected;
 
     colorExtractor = (item) => {
         const {
@@ -245,19 +222,30 @@ class Organigram extends PureComponent {
         const {
             data,
             boundingClientRect,
-            childrenAccessor,
-            labelAccessor,
+            childrenSelector,
+            labelSelector,
             nodeSize,
             disabled,
             margins,
         } = this.props;
 
-        this.calculateBounds();
+        const {
+            width,
+            height,
+        } = boundingClientRect;
+
+        const {
+            top,
+            right,
+            bottom,
+            left,
+        } = margins;
+
+        this.width = width - left - right;
+        this.height = height - top - bottom;
 
         const {
             setContext,
-            width,
-            height,
             colorExtractor,
             addDropShadow,
             toggleSelection,
@@ -268,12 +256,12 @@ class Organigram extends PureComponent {
         }
 
         addDropShadow(select(this.svg));
-        const group = setContext(width, height, margins);
+        const group = setContext(this.width, this.height, margins);
         const treemap = tree()
             .nodeSize(nodeSize)
             .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
 
-        const root = hierarchy(data, childrenAccessor);
+        const root = hierarchy(data, childrenSelector);
         const treeData = treemap(root);
         const links = treeData.links();
         const points = treeData.descendants();
@@ -314,7 +302,7 @@ class Organigram extends PureComponent {
             .attr('dy', '.35em')
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
-            .text(d => labelAccessor(d.data))
+            .text(d => labelSelector(d.data))
             .style('fill', d => getColorOnBgColor(colorExtractor(d)));
 
         const boxPadding = 10;
@@ -339,6 +327,7 @@ class Organigram extends PureComponent {
         const { className } = this.props;
 
         const svgClassName = [
+            'organigram',
             styles.organigram,
             className,
         ].join(' ');

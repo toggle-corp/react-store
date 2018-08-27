@@ -2,13 +2,28 @@ import React, {
     Fragment,
     PureComponent,
 } from 'react';
-import { select, event } from 'd3-selection';
-import { scaleLinear, scaleOrdinal, scaleBand } from 'd3-scale';
+import {
+    select,
+    event,
+} from 'd3-selection';
+import {
+    scaleLinear,
+    scaleOrdinal,
+    scaleBand,
+} from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
 import { keys } from 'd3-collection';
-import { stack, stackOffsetDiverging } from 'd3-shape';
-import { min, max } from 'd3-array';
-import { axisBottom, axisLeft } from 'd3-axis';
+import {
+    stack,
+    stackOffsetDiverging,
+} from 'd3-shape';
+import {
+    min, max,
+} from 'd3-array';
+import {
+    axisBottom,
+    axisLeft,
+} from 'd3-axis';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 
@@ -33,7 +48,7 @@ const propTypes = {
     ).isRequired,
     setSaveFunction: PropTypes.func,
     labelName: PropTypes.string.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     margins: PropTypes.shape({
@@ -88,7 +103,7 @@ class StackedBarChart extends PureComponent {
             data,
             colorScheme,
             labelName,
-            labelAccessor,
+            labelSelector,
         } = this.props;
 
         const {
@@ -112,7 +127,7 @@ class StackedBarChart extends PureComponent {
             .attr('transform', `translate(${left}, ${top})`);
 
         this.dimensions = keys(data[0]).filter(d => d !== labelName);
-        this.labels = data.map(d => labelAccessor(d));
+        this.labels = data.map(d => labelSelector(d));
 
         this.series = stack()
             .keys(this.dimensions)
@@ -158,7 +173,7 @@ class StackedBarChart extends PureComponent {
         const {
             boundingClientRect,
             data,
-            labelAccessor,
+            labelSelector,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -194,7 +209,7 @@ class StackedBarChart extends PureComponent {
             .on('mousemove', mouseMove)
             .on('mouseout', mouseOutRect)
             .attr('width', x.bandwidth)
-            .attr('x', d => x(labelAccessor(d.data)))
+            .attr('x', d => x(labelSelector(d.data)))
             .attr('y', d => y(d[1]))
             .attr('height', d => y(d[0]) - y(d[1]))
             .attr('cursor', 'pointer');
@@ -246,6 +261,7 @@ class StackedBarChart extends PureComponent {
         } = this.props;
 
         const svgClassName = [
+            'stacked-bar-chart',
             styles.barchart,
             className,
         ].join(' ');

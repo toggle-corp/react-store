@@ -30,11 +30,11 @@ const propTypes = {
         name: PropTypes.string,
     }),
     /* the accessor function to return array of data representing the children */
-    childAccessor: PropTypes.func,
+    childSelector: PropTypes.func,
     /* access the individual label of each data element */
-    labelAccessor: PropTypes.func,
+    labelSelector: PropTypes.func,
     /* access the id of each data element */
-    idAccessor: PropTypes.func,
+    idSelector: PropTypes.func,
     /* handle selection of nodes */
     onSelection: PropTypes.func,
     /* if true no click events on nodes */
@@ -64,9 +64,9 @@ const defaultProps = {
     value: [],
     data: {},
     setSaveFunction: () => {},
-    childAccessor: d => d.children,
-    labelAccessor: d => d.name,
-    idAccessor: d => d.id,
+    childSelector: d => d.children,
+    labelSelector: d => d.name,
+    idSelector: d => d.id,
     nodeSize: {
         minNodeWidth: 150,
         minNodeHeight: 50,
@@ -153,7 +153,7 @@ class OrgChart extends React.PureComponent {
     };
 
     addSelection = (item) => {
-        const newSelection = this.props.idAccessor(item.data);
+        const newSelection = this.props.idSelector(item.data);
 
         const settings = {
             $bulk: [
@@ -180,7 +180,7 @@ class OrgChart extends React.PureComponent {
     }
 
     findIndexInSelectedList = (item) => {
-        const itemId = this.props.idAccessor(item);
+        const itemId = this.props.idSelector(item);
         return this.state.selected.findIndex(e => e === itemId);
     }
 
@@ -194,8 +194,8 @@ class OrgChart extends React.PureComponent {
         const {
             boundingClientRect,
             data,
-            childAccessor,
-            labelAccessor,
+            childSelector,
+            labelSelector,
             disabled,
             fillColor,
             nodeSize,
@@ -241,7 +241,7 @@ class OrgChart extends React.PureComponent {
                 )`,
             );
 
-        const root = hierarchy(data, childAccessor);
+        const root = hierarchy(data, childSelector);
 
         const widthPerTreeLeaves = width / root.leaves().length;
         const heightPerTreeDepth = height / root.height;
@@ -285,7 +285,7 @@ class OrgChart extends React.PureComponent {
             .attr('dy', '.35em')
             .style('text-anchor', 'middle')
             .style('pointer-events', 'none')
-            .text(d => labelAccessor(d.data));
+            .text(d => labelSelector(d.data));
 
         const boxPadding = {
             x: 10,

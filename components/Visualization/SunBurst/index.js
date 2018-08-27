@@ -24,9 +24,9 @@ import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
- * valueAccessor: return the value for the unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
  * colorScheme: array of hex color values.
  * showLabels: show labels on the diagram?
  * showTooltip: show the tooltip?
@@ -42,9 +42,9 @@ const propTypes = {
         name: PropTypes.string,
     }).isRequired,
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func.isRequired,
-    valueAccessor: PropTypes.func.isRequired,
+    childrenSelector: PropTypes.func,
+    labelSelector: PropTypes.func.isRequired,
+    valueSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
@@ -59,7 +59,7 @@ const propTypes = {
 
 const defaultProps = {
     setSaveFunction: () => {},
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     colorScheme: schemePaired,
     showLabels: true,
     showTooltip: true,
@@ -189,8 +189,8 @@ class SunBurst extends PureComponent {
     }
 
     handleArcMouseOver = (d) => {
-        const { labelAccessor } = this.props;
-        const label = labelAccessor(d.data) || '';
+        const { labelSelector } = this.props;
+        const label = labelSelector(d.data) || '';
 
         this.tooltip.innerHTML = `
             <span class="${styles.label}">
@@ -278,9 +278,9 @@ class SunBurst extends PureComponent {
         const {
             boundingClientRect,
             data,
-            childrenAccessor,
-            labelAccessor,
-            valueAccessor,
+            childrenSelector,
+            labelSelector,
+            valueSelector,
             showLabels,
             showTooltip,
         } = this.props;
@@ -306,8 +306,8 @@ class SunBurst extends PureComponent {
             .append('g')
             .attr('transform', this.svgGroupTransformation);
 
-        const root = hierarchy(data, childrenAccessor)
-            .sum(d => valueAccessor(d));
+        const root = hierarchy(data, childrenSelector)
+            .sum(d => valueSelector(d));
         const partitions = partition()(root);
         const slicesData = partitions.descendants();
 
@@ -323,7 +323,7 @@ class SunBurst extends PureComponent {
             .attr('d', this.arch)
             .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
-            .style('fill', d => this.color(labelAccessor(d.children ? d.data : d.parent.data)))
+            .style('fill', d => this.color(labelSelector(d.children ? d.data : d.parent.data)))
             .on('click', d => this.handleSliceClick(slices, d));
 
         if (showTooltip) {
@@ -339,9 +339,9 @@ class SunBurst extends PureComponent {
                 .attr('transform', this.calculateLabelTransformation)
                 .attr('pointer-events', 'none')
                 .attr('text-anchor', 'middle')
-                .text(d => labelAccessor(d.data))
+                .text(d => labelSelector(d.data))
                 .style('fill', (d) => {
-                    const colorBg = this.color(labelAccessor(d.children ? d.data : d.parent.data));
+                    const colorBg = this.color(labelSelector(d.children ? d.data : d.parent.data));
                     return getColorOnBgColor(colorBg);
                 });
 

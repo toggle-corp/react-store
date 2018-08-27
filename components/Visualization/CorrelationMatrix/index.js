@@ -1,5 +1,9 @@
 import React from 'react';
-import { scaleLinear, scaleBand, scaleSequential } from 'd3-scale';
+import {
+    scaleLinear,
+    scaleBand,
+    scaleSequential,
+} from 'd3-scale';
 import { interpolateGnBu } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
 import { max, min, range } from 'd3-array';
@@ -38,6 +42,7 @@ const propTypes = {
     setSaveFunction: PropTypes.func,
     colorScheme: PropTypes.func,
     showLabels: PropTypes.bool,
+    tiltLabels: PropTypes.bool,
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -51,6 +56,7 @@ const defaultProps = {
     setSaveFunction: () => {},
     colorScheme: interpolateGnBu,
     showLabels: true,
+    tiltLabels: false,
     className: '',
     margins: {
         top: 50,
@@ -106,8 +112,8 @@ class CorrelationMatrix extends React.PureComponent {
     }
 
     redrawChart = () => {
-        const context = select(this.svg);
-        context.selectAll('*').remove();
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
         this.drawChart();
     }
 
@@ -174,6 +180,21 @@ class CorrelationMatrix extends React.PureComponent {
     }
 
 
+    handleMouseOver = (node) => {
+        select(node)
+            .transition()
+            .select('text')
+            .style('visibility', 'visible');
+    }
+
+    handleMouseOut = (node) => {
+        select(node)
+            .transition()
+            .select('text')
+            .style('visibility', 'hidden');
+    }
+
+
     addCells = (group, data, x, y, colors) => {
         const row = group
             .selectAll('.row')
@@ -183,20 +204,6 @@ class CorrelationMatrix extends React.PureComponent {
             .attr('class', 'row')
             .attr('transform', (d, i) => `translate(0, ${y(i)})`);
 
-        function handleMouseOver() {
-            select(this)
-                .transition()
-                .select('text')
-                .style('visibility', 'visible');
-        }
-
-        function handleMouseOut() {
-            select(this)
-                .transition()
-                .select('text')
-                .style('visibility', 'hidden');
-        }
-
         const cell = row
             .selectAll('.cell')
             .data(d => d)
@@ -205,8 +212,8 @@ class CorrelationMatrix extends React.PureComponent {
             .attr('class', 'cell')
             .attr('transform', (d, i) => `translate(${x(i)}, 0)`)
             .style('cursor', 'pointer')
-            .on('mouseover', handleMouseOver)
-            .on('mouseout', handleMouseOut);
+            .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
+            .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
 
         cell
             .append('rect')
@@ -242,6 +249,8 @@ class CorrelationMatrix extends React.PureComponent {
     }
 
     addLabels = (group, labels, x, y) => {
+        const { tiltLabels } = this.props;
+
         const columnLabels = group
             .selectAll('.column-labels')
             .data(labels)
@@ -274,6 +283,13 @@ class CorrelationMatrix extends React.PureComponent {
             .attr('dy', '.32em')
             .attr('text-anchor', 'end')
             .text(d => d);
+
+        if (tiltLabels) {
+            columnLabels
+                .selectAll('text')
+                .attr('text-anchor', 'start')
+                .attr('transform', `translate(${x.bandwidth() / 2}, -5) rotate(-45)`);
+        }
     }
 
     addLegend = (group, height, width, colors, minValue, maxValue) => {
@@ -313,19 +329,16 @@ class CorrelationMatrix extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles.correlationmatrixContainer} ${className}`;
-        const matrixStyle = styles.correlationMatrix;
-
+        const correlationMatrixStyle = [
+            'correlation-matrix',
+            styles.correlationMatrix,
+            className,
+        ].join(' ');
         return (
-            <div
-                className={containerStyle}
-                ref={(el) => { this.container = el; }}
-            >
-                <svg
-                    className={matrixStyle}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={correlationMatrixStyle}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }

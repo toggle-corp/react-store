@@ -6,11 +6,18 @@ import { select } from 'd3-selection';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { schemePaired } from 'd3-scale-chromatic';
-import { scalePoint, scaleLinear, scaleOrdinal } from 'd3-scale';
+import {
+    scalePoint,
+    scaleLinear,
+    scaleOrdinal,
+} from 'd3-scale';
 import { keys } from 'd3-collection';
 import { extent } from 'd3-array';
 import { axisLeft } from 'd3-axis';
-import { brushY, brushSelection } from 'd3-brush';
+import {
+    brushY,
+    brushSelection,
+} from 'd3-brush';
 import { line } from 'd3-shape';
 
 import Responsive from '../../General/Responsive';
@@ -30,7 +37,7 @@ const propTypes = {
     ).isRequired,
     setSaveFunction: PropTypes.func,
     labelName: PropTypes.string.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -174,7 +181,7 @@ class ParallelCoordinates extends PureComponent {
         const {
             data,
             boundingClientRect,
-            labelAccessor,
+            labelSelector,
             margins,
         } = this.props;
 
@@ -204,7 +211,7 @@ class ParallelCoordinates extends PureComponent {
             .append('path')
             .attr('class', 'bg')
             .style('fill', 'none')
-            .style('stroke', d => colors(labelAccessor(d)))
+            .style('stroke', d => colors(labelSelector(d)))
             .style('stroke-opacity', 0.2)
             .attr('d', path);
 
@@ -216,7 +223,7 @@ class ParallelCoordinates extends PureComponent {
             .enter()
             .append('path')
             .attr('class', 'fg')
-            .style('stroke', d => colors(labelAccessor(d)))
+            .style('stroke', d => colors(labelSelector(d)))
             .style('fill', 'none')
             .attr('d', path);
 
@@ -263,6 +270,7 @@ class ParallelCoordinates extends PureComponent {
         } = this.props;
 
         const svgClassName = [
+            'parallel-coordiantes',
             styles.parallel,
             className,
         ].join(' ');

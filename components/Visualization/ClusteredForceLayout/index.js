@@ -8,9 +8,18 @@ import { set } from 'd3-collection';
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
-import { select, event } from 'd3-selection';
-import { line, curveCatmullRomClosed } from 'd3-shape';
-import { polygonHull, polygonCentroid } from 'd3-polygon';
+import {
+    select,
+    event,
+} from 'd3-selection';
+import {
+    line,
+    curveCatmullRomClosed,
+} from 'd3-shape';
+import {
+    polygonHull,
+    polygonCentroid,
+} from 'd3-polygon';
 import {
     scaleLinear,
     scaleOrdinal,
@@ -41,10 +50,11 @@ const propTypes = {
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
-    idAccessor: PropTypes.func.isRequired,
+    idSelector: PropTypes.func.isRequired,
     setSaveFunction: PropTypes.func,
-    groupAccessor: PropTypes.func,
-    valueAccessor: PropTypes.func,
+    groupSelector: PropTypes.func,
+    valueSelector: PropTypes.func,
+    labelModifier: PropTypes.func,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     circleRadiusExtent: PropTypes.arrayOf(PropTypes.number),
@@ -68,8 +78,9 @@ const defaultProps = {
         left: 0,
     },
     setSaveFunction: () => {},
-    groupAccessor: d => d.index,
-    valueAccessor: () => 1,
+    groupSelector: d => d.index,
+    valueSelector: () => 1,
+    labelModifier: d => d,
     className: '',
     colorScheme: schemePaired,
     circleRadiusExtent: [5, 10],
@@ -111,9 +122,9 @@ class ClusteredForceLayout extends PureComponent {
 
     init = () => {
         const {
-            idAccessor,
+            idSelector,
             boundingClientRect,
-            valueAccessor,
+            valueSelector,
             colorScheme,
             margins,
             circleRadiusExtent,
@@ -163,7 +174,7 @@ class ClusteredForceLayout extends PureComponent {
         this.distance = scaleLinear()
             .domain([1, 10])
             .range([2, this.radius / 2]);
-        this.minmax = extent(data.links, valueAccessor);
+        this.minmax = extent(data.links, valueSelector);
         this.nodeSizeExtent = extent(this.nodeSizes, d => d.size);
         this.scaledWidth = scaleLinear()
             .domain(this.minmax)
@@ -189,7 +200,7 @@ class ClusteredForceLayout extends PureComponent {
 
         this.simulation = forceSimulation()
             .force('link', forceLink()
-                .id(d => idAccessor(d))
+                .id(d => idSelector(d))
                 .distance((d) => {
                     if (d.source.group !== d.target.group) {
                         return this.distance(+this.state.value * 2);
@@ -218,10 +229,12 @@ class ClusteredForceLayout extends PureComponent {
     }
 
     mouseOverNode = (node) => {
-        const { idAccessor } = this.props;
+        const {
+            labelModifier,
+        } = this.props;
 
         select(this.tooltip)
-            .html(`<span>${idAccessor(node) || ''}</span>`)
+            .html(`<span>${labelModifier(node) || ''}</span>`)
             .style('display', 'inline-block')
             .style('top', `${event.pageY - 30}px`)
             .style('left', `${event.pageX + 20}px`);
@@ -310,10 +323,10 @@ class ClusteredForceLayout extends PureComponent {
 
     drawChart = () => {
         const {
-            idAccessor,
+            idSelector,
             boundingClientRect,
-            groupAccessor,
-            valueAccessor,
+            groupSelector,
+            valueSelector,
         } = this.props;
 
         if (!boundingClientRect.width || isObjectEmpty(this.data)) {
@@ -354,7 +367,7 @@ class ClusteredForceLayout extends PureComponent {
             .data(data.links)
             .enter()
             .append('line')
-            .style('stroke-width', d => scaledWidth(valueAccessor(d)))
+            .style('stroke-width', d => scaledWidth(valueSelector(d)))
             .style('stroke', '#999')
             .style('stroke-opacity', '0.1');
 
@@ -368,10 +381,10 @@ class ClusteredForceLayout extends PureComponent {
             .attr('class', 'node')
             .attr('r', (d) => {
                 const size = nodeSizes
-                    .find(value => value.id === idAccessor(d)).size || nodeSizeExtent[0];
+                    .find(value => value.id === idSelector(d)).size || nodeSizeExtent[0];
                 return scaledRadius(size);
             })
-            .attr('fill', d => color(groupAccessor(d)))
+            .attr('fill', d => color(groupSelector(d)))
             .call(drag()
                 .on('start', dragstart)
                 .on('drag', dragged)
@@ -428,6 +441,7 @@ class ClusteredForceLayout extends PureComponent {
     render() {
         const { className } = this.props;
         const svgClassName = [
+            'clustered-forced-directed-graph',
             styles.forcedDirectedGraph,
             className,
         ].join(' ');

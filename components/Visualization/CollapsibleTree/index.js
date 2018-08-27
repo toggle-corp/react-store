@@ -1,6 +1,14 @@
-import React from 'react';
-import { select, event } from 'd3-selection';
-import { hierarchy, tree } from 'd3-hierarchy';
+import React, {
+    Fragment,
+} from 'react';
+import {
+    select,
+    event,
+} from 'd3-selection';
+import {
+    hierarchy,
+    tree,
+} from 'd3-hierarchy';
 import { scaleOrdinal } from 'd3-scale';
 import { easeSinInOut } from 'd3-ease';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -8,14 +16,19 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import {
+    getStandardFilename,
+    isObjectEmpty,
+} from '../../../utils/common';
+import iconNames from '../../../constants/iconNames';
+
 import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: returns the individual label from a unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -29,8 +42,8 @@ const propTypes = {
         name: PropTypes.string,
     }),
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func.isRequired,
+    childrenSelector: PropTypes.func,
+    labelSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     nodeSize: PropTypes.arrayOf(PropTypes.number),
     className: PropTypes.string,
@@ -45,15 +58,15 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     colorScheme: schemePaired,
     nodeSize: [50, 300],
     className: '',
     margins: {
-        top: 20,
-        right: 50,
-        bottom: 20,
-        left: 100,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
 };
 
@@ -87,15 +100,19 @@ class CollapsibleTree extends React.PureComponent {
             bottom,
             left,
         } = margins;
+
         const group = select(this.svg)
             .attr('width', width + left + right)
             .attr('height', height + top + bottom)
-            .call(zoom().on('zoom', () => {
-                const { x, y, k } = event.transform;
-                Object.assign(this, { x, y, k });
-                group
-                    .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
-            }))
+            .call(
+                zoom()
+                    .filter(() => event.ctrlKey)
+                    .on('zoom', () => {
+                        const { x, y, k } = event.transform;
+                        Object.assign(this, { x, y, k });
+                        group
+                            .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
+                    }))
             .append('g')
             .attr('transform', `translate(${left},${top + (height / 2)})`);
 
@@ -105,14 +122,14 @@ class CollapsibleTree extends React.PureComponent {
     setupChart = () => {
         const {
             data,
-            childrenAccessor,
+            childrenSelector,
             boundingClientRect,
             colorScheme,
             nodeSize,
             margins,
         } = this.props;
 
-        let { width, height } = boundingClientRect;
+        const { width, height } = boundingClientRect;
         const {
             top,
             right,
@@ -120,15 +137,15 @@ class CollapsibleTree extends React.PureComponent {
             left,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
+        this.width = width - left - right;
+        this.height = height - top - bottom;
 
         this.trees = tree().nodeSize(nodeSize);
-        this.root = hierarchy(data, childrenAccessor);
+        this.root = hierarchy(data, childrenSelector);
         this.root.x0 = height / 2;
         this.root.y0 = 0;
         this.colors = scaleOrdinal().range(colorScheme);
-        this.context = this.setContext(width, height, margins);
+        this.group = this.setContext(this.width, this.height, margins);
         this.duration = 0;
     }
 
@@ -139,10 +156,10 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     topicColors = (node) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         let color = this.colors(0);
         if (node.depth === 0 || node.depth === 1) {
-            color = this.colors(labelAccessor(node.data));
+            color = this.colors(labelSelector(node.data));
         } else {
             color = this.topicColors(node.parent);
         }
@@ -171,7 +188,7 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     addNodes = (group, source, nodes) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
 
         let i = 0;
         const node = group
@@ -207,7 +224,28 @@ class CollapsibleTree extends React.PureComponent {
             .attr('x', 0)
             .attr('y', -12) // d => (d.children || d.childrens ? 16 : 0))
             .attr('text-anchor', 'middle') // d => (d.children ? 'end' : 'start'))
-            .text(d => labelAccessor(d.data));
+            .text(d => labelSelector(d.data));
+
+
+        group
+            .select('text')
+            .call((d) => {
+                const { margins } = this.props;
+                const {
+                    top,
+                    left,
+                } = margins;
+                const {
+                    x = 0,
+                    y = 0,
+                    k = 1,
+                } = this;
+                const rootTextLength = d.node().getComputedTextLength() || 1;
+                const translateX = x < rootTextLength ? rootTextLength : 0;
+                group
+                    .transition()
+                    .attr('transform', `translate(${x + left + translateX}, ${y + top + (this.height / 2)}) scale(${k})`);
+            });
 
         const nodeUpdate = nodeEnter.merge(node);
 
@@ -289,10 +327,8 @@ class CollapsibleTree extends React.PureComponent {
         const nodes = treeData.descendants();
         const links = treeData.descendants().slice(1);
 
-        const group = this.context;
-
-        this.addNodes(group, source, nodes);
-        this.addLinks(group, source, links);
+        this.addNodes(this.group, source, nodes);
+        this.addLinks(this.group, source, links);
         nodes.forEach((d) => {
             d.x0 = d.x; // eslint-disable-line no-param-reassign
             d.y0 = d.y; // eslint-disable-line no-param-reassign
@@ -309,6 +345,11 @@ class CollapsibleTree extends React.PureComponent {
             return;
         }
 
+        if (boundingClientRect.width === 0 ||
+            boundingClientRect.height === 0) {
+            return;
+        }
+
         if (!data || data.length === 0 || isObjectEmpty(data)) {
             return;
         }
@@ -318,23 +359,30 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     redrawChart = () => {
-        const context = select(this.svg);
-        context.selectAll('*').remove();
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
         this.drawChart();
     }
 
     render() {
         const { className } = this.props;
-        const containerStyle = `${styles.collapsibleTreeContainer} ${className}`;
-        const collapsibleStyle = `${styles.collapsibleTree}`;
+        const treeStyle = [
+            'collapsible-tree',
+            styles.collapsibleTree,
+            className,
+        ].join(' ');
 
         return (
-            <div className={containerStyle}>
+            <Fragment>
                 <svg
-                    className={collapsibleStyle}
+                    className={treeStyle}
                     ref={(elem) => { this.svg = elem; }}
                 />
-            </div>
+                <span
+                    className={`${styles.info} ${iconNames.info}`}
+                    title="Use Ctrl + mouse to pan and zoom"
+                />
+            </Fragment>
         );
     }
 }

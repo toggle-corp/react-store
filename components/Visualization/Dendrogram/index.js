@@ -1,22 +1,31 @@
 import React from 'react';
-import { select } from 'd3-selection';
-import { cluster, hierarchy } from 'd3-hierarchy';
-import { schemePaired } from 'd3-scale-chromatic';
-import { scalePow, scaleOrdinal } from 'd3-scale';
-import { extent } from 'd3-array';
 import { PropTypes } from 'prop-types';
+import { select } from 'd3-selection';
+import { extent } from 'd3-array';
+import { schemePaired } from 'd3-scale-chromatic';
+import {
+    cluster,
+    hierarchy,
+} from 'd3-hierarchy';
+import {
+    scalePow,
+    scaleOrdinal,
+} from 'd3-scale';
+
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
-import LoadingAnimation from '../../View/LoadingAnimation';
+import {
+    getStandardFilename,
+    isObjectEmpty,
+} from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
  * data: the hierarchical data to be visualized.
- * childrenAccessor: the accessor function to return array of data representing the children.
- * labelAccessor: accesses the individual label from a unit data.
- * valueAccessor: accesses the value of the unit data.
+ * childrenSelector: the accessor function to return array of data representing the children.
+ * labelSelector: accesses the individual label from a unit data.
+ * valueSelector: accesses the value of the unit data.
  * colorScheme: the color scheme for links that connect the nodes.
  * className: additional class name for styling.
  * margins: the margin object with properties for the four sides(clockwise from top).
@@ -30,9 +39,9 @@ const propTypes = {
         name: PropTypes.string,
     }).isRequired,
     setSaveFunction: PropTypes.func,
-    childrenAccessor: PropTypes.func,
-    labelAccessor: PropTypes.func.isRequired,
-    valueAccessor: PropTypes.func,
+    childrenSelector: PropTypes.func,
+    labelSelector: PropTypes.func.isRequired,
+    valueSelector: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -41,13 +50,12 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    loading: PropTypes.bool,
 };
 
 const defaultProps = {
-    childrenAccessor: d => d.children,
+    childrenSelector: d => d.children,
     setSaveFunction: () => {},
-    valueAccessor: () => 1,
+    valueSelector: () => 1,
     colorScheme: schemePaired,
     className: '',
     margins: {
@@ -56,7 +64,6 @@ const defaultProps = {
         bottom: 0,
         left: 0,
     },
-    loading: false,
 };
 
 /**
@@ -105,10 +112,10 @@ class Dendrogram extends React.PureComponent {
     }
 
     topicColors = (node, colors) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         let color = colors(0);
         if (node.depth === 0 || node.depth === 1) {
-            color = colors(labelAccessor(node.data));
+            color = colors(labelSelector(node.data));
         } else {
             color = this.topicColors(node.parent, colors);
         }
@@ -155,7 +162,7 @@ class Dendrogram extends React.PureComponent {
     }
 
     addLabels = (selection, colors, scaledValues) => {
-        const { labelAccessor } = this.props;
+        const { labelSelector } = this.props;
         selection
             .append('text')
             .attr('dy', '.3em')
@@ -167,12 +174,12 @@ class Dendrogram extends React.PureComponent {
             })
             .style('fill', d => this.topicColors(d, colors))
             .style('text-anchor', d => (d.children ? 'end' : 'start'))
-            .text(d => labelAccessor(d.data));
+            .text(d => labelSelector(d.data));
     }
 
     redrawChart = () => {
-        const context = select(this.svg);
-        context.selectAll('*').remove();
+        const svg = select(this.svg);
+        svg.selectAll('*').remove();
         this.drawChart();
     }
 
@@ -180,8 +187,8 @@ class Dendrogram extends React.PureComponent {
         const {
             data,
             boundingClientRect,
-            childrenAccessor,
-            valueAccessor,
+            childrenSelector,
+            valueSelector,
             colorScheme,
             margins,
         } = this.props;
@@ -212,34 +219,32 @@ class Dendrogram extends React.PureComponent {
 
         const tree = cluster()
             .size([height, width - 200]);
-        const root = hierarchy(data, childrenAccessor)
-            .sum(valueAccessor);
+        const root = hierarchy(data, childrenSelector)
+            .sum(valueSelector);
         const minmax = extent(root.descendants(), d => d.value);
         const scaledValues = scalePow().exponent(0.5).domain(minmax).range([4, 20]);
         tree(root);
 
         this.addLines(lines, root.descendants().slice(1), colors);
-        const points = this.addNodes(nodes, root.descendants());
+        this.addNodes(nodes, root.descendants());
+        const points = nodes.selectAll('g');
         this.addLabels(points, colors, scaledValues);
         this.addCircles(points, colors, scaledValues);
     }
 
     render() {
-        const { loading, className } = this.props;
+        const { className } = this.props;
 
-        const containerStyle = `${styles.dendrogramContainer} ${className}`;
-        const dendroGramStyle = `${styles.dendrogram}`;
+        const dendrogramStyle = [
+            'dendrogram',
+            styles.dendrogram,
+            className,
+        ].join(' ');
         return (
-            <div
-                className={containerStyle}
-                ref={(el) => { this.container = el; }}
-            >
-                { loading && <LoadingAnimation /> }
-                <svg
-                    className={dendroGramStyle}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-            </div>
+            <svg
+                className={dendrogramStyle}
+                ref={(elem) => { this.svg = elem; }}
+            />
         );
     }
 }

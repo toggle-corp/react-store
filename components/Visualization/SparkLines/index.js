@@ -30,8 +30,8 @@ const propTypes = {
         height: PropTypes.number,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
-    xValueAccessor: PropTypes.func.isRequired,
-    yValueAccessor: PropTypes.func.isRequired,
+    xValueSelector: PropTypes.func.isRequired,
+    yValueSelector: PropTypes.func.isRequired,
     xLabelModifier: PropTypes.func,
     yLabelModifier: PropTypes.func,
     onHover: PropTypes.func,
@@ -132,8 +132,8 @@ class SparkLines extends PureComponent {
             boundingClientRect,
             margins,
             fill,
-            xValueAccessor,
-            yValueAccessor,
+            xValueSelector,
+            yValueSelector,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -162,8 +162,8 @@ class SparkLines extends PureComponent {
             .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
 
 
-        this.xValue = d => xValueAccessor(d);
-        this.yValue = d => yValueAccessor(d);
+        this.xValue = d => xValueSelector(d);
+        this.yValue = d => yValueSelector(d);
 
         this.bisectXValue = bisector(this.xValue).left;
 

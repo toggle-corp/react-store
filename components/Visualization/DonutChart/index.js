@@ -19,8 +19,8 @@ import styles from './styles.scss';
 /**
  * boundingClientRect: the width and height of the container.
  * data: the data to use to plot pie chart.
- * valueAccessor: return the value for the unit data.
- * labelAccessor: returns the individual label from a unit data.
+ * valueSelector: return the value for the unit data.
+ * labelSelector: returns the individual label from a unit data.
  * colorScheme: array of hex color values.
  * className: additional class name for styling.
  */
@@ -31,8 +31,8 @@ const propTypes = {
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
     setSaveFunction: PropTypes.func,
-    valueAccessor: PropTypes.func.isRequired,
-    labelAccessor: PropTypes.func.isRequired,
+    valueSelector: PropTypes.func.isRequired,
+    labelSelector: PropTypes.func.isRequired,
     labelModifier: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
@@ -166,8 +166,8 @@ class DonutChart extends PureComponent {
         } = options;
 
         const {
-            valueAccessor,
-            labelAccessor,
+            valueSelector,
+            labelSelector,
             labelModifier,
         } = this.props;
 
@@ -181,7 +181,7 @@ class DonutChart extends PureComponent {
                 d.outerRadius = outerRadius - 10;
             })
             .attr('d', arcs)
-            .style('fill', d => colors(labelAccessor(d.data)))
+            .style('fill', d => colors(labelSelector(d.data)))
             .attr('cursor', 'pointer')
             .attr('pointer-events', 'none')
             .on('mouseover', (d, i, nodes) => {
@@ -189,8 +189,8 @@ class DonutChart extends PureComponent {
                 select(nodes[i]).style('filter', 'url(#drop-shadow)');
             })
             .on('mousemove', (d) => {
-                const label = labelAccessor(d.data);
-                const value = valueAccessor(d.data);
+                const label = labelSelector(d.data);
+                const value = valueSelector(d.data);
                 const textLabel = labelModifier ? labelModifier(label, value) : `${label} ${value}`;
 
                 select(this.tooltip)
@@ -216,7 +216,7 @@ class DonutChart extends PureComponent {
     drawChart = () => {
         const {
             boundingClientRect,
-            valueAccessor,
+            valueSelector,
             data,
         } = this.props;
 
@@ -240,7 +240,7 @@ class DonutChart extends PureComponent {
         const colors = scaleOrdinal().range(this.props.colorScheme);
         const pies = pie()
             .sort(null)
-            .value(valueAccessor);
+            .value(valueSelector);
 
         const textArcs = this.textArch(outerRadius, innerRadius);
         const arcs = this.arch(outerRadius, innerRadius);
