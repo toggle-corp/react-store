@@ -63,6 +63,8 @@ const defaultProps = {
     setSubmitFunction: undefined,
 };
 
+const emptyObject = {};
+
 // TODO: memoizing accumulateErrors, analyzeErrors, accumulateValues
 // should be done later
 const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) => {
@@ -93,7 +95,6 @@ const handleSubmit = (value, schema, onValidationFailure, onValidationSuccess) =
 };
 
 const memoizedComputeOutputs = memoize(computeOutputs);
-
 const handleChange = ({
     value,
     info,
@@ -116,7 +117,7 @@ const handleChange = ({
         schema,
     );
 
-    onChange(newValue, newError, info);
+    onChange(newValue || emptyObject, newError || emptyObject, info);
 };
 
 
@@ -280,17 +281,14 @@ export default class Faram extends React.PureComponent {
     }
 }
 
+// NOTE: detachedFaram only calls handle submit and doesn't trigger
+// saving of new values or errors
 export const detachedFaram = ({
     value,
     schema,
-    // computeSchema,
-    // onChange,
     onValidationFailure,
     onValidationSuccess,
 }) => {
-    // NOTE: Faram may not be mounted so we need to trigger computation here
-    // handleValueChange(value, schema, computeSchema, onChange);
-
     handleSubmit(value, schema, onValidationFailure, onValidationSuccess);
 };
 
