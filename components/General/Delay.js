@@ -4,13 +4,13 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const propTypes = {
     value: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
+    onChange: PropTypes.func,
     changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
     value: undefined,
-    onChange: undefined,
+    onChange: () => {},
     changeDelay: 100,
 };
 
