@@ -16,7 +16,7 @@ const defaultProps = {
 };
 
 export default elementType => (WrappedComponent) => {
-    class FormElement extends React.PureComponent {
+    class FormElement extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
