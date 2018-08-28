@@ -29,42 +29,6 @@ export default class FaramGroupApi extends FormElementApi {
                     changeDelay: this.getChangeDelay(),
                 }),
             },
-            listInput: {
-                getPropsFromApi: ({
-                    faramElementName,
-                    faramInfo,
-                    faramFoldKey,
-                    faramFold,
-                    faramUnfold,
-                    ...otherProps
-                }) => {
-                    const faramFoldParams = {
-                        foldKey: faramFoldKey,
-                        fold: faramFold,
-                        unfold: faramUnfold,
-                    };
-
-                    return {
-                        apiProps: faramElementName
-                            ? { faramElementName, faramInfo, faramFoldParams }
-                            : undefined,
-                        otherProps,
-                    };
-                },
-
-                calculateElementProps: ({
-                    faramElementName,
-                    faramInfo,
-                    faramFoldParams,
-                }) => ({
-                    value: this.getValue(faramElementName, faramFoldParams),
-                    error: this.getError(faramElementName),
-                    onChange: this.getOnChange(faramElementName, faramInfo, faramFoldParams),
-                    disabled: this.isDisabled(),
-                    readOnly: this.isReadOnly(),
-                    changeDelay: this.getChangeDelay(),
-                }),
-            },
             output: {
                 getPropsFromApi: ({ faramElementName, ...otherProps }) => ({
                     apiProps: faramElementName
@@ -121,20 +85,9 @@ export default class FaramGroupApi extends FormElementApi {
         };
     }
 
-    getElementValue = faramElementName => (
+    getValue = faramElementName => (
         this.props.value ? this.props.value[faramElementName] : undefined
     )
-
-    getValue = (faramElementName, { foldKey, unfold } = {}) => {
-        const value = this.getElementValue(faramElementName);
-        if (!foldKey || !unfold) {
-            return value;
-        }
-
-        const foldValue = this.getElementValue(foldKey);
-        // FIXME: memoise the following mapping for value
-        return value.map(v => unfold(v, foldValue, foldKey));
-    }
 
     getError = faramElementName => (
         this.props.error ? this.props.error[faramElementName] : undefined
@@ -151,27 +104,10 @@ export default class FaramGroupApi extends FormElementApi {
     isDisabled = () => this.props.disabled;
 
     // helper for getOnChange
-    getNewValue = (key, oldValue, newValue, { foldKey, fold } = {}) => {
-        if (!key || !fold) {
-            return {
-                ...oldValue,
-                [key]: newValue,
-            };
-        }
-
-        const {
-            newValue: newerValue,
-            foldValue,
-        } = fold(newValue, oldValue[foldKey], foldKey);
-
-        return {
-            ...oldValue,
-            // fold may choose to return undefined to keep the value as it is
-            [key]: (newerValue === undefined) ? newValue : newerValue,
-            [foldKey]: foldValue,
-        };
-    }
-
+    getNewValue = (key, oldValue, newValue) => ({
+        ...oldValue,
+        [key]: newValue,
+    })
     // helper for getOnChange
     getNewInfo = (key, value, info, infoFromProps) => {
         const faramElementName = (info && info.faramElementName) || [];
@@ -192,7 +128,7 @@ export default class FaramGroupApi extends FormElementApi {
 
     // NOTE: memoized
     // NOTE: faramInfo shouldn't change
-    getOnChange = (faramElementName, faramInfo, faramFoldInfo) => {
+    getOnChange = (faramElementName, faramInfo) => {
         if (this.onChangeMemory[faramElementName]) {
             return this.onChangeMemory[faramElementName];
         }
@@ -206,7 +142,6 @@ export default class FaramGroupApi extends FormElementApi {
                 faramElementName,
                 this.props.value,
                 value,
-                faramFoldInfo,
             );
             const newInfo = this.getNewInfo(
                 faramElementName,

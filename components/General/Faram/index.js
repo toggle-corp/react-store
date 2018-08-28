@@ -260,6 +260,15 @@ export default class Faram extends React.PureComponent {
             disabled,
             readOnly,
             changeDelay,
+
+            schema,
+            computeSchema,
+            onChange,
+            onValidationFailure,
+            onValidationSuccess,
+            setSubmitFunction,
+
+            ...otherProps
         } = this.props;
 
         return (
@@ -275,6 +284,7 @@ export default class Faram extends React.PureComponent {
                     disabled={disabled}
                     readOnly={readOnly}
                     changeDelay={changeDelay}
+                    {...otherProps}
                 >
                     {children}
                 </FaramGroup>

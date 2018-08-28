@@ -29,12 +29,16 @@ const propTypes = {
      * label for the checkbox
      */
     label: PropTypes.node.isRequired,
+
+    // FIXME
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
     className: '',
     disabled: false,
     value: false,
+    changeDelay: undefined,
 };
 
 class Checkbox extends React.PureComponent {
@@ -59,6 +63,7 @@ class Checkbox extends React.PureComponent {
             value,
             disabled,
             onChange, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
