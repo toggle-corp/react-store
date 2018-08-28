@@ -145,7 +145,7 @@ export default class Faram extends React.PureComponent {
 
         handleChange({
             value,
-            info: { computed: true },
+            info: { isComputed: true },
             onChange,
             computeSchema,
             schema,
@@ -168,7 +168,7 @@ export default class Faram extends React.PureComponent {
 
         handleChange({
             value: newValue,
-            info: { computed: true },
+            info: { isComputed: true },
             onChange,
             computeSchema: newComputeSchema,
             schema: newSchema,
