@@ -103,10 +103,11 @@ const handleChange = ({
     schema,
     oldValue,
     oldError,
+    force,
 }) => {
     const newValue = memoizedComputeOutputs(value, computeSchema);
 
-    if (oldValue === newValue) {
+    if (!force && value === newValue) {
         return;
     }
 
@@ -144,7 +145,7 @@ export default class Faram extends React.PureComponent {
 
         handleChange({
             value,
-            info: { computed: true },
+            info: { isComputed: true },
             onChange,
             computeSchema,
             schema,
@@ -167,7 +168,7 @@ export default class Faram extends React.PureComponent {
 
         handleChange({
             value: newValue,
-            info: { computed: true },
+            info: { isComputed: true },
             onChange,
             computeSchema: newComputeSchema,
             schema: newSchema,
@@ -246,6 +247,7 @@ export default class Faram extends React.PureComponent {
             schema,
             oldValue,
             oldError,
+            force: true,
         });
     }
 
@@ -258,6 +260,15 @@ export default class Faram extends React.PureComponent {
             disabled,
             readOnly,
             changeDelay,
+
+            schema, // eslint-disable-line no-unused-vars
+            computeSchema, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars
+            onValidationFailure, // eslint-disable-line no-unused-vars
+            onValidationSuccess, // eslint-disable-line no-unused-vars
+            setSubmitFunction, // eslint-disable-line no-unused-vars
+
+            ...otherProps
         } = this.props;
 
         return (
@@ -273,6 +284,7 @@ export default class Faram extends React.PureComponent {
                     disabled={disabled}
                     readOnly={readOnly}
                     changeDelay={changeDelay}
+                    {...otherProps}
                 >
                     {children}
                 </FaramGroup>

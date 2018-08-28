@@ -108,7 +108,6 @@ export default class FaramGroupApi extends FormElementApi {
         ...oldValue,
         [key]: newValue,
     })
-
     // helper for getOnChange
     getNewInfo = (key, value, info, infoFromProps) => {
         const faramElementName = (info && info.faramElementName) || [];
@@ -139,8 +138,17 @@ export default class FaramGroupApi extends FormElementApi {
                 return;
             }
 
-            const newValue = this.getNewValue(faramElementName, this.props.value, value);
-            const newInfo = this.getNewInfo(faramElementName, value, info, faramInfo);
+            const newValue = this.getNewValue(
+                faramElementName,
+                this.props.value,
+                value,
+            );
+            const newInfo = this.getNewInfo(
+                faramElementName,
+                value,
+                info,
+                faramInfo,
+            );
             this.props.onChange(newValue, newInfo);
         };
         this.onChangeMemory[faramElementName] = newOnChange;
