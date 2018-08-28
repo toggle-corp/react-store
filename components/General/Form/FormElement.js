@@ -72,12 +72,16 @@ export default elementType => (WrappedComponent) => {
 
         renderWrappedComponent = ({ api } = {}) => {
             const newProps = FormElement.calculateProps(api, this.props);
+
+            if ('onChange' in newProps) {
+                newProps.onChange = this.calculateOnChange(newProps.onChange);
+            }
+            if ('value' in newProps) {
+                newProps.value = this.calculateValue(newProps.value);
+            }
+
             return (
-                <WrappedComponent
-                    {...newProps}
-                    onChange={this.calculateOnChange(newProps.onChange)}
-                    value={this.calculateValue(newProps.value)}
-                />
+                <WrappedComponent {...newProps} />
             );
         }
 

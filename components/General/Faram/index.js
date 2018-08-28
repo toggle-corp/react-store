@@ -261,12 +261,12 @@ export default class Faram extends React.PureComponent {
             readOnly,
             changeDelay,
 
-            schema,
-            computeSchema,
-            onChange,
-            onValidationFailure,
-            onValidationSuccess,
-            setSubmitFunction,
+            schema, // eslint-disable-line no-unused-vars
+            computeSchema, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars
+            onValidationFailure, // eslint-disable-line no-unused-vars
+            onValidationSuccess, // eslint-disable-line no-unused-vars
+            setSubmitFunction, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
