@@ -1,0 +1,53 @@
+@import '../../../../stylesheets/base';
+
+.legend {
+    background-color: $color-foreground;
+
+    .header {
+        border-bottom: $width-separator-thin solid $color-accent;
+        padding: $spacing-small $spacing-medium;
+        color: $color-text-label;
+        font-size: $font-size-small;
+        font-weight: $font-weight-bold;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-small;
+        width: 100%;
+        min-width: 186px;
+
+        .left-child {
+            display: flex;
+            align-items: center;
+
+            .icon-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: $font-size-medium-alt;
+                height: $font-size-medium-alt;
+                overflow-y: hidden;
+
+                .icon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                    font-size: 12px;
+                }
+            }
+
+            .label {
+                margin: 0 $spacing-small;
+                color: $color-text-label;
+                font-size: $font-size-small;
+                font-weight: 600;
+            }
+        }
+    }
+}
