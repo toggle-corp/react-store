@@ -1,22 +1,31 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
+import { requiredCondition } from '../../General/Faram';
 import { FaramInputElement } from '../../General/FaramElements';
-import SelectInput from '../SelectInput';
+import { ApplyModalFaram } from '../../View/ApplyModal';
 
-import Modal from '../../View/Modal';
-import ModalHeader from '../../View/Modal/Header';
-import ModalBody from '../../View/Modal/Body';
-import ModalFooter from '../../View/Modal/Footer';
+import SelectInput from '../SelectInput';
+import TimeInput from '../TimeInput';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 const propTypes = {
     className: PropTypes.string,
+    value: PropTypes.shape({
+        startTime: PropTypes.string,
+        endTime: PropTypes.string,
+    }),
+    onChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    value: {},
+    onChange: noOp,
 };
 
 class TimeFilter extends React.PureComponent {
@@ -24,11 +33,49 @@ class TimeFilter extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static defaultOptions = [
-        { key: 'now', label: 'Now' },
-        { key: 'last-hour', label: 'Last hour' },
-        { key: 'custom-exact', label: 'Custom exact time' },
-        { key: 'custom', label: 'Custom time range' },
+        { key: 'custom-exact', label: 'Exact time' },
+        { key: 'custom-range', label: 'Time range' },
     ];
+
+    static exactModalSchema = {
+        fields: {
+            time: [requiredCondition],
+        },
+    };
+
+    static rangeModalSchema = {
+        fields: {
+            startTime: [requiredCondition],
+            endTime: [requiredCondition],
+        },
+    };
+
+    static calculateOptionsAndValue = memoize((value) => {
+        const options = TimeFilter.defaultOptions;
+        const { startTime, endTime } = value;
+
+        if (!startTime || !endTime) {
+            return { options, value: undefined };
+        }
+
+        if (startTime === endTime) {
+            return {
+                options: [
+                    ...options,
+                    { key: 'selected-exact', label: startTime },
+                ],
+                value: 'selected-exact',
+            };
+        }
+
+        return {
+            options: [
+                ...options,
+                { key: 'selected-range', label: `${startTime} - ${endTime}` },
+            ],
+            value: 'selected-range',
+        };
+    });
 
     constructor(props) {
         super(props);
@@ -50,31 +97,111 @@ class TimeFilter extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getOptions = () => TimeFilter.defaultOptions
+    handleSelectInputChange = (value) => {
+        switch (value) {
+            case 'custom-exact':
+                this.setState({
+                    showExactModal: true,
+                });
+                break;
+            case 'custom-range':
+                this.setState({
+                    showRangeModal: true,
+                });
+                break;
+            case undefined:
+                this.props.onChange(undefined);
+                break;
+            default:
+        }
+    }
 
-    getSelectInputValue = () => undefined
+    closeRangeModal = () => {
+        this.setState({
+            showRangeModal: false,
+        });
+    }
+
+    applyRangeTime = ({ startTime, endTime }) => {
+        this.setState({
+            showRangeModal: false,
+        }, () => {
+            this.props.onChange({
+                startTime,
+                endTime,
+            });
+        });
+    }
+
+    closeExactModal = () => {
+        this.setState({
+            showExactModal: false,
+        });
+    }
+
+    applyExactTime = ({ time }) => {
+        this.setState({
+            showExactModal: false,
+        }, () => {
+            this.props.onChange({
+                startTime: time,
+                endTime: time,
+            });
+        });
+    }
 
     renderExactModal = () => {
-        const { showExactModal } = this.props;
-        return null;
+        const { showExactModal } = this.state;
+
+        if (!showExactModal) {
+            return null;
+        }
+
+        return (
+            <ApplyModalFaram
+                onClose={this.closeExactModal}
+                onApply={this.applyExactTime}
+                title="Select a time"
+                schema={TimeFilter.exactModalSchema}
+            >
+                <TimeInput faramElementName="time" />
+            </ApplyModalFaram>
+        );
     }
 
     renderRangeModal = () => {
-        const { showRangeModal } = this.props;
-        return null;
+        const { showRangeModal } = this.state;
+
+        if (!showRangeModal) {
+            return null;
+        }
+
+        return (
+            <ApplyModalFaram
+                onClose={this.closeRangeModal}
+                onApply={this.applyRangeTime}
+                title="Select a time range"
+                schema={TimeFilter.rangeModalSchema}
+            >
+                <TimeInput faramElementName="startTime" />
+                <TimeInput faramElementName="endTime" />
+            </ApplyModalFaram>
+        );
     }
 
     render() {
         const {
-            value, // eslint-disable-line no-unused-vars
+            value,
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
         const className = this.getClassName();
 
-        const options = this.getOptions();
-        const selectInputValue = this.getSelectInputValue();
+        const {
+            options: selectInputOptions,
+            value: selectInputValue,
+        } = TimeFilter.calculateOptionsAndValue(value);
 
         const CustomExactModal = this.renderExactModal;
         const CustomRangeModal = this.renderRangeModal;
@@ -83,8 +210,8 @@ class TimeFilter extends React.PureComponent {
             <React.Fragment>
                 <SelectInput
                     className={className}
-                    onChange={this.handleChange}
-                    options={options}
+                    onChange={this.handleSelectInputChange}
+                    options={selectInputOptions}
                     value={selectInputValue}
                     {...otherProps}
                 />
