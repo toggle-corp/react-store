@@ -90,7 +90,6 @@ class TimeFilter extends React.PureComponent {
         const { className } = this.props;
         const classNames = [
             className,
-            styles.timeFilter,
             'time-filter',
         ];
 
@@ -159,6 +158,7 @@ class TimeFilter extends React.PureComponent {
 
         return (
             <ApplyModalFaram
+                className={styles.timeFilterModal}
                 onClose={this.closeExactModal}
                 onApply={this.applyExactTime}
                 title="Select a time"
@@ -178,6 +178,7 @@ class TimeFilter extends React.PureComponent {
 
         return (
             <ApplyModalFaram
+                className={styles.timeFilterModal}
                 onClose={this.closeRangeModal}
                 onApply={this.applyRangeTime}
                 title="Select a time range"
