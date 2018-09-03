@@ -1,4 +1,5 @@
 import update from '../../../utils/immutable-update';
+import { isEqual } from '../../../utils/common';
 
 const emptyObject = {};
 const emptyList = [];
@@ -19,7 +20,15 @@ const computeOutputSettings = (obj, schema, dataList = []) => {
             let subSettings;
 
             if (isComputer) {
-                subSettings = { $set: childSchema(...newDataList) };
+                // Update the computed value only if it is different than existing value.
+                // This is to prevent immutability-helper from creating completely
+                // new object even when computed value is not changed.
+                const newData = childSchema(...newDataList);
+                const oldData = (obj || emptyObject)[fieldName];
+
+                subSettings = isEqual(oldData, newData)
+                    ? undefined
+                    : { $set: newData };
             } else {
                 subSettings = computeOutputSettings(
                     (obj || emptyObject)[fieldName],
@@ -28,7 +37,9 @@ const computeOutputSettings = (obj, schema, dataList = []) => {
                 );
             }
 
-            settings[fieldName] = subSettings;
+            if (subSettings) {
+                settings[fieldName] = subSettings;
+            }
         });
 
         return { $auto: settings };
@@ -69,6 +80,10 @@ const computeOutputs = (initialObj, schema) => {
         finalObj = update(obj, settings);
         iteration += 1;
     } while (finalObj !== obj && iteration < MAX_ITERATIONS);
+
+    if (iteration >= MAX_ITERATIONS) {
+        console.warning(`Faram computed for ${iteration} times.`);
+    }
 
     return finalObj;
 };
