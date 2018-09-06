@@ -33,8 +33,8 @@ class TimeFilter extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static defaultOptions = [
-        { key: 'custom-exact', label: 'Exact time' },
-        { key: 'custom-range', label: 'Time range' },
+        { key: 'customExact', label: 'Select an exact time' },
+        { key: 'customRange', label: 'Select a time range' },
     ];
 
     static exactModalSchema = {
@@ -62,18 +62,18 @@ class TimeFilter extends React.PureComponent {
             return {
                 options: [
                     ...options,
-                    { key: 'selected-exact', label: startTime },
+                    { key: 'selectedExact', label: startTime },
                 ],
-                value: 'selected-exact',
+                value: 'selectedExact',
             };
         }
 
         return {
             options: [
                 ...options,
-                { key: 'selected-range', label: `${startTime} - ${endTime}` },
+                { key: 'selectedRange', label: `${startTime} - ${endTime}` },
             ],
-            value: 'selected-range',
+            value: 'selectedRange',
         };
     });
 
@@ -98,12 +98,12 @@ class TimeFilter extends React.PureComponent {
 
     handleSelectInputChange = (value) => {
         switch (value) {
-            case 'custom-exact':
+            case 'customExact':
                 this.setState({
                     showExactModal: true,
                 });
                 break;
-            case 'custom-range':
+            case 'customRange':
                 this.setState({
                     showRangeModal: true,
                 });
