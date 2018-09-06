@@ -33,6 +33,77 @@ const defaultProps = {
 
 const formatDate = date => FormattedDate.format(decodeDate(date), 'dd-MM-yyyy');
 
+const presets = {
+    today: () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = encodeDate(today);
+        const endDate = encodeDate(today);
+
+        return { startDate, endDate };
+    },
+    yesterday: () => {
+        const yesterday = new Date();
+        yesterday.setHours(0, 0, 0, 0);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const startDate = encodeDate(yesterday);
+        const endDate = encodeDate(yesterday);
+
+        return { startDate, endDate };
+    },
+    currentWeek: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - min.getDay());
+        const startDate = encodeDate(min);
+
+        const max = min;
+        max.setHours(0, 0, 0, 0);
+        max.setDate(min.getDate() + 7);
+        const endDate = encodeDate(max);
+        return { startDate, endDate };
+    },
+    lastSevenDays: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 7);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    currentMonth: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(1);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        max.setMonth(min.getMonth() + 1);
+        max.setDate(0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    lastThirtyDays: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 30);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        max.setDate(max.getDate() + 1);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+};
+
 class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -40,12 +111,12 @@ class DateFilter extends React.PureComponent {
     static defaultOptions = [
         { key: 'today', label: 'Today' },
         { key: 'yesterday', label: 'Yesterday' },
-        { key: 'current-week', label: 'This week' },
-        { key: 'last-7-days', label: 'Last 7 days' },
-        { key: 'current-month', label: 'This month' },
-        { key: 'last-30-days', label: 'Last 30 days' },
-        { key: 'custom-exact', label: 'Exact date' },
-        { key: 'custom-range', label: 'Date range' },
+        { key: 'currentWeek', label: 'This week' },
+        { key: 'lastSevenDays', label: 'Last 7 days' },
+        { key: 'currentMonth', label: 'This month' },
+        { key: 'lastThirtyDays', label: 'Last 30 days' },
+        { key: 'customExact', label: 'Select an exact date' },
+        { key: 'customRange', label: 'Select a date range' },
     ];
 
     static exactModalSchema = {
@@ -73,22 +144,34 @@ class DateFilter extends React.PureComponent {
         endDateObj.setDate(endDateObj.getDate() - 1);
         const endDate = encodeDate(endDateObj);
 
+        const preset = Object.keys(presets).find((key) => {
+            const test = presets[key]();
+            return test.startDate === startDate && test.endDate === endDate;
+        });
+
+        if (preset) {
+            return {
+                options,
+                value: preset,
+            };
+        }
+
         if (startDate === endDate) {
             return {
                 options: [
                     ...options,
-                    { key: 'selected-exact', label: startDate },
+                    { key: 'selectedExact', label: startDate },
                 ],
-                value: 'selected-exact',
+                value: 'selectedExact',
             };
         }
 
         return {
             options: [
                 ...options,
-                { key: 'selected-range', label: `${formatDate(startDate)} - ${formatDate(endDate)}` },
+                { key: 'selectedRange', label: `${formatDate(startDate)} - ${formatDate(endDate)}` },
             ],
-            value: 'selected-range',
+            value: 'selectedRange',
         };
     });
 
@@ -129,94 +212,18 @@ class DateFilter extends React.PureComponent {
 
     handleSelectInputChange = (value) => {
         switch (value) {
-            case 'today': {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const startDate = encodeDate(today);
-                const endDate = encodeDate(today);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'yesterday': {
-                const yesterday = new Date();
-                yesterday.setHours(0, 0, 0, 0);
-                yesterday.setDate(yesterday.getDate() - 1);
-                const startDate = encodeDate(yesterday);
-                const endDate = encodeDate(yesterday);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'current-week': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - min.getDay());
-                const startDate = encodeDate(min);
-
-                const max = min;
-                max.setHours(0, 0, 0, 0);
-                max.setDate(min.getDate() + 7);
-                const endDate = encodeDate(max);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'last-7-days': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - 7);
-                const startDate = encodeDate(min);
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                const endDate = encodeDate(max);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'current-month': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(1);
-                const startDate = encodeDate(min);
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                max.setDate(max.getDate() + 1);
-                const endDate = encodeDate(max);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'last-30-days': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - 30);
-                const startDate = encodeDate(min);
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                max.setDate(max.getDate() + 1);
-                const endDate = encodeDate(max);
-
-                this.setNewDate({ startDate, endDate });
-                break;
-            }
-            case 'custom-exact':
+            case 'customExact':
                 this.setState({
                     showExactModal: true,
                 });
                 break;
-            case 'custom-range':
+            case 'customRange':
                 this.setState({
                     showRangeModal: true,
                 });
                 break;
-            case undefined:
-                this.setNewDate({});
-                break;
             default:
+                this.setNewDate(presets[value]());
         }
     }
 
