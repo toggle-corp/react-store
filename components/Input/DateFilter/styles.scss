@@ -1,16 +1,5 @@
 @import '../../../stylesheets/base';
 
-.select-input {
-    // width: 250px;
-
-    &.monospace {
-        font-family: $font-family-monospace;
-    }
-}
-
-.modal {
-    width: 400px;
-}
-:global #datepicker-container {
-    z-index: 1000;
+.date-filter-modal {
+    width: 200px;
 }

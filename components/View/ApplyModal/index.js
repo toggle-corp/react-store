@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WrapWithFaram from '../../General/WrapWithFaram';
-
+import Faram from '../../General/Faram';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
 
@@ -19,6 +18,7 @@ const propTypes = {
     title: PropTypes.string.isRequired,
     onClose: PropTypes.func,
     onApply: PropTypes.func,
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -32,6 +32,15 @@ export default class ApplyModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            faramValues: {},
+            faramErrors: {},
+        };
+    }
+
     getClassName = () => {
         const { className } = this.props;
         const classNames = [
@@ -42,15 +51,37 @@ export default class ApplyModal extends React.PureComponent {
         return classNames.join(' ');
     }
 
+    handleFaramSuccess = (values) => {
+        const { onApply } = this.props;
+        if (onApply) {
+            onApply(values);
+        }
+    }
+
+    handleFaramFailure = (faramErrors) => {
+        this.setState({ faramErrors });
+    }
+
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+        });
+    }
+
     render() {
         const className = this.getClassName();
         const {
             onClose,
-            onApply,
-
             title,
             children,
+            schema,
         } = this.props;
+
+        const {
+            faramValues,
+            faramErrors,
+        } = this.state;
 
         return (
             <Modal
@@ -58,28 +89,31 @@ export default class ApplyModal extends React.PureComponent {
                 closeOnEscape
                 onClose={onClose}
             >
-                <ModalHeader title={title} />
-                <ModalBody>
-                    {children}
-                </ModalBody>
-                <ModalFooter>
-                    <DangerButton
-                        onClick={onClose}
-                        autoFocus
-                    >
-                        Close
-                    </DangerButton>
-                    <PrimaryButton onClick={onApply}>
-                        Apply
-                    </PrimaryButton>
-                </ModalFooter>
+                <Faram
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramFailure}
+                    onValidationSuccess={this.handleFaramSuccess}
+                    schema={schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={title} />
+                    <ModalBody>
+                        {children}
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton
+                            onClick={onClose}
+                            autoFocus
+                        >
+                            Close
+                        </DangerButton>
+                        <PrimaryButton type="submit">
+                            Apply
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
             </Modal>
         );
     }
 }
-
-
-export const ApplyModalFaram = WrapWithFaram({
-    submitAction: 'onApply',
-    submitCallback: 'onApply',
-})(ApplyModal);
