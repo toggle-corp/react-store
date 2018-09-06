@@ -43,3 +43,9 @@
         margin-left: $spacing-medium;
     }
 }
+
+body {
+    >.tree-node {
+        @include shadow-small;
+    }
+}

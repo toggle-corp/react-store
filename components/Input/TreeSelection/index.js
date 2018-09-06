@@ -11,6 +11,7 @@ import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
 import { FaramInputElement } from '../../General/FaramElements';
 import Select from './Select';
+import ExtraRoot from './ExtraRoot';
 import SeparateDataValue from './SeparateDataValue';
 
 import styles from './styles.scss';
@@ -28,12 +29,14 @@ const propTypes = {
         draggable: PropTypes.bool,
     })),
     onChange: PropTypes.func,
+    initialExpandState: PropTypes.shape({}),
 };
 
 const defaultProps = {
     className: '',
     onChange: noOp,
     value: [],
+    initialExpandState: {},
 };
 
 const DragHandle = SortableHandle(() => (
@@ -72,7 +75,7 @@ const setNodeSelection = (node, selected) => ({
     selected,
 });
 
-class TreeSelection extends React.PureComponent {
+class NormalTreeSelection extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -80,7 +83,7 @@ class TreeSelection extends React.PureComponent {
         super(props);
 
         this.state = {
-            expanded: {},
+            expanded: props.initialExpandState,
         };
     }
 
@@ -233,6 +236,7 @@ class TreeSelection extends React.PureComponent {
     }
 }
 
+const TreeSelection = ExtraRoot(NormalTreeSelection);
 export default FaramInputElement(TreeSelection);
 export const SeparatedTreeSelection = FaramInputElement(SeparateDataValue(TreeSelection));
 export const TreeSelectionWithSelectors =
