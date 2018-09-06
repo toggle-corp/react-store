@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 
 import { requiredCondition } from '../../General/Faram';
 import { FaramInputElement } from '../../General/FaramElements';
-import { ApplyModalFaram } from '../../View/ApplyModal';
+import ApplyModal from '../../View/ApplyModal';
 
 import SelectInput from '../SelectInput';
 import TimeInput from '../TimeInput';
@@ -157,7 +157,7 @@ class TimeFilter extends React.PureComponent {
         }
 
         return (
-            <ApplyModalFaram
+            <ApplyModal
                 className={styles.timeFilterModal}
                 onClose={this.closeExactModal}
                 onApply={this.applyExactTime}
@@ -165,7 +165,7 @@ class TimeFilter extends React.PureComponent {
                 schema={TimeFilter.exactModalSchema}
             >
                 <TimeInput faramElementName="time" />
-            </ApplyModalFaram>
+            </ApplyModal>
         );
     }
 
@@ -177,7 +177,7 @@ class TimeFilter extends React.PureComponent {
         }
 
         return (
-            <ApplyModalFaram
+            <ApplyModal
                 className={styles.timeFilterModal}
                 onClose={this.closeRangeModal}
                 onApply={this.applyRangeTime}
@@ -186,7 +186,7 @@ class TimeFilter extends React.PureComponent {
             >
                 <TimeInput faramElementName="startTime" />
                 <TimeInput faramElementName="endTime" />
-            </ApplyModalFaram>
+            </ApplyModal>
         );
     }
 
