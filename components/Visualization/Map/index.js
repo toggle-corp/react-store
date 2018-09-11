@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
+import MapContext from './context';
 
 import Message from '../../View/Message';
 
@@ -12,15 +13,18 @@ const nullComponent = () => null;
 const propTypes = {
     className: PropTypes.string,
     bounds: PropTypes.arrayOf(PropTypes.number),
-    childRenderer: PropTypes.func,
     panelsRenderer: PropTypes.func,
+    children: PropTypes.oneOfType([
+        PropTypes.node,
+        PropTypes.arrayOf(PropTypes.node),
+    ]),
 };
 
 const defaultProps = {
     className: '',
     bounds: undefined,
-    childRenderer: nullComponent,
     panelsRenderer: nullComponent,
+    children: false,
 };
 
 export default class Map extends React.Component {
@@ -38,6 +42,7 @@ export default class Map extends React.Component {
         };
 
         this.unsupportedBrowser = !mapboxgl.supported();
+        this.childDestroyers = {};
     }
 
     componentDidMount() {
@@ -125,13 +130,19 @@ export default class Map extends React.Component {
     componentWillUnmount() {
         this.mounted = false;
 
+        Object.keys(this.childDestroyers).forEach((key) => {
+            this.childDestroyers[key]();
+        });
+
         // Remove the mapbox map
         const { map } = this.state;
         if (map) {
-            this.setState({ map: undefined }, () => {
-                map.remove();
-            });
+            map.remove();
         }
+    }
+
+    setChildDestroyer = (key, destroyer) => {
+        this.childDestroyers[key] = destroyer;
     }
 
     getClassName = () => {
@@ -145,12 +156,18 @@ export default class Map extends React.Component {
         return classNames.join(' ');
     }
 
+    renderChildren = childrenProps => (
+        <MapContext.Provider value={childrenProps}>
+            {this.props.children}
+        </MapContext.Provider>
+    )
+
     render() {
-        const { childRenderer, panelsRenderer } = this.props;
+        const { panelsRenderer } = this.props;
         const { map } = this.state;
 
         const className = this.getClassName();
-        const Child = childRenderer;
+        const Children = this.renderChildren;
         const Panels = panelsRenderer;
 
         if (this.unsupportedBrowser) {
@@ -173,9 +190,10 @@ export default class Map extends React.Component {
             >
                 {map && (
                     <React.Fragment>
-                        <Child
+                        <Children
                             map={map}
                             zoomLevel={this.state.zoomLevel}
+                            setDestroyer={this.setChildDestroyer}
                         />
                         <div
                             className={styles.leftBottomPanels}

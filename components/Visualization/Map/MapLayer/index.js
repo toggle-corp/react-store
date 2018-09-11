@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
+import MapChild from '../MapChild';
 import styles from './styles.scss';
 
 const renderInto = (container, component) => {
@@ -36,6 +37,8 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     onClick: PropTypes.func,
+
+    setDestroyer: PropTypes.func,
 };
 
 const defaultProps = {
@@ -44,12 +47,22 @@ const defaultProps = {
     property: undefined,
     hoverInfo: undefined,
     onClick: undefined,
+    setDestroyer: undefined,
 };
 
 
+@MapChild
 export default class MapLayer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        if (props.setDestroyer) {
+            props.setDestroyer(props.layerKey, this.destroy);
+        }
+    }
 
     componentDidMount() {
         this.create(this.props);
