@@ -123,7 +123,7 @@ class DonutChart extends PureComponent {
         const filter = defs
             .append('filter')
             .attr('id', 'drop-shadow')
-            .attr('height', '130%');
+            .attr('height', '120%');
 
         filter
             .append('feGaussianBlur')
@@ -178,7 +178,7 @@ class DonutChart extends PureComponent {
             .append('path')
             .each((d) => {
                 // eslint-disable-next-line no-param-reassign
-                d.outerRadius = outerRadius - 10;
+                d.outerRadius = outerRadius - 4;
             })
             .attr('d', arcs)
             .style('fill', d => colors(labelSelector(d.data)))
@@ -197,10 +197,10 @@ class DonutChart extends PureComponent {
                     .html(`<span>${textLabel}</span>`)
                     .style('display', 'inline-block')
                     .style('top', `${event.pageY - 30}px`)
-                    .style('left', `${event.pageX + 20}px`);
+                    .style('right', `${document.body.clientWidth - event.pageX}px`);
             })
             .on('mouseout', (d, i, nodes) => {
-                this.arcTween(nodes[i], arcs, outerRadius - 10, 150);
+                this.arcTween(nodes[i], arcs, outerRadius - 4, 150);
                 select(this.tooltip)
                     .style('display', 'none');
                 select(nodes[i]).style('filter', 'none');
@@ -234,8 +234,8 @@ class DonutChart extends PureComponent {
         const slices = context.append('g').attr('class', 'slices');
 
         const radius = Math.min(width, height) / 2;
-        const outerRadius = radius * 0.8;
-        const innerRadius = outerRadius - (outerRadius / 3);
+        const outerRadius = radius * 0.92;
+        const innerRadius = outerRadius - (outerRadius / 5);
 
         const colors = scaleOrdinal().range(this.props.colorScheme);
         const pies = pie()

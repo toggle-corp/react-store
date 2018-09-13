@@ -303,14 +303,15 @@ class HorizontalBar extends PureComponent {
             .delay(750)
             .text(d => (
                 valueLabelSelector ? valueLabelSelector(valueSelector(d)) : valueSelector(d)))
-            .style('fill', d => getColorOnBgColor(colors(labelSelector(d))))
-            .style('visibility', 'hidden')
             .on('end', (d, i, nodes) => {
                 const barWidth = bars.nodes()[i].width.baseVal.value || 0;
                 const textWidth = nodes[i].getComputedTextLength() || 0;
-                const visibility = textWidth > barWidth ? 'hidden' : 'visible';
+                const textpos = textWidth > barWidth;
+                const fillColor = textpos === true ? '#000' : getColorOnBgColor(colors(labelSelector(d)));
+                const newX = textpos === true ? (barWidth + 20) : (barWidth - 3);
                 select(nodes[i])
-                    .style('visibility', visibility);
+                    .attr('x', newX)
+                    .style('fill', fillColor);
             });
     }
 
