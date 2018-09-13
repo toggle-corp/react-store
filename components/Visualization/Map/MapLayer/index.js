@@ -29,10 +29,12 @@ const propTypes = {
     property: PropTypes.string,
 
     hoverInfo: PropTypes.shape({
-        paint: PropTypes.object.isRequired,
+        paint: PropTypes.object,
         showTooltip: PropTypes.bool,
         tooltipProperty: PropTypes.string,
         tooltipModifier: PropTypes.func,
+
+        onMouseOver: PropTypes.func,
     }),
 
     // eslint-disable-next-line react/no-unused-prop-types
@@ -172,6 +174,7 @@ export default class MapLayer extends React.PureComponent {
         const hoverLayerKey = `${layerKey}-hover`;
 
         const {
+            onMouseOver,
             paint,
             showTooltip,
         } = hoverInfo;
@@ -213,11 +216,18 @@ export default class MapLayer extends React.PureComponent {
                 renderInto(tooltipContainer, this.renderTooltip(feature.properties));
                 popup.setOffset([0, -tooltipContainer.clientHeight / 2]);
             }
+
+            if (onMouseOver) {
+                const propertyValue = feature.properties[property];
+                this.lastHoverValue = propertyValue;
+                onMouseOver(feature.properties);
+            }
         };
 
         this.eventHandlers.mousemove = (e) => {
             const feature = e.features[0];
-            map.setFilter(hoverLayerKey, ['==', property, feature.properties[property]]);
+            const propertyValue = feature.properties[property];
+            map.setFilter(hoverLayerKey, ['==', property, propertyValue]);
             // eslint-disable-next-line no-param-reassign
             map.getCanvas().style.cursor = 'pointer';
 
@@ -229,6 +239,11 @@ export default class MapLayer extends React.PureComponent {
                 renderInto(tooltipContainer, this.renderTooltip(feature.properties));
                 popup.setOffset([0, -tooltipContainer.clientHeight / 2]);
             }
+
+            if (onMouseOver && this.lastHoverValue !== propertyValue) {
+                this.lastHoverValue = propertyValue;
+                onMouseOver(feature.properties);
+            }
         };
 
         this.eventHandlers.mouseleave = () => {
@@ -238,6 +253,10 @@ export default class MapLayer extends React.PureComponent {
 
             if (popup) {
                 popup.remove();
+            }
+
+            if (onMouseOver) {
+                onMouseOver(undefined);
             }
         };
     }

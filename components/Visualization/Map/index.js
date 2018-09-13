@@ -13,6 +13,8 @@ const nullComponent = () => null;
 const propTypes = {
     className: PropTypes.string,
     bounds: PropTypes.arrayOf(PropTypes.number),
+    boundsPadding: PropTypes.number,
+    fitBoundsDuration: PropTypes.number,
     panelsRenderer: PropTypes.func,
     children: PropTypes.oneOfType([
         PropTypes.node,
@@ -23,6 +25,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     bounds: undefined,
+    boundsPadding: 64,
+    fitBoundsDuration: 1000,
     panelsRenderer: nullComponent,
     children: false,
 };
@@ -79,7 +83,7 @@ export default class Map extends React.Component {
             // Since the map is loaded asynchronously, make sure
             // we are still mounted before doing setState
             if (this.mounted) {
-                const { bounds } = this.props;
+                const { bounds, boundsPadding, fitBoundsDuration } = this.props;
                 if (bounds) {
                     map.fitBounds(
                         [[
@@ -89,13 +93,14 @@ export default class Map extends React.Component {
                             bounds[2],
                             bounds[3],
                         ]],
-                        { padding: 128 },
+                        {
+                            padding: boundsPadding,
+                            duration: fitBoundsDuration,
+                        },
                     );
                 }
 
-                if (this.mounted) {
-                    this.setState({ map });
-                }
+                this.setState({ map });
             }
         });
 
