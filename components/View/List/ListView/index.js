@@ -12,9 +12,9 @@ const defaultEmptyComponent = () => {
     ];
 
     return (
-        <p className={classNames.join(' ')}>
+        <div className={classNames.join(' ')}>
             Nothing Here
-        </p>
+        </div>
     );
 };
 
@@ -50,25 +50,41 @@ export class NormalListView extends React.Component {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             data,
             emptyComponent: EmptyComponent,
 
             ...otherProps
         } = this.props;
 
+        if (data.length === 0) {
+            const className = `
+                ${classNameFromProps}
+                ${styles.listView}
+                ${styles.listViewEmpty}
+                list-view
+                list-view-empty
+            `;
+
+            return (
+                <div className={className}>
+                    <EmptyComponent />
+                </div>
+            );
+        }
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.listView}
+            list-view
+        `;
+
         return (
-            <div className={`${styles.listView} list-view ${className}`}>
-                {
-                    data.length === 0 ? (
-                        <EmptyComponent />
-                    ) : (
-                        <NormalList
-                            data={data}
-                            {...otherProps}
-                        />
-                    )
-                }
+            <div className={className}>
+                <NormalList
+                    data={data}
+                    {...otherProps}
+                />
             </div>
         );
     }

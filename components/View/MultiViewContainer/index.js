@@ -117,6 +117,7 @@ export default class MultiViewContainer extends React.Component {
         const {
             view,
             isActive,
+            ...otherProps
         } = p;
 
         const Component = view.component;
@@ -126,13 +127,20 @@ export default class MultiViewContainer extends React.Component {
 
             return (
                 <div className={className}>
-                    <Component />
+                    <Component
+                        {...otherProps}
+                    />
                 </div>
             );
         }
 
         const className = this.getContentClassName(isActive);
-        return <Component className={className} />;
+        return (
+            <Component
+                className={className}
+                {...otherProps}
+            />
+        );
     }
 
     renderView = (k, data) => {
@@ -171,20 +179,24 @@ export default class MultiViewContainer extends React.Component {
                 LazyContainer = this.lazyContainers[key];
             }
 
+            const params = view.rendererParams ? view.rendererParams() : {};
             return (
                 <LazyContainer
                     key={key}
                     view={view}
                     isActive={isActive}
+                    {...params}
                 />
             );
         }
 
+        const params = view.rendererParams ? view.rendererParams() : {};
         return (
             <Container
                 key={key}
                 view={view}
                 isActive={isActive}
+                {...params}
             />
         );
     }
