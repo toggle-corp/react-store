@@ -6,11 +6,13 @@ import styles from './styles.scss';
 const propTypes = {
     children: PropTypes.node,
     className: PropTypes.string.isRequired,
+    large: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     children: undefined,
+    large: false,
 };
 
 export default class Message extends React.PureComponent {
@@ -18,8 +20,16 @@ export default class Message extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getClassName = () => {
-        const { className } = this.props;
-        return `${className} ${styles.message}`;
+        const {
+            className,
+            large,
+        } = this.props;
+
+        return `
+            ${className}
+            ${styles.message}
+            ${large ? 'large' : ''}
+        `;
     }
 
     render() {
