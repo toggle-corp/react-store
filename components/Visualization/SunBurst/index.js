@@ -137,7 +137,8 @@ class SunBurst extends PureComponent {
         this.radius = Math.min(this.width, this.height) / 2;
 
         this.x = scaleLinear()
-            .range([0, twoPi]);
+            .range([0, twoPi])
+            .clamp(true);
 
         this.y = scaleLinear()
             .range([0, this.radius]);
@@ -174,19 +175,6 @@ class SunBurst extends PureComponent {
         const perimeter = r * deltaAngle;
 
         return d.data.name.length * CHAR_SPACE < perimeter;
-    }
-
-    moveStackToFront = (t) => {
-        select(this.svg)
-            .selectAll('.slice')
-            .filter(d => d === t)
-            .each((d, i, nodes) => {
-                nodes[i].appendChild(nodes[i]);
-
-                if (d.parent) {
-                    this.moveStackToFront(d.parent);
-                }
-            });
     }
 
     handleClick = (d = { x0: 0, x1: 1, y0: 0, y1: 1 }) => {
@@ -232,8 +220,16 @@ class SunBurst extends PureComponent {
 
     handleArcMouseMove = () => {
         const { style } = this.tooltip;
-        style.top = `${event.pageY + tooltipOffset.y}px`;
-        style.left = `${event.pageX + tooltipOffset.x}px`;
+
+        const { width, height } = this.tooltip.getBoundingClientRect();
+        const x = event.pageX;
+        const y = event.pageY;
+
+        const posX = x - (width / 2);
+        const posY = y - (height + 10);
+
+        style.top = `${posY}px`;
+        style.left = `${posX}px`;
     }
 
     handleArcMouseOut = () => {
@@ -295,6 +291,7 @@ class SunBurst extends PureComponent {
             .attr('class', 'main-arc')
             .style('fill', d => this.getColor(d))
             .attr('d', this.arch)
+            .style('cursor', 'pointer')
             .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
             .on('mouseover', this.handleArcMouseOver)
