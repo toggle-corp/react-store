@@ -32,7 +32,7 @@ const propTypes = {
     setSaveFunction: PropTypes.func,
     childrenSelector: PropTypes.func,
     labelSelector: PropTypes.func.isRequired,
-    labelModifier: PropTypes.func,
+    tooltipContent: PropTypes.func,
     colorSelector: PropTypes.func,
     valueSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -50,7 +50,7 @@ const defaultProps = {
     childrenSelector: d => d.children,
     colorScheme: schemePaired,
     colorSelector: undefined,
-    labelModifier: d => d,
+    tooltipContent: undefined,
     showLabels: true,
     showTooltip: true,
     className: '',
@@ -63,7 +63,6 @@ const defaultProps = {
 };
 
 const twoPi = 2 * Math.PI;
-const tooltipOffset = { x: 10, y: 10 };
 
 class SunBurst extends PureComponent {
     static propTypes = propTypes;
@@ -168,8 +167,10 @@ class SunBurst extends PureComponent {
     }
 
     filterText = (d) => {
+        if (d && d.depth === 0) {
+            return false;
+        }
         const CHAR_SPACE = 6;
-
         const deltaAngle = this.x(d.x1) - this.x(d.x0);
         const r = Math.max(0, (this.y(d.y0) + this.y(d.y1)) / 2);
         const perimeter = r * deltaAngle;
@@ -202,17 +203,22 @@ class SunBurst extends PureComponent {
     }
 
     handleArcMouseOver = (d) => {
-        const { labelModifier } = this.props;
-        const label = labelModifier(d) || '';
+        const {
+            tooltipContent,
+            labelSelector,
+        } = this.props;
 
-        this.tooltip.innerHTML = `
+        const defautlTooltipContent = `
             <span class="${styles.label}">
-                ${label}
+                 ${labelSelector(d.data) || ''}
             </span>
             <span class="${styles.value}">
-                ${d.value}
-            </span>
-        `;
+                 ${d.value || ''}
+            </span>`;
+
+        const content = tooltipContent ? tooltipContent(d) : defautlTooltipContent;
+
+        this.tooltip.innerHTML = content;
 
         const { style } = this.tooltip;
         style.display = 'block';
