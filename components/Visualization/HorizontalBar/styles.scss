@@ -19,19 +19,11 @@
         path {
             stroke: $color-axis-path;
         }
-
-        .tick line {
-            visibility: hidden;
-        }
     }
 
     .y-axis {
         path {
             stroke: $color-axis-path;
-
-            .tick line {
-                visibility: hidden;
-            }
         }
     }
 }

@@ -3,8 +3,17 @@ import React, {
 } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
-import { scaleOrdinal, scaleLinear, scaleBand } from 'd3-scale';
-import { axisLeft, axisBottom } from 'd3-axis';
+import {
+    scaleOrdinal,
+    scaleLinear,
+    scaleBand,
+    scaleLog,
+    scalePow,
+} from 'd3-scale';
+import {
+    axisLeft,
+    axisBottom,
+} from 'd3-axis';
 import { max } from 'd3-array';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
@@ -13,7 +22,10 @@ import Responsive from '../../General/Responsive';
 
 import styles from './styles.scss';
 
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import {
+    getStandardFilename,
+    getColorOnBgColor,
+} from '../../../utils/common';
 
 const dummy = transition;
 
@@ -39,6 +51,8 @@ const propTypes = {
     showGridLines: PropTypes.bool,
     tiltLabels: PropTypes.bool,
     className: PropTypes.string,
+    scaleType: PropTypes.string,
+    exponent: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -55,6 +69,8 @@ const defaultProps = {
     showGridLines: true,
     className: '',
     tiltLabels: false,
+    scaleType: 'linear',
+    exponent: 1,
     margins: {
         top: 24,
         right: 24,
@@ -156,10 +172,10 @@ class HorizontalBar extends PureComponent {
             .attr('in', 'SourceGraphic');
     }
 
-    addLines = (func, scale, length, format) => func(scale)
+    addLines = (func, scale, length, tickFormat) => func(scale)
         .tickSize(-length)
         .tickPadding(10)
-        .tickFormat(format)
+        .tickFormat(tickFormat)
 
     addGrid = (svg, xscale, yscale, height, width, tickFormat) => {
         svg
@@ -192,6 +208,8 @@ class HorizontalBar extends PureComponent {
         this.drawChart();
     }
 
+    powerOfTen = d => d / (10 ** Math.ceil(Math.log(d) / (Math.LN10))) === 1
+
     drawChart = () => {
         const {
             data,
@@ -201,6 +219,8 @@ class HorizontalBar extends PureComponent {
             colorScheme,
             labelSelector,
             showGridLines,
+            scaleType,
+            exponent,
             margins,
             tiltLabels,
         } = this.props;
@@ -225,14 +245,30 @@ class HorizontalBar extends PureComponent {
 
         const group = this.setContext(width, height, margins);
 
-        const x = scaleLinear()
-            .range([0, width])
-            .domain([0, max(data, d => valueSelector(d))]);
+        const maxValue = max(data, d => valueSelector(d));
+
+        let x;
+        if (scaleType === 'log') {
+            x = scaleLog()
+                .range([0, width])
+                .clamp(true)
+                .domain([0.1, maxValue]);
+        } else if (scaleType === 'linear') {
+            x = scaleLinear()
+                .range([0, width])
+                .domain([0, maxValue]);
+        } else if (scaleType === 'exponent') {
+            x = scalePow()
+                .exponent([exponent])
+                .range([0, width])
+                .clamp(true)
+                .domain([0, maxValue]);
+        }
+
         const y = scaleBand()
             .rangeRound([height, 0])
             .domain(data.map(d => labelSelector(d)))
             .padding(0.2);
-
 
         this.addShadow(group);
 
@@ -245,26 +281,15 @@ class HorizontalBar extends PureComponent {
             group
                 .append('g')
                 .attr('id', 'xaxis')
-                .attr('class', styles.xAxis)
+                .attr('class', `x-axis ${styles.xAxis}`)
                 .attr('transform', `translate(0, ${height})`)
                 .call(xAxis);
 
             group
                 .append('g')
                 .attr('id', 'yaxis')
-                .attr('class', styles.yAxis)
+                .attr('class', `y-axis ${styles.yAxis}`)
                 .call(yAxis);
-        }
-
-        if (tiltLabels) {
-            group
-                .select('#xaxis')
-                .selectAll('text')
-                .attr('y', 0)
-                .attr('x', 9)
-                .attr('dy', '0.35em')
-                .attr('transform', 'rotate(-45)')
-                .style('text-anchor', 'end');
         }
 
         const groups = group
@@ -313,6 +338,36 @@ class HorizontalBar extends PureComponent {
                     .attr('x', newX)
                     .style('fill', fillColor);
             });
+
+        if (tiltLabels) {
+            group
+                .select('#xaxis')
+                .selectAll('text')
+                .attr('transform', 'rotate(-45)')
+                .style('text-anchor', 'end');
+        }
+
+        group
+            .selectAll('.x-axis')
+            .selectAll('.tick line')
+            .style('visibility', 'hidden');
+
+        group
+            .selectAll('.y-axis')
+            .selectAll('.tick line')
+            .style('visibility', 'hidden');
+
+        if (scaleType === 'log') {
+            group
+                .select('#xaxis')
+                .selectAll('.tick text')
+                .text(null)
+                .filter(this.powerOfTen)
+                .text(10)
+                .append('tspan')
+                .attr('dy', '-.7em')
+                .text(d => Math.round(Math.log(d) / Math.LN10));
+        }
     }
 
     render() {
