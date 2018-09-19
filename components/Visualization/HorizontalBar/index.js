@@ -1,5 +1,6 @@
 import React, {
     PureComponent,
+    Fragment,
 } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
@@ -24,6 +25,7 @@ import {
     getStandardFilename,
     getColorOnBgColor,
 } from '../../../utils/common';
+import Float from '../../View/Float';
 
 import styles from './styles.scss';
 
@@ -42,6 +44,8 @@ const propTypes = {
     colorSelector: PropTypes.func,
     valueLabelFormat: PropTypes.func,
     showGridLines: PropTypes.bool,
+    showTooltip: PropTypes.bool,
+    tooltipContent: PropTypes.func,
     tiltLabels: PropTypes.bool,
     className: PropTypes.string,
     scaleType: PropTypes.string,
@@ -62,8 +66,10 @@ const defaultProps = {
     bandPadding: 0.2,
     colorSelector: undefined,
     showGridLines: false,
+    showTooltip: false,
+    tooltipContent: undefined,
     className: '',
-    tiltLabels: true,
+    tiltLabels: false,
     scaleType: 'linear',
     exponent: 1,
     margins: {
@@ -190,12 +196,53 @@ class HorizontalBar extends PureComponent {
             .call(yAxis);
     }
 
-    handleMouseOver = (node) => {
+    handleMouseOver = (d, node) => {
+        const {
+            showTooltip,
+            tooltipContent,
+            labelSelector,
+            valueSelector,
+            valueLabelFormat,
+        } = this.props;
+
+
         select(node)
             .style('filter', 'url(#drop-shadow)');
+
+        let defaultTooltipContent = '';
+        const value = valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d);
+        const label = labelSelector(d);
+        if (showTooltip) {
+            defaultTooltipContent = `
+            <span class="${styles.label}">
+                 ${label || ''}
+            </span>
+            <span class="${styles.value}">
+                 ${value || ''}
+            </span>`;
+            const content = tooltipContent ? tooltipContent(d) : defaultTooltipContent;
+            this.tooltip.innerHTML = content;
+            const { style } = this.tooltip;
+            style.display = 'block';
+        }
+    }
+
+    handleMouseMove = () => {
+        const { style } = this.tooltip;
+        const { width, height } = this.tooltip.getBoundingClientRect();
+        const x = event.pageX;
+        const y = event.pageY;
+
+        const posX = x - (width / 2);
+        const posY = y - (height + 10);
+
+        style.top = `${posY}px`;
+        style.left = `${posX}px`;
     }
 
     handleMouseOut = (node) => {
+        const { style } = this.tooltip;
+        style.display = 'none';
         select(node)
             .style('filter', 'none');
     }
@@ -312,7 +359,8 @@ class HorizontalBar extends PureComponent {
             .attr('height', this.y.bandwidth())
             .style('fill', d => this.getColor(d))
             .style('cursor', 'pointer')
-            .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
+            .on('mouseover', (d, i, nodes) => this.handleMouseOver(d, nodes[i]))
+            .on('mousemove', this.handleMouseMove)
             .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
 
         bars
@@ -371,11 +419,24 @@ class HorizontalBar extends PureComponent {
             styles.horizontalBar,
             className,
         ].join(' ');
+
+        const tooltipClassName = [
+            'horizontal-bar-tooltip',
+            styles.horizontalBarTooltip,
+        ].join(' ');
         return (
-            <svg
-                className={svgClassName}
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <Fragment>
+                <svg
+                    className={svgClassName}
+                    ref={(elem) => { this.svg = elem; }}
+                />
+                <Float>
+                    <div
+                        ref={(el) => { this.tooltip = el; }}
+                        className={tooltipClassName}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }
