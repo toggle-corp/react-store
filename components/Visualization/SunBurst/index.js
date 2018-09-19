@@ -16,6 +16,7 @@ import {
     getStandardFilename,
     getColorOnBgColor,
     isObjectEmpty,
+    randomString,
 } from '../../../utils/common';
 import Float from '../../View/Float';
 
@@ -35,6 +36,7 @@ const propTypes = {
     tooltipContent: PropTypes.func,
     colorSelector: PropTypes.func,
     valueSelector: PropTypes.func.isRequired,
+    showTooltip: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -51,7 +53,6 @@ const defaultProps = {
     colorScheme: schemePaired,
     colorSelector: undefined,
     tooltipContent: undefined,
-    showLabels: true,
     showTooltip: true,
     className: '',
     margins: {
@@ -200,15 +201,19 @@ class SunBurst extends PureComponent {
         transitions
             .selectAll('text')
             .attrTween('display', t => () => (this.filterText(t) ? null : 'none'));
+
+        this.moveStackToFront(d);
     }
 
     handleArcMouseOver = (d) => {
         const {
             tooltipContent,
             labelSelector,
+            showTooltip,
         } = this.props;
 
-        const defautlTooltipContent = `
+        if (showTooltip) {
+            const defaultTooltipContent = `
             <span class="${styles.label}">
                  ${labelSelector(d.data) || ''}
             </span>
@@ -216,12 +221,13 @@ class SunBurst extends PureComponent {
                  ${d.value || ''}
             </span>`;
 
-        const content = tooltipContent ? tooltipContent(d) : defautlTooltipContent;
+            const content = tooltipContent ? tooltipContent(d) : defaultTooltipContent;
 
-        this.tooltip.innerHTML = content;
+            this.tooltip.innerHTML = content;
 
-        const { style } = this.tooltip;
-        style.display = 'block';
+            const { style } = this.tooltip;
+            style.display = 'block';
+        }
     }
 
     handleArcMouseMove = () => {
@@ -243,6 +249,18 @@ class SunBurst extends PureComponent {
         style.display = 'none';
     }
 
+    moveStackToFront = (t) => {
+        select(this.svg)
+            .selectAll('.slice')
+            .filter(d => d === t)
+            .each((d, i, nodes) => {
+                nodes[i].parentNode.appendChild(nodes[i]);
+                if (d.parent) {
+                    this.moveStackToFront(d.parent);
+                }
+            });
+    }
+
     drawChart = () => {
         const {
             boundingClientRect,
@@ -257,6 +275,7 @@ class SunBurst extends PureComponent {
         }
 
         this.init();
+        const uniqueId = randomString();
 
         const {
             width,
@@ -268,7 +287,7 @@ class SunBurst extends PureComponent {
         const group = svg
             .attr('width', width)
             .attr('height', height)
-            .on('click', () => this.handleClick())
+            .on('click', this.handleClick)
             .append('g')
             .attr('transform', this.svgGroupTransformation);
 
@@ -308,7 +327,7 @@ class SunBurst extends PureComponent {
             .append('path')
             .attr('class', 'hidden-arc')
             .style('fill', 'none')
-            .attr('id', (_, i) => `hiddenArc${i}`)
+            .attr('id', (_, i) => `${uniqueId}-hiddenArc${i}`)
             .attr('d', this.middleArcLine);
 
         const text = newSlice
@@ -320,7 +339,7 @@ class SunBurst extends PureComponent {
             .append('textPath')
             .attr('startOffset', '50%')
             .attr('text-anchor', 'middle')
-            .attr('xlink:href', (_, i) => `#hiddenArc${i}`)
+            .attr('xlink:href', (_, i) => `#${uniqueId}-hiddenArc${i}`)
             .text(d => labelSelector(d.data))
             .style('fill', (d) => {
                 const colorBg = this.getColor(d);
