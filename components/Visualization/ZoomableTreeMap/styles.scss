@@ -1,0 +1,42 @@
+@import '../../../stylesheets/base';
+
+.treemap {
+    display: flex;
+    flex: 1 1 auto;
+
+    rect {
+        cursor: pointer;
+    }
+
+    .grandparent {
+        cursor: pointer;
+
+        :hover {
+            fill: $color-viz-grey;
+        }
+
+        rect {
+            fill: $color-accent;
+        }
+    }
+
+    .child-label {
+        font-weight: $font-weight-normal;
+    }
+    .parent-label {
+        font-weight: $font-weight-bold;
+    }
+
+    .parent text{
+        font-size: $font-size-large;
+    }
+
+    .children rect.parent,
+    .children rect.child {
+        opacity: 1;
+    }
+
+    .children rect.parent {
+        fill-opacity: 0;
+    }
+}

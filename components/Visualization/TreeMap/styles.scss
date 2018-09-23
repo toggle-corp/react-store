@@ -1,41 +1,12 @@
-@import '../../../stylesheets/base';
-
-:global .treemap-container {
+.treemap {
     display: flex;
-    width: 100%;
-    height: 100%;
+    flex: 1 1 auto;
 
-    .treemap {
-        flex: 1 1 auto;
+    .rectangle {
+        cursor: pointer;
+    }
 
-        .grandparent text {
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .navigation:hover {
-            fill: $color-accent;
-        }
-
-        .children rect.parent,
-        .children rect.child {
-            opacity: 1;
-        }
-
-        .children rect.parent {
-            fill-opacity: 0;
-        }
-
-        .parent-text {
-            font-weight: 700;
-        }
-
-        rect {
-            cursor: pointer;
-        }
-
-        rect.parent {
-            pointer-events: none;
-        }
+    .label {
+        pointer-events: none;
     }
 }
