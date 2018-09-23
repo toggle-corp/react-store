@@ -29,5 +29,6 @@ HackedFormattedDate.propTypes = {
 HackedFormattedDate.defaultProps = {
     value: undefined,
 };
+HackedFormattedDate.format = FormattedDate.format;
 
 export default HackedFormattedDate;
