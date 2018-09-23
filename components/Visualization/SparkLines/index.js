@@ -186,14 +186,14 @@ class SparkLines extends PureComponent {
 
         if (fill) {
             group.append('path')
-                .attr('class', styles.area)
+                .attr('class', `fill ${styles.area}`)
                 .datum(data)
                 .attr('d', areas);
         }
 
         group
             .append('path')
-            .attr('class', styles.path)
+            .attr('class', `line ${styles.path}`)
             .datum(data)
             .attr('d', lines)
             .style('fill', 'none');
