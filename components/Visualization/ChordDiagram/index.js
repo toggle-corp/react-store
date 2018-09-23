@@ -110,8 +110,6 @@ class ChordDiagram extends PureComponent {
         } = margins;
 
         return select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${(width + left + right) / 2}, ${(height + top + bottom) / 2})`)
             .datum(data);

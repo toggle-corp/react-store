@@ -96,14 +96,10 @@ class CollapsibleTree extends React.PureComponent {
     setContext = (width, height, margins) => {
         const {
             top,
-            right,
-            bottom,
             left,
         } = margins;
 
         const group = select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .call(
                 zoom()
                     .filter(() => event.ctrlKey)
@@ -112,7 +108,8 @@ class CollapsibleTree extends React.PureComponent {
                         Object.assign(this, { x, y, k });
                         group
                             .attr('transform', `translate(${x + left}, ${y + top + (height / 2)}) scale(${k})`);
-                    }))
+                    }),
+            )
             .append('g')
             .attr('transform', `translate(${left},${top + (height / 2)})`);
 
@@ -368,7 +365,6 @@ class CollapsibleTree extends React.PureComponent {
         const { className } = this.props;
         const treeStyle = [
             'collapsible-tree',
-            styles.collapsibleTree,
             className,
         ].join(' ');
 
