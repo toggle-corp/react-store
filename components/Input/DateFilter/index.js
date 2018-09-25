@@ -1,54 +1,107 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
+import memoize from 'memoize-one';
 
+import { requiredCondition } from '../../General/Faram';
 import { FaramInputElement } from '../../General/FaramElements';
+import FormattedDate from '../../View/FormattedDate/FormattedDate';
+import ApplyModal from '../../View/ApplyModal';
+
+import { encodeDate, decodeDate } from '../../../utils/common';
 
 import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
-import PrimaryButton from '../../Action/Button/PrimaryButton';
-import DangerButton from '../../Action/Button/DangerButton';
-import FormattedDate from '../../View/FormattedDate';
-import Modal from '../../View/Modal';
-import ModalHeader from '../../View/Modal/Header';
-import ModalBody from '../../View/Modal/Body';
-import ModalFooter from '../../View/Modal/Footer';
-
-import { encodeDate } from '../../../utils/common';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
 
 const propTypes = {
-    /**
-     * for styling
-     */
     className: PropTypes.string,
-
-    onChange: PropTypes.func,
-
-    /**
-     * Placeholder for the input
-     */
-    placeholder: PropTypes.string,
-
     value: PropTypes.shape({
-        type: PropTypes.string,
-        startDate: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.string,
-        ]),
-        endDate: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.string,
-        ]),
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
     }),
+    onChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    placeholder: 'Select an option',
-    value: undefined,
-    onChange: undefined,
+    value: {},
+    onChange: noOp,
+};
+
+const formatDate = date => FormattedDate.format(decodeDate(date), 'dd-MM-yyyy');
+
+const presets = {
+    today: () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = encodeDate(today);
+        const endDate = encodeDate(today);
+
+        return { startDate, endDate };
+    },
+    yesterday: () => {
+        const yesterday = new Date();
+        yesterday.setHours(0, 0, 0, 0);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const startDate = encodeDate(yesterday);
+        const endDate = encodeDate(yesterday);
+
+        return { startDate, endDate };
+    },
+    currentWeek: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - min.getDay());
+        const startDate = encodeDate(min);
+
+        const max = min;
+        max.setHours(0, 0, 0, 0);
+        max.setDate(min.getDate() + 7);
+        const endDate = encodeDate(max);
+        return { startDate, endDate };
+    },
+    lastSevenDays: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 7);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    currentMonth: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(1);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        max.setMonth(min.getMonth() + 1);
+        max.setDate(0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    lastThirtyDays: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 30);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        max.setDate(max.getDate() + 1);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
 };
 
 class DateFilter extends React.PureComponent {
@@ -58,282 +111,226 @@ class DateFilter extends React.PureComponent {
     static defaultOptions = [
         { key: 'today', label: 'Today' },
         { key: 'yesterday', label: 'Yesterday' },
-        { key: 'current-week', label: 'This week' },
-        { key: 'last-7-days', label: 'Last 7 days' },
-        { key: 'current-month', label: 'This month' },
-        { key: 'last-30-days', label: 'Last 30 days' },
-        { key: 'custom', label: 'Custom range' },
+        { key: 'currentWeek', label: 'This week' },
+        { key: 'lastSevenDays', label: 'Last 7 days' },
+        { key: 'currentMonth', label: 'This month' },
+        { key: 'lastThirtyDays', label: 'Last 30 days' },
+        { key: 'customExact', label: 'Select an exact date' },
+        { key: 'customRange', label: 'Select a date range' },
     ];
 
-    static getClassName = (className, value) => {
-        const classNames = [
-            ...className.split(' '),
-            styles.selectInput,
-        ];
+    static exactModalSchema = {
+        fields: {
+            date: [requiredCondition],
+        },
+    };
 
-        if (value && value.type === 'custom') {
-            classNames.push(styles.monospace);
+    static rangeModalSchema = {
+        fields: {
+            startDate: [requiredCondition],
+            endDate: [requiredCondition],
+        },
+    };
+
+    static calculateOptionsAndValue = memoize((value) => {
+        const options = DateFilter.defaultOptions;
+        const { startDate, endDate: actualEndDate } = value;
+
+        if (!startDate || !actualEndDate) {
+            return { options, value: undefined };
         }
 
-        return classNames.join(' ');
-    }
+        const endDateObj = decodeDate(actualEndDate);
+        endDateObj.setDate(endDateObj.getDate() - 1);
+        const endDate = encodeDate(endDateObj);
 
-    static getRangeValues = (type, startDaet, endDaet) => {
-        let startDate = startDaet;
-        let endDate = endDaet;
-        switch (type) {
-            case 'today': {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                startDate = today.getTime();
+        const preset = Object.keys(presets).find((key) => {
+            const test = presets[key]();
+            return test.startDate === startDate && test.endDate === endDate;
+        });
 
-                today.setDate(today.getDate() + 1);
-                endDate = today.getTime();
-                break;
-            }
-            case 'yesterday': {
-                const yesterday = new Date();
-                yesterday.setHours(0, 0, 0, 0);
-                yesterday.setDate(yesterday.getDate() - 1);
-                startDate = yesterday.getTime();
+        if (preset) {
+            return {
+                options,
+                value: preset,
+            };
+        }
 
-                yesterday.setDate(yesterday.getDate() + 1);
-                endDate = yesterday.getTime();
-                break;
-            }
-            case 'current-week': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - min.getDay());
-                startDate = min.getTime();
-
-                const max = min;
-                max.setHours(0, 0, 0, 0);
-                max.setDate(min.getDate() + 8);
-                endDate = max.getTime();
-                break;
-            }
-            case 'last-7-days': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - 7);
-                startDate = min.getTime();
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                max.setDate(max.getDate() + 1);
-                endDate = max.getTime();
-                break;
-            }
-            case 'current-month': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(1);
-                startDate = min.getTime();
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                max.setDate(max.getDate() + 1);
-                endDate = max.getTime();
-                break;
-            }
-            case 'last-30-days': {
-                const min = new Date();
-                min.setHours(0, 0, 0, 0);
-                min.setDate(min.getDate() - 30);
-                startDate = min.getTime();
-
-                const max = new Date();
-                max.setHours(0, 0, 0, 0);
-                max.setDate(max.getDate() + 1);
-                endDate = max.getTime();
-                break;
-            }
-            default:
-                console.error(`Invalid type: ${type}`);
+        if (startDate === endDate) {
+            return {
+                options: [
+                    ...options,
+                    { key: 'selectedExact', label: startDate },
+                ],
+                value: 'selectedExact',
+            };
         }
 
         return {
-            startDate: encodeDate(new Date(startDate)),
-            endDate: encodeDate(new Date(endDate)),
+            options: [
+                ...options,
+                { key: 'selectedRange', label: `${formatDate(startDate)} - ${formatDate(endDate)}` },
+            ],
+            value: 'selectedRange',
         };
-    }
-
-    static dateToStr = date => FormattedDate.format(new Date(date), 'dd-MM-yyyy');
+    });
 
     constructor(props) {
         super(props);
 
         this.state = {
-            modalShown: false,
-            startDate: undefined,
-            endDate: undefined,
+            showRangeModal: false,
+            showExactModal: false,
         };
-
-        const { value } = props;
-        if (value && value.type === 'custom') {
-            this.state = {
-                ...this.state,
-                startDate: value.startDate,
-                endDate: value.endDate,
-            };
-        }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (
-            (this.props.value !== nextProps.value) &&
-            (nextProps.value && nextProps.value.type === 'custom')
-        ) {
-            this.setState({
-                startDate: nextProps.value.startDate,
-                endDate: nextProps.value.endDate,
-            });
-        }
+    getClassName = () => {
+        const { className } = this.props;
+        const classNames = [
+            className,
+            'date-filter',
+        ];
+
+        return classNames.join(' ');
     }
 
-    setCustomDate = () => {
-        const {
-            startDate,
-            endDate,
-        } = this.state;
-
-        if (this.props.onChange) {
-            this.props.onChange({
-                type: 'custom',
-                startDate,
-                endDate,
-            });
-        }
-
-        this.closeModal();
-    }
-
-    handleChange = (valueType) => {
-        const { onChange } = this.props;
-        if (!onChange) {
+    setNewDate = ({ startDate, endDate } = {}) => {
+        if (!startDate || !endDate) {
+            this.props.onChange(undefined);
             return;
         }
 
-        if (!valueType) {
-            onChange(valueType);
-        } else if (valueType === 'custom-range') {
-            this.setCustomDate();
-        } else if (valueType === 'custom') {
-            this.showModal();
-        } else {
-            const { startDate, endDate } = this.state;
-            onChange({
-                type: valueType,
-                ...DateFilter.getRangeValues(valueType, startDate, endDate),
-            });
+        const endDateObj = decodeDate(endDate);
+        endDateObj.setDate(endDateObj.getDate() + 1);
+        const actualEndDate = encodeDate(endDateObj);
+
+        this.props.onChange({
+            startDate,
+            endDate: actualEndDate,
+        });
+    }
+
+    handleSelectInputChange = (value) => {
+        switch (value) {
+            case 'customExact':
+                this.setState({
+                    showExactModal: true,
+                });
+                break;
+            case 'customRange':
+                this.setState({
+                    showRangeModal: true,
+                });
+                break;
+            default:
+                this.setNewDate(presets[value]());
         }
     }
 
-    showModal = () => {
-        this.setState({ modalShown: true });
+    closeRangeModal = () => {
+        this.setState({
+            showRangeModal: false,
+        });
     }
 
-    closeModal = () => {
-        this.setState({ modalShown: false });
+    applyRangeDate = ({ startDate, endDate }) => {
+        this.setState({
+            showRangeModal: false,
+        }, () => {
+            this.setNewDate({
+                startDate,
+                endDate,
+            });
+        });
     }
 
-    handleStartDateChange = (startDate) => {
-        this.setState({ startDate });
+    closeExactModal = () => {
+        this.setState({
+            showExactModal: false,
+        });
     }
 
-    handleEndDateChange = (timestamp) => {
-        const endDate = new Date(timestamp);
-        endDate.setDate(endDate.getDate() + 1);
-        this.setState({ endDate: encodeDate(endDate) });
+    applyExactDate = ({ date }) => {
+        this.setState({
+            showExactModal: false,
+        }, () => {
+            this.setNewDate({
+                startDate: date,
+                endDate: date,
+            });
+        });
+    }
+
+    renderExactModal = () => {
+        const { showExactModal } = this.state;
+
+        if (!showExactModal) {
+            return null;
+        }
+
+        return (
+            <ApplyModal
+                className={styles.dateFilterModal}
+                onClose={this.closeExactModal}
+                onApply={this.applyExactDate}
+                title="Select a date"
+                schema={DateFilter.exactModalSchema}
+            >
+                <DateInput faramElementName="date" />
+            </ApplyModal>
+        );
+    }
+
+    renderRangeModal = () => {
+        const { showRangeModal } = this.state;
+
+        if (!showRangeModal) {
+            return null;
+        }
+
+        return (
+            <ApplyModal
+                className={styles.dateFilterModal}
+                onClose={this.closeRangeModal}
+                onApply={this.applyRangeDate}
+                title="Select a date range"
+                schema={DateFilter.rangeModalSchema}
+            >
+                <DateInput faramElementName="startDate" />
+                <DateInput faramElementName="endDate" />
+            </ApplyModal>
+        );
     }
 
     render() {
         const {
-            placeholder,
-            className,
             value,
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
+        const className = this.getClassName();
 
         const {
-            modalShown,
-            startDate,
-            endDate,
-        } = this.state;
+            options: selectInputOptions,
+            value: selectInputValue,
+        } = DateFilter.calculateOptionsAndValue(value);
 
-        // XXX: put options in state
-        let options = DateFilter.defaultOptions;
+        const CustomExactModal = this.renderExactModal;
+        const CustomRangeModal = this.renderRangeModal;
 
-        let endDateToDisplay;
-        if (endDate) {
-            endDateToDisplay = new Date(endDate);
-            endDateToDisplay.setDate(endDateToDisplay.getDate() - 1);
-            endDateToDisplay = encodeDate(endDateToDisplay);
-        }
-
-        if (startDate && endDate) {
-            const startStr = DateFilter.dateToStr(startDate);
-            const endStr = DateFilter.dateToStr(endDate);
-            const customLabel = `${startStr} to ${endStr}`;
-            options = [
-                ...options,
-                { key: 'custom-range', label: customLabel },
-            ];
-        }
-
-        const selectInputValue = value && (
-            value.type === 'custom' ? 'custom-range' : value.type
-        );
         return (
-            <Fragment>
+            <React.Fragment>
                 <SelectInput
-                    onChange={this.handleChange}
-                    options={options}
-                    placeholder={placeholder}
-                    className={DateFilter.getClassName(className, value)}
+                    className={className}
+                    onChange={this.handleSelectInputChange}
+                    options={selectInputOptions}
                     value={selectInputValue}
                     {...otherProps}
                 />
-                {
-                    modalShown && (
-                        <Modal
-                            closeOnEscape
-                            onClose={this.closeModal}
-                            className={styles.modal}
-                        >
-                            <ModalHeader title="Select date range" />
-                            <ModalBody>
-                                <DateInput
-                                    label="Start date"
-                                    onChange={this.handleStartDateChange}
-                                    value={startDate}
-                                />
-                                <DateInput
-                                    label="End date"
-                                    onChange={this.handleEndDateChange}
-                                    value={endDateToDisplay}
-                                />
-                            </ModalBody>
-                            <ModalFooter>
-                                <DangerButton
-                                    onClick={this.closeModal}
-                                    autoFocus
-                                >
-                                    Close
-                                </DangerButton>
-                                <PrimaryButton
-                                    onClick={this.setCustomDate}
-                                >
-                                    Apply
-                                </PrimaryButton>
-                            </ModalFooter>
-                        </Modal>
-                    )
-                }
-            </Fragment>
+                <CustomExactModal />
+                <CustomRangeModal />
+            </React.Fragment>
         );
     }
 }
