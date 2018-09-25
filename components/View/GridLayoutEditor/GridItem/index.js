@@ -314,14 +314,18 @@ export default class GridItem extends React.PureComponent {
         let sx = 0;
         if (right > scrollRight) {
             sx = SCROLL_DISTANCE;
-        } else if (left < scrollLeft && scrollLeft > 0) {
+        } else if (this.isResizing && right < scrollLeft) {
+            sx = -SCROLL_DISTANCE;
+        } else if (!this.isResizing && left < scrollLeft && scrollLeft > 0) {
             sx = -SCROLL_DISTANCE;
         }
 
         let sy = 0;
         if (bottom > scrollBottom) {
             sy = SCROLL_DISTANCE;
-        } else if (top < scrollTop && scrollTop > 0) {
+        } else if (this.isResizing && bottom < scrollTop) {
+            sy = -SCROLL_DISTANCE;
+        } else if (!this.isResizing && top < scrollTop && scrollTop > 0) {
             sy = -SCROLL_DISTANCE;
         }
 
