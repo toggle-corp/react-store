@@ -169,8 +169,6 @@ class ForceDirectedGraph extends React.PureComponent {
             .range([1, radius / 2]);
 
         const group = svg
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 

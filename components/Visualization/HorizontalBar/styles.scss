@@ -1,8 +1,6 @@
 @import '../../../stylesheets/base';
 
 .horizontal-bar {
-    display: flex;
-    flex: 1 1 auto;
 
     .grid line {
         stroke: $color-grid-path;

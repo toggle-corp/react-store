@@ -155,8 +155,6 @@ class SparkLines extends PureComponent {
         this.height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', this.width + left + right + marginForCircle)
-            .attr('height', this.height + top + bottom + marginForCircle)
             .append('g')
             .attr('class', styles.sparkLine)
             .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
