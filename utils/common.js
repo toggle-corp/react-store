@@ -759,6 +759,7 @@ export const getRatingForContentInString = (content = '', str) => (
 
 // MISC
 
+// NOTE: used in debugger
 export const findDifferenceInObject = (o, n) => {
     const allKeys = new Set([
         ...Object.keys(o),
@@ -774,6 +775,7 @@ export const findDifferenceInObject = (o, n) => {
     return changes;
 };
 
+// NOTE: used in Faram:validator
 export const findDifferenceInList = (listA, listB, keySelector) => {
     const modified = [];
     const added = [];
@@ -815,6 +817,7 @@ export const checkVersion = (oldVersionId, newVersionId) => ({
     isValueOverriden: isTruthy(oldVersionId) && oldVersionId < newVersionId,
 });
 
+// NOTE: only used in chord diagram; maybe on deep
 // save the svg node element
 export const saveSvg = (svgElement, name) => {
     svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -830,7 +833,7 @@ export const saveSvg = (svgElement, name) => {
     document.body.removeChild(downloadLink);
 };
 
-export const getClassNameListAndIndex = (el, className) => {
+const getClassNameListAndIndex = (el, className) => {
     const classNameList = (el.getAttribute('class')).split(' ');
     const index = classNameList.findIndex(d => d === className);
 
