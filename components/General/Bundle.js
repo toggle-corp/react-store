@@ -48,7 +48,7 @@ class Bundle extends React.Component {
 
     handleLoad = (BundledComponent) => {
         if (!this.mounted) {
-            console.error('Bundle unmounted while loading Component.');
+            console.warn('Bundle unmounted while loading Component.');
             return;
         }
 
@@ -64,11 +64,11 @@ class Bundle extends React.Component {
 
     handleLoadError = (err) => {
         if (!this.mounted) {
-            console.error('Bundle unmounted while loading Component.');
+            console.warn('Bundle unmounted while loading Component.');
             return;
         }
         this.setState({ failed: true });
-        console.error('Bundle load failed.', err);
+        console.warn('Bundle load failed.', err);
     }
 
     renderLoading = ({ text }) => (

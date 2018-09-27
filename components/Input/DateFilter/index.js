@@ -150,7 +150,7 @@ class DateFilter extends React.PureComponent {
                 break;
             }
             default:
-                console.error(`Invalid type: ${type}`);
+                console.error(`Invalid date range type: ${type}`);
         }
 
         return {
