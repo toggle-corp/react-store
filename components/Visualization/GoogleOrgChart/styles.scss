@@ -1,0 +1,24 @@
+@import '../../../stylesheets/base';
+
+.orgChart {
+    .node-class {
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 2px solid $color-background-light;
+        color: $color-text-on-light;
+        background-color: $color-background-light;
+    }
+
+    .disabled {
+        color: $color-text-on-light;
+        background-color: $color-background-light;
+    }
+
+    .selected-node-class {
+        cursor: pointer;
+        border: 2px solid $color-accent-light;
+        background-color: $color-accent-light;
+        color: $color-text-on-dark;
+    }
+}
