@@ -19,8 +19,8 @@ import {
     forceCenter,
     forceCollide,
 } from 'd3-force';
-import { forceAttract } from 'd3-force-attract';
-import { forceCluster } from 'd3-force-cluster';
+import { forceAttract } from 'd3-force-attract/index';
+import { forceCluster } from 'd3-force-cluster/index';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
@@ -45,9 +45,9 @@ const propTypes = {
         value: PropTypes.string,
         score: PropTypes.number,
     }),
-    idAccessor: PropTypes.func.isRequired,
-    groupAccessor: PropTypes.func,
-    valueAccessor: PropTypes.func,
+    idSelector: PropTypes.func.isRequired,
+    groupSelector: PropTypes.func,
+    valueSelector: PropTypes.func,
     scaleFactor: PropTypes.number,
     onHover: PropTypes.func,
     className: PropTypes.string,
@@ -73,8 +73,8 @@ const defaultProps = {
         value: 'gold',
         cluster: 0,
     },
-    groupAccessor: d => d.cluster,
-    valueAccessor: d => d.score,
+    groupSelector: d => d.cluster,
+    valueSelector: d => d.score,
     scaleFactor: 2,
     onHover: () => true,
     className: '',
@@ -118,8 +118,8 @@ class ClusterForceLayout extends PureComponent {
             .style('display', 'none');
     }
 
-    getMaxNode = (data, valueAccessor) => data.reduce((previous, current) => (
-        valueAccessor(current) > valueAccessor(previous) ? current : previous
+    getMaxNode = (data, valueSelector) => data.reduce((previous, current) => (
+        valueSelector(current) > valueSelector(previous) ? current : previous
     ))
 
     dragstarted = (d) => {
@@ -148,10 +148,10 @@ class ClusterForceLayout extends PureComponent {
     drawChart = () => {
         const {
             data,
-            idAccessor,
-            groupAccessor,
+            idSelector,
+            groupSelector,
             boundingClientRect,
-            valueAccessor,
+            valueSelector,
             selectedData,
             scaleFactor,
             colorScheme,
@@ -176,7 +176,7 @@ class ClusterForceLayout extends PureComponent {
 
         const padding = 2;
 
-        const clusterGroup = groupList(data, valueAccessor);
+        const clusterGroup = groupList(data, valueSelector);
 
         const noOfClusters = Object.keys(clusterGroup).length;
 
@@ -185,10 +185,10 @@ class ClusterForceLayout extends PureComponent {
 
         const clusters = [];
         const nodes = data.map((node) => {
-            const group = groupAccessor(node);
-            const radius = valueAccessor(node) * scaleFactor;
+            const group = groupSelector(node);
+            const radius = valueSelector(node) * scaleFactor;
             const element = {
-                id: idAccessor(node),
+                id: idSelector(node),
                 radius,
                 group,
                 x: (Math.cos((group / noOfClusters) * 2 * Math.PI) * 200) +
