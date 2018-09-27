@@ -236,7 +236,7 @@ export default class RestRequest {
                 return;
             }
             // NOTE: a network problem may occur
-            console.error(ex);
+            console.warn(ex);
             const retrySuccessful = this.retry();
             if (!retrySuccessful) {
                 this.fatal({ errorMessage: ex.message, errorCode: ex.statusCode });
