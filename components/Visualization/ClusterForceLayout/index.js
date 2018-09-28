@@ -5,7 +5,10 @@ import React, {
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
 import { drag } from 'd3-drag';
-import { select, event } from 'd3-selection';
+import {
+    select,
+    event,
+} from 'd3-selection';
 import { timer } from 'd3-timer';
 import { range } from 'd3-array';
 
@@ -27,7 +30,7 @@ import Float from '../../View/Float';
 
 import {
     groupList,
-    getStanadardFilename,
+    getStandardFilename,
 } from '../../../utils/common';
 
 import styles from './styles.scss';
@@ -48,6 +51,7 @@ const propTypes = {
     idSelector: PropTypes.func.isRequired,
     groupSelector: PropTypes.func,
     valueSelector: PropTypes.func,
+    setSaveFunction: PropTypes.func,
     scaleFactor: PropTypes.number,
     onHover: PropTypes.func,
     className: PropTypes.string,
@@ -73,10 +77,11 @@ const defaultProps = {
         value: 'gold',
         cluster: 0,
     },
+    setSaveFunction: () => {},
     groupSelector: d => d.cluster,
     valueSelector: d => d.score,
     scaleFactor: 2,
-    onHover: () => true,
+    onHover: () => {},
     className: '',
     colorScheme: interpolateRainbow,
 };
@@ -85,18 +90,27 @@ class ClusterForceLayout extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
+
     componentDidMount() {
         this.drawChart();
+        this.updateData(this.props.data);
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.data !== this.props.data) {
-            this.updateData(nextProps);
+            this.updateData(nextProps.data);
         }
     }
 
     componentDidUpdate() {
         this.redrawChart();
     }
+
 
     onMouseOver = (d) => {
         this.props.onHover(d);
@@ -118,9 +132,9 @@ class ClusterForceLayout extends PureComponent {
             .style('display', 'none');
     }
 
-    getMaxNode = (data, valueSelector) => data.reduce((previous, current) => (
-        valueSelector(current) > valueSelector(previous) ? current : previous
-    ))
+    updateData = (data) => {
+        this.data = JSON.parse(JSON.stringify(data));
+    }
 
     dragstarted = (d) => {
         if (!event.active) this.simulation.alphaTarget(0.3).restart();
@@ -142,12 +156,11 @@ class ClusterForceLayout extends PureComponent {
     save = () => {
         const svgsaver = new SvgSaver();
         const svg = select(this.svg);
-        svgsaver.asSvg(svg.node(), `${getStanadardFilename('clustergraph', 'graph')}.svg`);
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('clustergraph', 'graph')}.svg`);
     }
 
     drawChart = () => {
         const {
-            data,
             idSelector,
             groupSelector,
             boundingClientRect,
@@ -158,7 +171,7 @@ class ClusterForceLayout extends PureComponent {
             margins,
         } = this.props;
 
-        const {
+        let {
             width,
             height,
         } = boundingClientRect;
@@ -171,12 +184,12 @@ class ClusterForceLayout extends PureComponent {
         } = margins;
         if (!boundingClientRect.width) return;
 
-        this.width = width - left - right;
-        this.height = height - top - bottom;
+        width = width - left - right;
+        height = height - top - bottom;
 
         const padding = 2;
 
-        const clusterGroup = groupList(data, valueSelector);
+        const clusterGroup = groupList(this.data, valueSelector);
 
         const noOfClusters = Object.keys(clusterGroup).length;
 
@@ -184,7 +197,7 @@ class ClusterForceLayout extends PureComponent {
             .domain(range(noOfClusters));
 
         const clusters = [];
-        const nodes = data.map((node) => {
+        const nodes = this.data.map((node) => {
             const group = groupSelector(node);
             const radius = valueSelector(node) * scaleFactor;
             const element = {
@@ -196,8 +209,9 @@ class ClusterForceLayout extends PureComponent {
                 y: (Math.sin((group / noOfClusters) * 2 * Math.PI) * 200) +
                       (height / 2) + Math.random(),
             };
-            if (!clusters.find(cluster => cluster.group === group) ||
-                (radius > clusters.find(cluster => cluster.group === group).radius)) {
+            const maxElementofGroup = clusters.find(cluster => cluster.group === group);
+            if (!maxElementofGroup ||
+                (radius > maxElementofGroup.radius)) {
                 const index = clusters.findIndex(cluster => cluster.group === group);
                 if (index === -1) {
                     clusters.push(element);
@@ -209,9 +223,9 @@ class ClusterForceLayout extends PureComponent {
         });
 
         this.simulation = forceSimulation()
-            .force('center', forceCenter(this.width / 2, this.height / 2))
+            .force('center', forceCenter(width / 2, height / 2))
             .force('attract', forceAttract()
-                .target([this.width / 2, this.height / 2])
+                .target([width / 2, height / 2])
                 .strength(0.01))
             .force('cluster', forceCluster()
                 .centers(d => clusters.find(node => node.group === d.group))
