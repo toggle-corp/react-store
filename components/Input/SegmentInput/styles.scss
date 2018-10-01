@@ -1,0 +1,39 @@
+@import '~base-scss/base';
+
+.segment-input {
+    .segment-container {
+        display: inline-flex;
+        flex-wrap: wrap;
+        border: $width-separator-thin solid $color-accent;
+    }
+
+    &.error {
+        .label {
+            color: $color-danger;
+        }
+
+        .segment-container {
+            border: $width-separator-thin solid $color-danger;
+        }
+    }
+
+    &.required {
+        .label {
+            font-weight: $font-weight-medium;
+
+            &::after {
+                content: '*';
+            }
+        }
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
+
+        .segment-container {
+            border: $width-separator-thin solid $color-text-disabled;
+        }
+    }
+}
