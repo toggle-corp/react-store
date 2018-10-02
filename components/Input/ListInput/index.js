@@ -84,7 +84,7 @@ class ListInput extends React.PureComponent {
             <ListView
                 className={className}
                 data={value}
-                keyExtractor={keySelector}
+                keySelector={keySelector}
                 modifier={this.renderItem}
             />
         );

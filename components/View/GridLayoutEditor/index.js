@@ -342,7 +342,7 @@ export default class GridLayoutEditor extends React.PureComponent {
                 >
                     <List
                         data={data}
-                        keyExtractor={keySelector}
+                        keySelector={keySelector}
                         renderer={GridItem}
                         rendererClassName={itemClassName}
                         rendererParams={this.renderParams}

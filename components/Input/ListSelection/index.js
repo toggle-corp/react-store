@@ -115,7 +115,7 @@ export class NormalListSelection extends React.PureComponent {
             <ListView
                 data={options}
                 renderer={Checkbox}
-                keyExtractor={keySelector}
+                keySelector={keySelector}
                 rendererParams={this.renderParams}
             />
         );

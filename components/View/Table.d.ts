@@ -28,7 +28,7 @@ interface Props<Data> {
     expandRowId?: string | number;
     expandedRowModifier?(data: Data): React.ReactNode;
 
-    keyExtractor(data: Data): string | number;
+    keySelector(data: Data): string | number;
 
     onBodyClick?(rowKey: string, cellKey: string): void; // FIXME: third props is event
 

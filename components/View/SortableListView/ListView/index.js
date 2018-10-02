@@ -10,14 +10,14 @@ const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
     emptyComponent: PropTypes.func,
-    keyExtractor: PropTypes.func,
+    keySelector: PropTypes.func,
     faramElement: PropTypes.bool,
     itemClassName: PropTypes.string,
 };
 
 const defaultProps = {
     data: [],
-    keyExtractor: undefined,
+    keySelector: undefined,
     className: '',
     emptyComponent: undefined,
     faramElement: false,
@@ -33,7 +33,7 @@ export default class ListViewSortableContainer extends React.Component {
         const {
             data, // eslint-disable-line no-unused-vars
             className, // eslint-disable-line no-unused-vars
-            keyExtractor, // eslint-disable-line no-unused-vars
+            keySelector, // eslint-disable-line no-unused-vars
             emptyComponent, // eslint-disable-line no-unused-vars
             itemClassName,
             ...otherProps
@@ -54,7 +54,7 @@ export default class ListViewSortableContainer extends React.Component {
         const {
             data,
             className,
-            keyExtractor,
+            keySelector,
             emptyComponent,
             faramElement,
         } = this.props;
@@ -64,7 +64,7 @@ export default class ListViewSortableContainer extends React.Component {
                 className={className}
                 emptyComponent={emptyComponent}
                 data={data}
-                keyExtractor={keyExtractor}
+                keySelector={keySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
                 faramElement={faramElement}

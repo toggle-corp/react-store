@@ -107,7 +107,7 @@ export default class GridViewLayout extends React.PureComponent {
             >
                 <List
                     data={this.data}
-                    keyExtractor={keySelector}
+                    keySelector={keySelector}
                     renderer={GridItem}
                     rendererClassName={itemClassName}
                     rendererParams={this.renderParams}

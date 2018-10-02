@@ -105,7 +105,7 @@ class RadioInput extends React.PureComponent {
             <ListView
                 className={`radio-input ${className} ${styles.radioInput}`}
                 data={this.props.options}
-                keyExtractor={RadioInput.optionKeyExtractor}
+                keySelector={RadioInput.optionKeyExtractor}
                 modifier={this.renderOption}
             />
         );

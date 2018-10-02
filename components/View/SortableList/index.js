@@ -40,7 +40,7 @@ const propTypes = {
 
     modifier: PropTypes.func.isRequired,
 
-    keyExtractor: PropTypes.func,
+    keySelector: PropTypes.func,
 
     useDragHandle: PropTypes.bool,
 
@@ -55,7 +55,7 @@ const defaultProps = {
     onChange: undefined,
     useDragHandle: true,
     sortableItemClass: '',
-    keyExtractor: undefined,
+    keySelector: undefined,
     dragHandleModifier: undefined,
     emptyComponent: undefined,
 };
@@ -100,7 +100,7 @@ export default class SortableList extends React.Component {
         <ListView
             className={this.props.className}
             data={items}
-            keyExtractor={this.props.keyExtractor}
+            keySelector={this.props.keySelector}
             modifier={this.getSortableItems}
             emptyComponent={this.props.emptyComponent}
         />

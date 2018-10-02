@@ -79,7 +79,7 @@ export default class Headers extends React.Component {
                 <tr>
                     <List
                         data={headers}
-                        keyExtractor={this.getHeaderKey}
+                        keySelector={this.getHeaderKey}
                         modifier={this.renderHeader}
                     />
                 </tr>

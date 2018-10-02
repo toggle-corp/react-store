@@ -35,7 +35,7 @@ export default class FaramListApi extends FaramGroupApi {
                 }),
                 calculateElementProps: () => ({
                     data: this.props.value,
-                    keyExtractor: this.props.keySelector,
+                    keySelector: this.props.keySelector,
                 }),
             },
             sortableList: {
@@ -48,7 +48,7 @@ export default class FaramListApi extends FaramGroupApi {
                 calculateElementProps: () => ({
                     data: this.props.value,
                     onChange: this.props.onChange,
-                    keyExtractor: this.props.keySelector,
+                    keySelector: this.props.keySelector,
                 }),
             },
         };

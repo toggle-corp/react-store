@@ -85,7 +85,7 @@ const propTypes = {
     /**
      * A function that returns key from the row data
      */
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 
     highlightCellKey: PropTypes.shape({
         columnKey: propTypeKey,
@@ -315,7 +315,7 @@ export default class Table extends React.PureComponent {
     render() {
         const {
             className,
-            keyExtractor,
+            keySelector,
             highlightCellKey,
             highlightRowKey,
             highlightColumnKey,
@@ -340,7 +340,7 @@ export default class Table extends React.PureComponent {
                 dataModifier={this.dataModifier}
                 headerModifier={this.headerModifier}
                 headers={headers}
-                keyExtractor={keyExtractor}
+                keySelector={keySelector}
                 onHeaderClick={this.handleHeaderClick}
                 highlightCellKey={highlightCellKey}
                 highlightRowKey={highlightRowKey}

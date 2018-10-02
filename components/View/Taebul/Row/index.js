@@ -62,7 +62,7 @@ export default class Row extends React.PureComponent {
             <ListView
                 className={className}
                 data={columns}
-                keyExtractor={columnKeySelector}
+                keySelector={columnKeySelector}
                 renderer={Cell}
                 rendererParams={this.cellRendererParams}
             />
