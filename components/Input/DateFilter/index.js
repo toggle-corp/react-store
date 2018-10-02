@@ -7,12 +7,12 @@ import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
-import FormattedDate from '../../View/FormattedDate';
 import Modal from '../../View/Modal';
 import ModalHeader from '../../View/Modal/Header';
 import ModalBody from '../../View/Modal/Body';
 import ModalFooter from '../../View/Modal/Footer';
 
+import { formatDate } from '../../../utils/date';
 import { encodeDate } from '../../../utils/common';
 
 import styles from './styles.scss';
@@ -159,7 +159,7 @@ class DateFilter extends React.PureComponent {
         };
     }
 
-    static dateToStr = date => FormattedDate.format(new Date(date), 'dd-MM-yyyy');
+    static dateToStr = date => formatDate(new Date(date), 'dd-MM-yyyy');
 
     constructor(props) {
         super(props);
