@@ -1,0 +1,54 @@
+@import '~base-scss/base';
+
+.segment-button-input {
+    display: none;
+}
+
+.segment-option {
+    @include transition-medium;
+    margin: 0;
+    background-color: $color-foreground;
+    cursor: pointer;
+    padding: $spacing-extra-small $spacing-medium;
+    color: $color-text-label;
+
+    &.checked {
+        @include background-color($color-accent);
+
+        &.error {
+            @include background-color($color-danger);
+        }
+
+        &.disabled {
+            @include background-color($color-text-disabled);
+        }
+    }
+
+    &.disabled {
+        pointer-events: none;
+    }
+
+    &.read-only {
+        pointer-events: none;
+    }
+
+    &:not(:last-child) {
+        border-right: $width-separator-thin solid $color-accent;
+
+        &.error {
+            border-right: $width-separator-thin solid $color-danger;
+        }
+
+        &.disabled {
+            border-right: $width-separator-thin solid $color-text-disabled;
+        }
+    }
+
+    &:not(.disabled) {
+        &:hover {
+            background-color: $color-background-hover;
+            color: $color-text;
+        }
+    }
+
+}
