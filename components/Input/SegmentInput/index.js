@@ -159,7 +159,7 @@ class SegmentInput extends React.PureComponent {
                     data={options}
                     renderer={Option}
                     rendererParams={this.rendererParams}
-                    keyExtractor={keySelector}
+                    keySelector={keySelector}
                 />
                 <HintAndError
                     show={showHintAndError}

@@ -1,9 +1,8 @@
 /**
  * @author tnagorra <weathermist@gmail.com>
  */
+import { formatDate } from './date';
 
-// TODO: Move FormattedDate.format to utils and remove this import
-import FormattedDate from '../components/View/FormattedDate/FormattedDate';
 
 // CHECKER
 
@@ -177,7 +176,7 @@ export const getNumDaysInMonth = date => (
     ) : 32
 );
 
-export const encodeDate = date => FormattedDate.format(date, 'yyyy-MM-dd');
+export const encodeDate = date => formatDate(date, 'yyyy-MM-dd');
 
 export const decodeDate = (value) => {
     // Let's assume that the value is in local time zone

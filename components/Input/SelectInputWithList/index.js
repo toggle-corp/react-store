@@ -232,7 +232,7 @@ class SelectInputWithList extends React.PureComponent {
                     data={objectValues}
                     renderer={Item}
                     rendererParams={this.getListItemParams}
-                    keyExtractor={keySelector}
+                    keySelector={keySelector}
                     {...listProps}
                 />
             </div>

@@ -33,7 +33,7 @@ const propTypes = {
     className: PropTypes.string,
     data: propTypeData,
 
-    keyExtractor: PropTypes.func,
+    keySelector: PropTypes.func,
     modifier: PropTypes.func,
 
     renderer: PropTypes.func,
@@ -47,7 +47,7 @@ const defaultProps = {
     className: '',
     data: [],
     modifier: undefined,
-    keyExtractor: undefined,
+    keySelector: undefined,
     renderer: undefined,
     rendererClassName: '',
     rendererParams: undefined,
@@ -135,14 +135,14 @@ export default class VirtualizedListView extends React.Component {
     renderItem = (datum, i) => {
         const {
             data,
-            keyExtractor,
+            keySelector,
             modifier,
             renderer: Renderer,
             rendererClassName: rendererClassNameFromProps,
             rendererParams,
         } = this.props;
 
-        const key = (keyExtractor && keyExtractor(datum, i)) || datum;
+        const key = (keySelector && keySelector(datum, i)) || datum;
 
         if (modifier) {
             return modifier(key, datum, i, data);

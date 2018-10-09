@@ -104,7 +104,7 @@ export default class Row extends React.PureComponent {
         }
     }
 
-    keyExtractor = header => header;
+    keySelector = header => header;
 
     renderCell = (key) => {
         const {
@@ -149,7 +149,7 @@ export default class Row extends React.PureComponent {
             <tr className={trClassName}>
                 <List
                     data={headersOrder}
-                    keyExtractor={this.keyExtractor}
+                    keySelector={this.keySelector}
                     modifier={this.renderCell}
                 />
             </tr>

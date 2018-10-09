@@ -38,9 +38,9 @@ const propTypes = {
     expandedRowModifier: PropTypes.func,
 
     /**
-     * keyExtractor is used to get a unique key associated with rowData
+     * keySelector is used to get a unique key associated with rowData
      */
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 
     onBodyClick: PropTypes.func,
 
@@ -141,7 +141,7 @@ export default class RawTable extends React.PureComponent {
             data,
             dataModifier,
             headerModifier,
-            keyExtractor,
+            keySelector,
             onHeaderClick,
             onBodyClick,
             onBodyHover,
@@ -180,7 +180,7 @@ export default class RawTable extends React.PureComponent {
                                 dataModifier={dataModifier}
                                 expandedRowModifier={expandedRowModifier}
                                 headersOrder={this.state.headersOrder}
-                                keyExtractor={keyExtractor}
+                                keySelector={keySelector}
                                 onClick={onBodyClick}
                                 onHover={onBodyHover}
                                 onHoverOut={onBodyHoverOut}

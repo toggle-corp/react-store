@@ -349,7 +349,7 @@ class TabularSelectInput extends React.PureComponent {
                     <Table
                         data={selectedOptions}
                         headers={tableHeadersWithRemove}
-                        keyExtractor={keySelector}
+                        keySelector={keySelector}
                     />
                 </div>
                 {

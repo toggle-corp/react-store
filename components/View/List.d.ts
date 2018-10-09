@@ -11,7 +11,7 @@ interface RendererProps<T> {
 
 interface Props<T> {
     data?: T[];
-    keyExtractor?(datum: T, index: number): string;
+    keySelector?(datum: T, index: number): string;
     // FIXME: key should not be undefined
     modifier?(key: string | undefined, dataum: T, i: number, data: T[]): React.ReactNode;
 }

@@ -45,9 +45,9 @@ const propTypes = {
     highlightColumnKey: propTypeKey,
 
     /**
-     * keyExtractor is used to get a unique key associated with rowData
+     * keySelector is used to get a unique key associated with rowData
      */
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 
     onClick: PropTypes.func,
 
@@ -88,8 +88,8 @@ export default class Body extends React.PureComponent {
     }
 
     getRowKey = (rowData) => {
-        const { keyExtractor } = this.props;
-        return keyExtractor(rowData);
+        const { keySelector } = this.props;
+        return keySelector(rowData);
     }
 
     handleRowClick = (rowKey, cellKey, e) => {
@@ -168,7 +168,7 @@ export default class Body extends React.PureComponent {
             <tbody className={className}>
                 <List
                     data={data}
-                    keyExtractor={this.getRowKey}
+                    keySelector={this.getRowKey}
                     modifier={this.renderRow}
                 />
             </tbody>

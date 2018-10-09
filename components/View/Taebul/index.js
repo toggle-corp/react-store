@@ -76,14 +76,14 @@ export default class Taebul extends React.PureComponent {
                 <ListView
                     className={styles.head}
                     data={columns}
-                    keyExtractor={Taebul.columnKeySelector}
+                    keySelector={Taebul.columnKeySelector}
                     renderer={Header}
                     rendererParams={this.headerRendererParams}
                 />
                 <ListView
                     className={styles.body}
                     data={data}
-                    keyExtractor={keySelector}
+                    keySelector={keySelector}
                     renderer={Row}
                     rendererParams={this.rowRendererParams}
                     rendererClassName={rowClassName}
