@@ -92,6 +92,13 @@ update.extend('$setIfDefined', (value, original) => {
     return value;
 });
 
+update.extend('$setDefault', (value, original) => {
+    if (original === undefined) {
+        return value;
+    }
+    return original;
+});
+
 update.extend('$mergeIfDefined', (obj, original) => {
     const copy = { ...original };
     Object.keys(obj).forEach((key) => {
