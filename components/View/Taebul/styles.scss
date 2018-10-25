@@ -1,13 +1,20 @@
 @import '../../../stylesheets/base';
 
 .taebul {
+    position: relative;
+    overflow: auto;
+
     .head {
         display: flex;
+        position: sticky;
+        top: 0;
         border-bottom: $width-separator-medium solid $color-separator;
+        background-color: $color-foreground;
     }
 
     .body {
         padding: 0;
+        height: 100%;
 
         .row {
             display: flex;
