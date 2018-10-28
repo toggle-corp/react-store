@@ -88,6 +88,20 @@ const defaultProps = {
     changeDelay: 0,
 };
 
+const emptyObject = {};
+const isFunction = functionToCheck => (
+    functionToCheck
+    && {}.toString.call(functionToCheck) === '[object Function]'
+);
+
+const resolveToObject = (d) => {
+    if (isFunction(d)) {
+        return d();
+    }
+
+    return d || emptyObject;
+};
+
 /**
  * Basic button component
  */
@@ -161,10 +175,18 @@ class Button extends React.PureComponent {
     handleClick = (e) => {
         clearTimeout(this.changeTimeout);
         this.pendingChange = true;
+        const {
+            onClick,
+            onClickParams,
+        } = this.props;
+
         this.changeTimeout = setTimeout(
             () => {
                 this.pendingChange = false;
-                this.props.onClick(e);
+                onClick({
+                    event: e,
+                    params: resolveToObject(onClickParams),
+                });
             },
             this.props.changeDelay,
         );
@@ -190,6 +212,7 @@ class Button extends React.PureComponent {
             type,
 
             onClick, // eslint-disable-line no-unused-vars
+            onClickParams, // eslint-disable-line no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars
             buttonType, // eslint-disable-line no-unused-vars
             className: captureClassName, // eslint-disable-line no-unused-vars
