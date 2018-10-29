@@ -204,8 +204,6 @@ class StreamGraph extends PureComponent {
         this.height = height - top - bottom;
 
         this.group = select(this.svg)
-            .attr('width', this.width + left + right)
-            .attr('height', this.height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 

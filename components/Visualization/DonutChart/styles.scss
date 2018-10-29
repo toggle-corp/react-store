@@ -1,10 +1,5 @@
 @import '../../../stylesheets/base';
 
-.donutchart {
-    display: flex;
-    flex: 1 1 auto;
-}
-
 .donut-tooltip {
     @include shadow-medium;
     @include background-color($color-foreground);

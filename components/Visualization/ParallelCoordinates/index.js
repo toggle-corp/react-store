@@ -89,8 +89,6 @@ class ParallelCoordinates extends PureComponent {
         } = margins;
 
         return select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
     }
@@ -110,7 +108,7 @@ class ParallelCoordinates extends PureComponent {
             colorScheme,
         } = this.props;
 
-        const {
+        let {
             width,
             height,
         } = boundingClientRect;
@@ -122,19 +120,19 @@ class ParallelCoordinates extends PureComponent {
             left,
         } = margins;
 
-        this.width = width - left - right;
-        this.height = height - top - bottom;
+        width = width - left - right;
+        height = height - top - bottom;
         this.dimensions = keys(data[0]).filter(d => d !== labelName);
         this.x = scalePoint()
             .domain(this.dimensions)
-            .range([0, this.width])
+            .range([0, width])
             .padding(0.1);
         this.y = {};
         this.dimensions
             .forEach((d) => {
                 this.y[d] = scaleLinear()
                     .domain(extent(data, value => value[d]))
-                    .range([this.height, 0]);
+                    .range([height, 0]);
                 this.y[d].brush = brushY()
                     .extent([[-10, this.y[d].range()[1]], [10, this.y[d].range()[0]]])
                     .on('brush', this.brush);

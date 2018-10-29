@@ -1,9 +1,6 @@
 @import '../../../stylesheets/base';
 
 .chord-diagram {
-    display: flex;
-    flex: 1 1 auto;
-
     .chords {
         .path {
             cursor: pointer;

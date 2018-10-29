@@ -1,9 +1,6 @@
 @import '../../../stylesheets/base';
 
 .barchart {
-    display: flex;
-    flex: 1 1 auto;
-
     .y-axis path {
         stroke: $color-axis-path;
     }

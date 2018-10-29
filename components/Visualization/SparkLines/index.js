@@ -155,8 +155,6 @@ class SparkLines extends PureComponent {
         this.height = height - top - bottom - marginForCircle;
 
         const group = select(this.svg)
-            .attr('width', this.width + left + right + marginForCircle)
-            .attr('height', this.height + top + bottom + marginForCircle)
             .append('g')
             .attr('class', styles.sparkLine)
             .attr('transform', `translate(${left + circleRadius}, ${top + circleRadius})`);
@@ -186,14 +184,14 @@ class SparkLines extends PureComponent {
 
         if (fill) {
             group.append('path')
-                .attr('class', styles.area)
+                .attr('class', `fill ${styles.area}`)
                 .datum(data)
                 .attr('d', areas);
         }
 
         group
             .append('path')
-            .attr('class', styles.path)
+            .attr('class', `line ${styles.path}`)
             .datum(data)
             .attr('d', lines)
             .style('fill', 'none');

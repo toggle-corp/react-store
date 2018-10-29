@@ -1,8 +1,6 @@
 @import '../../../stylesheets/base';
 
 .parallel {
-    display: flex;
-    flex: 1 1 auto;
 
     .axis path {
         stroke: $color-axis-path;

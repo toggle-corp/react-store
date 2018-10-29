@@ -92,14 +92,10 @@ class Sankey extends PureComponent {
     setContext = (width, height, margins) => {
         const {
             top,
-            right,
-            bottom,
             left,
         } = margins;
 
         return select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
     }

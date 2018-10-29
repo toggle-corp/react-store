@@ -65,8 +65,6 @@ class PieChart extends PureComponent {
 
     setContext = (data, width, height) => (
         select(this.svg)
-            .attr('width', width)
-            .attr('height', height)
             .datum(data)
             .append('g')
             .attr('transform', `translate(${width / 2}, ${height / 2})`)

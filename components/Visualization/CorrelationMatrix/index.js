@@ -19,7 +19,6 @@ import {
     isValidHexColor,
     isObjectEmpty,
 } from '../../../utils/common';
-import styles from './styles.scss';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -93,14 +92,10 @@ class CorrelationMatrix extends React.PureComponent {
     setContext = (width, height, margins) => {
         const {
             top,
-            right,
-            bottom,
             left,
         } = margins;
 
         return select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left},${top})`);
     }
@@ -331,7 +326,6 @@ class CorrelationMatrix extends React.PureComponent {
         const { className } = this.props;
         const correlationMatrixStyle = [
             'correlation-matrix',
-            styles.correlationMatrix,
             className,
         ].join(' ');
         return (

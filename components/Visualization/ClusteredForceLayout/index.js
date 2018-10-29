@@ -149,8 +149,6 @@ class ClusteredForceLayout extends PureComponent {
         } = this;
 
         this.group = select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 

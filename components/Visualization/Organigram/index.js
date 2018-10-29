@@ -107,14 +107,10 @@ class Organigram extends PureComponent {
     setContext = (width, height, margins) => {
         const {
             top,
-            right,
-            bottom,
             left,
         } = margins;
 
         const group = select(this.svg)
-            .attr('width', width + left + right)
-            .attr('height', height + top + bottom)
             .call(zoom().on('zoom', () => {
                 const { x, y, k } = event.transform;
                 Object.assign(this, { x, y, k });
@@ -229,7 +225,7 @@ class Organigram extends PureComponent {
             margins,
         } = this.props;
 
-        const {
+        let {
             width,
             height,
         } = boundingClientRect;
@@ -241,8 +237,8 @@ class Organigram extends PureComponent {
             left,
         } = margins;
 
-        this.width = width - left - right;
-        this.height = height - top - bottom;
+        width = width - left - right;
+        height = height - top - bottom;
 
         const {
             setContext,
@@ -256,7 +252,7 @@ class Organigram extends PureComponent {
         }
 
         addDropShadow(select(this.svg));
-        const group = setContext(this.width, this.height, margins);
+        const group = setContext(width, height, margins);
         const treemap = tree()
             .nodeSize(nodeSize)
             .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
