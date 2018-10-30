@@ -218,11 +218,15 @@ class NumberInput extends React.PureComponent {
         const { separator } = this.props;
         const { value: val } = event.target;
 
-        const { value, displayValue } = NumberInput.calculateNewValues(
+        const { value } = NumberInput.calculateNewValues(
             val,
             separator,
         );
+
+        /*
+        // NOTE: this may not be required
         this.setState({ value: displayValue });
+        */
 
         const { onChange } = this.props;
         if (onChange) {
