@@ -11,7 +11,7 @@ const propTypes = {
 const defaultProps = {
     value: undefined,
     onChange: () => {},
-    changeDelay: 100,
+    changeDelay: 300,
 };
 
 export default (WrappedComponent) => {
@@ -23,6 +23,7 @@ export default (WrappedComponent) => {
             super(props);
 
             this.pendingChange = false;
+            this.lastValue = this.props.value;
             this.state = {
                 value: this.props.value,
             };
@@ -31,6 +32,7 @@ export default (WrappedComponent) => {
         componentWillReceiveProps(nextProps) {
             if (this.props.value !== nextProps.value) {
                 if (!this.pendingChange) {
+                    this.lastValue = nextProps.value;
                     this.setState({
                         value: nextProps.value,
                     });
@@ -62,6 +64,7 @@ export default (WrappedComponent) => {
             this.changeTimeout = setTimeout(
                 () => {
                     this.pendingChange = false;
+                    this.setState({ value: this.lastValue });
                     onChange(value, error, info);
                 },
                 changeDelay,

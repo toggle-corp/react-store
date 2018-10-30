@@ -149,6 +149,7 @@ export default class FaramGroupApi extends FormElementApi {
                 info,
                 faramInfo,
             );
+
             this.props.onChange(newValue, newInfo);
         };
         this.onChangeMemory[faramElementName] = newOnChange;
