@@ -4,10 +4,10 @@ import memoize from 'memoize-one';
 
 import { requiredCondition } from '../../General/Faram';
 import { FaramInputElement } from '../../General/FaramElements';
-import FormattedDate from '../../View/FormattedDate/FormattedDate';
 import ApplyModal from '../../View/ApplyModal';
 
 import { encodeDate, decodeDate } from '../../../utils/common';
+import { formatDate as formatDateByMode } from '../../../utils/date';
 
 import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
@@ -31,7 +31,7 @@ const defaultProps = {
     onChange: noOp,
 };
 
-const formatDate = date => FormattedDate.format(decodeDate(date), 'dd-MM-yyyy');
+const formatDate = date => formatDateByMode(decodeDate(date), 'dd-MM-yyyy');
 
 const presets = {
     today: () => {
