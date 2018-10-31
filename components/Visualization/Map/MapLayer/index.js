@@ -148,7 +148,7 @@ export default class MapLayer extends React.PureComponent {
         if (onClick) {
             this.eventHandlers.click = (e) => {
                 const feature = e.features[0];
-                onClick(feature.properties[property]);
+                onClick(feature.properties[property], e);
             };
         }
 
