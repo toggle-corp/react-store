@@ -14,7 +14,6 @@ import { range } from 'd3-array';
 
 import {
     scaleSequential,
-    interpolateRainbow,
 } from 'd3-scale';
 
 import {
@@ -22,6 +21,8 @@ import {
     forceCenter,
     forceCollide,
 } from 'd3-force';
+import { interpolateRainbow } from 'd3-scale-chromatic';
+
 import { forceAttract } from 'd3-force-attract/index';
 import { forceCluster } from 'd3-force-cluster/index';
 
@@ -41,13 +42,9 @@ const propTypes = {
         height: PropTypes.number,
     }).isRequired,
     data: PropTypes.arrayOf(PropTypes.shape({
-        value: PropTypes.string,
-        score: PropTypes.number,
+        id: PropTypes.string,
+        value: PropTypes.number,
     })),
-    selectedData: PropTypes.shape({
-        value: PropTypes.string,
-        score: PropTypes.number,
-    }),
     idSelector: PropTypes.func.isRequired,
     groupSelector: PropTypes.func,
     valueSelector: PropTypes.func,
@@ -71,11 +68,6 @@ const defaultProps = {
         right: 0,
         bottom: 0,
         left: 0,
-    },
-    selectedData: {
-        score: 10,
-        value: 'gold',
-        cluster: 0,
     },
     setSaveFunction: () => {},
     groupSelector: d => d.cluster,
@@ -165,7 +157,6 @@ class ClusterForceLayout extends PureComponent {
             groupSelector,
             boundingClientRect,
             valueSelector,
-            selectedData,
             scaleFactor,
             colorScheme,
             margins,
@@ -193,7 +184,7 @@ class ClusterForceLayout extends PureComponent {
 
         const noOfClusters = Object.keys(clusterGroup).length;
 
-        const color = scaleSequential(colorScheme)
+        const color = scaleSequential(interpolateRainbow)
             .domain(range(noOfClusters));
 
         const clusters = [];
@@ -245,17 +236,6 @@ class ClusterForceLayout extends PureComponent {
             .enter()
             .append('circle')
             .style('fill', d => (color(d.group / noOfClusters)))
-            .each((d) => {
-                if (selectedData.value === d.id) {
-                    select(this.tooltip)
-                        .style('display', 'block')
-                        .html(`<span class=${styles.id}>${d.id}</span>
-                             <span class=${styles.score}>${d.radius}</span>`)
-                        .style('display', 'block')
-                        .style('top', `${d.y - 50}px`)
-                        .style('left', `${d.x - 30}px`);
-                }
-            })
             .call(drag()
                 .on('start', this.dragstarted)
                 .on('drag', this.dragged)
