@@ -223,7 +223,7 @@ class DateFilter extends React.PureComponent {
                 });
                 break;
             default:
-                this.setNewDate(presets[value]());
+                this.setNewDate(value && presets[value]());
         }
     }
 
