@@ -276,18 +276,14 @@ class DateInput extends React.PureComponent {
             separator,
         } = this.props;
 
-        console.warn(valueToOverride);
-
         const oldValue = decodeDate(valueFromProps, separator);
 
         const { y, m, d } = {
             ...oldValue,
             ...valueToOverride,
         };
-        console.warn(y, m, d);
 
         const newValue = encodeDate({ y, m, d }, separator);
-        console.warn(oldValue, newValue);
 
         if (newValue !== valueFromProps) {
             onChange(newValue);

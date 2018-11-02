@@ -18,6 +18,11 @@ export const isInteger = value => (
     typeof value === 'number' && value % 1 === 0
 );
 
+export const isEqual = (a, b) => (
+    a === b ||
+    (Number.isNaN(a) && Number.isNaN(b))
+);
+
 export const isFalsyOrEmptyOrZero = val => (
     isFalsy(val) || val.length === 0 || val === 0 || val === '0'
 );
