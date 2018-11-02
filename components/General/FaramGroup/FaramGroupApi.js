@@ -99,7 +99,7 @@ export default class FaramGroupApi extends FormElementApi {
 
     getChangeDelay = () => this.props.changeDelay;
 
-    isReadOnly = () => this.props.isReadOnly;
+    isReadOnly = () => this.props.readOnly;
 
     isDisabled = () => this.props.disabled;
 
