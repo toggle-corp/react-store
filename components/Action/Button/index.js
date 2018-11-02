@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { iconNames } from '../../../constants';
 import { FaramActionElement } from '../../General/FaramElements';
 
 /*
@@ -44,6 +45,11 @@ const propTypes = {
     disabled: PropTypes.bool,
 
     /**
+     * if pending is true, the action is blocked and it is indicated
+     */
+    pending: PropTypes.bool,
+
+    /**
      * iconName is the name of the icon in Ionicons 2
      */
     iconName: PropTypes.string,
@@ -79,6 +85,7 @@ const defaultProps = {
     type: 'button',
     className: '',
     disabled: false,
+    pending: false,
     iconName: undefined,
     onClick: () => {}, // no-op
     children: undefined,
@@ -155,13 +162,15 @@ class Button extends React.PureComponent {
     }
 
     static getIconClassName = (props) => {
-        const { iconName } = props;
+        const { iconName, className } = props;
 
         const classNames = [];
         classNames.push('icon');
         classNames.push(styles.icon);
-
         classNames.push(iconName);
+        if (className) {
+            classNames.push(className);
+        }
 
         return classNames.join(' ');
     }
@@ -209,6 +218,7 @@ class Button extends React.PureComponent {
             iconName,
             children,
             disabled,
+            pending,
             type,
 
             onClick, // eslint-disable-line no-unused-vars
@@ -230,11 +240,17 @@ class Button extends React.PureComponent {
         return (
             <button
                 className={className}
-                disabled={disabled}
+                disabled={disabled || pending}
                 onClick={this.handleClick}
                 type={type}
                 {...otherProps}
             >
+                { pending &&
+                    <Icon
+                        className={styles.pendingIcon}
+                        iconName={iconNames.loading}
+                    />
+                }
                 <Icon iconName={iconName} />
                 { children }
             </button>
