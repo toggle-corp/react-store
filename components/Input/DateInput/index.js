@@ -325,6 +325,7 @@ class DateInput extends React.PureComponent {
             title,
             disabled,
             value,
+            readOnly,
             separator,
         } = this.props;
         const { showDatePicker } = this.state;
@@ -364,7 +365,7 @@ class DateInput extends React.PureComponent {
                             max={getNumDaysInMonthX(+yearValue, +monthValue)}
                             step={STEP}
                             placeholder={dayPlaceholder}
-                            disabled={disabled}
+                            disabled={disabled || readOnly}
                             value={dayValue}
                             onChange={this.handleDayInputChange}
                         />
@@ -377,7 +378,7 @@ class DateInput extends React.PureComponent {
                             max={MAX_MONTH}
                             step={STEP}
                             placeholder={monthPlaceholder}
-                            disabled={disabled}
+                            disabled={disabled || readOnly}
                             value={monthValue}
                             onChange={this.handleMonthInputChange}
                         />
@@ -390,7 +391,7 @@ class DateInput extends React.PureComponent {
                             max={MAX_YEAR}
                             step={STEP}
                             placeholder={yearPlaceholder}
-                            disabled={disabled}
+                            disabled={disabled || readOnly}
                             value={yearValue}
                             onChange={this.handleYearInputChange}
                         />
@@ -398,6 +399,7 @@ class DateInput extends React.PureComponent {
                     <ActionButtons
                         className={styles.actionButtons}
                         disabled={disabled}
+                        readOnly={readOnly}
                         onClearButtonClick={this.handleClearButtonClick}
                         onTodayButtonClick={this.handleTodayButtonClick}
                         onCalendarButtonClick={this.handleCalendarButtonClick}

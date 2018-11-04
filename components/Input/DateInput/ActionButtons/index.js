@@ -6,6 +6,7 @@ import styles from './styles.scss';
 
 const ActionButtons = ({
     disabled,
+    readOnly,
     onClearButtonClick,
     onTodayButtonClick,
     onCalendarButtonClick,
@@ -31,7 +32,7 @@ const ActionButtons = ({
                 onClick={onClearButtonClick}
                 title="Clear date"
                 tabIndex="-1"
-                disabled={disabled}
+                disabled={disabled || readOnly}
             >
                 <span className={iconNames.closeRound} />
             </button>
@@ -41,7 +42,7 @@ const ActionButtons = ({
                 type="button"
                 title="Set date to today"
                 tabIndex="-1"
-                disabled={disabled}
+                disabled={disabled || readOnly}
             >
                 <span className={iconNames.clock} />
             </button>
@@ -51,7 +52,7 @@ const ActionButtons = ({
                 type="button"
                 title="Open date picker"
                 tabIndex="-1"
-                disabled={disabled}
+                disabled={disabled || readOnly}
             >
                 <span className={iconNames.calendar} />
             </button>
@@ -64,11 +65,13 @@ ActionButtons.propTypes = {
     onTodayButtonClick: PropTypes.func.isRequired,
     onCalendarButtonClick: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     className: PropTypes.string,
 };
 
 ActionButtons.defaultProps = {
     disabled: false,
+    readOnly: false,
     className: '',
 };
 

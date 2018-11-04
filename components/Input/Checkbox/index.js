@@ -30,6 +30,8 @@ const propTypes = {
      */
     label: PropTypes.node.isRequired,
 
+    readOnly: PropTypes.bool,
+
     // FIXME
     changeDelay: PropTypes.number,
 };
@@ -37,6 +39,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     disabled: false,
+    readOnly: false,
     value: false,
     changeDelay: undefined,
 };
@@ -62,6 +65,7 @@ class Checkbox extends React.PureComponent {
             className,
             value,
             disabled,
+            readOnly,
             onChange, // eslint-disable-line no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars
             ...otherProps
@@ -76,6 +80,11 @@ class Checkbox extends React.PureComponent {
         if (disabled) {
             classNames.push('disabled');
             classNames.push(styles.disabled);
+        }
+
+        if (readOnly) {
+            classNames.push('read-only');
+            classNames.push(styles.readOnly);
         }
 
         const spanClassNames = [
@@ -104,7 +113,7 @@ class Checkbox extends React.PureComponent {
                     type="checkbox"
                     checked={value}
                     id={this.inputId}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     {...otherProps}
                 />
                 <span className={labelClassNames.join(' ')}>

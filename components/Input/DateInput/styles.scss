@@ -77,9 +77,26 @@ $width-date-input: 180px;
     &.readOnly {
         .input {
             border-bottom-color: $color-separator;
+
+            &:hover {
+                .action-buttons {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+            }
         }
         .label {
             color: $color-text-disabled;
+        }
+    }
+
+    &.disabled {
+        .input {
+            .day-unit,
+            .month-unit,
+            .year-unit {
+                color: $color-text-disabled;
+            }
         }
     }
 }

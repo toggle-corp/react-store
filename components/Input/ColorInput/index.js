@@ -9,6 +9,8 @@ import {
 import { FaramInputElement } from '../../General/FaramElements';
 
 import FloatingContainer from '../../View/FloatingContainer';
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 
 import styles from './styles.scss';
 
@@ -142,22 +144,26 @@ class ColorInput extends React.PureComponent {
             'color-box',
         ];
 
+        const classNames = [
+            styles.colorInput,
+            className,
+        ];
+
         if (disabled) {
             buttonClassNames.push(styles.disabled);
+            classNames.push(styles.disabled);
         }
 
         return (
             <div
-                className={`${styles.colorInput} ${className}`}
+                className={classNames.join(' ')}
                 ref={(el) => { this.container = el; }}
             >
-                {
-                    showLabel && (
-                        <div className={`${styles.label} label`} >
-                            {label}
-                        </div>
-                    )
-                }
+                <Label
+                    className={styles.label}
+                    show={showLabel}
+                    text={label}
+                />
                 <button
                     type="button"
                     className={buttonClassNames.join(' ')}
@@ -169,35 +175,11 @@ class ColorInput extends React.PureComponent {
                         style={{ backgroundColor: value }}
                     />
                 </button>
-                {
-                    /* FIXME: Use HintAndError component */
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} error empty`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
                 {
                     showColorPicker && (
                         <FloatingContainer

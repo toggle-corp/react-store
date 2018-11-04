@@ -10,6 +10,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    disabled: PropTypes.bool,
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
     title: PropTypes.string,
@@ -23,6 +24,7 @@ const defaultProps = {
     keySelector: d => d.key,
     labelSelector: d => d.label,
     title: '',
+    disabled: false,
     options: [],
     onChange: () => {},
     value: [],
@@ -68,6 +70,7 @@ class CheckGroup extends React.PureComponent {
             keySelector,
             labelSelector,
             value,
+            ...otherProps
         } = this.props;
 
         if (!data) {
@@ -86,6 +89,7 @@ class CheckGroup extends React.PureComponent {
                 value={valueIndex !== -1}
                 key={key}
                 label={labelSelector(data)}
+                {...otherProps}
             />
         );
     }
@@ -94,15 +98,21 @@ class CheckGroup extends React.PureComponent {
         const {
             title,
             options,
+            disabled,
         } = this.props;
 
         const className = this.getClassName();
-        const titleClassName = `${styles.title} title`;
+        const titleClassName = [styles.title, 'title'];
+
+        if (disabled) {
+            titleClassName.push(styles.disabled);
+        }
+
         const inputsClassName = `${styles.inputs} inputs`;
 
         return (
             <div className={className}>
-                <div className={titleClassName}>
+                <div className={titleClassName.join(' ')}>
                     { title }
                 </div>
                 <ListView

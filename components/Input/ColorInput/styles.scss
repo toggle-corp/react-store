@@ -4,6 +4,7 @@
 .color-input {
     .label {
         @extend %input-label;
+        padding-bottom: $spacing-extra-small;
     }
 
     .color-box {
@@ -36,29 +37,10 @@
         }
 
         &.error {
-            /*
-            .input {
-                border-bottom-color: $color-danger;
-            }
-            */
-
             .label {
                 color: $color-danger;
             }
         }
-
-        /*
-        &.disabled {
-            .label {
-                color: $color-text-disabled;
-            }
-
-            .input {
-                border-bottom-color: $color-separator;
-                color: $color-text-disabled;
-            }
-        }
-        */
     }
 
     %base {
@@ -66,18 +48,14 @@
         font-size: $font-size-extra-small;
     }
 
-    .hint {
-        @extend %base;
-        color: $color-text-label;
-    }
-
-    .error {
-        @extend %base;
-        color: $color-danger;
-    }
-
     .empty {
         @extend %base;
         visibility: hidden;
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
     }
 }

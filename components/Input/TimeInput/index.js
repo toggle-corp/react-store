@@ -221,6 +221,7 @@ class TimeInput extends React.PureComponent {
             disabled,
             value,
             separator,
+            readOnly,
         } = this.props;
 
         const className = this.getClassName();
@@ -253,7 +254,7 @@ class TimeInput extends React.PureComponent {
                             max={MAX_HOUR}
                             step={STEP}
                             placeholder={hourPlaceholder}
-                            disabled={disabled}
+                            disabled={disabled || readOnly}
                             value={hourValue}
                             onChange={this.handleHourInputChange}
                         />
@@ -269,7 +270,7 @@ class TimeInput extends React.PureComponent {
                             max={MAX_MINUTE}
                             step={STEP}
                             placeholder={minutePlaceholder}
-                            disabled={disabled}
+                            disabled={disabled || readOnly}
                             value={minuteValue}
                             onChange={this.handleMinuteInputChange}
                         />
@@ -277,6 +278,7 @@ class TimeInput extends React.PureComponent {
                     <ActionButtons
                         className={styles.actionButtons}
                         disabled={disabled}
+                        readOnly={readOnly}
                         onClearButtonClick={this.handleClearButtonClick}
                         onTodayButtonClick={this.handleTodayButtonClick}
                     />

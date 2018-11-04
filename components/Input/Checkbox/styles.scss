@@ -41,4 +41,10 @@
             color: $color-text-disabled;
         }
     }
+
+    &.read-only {
+        .checkmark {
+            color: $color-text;
+        }
+    }
 }
