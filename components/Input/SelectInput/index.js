@@ -29,6 +29,7 @@ const propTypes = {
     autoFocus: PropTypes.bool,
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hideClearButton: PropTypes.bool,
     hint: PropTypes.string,
@@ -55,6 +56,7 @@ const defaultProps = {
     autoFocus: undefined,
     className: '',
     disabled: false,
+    readOnly: false,
     error: undefined,
     hideClearButton: false,
     hint: undefined,
@@ -410,11 +412,12 @@ class SelectInput extends React.PureComponent {
     renderClearButton = () => {
         const {
             disabled,
+            readOnly,
             value,
             hideClearButton,
         } = this.props;
 
-        const showClearButton = value && !(hideClearButton || disabled);
+        const showClearButton = value && !(hideClearButton || disabled || readOnly);
 
         if (!showClearButton) {
             return null;
@@ -437,7 +440,10 @@ class SelectInput extends React.PureComponent {
     }
 
     renderActions = () => {
-        const { disabled } = this.props;
+        const {
+            disabled,
+            readOnly,
+        } = this.props;
 
         const className = `
             actions
@@ -458,7 +464,7 @@ class SelectInput extends React.PureComponent {
                     iconName={iconNames.arrowDropdown}
                     className={dropdownButtonClassName}
                     onClick={this.handleDropdownButtonClick}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     transparent
                 />
             </div>
@@ -473,6 +479,7 @@ class SelectInput extends React.PureComponent {
 
         const {
             disabled,
+            readOnly,
             placeholder,
             autoFocus,
         } = this.props;
@@ -489,7 +496,7 @@ class SelectInput extends React.PureComponent {
             <div className={className}>
                 <input
                     className={inputClassName}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     onBlur={this.handleInputBlur}
                     onChange={this.handleInputChange}
                     onClick={this.handleInputClick}

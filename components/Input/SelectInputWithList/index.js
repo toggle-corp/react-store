@@ -103,7 +103,11 @@ class SelectInputWithList extends React.PureComponent {
     }
 
     getClassName = () => {
-        const { className } = this.props;
+        const {
+            className,
+            disabled,
+            readOnly,
+        } = this.props;
         const { error } = this.state;
 
         const classNames = [
@@ -117,13 +121,16 @@ class SelectInputWithList extends React.PureComponent {
             classNames.push('error');
         }
 
+        if (disabled) {
+            classNames.push(styles.disabled);
+        }
+
         return classNames.join(' ');
     }
 
     getListItemParams = (key, datum) => {
         const {
             labelSelector,
-            disabled,
         } = this.props;
 
         return {
@@ -131,7 +138,6 @@ class SelectInputWithList extends React.PureComponent {
             itemKey: key,
             onDismiss: this.handleItemDismiss,
             className: styles.listItem,
-            disabled,
         };
     }
 
@@ -139,7 +145,6 @@ class SelectInputWithList extends React.PureComponent {
         const {
             onChange,
             value,
-            options,
         } = this.props;
 
         const index = value.indexOf(key);
@@ -148,10 +153,6 @@ class SelectInputWithList extends React.PureComponent {
         if (index !== -1) {
             newValue.splice(index, 1);
         }
-
-        const objectValues = this.getObjectFromValue(options, newValue);
-        this.setState({ objectValues });
-
         if (onChange) {
             onChange(newValue);
         }
@@ -209,8 +210,10 @@ class SelectInputWithList extends React.PureComponent {
             selectClassNames.push(styles.hasTopRightChild);
         }
 
-        const isListItem = hideRemoveFromListButton || readOnly;
-        const Item = isListItem ? ListItem : DismissableListItem;
+        const Item = (
+            hideRemoveFromListButton ||
+            readOnly ||
+            disabled) ? ListItem : DismissableListItem;
 
         return (
             <div className={this.getClassName()}>
@@ -218,6 +221,7 @@ class SelectInputWithList extends React.PureComponent {
                     <MultiSelectInput
                         className={selectClassNames.join(' ')}
                         disabled={disabled}
+                        readOnly={readOnly}
                         keySelector={keySelector}
                         label={label}
                         labelSelector={labelSelector}

@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     value: PropTypes.string.isRequired,
     marker: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     marker: '•',
 };
 

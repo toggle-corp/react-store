@@ -9,6 +9,8 @@ import DangerButton from '../../Action/Button/DangerButton';
 import MultiSelectInput from '../../Input/MultiSelectInput';
 import Table from '../../View/Table';
 
+import HintAndError from '../HintAndError';
+
 import styles from './styles.scss';
 
 /**
@@ -76,6 +78,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 
     /**
      * Value selector function
@@ -113,6 +116,7 @@ const defaultProps = {
     blackList: [],
     value: [],
     disabled: false,
+    readOnly: false,
     showHintAndError: true,
 };
 
@@ -227,7 +231,6 @@ class TabularSelectInput extends React.PureComponent {
     createTableHeaders = (tableHeaders) => {
         const {
             hideRemoveFromListButton,
-            disabled,
         } = this.props;
 
         if (hideRemoveFromListButton) {
@@ -246,7 +249,7 @@ class TabularSelectInput extends React.PureComponent {
                         iconName={iconNames.delete}
                         smallVerticalPadding
                         transparent
-                        disabled={disabled}
+                        disabled={this.props.disabled || this.props.readOnly}
                     />
                 ),
             },
@@ -357,34 +360,11 @@ class TabularSelectInput extends React.PureComponent {
                         keySelector={keySelector}
                     />
                 </div>
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} empty`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
             </div>
         );
     }

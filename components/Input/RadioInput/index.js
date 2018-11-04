@@ -19,6 +19,11 @@ const propTypes = {
     name: PropTypes.string.isRequired,
 
     /**
+     * Is input disabled?
+     */
+    disabled: PropTypes.bool,
+
+    /**
      * list of options
      */
     options: PropTypes.arrayOf(
@@ -30,6 +35,8 @@ const propTypes = {
 
     onChange: PropTypes.func,
 
+    readOnly: PropTypes.bool,
+
     /**
      * key for selected option
      */
@@ -40,6 +47,8 @@ const defaultProps = {
     className: '',
     onChange: undefined,
     value: undefined,
+    disabled: false,
+    readOnly: false,
 };
 
 class RadioInput extends React.PureComponent {
@@ -96,11 +105,13 @@ class RadioInput extends React.PureComponent {
             label={option.label}
             checked={this.state.selectedOption && key === this.state.selectedOption.key}
             onClick={() => this.handleOptionClick(key)}
+            {...this.props}
         />
     )
 
     render() {
         const { className } = this.props;
+
         return (
             <ListView
                 className={`radio-input ${className} ${styles.radioInput}`}

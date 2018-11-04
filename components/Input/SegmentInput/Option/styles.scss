@@ -11,6 +11,7 @@
     cursor: pointer;
     padding: $spacing-extra-small $spacing-medium;
     color: $color-text-label;
+    user-select: none;
 
     &.checked {
         @include background-color($color-accent);
@@ -44,7 +45,7 @@
         }
     }
 
-    &:not(.disabled) {
+    &:not(.disabled):not(.checked) {
         &:hover {
             background-color: $color-background-hover;
             color: $color-text;

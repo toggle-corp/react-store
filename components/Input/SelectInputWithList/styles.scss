@@ -27,4 +27,12 @@
     &.error {
         border-bottom-color: $color-danger;
     }
+
+    &.disabled {
+        .list {
+            .list-item {
+                color: $color-text-disabled;
+            }
+        }
+    }
 }

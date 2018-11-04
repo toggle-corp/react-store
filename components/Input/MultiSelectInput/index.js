@@ -36,6 +36,7 @@ export const propTypes = {
     className: PropTypes.string,
     clearable: PropTypes.bool,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hideClearButton: PropTypes.bool,
     hideSelectAllButton: PropTypes.bool,
@@ -58,6 +59,7 @@ export const defaultProps = {
     className: '',
     clearable: false,
     disabled: false,
+    readOnly: false,
     error: undefined,
     hideClearButton: false,
     hideSelectAllButton: false,
@@ -513,7 +515,10 @@ export class NormalMultiSelectInput extends React.PureComponent {
     }
 
     renderActions = () => {
-        const { disabled } = this.props;
+        const {
+            disabled,
+            readOnly,
+        } = this.props;
 
         const className = `
             actions
@@ -537,7 +542,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                     className={dropdownButtonClassName}
                     onClick={this.handleDropdownButtonClick}
                     transparent
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                 />
             </div>
         );
@@ -545,6 +550,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
 
     renderInput = () => {
         const {
+            readOnly,
             disabled,
             autoFocus,
         } = this.props;
@@ -562,7 +568,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
         return (
             <input
                 className={className}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 onBlur={this.handleInputBlur}
                 onChange={this.handleInputValueChange}
                 onClick={this.handleInputClick}
@@ -580,12 +586,13 @@ export class NormalMultiSelectInput extends React.PureComponent {
 
     renderClearButton = () => {
         const {
+            readOnly,
             disabled,
             value,
             hideClearButton,
         } = this.props;
 
-        const hide = (hideClearButton || disabled || value.length === 0);
+        const hide = (hideClearButton || disabled || readOnly || value.length === 0);
         if (hide) {
             return null;
         }
@@ -603,7 +610,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 className={className}
                 onClick={this.handleClearButtonClick}
                 title={tooltipText}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 iconName={iconNames.close}
             />
         );
@@ -614,11 +621,12 @@ export class NormalMultiSelectInput extends React.PureComponent {
             value,
             options,
             disabled,
+            readOnly,
             hideSelectAllButton,
         } = this.props;
 
         const hide = (
-            hideSelectAllButton || disabled || value.length === options.length
+            hideSelectAllButton || disabled || readOnly || value.length === options.length
         );
 
         if (hide) {
@@ -638,7 +646,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 className={className}
                 onClick={this.handleSelectAllButtonClick}
                 title={tooltipText}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 type="button"
                 iconName={iconNames.checkAll}
             />

@@ -24,4 +24,19 @@
             display: initial;
         }
     }
+
+    &.disabled {
+        .item {
+            .label {
+                color: $color-text-disabled;
+            }
+        }
+    }
+
+    &.disabled,
+    &.readOnly {
+        .item {
+            pointer-events: none;
+        }
+    }
 }
