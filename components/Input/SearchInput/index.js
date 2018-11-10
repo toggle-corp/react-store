@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { FaramInputElement } from '../../General/FaramElements';
+import Delay from '../../General/Delay';
+
 import TextInput from '../TextInput';
 import iconNames from '../../../constants/iconNames.js';
 
@@ -8,13 +11,15 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
-export default class SearchInput extends React.PureComponent {
+class SearchInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -33,6 +38,7 @@ export default class SearchInput extends React.PureComponent {
     render() {
         const {
             className: dummy, // eslint-disable-line no-unused-vars
+            disabled,
             ...otherProps
         } = this.props;
 
@@ -42,14 +48,18 @@ export default class SearchInput extends React.PureComponent {
             'icon',
             styles.icon,
             iconNames.search,
-        ].join(' ');
+        ];
+        if (disabled) {
+            iconClassName.push(styles.disabled);
+        }
 
         return (
             <div className={className}>
-                <span className={iconClassName} />
+                <span className={iconClassName.join(' ')} />
                 <TextInput
                     className={inputClassName}
                     type="search"
+                    disabled={disabled}
                     {...otherProps}
                 />
             </div>
@@ -57,3 +67,4 @@ export default class SearchInput extends React.PureComponent {
     }
 }
 
+export default FaramInputElement(Delay(SearchInput));

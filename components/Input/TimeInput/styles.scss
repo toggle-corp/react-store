@@ -24,6 +24,8 @@ $width-time-input: 120px;
             }
 
             .separator {
+                display: flex;
+                align-items: center;
                 flex-shrink: 0;
                 padding-right: $spacing-small;
             }
@@ -63,9 +65,28 @@ $width-time-input: 120px;
         }
     }
 
+
+    &.disabled {
+        .input {
+            .units {
+                .unit {
+                    color: $color-text-disabled;
+                }
+            }
+        }
+    }
+
+    &.readOnly,
     &.disabled {
         .input {
             border-bottom-color: $color-separator;
+        }
+
+        &:hover {
+            .action-buttons {
+                opacity: 0;
+                pointer-events: none;
+            }
         }
 
         .label {

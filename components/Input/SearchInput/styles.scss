@@ -6,11 +6,20 @@ $width-icon: 16px;
     position: relative;
 
     .icon {
+        display: flex;
         position: absolute;
+        top: 0;
         bottom: $spacing-extra-small;
-        left: 0;
+        left: $spacing-extra-small;
+        align-items: center;
+        justify-content: center;
+        transform: orgin(50%, 50%);
         width: $width-icon;
         color: $color-text-label;
+
+        &.disabled {
+            color: $color-text-disabled;
+        }
     }
 
     .text-input {

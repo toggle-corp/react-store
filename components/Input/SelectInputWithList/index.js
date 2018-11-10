@@ -12,6 +12,7 @@ const propTypes = {
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onChange: PropTypes.func,
 
     label: PropTypes.oneOfType([
@@ -59,6 +60,7 @@ const defaultProps = {
     hideRemoveFromListButton: false,
     topRightChild: undefined,
     disabled: false,
+    readOnly: false,
 };
 
 const emptyList = [];
@@ -76,9 +78,7 @@ class SelectInputWithList extends React.PureComponent {
 
         const objectValues = this.getObjectFromValue(options, value);
 
-        this.state = {
-            objectValues,
-        };
+        this.state = { objectValues };
     }
 
     componentWillReceiveProps(newProps) {
@@ -103,7 +103,11 @@ class SelectInputWithList extends React.PureComponent {
     }
 
     getClassName = () => {
-        const { className } = this.props;
+        const {
+            className,
+            disabled,
+            readOnly,
+        } = this.props;
         const { error } = this.state;
 
         const classNames = [
@@ -115,6 +119,10 @@ class SelectInputWithList extends React.PureComponent {
         if (error) {
             classNames.push(styles.error);
             classNames.push('error');
+        }
+
+        if (disabled) {
+            classNames.push(styles.disabled);
         }
 
         return classNames.join(' ');
@@ -137,24 +145,16 @@ class SelectInputWithList extends React.PureComponent {
         const {
             onChange,
             value,
-            options,
-            disabled,
         } = this.props;
 
-        if (!disabled) {
-            const index = value.indexOf(key);
-            const newValue = [...value];
+        const index = value.indexOf(key);
+        const newValue = [...value];
 
-            if (index !== -1) {
-                newValue.splice(index, 1);
-            }
-
-            const objectValues = this.getObjectFromValue(options, newValue);
-            this.setState({ objectValues });
-
-            if (onChange) {
-                onChange(newValue);
-            }
+        if (index !== -1) {
+            newValue.splice(index, 1);
+        }
+        if (onChange) {
+            onChange(newValue);
         }
     }
 
@@ -180,6 +180,7 @@ class SelectInputWithList extends React.PureComponent {
             label,
             labelSelector,
             onChange, // eslint-disable-line no-unused-vars
+            readOnly,
             options,
             value,
             selectClassName,
@@ -209,7 +210,10 @@ class SelectInputWithList extends React.PureComponent {
             selectClassNames.push(styles.hasTopRightChild);
         }
 
-        const Item = hideRemoveFromListButton ? ListItem : DismissableListItem;
+        const Item = (
+            hideRemoveFromListButton ||
+            readOnly ||
+            disabled) ? ListItem : DismissableListItem;
 
         return (
             <div className={this.getClassName()}>
@@ -217,6 +221,7 @@ class SelectInputWithList extends React.PureComponent {
                     <MultiSelectInput
                         className={selectClassNames.join(' ')}
                         disabled={disabled}
+                        readOnly={readOnly}
                         keySelector={keySelector}
                         label={label}
                         labelSelector={labelSelector}

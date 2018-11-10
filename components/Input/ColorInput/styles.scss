@@ -4,6 +4,7 @@
 .color-input {
     .label {
         @extend %input-label;
+        padding-bottom: $spacing-extra-small;
     }
 
     .color-box {
@@ -19,34 +20,27 @@
             min-height: $font-size-medium;
         }
 
+        &.disabled {
+            cursor: default;
+
+            .color {
+                filter: grayscale(100%);
+            }
+        }
+
         &:hover {
             border-bottom-color: $color-separator-hover;
         }
 
-        &.error {
-            /*
-            .input {
-                border-bottom-color: $color-danger;
-            }
-            */
+        &:focus {
+            border-bottom-color: $color-accent;
+        }
 
+        &.error {
             .label {
                 color: $color-danger;
             }
         }
-
-        /*
-        &.disabled {
-            .label {
-                color: $color-text-disabled;
-            }
-
-            .input {
-                border-bottom-color: $color-separator;
-                color: $color-text-disabled;
-            }
-        }
-        */
     }
 
     %base {
@@ -54,18 +48,14 @@
         font-size: $font-size-extra-small;
     }
 
-    .hint {
-        @extend %base;
-        color: $color-text-label;
-    }
-
-    .error {
-        @extend %base;
-        color: $color-danger;
-    }
-
     .empty {
         @extend %base;
         visibility: hidden;
+    }
+
+    &.disabled {
+        .label {
+            color: $color-text-disabled;
+        }
     }
 }

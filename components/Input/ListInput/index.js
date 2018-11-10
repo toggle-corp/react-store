@@ -13,6 +13,8 @@ const propTypes = {
 
     onChange: PropTypes.func,
     value: PropTypes.arrayOf(PropTypes.any),
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
 };
@@ -22,6 +24,8 @@ const defaultProps = {
 
     onChange: undefined,
     value: [],
+    disabled: false,
+    readOnly: false,
     keySelector: item => item,
     labelSelector: item => item,
 };
@@ -31,12 +35,25 @@ class ListInput extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getClassName() {
-        const { className } = this.props;
+        const {
+            className,
+            disabled,
+            readOnly,
+        } = this.props;
+
         const classNames = [
             className,
             'list-input',
             styles.listInput,
         ];
+
+        if (disabled) {
+            classNames.push(styles.disabled);
+        }
+
+        if (readOnly) {
+            classNames.push(styles.readOnly);
+        }
 
         return classNames.join(' ');
     }
@@ -56,7 +73,11 @@ class ListInput extends React.PureComponent {
     }
 
     renderItem = (key, data) => {
-        const { labelSelector } = this.props;
+        const {
+            labelSelector,
+            disabled,
+            readOnly,
+        } = this.props;
 
         return (
             <div
@@ -70,6 +91,7 @@ class ListInput extends React.PureComponent {
                     className={styles.action}
                     iconName={iconNames.delete}
                     onClick={() => this.deleteItem(key)}
+                    disabled={disabled || readOnly}
                     transparent
                 />
             </div>

@@ -9,6 +9,8 @@ import {
 import { FaramInputElement } from '../../General/FaramElements';
 
 import FloatingContainer from '../../View/FloatingContainer';
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 
 import styles from './styles.scss';
 
@@ -46,6 +48,9 @@ const propTypes = {
     showLabel: PropTypes.bool,
 
     showHintAndError: PropTypes.bool,
+
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -55,6 +60,8 @@ const defaultProps = {
     error: '',
     hint: '',
     showHintAndError: true,
+    disabled: false,
+    readOnly: false,
 };
 
 class ColorInput extends React.PureComponent {
@@ -127,61 +134,52 @@ class ColorInput extends React.PureComponent {
             showHintAndError,
             error,
             hint,
+            disabled,
+            readOnly,
         } = this.props;
 
         const { showColorPicker } = this.state;
+        const buttonClassNames = [
+            styles.colorBox,
+            'color-box',
+        ];
+
+        const classNames = [
+            styles.colorInput,
+            className,
+        ];
+
+        if (disabled) {
+            buttonClassNames.push(styles.disabled);
+            classNames.push(styles.disabled);
+        }
 
         return (
             <div
-                className={`${styles.colorInput} ${className}`}
+                className={classNames.join(' ')}
                 ref={(el) => { this.container = el; }}
             >
-                {
-                    showLabel && (
-                        <div className={`${styles.label} label`} >
-                            {label}
-                        </div>
-                    )
-                }
+                <Label
+                    className={styles.label}
+                    show={showLabel}
+                    text={label}
+                />
                 <button
                     type="button"
-                    className={`${styles.colorBox} color-box`}
+                    className={buttonClassNames.join(' ')}
                     onClick={this.handleColorBoxClick}
+                    disabled={disabled || readOnly}
                 >
                     <span
                         className={`${styles.color} color`}
                         style={{ backgroundColor: value }}
                     />
                 </button>
-                {
-                    /* FIXME: Use HintAndError component */
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} error empty`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
                 {
                     showColorPicker && (
                         <FloatingContainer

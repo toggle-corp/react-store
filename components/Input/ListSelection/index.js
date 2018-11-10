@@ -95,6 +95,7 @@ export class NormalListSelection extends React.PureComponent {
             labelSelector,
             value,
             disabled,
+            readOnly,
         } = this.props;
 
         const selected = value.indexOf(key) >= 0;
@@ -105,6 +106,7 @@ export class NormalListSelection extends React.PureComponent {
             value: selected,
             onChange: val => this.handleItemChange(key, val),
             disabled,
+            readOnly,
         };
     }
 

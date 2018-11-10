@@ -8,6 +8,10 @@
         flex-shrink: 0;
         padding: $spacing-small $spacing-medium;
         text-transform: uppercase;
+
+        &.disabled {
+            color: $color-text-disabled;
+        }
     }
 
     .inputs {
