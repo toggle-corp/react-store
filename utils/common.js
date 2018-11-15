@@ -311,9 +311,11 @@ export const getNumbers = (start, end) => {
     return list;
 };
 
-export const randomString = (length = 8) => {
+export const randomString = (length = 8, mixedCase = false) => {
     let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const possible = mixedCase
+        ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        : 'abcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < length; i += 1) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }

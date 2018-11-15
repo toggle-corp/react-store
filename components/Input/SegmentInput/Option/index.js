@@ -31,7 +31,7 @@ export default class SegmentOption extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.inputId = randomString().toLowerCase();
+        this.inputId = randomString();
     }
 
     getClassName = () => {
