@@ -190,16 +190,19 @@ class SunBurst extends PureComponent {
 
     handleArcMouseOver = (d) => {
         const { labelSelector } = this.props;
-        const label = labelSelector(d.data) || '';
-
-        this.tooltip.innerHTML = `
-            <span class="${styles.label}">
-                ${label}
-            </span>
-            <span class="${styles.value}">
-                ${d.value}
-            </span>
-        `;
+        const label = labelSelector(d.data);
+        if (label === null) {
+            this.tooltip.innerHTML = '';
+        } else {
+            this.tooltip.innerHTML = `
+                <span class="${styles.label}">
+                    ${label}
+                </span>
+                <span class="${styles.value}">
+                    ${d.value}
+                </span>
+            `;
+        }
 
         const { style } = this.tooltip;
         style.display = 'block';
