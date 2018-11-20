@@ -56,7 +56,7 @@ const propTypes = {
         PropTypes.number,
     ]),
 
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
 };
 
 const defaultProps = {
@@ -69,10 +69,11 @@ const defaultProps = {
     onChange: undefined,
     required: false,
     showLabel: true,
-    keySelector: d => d,
-    labelSelector: d => d,
+    keySelector: d => d.key,
+    labelSelector: d => d.label,
     showHintAndError: true,
     value: '',
+    name: '',
     options: [],
 };
 
