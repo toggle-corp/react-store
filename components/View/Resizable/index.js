@@ -12,10 +12,10 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
 
-    firstChild: PropTypes.node.isRequired,
+    firstChild: PropTypes.node,
     firstContainerClassName: PropTypes.string,
 
-    secondChild: PropTypes.node.isRequired,
+    secondChild: PropTypes.node,
     secondContainerClassName: PropTypes.string,
 
     separatorClassName: PropTypes.string,
@@ -33,6 +33,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     disabled: false,
+    firstChild: null,
+    secondChild: null,
     separatorClassName: '',
     firstContainerClassName: '',
     secondContainerClassName: '',

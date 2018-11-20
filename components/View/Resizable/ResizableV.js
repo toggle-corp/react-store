@@ -4,13 +4,15 @@ import React from 'react';
 import Resizable from './index';
 
 const propTypes = {
-    topChild: PropTypes.node.isRequired,
+    topChild: PropTypes.node,
     topContainerClassName: PropTypes.string,
 
-    bottomChild: PropTypes.node.isRequired,
+    bottomChild: PropTypes.node,
     bottomContainerClassName: PropTypes.string,
 };
 const defaultProps = {
+    topChild: null,
+    bottomChild: null,
     topContainerClassName: '',
     bottomContainerClassName: '',
 };
