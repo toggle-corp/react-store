@@ -24,13 +24,21 @@ class SearchInput extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getClassName = () => {
-        const { className } = this.props;
+        const {
+            className,
+            disabled,
+        } = this.props;
 
         const classNames = [
             className,
             'search-input',
             styles.searchInput,
         ];
+
+        if (disabled) {
+            classNames.push('disabled');
+            classNames.push(styles.disabled);
+        }
 
         return classNames.join(' ');
     }
@@ -43,21 +51,17 @@ class SearchInput extends React.PureComponent {
         } = this.props;
 
         const className = this.getClassName();
-        const inputClassName = `text-input ${styles.textInput}`;
-        const iconClassName = [
-            'icon',
-            styles.icon,
-            iconNames.search,
-        ];
-        if (disabled) {
-            iconClassName.push(styles.disabled);
-        }
+        const iconClassName = `
+            icon
+            ${styles.icon}
+            ${iconNames.search}
+        `;
 
         return (
             <div className={className}>
-                <span className={iconClassName.join(' ')} />
+                <span className={iconClassName} />
                 <TextInput
-                    className={inputClassName}
+                    className={styles.textInput}
                     type="search"
                     disabled={disabled}
                     {...otherProps}
