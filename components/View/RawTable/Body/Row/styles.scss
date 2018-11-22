@@ -1,14 +1,20 @@
 @import '../../../../../stylesheets/base';
 
 .row {
-    @extend %background-alternating-row;
+    // @extend %background-alternating-row;
     transition: $duration-transition-medium background-color ease-in-out, $duration-transition-medium color ease-in-out;
+    border-bottom: $width-separator-thin solid $color-separator;
 
     &.hoverable {
         &:hover {
             background-color: $color-background-hover;
             color: $color-text;
         }
+    }
+
+    &:hover {
+        background-color: $color-background-hover;
+        color: $color-text;
     }
 
     &.highlighted {
