@@ -1,0 +1,79 @@
+@import '~base-scss/base';
+
+$page-margin: $spacing-small-alt;
+$width-sidebar: 300px;
+
+.page-with-sidebar {
+    display: flex;
+    margin: (-$page-margin);
+    height: calc(100% + #{$page-margin * 2});
+    overflow: auto;
+
+    .sidebar {
+        flex-basis: $width-sidebar;
+        flex-grow: 0;
+        flex-shrink: 0;
+        @include background-color($color-foreground);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .header {
+            flex-shrink: 0;
+            border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-small $spacing-medium;
+            @include background-color($color-background-header);
+        }
+
+        .main-content {
+            @extend %main-content;
+            position: relative;
+            flex-grow: 1;
+            margin: $page-margin;
+            overflow: auto;
+            @include background-color($color-foreground-alt);
+        }
+
+        .footer {
+            flex-shrink: 0;
+            border-top: $width-separator-thin solid $color-separator;
+            padding: $spacing-small $spacing-medium;
+            @include background-color($color-foreground);
+        }
+    }
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    margin: (-$page-margin);
+    height: calc(100% + #{$page-margin * 2});
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-small $spacing-medium;
+        @include background-color($color-background-header);
+    }
+
+    .main-content {
+        @extend %main-content;
+        position: relative;
+        flex-grow: 1;
+        margin: $page-margin;
+        overflow: auto;
+        @include background-color($color-foreground-alt);
+    }
+
+    .footer {
+        flex-shrink: 0;
+        border-top: $width-separator-thin solid $color-separator;
+        padding: $spacing-small $spacing-medium;
+        @include background-color($color-foreground);
+    }
+}
