@@ -245,13 +245,14 @@ class Button extends React.PureComponent {
                 type={type}
                 {...otherProps}
             >
-                { pending &&
+                { pending ? (
                     <Icon
                         className={styles.pendingIcon}
-                        iconName={iconNames.loading}
+                        iconName={iconNames.spinner}
                     />
-                }
-                <Icon iconName={iconName} />
+                ) : (
+                    <Icon iconName={iconName} />
+                )}
                 { children }
             </button>
         );

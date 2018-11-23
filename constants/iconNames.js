@@ -35,6 +35,7 @@ const iconNames = {
     link: 'ion-link',
     list: 'ion-ios-list-outline',
     loading: 'ion-load-c',
+    spinner: 'fa fa-circle-o-notch fa-spin fa-fw',
     location: 'ion-ios-location',
     locked: 'ion-locked',
     logout: 'ion-log-out',
