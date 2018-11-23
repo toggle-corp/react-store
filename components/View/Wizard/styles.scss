@@ -1,0 +1,33 @@
+@import '../../../stylesheets/base';
+
+.next {
+    animation: slide-from-right $duration-slow ease-in;
+}
+
+.prev {
+    animation: slide-from-left $duration-slow ease-in;
+}
+
+@keyframes slide-from-right {
+    from {
+        transform: translateX(3%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-from-left {
+    from {
+        transform: translateX(-3%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
