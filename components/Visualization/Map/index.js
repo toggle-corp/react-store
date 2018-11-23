@@ -110,13 +110,16 @@ export default class Map extends React.Component {
             });
         });
 
-        setTimeout(() => { map.resize(); }, 200);
+        this.timeout = setTimeout(() => {
+            map.resize();
+        }, 200);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.bounds !== nextProps.bounds && this.state.map) {
-            const { bounds } = nextProps;
+            const { bounds, boundsPadding, fitBoundsDuration } = nextProps;
             const { map } = this.state;
+
             if (bounds) {
                 map.fitBounds(
                     [[
@@ -126,7 +129,10 @@ export default class Map extends React.Component {
                         bounds[2],
                         bounds[3],
                     ]],
-                    { padding: 128 },
+                    {
+                        padding: boundsPadding,
+                        duration: fitBoundsDuration,
+                    },
                 );
             }
         }
@@ -134,6 +140,7 @@ export default class Map extends React.Component {
 
     componentWillUnmount() {
         this.mounted = false;
+        clearTimeout(this.timeout);
 
         Object.keys(this.childDestroyers).forEach((key) => {
             this.childDestroyers[key]();

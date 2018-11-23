@@ -20,6 +20,8 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     supportHover: PropTypes.bool,
     setDestroyer: PropTypes.func,
+    // eslint-disable-next-line react/forbid-prop-types
+    geoJson: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -55,6 +57,11 @@ export default class MapSource extends React.PureComponent {
         if (this.props.map !== nextProps.map) {
             this.destroy();
             this.create(nextProps);
+        } else if (this.props.geoJson !== nextProps.geoJson) {
+            const { map } = this.props;
+            if (this.source && map) {
+                map.getSource(this.source).setData(nextProps.geoJson);
+            }
         }
     }
 
