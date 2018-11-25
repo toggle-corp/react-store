@@ -31,45 +31,15 @@ export default class Confirm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            show: props.show,
-        };
-    }
-
-    // XXX: show remove?
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            show: nextProps.show,
-        });
-    }
-
-    // XXX: is this used?
-    getContent = () => ([
-    ])
-
     handleOkButtonClick = () => {
-        this.setState({
-            show: false,
-        });
-
         this.props.onClose(true);
     }
 
     handleCancelButtonClick = () => {
-        this.setState({
-            show: false,
-        });
-
         this.props.onClose(false);
     }
 
     handleClose = () => {
-        this.setState({
-            show: false,
-        });
         this.props.onClose(false);
     }
 
@@ -78,16 +48,20 @@ export default class Confirm extends React.PureComponent {
             className,
             children,
             title,
+            show,
         } = this.props;
-
-        const { show } = this.state;
 
         if (!show) {
             return null;
         }
 
         return (
-            <Modal className={`${className} confirm ${styles.confirm}`}>
+            <Modal
+                className={`${className} confirm ${styles.confirm}`}
+                closeOnEscape
+                closeOnOutsideClick
+                onClose={this.handleClose}
+            >
                 <ModalHeader title={title} />
                 <ModalBody>
                     { children }
