@@ -35,6 +35,7 @@ const propTypes = {
     valueSelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
     labelModifier: PropTypes.func,
+    sideLengthRatio: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
 };
@@ -44,6 +45,7 @@ const defaultProps = {
     setSaveFunction: () => {},
     colorScheme: schemeAccent,
     className: '',
+    sideLengthRatio: 0.4,
     labelModifier: undefined,
 };
 
@@ -195,8 +197,14 @@ class DonutChart extends PureComponent {
                 select(this.tooltip)
                     .html(`<span>${textLabel}</span>`)
                     .style('display', 'inline-block')
-                    .style('top', `${event.pageY - 30}px`)
-                    .style('right', `${document.body.clientWidth - event.pageX}px`);
+                    .style('top', () => {
+                        const { height } = this.tooltip.getBoundingClientRect();
+                        return `${event.pageY - height - (height / 2)}px`;
+                    })
+                    .style('right', () => {
+                        const { width } = this.tooltip.getBoundingClientRect();
+                        return `${document.body.clientWidth - event.pageX - (width / 2)}px`;
+                    });
             })
             .on('mouseout', (d, i, nodes) => {
                 this.arcTween(nodes[i], arcs, outerRadius - 4, 150);
@@ -217,6 +225,7 @@ class DonutChart extends PureComponent {
             boundingClientRect,
             valueSelector,
             data,
+            sideLengthRatio,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -234,7 +243,7 @@ class DonutChart extends PureComponent {
 
         const radius = Math.min(width, height) / 2;
         const outerRadius = radius * 0.92;
-        const innerRadius = outerRadius - (outerRadius / 5);
+        const innerRadius = outerRadius - (outerRadius * sideLengthRatio);
 
         const colors = scaleOrdinal().range(this.props.colorScheme);
         const pies = pie()
