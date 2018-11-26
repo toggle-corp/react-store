@@ -8,6 +8,7 @@ import { select, event } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
+import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
 import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
