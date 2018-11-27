@@ -108,8 +108,6 @@ export default class MultiViewContainer extends React.Component {
     }
 
     handleHashChange = () => {
-        // NOTE: added this because hash wasn't used
-        console.warn('Hash has changed from ', this.state.hash, 'to', this.getHash());
         this.setState({ hash: this.getHash() });
     }
 

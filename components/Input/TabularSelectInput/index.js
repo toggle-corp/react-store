@@ -135,7 +135,7 @@ class TabularSelectInput extends React.PureComponent {
             value,
         } = this.props;
 
-        const selectedOptions = this.getSelectedOptions(value, keySelector, blackList);
+        const selectedOptions = this.getSelectedOptions(value, keySelector, blackList, options);
         const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
         const validOptions = this.getValidOptions(options, keySelector, blackList);
         const selectedOptionsKeys = selectedOptions.map(d => keySelector(d));
@@ -174,6 +174,7 @@ class TabularSelectInput extends React.PureComponent {
                 nextProps.value,
                 nextProps.keySelector,
                 this.props.blackList,
+                nextProps.options,
             );
             const selectedOptionsKeys = selectedOptions.map(d => nextProps.keySelector(d));
 
@@ -202,16 +203,25 @@ class TabularSelectInput extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    getSelectedOptions = (values, keySelector, blackList) => {
+    getSelectedOptions = (values, keySelector, blackList, options) => {
         const blackListMap = listToMap(
             blackList,
             d => d,
             () => true,
         );
-
-        const selectedOptions = values.filter(
-            value => !blackListMap[keySelector(value)],
+        const optionsMap = listToMap(
+            options,
+            d => keySelector(d),
         );
+
+        const selectedOptions = values
+            .map(v => ({
+                ...optionsMap[keySelector(v)],
+                ...values,
+            }))
+            .filter(
+                value => !blackListMap[keySelector(value)],
+            );
         return selectedOptions;
     }
 

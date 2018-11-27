@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from '../../../Action/Button';
-import PrimaryButton from '../../../Action/Button/PrimaryButton';
+import DangerButton from '../../../Action/Button/DangerButton';
 
 import ModalHeader from '../Header';
 import ModalBody from '../Body';
@@ -24,6 +24,8 @@ const propTypes = {
     hideCancel: PropTypes.bool,
     title: PropTypes.string,
     show: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
+    autoFocus: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -32,6 +34,8 @@ const defaultProps = {
     closeOnEscape: true,
     closeOnOutsideClick: true,
     hideCancel: false,
+    disabled: false,
+    autoFocus: true,
 };
 
 export default class Confirm extends React.PureComponent {
@@ -59,6 +63,8 @@ export default class Confirm extends React.PureComponent {
             hideCancel,
             closeOnEscape,
             closeOnOutsideClick,
+            disabled,
+            autoFocus,
         } = this.props;
 
         if (!show) {
@@ -81,17 +87,18 @@ export default class Confirm extends React.PureComponent {
                         <Button
                             className={`cancel-button ${styles.cancelButton}`}
                             onClick={this.handleCancelButtonClick}
-                            autoFocus
+                            autoFocus={autoFocus}
                         >
                             Cancel
                         </Button>
                     }
-                    <PrimaryButton
+                    <DangerButton
                         className={`ok-button ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}
+                        disabled={disabled}
                     >
                         Ok
-                    </PrimaryButton>
+                    </DangerButton>
                 </ModalFooter>
             </Modal>
         );
