@@ -3,8 +3,6 @@ import FaramGroupApi from '../FaramGroup/FaramGroupApi';
 const emptyArray = [];
 
 export default class FaramListApi extends FaramGroupApi {
-    onClickMemory = {}
-
     constructor(props) {
         super(props);
         this.handlers = this.getHandler();
@@ -13,19 +11,6 @@ export default class FaramListApi extends FaramGroupApi {
     getHandler() {
         return {
             ...super.getHandler(),
-            action: {
-                getPropsFromApi: ({ faramElementName, faramAction, ...otherProps }) => ({
-                    apiProps: faramElementName !== undefined && faramAction
-                        ? { faramElementName, faramAction }
-                        : undefined,
-                    otherProps,
-                }),
-                calculateElementProps: ({ faramElementName, faramAction }) => ({
-                    disabled: this.isDisabled() || this.isReadOnly(),
-                    changeDelay: this.getChangeDelay(),
-                    onClick: this.getOnClick(faramElementName, faramAction),
-                }),
-            },
             list: {
                 getPropsFromApi: ({ faramElement, ...otherProps }) => ({
                     apiProps: faramElement
@@ -54,6 +39,8 @@ export default class FaramListApi extends FaramGroupApi {
         };
     }
 
+    getEmptyElement = () => emptyArray;
+
     // override FaramGroupApi
     getNewValue = (key, oldValue, newValue) => {
         const result = [...oldValue];
@@ -67,25 +54,5 @@ export default class FaramListApi extends FaramGroupApi {
         return this.props.error
             ? this.props.error[index]
             : undefined;
-    }
-
-    // NOTE: memoized
-    // NOTE: faramAction shouldn't change
-    getOnClick = (faramElementName, faramAction) => {
-        if (this.onClickMemory[faramElementName]) {
-            return this.onClickMemory[faramElementName];
-        }
-
-        const newOnClick = (clickParams) => {
-            const newValue = faramAction(
-                this.props.value || emptyArray,
-                faramElementName,
-                clickParams,
-            );
-            // Button doesn't have children, so no need to propagate faramInfo
-            this.props.onChange(newValue);
-        };
-        this.onClickMemory[faramElementName] = newOnClick;
-        return newOnClick;
     }
 }

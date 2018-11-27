@@ -2,8 +2,11 @@ import FormElementApi from '../Form/FormElementApi';
 
 import { analyzeErrors } from '../Faram/validator';
 
+const emptyObject = {};
+
 export default class FaramGroupApi extends FormElementApi {
     onChangeMemory = {};
+    onClickMemory = {}
 
     constructor() {
         super();
@@ -67,8 +70,23 @@ export default class FaramGroupApi extends FormElementApi {
                     return calculatedProps;
                 },
             },
+            action: {
+                getPropsFromApi: ({ faramElementName, faramAction, ...otherProps }) => ({
+                    apiProps: faramElementName !== undefined && faramAction
+                        ? { faramElementName, faramAction }
+                        : undefined,
+                    otherProps,
+                }),
+                calculateElementProps: ({ faramElementName, faramAction }) => ({
+                    disabled: this.isDisabled() || this.isReadOnly(),
+                    changeDelay: this.getChangeDelay(),
+                    onClick: this.getOnClick(faramElementName, faramAction),
+                }),
+            },
         };
     }
+
+    getEmptyElement = () => emptyObject;
 
     // overrides FormElementApi
     setProps = (props) => {
@@ -154,5 +172,25 @@ export default class FaramGroupApi extends FormElementApi {
         };
         this.onChangeMemory[faramElementName] = newOnChange;
         return newOnChange;
+    }
+
+    // NOTE: memoized
+    // NOTE: faramAction shouldn't change
+    getOnClick = (faramElementName, faramAction) => {
+        if (this.onClickMemory[faramElementName]) {
+            return this.onClickMemory[faramElementName];
+        }
+
+        const newOnClick = (clickParams) => {
+            const newValue = faramAction(
+                this.props.value || this.getEmptyElement(),
+                faramElementName,
+                clickParams,
+            );
+            // Button doesn't have children, so no need to propagate faramInfo
+            this.props.onChange(newValue);
+        };
+        this.onClickMemory[faramElementName] = newOnClick;
+        return newOnClick;
     }
 }
