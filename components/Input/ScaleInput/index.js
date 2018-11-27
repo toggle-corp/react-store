@@ -10,7 +10,7 @@ const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     options: PropTypes.array,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
