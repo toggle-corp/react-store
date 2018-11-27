@@ -1,6 +1,7 @@
 @import '../../../stylesheets/base';
 
 .numeral {
+    text-align: right;
     font-family: $font-family-monospace;
 
     &.positive {

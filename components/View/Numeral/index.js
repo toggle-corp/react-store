@@ -195,7 +195,7 @@ class Numeral extends React.PureComponent {
         }
 
         return (
-            <span className={classNames.join(' ')}>
+            <div className={classNames.join(' ')}>
                 {
                     isTruthy(prefix) && (
                         <span className="prefix">
@@ -227,7 +227,7 @@ class Numeral extends React.PureComponent {
                         </span>
                     )
                 }
-            </span>
+            </div>
         );
     }
 }
