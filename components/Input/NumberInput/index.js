@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import {
     isTruthy,
-    isFalsy,
     addSeparator,
 } from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
@@ -86,92 +86,62 @@ const defaultProps = {
 
 const INT_LIMIT = 9007199254740992;
 
+const sanitizeNumber = (value = '') => {
+    if (value === '') {
+        return value;
+    }
+
+    const newValue = value.replace(/[^0-9]/g, '');
+    if (newValue === '') {
+        return newValue;
+    }
+
+    const realValue = +newValue;
+    // NOTE: Limit integer value to MAX_LIMIT
+    return (
+        isTruthy(realValue)
+            ? String(Math.min(INT_LIMIT, realValue))
+            : newValue
+    );
+};
+
+const isSign = value => value === '-';
+
+const getNumberAndSign = (value = '') => {
+    if (Number.isNaN(value)) {
+        return { sign: '-' };
+    }
+
+    const stringValue = value.toString();
+    const firstCharacter = stringValue.charAt(0);
+
+    if (isSign(firstCharacter)) {
+        return {
+            sign: '-',
+            number: sanitizeNumber(stringValue.substring(1)),
+        };
+    }
+
+    return { number: sanitizeNumber(stringValue) };
+};
+
 class NumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    // NOTE: no sign part here
-    static changeToNumber = (val = '') => {
-        const newVal = val.replace(/[^0-9]/g, '');
-        // Limit integer value to MAX_LIMIT
-        if (newVal !== '') {
-            const realValue = +newVal;
-            if (isTruthy(realValue)) {
-                return String(Math.min(INT_LIMIT, realValue));
-            }
-        }
-        return newVal;
-    };
-
-    static concatNumber = (sign, value) => {
-        let op = '';
-        if (isTruthy(sign)) {
-            op += sign;
-        }
-        if (isTruthy(value)) {
-            op += value;
-        }
-        return op;
-    }
-
-    static calculateNewValues = (v, separator) => {
-        if (isFalsy(v)) {
-            return {};
-        }
-        // NOTE: Value provided is most likely to be number
-        // when it is provided from props, change it to string first
-        const stringifiedV = String(v);
-
-        let signPart;
-        let numberPart = stringifiedV;
-        // extract sign if there is a sign
-        if (stringifiedV[0] === '-' || stringifiedV[0] === '+') {
-            // eslint-disable-next-line prefer-destructuring
-            signPart = stringifiedV[0];
-            numberPart = stringifiedV.substr(1);
-        }
-
-        // get string with only number
-        const numberSanitizedPart = NumberInput.changeToNumber(numberPart);
-        const numberWithCommaPart = addSeparator(numberSanitizedPart, separator);
-
-        // get value to display
-        const displayValue = NumberInput.concatNumber(signPart, numberWithCommaPart);
-
-        // get value to return outside
-        let value = NumberInput.concatNumber(signPart, numberSanitizedPart);
-        if (value === '+' || value === '-' || value === '') {
-            value = undefined;
-        } else {
-            value = +value;
-        }
-
-        return { value, displayValue };
-    }
-
     constructor(props) {
         super(props);
-
-        const { displayValue } = NumberInput.calculateNewValues(
-            props.value,
-            props.separator,
-        );
-
-        this.state = {
-            isFocused: false,
-            value: displayValue,
-        };
+        this.state = { isFocused: false };
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
-            const { displayValue } = NumberInput.calculateNewValues(
-                nextProps.value,
-                nextProps.separator,
-            );
-            this.setState({ value: displayValue });
-        }
-    }
+    getDisplayValue = memoize((value, separator) => {
+        const {
+            sign = '',
+            number = '',
+        } = getNumberAndSign(value);
+        const numberWithSeparator = addSeparator(number, separator);
+        return `${sign}${numberWithSeparator}`;
+    })
 
     getClassName() {
         const {
@@ -215,22 +185,23 @@ class NumberInput extends React.PureComponent {
     }
 
     handleChange = (event) => {
-        const { separator } = this.props;
-        const { value: val } = event.target;
-
-        const { value } = NumberInput.calculateNewValues(
-            val,
-            separator,
-        );
-
-        /*
-        // NOTE: this may not be required
-        this.setState({ value: displayValue });
-        */
-
+        const { value } = event.target;
         const { onChange } = this.props;
         if (onChange) {
-            onChange(value);
+            const {
+                number = '',
+                sign = '',
+            } = getNumberAndSign(value);
+
+            let realValue;
+            if (number === '' && sign !== '') {
+                realValue = NaN;
+            } else if (number === '' && sign === '') {
+                realValue = undefined;
+            } else {
+                realValue = +`${sign}${number}`;
+            }
+            onChange(realValue);
         }
     }
 
@@ -270,11 +241,11 @@ class NumberInput extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            value,
             title,
+            separator,
             ...otherProps
         } = this.props;
-
-        const { value = '' } = this.state;
 
         const className = this.getClassName();
 
@@ -293,7 +264,7 @@ class NumberInput extends React.PureComponent {
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
-                    value={value}
+                    value={this.getDisplayValue(value, separator)}
                     {...otherProps}
                 />
                 <HintAndError
