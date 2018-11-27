@@ -237,6 +237,9 @@ export const getErrorForDateValues = ({ yearValue, monthValue, dayValue }) => {
 
 export const addSeparator = (num, separator = ',') => {
     const nStr = String(num);
+    if (nStr === '') {
+        return '';
+    }
     const x = nStr.split('.');
     let x1 = x[0];
     const x2 = x.length > 1 ? `.${x[1]}` : '';
