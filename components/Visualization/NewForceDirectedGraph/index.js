@@ -7,7 +7,6 @@ import {
     forceLink,
     forceManyBody,
     forceCenter,
-    forceCollide,
 } from 'd3-force';
 import { drag } from 'd3-drag';
 import { extent } from 'd3-array';

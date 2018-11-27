@@ -83,8 +83,6 @@ class ParallelCoordinates extends PureComponent {
     setContext = (width, height, margins) => {
         const {
             top,
-            right,
-            bottom,
             left,
         } = margins;
 

@@ -52,6 +52,7 @@ export const propTypes = {
     showLabel: PropTypes.bool,
     title: PropTypes.string,
     value: PropTypes.arrayOf(keyPropType),
+    keySelector: PropTypes.func,
 };
 
 export const defaultProps = {

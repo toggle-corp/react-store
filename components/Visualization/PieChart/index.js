@@ -13,6 +13,7 @@ import Responsive from '../../General/Responsive';
 
 import styles from './styles.scss';
 
+// eslint-disable-next-line no-unused-vars
 const dummy = transition;
 
 /**

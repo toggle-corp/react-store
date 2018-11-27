@@ -53,6 +53,8 @@ const propTypes = {
      * The value of the numeral
      */
     value: PropTypes.number,
+
+    lang: PropTypes.string,
 };
 
 const defaultProps = {
@@ -66,6 +68,7 @@ const defaultProps = {
     showSign: false,
     suffix: undefined,
     value: undefined,
+    lang: undefined,
 };
 
 

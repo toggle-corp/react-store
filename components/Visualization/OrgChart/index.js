@@ -39,10 +39,6 @@ const propTypes = {
     onSelection: PropTypes.func,
     /* if true no click events on nodes */
     disabled: PropTypes.bool,
-    /* default color for nodes */
-    fillColor: PropTypes.string,
-    /* nodes color when selected */
-    selectColor: PropTypes.string,
     /* the cluster minimum layout's node size */
     nodeSize: PropTypes.shape({
         minNodeWidth: PropTypes.number,
@@ -73,8 +69,6 @@ const defaultProps = {
     },
     onSelection: () => [],
     disabled: false,
-    fillColor: '#ffffff',
-    selectColor: '#afeeee',
     margins: {
         top: 0,
         right: 0,
@@ -197,9 +191,7 @@ class OrgChart extends React.PureComponent {
             childSelector,
             labelSelector,
             disabled,
-            fillColor,
             nodeSize,
-            selectColor,
             margins,
         } = this.props;
 

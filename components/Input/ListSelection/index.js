@@ -23,6 +23,7 @@ const propTypes = {
 
     label: PropTypes.string,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
     showLabel: PropTypes.bool,
@@ -39,6 +40,7 @@ const defaultProps = {
 
     label: '',
     disabled: false,
+    readOnly: false,
     error: '',
     hint: '',
     showLabel: true,
