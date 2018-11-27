@@ -5,6 +5,8 @@ import { select, event } from 'd3-selection';
 
 import styles from './styles.scss';
 
+import 'd3-transition';
+
 const propTypes = {
     initialChildren: PropTypes.oneOfType([
         PropTypes.string,
