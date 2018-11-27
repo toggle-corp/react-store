@@ -106,7 +106,6 @@ class SelectInputWithList extends React.PureComponent {
         const {
             className,
             disabled,
-            readOnly,
         } = this.props;
         const { error } = this.state;
 

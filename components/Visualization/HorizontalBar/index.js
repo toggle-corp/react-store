@@ -9,12 +9,14 @@ import { max } from 'd3-array';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+
 import Responsive from '../../General/Responsive';
+import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
 import styles from './styles.scss';
 
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
 
+// eslint-disable-next-line no-unused-vars
 const dummy = transition;
 
 /**

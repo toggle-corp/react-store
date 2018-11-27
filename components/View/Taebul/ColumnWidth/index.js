@@ -18,7 +18,7 @@ class ResizableHeader extends React.PureComponent {
 
     render() {
         const {
-            _columnKey: columnKey,
+            _columnKey: columnKey, // eslint-disable-line no-unused-vars
             _headerRenderer: Header,
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
             ...otherProps
