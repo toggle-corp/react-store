@@ -1,15 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { scaleLinear } from 'd3-scale';
+import {
+    scaleLinear,
+    scaleTime,
+} from 'd3-scale';
 import {
     area,
     line as d3Line,
-    // curveMonotoneX,
 } from 'd3-shape';
-import { axisLeft, axisBottom } from 'd3-axis';
-import { select, mouse } from 'd3-selection';
-import { extent, bisector } from 'd3-array';
+import {
+    axisLeft,
+    axisBottom,
+} from 'd3-axis';
+import {
+    select,
+    mouse,
+} from 'd3-selection';
+import {
+    extent,
+    bisector,
+} from 'd3-array';
 
 import Responsive from '../../General/Responsive';
 import Tooltip from '../Tooltip';
@@ -62,7 +73,7 @@ class TimeSeries extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.scaleX = scaleLinear();
+        this.scaleX = scaleTime();
         this.scaleY = scaleLinear();
         this.bisector = bisector(d => d[props.xKey]).left;
     }
@@ -98,7 +109,13 @@ class TimeSeries extends React.PureComponent {
     }
 
     onMouseMove = (overLay, overLayLine, overLayCircle) => {
-        const { data, xKey, yKey, tooltipRender } = this.props;
+        const {
+            data,
+            xKey,
+            yKey,
+            tooltipRender,
+        } = this.props;
+
         const x0 = this.scaleX.invert(mouse(overLay.node())[0]);
         const i = this.bisector(data, x0);
         const d0 = data[i - 1];
@@ -153,8 +170,17 @@ class TimeSeries extends React.PureComponent {
     setTooltip = (tooltip) => { this.tooltip = tooltip; }
 
     updateRender() {
-        const { right, top, left, bottom } = this.props.margins;
-        const { height, width } = this.props.boundingClientRect;
+        const {
+            right,
+            top,
+            left,
+            bottom,
+        } = this.props.margins;
+
+        const {
+            height,
+            width,
+        } = this.props.boundingClientRect;
 
         if (!width) {
             return;
@@ -171,11 +197,22 @@ class TimeSeries extends React.PureComponent {
 
     renderBarChart(height, width) {
         const {
-            data, xKey, yKey, yTicks, margins, xTickFormat, yTickFormat, showArea,
+            data,
+            xKey,
+            yKey,
+            yTicks,
+            margins,
+            xTickFormat,
+            yTickFormat,
+            showArea,
         } = this.props;
-        const { top, left } = margins;
 
-        this.scaleX.domain(extent(data.map(d => d[xKey])));
+        const {
+            top,
+            left,
+        } = margins;
+
+        this.scaleX.domain(extent(data.map(d => new Date(d[xKey]))));
         this.scaleY.domain(extent(data.map(d => d[yKey])));
 
         const svg = select(this.svg);
@@ -189,9 +226,7 @@ class TimeSeries extends React.PureComponent {
 
         const xAxis = axisBottom(this.scaleX)
             .tickSizeInner(-height)
-            // .tickSizeOuter(0)
             .tickFormat(xTickFormat)
-            // .ticks(5)
             .tickValues(xTickValues);
 
         const yAxis = axisLeft(this.scaleY)
@@ -202,9 +237,8 @@ class TimeSeries extends React.PureComponent {
         if (yTicks) { yAxis.ticks(yTicks); }
 
         const line = d3Line()
-            // .curve(curveMonotoneX)
-            .x(d => this.scaleX(d[xKey] || 0))
-            .y(d => this.scaleY(d[yKey] || 0));
+            .x(d => (this.scaleX(new Date(d[xKey]) || 0)))
+            .y(d => (this.scaleY(d[yKey] || 0)));
 
         const root = svg.append('g')
             .attr('transform', `translate(${left},${top})`);
@@ -220,8 +254,7 @@ class TimeSeries extends React.PureComponent {
 
         if (showArea) {
             const lineArea = area()
-                // .curve(curveMonotoneX)
-                .x(d => this.scaleX(d[xKey] || 0))
+                .x(d => this.scaleX(new Date(d[xKey]) || 0))
                 .y1(d => this.scaleY(d[yKey] || 0))
                 .y0(height);
 
@@ -252,23 +285,21 @@ class TimeSeries extends React.PureComponent {
             .attr('r', 3)
             .style('opacity', 0);
 
-        const overLay = root.append('rect')
+        const overLay = root
+            .append('rect')
             .attr('class', 'overlay')
             .attr('width', width)
             .attr('height', height)
-            .on('mouseenter', () =>
-                this.onMouseEnter(overLayLine, overLayCircle))
-            .on('mouseleave', () =>
-                this.onMouseLeave(overLayLine, overLayCircle))
-            .on('mousemove', () =>
-                this.onMouseMove(overLay, overLayLine, overLayCircle));
+            .on('mouseenter', () => this.onMouseEnter(overLayLine, overLayCircle))
+            .on('mouseleave', () => this.onMouseLeave(overLayLine, overLayCircle))
+            .on('mousemove', () => this.onMouseMove(overLay, overLayLine, overLayCircle));
     }
 
     render() {
         const { className } = this.props;
 
         return (
-            <div className={`${className} ${styles.timeSeries}`} >
+            <div className={`${className} ${styles.timeSeries}`}>
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip setTooltipApi={this.setTooltip} />
             </div>
