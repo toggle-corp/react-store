@@ -64,7 +64,7 @@ export default (WrappedComponent) => {
             this.changeTimeout = setTimeout(
                 () => {
                     this.pendingChange = false;
-                    this.setState({ value: this.lastValue });
+                    // this.setState({ value: this.lastValue });
                     onChange(value, error, info);
                 },
                 changeDelay,
