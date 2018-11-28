@@ -31,6 +31,7 @@ const propTypes = {
     title: PropTypes.string,
 
     dropdownClassName: PropTypes.string,
+    dropdownIcon: PropTypes.string,
 };
 
 const defaultProps = {
@@ -40,6 +41,7 @@ const defaultProps = {
     hideDropdownIcon: false,
     title: '',
     dropdownClassName: '',
+    dropdownIcon: iconNames.chevronDown,
 };
 
 export default class DropdownMenu extends React.PureComponent {
@@ -90,7 +92,6 @@ export default class DropdownMenu extends React.PureComponent {
         }
 
         const { showDropdown: oldShowDropdown } = this.state;
-
         this.setState({ showDropdown: !oldShowDropdown });
     };
 
@@ -100,7 +101,7 @@ export default class DropdownMenu extends React.PureComponent {
 
     handleWindowClick = () => {
         if (this.state.showDropdown) {
-            this.setState({ showDropdown: false });
+            // this.setState({ showDropdown: false });
         }
     }
 
@@ -147,14 +148,17 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     renderDropdownIcon = () => {
-        const { hideDropdownIcon } = this.props;
+        const {
+            hideDropdownIcon,
+            dropdownIcon,
+        } = this.props;
 
         if (hideDropdownIcon) {
             return null;
         }
 
         const className = [
-            iconNames.chevronDown,
+            dropdownIcon,
             'dropdown-icon',
             styles.dropdownIcon,
         ].join(' ');
