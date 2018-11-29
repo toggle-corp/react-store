@@ -20,6 +20,8 @@ const propTypes = {
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
     ]),
+    navControlPosition: PropTypes.string,
+    hideNavControl: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -29,6 +31,8 @@ const defaultProps = {
     fitBoundsDuration: 1000,
     panelsRenderer: nullComponent,
     children: false,
+    navControlPosition: 'top-left',
+    hideNavControl: false,
 };
 
 export default class Map extends React.Component {
@@ -77,7 +81,11 @@ export default class Map extends React.Component {
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
-        map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+
+        const { navControlPosition, hideNavControl } = this.props;
+        if (!hideNavControl) {
+            map.addControl(new mapboxgl.NavigationControl(), navControlPosition);
+        }
 
         map.on('load', () => {
             // Since the map is loaded asynchronously, make sure
@@ -200,24 +208,20 @@ export default class Map extends React.Component {
                 className={className}
                 ref={this.mapContainer}
             >
-                {map && (
-                    <React.Fragment>
-                        <Children
-                            map={map}
-                            zoomLevel={this.state.zoomLevel}
-                            setDestroyer={this.setChildDestroyer}
-                        />
-                        <div
-                            className={styles.leftBottomPanels}
-                            ref={this.leftBottomPanels}
-                        >
-                            <Panels
-                                map={map}
-                                zoomLevel={this.state.zoomLevel}
-                            />
-                        </div>
-                    </React.Fragment>
-                )}
+                <Children
+                    map={map}
+                    zoomLevel={this.state.zoomLevel}
+                    setDestroyer={this.setChildDestroyer}
+                />
+                <div
+                    className={styles.leftBottomPanels}
+                    ref={this.leftBottomPanels}
+                >
+                    <Panels
+                        map={map}
+                        zoomLevel={this.state.zoomLevel}
+                    />
+                </div>
             </div>
         );
     }
