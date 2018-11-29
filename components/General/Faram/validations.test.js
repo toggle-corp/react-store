@@ -11,6 +11,8 @@ import {
     lengthEqualToCondition,
     emailCondition,
     urlCondition,
+    exclusiveInBetweenCondition,
+    inclusiveInBetweenCondition,
 } from './validations';
 
 test('required condition', () => {
@@ -43,6 +45,30 @@ test('integer condition', () => {
     expect(integerCondition(1.23).ok).toBe(false);
     expect(integerCondition(-1).ok).toBe(true);
     expect(integerCondition('2').ok).toBe(true);
+});
+
+test('exclusively in between', () => {
+    expect(exclusiveInBetweenCondition(-20, 20)(100).ok).toBe(false);
+    expect(exclusiveInBetweenCondition(-20, 20)(20).ok).toBe(false);
+    expect(exclusiveInBetweenCondition(-20, 20)(0).ok).toBe(true);
+    expect(exclusiveInBetweenCondition(-20, 20)(-20).ok).toBe(false);
+    expect(exclusiveInBetweenCondition(-20, 20)(-100).ok).toBe(false);
+
+    expect(exclusiveInBetweenCondition(undefined, 20)(100).message).toBe('Value must be less than 20');
+    expect(exclusiveInBetweenCondition(-20, undefined)(-100).message).toBe('Value must be greater than -20');
+    expect(exclusiveInBetweenCondition(-20, 20)(100).message).toBe('Value must be exclusively in between -20 and 20');
+});
+
+test('inclusively in between', () => {
+    expect(inclusiveInBetweenCondition(-20, 20)(100).ok).toBe(false);
+    expect(inclusiveInBetweenCondition(-20, 20)(20).ok).toBe(true);
+    expect(inclusiveInBetweenCondition(-20, 20)(0).ok).toBe(true);
+    expect(inclusiveInBetweenCondition(-20, 20)(-20).ok).toBe(true);
+    expect(inclusiveInBetweenCondition(-20, 20)(-100).ok).toBe(false);
+
+    expect(inclusiveInBetweenCondition(undefined, 20)(100).message).toBe('Value must be less than or equal to 20');
+    expect(inclusiveInBetweenCondition(-20, undefined)(-100).message).toBe('Value must be greater than or equal to -20');
+    expect(inclusiveInBetweenCondition(-20, 20)(100).message).toBe('Value must be in between -20 and 20');
 });
 
 test('less than condition', () => {
