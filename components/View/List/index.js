@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FaramListElement } from '../../General/FaramElements';
+import { groupList } from '../../../utils/common';
 import ListItem from './ListItem';
+import GroupItem from './GroupItem';
 
 const propTypeData = PropTypes.arrayOf(
     PropTypes.oneOfType([
@@ -20,23 +22,33 @@ const propTypes = {
     data: propTypeData,
     /* get key for each component in list */
     keySelector: PropTypes.func,
+    /* get key fro each group */
+    groupKeySelector: PropTypes.func,
     /* component to be shown as item in list */
     modifier: PropTypes.func,
 
     renderer: PropTypes.func,
     rendererClassName: PropTypes.string,
-
-    // eslint-disable-next-line react/forbid-prop-types
     rendererParams: PropTypes.func,
+
+    groupRenderer: PropTypes.func,
+    groupRendererClassName: PropTypes.string,
+    groupRendererParams: PropTypes.func,
+    groupComparator: PropTypes.func,
 };
 
 const defaultProps = {
     data: [],
     modifier: undefined,
     keySelector: undefined,
+    groupKeySelector: undefined,
     renderer: undefined,
     rendererClassName: '',
     rendererParams: undefined,
+    groupRenderer: undefined,
+    groupRendererClassName: undefined,
+    groupRendererParams: undefined,
+    groupComparator: undefined,
 };
 
 export class NormalList extends React.Component {
@@ -68,6 +80,7 @@ export class NormalList extends React.Component {
                 />
             );
         }
+
         // If there is no modifier, then return a ListItem
         return (
             <ListItem key={key}>
@@ -76,9 +89,54 @@ export class NormalList extends React.Component {
         );
     }
 
+    renderListItemFromGroup = (datum, groupKey, i) => (
+        this.renderListItem(datum, i)
+    )
+
+    renderGroup = (groupKey) => {
+        const {
+            groupRenderer: Renderer = GroupItem,
+            groupRendererClassName,
+            groupRendererParams,
+        } = this.props;
+
+        const extraProps = groupRendererParams
+            ? groupRendererParams(groupKey)
+            : undefined;
+
+        return (
+            <Renderer
+                key={groupKey}
+                className={groupRendererClassName}
+                {...extraProps}
+            />
+        );
+    }
+
     render() {
-        const { data } = this.props;
-        return data.map(this.renderListItem);
+        const {
+            data,
+            groupKeySelector,
+            groupComparator,
+        } = this.props;
+
+        if (!groupKeySelector) {
+            return data.map(this.renderListItem);
+        }
+
+        // TODO: memoize this operation
+        const groups = groupList(
+            data,
+            groupKeySelector,
+            this.renderListItemFromGroup,
+        );
+
+        const children = [];
+        Object.keys(groups).sort(groupComparator).forEach((groupKey) => {
+            children.push(this.renderGroup(groupKey));
+            children.push(...groups[groupKey]);
+        });
+        return children;
     }
 }
 

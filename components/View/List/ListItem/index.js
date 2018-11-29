@@ -19,7 +19,7 @@ const defaultProps = {
     scrollIntoView: false,
 };
 
-export default class List extends React.PureComponent {
+export default class ListItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

@@ -514,9 +514,9 @@ export const pick = (obj, keys) => keys.reduce(
 
 export const groupList = (list = [], keySelector, modifier) => (
     list.reduce(
-        (acc, elem) => {
+        (acc, elem, index) => {
             const key = keySelector(elem);
-            const e = modifier ? modifier(elem, key) : elem;
+            const e = modifier ? modifier(elem, key, index) : elem;
             if (acc[key]) {
                 acc[key].push(e);
             } else {
