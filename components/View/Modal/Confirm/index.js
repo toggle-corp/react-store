@@ -14,10 +14,14 @@ import styles from './styles.scss';
 const propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
+        PropTypes.string,
         PropTypes.element,
     ]).isRequired,
     className: PropTypes.string,
     onClose: PropTypes.func.isRequired,
+    closeOnEscape: PropTypes.bool,
+    closeOnOutsideClick: PropTypes.bool,
+    hideCancel: PropTypes.bool,
     title: PropTypes.string,
     show: PropTypes.bool.isRequired,
 };
@@ -25,6 +29,9 @@ const propTypes = {
 const defaultProps = {
     className: '',
     title: 'Confirm',
+    closeOnEscape: true,
+    closeOnOutsideClick: true,
+    hideCancel: false,
 };
 
 export default class Confirm extends React.PureComponent {
@@ -49,6 +56,9 @@ export default class Confirm extends React.PureComponent {
             children,
             title,
             show,
+            hideCancel,
+            closeOnEscape,
+            closeOnOutsideClick,
         } = this.props;
 
         if (!show) {
@@ -58,8 +68,8 @@ export default class Confirm extends React.PureComponent {
         return (
             <Modal
                 className={`${className} confirm ${styles.confirm}`}
-                closeOnEscape
-                closeOnOutsideClick
+                closeOnEscape={closeOnEscape}
+                closeOnOutsideClick={closeOnOutsideClick}
                 onClose={this.handleClose}
             >
                 <ModalHeader title={title} />
@@ -67,13 +77,15 @@ export default class Confirm extends React.PureComponent {
                     { children }
                 </ModalBody>
                 <ModalFooter>
-                    <Button
-                        className={`cancel-button ${styles.cancelButton}`}
-                        onClick={this.handleCancelButtonClick}
-                        autoFocus
-                    >
-                        Cancel
-                    </Button>
+                    {!hideCancel &&
+                        <Button
+                            className={`cancel-button ${styles.cancelButton}`}
+                            onClick={this.handleCancelButtonClick}
+                            autoFocus
+                        >
+                            Cancel
+                        </Button>
+                    }
                     <PrimaryButton
                         className={`ok-button ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}

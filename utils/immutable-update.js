@@ -13,6 +13,14 @@ update.extend(
     '$autoArray',
     (value, object) => update(object || [], value),
 );
+update.extend(
+    '$autoPush',
+    (value, object) => (object || []).concat(value.length ? value : []),
+);
+update.extend(
+    '$autoUnshift',
+    (value, object) => (value.length ? value : []).concat(object || []),
+);
 
 // Control
 update.extend(
@@ -66,17 +74,23 @@ update.extend(
         return newArr;
     },
 );
-
 update.extend(
-    '$autoPush',
-    (value, object) => (object || []).concat(value.length ? value : []),
+    '$removeFromIndex',
+    (indices, lst) => {
+        if (indices.length <= 0 || lst.length <= 0) {
+            return lst;
+        }
+
+        const newLst = [...lst];
+        const newIndices = indices.sort((a, b) => b - a);
+        newIndices.forEach((index) => {
+            newLst.splice(index, 1);
+        });
+        return newLst;
+    },
 );
 
-update.extend(
-    '$autoUnshift',
-    (value, object) => (value.length ? value : []).concat(object || []),
-);
-
+// Object
 update.extend('$unset', (keysToRemove, original) => {
     const copy = { ...original };
     keysToRemove.forEach((key) => {
@@ -85,18 +99,18 @@ update.extend('$unset', (keysToRemove, original) => {
     return copy;
 });
 
-update.extend('$setIfDefined', (value, original) => {
-    if (value === undefined) {
-        return original;
-    }
-    return value;
-});
-
 update.extend('$setDefault', (value, original) => {
     if (original === undefined) {
         return value;
     }
     return original;
+});
+
+update.extend('$setIfDefined', (value, original) => {
+    if (value === undefined) {
+        return original;
+    }
+    return value;
 });
 
 update.extend('$mergeIfDefined', (obj, original) => {

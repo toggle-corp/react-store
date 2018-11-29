@@ -209,3 +209,28 @@ test('should filter array, no change in array', () => {
     const after = update(before, settings);
     expect(after.b).toEqual(before.b);
 });
+
+test('should remove elements using indices in array', () => {
+    const cases = [
+        {
+            before: [0, 1, 2, 3, 4, 5, 6],
+            params: [6, 0, 2],
+            after: [1, 3, 4, 5],
+        },
+        {
+            before: [],
+            params: [],
+            after: [],
+        },
+        {
+            before: [1],
+            params: [],
+            after: [1],
+        },
+    ];
+    cases.forEach((testcase) => {
+        const { after, before, params } = testcase;
+        const settings = { $removeFromIndex: params };
+        expect(update(before, settings)).toEqual(after);
+    });
+});
