@@ -8,6 +8,36 @@ import {
 import urlRegex from '../../../utils/regexForWeburl';
 
 
+export const exclusiveInBetweenCondition = (min, max) => (value) => {
+    const ok = isFalsy(value)
+        || (isFalsy(min) && isFalsy(max))
+        || (isFalsy(min) && value < max)
+        || (isFalsy(max) && value > min)
+        || (value < max && value > min);
+
+    const message = ((isFalsy(min) && isFalsy(max)) || '')
+        || (isFalsy(min) && `Value must be less than ${max}`)
+        || (isFalsy(max) && `Value must be greater than ${min}`)
+        || `Value must be exclusively in between ${min} and ${max}`;
+
+    return { ok, message };
+};
+
+export const inclusiveInBetweenCondition = (min, max) => (value) => {
+    const ok = isFalsy(value)
+        || (isFalsy(min) && isFalsy(max))
+        || (isFalsy(min) && value <= max)
+        || (isFalsy(max) && value >= min)
+        || (value <= max && value >= min);
+
+    const message = ((isFalsy(min) && isFalsy(max)) || '')
+        || (isFalsy(min) && `Value must be less than or equal to ${max}`)
+        || (isFalsy(max) && `Value must be greater than or equal to ${min}`)
+        || `Value must be in between ${min} and ${max}`;
+
+    return { ok, message };
+};
+
 export const lessThanCondition = n => (value) => {
     const ok = isFalsy(value) || value < n;
     return {
@@ -83,7 +113,7 @@ export const requiredCondition = (value) => {
 };
 
 export const numberCondition = (value) => {
-    const ok = isFalsy(value) || !isFalsy(+value);
+    const ok = !Number.isNaN(value) && (isFalsy(value) || !isFalsy(+value));
     return {
         ok,
         message: 'Value must be a number',
@@ -91,7 +121,7 @@ export const numberCondition = (value) => {
 };
 
 export const integerCondition = (value) => {
-    const ok = isFalsy(value) || isInteger(+value);
+    const ok = !Number.isNaN(value) && (isFalsy(value) || isInteger(+value));
     return {
         ok,
         message: 'Value must be a integer',
