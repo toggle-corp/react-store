@@ -533,7 +533,6 @@ export const groupList = (list = [], keySelector, modifier) => (
 /**
  * get location from pathname
  */
-// TODO: write test
 export const reverseRoute = (route, params) => {
     const paths = route.split('/');
 
@@ -567,6 +566,11 @@ export const reverseRoute = (route, params) => {
     }
 
     return paths.join('/');
+};
+
+export const isParamRequired = (route, param) => {
+    const re = new RegExp(`:${param}([^\\?]|$)`);
+    return route.search(re) !== -1;
 };
 
 // COLOR
