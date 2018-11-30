@@ -118,7 +118,12 @@ const handleChange = ({
         schema,
     );
 
-    onChange(newValue || emptyObject, newError || emptyObject, info);
+    const newInfo = {
+        ...info,
+        hasError: analyzeErrors(newError),
+    };
+
+    onChange(newValue || emptyObject, newError || emptyObject, newInfo);
 };
 
 

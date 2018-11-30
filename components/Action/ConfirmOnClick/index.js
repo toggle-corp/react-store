@@ -10,6 +10,7 @@ import styles from './styles.scss';
 const propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
+    skipConfirmation: PropTypes.bool,
     challengeValue: PropTypes.string,
     challengeLabel: PropTypes.string,
     challengePlaceholder: PropTypes.string,
@@ -27,6 +28,7 @@ const defaultProps = {
     challengeValue: undefined,
     challengeLabel: '',
     challengePlaceholder: '',
+    skipConfirmation: false,
 };
 
 const ConfirmOnClick = (WrappedComponent) => {
@@ -44,7 +46,15 @@ const ConfirmOnClick = (WrappedComponent) => {
         }
 
         handleModalOpen = () => {
-            this.setState({ showConfirm: true });
+            const {
+                skipConfirmation,
+                onClick,
+            } = this.props;
+            if (skipConfirmation) {
+                onClick();
+            } else {
+                this.setState({ showConfirm: true });
+            }
         }
 
         handleModalClose = (confirm) => {
@@ -79,6 +89,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                 confirmationMessage,
                 confirmationTitle,
                 challengeValue, // eslint-disable-line no-unused-vars
+                skipConfirmation, // eslint-disable-line no-unused-vars
                 challengeLabel,
                 challengePlaceholder,
                 ...otherProps
