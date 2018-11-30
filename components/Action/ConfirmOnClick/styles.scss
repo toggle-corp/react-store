@@ -1,0 +1,11 @@
+@import '../../../stylesheets/base';
+
+.confirm-content {
+    .challenge-form {
+        margin-top: $spacing-large;
+
+        .challenge-text {
+            margin-top: $spacing-medium-alt;
+        }
+    }
+}
