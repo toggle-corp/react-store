@@ -40,12 +40,31 @@ export default class Modal extends React.PureComponent {
     componentDidMount() {
         document.addEventListener('keydown', this.handleKeyPressed);
         document.addEventListener('mousedown', this.handleClickOutside);
+
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach((modal, i) => {
+            if (i === modals.length - 1) {
+                modal.classList.add('last-modal');
+            } else {
+                modal.classList.remove('last-modal');
+            }
+        });
     }
 
     componentWillUnmount() {
         this.syncViewWithBody(false);
         document.removeEventListener('keydown', this.handleKeyPressed);
         document.removeEventListener('mousedown', this.handleClickOutside);
+
+        const modals = Array.from(document.querySelectorAll('.modal'))
+            .filter(n => n !== this.wrapperRef.current);
+        modals.forEach((modal, i) => {
+            if (i === modals.length - 1) {
+                modal.classList.add('last-modal');
+            } else {
+                modal.classList.remove('last-modal');
+            }
+        });
     }
 
     getClassName = () => {
