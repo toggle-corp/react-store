@@ -7,6 +7,8 @@ import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 /**
  * Iconleft is the name of ionicon in left of title button
  * showDropdown shows chevron on right of title button
@@ -31,6 +33,12 @@ const propTypes = {
     title: PropTypes.string,
 
     dropdownClassName: PropTypes.string,
+
+    dropdownIcon: PropTypes.string,
+
+    onClick: PropTypes.func,
+
+    closeOnClick: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -40,6 +48,9 @@ const defaultProps = {
     hideDropdownIcon: false,
     title: '',
     dropdownClassName: '',
+    dropdownIcon: iconNames.chevronDown,
+    onClick: noOp,
+    closeOnClick: false,
 };
 
 export default class DropdownMenu extends React.PureComponent {
@@ -90,8 +101,10 @@ export default class DropdownMenu extends React.PureComponent {
         }
 
         const { showDropdown: oldShowDropdown } = this.state;
-
         this.setState({ showDropdown: !oldShowDropdown });
+
+        const { onClick } = this.props;
+        onClick(!oldShowDropdown, e);
     };
 
     handleDropdownContainerBlur = () => {
@@ -99,7 +112,9 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     handleWindowClick = () => {
-        if (this.state.showDropdown) {
+        const { closeOnClick } = this.props;
+
+        if (closeOnClick && this.state.showDropdown) {
             this.setState({ showDropdown: false });
         }
     }
@@ -147,14 +162,17 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     renderDropdownIcon = () => {
-        const { hideDropdownIcon } = this.props;
+        const {
+            hideDropdownIcon,
+            dropdownIcon,
+        } = this.props;
 
         if (hideDropdownIcon) {
             return null;
         }
 
         const className = [
-            iconNames.chevronDown,
+            dropdownIcon,
             'dropdown-icon',
             styles.dropdownIcon,
         ].join(' ');
