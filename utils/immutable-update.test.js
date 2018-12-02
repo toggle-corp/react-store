@@ -234,3 +234,35 @@ test('should remove elements using indices in array', () => {
         expect(update(before, settings)).toEqual(after);
     });
 });
+
+test('should add or replace element in array', () => {
+    expect(update(
+        [1, 2, 3, 4],
+        {
+            $replaceOrPush: [
+                a => a === 2,
+                () => 100,
+            ],
+        },
+    )).toEqual([1, 100, 3, 4]);
+
+    expect(update(
+        [1, 2, 3, 4],
+        {
+            $replaceOrPush: [
+                a => a === 2,
+                a => -a,
+            ],
+        },
+    )).toEqual([1, -2, 3, 4]);
+
+    expect(update(
+        [1, 2, 3, 4],
+        {
+            $replaceOrPush: [
+                a => a === 5,
+                () => 6,
+            ],
+        },
+    )).toEqual([1, 2, 3, 4, 6]);
+});

@@ -89,6 +89,19 @@ update.extend(
         return newLst;
     },
 );
+update.extend(
+    '$replaceOrPush',
+    ([finder, modifier], lst) => {
+        const newLst = [...lst];
+        const index = newLst.findIndex(finder);
+        if (index === -1) {
+            return [...newLst, modifier()];
+        }
+        newLst.splice(index, 1, modifier(newLst[index]));
+        return newLst;
+    },
+);
+
 
 // Object
 update.extend('$unset', (keysToRemove, original) => {
