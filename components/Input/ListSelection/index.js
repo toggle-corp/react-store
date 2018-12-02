@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '../../View/List/ListView';
+import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
 import Checkbox from '../Checkbox';
 
@@ -20,6 +21,7 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
+    tooltipSelector: PropTypes.func,
 
     label: PropTypes.string,
     disabled: PropTypes.bool,
@@ -28,6 +30,7 @@ const propTypes = {
     hint: PropTypes.string,
     showLabel: PropTypes.bool,
     showHintAndError: PropTypes.bool,
+    segment: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -36,6 +39,7 @@ const defaultProps = {
     options: [],
     onChange: undefined,
     keySelector: item => item.key,
+    tooltipSelector: item => item.label,
     labelSelector: item => item.label,
 
     label: '',
@@ -45,6 +49,7 @@ const defaultProps = {
     hint: '',
     showLabel: true,
     showHintAndError: true,
+    segment: false,
 };
 
 
@@ -57,6 +62,7 @@ export class NormalListSelection extends React.PureComponent {
             className,
             disabled,
             error,
+            segment,
         } = this.props;
 
         const classNames = [
@@ -64,6 +70,14 @@ export class NormalListSelection extends React.PureComponent {
             styles.listSelection,
             'list-selection',
         ];
+
+        if (segment) {
+            classNames.push(styles.multiSegment);
+            classNames.push('multi-segment');
+        } else {
+            classNames.push(styles.listSelection);
+            classNames.push('list-selection');
+        }
 
         if (disabled) {
             classNames.push(styles.disabled);
@@ -95,28 +109,40 @@ export class NormalListSelection extends React.PureComponent {
     renderParams = (key, itemData) => {
         const {
             labelSelector,
+            tooltipSelector,
             value,
             disabled,
             readOnly,
+            segment,
         } = this.props;
 
         const selected = value.indexOf(key) >= 0;
+        const classNames = [styles.item];
+        if (selected) {
+            classNames.push(styles.checked);
+        }
 
         return {
-            className: styles.item,
+            className: classNames.join(' '),
             label: labelSelector(itemData),
+            tooltip: tooltipSelector(itemData),
             value: selected,
             onChange: val => this.handleItemChange(key, val),
+            checkboxType: segment ? iconNames.check : iconNames.checkbox,
             disabled,
             readOnly,
         };
     }
 
     renderInput = () => {
-        const { options, keySelector } = this.props;
+        const {
+            options,
+            keySelector,
+        } = this.props;
 
         return (
             <ListView
+                className={styles.options}
                 data={options}
                 renderer={Checkbox}
                 keySelector={keySelector}

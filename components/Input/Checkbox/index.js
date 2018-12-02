@@ -30,7 +30,11 @@ const propTypes = {
      */
     label: PropTypes.node.isRequired,
 
+    tooltip: PropTypes.string,
+
     readOnly: PropTypes.bool,
+
+    checkboxType: PropTypes.string,
 
     // FIXME
     changeDelay: PropTypes.number,
@@ -39,6 +43,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     disabled: false,
+    checkboxType: iconNames.checkbox,
+    tooltip: '',
     readOnly: false,
     value: false,
     changeDelay: undefined,
@@ -62,6 +68,7 @@ class Checkbox extends React.PureComponent {
     render() {
         const {
             label,
+            tooltip,
             className,
             value,
             disabled,
@@ -90,7 +97,7 @@ class Checkbox extends React.PureComponent {
         const spanClassNames = [
             styles.checkmark,
             'checkmark',
-            value ? iconNames.checkbox : iconNames.checkboxOutlineBlank,
+            value ? this.props.checkboxType : iconNames.checkboxOutlineBlank,
         ];
         const inputClassNames = [
             'input',
@@ -105,6 +112,7 @@ class Checkbox extends React.PureComponent {
             <label
                 htmlFor={this.inputId}
                 className={classNames.join(' ')}
+                title={tooltip}
             >
                 <span className={spanClassNames.join(' ')} />
                 <input
