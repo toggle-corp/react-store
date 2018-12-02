@@ -44,9 +44,11 @@ export default class Modal extends React.PureComponent {
         const modals = document.querySelectorAll('.modal');
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
-                modal.classList.add('last-modal');
+                // eslint-disable-next-line no-param-reassign
+                modal.dataset.lastModal = 'true';
             } else {
-                modal.classList.remove('last-modal');
+                // eslint-disable-next-line no-param-reassign
+                modal.dataset.lastModal = 'false';
             }
         });
     }
@@ -60,9 +62,11 @@ export default class Modal extends React.PureComponent {
             .filter(n => n !== this.wrapperRef.current);
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
-                modal.classList.add('last-modal');
+                // eslint-disable-next-line no-param-reassign
+                modal.dataset.lastModal = 'true';
             } else {
-                modal.classList.remove('last-modal');
+                // eslint-disable-next-line no-param-reassign
+                modal.dataset.lastModal = 'false';
             }
         });
     }
