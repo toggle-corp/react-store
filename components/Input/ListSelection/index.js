@@ -21,6 +21,7 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
+    tooltipSelector: PropTypes.func,
 
     label: PropTypes.string,
     disabled: PropTypes.bool,
@@ -38,6 +39,7 @@ const defaultProps = {
     options: [],
     onChange: undefined,
     keySelector: item => item.key,
+    tooltipSelector: item => item.label,
     labelSelector: item => item.label,
 
     label: '',
@@ -107,6 +109,7 @@ export class NormalListSelection extends React.PureComponent {
     renderParams = (key, itemData) => {
         const {
             labelSelector,
+            tooltipSelector,
             value,
             disabled,
             readOnly,
@@ -122,6 +125,7 @@ export class NormalListSelection extends React.PureComponent {
         return {
             className: classNames.join(' '),
             label: labelSelector(itemData),
+            tooltip: tooltipSelector(itemData),
             value: selected,
             onChange: val => this.handleItemChange(key, val),
             checkboxType: segment ? iconNames.check : iconNames.checkbox,
@@ -131,7 +135,10 @@ export class NormalListSelection extends React.PureComponent {
     }
 
     renderInput = () => {
-        const { options, keySelector } = this.props;
+        const {
+            options,
+            keySelector,
+        } = this.props;
 
         return (
             <ListView

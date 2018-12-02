@@ -30,6 +30,8 @@ const propTypes = {
      */
     label: PropTypes.node.isRequired,
 
+    tooltip: PropTypes.string,
+
     readOnly: PropTypes.bool,
 
     checkboxType: PropTypes.string,
@@ -42,6 +44,7 @@ const defaultProps = {
     className: '',
     disabled: false,
     checkboxType: iconNames.checkbox,
+    tooltip: '',
     readOnly: false,
     value: false,
     changeDelay: undefined,
@@ -65,6 +68,7 @@ class Checkbox extends React.PureComponent {
     render() {
         const {
             label,
+            tooltip,
             className,
             value,
             disabled,
@@ -108,6 +112,7 @@ class Checkbox extends React.PureComponent {
             <label
                 htmlFor={this.inputId}
                 className={classNames.join(' ')}
+                title={tooltip}
             >
                 <span className={spanClassNames.join(' ')} />
                 <input
