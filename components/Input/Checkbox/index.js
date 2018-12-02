@@ -32,6 +32,8 @@ const propTypes = {
 
     readOnly: PropTypes.bool,
 
+    checkboxType: PropTypes.string,
+
     // FIXME
     changeDelay: PropTypes.number,
 };
@@ -39,6 +41,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     disabled: false,
+    checkboxType: iconNames.checkbox,
     readOnly: false,
     value: false,
     changeDelay: undefined,
@@ -90,7 +93,7 @@ class Checkbox extends React.PureComponent {
         const spanClassNames = [
             styles.checkmark,
             'checkmark',
-            value ? iconNames.check : iconNames.checkboxOutlineBlank,
+            value ? this.props.checkboxType : iconNames.checkboxOutlineBlank,
         ];
         const inputClassNames = [
             'input',

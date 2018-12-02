@@ -4,8 +4,12 @@
     .segment-container {
         display: inline-flex;
         flex-wrap: wrap;
-        margin: $spacing-extra-small-alt 0;
+        margin: 0;
         border: $width-separator-thin solid $color-accent;
+    }
+
+    .label {
+        padding-bottom: $spacing-extra-small;
     }
 
     &.error {

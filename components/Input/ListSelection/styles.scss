@@ -23,27 +23,28 @@
     }
 }
 
+$width-checkmark: $font-size-extra-small + $spacing-small;
+
 .multi-segment {
     .options {
         display: flex;
 
         .item {
-            @include transition-medium;
             display: flex;
             position: relative;
             align-items: center;
+            transition: $duration-transition-medium background-color ease-in-out,
+                $duration-transition-medium padding linear;
             margin: 0;
-            border-top: $width-separator-thin solid $color-accent;
-            border-right: $width-separator-thin solid $color-accent;
-            border-bottom: $width-separator-thin solid $color-accent;
+            border: $width-separator-thin solid $color-accent;
             background-color: $color-foreground;
             cursor: pointer;
-            padding: $spacing-extra-small calc(#{$spacing-small} + #{$font-size-extra-small} / 2);
+            padding: $spacing-extra-small $spacing-small + $width-checkmark / 2;
             color: $color-text-label;
             user-select: none;
 
-            &:first-child {
-                border-left: $width-separator-thin solid $color-accent;
+            &:not(:first-child) {
+                border-left: 0;
             }
 
             :global {
@@ -53,6 +54,9 @@
 
                 .checkmark {
                     flex-shrink: 0;
+                    transition: $duration-transition-medium width linear,
+                        $duration-transition-medium opacity ease-in-out;
+                    opacity: 0;
                     margin-right: 0;
                     width: 0;
                     overflow: hidden;
@@ -70,7 +74,8 @@
 
                 :global {
                     .checkmark {
-                        width: $font-size-extra-small;
+                        opacity: 1;
+                        width: $width-checkmark;
                         overflow: initial;
                         color: $color-foreground;
                     }
