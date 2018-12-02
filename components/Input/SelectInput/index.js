@@ -409,6 +409,11 @@ class SelectInput extends React.PureComponent {
         this.setState({ focusedKey });
     }
 
+    handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     renderClearButton = () => {
         const {
             disabled,
@@ -508,6 +513,7 @@ class SelectInput extends React.PureComponent {
                     ref={this.input}
                     type="text"
                     value={inputValue}
+                    onDrop={this.handleDrop}
                 />
                 <Actions />
             </div>
@@ -545,6 +551,8 @@ class SelectInput extends React.PureComponent {
                 className={className}
                 ref={this.container}
                 title={title}
+                onDragStart={this.handledragstart}
+                onDrop={this.handledrop}
             >
                 <Label
                     className={styles.label}

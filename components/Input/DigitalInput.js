@@ -59,6 +59,11 @@ export default class DigitalInput extends React.PureComponent {
         }
     }
 
+    handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     render() {
         const {
             onChange, // eslint-disable-line no-unused-vars
@@ -70,6 +75,7 @@ export default class DigitalInput extends React.PureComponent {
             <input
                 type="number"
                 onChange={this.handleChange}
+                onDrop={this.handleDrop}
                 {...otherProps}
             />
         );

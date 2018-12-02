@@ -226,6 +226,11 @@ class NumberInput extends React.PureComponent {
         }
     }
 
+    handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     render() {
         const {
             // skip prop injection
@@ -264,6 +269,7 @@ class NumberInput extends React.PureComponent {
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
+                    onDrop={this.handleDrop}
                     value={this.getDisplayValue(value, separator)}
                     {...otherProps}
                 />

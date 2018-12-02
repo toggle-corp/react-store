@@ -515,6 +515,11 @@ export class NormalMultiSelectInput extends React.PureComponent {
         onChange(emptyList);
     }
 
+    handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     renderActions = () => {
         const {
             disabled,
@@ -581,6 +586,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 ref={this.input}
                 type="text"
                 value={inputValue}
+                onDrop={this.handleDrop}
             />
         );
     }
