@@ -31,6 +31,8 @@ import {
     formatPdfText,
     encodeDate,
     decodeDate,
+    reverseRoute,
+    isParamRequired,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -114,6 +116,21 @@ test('group list into map with modifier', () => {
     expect(groupList(input, keySelector, modifier)).toEqual(output);
 });
 
+test('check reverseRoute', () => {
+    expect(reverseRoute('/projects/:projectId/', { projectId: 12 })).toEqual('/projects/12/');
+    expect(reverseRoute('/projects/:projectId?', {})).toEqual('/projects');
+    expect(reverseRoute('/:userId/projects/:projectId?', { userId: 1 })).toEqual('/1/projects');
+    expect(reverseRoute('/:userId/projects/:projectId?/', { userId: 1 })).toEqual('/1/projects/');
+});
+
+test('check isRaramRequired', () => {
+    expect(isParamRequired('/projects/:projectId/', 'projectId')).toEqual(true);
+    expect(isParamRequired('/projects/:projectId?', 'projectId')).toEqual(false);
+    expect(isParamRequired('/:userId/projects/:projectId?', 'projectId')).toEqual(false);
+    expect(isParamRequired('/projects/:projectId/', 'userId')).toEqual(false);
+    expect(isParamRequired('/projects/:projectId?', 'userId')).toEqual(false);
+    expect(isParamRequired('/:userId/projects/:projectId?', 'userId')).toEqual(true);
+});
 
 test('case-insensitive submatch', () => {
     expect(caseInsensitiveSubmatch('HArI', 'ari')).toEqual(true);
