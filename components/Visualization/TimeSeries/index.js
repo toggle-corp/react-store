@@ -48,6 +48,7 @@ const propTypes = {
     tooltipRender: PropTypes.func.isRequired,
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
     showArea: PropTypes.bool,
+    gradientColor: PropTypes.string,
 };
 
 const defaultProps = {
@@ -64,6 +65,7 @@ const defaultProps = {
     xTicks: undefined,
     yTicks: undefined,
     showArea: false,
+    gradientColor: '#008080',
 };
 
 class TimeSeries extends React.PureComponent {
@@ -205,6 +207,7 @@ class TimeSeries extends React.PureComponent {
             xTickFormat,
             yTickFormat,
             showArea,
+            gradientColor,
         } = this.props;
 
         const {
@@ -217,6 +220,27 @@ class TimeSeries extends React.PureComponent {
 
         const svg = select(this.svg);
         svg.select('*').remove();
+
+        const gradient = svg
+            .append('defs')
+            .append('linearGradient')
+            .attr('id', 'gradient')
+            .attr('x1', '0%')
+            .attr('x2', '0%')
+            .attr('y1', '0%')
+            .attr('y2', '100%');
+
+        gradient
+            .append('stop')
+            .attr('offset', '0%')
+            .style('stop-color', gradientColor)
+            .style('stop-opacity', 1);
+
+        gradient
+            .append('stop')
+            .attr('offset', '100%')
+            .style('stop-color', gradientColor)
+            .style('stop-opacity', 0.1);
 
         if (data.length === 0) {
             return;
@@ -262,7 +286,8 @@ class TimeSeries extends React.PureComponent {
                 .attr('class', 'time-area')
                 .append('path')
                 .data([data])
-                .attr('d', lineArea);
+                .attr('d', lineArea)
+            .style('fill', 'url(#gradient)');
         }
 
         root.append('g')
