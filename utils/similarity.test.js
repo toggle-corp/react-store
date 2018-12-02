@@ -1,54 +1,28 @@
 import {
-    setsEqual,
     intersection,
     union,
-    getTrigramCharsWord,
-    getTrigramCharsString,
+
+    getTrigrams,
+    getTrigramsForSentence,
     getTrigramSimilarity,
 } from './similarity';
 
-test('should test the equality of the sets', () => {
-    const empty = new Set();
-    const nextempty = new Set();
-    const seta = new Set([1, 2, 3]);
-    const setb = new Set([2, 1, 3]);
-    const setc = new Set([2, 4, 3]);
-    const setd = new Set([2, 4, 3, 1]);
-    // Test with itself
-    expect(setsEqual(empty, empty)).toEqual(true);
-    expect(setsEqual(seta, seta)).toEqual(true);
-
-    // Test empty sets
-    expect(setsEqual(empty, nextempty)).toEqual(true);
-    // Test sets a and b
-    expect(setsEqual(seta, setb)).toEqual(true);
-    // Test non equality
-    expect(setsEqual(seta, setd)).toEqual(false);
-    expect(setsEqual(setd, seta)).toEqual(false);
-    expect(setsEqual(seta, setc)).toEqual(false);
-    expect(setsEqual(seta, empty)).toEqual(false);
-    expect(setsEqual(setb, empty)).toEqual(false);
-    expect(setsEqual(setb, nextempty)).toEqual(false);
-    expect(setsEqual(setc, seta)).toEqual(false);
-});
-
 test('should union the sets', () => {
+    const empty = new Set();
     const seta = new Set([1, 2, 3, 4]);
     const setb = new Set([3, 4, 5, 2]);
     const unioned = new Set([1, 2, 3, 4, 5]);
+    const setc = new Set(['a', 'b', 'c']);
 
     // Commutativity
     expect(union(seta, setb)).toEqual(union(setb, seta));
 
     expect(union(seta, setb)).toEqual(unioned);
 
-    const empty = new Set();
-    const setc = new Set(['a', 'b', 'c']);
-
-    expect(setsEqual(union(empty, empty), empty)).toEqual(true);
-    expect(setsEqual(union(setc, empty), setc)).toEqual(true);
-    expect(setsEqual(union(setc, empty), setc)).toEqual(true);
-    expect(setsEqual(union(seta, setb), unioned)).toEqual(true);
+    expect(union(empty, empty)).toEqual(empty);
+    expect(union(setc, empty)).toEqual(setc);
+    expect(union(setc, empty)).toEqual(setc);
+    expect(union(seta, setb)).toEqual(unioned);
 });
 
 test('should intersect the sets', () => {
@@ -57,9 +31,9 @@ test('should intersect the sets', () => {
     const setb = new Set([3, 4, 5, 2]);
     const intersected = new Set([2, 3, 4]);
 
-    expect(setsEqual(intersection(empty, empty), empty)).toEqual(true);
-    expect(setsEqual(intersection(seta, empty), empty)).toEqual(true);
-    expect(setsEqual(intersection(seta, setb), intersected)).toEqual(true);
+    expect(intersection(empty, empty)).toEqual(empty);
+    expect(intersection(seta, empty)).toEqual(empty);
+    expect(intersection(seta, setb)).toEqual(intersected);
 });
 
 test('should get trigram chars for a word', () => {
@@ -67,10 +41,10 @@ test('should get trigram chars for a word', () => {
     const notCleanWord = '.@#teSt';
     const trigrams = new Set(['  t', ' te', 'tes', 'est', 'st ']);
 
-    expect(setsEqual(getTrigramCharsWord(word), trigrams)).toEqual(true);
+    expect(getTrigrams(word)).toEqual(trigrams);
     // Same result should be for word containing non alpha numeric chars and
     // also, cases ignored
-    expect(setsEqual(getTrigramCharsWord(notCleanWord), trigrams)).toEqual(true);
+    expect(getTrigrams(notCleanWord)).toEqual(trigrams);
 });
 
 test('should get trigram chars for a string', () => {
@@ -79,7 +53,7 @@ test('should get trigram chars for a string', () => {
         '  b', '  c', ' bl', ' ch', 'anc', 'ate', 'au ', 'bla', 'cha',
         'eau', 'hat', 'lan', 'nc ', 'tea',
     ]);
-    expect(setsEqual(trigrams, getTrigramCharsString(string))).toEqual(true);
+    expect(getTrigramsForSentence(string)).toEqual(trigrams);
 });
 
 test('should get trigrams Similarity for two stinrgs', () => {
