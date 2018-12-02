@@ -28,6 +28,7 @@ const propTypes = {
     hint: PropTypes.string,
     showLabel: PropTypes.bool,
     showHintAndError: PropTypes.bool,
+    segment: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -45,6 +46,7 @@ const defaultProps = {
     hint: '',
     showLabel: true,
     showHintAndError: true,
+    segment: false,
 };
 
 
@@ -57,6 +59,7 @@ export class NormalListSelection extends React.PureComponent {
             className,
             disabled,
             error,
+            segment,
         } = this.props;
 
         const classNames = [
@@ -64,6 +67,14 @@ export class NormalListSelection extends React.PureComponent {
             styles.listSelection,
             'list-selection',
         ];
+
+        if (segment) {
+            classNames.push(styles.multiSegment);
+            classNames.push('multi-segment');
+        } else {
+            classNames.push(styles.listSelection);
+            classNames.push('list-selection');
+        }
 
         if (disabled) {
             classNames.push(styles.disabled);
@@ -101,9 +112,13 @@ export class NormalListSelection extends React.PureComponent {
         } = this.props;
 
         const selected = value.indexOf(key) >= 0;
+        const classNames = [styles.item];
+        if (selected) {
+            classNames.push(styles.checked);
+        }
 
         return {
-            className: styles.item,
+            className: classNames.join(' '),
             label: labelSelector(itemData),
             value: selected,
             onChange: val => this.handleItemChange(key, val),
@@ -117,6 +132,7 @@ export class NormalListSelection extends React.PureComponent {
 
         return (
             <ListView
+                className={styles.options}
                 data={options}
                 renderer={Checkbox}
                 keySelector={keySelector}

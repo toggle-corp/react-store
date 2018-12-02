@@ -90,7 +90,7 @@ class Checkbox extends React.PureComponent {
         const spanClassNames = [
             styles.checkmark,
             'checkmark',
-            value ? iconNames.checkbox : iconNames.checkboxOutlineBlank,
+            value ? iconNames.check : iconNames.checkboxOutlineBlank,
         ];
         const inputClassNames = [
             'input',

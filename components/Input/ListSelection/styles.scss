@@ -22,3 +22,66 @@
         }
     }
 }
+
+.multi-segment {
+    .options {
+        display: flex;
+
+        .item {
+            @include transition-medium;
+            display: flex;
+            position: relative;
+            align-items: center;
+            margin: 0;
+            border-top: $width-separator-thin solid $color-accent;
+            border-right: $width-separator-thin solid $color-accent;
+            border-bottom: $width-separator-thin solid $color-accent;
+            background-color: $color-foreground;
+            cursor: pointer;
+            padding: $spacing-extra-small calc(#{$spacing-small} + #{$font-size-extra-small} / 2);
+            color: $color-text-label;
+            user-select: none;
+
+            &:first-child {
+                border-left: $width-separator-thin solid $color-accent;
+            }
+
+            :global {
+                .label {
+                    flex-shrink: 0;
+                }
+
+                .checkmark {
+                    flex-shrink: 0;
+                    margin-right: 0;
+                    width: 0;
+                    overflow: hidden;
+                    font-size: $font-size-extra-small;
+                }
+            }
+
+            &.checked {
+                @include background-color($color-accent);
+                padding: $spacing-extra-small $spacing-small;
+
+                &:not(:last-child) {
+                    border-right-color: $color-foreground;
+                }
+
+                :global {
+                    .checkmark {
+                        width: $font-size-extra-small;
+                        overflow: initial;
+                        color: $color-foreground;
+                    }
+                }
+            }
+
+            &:hover {
+                &:not(&.checked) {
+                    @include background-color($color-background-disabled);
+                }
+            }
+        }
+    }
+}
