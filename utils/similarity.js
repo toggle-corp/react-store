@@ -8,29 +8,25 @@ export const intersection = (seta, setb) => new Set(
 );
 
 export const getTrigrams = (word) => {
-    // Remove non-numeric characters
-    const replaced = word.replace(/[^a-zA-z0-9 ]/g, '');
-    // Append two spaces to the beginning and end
-    const formattedWord = `  ${replaced.trim().toLowerCase()} `;
+    const newWord = word.trim()
+        .toLowerCase()
+        .replace(/[^a-zA-z0-9]/g, ' ')
+        .replace(/\s+/g, '  ');
+    const formattedWord = `  ${newWord} `;
 
     const trigrams = [];
     for (let i = 0; i < formattedWord.length - 2; i += 1) {
-        trigrams.push(formattedWord.substr(i, 3));
+        const trigram = formattedWord.substr(i, 3);
+        if (trigram[1] !== ' ' || trigram[2] !== ' ') {
+            trigrams.push(trigram);
+        }
     }
     return new Set(trigrams);
 };
 
-export const getTrigramsForSentence = (string) => {
-    const words = string.trim().split(/\s+/);
-    return words.reduce(
-        (acc, word) => union(acc, getTrigrams(word)),
-        new Set(),
-    );
-};
-
 export const getTrigramSimilarity = (foo, bar) => {
-    const fooTrigrams = getTrigramsForSentence(foo);
-    const barTrigrams = getTrigramsForSentence(bar);
+    const fooTrigrams = getTrigrams(foo);
+    const barTrigrams = getTrigrams(bar);
 
     const common = intersection(fooTrigrams, barTrigrams);
     const all = union(fooTrigrams, barTrigrams);
