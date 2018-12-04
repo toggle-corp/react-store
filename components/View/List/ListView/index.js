@@ -3,6 +3,7 @@ import React from 'react';
 
 import { FaramListElement } from '../../../General/FaramElements';
 import { NormalList } from '../index';
+import Message from '../../Message';
 import styles from './styles.scss';
 
 const defaultEmptyComponent = () => {
@@ -12,9 +13,9 @@ const defaultEmptyComponent = () => {
     ];
 
     return (
-        <div className={classNames.join(' ')}>
-            Nothing Here
-        </div>
+        <Message className={classNames.join(' ')}>
+            Nothing to show.
+        </Message>
     );
 };
 
@@ -65,6 +66,10 @@ export class NormalListView extends React.Component {
                 list-view
                 list-view-empty
             `;
+
+            if (!EmptyComponent) {
+                return null;
+            }
 
             return (
                 <div className={className}>

@@ -88,7 +88,7 @@ export default class FormattedDate extends React.PureComponent {
         if (!date) {
             return (
                 <div className={containerClassName}>
-                    <Empty />
+                    { Empty && <Empty />}
                 </div>
             );
         }
