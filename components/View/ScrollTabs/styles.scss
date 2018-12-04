@@ -2,44 +2,69 @@
 
 .scroll-tabs {
     display: flex;
-    position: relative;
-    width: 200px;
-    overflow: hidden;
+    justify-content: center;
+    background-color: $color-foreground;
 
-    .tab {
+    .left-button {
+        display: none;
+        align-self: center;
         flex-shrink: 0;
-        outline: 0;
-        border: 0;
-        border-bottom: $width-separator-medium solid $color-separator;
-        background-color: transparent;
-        cursor: pointer;
-        padding: $spacing-small $spacing-medium;
-        color: $color-text-label-on-light;
-        font-family: inherit;
-        font-size: inherit;
+        padding: $spacing-small-alt;
+    }
 
-        &.active {
-            border-bottom-color: $color-accent;
-            color: $color-text;
+    .right-button {
+        display: none;
+        align-self: center;
+        flex-shrink: 0;
+        padding: $spacing-small-alt;
+    }
+
+    .tabs-container {
+        display: flex;
+        flex-grow: 1;
+        overflow-x: auto;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            user-select: none;
+            flex-shrink: 0;
+            outline: 0;
+            border: 0;
+            border-bottom: $width-separator-medium solid $color-separator;
+            background-color: transparent;
+            cursor: pointer;
+            padding: $spacing-small-alt $spacing-medium;
+            text-transform: uppercase;
+            color: $color-text-label;
+            font-family: inherit;
+            font-size: inherit;
+
+            &.active {
+                border-bottom-color: $color-accent;
+                color: $color-text;
+            }
+        }
+
+        .blank {
+            display: flex;
+            align-items: center;
+            align-self: stretch;
+            flex-grow: 1;
+            justify-content: flex-end;
+            border-bottom: $width-separator-medium solid $color-separator;
         }
     }
 
-    .scroll-button {
-        position: absolute;
-        align-self: center;
-    }
+    &.scroll {
+        .left-button {
+            display: initial;
+        }
 
-    .scroll-button-left {
-        left: 0;
-    }
-
-    .scroll-button-right {
-        right: 0;
-    }
-
-    .void {
-        align-self: stretch;
-        flex-grow: 1;
-        border-bottom: $width-separator-medium solid $color-separator;
+        .right-button {
+            display: initial;
+        }
     }
 }
