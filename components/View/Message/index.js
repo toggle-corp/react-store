@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import ResizeObserver from 'resize-observer-polyfill';
 
 import styles from './styles.scss';
 
@@ -32,7 +33,7 @@ export default class Message extends React.PureComponent {
     componentDidMount() {
         const { current: container } = this.containerRef;
 
-        const ro = new ResizeObserver((e) => {
+        this.resizeObserver = new ResizeObserver((e) => {
             const {
                 maxFontSize,
                 minFontSize,
@@ -58,7 +59,12 @@ export default class Message extends React.PureComponent {
             container.style.fontSize = `${fontSize}px`;
         });
 
-        ro.observe(container.parentNode);
+        this.resizeObserver.observe(container.parentNode);
+    }
+
+    componentWillUnmount() {
+        const { current: container } = this.containerRef;
+        this.resizeObserver.unobserve(container.parentNode);
     }
 
     render() {
