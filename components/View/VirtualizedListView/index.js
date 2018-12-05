@@ -10,11 +10,9 @@ const DefaultEmptyComponent = () => {
         ${styles.empty}
     `;
 
-    const emptyText = 'Nothing here';
-
     return (
         <Message className={className}>
-            { emptyText }
+            Nothing to show.
         </Message>
     );
 };
@@ -249,7 +247,7 @@ export default class VirtualizedListView extends React.Component {
                 className={className}
             >
                 <Items />
-                { data.length === 0 && <EmptyComponent /> }
+                { data.length === 0 && EmptyComponent && <EmptyComponent /> }
             </div>
         );
     }

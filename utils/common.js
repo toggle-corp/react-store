@@ -41,6 +41,38 @@ export const isArrayEqual = (array1, array2) => (
     array1.length === array2.length && array1.every((d, i) => d === array2[i])
 );
 
+export const doesObjectHaveNoData = (obj) => {
+    /*
+    if (obj === true || obj === false || Number.isNaN(obj) || obj === null) {
+        return false;
+    }
+    */
+    // undefined, NaN, null
+    if (obj === undefined) {
+        return true;
+    }
+
+    // array
+    if (obj && Array.isArray(obj)) {
+        if (obj.length <= 0) {
+            return true;
+        }
+        // return recursion;
+        return obj.every(doesObjectHaveNoData);
+    }
+
+    if (obj && obj.constructor === Object) {
+        if (Object.keys(obj) <= 0) {
+            return true;
+        }
+        // return recursion;
+        return Object.keys(obj).every(key => doesObjectHaveNoData(obj[key]));
+    }
+
+    return false;
+};
+
+// FIXME: this is probably very dangerous
 // Check if object is empty (or undefined)
 export const isObjectEmpty = (obj) => {
     // Check if obj is defined, has keys and is object: else return true

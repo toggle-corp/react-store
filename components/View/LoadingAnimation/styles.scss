@@ -12,18 +12,6 @@
     width: 100%;
     height: 100%;
 
-    &.small {
-        font-size: $font-size-loading-icon-small;
-    }
-
-    &.medium {
-        font-size: $font-size-loading-icon-medium;
-    }
-
-    &.large {
-        font-size: $font-size-loading-icon-large;
-    }
-
     .icon {
         animation: spin 1s linear infinite;
         line-height: 1;
@@ -31,6 +19,7 @@
 
     .message {
         margin-left: $spacing-medium;
+        text-align: center;
         color: $color-text-label;
     }
 }

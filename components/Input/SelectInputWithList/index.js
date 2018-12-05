@@ -44,6 +44,8 @@ const propTypes = {
         }),
     ),
     topRightChild: PropTypes.func,
+
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
@@ -61,6 +63,7 @@ const defaultProps = {
     topRightChild: undefined,
     disabled: false,
     readOnly: false,
+    emptyComponent: undefined,
 };
 
 const emptyList = [];
@@ -184,6 +187,7 @@ class SelectInputWithList extends React.PureComponent {
             value,
             selectClassName,
             listProps,
+            emptyComponent,
             listClassName,
             topRightChild: TopRightChild,
             hideRemoveFromListButton,
@@ -237,6 +241,7 @@ class SelectInputWithList extends React.PureComponent {
                     renderer={Item}
                     rendererParams={this.getListItemParams}
                     keySelector={keySelector}
+                    emptyComponent={emptyComponent}
                     {...listProps}
                 />
             </div>
