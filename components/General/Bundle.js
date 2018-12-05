@@ -20,7 +20,7 @@ class Bundle extends React.Component {
 
     static loadingStyle = {
         height: '100%',
-        fontSize: '2em',
+        fontSize: '18px',
         color: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         alignItems: 'center',
@@ -71,6 +71,7 @@ class Bundle extends React.Component {
         console.warn('Bundle load failed.', err);
     }
 
+    // NOTE: why this does't use className?
     renderLoading = ({ text }) => (
         <div style={Bundle.loadingStyle}>
             {text}
