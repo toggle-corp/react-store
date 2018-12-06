@@ -6,6 +6,7 @@ import { PropTypes } from 'prop-types';
 import { schemeAccent } from 'd3-scale-chromatic';
 import { select, event } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
+import "d3-transition"
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
 import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
@@ -243,7 +244,7 @@ class DonutChart extends PureComponent {
 
         const radius = Math.min(width, height) / 2;
         const outerRadius = radius * 0.92;
-        const innerRadius = outerRadius - (outerRadius * sideLengthRatio);
+        const innerRadius = outerRadius - (outerRadius / 3);
 
         const colors = scaleOrdinal().range(this.props.colorScheme);
         const pies = pie()
