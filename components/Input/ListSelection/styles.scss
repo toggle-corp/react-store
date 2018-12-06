@@ -27,14 +27,9 @@ $width-checkmark: $font-size-extra-small + $spacing-small;
 
 .multi-segment {
     .options {
-        display: flex;
-
         .item {
-            display: flex;
+            display: inline;
             position: relative;
-            align-items: center;
-            transition: $duration-transition-medium background-color ease-in-out,
-                $duration-transition-medium padding linear;
             margin: 0;
             border: $width-separator-thin solid $color-accent;
             background-color: $color-foreground;
@@ -54,8 +49,6 @@ $width-checkmark: $font-size-extra-small + $spacing-small;
 
                 .checkmark {
                     flex-shrink: 0;
-                    transition: $duration-transition-medium width linear,
-                        $duration-transition-medium opacity ease-in-out;
                     opacity: 0;
                     margin-right: 0;
                     width: 0;
