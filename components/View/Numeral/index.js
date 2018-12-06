@@ -54,7 +54,11 @@ const propTypes = {
      */
     value: PropTypes.number,
 
-    lang: PropTypes.string,
+    comparisionValue: PropTypes.number,
+
+    comparisionBaseValue: PropTypes.number,
+
+    colored: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -68,7 +72,9 @@ const defaultProps = {
     showSign: false,
     suffix: undefined,
     value: undefined,
-    lang: undefined,
+    comparisionValue: undefined,
+    comparisionBaseValue: 0,
+    colored: false,
 };
 
 
@@ -150,6 +156,9 @@ class Numeral extends React.PureComponent {
             suffix,
             value,
             lang,
+            colored,
+            comparisionValue = value,
+            comparisionBaseValue,
         } = this.props;
 
         if (isFalsy(value)) {
@@ -166,8 +175,27 @@ class Numeral extends React.PureComponent {
             value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
+        const classNames = [
+            'numeral',
+            className,
+            styles.numeral,
+        ];
+
+        if (colored) {
+            if (comparisionValue > comparisionBaseValue) {
+                classNames.push(styles.positive);
+                classNames.push('numeral-positive');
+            } else if (comparisionValue < comparisionBaseValue) {
+                classNames.push(styles.negative);
+                classNames.push('numeral-negative');
+            } else {
+                classNames.push(styles.neutral);
+                classNames.push('numeral-neutral');
+            }
+        }
+
         return (
-            <span className={`numeral ${className} ${styles.numeral}`}>
+            <span className={classNames.join(' ')}>
                 {
                     isTruthy(prefix) && (
                         <span className="prefix">

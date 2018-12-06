@@ -63,7 +63,7 @@ export default class Row extends React.PureComponent {
         const classNames = [];
 
         // default className for global override
-        classNames.push('row');
+        classNames.push('tc_row');
         classNames.push(styles.row);
 
         // className provided by parent (through className)

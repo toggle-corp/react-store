@@ -2,4 +2,16 @@
 
 .numeral {
     font-family: $font-family-monospace;
+
+    &.positive {
+        color: $color-success;
+    }
+
+    &.negative {
+        color: $color-danger;
+    }
+
+    &.neutral {
+        color: $color-accent;
+    }
 }
