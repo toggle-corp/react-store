@@ -3,13 +3,12 @@
 .header {
     position: sticky;
     top: 0;
-    background-color: $color-background-header;
+    background-color: $color-foreground;
     padding: 0;
-    text-transform: uppercase;
-    font-size: $font-size-small;
-    font-weight: $font-weight-normal;
+    // text-transform: uppercase;
+    font-weight: $font-weight-bold;
 
-    &:not(:last-child) {
-        border-right: $width-separator-thin solid $color-separator;
-    }
+    // &:not(:last-child) {
+    //     border-right: $width-separator-thin solid $color-separator;
+    // }
 }

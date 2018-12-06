@@ -1,7 +1,7 @@
 @import '../../../../../stylesheets/base';
 
 .cell {
-    padding: $spacing-small $spacing-medium;
+    padding: $spacing-medium;
 
     &.hoverable {
         &:hover {
@@ -15,7 +15,7 @@
         @include background-color($color-accent);
     }
 
-    &:not(:last-child) {
-        border-right: $width-separator-thin solid $color-separator;
-    }
+    // &:not(:last-child) {
+    //     border-right: $width-separator-thin solid $color-separator;
+    // }
 }
