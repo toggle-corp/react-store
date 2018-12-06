@@ -9,62 +9,93 @@ const propTypes = {
     className: PropTypes.string.isRequired,
     maxFontSize: PropTypes.number.isRequired,
     minFontSize: PropTypes.number.isRequired,
+    maxPaddingSize: PropTypes.number.isRequired,
+    minPaddingSize: PropTypes.number.isRequired,
     resizeFactor: PropTypes.number,
 };
 
 const defaultProps = {
     className: '',
     children: undefined,
-    maxFontSize: 18,
-    minFontSize: 10,
-    resizeFactor: 0.006,
+    maxFontSize: 20,
+    minFontSize: 8,
+    maxPaddingSize: 16,
+    minPaddingSize: 5,
+    resizeFactor: 0.0001,
 };
+
+const calculateDimensionCost = (width, height, factor) => (
+    width * Math.sqrt(height) * factor
+);
+
+const calculateRelativeValue = (minFontSize, maxFontSize, width, height, factor) => (
+    Math.min(
+        maxFontSize,
+        minFontSize + ((maxFontSize - minFontSize) * calculateDimensionCost(width, height, factor)),
+    )
+);
 
 export default class Message extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+
     constructor(props) {
         super(props);
 
+        this.state = { show: false };
         this.containerRef = React.createRef();
     }
 
     componentDidMount() {
         const { current: container } = this.containerRef;
 
-        this.resizeObserver = new ResizeObserver((e) => {
-            const {
-                maxFontSize,
-                minFontSize,
-                resizeFactor,
-            } = this.props;
-
-            const {
-                width,
-                height,
-            } = e[0].contentRect;
-
-            container.style.width = `${width}px`;
-            container.style.height = `${height}px`;
-
-            const fontSize = Math.min(
-                maxFontSize,
-                Math.max(
-                    minFontSize,
-                    Math.round(width * Math.sqrt(height) * resizeFactor),
-                ),
-            );
-
-            container.style.fontSize = `${fontSize}px`;
-        });
-
-        this.resizeObserver.observe(container.parentNode);
+        this.timeout = setTimeout(() => {
+            this.resizeObserver = new ResizeObserver(this.handleResize);
+            this.resizeObserver.observe(container.parentNode);
+            this.setState({ show: true });
+        }, 0);
     }
 
     componentWillUnmount() {
+        clearTimeout(this.timeout);
+        if (this.resizeObserver) {
+            const { current: container } = this.containerRef;
+            this.resizeObserver.unobserve(container.parentNode);
+        }
+    }
+
+    handleResize = (e) => {
+        const {
+            0: {
+                contentRect: {
+                    width,
+                    height,
+                },
+            },
+        } = e;
+
+        const {
+            maxFontSize,
+            minFontSize,
+            maxPaddingSize,
+            minPaddingSize,
+            resizeFactor,
+        } = this.props;
+
         const { current: container } = this.containerRef;
-        this.resizeObserver.unobserve(container.parentNode);
+
+        const fontSize = calculateRelativeValue(
+            minFontSize, maxFontSize, width, height, resizeFactor,
+        );
+        const padding = calculateRelativeValue(
+            minPaddingSize, maxPaddingSize, width, height, resizeFactor,
+        );
+
+        container.style.width = `${width}px`;
+        container.style.height = `${height}px`;
+        container.style.fontSize = `${fontSize}px`;
+        container.style.padding = `${padding}px`;
     }
 
     render() {
@@ -83,7 +114,7 @@ export default class Message extends React.PureComponent {
                 ref={this.containerRef}
                 className={className}
             >
-                { children }
+                { this.state.show && children }
             </div>
         );
     }

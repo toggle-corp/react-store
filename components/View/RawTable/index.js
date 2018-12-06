@@ -175,29 +175,32 @@ export default class RawTable extends React.PureComponent {
 
         return (
             <Fragment>
-                <table className={tableClassName}>
-                    <Headers
-                        headers={this.state.headers}
-                        headerModifier={headerModifier}
-                        onClick={onHeaderClick}
-                    />
-                    <Body
-                        data={data}
-                        dataModifier={dataModifier}
-                        expandedRowModifier={expandedRowModifier}
-                        headersOrder={this.state.headersOrder}
-                        keySelector={keySelector}
-                        onClick={onBodyClick}
-                        onHover={onBodyHover}
-                        onHoverOut={onBodyHoverOut}
-                        highlightCellKey={highlightCellKey}
-                        highlightRowKey={highlightRowKey}
-                        highlightColumnKey={highlightColumnKey}
-                        expandRowId={expandRowId}
-                    />
-                </table>
-                { data.length === 0 && EmptyComponent &&
-                    <EmptyComponent className={emptyClassName} />
+                {
+                    data.length > 0 ? (
+                        <table className={tableClassName}>
+                            <Headers
+                                headers={this.state.headers}
+                                headerModifier={headerModifier}
+                                onClick={onHeaderClick}
+                            />
+                            <Body
+                                data={data}
+                                dataModifier={dataModifier}
+                                expandedRowModifier={expandedRowModifier}
+                                headersOrder={this.state.headersOrder}
+                                keySelector={keySelector}
+                                onClick={onBodyClick}
+                                onHover={onBodyHover}
+                                onHoverOut={onBodyHoverOut}
+                                highlightCellKey={highlightCellKey}
+                                highlightRowKey={highlightRowKey}
+                                highlightColumnKey={highlightColumnKey}
+                                expandRowId={expandRowId}
+                            />
+                        </table>
+                    ) : (
+                        EmptyComponent && <EmptyComponent className={emptyClassName} />
+                    )
                 }
             </Fragment>
         );
