@@ -56,17 +56,17 @@ export default class Option extends React.PureComponent {
         const classNames = [
             className,
             styles.option,
-            'option',
+            'tc-select-input-option',
         ];
 
         if (isActive) {
             classNames.push(styles.active);
-            classNames.push('active');
+            classNames.push('tc-select-input-option-active');
         }
 
         if (isFocused) {
             classNames.push(styles.focused);
-            classNames.push('focused');
+            classNames.push('tc-select-input-option-focused');
         }
 
         return classNames.join(' ');

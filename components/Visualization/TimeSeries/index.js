@@ -78,16 +78,12 @@ class TimeSeries extends React.PureComponent {
         this.scaleX = scaleTime();
         this.scaleY = scaleLinear();
         this.bisector = bisector(d => d[props.xKey]).left;
+
+        this.svgRef = React.createRef();
     }
 
     componentDidMount() {
         this.updateRender();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props !== nextProps) {
-            this.updateRender();
-        }
     }
 
     componentDidUpdate() {
@@ -218,8 +214,10 @@ class TimeSeries extends React.PureComponent {
         this.scaleX.domain(extent(data.map(d => new Date(d[xKey]))));
         this.scaleY.domain(extent(data.map(d => d[yKey])));
 
-        const svg = select(this.svg);
-        svg.select('*').remove();
+        const { current: svgEl } = this.svgRef;
+
+        const svg = select(svgEl);
+        svg.selectAll('*').remove();
 
         const gradient = svg
             .append('defs')
@@ -287,7 +285,7 @@ class TimeSeries extends React.PureComponent {
                 .append('path')
                 .data([data])
                 .attr('d', lineArea)
-            .style('fill', 'url(#gradient)');
+                .style('fill', 'url(#gradient)');
         }
 
         root.append('g')
@@ -325,7 +323,7 @@ class TimeSeries extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.timeSeries}`}>
-                <svg ref={(svg) => { this.svg = svg; }} />
+                <svg ref={this.svgRef} />
                 <Tooltip setTooltipApi={this.setTooltip} />
             </div>
         );

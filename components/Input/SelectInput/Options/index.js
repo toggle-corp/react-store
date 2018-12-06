@@ -91,7 +91,7 @@ export default class Options extends React.PureComponent {
         }
 
         const className = `
-            empty
+            tc-select-input-empty
             ${styles.empty}
         `;
 
@@ -119,7 +119,7 @@ export default class Options extends React.PureComponent {
         const className = `
             ${classNameFromProps}
             ${styles.options}
-            options
+            tc-select-input-options
         `;
 
         const Empty = this.renderEmpty;

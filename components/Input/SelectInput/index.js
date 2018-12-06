@@ -424,7 +424,7 @@ class SelectInput extends React.PureComponent {
         }
 
         const className = `
-            clear-button
+            tc-select-input-clear-button
             ${styles.clearButton}
         `;
 
@@ -446,11 +446,11 @@ class SelectInput extends React.PureComponent {
         } = this.props;
 
         const className = `
-            actions
+            tc-select-input-actions
             ${styles.actions}
         `;
         const dropdownButtonClassName = `
-            dropdown-button
+            tc-select-input-dropdown-button
             ${styles.dropdownButton}
         `;
 
@@ -474,7 +474,7 @@ class SelectInput extends React.PureComponent {
     renderInputAndActions = () => {
         const className = `
             ${styles.inputAndActions}
-            input-and-actions
+            tc-select-input-input-and-actions
         `;
 
         const {
@@ -488,7 +488,7 @@ class SelectInput extends React.PureComponent {
         const Actions = this.renderActions;
 
         const inputClassName = `
-            input
+            tc-select-input-input
             ${styles.input}
         `;
 
