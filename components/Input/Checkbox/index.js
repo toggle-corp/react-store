@@ -75,6 +75,7 @@ class Checkbox extends React.PureComponent {
             readOnly,
             onChange, // eslint-disable-line no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars
+            checkboxType, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
