@@ -15,6 +15,15 @@ $width-modal-small: 420px !default;
     animation: fade-in-from-top $duration-transition-medium ease forwards;
 }
 
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .6);
+    width: 100vw;
+    height: 100vh;
+}
+
 @keyframes fade-in-from-top {
     from {
         transform: translate(-50%, -60%);
