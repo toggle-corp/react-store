@@ -78,7 +78,7 @@ export default class Body extends React.PureComponent {
         const classNames = [];
 
         // default className for global override
-        classNames.push('body');
+        classNames.push('tc-table-body');
         // classNames.push(styles.body);
 
         // className provided by parent (through className)

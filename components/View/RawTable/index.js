@@ -127,7 +127,7 @@ export default class RawTable extends React.PureComponent {
         const classNames = [];
 
         // default className for global override
-        classNames.push('raw-table');
+        classNames.push('tc-raw-table');
         classNames.push(styles.rawTable);
 
         // className provided by parent (through className)
@@ -157,7 +157,7 @@ export default class RawTable extends React.PureComponent {
 
         const tableClassName = this.getClassName(className);
         const emptyClassName = [
-            'empty',
+            'tc-table-empty',
             styles.empty,
         ];
 

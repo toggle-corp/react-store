@@ -37,7 +37,7 @@ export default class Cell extends React.PureComponent {
         const classNames = [];
 
         classNames.push(uniqueKey);
-        classNames.push('cell');
+        classNames.push('tc-table-cell');
 
         classNames.push(styles.cell);
 
@@ -45,17 +45,17 @@ export default class Cell extends React.PureComponent {
         classNames.push(className);
 
         if (hoverable) {
-            classNames.push('hoverable');
+            classNames.push('tc-table-cell-hoverable');
             classNames.push(styles.hoverable);
         }
 
         if (highlighted) {
-            classNames.push('highlighted');
+            classNames.push('tc-table-cell-highlighted');
             classNames.push(styles.highlighted);
         }
 
         if (columnHighlighted) {
-            classNames.push('column-highlighted');
+            classNames.push('tc-table-cell-column-highlighted');
             classNames.push(styles.columnHighlighted);
         }
 

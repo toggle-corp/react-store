@@ -32,7 +32,7 @@ export default class Headers extends React.Component {
         const classNames = [];
 
         // default className for global override
-        classNames.push('headers');
+        classNames.push('tc-table-headers');
 
         // className provided by parent (through className)
         classNames.push(className);

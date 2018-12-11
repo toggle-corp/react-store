@@ -176,7 +176,7 @@ class Numeral extends React.PureComponent {
         });
 
         const classNames = [
-            'numeral',
+            'tc-numeral',
             className,
             styles.numeral,
         ];
@@ -184,13 +184,13 @@ class Numeral extends React.PureComponent {
         if (colored) {
             if (comparisionValue > comparisionBaseValue) {
                 classNames.push(styles.positive);
-                classNames.push('numeral-positive');
+                classNames.push('tc-numeral-positive');
             } else if (comparisionValue < comparisionBaseValue) {
                 classNames.push(styles.negative);
-                classNames.push('numeral-negative');
+                classNames.push('tc-numeral-negative');
             } else {
                 classNames.push(styles.neutral);
-                classNames.push('numeral-neutral');
+                classNames.push('tc-numeral-neutral');
             }
         }
 
@@ -205,24 +205,24 @@ class Numeral extends React.PureComponent {
                 }
                 {
                     isTruthy(showSign) && value !== 0 && (
-                        <span className="sign">
+                        <span className="tc-numeral-sign">
                             {value > 0 ? '+' : '-'}
                         </span>
                     )
                 }
-                <span className="number">
+                <span className="tc-numeral-number">
                     {number}
                 </span>
                 {
                     isTruthy(normalizeSuffix) && (
-                        <span className="normalized-suffix">
+                        <span className="tc-numeral-normalized-suffix">
                             {normalizeSuffix}
                         </span>
                     )
                 }
                 {
                     isTruthy(suffix) && (
-                        <span className="suffix">
+                        <span className="tc-numeral-suffix">
                             {suffix}
                         </span>
                     )

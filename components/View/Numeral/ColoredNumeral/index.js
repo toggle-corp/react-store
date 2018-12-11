@@ -77,10 +77,10 @@ export default class ColoredNumeral extends React.PureComponent {
             colorClass,
         ];
         if (inBlock) {
-            classNames.push('block-numeral');
+            classNames.push('tc-block-numeral');
             classNames.push(styles.blockNumeral);
         } else {
-            classNames.push('colored-numeral');
+            classNames.push('tc-colored-numeral');
             classNames.push(styles.coloredNumeral);
         }
 
@@ -88,7 +88,7 @@ export default class ColoredNumeral extends React.PureComponent {
             <span className={classNames.join(' ')}>
                 {
                     label && (
-                        <div className="label">
+                        <div className="tc-label">
                             { label }
                         </div>
                     )

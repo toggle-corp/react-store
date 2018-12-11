@@ -10,8 +10,10 @@ $width-modal-small: 420px !default;
     flex-direction: column;
     box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
     background-color: $color-foreground;
-    width: $width-modal-medium;
-    max-height: 96vh;
+    width: 97vw;
+    max-width: 800px;
+    height: 96vh;
+    max-height: 768px;
     animation: fade-in-from-top $duration-transition-medium ease forwards;
 }
 
