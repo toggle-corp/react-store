@@ -25,7 +25,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     date: undefined,
-    mode: 'dd-MM-yyyy',
+    mode: 'yyyy-MM-dd',
 
     emptyComponent: () => '-',
 };
