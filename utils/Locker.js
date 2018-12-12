@@ -10,6 +10,9 @@ export default class Locker {
         this.uniqueId = `${Date.now()}:${Math.round(Math.random() * 1000000000)}`;
         this.xKey = `${this.lock}__x`;
         this.yKey = `${this.lock}__y`;
+
+        // Will release lock if tab is closed
+        window.onunload = this.release;
     }
 
     // Acquire the lock: returns a promise that resolves when done.

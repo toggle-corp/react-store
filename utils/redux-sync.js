@@ -15,19 +15,47 @@ export const startActionsSync = (store) => {
 };
 
 // Create a middleware that dispatches actions to other tabs.
-export const createActionSyncMiddleware = actionPrefixes => () => next => (action) => {
-    const containsPrefix = prefix => action.type.startsWith(prefix);
-    if (!action.noFurtherDispatch && actionPrefixes.find(containsPrefix)) {
-        // Two successive actions with same body won't propagate twice.
-        // So, we add timestamp to make sure the body is unique.
-        const timestampedAction = {
+export const createActionSyncMiddleware = (actionPrefixes, tabId) => () => next => (action) => {
+    const {
+        senderId,
+        resenderId,
+        type,
+        retransmit,
+    } = action;
+
+    const containsPrefix = prefix => type.startsWith(prefix);
+
+    // do not set to local storage
+    if (!actionPrefixes.find(containsPrefix) || (senderId && resenderId)) {
+        return next(action);
+    }
+
+    let timestampedAction;
+    // Two successive actions with same body won't propagate twice.
+    // So, we add timestamp to make sure the body is unique.
+
+    if (!senderId) {
+        // this is original message to be sent
+        timestampedAction = {
             action: {
                 ...action,
-                noFurtherDispatch: true,
+                senderId: tabId,
             },
             time: Date.now(),
         };
-        localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
+    } else if (retransmit) {
+        // this is retransmitted back
+        timestampedAction = {
+            action: {
+                ...action,
+                resenderId: tabId,
+            },
+            time: Date.now(),
+        };
+    } else {
+        return next(action);
     }
+
+    localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
     return next(action);
 };
