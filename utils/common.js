@@ -879,7 +879,7 @@ export const saveSvg = (svgElement, name) => {
 };
 
 const getClassNameListAndIndex = (el, className) => {
-    const classNameList = (el.getAttribute('class')).split(' ');
+    const classNameList = (el.getAttribute('class') || '').split(' ');
     const index = classNameList.findIndex(d => d === className);
 
     return {
