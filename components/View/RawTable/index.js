@@ -96,7 +96,7 @@ const defaultProps = {
     emptyComponent: defaultEmptyComponent,
 };
 
-export default class RawTable extends React.PureComponent {
+export default class RawTable extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
