@@ -85,7 +85,8 @@ class ScaleInput extends React.PureComponent {
             styles.value,
         ];
 
-        const isActive = key === value;
+        // FIXME: there shouldn't be need for cast to string
+        const isActive = String(key) === String(value);
 
         if (isActive) {
             classNames.push(styles.active);
@@ -101,9 +102,11 @@ class ScaleInput extends React.PureComponent {
             keySelector,
             disabled,
         } = this.props;
+
         if (disabled) {
             return;
         }
+
         const defaultOption = options.find(option => isDefaultSelector(option));
         if (!value && defaultOption) {
             onChange(keySelector(defaultOption));
