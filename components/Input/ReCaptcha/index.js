@@ -47,13 +47,14 @@ class ReCaptcha extends Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static isReady = () => (window.grecaptcha !== undefined)
+    static isReady = () => (window.grecaptcha && window.grecaptcha.render)
 
     constructor(props) {
         super(props);
 
-        const ready = ReCaptcha.isReady();
-        this.state = { ready };
+        this.state = {
+            ready: ReCaptcha.isReady(),
+        };
 
         if (props.setResetFunction) {
             props.setResetFunction(this.reset);
@@ -97,7 +98,7 @@ class ReCaptcha extends Component {
     }
 
     reset = () => {
-        if (ReCaptcha.isReady() && this.widget !== null) {
+        if (this.state.ready && this.widget !== null) {
             window.grecaptcha.reset(this.widget);
         }
         // Clear old values
