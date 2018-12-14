@@ -216,7 +216,9 @@ class TimeSeries extends React.PureComponent {
 
         const { current: svgEl } = this.svgRef;
 
-        const svg = select(svgEl);
+        const svg = select(svgEl)
+            .attr('class', `${styles.chart} chart`);
+
         svg.selectAll('*').remove();
 
         const gradient = svg
@@ -262,16 +264,17 @@ class TimeSeries extends React.PureComponent {
             .x(d => (this.scaleX(new Date(d[xKey]) || 0)))
             .y(d => (this.scaleY(d[yKey] || 0)));
 
-        const root = svg.append('g')
+        const root = svg
+            .append('g')
             .attr('transform', `translate(${left},${top})`);
 
         root.append('g')
-            .attr('class', 'axis axis--x')
+            .attr('class', `${styles.axis} axis`)
             .attr('transform', `translate(0, ${height})`)
             .call(xAxis);
 
         root.append('g')
-            .attr('class', 'axis axis--y')
+            .attr('class', `${styles.axis} axis`)
             .call(yAxis);
 
         if (showArea) {
@@ -281,7 +284,7 @@ class TimeSeries extends React.PureComponent {
                 .y0(height);
 
             root.append('g')
-                .attr('class', 'time-area')
+                .attr('class', `${styles.area} area`)
                 .append('path')
                 .data([data])
                 .attr('d', lineArea)
@@ -289,20 +292,22 @@ class TimeSeries extends React.PureComponent {
         }
 
         root.append('g')
-            .attr('class', 'time-path')
+            .attr('class', `${styles.line} line`)
             .append('path')
             .data([data])
             .attr('d', line);
 
-        const overLayLine = root.append('rect')
-            .attr('class', 'overlay-line')
+        const overLayLine = root
+            .append('rect')
+            .attr('class', `${styles.overlayLine} overlay-line`)
             .attr('width', 0.1)
             .attr('x', 0)
             .attr('height', height)
             .style('opacity', 0);
 
-        const overLayCircle = root.append('circle')
-            .attr('class', 'overlay-circle')
+        const overLayCircle = root
+            .append('circle')
+            .attr('class', `${styles.overlayCircle} overlay-circle`)
             .attr('cx', 0)
             .attr('cy', 0)
             .attr('r', 3)
@@ -310,7 +315,7 @@ class TimeSeries extends React.PureComponent {
 
         const overLay = root
             .append('rect')
-            .attr('class', 'overlay')
+            .attr('class', `${styles.overlay} overlay`)
             .attr('width', width)
             .attr('height', height)
             .on('mouseenter', () => this.onMouseEnter(overLayLine, overLayCircle))
@@ -323,7 +328,9 @@ class TimeSeries extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.timeSeries}`}>
-                <svg ref={this.svgRef} />
+                <svg
+                    ref={this.svgRef}
+                />
                 <Tooltip setTooltipApi={this.setTooltip} />
             </div>
         );

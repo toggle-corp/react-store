@@ -1,65 +1,58 @@
 @import '../../../stylesheets/base';
 
-$timeseries-area-color: rgba(0, 128, 128, .6) !default;
-$timeseries-line-color: #008080 !default;
+$timeseries-area-color: #0584ef !default;
+$timeseries-line-color: #0584ef !default;
 $timeseries-color-overlay: $timeseries-line-color !default;
 $timeseries-stroke-overlay: #fff !default;
 
 .time-series {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
     width: 100%;
     height: 100%;
 
-    svg {
-        flex-grow: 1;
+    .chart {
         width: 100%;
         height: 100%;
 
-        :global {
-            .axis {
-                line,
-                path {
-                    stroke: $color-grid-path;
-                }
-
-                text {
-                    fill: $color-text;
-                }
+        .axis {
+            line,
+            path {
+                stroke: $color-background-header-alt;
             }
 
-            .time-area {
-                path {
-                    stroke: $timeseries-area-color;
-                    fill: $timeseries-area-color;
-                }
+            text {
+                fill: $color-text;
             }
+        }
 
-            .time-path {
-                path {
-                    stroke: $timeseries-line-color;
-                    fill: transparent;
-                    stroke-width: 1.5px;
-                }
+        .area {
+            path: {
+                stroke: $timeseries-area-color;
             }
+        }
 
-            .overlay {
-                fill: none;
-                pointer-events: all;
+        .line {
+            path {
+                stroke: $timeseries-line-color;
+                fill: transparent;
+                stroke-width: 1.5px;
             }
+        }
 
-            .overlay-line {
-                opacity: 0;
-                stroke: $timeseries-color-overlay;
-                fill: $timeseries-color-overlay;
-            }
+        .overlay {
+            fill: none;
+            pointer-events: all;
+        }
 
-            .overlay-circle {
-                opacity: 0;
-                stroke: $timeseries-stroke-overlay;
-                fill: $timeseries-line-color;
-            }
+        .overlay-line {
+            opacity: 0;
+            stroke: $timeseries-color-overlay;
+            fill: $timeseries-color-overlay;
+        }
+
+        .overlay-circle {
+            opacity: 0;
+            stroke: $timeseries-stroke-overlay;
+            fill: $timeseries-line-color;
         }
     }
 }
