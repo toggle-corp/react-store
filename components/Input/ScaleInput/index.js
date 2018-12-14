@@ -39,11 +39,15 @@ class ScaleInput extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        // FIXME: this kind of actions should be moved to Faram:computeSchema
         this.checkAndSetDefaultValue(props.options, props.value);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.options !== this.props.options) {
+        if (
+            nextProps.options !== this.props.options ||
+            (!nextProps.disabled && nextProps.disabled !== this.props.disabled)
+        ) {
             this.checkAndSetDefaultValue(nextProps.options, nextProps.value);
         }
     }
@@ -81,7 +85,8 @@ class ScaleInput extends React.PureComponent {
             styles.value,
         ];
 
-        const isActive = key === value;
+        // FIXME: there shouldn't be need for cast to string
+        const isActive = String(key) === String(value);
 
         if (isActive) {
             classNames.push(styles.active);
@@ -95,7 +100,13 @@ class ScaleInput extends React.PureComponent {
             onChange,
             isDefaultSelector,
             keySelector,
+            disabled,
         } = this.props;
+
+        if (disabled) {
+            return;
+        }
+
         const defaultOption = options.find(option => isDefaultSelector(option));
         if (!value && defaultOption) {
             onChange(keySelector(defaultOption));
