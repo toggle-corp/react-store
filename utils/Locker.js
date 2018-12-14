@@ -18,8 +18,8 @@ export default class Locker {
     // Acquire the lock: returns a promise that resolves when done.
     // To mark a lock continously for this process, it continuously
     // resets the timestamp in localStorage.
-    acquire(maxLockTime = 5000, refreshTime = 1000) {
-        return new Promise((resolve) => {
+    acquire = (maxLockTime = 5000, refreshTime = 1000) => (
+        new Promise((resolve) => {
             const randomTime = Math.round(Math.random() * 2000);
             this.stopped = false;
 
@@ -35,18 +35,18 @@ export default class Locker {
                 this.lamportFastLock(callbackOnLock, maxLockTime);
             };
             this.timeouts.push(setTimeout(timeoutFn, randomTime));
-        });
-    }
+        })
+    )
 
     // Clear lock if acquired and all attempts if trying to acquire
-    release() {
+    release = () => {
         this.stopped = true;
         this.timeouts.forEach(id => clearTimeout(id));
         this.intervals.forEach(id => clearInterval(id));
         localStorage.removeItem(this.yKey);
     }
 
-    lamportFastLock(callback, maxLockTime) {
+    lamportFastLock = (callback, maxLockTime) => {
         if (this.stopped) {
             return;
         }
@@ -79,7 +79,7 @@ export default class Locker {
         callback();
     }
 
-    resetTimestamp() {
+    resetTimestamp = () => {
         localStorage[this.yKey] = `${this.uniqueId}|${Date.now()}`;
     }
 }
