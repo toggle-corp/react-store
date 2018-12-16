@@ -38,6 +38,10 @@ const addResizeHandler = (element, callback) => {
 };
 
 const removeResizeHandler = (element) => {
+    if (!element) {
+        return;
+    }
+
     observer.unobserve(element);
     const key = element.dataset.resizeHandlerKey;
     if (!key || !resizeHandlers[key]) {
