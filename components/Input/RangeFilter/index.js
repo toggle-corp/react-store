@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import SelectInput from '../SelectInput';
 
 const propTypes = {
-    className: PropTypes.string,
     label: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.arrayOf(PropTypes.string),
@@ -16,7 +15,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
     label: '',
     value: undefined,
     options: [],
@@ -71,7 +69,6 @@ class RangeFilter extends React.PureComponent {
 
     render() {
         const {
-            className,
             label,
             value, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars
@@ -79,7 +76,7 @@ class RangeFilter extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={className}>
+            <Fragment>
                 <SelectInput
                     onChange={this.handleStartValueChange}
                     value={this.startValue}
@@ -92,7 +89,7 @@ class RangeFilter extends React.PureComponent {
                     label={`${label} to`}
                     {...otherProps}
                 />
-            </div>
+            </Fragment>
 
         );
     }
