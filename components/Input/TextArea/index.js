@@ -78,7 +78,7 @@ const defaultProps = {
     selectOnFocus: false,
 };
 
-class TextArea extends React.PureComponent {
+export class NormalTextArea extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -238,4 +238,4 @@ class TextArea extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(Delay(TextArea));
+export default FaramInputElement(Delay(NormalTextArea));
