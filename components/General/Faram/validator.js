@@ -17,6 +17,16 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
+const getNameFromMembers = (element, members) => (
+    members.identifier(element) || 'default'
+);
+
+const getMemberFromMembers = (element, members) => {
+    const localMemberKey = getNameFromMembers(element, members);
+    const localMember = members[localMemberKey];
+    return localMember;
+};
+
 export const accumulateValues = (obj, schema = {}, settings = {}) => {
     const {
         noFalsyValues = false,
@@ -24,21 +34,25 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
     } = settings;
 
     // NOTE: if schema is array, the object is the node element
-    const { member, fields } = schema;
+    const { member, fields, ...members } = schema;
     const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = !!member;
     const isSchemaForObject = !!fields;
+    const isSchemaForHeterogenousArray = !!members.identifier;
 
     if (isSchemaForLeaf) {
         if (isFalsy(obj) && !noFalsyValues) {
             return falsyValue;
         }
         return obj;
-    } else if (isSchemaForArray) {
+    } else if (isSchemaForArray || isSchemaForHeterogenousArray) {
         const safeObj = obj || emptyArray;
         const values = [];
         safeObj.forEach((element) => {
-            const value = accumulateValues(element, member, settings);
+            const localMember = isSchemaForHeterogenousArray
+                ? getMemberFromMembers(element, members)
+                : member;
+            const value = accumulateValues(element, localMember, settings);
             values.push(value);
         });
         if (hasNoValues(values)) {
@@ -67,9 +81,10 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
 
 export const accumulateErrors = (obj, schema = {}) => {
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, validation, keySelector } = schema;
+    const { member, fields, validation, keySelector, ...members } = schema;
     const schemaForLeaf = isList(schema);
-    const schemaForArray = !!member && !!keySelector;
+    const schemaForArray = (!!member && !!keySelector);
+    const schemaForHeterogenousArray = !!members.identifier;
     const schemaForObject = !!fields;
 
     if (schemaForLeaf) {
@@ -91,10 +106,13 @@ export const accumulateErrors = (obj, schema = {}) => {
             errors.$internal = validationErrors;
         }
     }
-    if (schemaForArray) {
+    if (schemaForArray || schemaForHeterogenousArray) {
         const safeObj = obj || emptyArray;
         safeObj.forEach((element) => {
-            const fieldError = accumulateErrors(element, member);
+            const localMember = schemaForHeterogenousArray
+                ? getMemberFromMembers(element, members)
+                : member;
+            const fieldError = accumulateErrors(element, localMember);
             if (fieldError) {
                 const index = keySelector(element);
                 errors[index] = fieldError;
@@ -123,9 +141,10 @@ export const accumulateDifferentialErrors = (
         return oldError;
     }
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, validation, keySelector } = schema;
+    const { member, fields, validation, keySelector, ...members } = schema;
     const schemaForLeaf = isList(schema);
     const schemaForArray = !!member && !!keySelector;
+    const schemaForHeterogenousArray = !!members.identifier;
     const schemaForObject = !!fields;
 
     if (schemaForLeaf) {
@@ -148,7 +167,7 @@ export const accumulateDifferentialErrors = (
         }
     }
 
-    if (schemaForArray) {
+    if (schemaForArray || schemaForHeterogenousArray) {
         const safeOldObj = oldObj || emptyArray;
         const safeNewObj = newObj || emptyArray;
         const safeOldError = oldError || emptyObject;
@@ -159,8 +178,12 @@ export const accumulateDifferentialErrors = (
         } = findDifferenceInList(safeOldObj, safeNewObj, keySelector);
 
         /*
+        // NOTE: no error for newly added elements
         added.forEach((e) => {
-            const fieldError = accumulateErrors(e, member);
+            const localMember = isSchemaForHeterogenousArray
+                ? getMemberFromMembers(element, members)
+                : member;
+            const fieldError = accumulateErrors(e, localMember);
             if (fieldError) {
                 const index = keySelector(e);
                 errors[index] = fieldError;
@@ -174,12 +197,24 @@ export const accumulateDifferentialErrors = (
         });
 
         modified.forEach((e) => {
+            const forgetOldError = (
+                schemaForHeterogenousArray &&
+                getNameFromMembers(e.new, members) !== getNameFromMembers(e.old, members)
+            );
+
+            const localMember = schemaForHeterogenousArray
+                ? getMemberFromMembers(e.new, members)
+                : member;
+
             const index = keySelector(e.new);
+
+            // TODO: clear out errors if different localMember for e.old and e.new
+
             const fieldError = accumulateDifferentialErrors(
                 e.old,
                 e.new,
-                safeOldError[index],
-                member,
+                forgetOldError ? undefined : safeOldError[index],
+                localMember,
             );
             if (fieldError) {
                 errors[index] = fieldError;
