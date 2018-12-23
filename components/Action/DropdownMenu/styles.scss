@@ -49,8 +49,13 @@
         }
 
         .dropdown-icon {
+            @include transition-medium();
             flex-shrink: 0;
             padding: 0 $spacing-small;
+
+            &.rotate {
+                transform: rotateX(180deg);
+            }
         }
     }
 }

@@ -1,0 +1,15 @@
+@import '../../../stylesheets/base';
+
+.conditional-button {
+    box-shadow: none!important;
+    border-radius: 0!important;
+    text-transform: capitalize!important;
+    font-weight: $font-weight-normal!important;
+    border-bottom: $width-separator-thin solid $color-accent;
+    padding: $spacing-extra-small $spacing-small!important;
+
+    &.active {
+        background-color: $color-accent!important;
+        color: $color-foreground!important;
+    }
+}
