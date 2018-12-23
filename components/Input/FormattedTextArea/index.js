@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import { iconNames } from '#constants';
 import { formatPdfText } from '../../../utils/common';
@@ -16,6 +17,7 @@ const propTypes = {
     onChange: PropTypes.func,
     required: PropTypes.bool,
     readOnly: PropTypes.bool,
+    showFormatButton: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -24,6 +26,7 @@ const defaultProps = {
     readOnly: false,
     onChange: undefined,
     required: false,
+    showFormatButton: true,
 };
 
 
@@ -41,11 +44,15 @@ class FormattedTextArea extends React.PureComponent {
         onChange(formattedText);
     }
 
+    shouldDisableFormat = memoize(excerpt => !excerpt || excerpt === formatPdfText(excerpt))
+
     render() {
         const {
             disabled,
             readOnly,
             className,
+            showFormatButton,
+            value,
             ...otherProps
         } = this.props;
 
@@ -56,18 +63,21 @@ class FormattedTextArea extends React.PureComponent {
                     disabled={disabled}
                     readOnly={readOnly}
                     className={styles.area}
+                    value={value}
                 />
-                <AccentButton
-                    tabIndex="-1"
-                    className={styles.formatButton}
-                    iconName={iconNames.textFormat}
-                    onClick={this.handleFormatText}
-                    title="Click here to format the text"
-                    smallVerticalPadding
-                    smallHorizontalPadding
-                    transparent
-                    disabled={disabled || readOnly}
-                />
+                { showFormatButton &&
+                    <AccentButton
+                        tabIndex="-1"
+                        className={styles.formatButton}
+                        iconName={iconNames.textFormat}
+                        onClick={this.handleFormatText}
+                        title="Click here to format the text"
+                        smallVerticalPadding
+                        smallHorizontalPadding
+                        transparent
+                        disabled={disabled || readOnly || this.shouldDisableFormat(value)}
+                    />
+                }
             </div>
         );
     }
