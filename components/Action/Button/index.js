@@ -128,7 +128,6 @@ class Button extends React.PureComponent {
         } = props;
 
         const classNames = [
-            className,
             'button',
             styles.button,
         ];
@@ -157,6 +156,8 @@ class Button extends React.PureComponent {
             classNames.push('transparent');
             classNames.push(styles.transparent);
         }
+
+        classNames.push(className);
 
         return classNames.join(' ');
     }
