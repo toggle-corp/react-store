@@ -1,0 +1,25 @@
+@import '../../../stylesheets/base';
+
+.formatted-text {
+    position: relative;
+    overflow: auto;
+
+    .area {
+        height: 100%;
+    }
+
+    .format-button {
+        @include transition-medium;
+        position: absolute;
+        right: $spacing-large;
+        bottom: $spacing-extra-large;
+        opacity: .1;
+        font-size: $font-size-extra-large;
+    }
+
+    &:hover {
+        .format-button {
+            opacity: 1;
+        }
+    }
+}
