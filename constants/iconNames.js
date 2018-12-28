@@ -55,6 +55,9 @@ const iconNames = {
     download: 'fa fa-download',
     refresh: 'ion-refresh',
 
+    plusOutline: 'ion-ios-plus-outline',
+    minusOutline: 'ion-ios-minus-outline',
+
     sort: 'fa fa-sort',
     sortAscending: 'fa fa-sort-asc',
     sortDescending: 'fa fa-sort-desc',

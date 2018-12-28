@@ -1,0 +1,34 @@
+@import '../../../stylesheets/base';
+
+.image-container {
+    position: relative;
+    overflow: auto;
+
+    .image {
+        // Nothing here?
+    }
+
+    .action-buttons {
+        position: fixed;
+        right: $spacing-large;
+        bottom: $spacing-large;
+        transition: $duration-transition-medium opacity ease-in-out;
+        opacity: 0;
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, .7);
+        padding: $spacing-extra-small 0;
+
+        .action {
+            display: block;
+            padding: 0 $spacing-small;
+            color: #fff;
+            font-size: $font-size-large;
+        }
+    }
+
+    &:hover {
+        .action-buttons {
+            opacity: 1;
+        }
+    }
+}
