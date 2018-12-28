@@ -452,16 +452,19 @@ class ClusteredForceLayout extends PureComponent {
                         className={styles.forcedTooltip}
                     />
                 </Float>
-                <input
-                    className={styles.inputSlider}
-                    id="sliderinput"
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={this.state.value}
-                    onChange={this.handleSlide}
-                    step="1"
-                />
+                <div
+                    className={styles.slider}
+                >
+                    <input
+                        id="sliderinput"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={this.state.value}
+                        onChange={this.handleSlide}
+                        step="1"
+                    />
+                </div>
                 <svg
                     ref={(elem) => { this.svg = elem; }}
                     className={svgClassName}

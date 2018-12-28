@@ -1,0 +1,17 @@
+@import '../../../stylesheets/base';
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .slider {
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .wrapped {
+        flex-grow: 1;
+    }
+}
