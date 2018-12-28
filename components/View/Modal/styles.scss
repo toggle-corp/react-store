@@ -8,11 +8,12 @@ $width-modal-small: 420px !default;
     top: 50%;
     left: 50%;
     flex-direction: column;
+    transform: translate(-50%, -50%);
     box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
     background-color: $color-foreground;
     width: $width-modal-medium;
     max-height: 96vh;
-    animation: fade-in-from-top $duration-transition-medium ease forwards;
+    // animation: fade-in-from-top $duration-transition-medium ease forwards;
 }
 
 @keyframes fade-in-from-top {
