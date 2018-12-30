@@ -14,6 +14,7 @@
         bottom: $spacing-large;
         transition: $duration-transition-medium opacity ease-in-out;
         opacity: 0;
+        border: $width-separator-thin solid rgba(0, 0, 0, .3);
         border-radius: 4px;
         background-color: rgba(0, 0, 0, .7);
         padding: $spacing-extra-small 0;
@@ -21,7 +22,7 @@
         .action {
             display: block;
             padding: 0 $spacing-small;
-            color: #fff;
+            color: $color-foreground;
             font-size: $font-size-large;
         }
     }

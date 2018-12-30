@@ -23,6 +23,7 @@ const defaultProps = {
 const ActionButton = p => (
     <Button
         {...p}
+        tabIndex="-1"
         transparent
         smallVerticalPadding
         smallHorizontalPadding
@@ -53,6 +54,10 @@ export default class Image extends React.PureComponent {
         image.style.height = `${image.offsetHeight * 0.9}px`;
     }
 
+    handleImageDragStart = (e) => {
+        e.preventDefault();
+    }
+
     render() {
         const {
             className: classNameFromProps,
@@ -76,6 +81,7 @@ export default class Image extends React.PureComponent {
                     className={styles.image}
                     alt={alt}
                     src={src}
+                    onDragStart={this.handleImageDragStart}
                 />
                 { zoomable && (
                     <div className={styles.actionButtons}>
