@@ -38,6 +38,7 @@ export default class Image extends React.PureComponent {
         super(props);
         this.containerRef = React.createRef();
         this.imageRef = React.createRef();
+        this.actionButtonsRef = React.createRef();
     }
 
     handlePlusButtonClick = () => {
@@ -58,6 +59,11 @@ export default class Image extends React.PureComponent {
         e.preventDefault();
     }
 
+    handleScroll = (e) => {
+        const { current: actionButtons } = this.actionButtonsRef;
+        actionButtons.style.transform = `translate(${e.target.scrollLeft}px, ${e.target.scrollTop}px)`;
+    }
+
     render() {
         const {
             className: classNameFromProps,
@@ -75,6 +81,7 @@ export default class Image extends React.PureComponent {
             <div
                 className={className}
                 ref={this.containerRef}
+                onScroll={this.handleScroll}
             >
                 <img
                     ref={this.imageRef}
@@ -84,13 +91,18 @@ export default class Image extends React.PureComponent {
                     onDragStart={this.handleImageDragStart}
                 />
                 { zoomable && (
-                    <div className={styles.actionButtons}>
+                    <div
+                        className={styles.actionButtons}
+                        ref={this.actionButtonsRef}
+                    >
                         <ActionButton
+                            title="Zoom in"
                             className={styles.action}
                             iconName={iconNames.plusOutline}
                             onClick={this.handlePlusButtonClick}
                         />
                         <ActionButton
+                            title="Zoom out"
                             className={styles.action}
                             iconName={iconNames.minusOutline}
                             onClick={this.handleMinusButtonClick}
