@@ -82,6 +82,8 @@ export default class Uploader {
                 return;
             }
 
+            console.log(`Recieving ${this.uploadUrl}`, response);
+
             if (okay) {
                 // callback
                 this.success(response, xhr.status);
@@ -111,6 +113,9 @@ export default class Uploader {
         formData.append('title', this.file.name);
 
         const parameters = typeof this.params === 'function' ? this.params() : this.params;
+
+        // DEBUG:
+        console.log(`Fetching ${this.uploadUrl}`, parameters);
 
         const headerKeys = Object.keys(parameters.headers);
         headerKeys.forEach((key) => {
