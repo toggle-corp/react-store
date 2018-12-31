@@ -230,7 +230,10 @@ class HorizontalBar extends PureComponent {
     handleMouseMove = () => {
         const { style } = this.tooltip;
         const { width, height } = this.tooltip.getBoundingClientRect();
+        // eslint-disable-next-line no-restricted-globals
         const x = event.pageX;
+
+        // eslint-disable-next-line no-restricted-globals
         const y = event.pageY;
 
         const posX = x - (width / 2);
