@@ -1,33 +1,36 @@
 import React, {
     PureComponent,
+    Fragment,
 } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
-import { scaleOrdinal, scaleLinear, scaleBand } from 'd3-scale';
-import { axisLeft, axisBottom } from 'd3-axis';
+import {
+    scaleOrdinal,
+    scaleLinear,
+    scaleBand,
+    scalePow,
+    scaleLog,
+} from 'd3-scale';
+import {
+    axisLeft,
+    axisBottom,
+} from 'd3-axis';
 import { max } from 'd3-array';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, getColorOnBgColor } from '../../../utils/common';
+import {
+    getStandardFilename,
+    getColorOnBgColor,
+} from '../../../utils/common';
+import Float from '../../View/Float';
 
 import styles from './styles.scss';
 
-
-// eslint-disable-next-line no-unused-vars
 const dummy = transition;
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the categorical data having values.
- * labelSelector: returns the individual label from a unit data.
- * valueSelector: return the value for the unit data.
- * showGridLines: if true the gridlines are drawn.
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -37,10 +40,16 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     valueSelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
-    valueLabelSelector: PropTypes.func,
+    bandPadding: PropTypes.number,
+    colorSelector: PropTypes.func,
+    valueLabelFormat: PropTypes.func,
     showGridLines: PropTypes.bool,
+    showTooltip: PropTypes.bool,
+    tooltipContent: PropTypes.func,
     tiltLabels: PropTypes.bool,
     className: PropTypes.string,
+    scaleType: PropTypes.string,
+    exponent: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -53,10 +62,16 @@ const propTypes = {
 const defaultProps = {
     data: [],
     setSaveFunction: () => {},
-    valueLabelSelector: undefined,
-    showGridLines: true,
+    valueLabelFormat: undefined,
+    bandPadding: 0.2,
+    colorSelector: undefined,
+    showGridLines: false,
+    showTooltip: false,
+    tooltipContent: undefined,
     className: '',
     tiltLabels: false,
+    scaleType: 'linear',
+    exponent: 1,
     margins: {
         top: 24,
         right: 24,
@@ -66,10 +81,6 @@ const defaultProps = {
     colorScheme: schemeSet3,
 };
 
-/**
- * A horizontal bar graph shows categorical data with rectangular bars with length proportional
- * to values they represent.
- */
 class HorizontalBar extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -89,15 +100,16 @@ class HorizontalBar extends PureComponent {
         this.redrawChart();
     }
 
-    setContext = (width, height, margins) => {
+    getColor = (d) => {
         const {
-            top,
-            left,
-        } = margins;
+            labelSelector,
+            colorSelector,
+        } = this.props;
 
-        return select(this.svg)
-            .append('g')
-            .attr('transform', `translate(${left}, ${top})`);
+        if (colorSelector) {
+            return colorSelector(d);
+        }
+        return this.colors(labelSelector(d));
     }
 
     save = () => {
@@ -106,6 +118,8 @@ class HorizontalBar extends PureComponent {
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('horizontalbar', 'graph')}.svg`);
     }
+
+    powerOfTen = d => d / (10 ** Math.ceil(Math.log(d) / (Math.LN10))) === 1
 
     addShadow = (svg) => {
         const defs = svg.append('defs');
@@ -154,32 +168,84 @@ class HorizontalBar extends PureComponent {
             .attr('in', 'SourceGraphic');
     }
 
-    addLines = (func, scale, length, format) => func(scale)
-        .tickSize(-length)
-        .tickPadding(10)
-        .tickFormat(format)
+    addGrid = (group) => {
+        const { valueLabelFormat } = this.props;
 
-    addGrid = (svg, xscale, yscale, height, width, tickFormat) => {
-        svg
+        const xAxis = axisBottom(this.x)
+            .tickSizeInner(-this.height)
+            .tickSizeOuter(0)
+            .tickPadding(10)
+            .tickFormat(valueLabelFormat);
+
+        const yAxis = axisLeft(this.y)
+            .tickSizeInner(-this.width)
+            .tickSizeOuter(0)
+            .tickPadding(10);
+
+        group
             .append('g')
             .attr('id', 'xaxis')
             .attr('class', styles.grid)
-            .attr('transform', `translate(0, ${height})`)
-            .call(this.addLines(axisBottom, xscale, height, tickFormat));
+            .attr('transform', `translate(0, ${this.height})`)
+            .call(xAxis);
 
-        svg
+        group
             .append('g')
             .attr('id', 'yaxis')
             .attr('class', styles.grid)
-            .call(this.addLines(axisLeft, yscale, width));
+            .call(yAxis);
     }
 
-    handleMouseOver = (node) => {
+    handleMouseOver = (d, node) => {
+        const {
+            showTooltip,
+            tooltipContent,
+            labelSelector,
+            valueSelector,
+            valueLabelFormat,
+        } = this.props;
+
+
         select(node)
             .style('filter', 'url(#drop-shadow)');
+
+        let defaultTooltipContent = '';
+        const value = valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d);
+        const label = labelSelector(d);
+        if (showTooltip) {
+            defaultTooltipContent = `
+            <span class="${styles.label}">
+                 ${label || ''}
+            </span>
+            <span class="${styles.value}">
+                 ${value || ''}
+            </span>`;
+            const content = tooltipContent ? tooltipContent(d) : defaultTooltipContent;
+            this.tooltip.innerHTML = content;
+            const { style } = this.tooltip;
+            style.display = 'block';
+        }
+    }
+
+    handleMouseMove = () => {
+        const { style } = this.tooltip;
+        const { width, height } = this.tooltip.getBoundingClientRect();
+        // eslint-disable-next-line no-restricted-globals
+        const x = event.pageX;
+
+        // eslint-disable-next-line no-restricted-globals
+        const y = event.pageY;
+
+        const posX = x - (width / 2);
+        const posY = y - (height + 10);
+
+        style.top = `${posY}px`;
+        style.left = `${posX}px`;
     }
 
     handleMouseOut = (node) => {
+        const { style } = this.tooltip;
+        style.display = 'none';
         select(node)
             .style('filter', 'none');
     }
@@ -195,7 +261,10 @@ class HorizontalBar extends PureComponent {
             data,
             boundingClientRect,
             valueSelector,
-            valueLabelSelector,
+            bandPadding,
+            scaleType,
+            exponent,
+            valueLabelFormat,
             colorScheme,
             labelSelector,
             showGridLines,
@@ -207,110 +276,143 @@ class HorizontalBar extends PureComponent {
             return;
         }
 
-        let { width, height } = boundingClientRect;
+        const { width, height } = boundingClientRect;
+
         const {
-            top,
-            right,
-            bottom,
-            left,
+            top = 0,
+            right = 0,
+            bottom = 0,
+            left = 0,
         } = margins;
 
-        width = width - left - right;
-        height = height - top - bottom;
+        this.width = width - left - right;
+        this.height = height - top - bottom;
 
-        if (width < 0) width = 0;
-        if (height < 0) height = 0;
+        if (this.width < 0) this.width = 0;
+        if (this.height < 0) this.height = 0;
 
-        const group = this.setContext(width, height, margins);
+        this.group = select(this.svg)
+            .append('g')
+            .attr('transform', `translate(${left}, ${top})`);
 
-        const x = scaleLinear()
-            .range([0, width])
-            .domain([0, max(data, d => valueSelector(d))]);
-        const y = scaleBand()
-            .rangeRound([height, 0])
+        const maxValue = max(data, d => valueSelector(d));
+
+        if (scaleType === 'log') {
+            this.x = scaleLog()
+                .range([0, this.width])
+                .clamp(true)
+                .domain([0.1, maxValue]);
+        } else if (scaleType === 'linear') {
+            this.x = scaleLinear()
+                .range([0, this.width])
+                .domain([0, maxValue]);
+        } else if (scaleType === 'exponent') {
+            this.x = scalePow()
+                .exponent([exponent])
+                .range([0, this.width])
+                .clamp(true)
+                .domain([0, maxValue]);
+        }
+
+        this.y = scaleBand()
+            .rangeRound([this.height, 0])
             .domain(data.map(d => labelSelector(d)))
-            .padding(0.2);
+            .padding(bandPadding);
 
+        this.colors = scaleOrdinal().range(colorScheme);
 
-        this.addShadow(group);
+        this.addShadow(this.group);
 
         if (showGridLines) {
-            this.addGrid(group, x, y, height, width, valueLabelSelector);
+            this.addGrid(this.group);
         } else {
-            const xAxis = axisBottom(x);
-            const yAxis = axisLeft(y);
-
-            group
+            this.group
                 .append('g')
                 .attr('id', 'xaxis')
-                .attr('class', styles.xAxis)
-                .attr('transform', `translate(0, ${height})`)
-                .call(xAxis);
+                .attr('class', `x-axis ${styles.xAxis}`)
+                .attr('transform', `translate(0, ${this.height})`)
+                .call(axisBottom(this.x));
 
-            group
+            this.group
                 .append('g')
                 .attr('id', 'yaxis')
-                .attr('class', styles.yAxis)
-                .call(yAxis);
+                .attr('class', `y-axis ${styles.yAxis}`)
+                .call(axisLeft(this.y));
         }
 
         if (tiltLabels) {
-            group
+            this.group
                 .select('#xaxis')
                 .selectAll('text')
-                .attr('y', 0)
-                .attr('x', 9)
-                .attr('dy', '0.35em')
                 .attr('transform', 'rotate(-45)')
                 .style('text-anchor', 'end');
         }
 
-        const groups = group
+        const groups = this.group
             .selectAll('.bar')
             .data(data)
             .enter()
             .append('g')
             .attr('class', 'bar');
 
-        const colors = scaleOrdinal()
-            .range(colorScheme);
-
         const bars = groups
             .append('rect')
-            .style('cursor', 'pointer')
             .attr('x', 0)
-            .attr('y', d => y(labelSelector(d)))
-            .attr('height', y.bandwidth())
-            .attr('fill', d => colors(labelSelector(d)))
-            .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
+            .attr('y', d => this.y(labelSelector(d)))
+            .attr('height', this.y.bandwidth())
+            .style('fill', d => this.getColor(d))
+            .style('cursor', 'pointer')
+            .on('mouseover', (d, i, nodes) => this.handleMouseOver(d, nodes[i]))
+            .on('mousemove', this.handleMouseMove)
             .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
 
         bars
             .transition()
             .duration(750)
-            .attr('width', d => x(valueSelector(d)));
+            .attr('width', d => this.x(valueSelector(d)));
+
+        this.group
+            .selectAll('.x-axis')
+            .selectAll('.tick line')
+            .style('visibility', 'hidden');
+
+        this.group
+            .selectAll('.y-axis')
+            .selectAll('.tick line')
+            .style('visibility', 'hidden');
 
         groups
             .append('text')
-            .attr('x', d => x(valueSelector(d)) - 3)
-            .attr('y', d => y(labelSelector(d)) + (y.bandwidth() / 2))
+            .attr('x', d => this.x(valueSelector(d)))
+            .attr('y', d => this.y(labelSelector(d)) + (this.y.bandwidth() / 2))
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .style('fill', 'none')
             .transition()
             .delay(750)
-            .text(d => (
-                valueLabelSelector ? valueLabelSelector(valueSelector(d)) : valueSelector(d)))
+            .text(d => (valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d)))
             .on('end', (d, i, nodes) => {
                 const barWidth = bars.nodes()[i].width.baseVal.value || 0;
                 const textWidth = nodes[i].getComputedTextLength() || 0;
-                const textpos = textWidth > barWidth;
-                const fillColor = textpos === true ? '#000' : getColorOnBgColor(colors(labelSelector(d)));
-                const newX = textpos === true ? (barWidth + 20) : (barWidth - 3);
+                const longText = textWidth > barWidth;
+                const fillColor = longText ? '#000' : getColorOnBgColor(this.getColor(d));
+                const newX = longText ? (barWidth + textWidth) : (barWidth);
                 select(nodes[i])
                     .attr('x', newX)
                     .style('fill', fillColor);
             });
+
+        if (scaleType === 'log') {
+            this.group
+                .select('#xaxis')
+                .selectAll('.tick text')
+                .text(null)
+                .filter(this.powerOfTen)
+                .text(10)
+                .append('tspan')
+                .attr('dy', '-.7em')
+                .text(d => Math.round(Math.log(d) / Math.LN10));
+        }
     }
 
     render() {
@@ -320,11 +422,24 @@ class HorizontalBar extends PureComponent {
             styles.horizontalBar,
             className,
         ].join(' ');
+
+        const tooltipClassName = [
+            'horizontal-bar-tooltip',
+            styles.horizontalBarTooltip,
+        ].join(' ');
         return (
-            <svg
-                className={svgClassName}
-                ref={(elem) => { this.svg = elem; }}
-            />
+            <Fragment>
+                <svg
+                    className={svgClassName}
+                    ref={(elem) => { this.svg = elem; }}
+                />
+                <Float>
+                    <div
+                        ref={(el) => { this.tooltip = el; }}
+                        className={tooltipClassName}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }

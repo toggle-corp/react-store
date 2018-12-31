@@ -9,7 +9,7 @@
 
     .grid {
         path {
-            stroke-width: 0;
+            stroke: $color-axis-path;
         }
     }
 
@@ -31,5 +31,23 @@
                 visibility: hidden;
             }
         }
+    }
+}
+
+.horizontal-bar-tooltip {
+    @include shadow-medium;
+    @include background-color($color-foreground);
+    position: fixed;
+    z-index: 10;
+    padding: $spacing-small $spacing-medium-alt;
+    animation: fade-in .2s ease-in;
+    pointer-events: none;
+
+    .label {
+        display: block;
+    }
+
+    .value {
+        display: block;
     }
 }
