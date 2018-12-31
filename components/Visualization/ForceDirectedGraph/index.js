@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+    Fragment,
+} from 'react';
 import { select, event } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -8,6 +10,8 @@ import { extent } from 'd3-array';
 import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+
+import Float from '../../View/Float';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
 
@@ -40,6 +44,7 @@ const propTypes = {
     groupSelector: PropTypes.func,
     valueSelector: PropTypes.func,
     circleRadius: PropTypes.number,
+    distance: PropTypes.number,
     useVoronoi: PropTypes.bool,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -62,6 +67,7 @@ const defaultProps = {
     circleRadius: 30,
     useVoronoi: true,
     className: '',
+    distance: 5,
     colorScheme: schemePaired,
     margins: {
         top: 0,
@@ -83,9 +89,6 @@ class ForceDirectedGraph extends React.PureComponent {
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
-        this.state = {
-            value: 5,
-        };
     }
 
     componentDidMount() {
@@ -112,13 +115,6 @@ class ForceDirectedGraph extends React.PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('forceddirectedgraph', 'graph')}.svg`);
     }
 
-    handleChange = (eve) => {
-        this.setState({
-            value: eve.target.value,
-        });
-        this.updateData(this.props);
-    }
-
     renderChart() {
         const {
             boundingClientRect,
@@ -135,10 +131,6 @@ class ForceDirectedGraph extends React.PureComponent {
         const svg = select(this.svg);
         svg.selectAll('*').remove();
 
-        select(this.container)
-            .selectAll('.tooltip')
-            .remove();
-
         if (!boundingClientRect.width) {
             return;
         }
@@ -153,11 +145,7 @@ class ForceDirectedGraph extends React.PureComponent {
             left,
         } = margins;
 
-        const tooltip = select(this.container)
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('display', 'none')
-            .style('z-index', 10);
+        const tooltip = select(this.tooltip);
 
         width = width - left - right;
         height = height - top - bottom;
@@ -197,7 +185,7 @@ class ForceDirectedGraph extends React.PureComponent {
         }
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idSelector(d)).distance(distance(this.state.value)))
+            .force('link', forceLink().id(d => idSelector(d)).distance(distance(this.props.distance)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
@@ -226,7 +214,7 @@ class ForceDirectedGraph extends React.PureComponent {
         }
 
         function mouseOverCircle(d) {
-            tooltip.html(`<span class="name">${idSelector(d)}</span>`);
+            tooltip.html(`<span class=${styles.value}>${idSelector(d)}</span>`);
             return tooltip
                 .transition()
                 .duration(100)
@@ -248,7 +236,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         const link = group
             .append('g')
-            .attr('class', 'links')
+            .attr('class', `links ${styles.links}`)
             .selectAll('line')
             .data(data.links)
             .enter()
@@ -260,7 +248,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .data(data.nodes)
             .enter()
             .append('g')
-            .attr('class', 'nodes')
+            .attr('class', `nodes ${styles.nodes}`)
             .call(drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -272,7 +260,7 @@ class ForceDirectedGraph extends React.PureComponent {
         if (useVoronoi) {
             node
                 .append('circle')
-                .attr('class', 'circle')
+                .attr('class', `circle ${styles.cirlce}`)
                 .attr('r', circleRadius)
                 .attr('fill', d => color(groupSelector(d)));
 
@@ -339,26 +327,29 @@ class ForceDirectedGraph extends React.PureComponent {
             .links(data.links);
     }
     render() {
+        const {
+            className,
+        } = this.props;
+
+        const svgClassName = [
+            'force-directed-graph',
+            styles.forceDirectedGraph,
+            className,
+        ].join(' ');
+
         return (
-            <div
-                className={`force-directed-graph-container ${this.props.className}`}
-                ref={(el) => { this.container = el; }}
-            >
-                <input
-                    className="input-slider"
-                    id="sliderinput"
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    step="1"
-                />
+            <Fragment>
                 <svg
-                    className="force-directed-graph"
+                    className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
                 />
-            </div>
+                <Float>
+                    <div
+                        ref={(elem) => { this.tooltip = elem; }}
+                        className={styles.tooltip}
+                    />
+                </Float>
+            </Fragment>
         );
     }
 }
