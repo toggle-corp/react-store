@@ -6,23 +6,6 @@ import {
     findDifferenceInList,
 } from '../../../utils/common';
 
-/*
-{
-    member
-    keySelector
-    validator
-    identifier
-    default
-}
-
-{
-    fields
-    validator
-    identifier
-    default
-}
-*/
-
 const emptyObject = {};
 const emptyArray = [];
 
@@ -34,13 +17,13 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
-const getIdentifierName = (element, otherProps) => (
-    otherProps.identifier(element) || 'default'
+const getIdentifierName = (element, identifier) => (
+    identifier(element) || 'default'
 );
 
-const getIdentifierChoice = (element, otherProps) => {
-    const name = getIdentifierName(element, otherProps);
-    return otherProps[name];
+const getIdentifierChoice = (element, identifier, fieldsOrMember) => {
+    const name = getIdentifierName(element, identifier);
+    return fieldsOrMember[name];
 };
 
 export const accumulateValues = (obj, schema = {}, settings = {}) => {
@@ -50,11 +33,11 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
     } = settings;
 
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, ...otherProps } = schema;
+    const { member, fields, identifier } = schema;
     const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = !!member;
     const isSchemaForObject = !!fields;
-    const hasIdentifierFunction = !!otherProps.identifier;
+    const hasIdentifierFunction = !!identifier;
 
     if (isSchemaForLeaf) {
         if (isFalsy(obj) && !noFalsyValues) {
@@ -66,7 +49,7 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
         const values = [];
         safeObj.forEach((element) => {
             const localMember = hasIdentifierFunction
-                ? getIdentifierChoice(element, otherProps)
+                ? getIdentifierChoice(element, identifier, member)
                 : member;
             const value = accumulateValues(element, localMember, settings);
             values.push(value);
@@ -80,7 +63,7 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
         const values = {};
 
         const localFields = hasIdentifierFunction
-            ? getIdentifierChoice(fields, otherProps)
+            ? getIdentifierChoice(safeObj, identifier, fields)
             : fields;
 
         Object.keys(localFields).forEach((fieldName) => {
@@ -102,10 +85,10 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
 
 export const accumulateErrors = (obj, schema = {}) => {
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, validation, keySelector, ...otherProps } = schema;
+    const { member, fields, validation, keySelector, identifier } = schema;
     const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = (!!member && !!keySelector);
-    const hasIdentifierFunction = !!otherProps.identifier;
+    const hasIdentifierFunction = !!identifier;
     const isSchemaForObject = !!fields;
 
     if (isSchemaForLeaf) {
@@ -131,7 +114,7 @@ export const accumulateErrors = (obj, schema = {}) => {
         const safeObj = obj || emptyArray;
         safeObj.forEach((element) => {
             const localMember = hasIdentifierFunction
-                ? getIdentifierChoice(element, otherProps)
+                ? getIdentifierChoice(element, identifier, member)
                 : member;
             const fieldError = accumulateErrors(element, localMember);
             if (fieldError) {
@@ -143,7 +126,7 @@ export const accumulateErrors = (obj, schema = {}) => {
     } else if (isSchemaForObject) {
         const safeObj = obj || emptyObject;
         const localFields = hasIdentifierFunction
-            ? getIdentifierChoice(fields, otherProps)
+            ? getIdentifierChoice(safeObj, identifier, fields)
             : fields;
         Object.keys(localFields).forEach((fieldName) => {
             const fieldError = accumulateErrors(safeObj[fieldName], localFields[fieldName]);
@@ -165,10 +148,10 @@ export const accumulateDifferentialErrors = (
         return oldError;
     }
     // NOTE: if schema is array, the object is the node element
-    const { member, fields, validation, keySelector, ...otherProps } = schema;
+    const { member, fields, validation, keySelector, identifier } = schema;
     const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = !!member && !!keySelector;
-    const hasIdentifierFunction = !!otherProps.identifier;
+    const hasIdentifierFunction = !!identifier;
     const isSchemaForObject = !!fields;
 
     if (isSchemaForLeaf) {
@@ -223,11 +206,11 @@ export const accumulateDifferentialErrors = (
         modified.forEach((e) => {
             const forgetOldError = (
                 hasIdentifierFunction &&
-                getIdentifierName(e.new, otherProps) !== getIdentifierName(e.old, otherProps)
+                getIdentifierName(e.new, identifier) !== getIdentifierName(e.old, identifier)
             );
 
             const localMember = hasIdentifierFunction
-                ? getIdentifierChoice(e.new, otherProps)
+                ? getIdentifierChoice(e.new, identifier, member)
                 : member;
 
             const index = keySelector(e.new);
@@ -251,7 +234,7 @@ export const accumulateDifferentialErrors = (
         const safeNewObj = newObj || emptyObject;
         const safeOldError = oldError || emptyObject;
         const localFields = hasIdentifierFunction
-            ? getIdentifierChoice(fields, otherProps)
+            ? getIdentifierChoice(safeNewObj, identifier, fields)
             : fields;
         Object.keys(localFields).forEach((fieldName) => {
             if (safeOldObj[fieldName] === safeNewObj[fieldName] && safeOldError[fieldName]) {
