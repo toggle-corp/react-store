@@ -7,32 +7,21 @@ import { hierarchy, partition } from 'd3-hierarchy';
 import { arc } from 'd3-shape';
 import { interpolateArray } from 'd3-interpolate';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
-import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
+import { path } from 'd3-path';
 import SvgSaver from 'svgsaver';
 import Responsive from '../../General/Responsive';
 import {
     getStandardFilename,
     getColorOnBgColor,
     isObjectEmpty,
+    randomString,
 } from '../../../utils/common';
 import Float from '../../View/Float';
 
 import styles from './styles.scss';
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the hierarchical data to be visualized.
- * childrenSelector: the accessor function to return array of data representing the children.
- * labelSelector: returns the individual label from a unit data.
- * valueSelector: return the value for the unit data.
- * colorScheme: array of hex color values.
- * showLabels: show labels on the diagram?
- * showTooltip: show the tooltip?
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
 const propTypes = {
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
@@ -44,10 +33,11 @@ const propTypes = {
     setSaveFunction: PropTypes.func,
     childrenSelector: PropTypes.func,
     labelSelector: PropTypes.func.isRequired,
+    tooltipContent: PropTypes.func,
+    colorSelector: PropTypes.func,
     valueSelector: PropTypes.func.isRequired,
-    colorScheme: PropTypes.arrayOf(PropTypes.string),
-    showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -61,7 +51,8 @@ const defaultProps = {
     setSaveFunction: () => {},
     childrenSelector: d => d.children,
     colorScheme: schemePaired,
-    showLabels: true,
+    colorSelector: undefined,
+    tooltipContent: undefined,
     showTooltip: true,
     className: '',
     margins: {
@@ -73,13 +64,6 @@ const defaultProps = {
 };
 
 const twoPi = 2 * Math.PI;
-const tooltipOffset = { x: 10, y: 10 };
-const transitionDuration = 750;
-
-/*
- * Sunburst is a multilevel pie chart used to represent proportion of values found at each level
- * in hierarchy.
- * */
 
 class SunBurst extends PureComponent {
     static propTypes = propTypes;
@@ -90,16 +74,26 @@ class SunBurst extends PureComponent {
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
-        this.scaleX = scaleLinear()
-            .range([0, twoPi]);
     }
 
     componentDidMount() {
-        this.renderChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
-        this.renderChart();
+        this.redrawChart();
+    }
+
+    getColor = (d) => {
+        const {
+            labelSelector,
+            colorSelector,
+        } = this.props;
+
+        if (colorSelector) {
+            return colorSelector(d);
+        }
+        return this.colors(labelSelector(d.children ? d.data : d.parent.data));
     }
 
     save = () => {
@@ -135,80 +129,119 @@ class SunBurst extends PureComponent {
         )`;
     }
 
-    calculateLabelTransformation = (t) => {
-        const st = this.arch.startAngle()(t);
-        const ed = this.arch.endAngle()(t);
-        const angle = Math.round(Math.abs(st - ed)).toFixed(2);
-        const twoPI = Math.round(twoPi).toFixed(2);
-
-        if (t.parent === null) {
-            return 'translate(0, 0)';
-        }
-
-        const { centroid } = this.arch;
-
-        if (angle >= twoPI) {
-            return `translate(${centroid(t)})`;
-        }
-
-        return `
-            translate(${centroid(t)})
-            rotate(${this.calculateTextRotation(t)})
-        `;
-    }
-
-    calculateTextRotation = (d) => {
-        const angle = ((this.scaleX((d.x0 + d.x1) / 2)
-            - (Math.PI / 2)) / Math.PI) * 180;
-
-        return (angle > 90) ? 180 + angle : angle;
-    };
-
     init = () => {
         const { colorScheme } = this.props;
 
         this.calculateBounds();
 
         this.radius = Math.min(this.width, this.height) / 2;
-        this.scaleY = scaleLinear()
+
+        this.x = scaleLinear()
+            .range([0, twoPi])
+            .clamp(true);
+
+        this.y = scaleLinear()
             .range([0, this.radius]);
 
-        this.color = scaleOrdinal()
+        this.colors = scaleOrdinal()
             .range(colorScheme);
 
         this.arch = arc()
-            .startAngle(d => Math.max(0, Math.min(twoPi, this.scaleX(d.x0))))
-            .endAngle(d => Math.max(0, Math.min(twoPi, this.scaleX(d.x1))))
-            .innerRadius(d => Math.max(0, this.scaleY(d.y0)))
-            .outerRadius(d => Math.max(0, this.scaleY(d.y1)));
+            .startAngle(d => this.x(d.x0))
+            .endAngle(d => this.x(d.x1))
+            .innerRadius(d => Math.max(0, this.y(d.y0)))
+            .outerRadius(d => Math.max(0, this.y(d.y1)));
     }
 
-    clearNodes = (svg) => {
-        svg.selectAll('*')
-            .remove();
+    middleArcLine = (d) => {
+        const halfPi = Math.PI / 2;
+        const angles = [this.x(d.x0) - halfPi, this.x(d.x1) - halfPi];
+        const r = Math.max(0, (this.y(d.y0) + this.y(d.y1)) / 2);
+
+        const middleAngle = (angles[1] + angles[0]) / 2;
+        const invertDirection = middleAngle > 0 && middleAngle < Math.PI;
+        if (invertDirection) { angles.reverse(); }
+
+        const paths = path();
+        paths.arc(0, 0, r, angles[0], angles[1], invertDirection);
+        return paths.toString();
+    }
+
+    filterText = (d) => {
+        if (d && d.depth === 0) {
+            return false;
+        }
+        const CHAR_SPACE = 6;
+        const deltaAngle = this.x(d.x1) - this.x(d.x0);
+        const r = Math.max(0, (this.y(d.y0) + this.y(d.y1)) / 2);
+        const perimeter = r * deltaAngle;
+
+        return d.data.name.length * CHAR_SPACE < perimeter;
+    }
+
+    handleClick = (d = { x0: 0, x1: 1, y0: 0, y1: 1 }) => {
+        const transitions = select(this.svg)
+            .transition()
+            .duration(750)
+            .tween('scale', () => {
+                const xd = interpolateArray(this.x.domain(), [d.x0, d.x1]);
+                const yd = interpolateArray(this.y.domain(), [d.y0, 1]);
+                const yr = interpolateArray(this.y.range(), [d.y0 ? 20 : 0, this.radius]);
+                return (t) => { this.x.domain(xd(t)); this.y.domain(yd(t)).range(yr(t)); };
+            });
+
+        transitions
+            .selectAll('path.main-arc')
+            .attrTween('d', t => () => this.arch(t));
+
+        transitions
+            .selectAll('path.hidden-arc')
+            .attrTween('d', t => () => this.middleArcLine(t));
+
+        transitions
+            .selectAll('text')
+            .attrTween('display', t => () => (this.filterText(t) ? null : 'none'));
+
+        this.moveStackToFront(d);
     }
 
     handleArcMouseOver = (d) => {
-        const { labelSelector } = this.props;
-        const label = labelSelector(d.data) || '';
+        const {
+            tooltipContent,
+            labelSelector,
+            showTooltip,
+        } = this.props;
 
-        this.tooltip.innerHTML = `
+        if (showTooltip) {
+            const defaultTooltipContent = `
             <span class="${styles.label}">
-                ${label}
+                 ${labelSelector(d.data) || ''}
             </span>
             <span class="${styles.value}">
-                ${d.value}
-            </span>
-        `;
+                 ${d.value || ''}
+            </span>`;
 
-        const { style } = this.tooltip;
-        style.display = 'block';
+            const content = tooltipContent ? tooltipContent(d) : defaultTooltipContent;
+
+            this.tooltip.innerHTML = content;
+
+            const { style } = this.tooltip;
+            style.display = 'block';
+        }
     }
 
     handleArcMouseMove = () => {
         const { style } = this.tooltip;
-        style.top = `${event.pageY + tooltipOffset.y}px`;
-        style.left = `${event.pageX + tooltipOffset.x}px`;
+
+        const { width, height } = this.tooltip.getBoundingClientRect();
+        const x = event.pageX;
+        const y = event.pageY;
+
+        const posX = x - (width / 2);
+        const posY = y - (height + 10);
+
+        style.top = `${posY}px`;
+        style.left = `${posX}px`;
     }
 
     handleArcMouseOut = () => {
@@ -216,73 +249,25 @@ class SunBurst extends PureComponent {
         style.display = 'none';
     }
 
-    handleSliceClick = (selection, node) => {
-        selection
-            .selectAll('text')
-            .transition()
-            .attr('opacity', 0);
-
-        const tran = transition()
-            .duration(transitionDuration);
-
-        selection
-            .transition(tran)
-            .tween('scale', () => {
-                const xd = interpolateArray(this.scaleX.domain(), [node.x0, node.x1]);
-                const yd = interpolateArray(this.scaleY.domain(), [node.y0, 1]);
-                const yr = interpolateArray(this.scaleY.range(), [node.y0 ? 20 : 0, this.radius]);
-
-                return (t) => {
-                    this.scaleX.domain(xd(t));
-                    this.scaleY.domain(yd(t))
-                        .range(yr(t));
-                };
-            })
-            .selectAll('path')
-            .attrTween('d', t => () => this.arch(t))
-            .on('end', (e, dummy, nodes) => {
-                this.renderText(node, e, nodes[0]);
+    moveStackToFront = (t) => {
+        select(this.svg)
+            .selectAll('.slice')
+            .filter(d => d === t)
+            .each((d, i, nodes) => {
+                nodes[i].parentNode.appendChild(nodes[i]);
+                if (d.parent) {
+                    this.moveStackToFront(d.parent);
+                }
             });
     }
 
-    filterText = (e, currentText) => {
-        const textLength = currentText.getComputedTextLength();
-        const textWidth = select(currentText).node().getBBox().height;
-
-        const innerRadius = this.arch.innerRadius()(e);
-        const outerRadius = this.arch.outerRadius()(e);
-        const arcWidth = outerRadius - innerRadius;
-        const angle = this.arch.endAngle()(e)
-            - this.arch.startAngle()(e);
-        const arcLength = angle * innerRadius;
-        return (arcWidth <= textLength || arcLength <= textWidth);
-    }
-
-    renderText = (node, e, currentNode) => {
-        if (e.x0 >= node.x0 && e.x1 <= node.x1) {
-            const text = select(currentNode.parentNode)
-                .select('text');
-
-            text.transition()
-                .duration(transitionDuration)
-                .attr('opacity', 1)
-                .attr('transform', this.calculateLabelTransformation)
-                .filter((e1, i, textNodes) => (
-                    this.filterText(e1, textNodes[i])
-                ))
-                .attr('opacity', 0);
-        }
-    }
-
-    renderChart = () => {
+    drawChart = () => {
         const {
             boundingClientRect,
             data,
             childrenSelector,
             labelSelector,
             valueSelector,
-            showLabels,
-            showTooltip,
         } = this.props;
 
         if (!boundingClientRect.width || isObjectEmpty(data)) {
@@ -290,6 +275,7 @@ class SunBurst extends PureComponent {
         }
 
         this.init();
+        const uniqueId = randomString();
 
         const {
             width,
@@ -298,11 +284,10 @@ class SunBurst extends PureComponent {
 
         const svg = select(this.svg);
 
-        this.clearNodes(svg);
-        // this.tooltip = this.createTooltip(container);
-
-        const group = svg.attr('width', width)
+        const group = svg
+            .attr('width', width)
             .attr('height', height)
+            .on('click', this.handleClick)
             .append('g')
             .attr('transform', this.svgGroupTransformation);
 
@@ -312,43 +297,60 @@ class SunBurst extends PureComponent {
         const slicesData = partitions.descendants();
 
         const slices = group
-            .selectAll('g')
-            .data(slicesData)
-            .enter()
-            .append('g');
+            .selectAll('g.slice')
+            .data(slicesData);
 
-        const arcs = slices
+        slices.exit().remove();
+
+        const newSlice = slices
+            .enter()
+            .append('g')
+            .attr('class', 'slice')
+            .on('click', (d) => {
+                event.stopPropagation();
+                this.handleClick(d);
+            });
+
+        newSlice
             .append('path')
-            .attr('class', 'arcs')
+            .attr('class', 'main-arc')
+            .style('fill', d => this.getColor(d))
             .attr('d', this.arch)
+            .style('cursor', 'pointer')
             .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
-            .style('fill', d => this.color(labelSelector(d.children ? d.data : d.parent.data)))
-            .on('click', d => this.handleSliceClick(slices, d));
+            .on('mouseover', this.handleArcMouseOver)
+            .on('mousemove', this.handleArcMouseMove)
+            .on('mouseout', this.handleArcMouseOut);
 
-        if (showTooltip) {
-            arcs.on('mouseover', this.handleArcMouseOver)
-                .on('mousemove', this.handleArcMouseMove)
-                .on('mouseout', this.handleArcMouseOut);
-        }
+        newSlice
+            .append('path')
+            .attr('class', 'hidden-arc')
+            .style('fill', 'none')
+            .attr('id', (_, i) => `${uniqueId}-hiddenArc${i}`)
+            .attr('d', this.middleArcLine);
 
-        if (showLabels) {
-            const labels = slices
-                .append('text')
-                .attr('class', 'labels')
-                .attr('transform', this.calculateLabelTransformation)
-                .attr('pointer-events', 'none')
-                .attr('text-anchor', 'middle')
-                .text(d => labelSelector(d.data))
-                .style('fill', (d) => {
-                    const colorBg = this.color(labelSelector(d.children ? d.data : d.parent.data));
-                    return getColorOnBgColor(colorBg);
-                });
+        const text = newSlice
+            .append('text')
+            .attr('display', d => (this.filterText(d) ? null : 'none'))
+            .style('pointer-events', 'none');
 
-            labels.filter((e, i, textNodes) => (
-                this.filterText(e, textNodes[i])
-            )).attr('opacity', 0);
-        }
+        text
+            .append('textPath')
+            .attr('startOffset', '50%')
+            .attr('text-anchor', 'middle')
+            .attr('xlink:href', (_, i) => `#${uniqueId}-hiddenArc${i}`)
+            .text(d => labelSelector(d.data))
+            .style('fill', (d) => {
+                const colorBg = this.getColor(d);
+                return getColorOnBgColor(colorBg);
+            });
+    }
+
+    redrawChart = () => {
+        const context = select(this.svg);
+        context.selectAll('*').remove();
+        this.drawChart();
     }
 
     render() {
