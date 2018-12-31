@@ -1,0 +1,23 @@
+@import '../../../stylesheets/base';
+
+.cluster-force-layout {
+    width: 100%;
+    height: 100%;
+}
+
+.cluster-tooltip {
+    @include shadow-medium;
+    @include background-color($color-foreground);
+
+    position: fixed;
+    z-index: 10;
+    padding: $spacing-small $spacing-medium-alt;
+
+    .id {
+        display: block;
+    }
+
+    .score {
+        display: block;
+    }
+}
