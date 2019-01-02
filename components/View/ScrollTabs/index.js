@@ -1,30 +1,64 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from '../List';
 import Button from '../../Action/Button';
+import HashManager from '../../General/HashManager';
+import List from '../List';
 import iconNames from '../../../constants/iconNames';
+import { addClassName } from '../../../utils/common';
+
 import styles from './styles.scss';
 
 const propTypes = {
+    active: PropTypes.string,
+    children: PropTypes.node,
     className: PropTypes.string,
+    itemClassName: PropTypes.string,
+    defaultHash: PropTypes.string,
+    onClick: PropTypes.func,
+    replaceHistory: PropTypes.bool,
     tabs: PropTypes.shape({
         dummy: PropTypes.string,
     }),
-    onClick: PropTypes.func,
-    active: PropTypes.string,
+    useHash: PropTypes.bool,
+    modifier: PropTypes.func,
 };
 
 const defaultProps = {
     active: undefined,
+    children: null,
     className: '',
-    tabs: [],
+    itemClassName: '',
+    defaultHash: undefined,
     onClick: () => {},
+    replaceHistory: false,
+    tabs: {},
+    useHash: false,
+    modifier: undefined,
 };
 
-export default class ScrollTabs extends React.Component {
+
+export default class FixedTabs extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            hash: undefined,
+        };
+        this.tabsContainerRef = React.createRef();
+        this.mainContainerRef = React.createRef();
+    }
+
+    componentDidMount() {
+        const { current: tabsContainer } = this.tabsContainerRef;
+        const { current: mainContainer } = this.mainContainerRef;
+
+        if (tabsContainer.scrollWidth > tabsContainer.clientWidth) {
+            addClassName(mainContainer, styles.scroll);
+        }
+    }
 
     getClassName = () => {
         const { className } = this.props;
@@ -32,15 +66,19 @@ export default class ScrollTabs extends React.Component {
         const classNames = [
             className,
             'scroll-tabs',
+            styles.scrollTabs,
         ];
 
         return classNames.join(' ');
     }
 
     getTabClassName = (isActive) => {
+        const { itemClassName } = this.props;
+
         const classNames = [
+            itemClassName,
             styles.tab,
-            'scroll-tab',
+            'fixed-tab',
         ];
 
         if (isActive) {
@@ -51,69 +89,129 @@ export default class ScrollTabs extends React.Component {
         return classNames.join(' ');
     }
 
-    handleTabClick = (key) => {
-        const { onClick } = this.props;
+    handleHashChange = (hash) => {
+        this.setState({ hash });
+    }
+
+    handleTabClick = (key, e) => {
+        const {
+            onClick,
+            useHash,
+            replaceHistory,
+        } = this.props;
+
+        if (useHash && replaceHistory) {
+            window.location.replace(`#/${key}`);
+            e.preventDefault();
+        }
+
         onClick(key);
     }
 
-    renderTab = (key, data) => {
+    handleLeftButtonClick = () => {
+        const { current: tabsContainer } = this.tabsContainerRef;
+
+        tabsContainer.scrollLeft -= 48;
+    }
+
+    handleRightButtonClick = () => {
+        const { current: tabsContainer } = this.tabsContainerRef;
+
+        tabsContainer.scrollLeft += 48;
+    }
+
+    renderTab = (_, data) => {
         const {
             active,
             tabs,
+            useHash,
+            modifier,
         } = this.props;
-        const isActive = data === active;
+
+        if (!tabs[data]) {
+            return null;
+        }
+
+        const onClick = (e) => { this.handleTabClick(data, e); };
+        const content = modifier ? modifier(data) : tabs[data];
+
+        if (!useHash) {
+            const isActive = data === active;
+            const className = this.getTabClassName(isActive);
+
+            return (
+                <button
+                    onClick={onClick}
+                    className={className}
+                    key={data}
+                    type="button"
+                >
+                    { content }
+                </button>
+            );
+        }
+
+        const { hash } = this.state;
+
+        const isActive = hash === data;
         const className = this.getTabClassName(isActive);
-        const onClick = () => { this.handleTabClick(data); };
 
         return (
-            <button
+            <a
+                onClick={onClick}
+                href={`#/${data}`}
                 className={className}
                 key={data}
-                onClick={onClick}
-                type="button"
             >
-                { tabs[data] }
-            </button>
+                { content }
+            </a>
         );
     }
 
     render() {
         const {
             tabs,
+            useHash,
+            defaultHash,
         } = this.props;
 
+        // FIXME: generate tabList when tabs change
         const tabList = Object.keys(tabs);
-        const leftButtonClassNames = [
-            styles.scrollButton,
-            styles.scrollButtonLeft,
-        ];
-        const rightButtonClassNames = [
-            styles.scrollButton,
-            styles.scrollButtonRight,
-        ];
-
+        const className = this.getClassName();
         return (
-            <div className={styles.scrollTabs}>
+            <div
+                ref={this.mainContainerRef}
+                className={className}
+            >
+                <HashManager
+                    tabs={tabs}
+                    useHash={useHash}
+                    defaultHash={defaultHash}
+                    onHashChange={this.handleHashChange}
+                />
                 <Button
-                    className={leftButtonClassNames.join(' ')}
-                    transparent
-                    smallVerticalPadding
-                    smallHorizontalPadding
-                    onClick={this.handleScrollLeftButtonClick}
                     iconName={iconNames.chevronLeft}
-                />
-                <List
-                    data={tabList}
-                    modifier={this.renderTab}
-                />
-                <div className={styles.void} />
-                <Button
-                    className={rightButtonClassNames.join(' ')}
                     transparent
-                    smallVerticalPadding
-                    smallHorizontalPadding
-                    onClick={this.handleScrollLeftButtonClick}
+                    className={styles.leftButton}
+                    onClick={this.handleLeftButtonClick}
+                />
+                <div
+                    ref={this.tabsContainerRef}
+                    className={styles.tabsContainer}
+                >
+                    <List
+                        data={tabList}
+                        modifier={this.renderTab}
+                    />
+                    <div className={styles.blank}>
+                        { this.props.children }
+                    </div>
+                </div>
+                <Button
                     iconName={iconNames.chevronRight}
+                    transparent
+                    className={styles.rightButton}
+                    onClick={this.handleRightButtonClick}
                 />
             </div>
         );
