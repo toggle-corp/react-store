@@ -3,6 +3,7 @@ import React from 'react';
 
 import styles from './styles.scss';
 
+// TODO: move to utils
 // eslint-disable-next-line no-underscore-dangle
 const _cs = (...props) => props.filter(c => !!c).join(' ');
 
@@ -45,11 +46,15 @@ export default class Page extends React.PureComponent {
             sidebarClassName,
             footer,
             footerClassName,
+            containerRef,
         } = this.props;
 
         if (sidebar) {
             return (
-                <div className={_cs(className, styles.pageWithSidebar)}>
+                <div
+                    className={_cs(className, styles.pageWithSidebar)}
+                    ref={containerRef}
+                >
                     <aside className={_cs(sidebarClassName, styles.sidebar)}>
                         { sidebar }
                     </aside>
@@ -75,7 +80,10 @@ export default class Page extends React.PureComponent {
         }
 
         return (
-            <div className={_cs(className, styles.page)}>
+            <div
+                className={_cs(className, styles.page)}
+                ref={containerRef}
+            >
                 { header && (
                     <header className={_cs(headerClassName, styles.header)}>
                         { header }
