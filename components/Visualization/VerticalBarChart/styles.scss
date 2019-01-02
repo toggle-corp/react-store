@@ -1,0 +1,45 @@
+@import '../../../stylesheets/base';
+
+.bar-chart {
+    .bar{
+        cursor: pointer;
+    }
+
+    .xaxis {
+        path {
+            stroke: $color-axis-path;
+        }
+
+        line {
+            visibility: hidden;
+        }
+    }
+
+    .yaxis {
+        path {
+            stroke: $color-axis-path;
+        }
+
+        line {
+            visibility: hidden;
+        }
+    }
+}
+
+.tooltip {
+    @include shadow-medium;
+    @include background-color($color-foreground);
+    position: fixed;
+    z-index: 10;
+    padding: $spacing-small $spacing-medium-alt;
+    animation: fade-in .2s ease-in;
+    pointer-events: none;
+
+    .label {
+        display: block;
+    }
+
+    .value {
+        display: block;
+    }
+}
