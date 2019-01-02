@@ -2,6 +2,7 @@
 
 .virtualized-list-view {
     padding: 0;
+    overflow: auto;
 
     .virtual-div {
         background: linear-gradient(

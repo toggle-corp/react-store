@@ -1,0 +1,9 @@
+@import '../../../../stylesheets/base';
+
+.row-wrapper {
+    display: inline-block;
+
+    .row {
+        display: flex;
+    }
+}

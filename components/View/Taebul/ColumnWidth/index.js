@@ -21,11 +21,17 @@ class ResizableHeader extends React.PureComponent {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
             _headerRenderer: Header,
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
+            className: classNameFromProps,
             ...otherProps
         } = this.props;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.newHeader}
+        `;
+
         return (
-            <div className={styles.newHeader}>
+            <div className={className}>
                 <div className={styles.originalHeaderContainer}>
                     <Header {...otherProps} />
                 </div>

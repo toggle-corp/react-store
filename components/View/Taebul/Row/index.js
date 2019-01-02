@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ListView from '../../List/ListView';
 
 import Cell from '../Cell';
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -55,17 +56,24 @@ export default class Row extends React.PureComponent {
         const {
             columns,
             columnKeySelector,
-            className,
+            className: classNameFromProps,
         } = this.props;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.rowWrapper}
+        `;
+
         return (
-            <ListView
-                className={className}
-                data={columns}
-                keySelector={columnKeySelector}
-                renderer={Cell}
-                rendererParams={this.cellRendererParams}
-            />
+            <div className={className}>
+                <ListView
+                    className={styles.row}
+                    data={columns}
+                    keySelector={columnKeySelector}
+                    renderer={Cell}
+                    rendererParams={this.cellRendererParams}
+                />
+            </div>
         );
     }
 }
