@@ -1,0 +1,22 @@
+@import '../../../stylesheets/base';
+
+.header {
+    padding: $spacing-medium;
+
+    .top {
+        display: flex;
+        align-items: center;
+
+        .heading {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .actions {
+            flex-shrink: 0;
+            padding-left: $spacing-medium;
+        }
+    }
+}
