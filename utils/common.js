@@ -918,3 +918,6 @@ export const removeClassName = (el, className) => {
         el.setAttribute('class', newClassNameList.join(' '));
     }
 };
+
+// eslint-disable-next-line no-underscore-dangle
+export const _cs = (...props) => props.filter(c => !!c).join(' ');

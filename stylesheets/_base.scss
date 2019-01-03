@@ -7,3 +7,7 @@
 $font-family-sans-serif: sans-serif !default;
 $font-family-monospace: monospace !default;
 $font-family-icons: 'Ionicons' !default;
+
+%main-content {
+    // may this not override the main content from other base
+}

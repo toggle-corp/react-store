@@ -34,6 +34,7 @@ import {
     reverseRoute,
     doesObjectHaveNoData,
     isParamRequired,
+    _cs,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -412,4 +413,19 @@ test('decode date from string and timestamp', () => {
     expect(decodeDate(dateStr)).toEqual(date);
     expect(decodeDate(dateIso)).toEqual(date);
     expect(decodeDate(dateTimestamp)).toEqual(date);
+});
+
+test('join classname using _cs', () => {
+    const isBad = false;
+    const isAwesome = true;
+
+    expect(_cs('class', 'name', '', 'joined')).toEqual('class name joined');
+    expect(_cs(
+        isBad && 'bad',
+        isAwesome && 'awesome',
+        '',
+        undefined,
+        'welldone',
+        null,
+    )).toEqual('awesome welldone');
 });
