@@ -2,10 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './styles.scss';
-
-// TODO: move to utils
-// eslint-disable-next-line no-underscore-dangle
-const _cs = (...props) => props.filter(c => !!c).join(' ');
+import { _cs } from '../../../utils/common';
 
 const propTypes = {
     className: PropTypes.string,
