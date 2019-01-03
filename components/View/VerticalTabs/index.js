@@ -17,6 +17,7 @@ const propTypes = {
     replaceHistory: PropTypes.bool,
     useHash: PropTypes.bool,
     defaultHash: PropTypes.string,
+    inverted: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -28,6 +29,7 @@ const defaultProps = {
     useHash: false,
     replaceHistory: false,
     defaultHash: undefined,
+    inverted: false,
 };
 
 export default class VerticalTabs extends React.Component {
@@ -42,13 +44,21 @@ export default class VerticalTabs extends React.Component {
     }
 
     getClassName = () => {
-        const { className } = this.props;
+        const {
+            className,
+            inverted,
+        } = this.props;
 
         const classNames = [
             className,
             'vertical-tabs',
             styles.verticalTabs,
         ];
+
+        if (inverted) {
+            classNames.push('inverted');
+            classNames.push(styles.inverted);
+        }
 
         return classNames.join(' ');
     }
