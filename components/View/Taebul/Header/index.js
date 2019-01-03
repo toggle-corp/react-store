@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import styles from './styles.scss';
+
 const propTypes = {
     className: PropTypes.string,
     renderer: PropTypes.func,
@@ -19,7 +21,7 @@ export default class Header extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             data,
             columnKey,
             column,
@@ -30,6 +32,10 @@ export default class Header extends React.PureComponent {
 
         const params = rendererParams ? rendererParams({ columnKey, column, settings, data }) : {};
         const { headerStyle } = column;
+        const className = `
+            ${classNameFromProps}
+            ${styles.header}
+        `;
 
         return (
             <div

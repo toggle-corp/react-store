@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '../List/ListView';
+import VirtualizedListView from '../VirtualizedListView';
 
 import Header from './Header';
 import Row from './Row';
@@ -30,6 +31,25 @@ export default class Taebul extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static columnKeySelector = column => column.key;
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll, true);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll, true);
+    }
+
+    handleScroll = (e) => {
+        const body = e.target;
+        if (body.className && body.className.includes(styles.body)) {
+            const head = document.getElementsByClassName(styles.head)[0];
+
+            if (head) {
+                head.scrollLeft = body.scrollLeft;
+            }
+        }
+    }
 
     headerRendererParams = (columnKey, column) => {
         const { data, settings } = this.props;
@@ -80,7 +100,7 @@ export default class Taebul extends React.PureComponent {
                     renderer={Header}
                     rendererParams={this.headerRendererParams}
                 />
-                <ListView
+                <VirtualizedListView
                     className={styles.body}
                     data={data}
                     keySelector={keySelector}

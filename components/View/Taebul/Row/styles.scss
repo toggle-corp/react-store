@@ -1,0 +1,10 @@
+@import '../../../../stylesheets/base';
+
+.row-wrapper {
+    display: inline-block;
+    min-width: 100%;
+
+    .row {
+        display: flex;
+    }
+}

@@ -10,9 +10,9 @@
     .separator {
         align-self: center;
         flex-shrink: 0;
-        border-right: $width-separator-medium solid $color-separator-alt;
+        border-right: $width-separator-thin solid $color-separator-alt;
         cursor: col-resize;
-        padding: 0 $spacing-small;
+        padding: 0 $spacing-extra-small;
         height: $font-size-medium;
     }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import styles from './styles.scss';
+
 const propTypes = {
     className: PropTypes.string,
 };
@@ -15,7 +17,7 @@ export default class Cell extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             settings,
             datumKey,
             datum,
@@ -27,6 +29,10 @@ export default class Cell extends React.PureComponent {
 
         const params = rendererParams({ datum, column, datumKey, columnKey, settings });
         const { cellStyle } = column;
+        const className = `
+            ${classNameFromProps}
+            ${styles.cell}
+        `;
 
         return (
             <div

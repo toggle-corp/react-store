@@ -1,23 +1,25 @@
 @import '../../../stylesheets/base';
 
 .taebul {
+    display: flex;
     position: relative;
+    flex-direction: column;
     overflow: auto;
 
     .head {
         display: flex;
-        position: sticky;
-        top: 0;
+        flex-shrink: 0;
         border-bottom: $width-separator-medium solid $color-separator;
         background-color: $color-foreground;
+        overflow: hidden;
     }
 
     .body {
+        flex-grow: 1;
         padding: 0;
-        height: 100%;
+        overflow: auto;
 
         .row {
-            display: flex;
             border-bottom: $width-separator-thin solid $color-separator;
         }
     }
