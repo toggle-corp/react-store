@@ -1,6 +1,7 @@
 @import '../../../../stylesheets/base';
 
 .body {
+    position: relative;
     flex-grow: 1;
     padding: $spacing-medium-alt;
     overflow-y: auto;

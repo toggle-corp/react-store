@@ -19,6 +19,7 @@ const propTypes = {
     }),
     useHash: PropTypes.bool,
     modifier: PropTypes.func,
+    inverted: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -32,6 +33,7 @@ const defaultProps = {
     tabs: {},
     useHash: false,
     modifier: undefined,
+    inverted: false,
 };
 
 
@@ -47,13 +49,21 @@ export default class FixedTabs extends React.Component {
     }
 
     getClassName = () => {
-        const { className } = this.props;
+        const {
+            className,
+            inverted,
+        } = this.props;
 
         const classNames = [
             className,
             'fixed-tabs',
             styles.fixedTabs,
         ];
+
+        if (inverted) {
+            classNames.push('inverted');
+            classNames.push(styles.inverted);
+        }
 
         return classNames.join(' ');
     }

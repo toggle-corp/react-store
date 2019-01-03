@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     children: PropTypes.oneOfType([
         PropTypes.element,
         PropTypes.array,
@@ -11,6 +12,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 export default class Wizard extends React.Component {
@@ -45,6 +47,7 @@ export default class Wizard extends React.Component {
     render() {
         const {
             children,
+            className: classNameFromProps,
             ...otherProps
         } = this.props;
         const {
@@ -86,7 +89,7 @@ export default class Wizard extends React.Component {
 
         return (
             <div
-                className={className}
+                className={`${className} ${classNameFromProps}`}
                 key={visiblePage}
             >
                 {React.cloneElement(child, props)}
