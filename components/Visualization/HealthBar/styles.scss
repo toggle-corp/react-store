@@ -1,0 +1,25 @@
+@import '../../../stylesheets/base';
+
+.health-bar {
+    display: flex;
+    align-items: center;
+
+    .title {
+        flex-shrink: 0;
+        padding-right: $spacing-medium;
+        width: 64px;
+        text-transform: capitalize;
+        color: $color-text-label;
+        font-weight: $font-weight-bold;
+
+        &:after {
+            content: ':',
+        }
+    }
+
+    .segments {
+        display: flex;
+        flex-grow: 1;
+        height: 100%;
+    }
+}
