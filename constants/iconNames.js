@@ -54,6 +54,7 @@ const iconNames = {
     expand: 'ion-arrow-expand',
     download: 'fa fa-download',
     refresh: 'ion-refresh',
+    swap: 'ion-arrow-swap',
 
     plusOutline: 'ion-ios-plus-outline',
     minusOutline: 'ion-ios-minus-outline',

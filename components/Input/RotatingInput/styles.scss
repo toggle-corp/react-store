@@ -1,13 +1,6 @@
 @import '../../../stylesheets/base';
 
-.segment-input {
-    .segment-container {
-        display: inline-flex;
-        flex-wrap: wrap;
-        margin: 0;
-        border: $width-separator-thin solid $color-accent;
-    }
-
+.rotating-input {
     .label {
         padding-bottom: $spacing-extra-small;
     }
@@ -17,7 +10,7 @@
             color: $color-danger;
         }
 
-        .segment-container {
+        .button {
             border: $width-separator-thin solid $color-danger;
         }
     }
@@ -35,10 +28,6 @@
     &.disabled {
         .label {
             color: $color-text-disabled;
-        }
-
-        .segment-container {
-            border: $width-separator-thin solid $color-text-disabled;
         }
     }
 }
