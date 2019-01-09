@@ -1,6 +1,5 @@
 import React, {
     PureComponent,
-    Fragment,
 } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
@@ -43,7 +42,9 @@ const propTypes = {
     bandPadding: PropTypes.number,
     colorSelector: PropTypes.func,
     valueLabelFormat: PropTypes.func,
-    showGridLines: PropTypes.bool,
+    addShadow: PropTypes.bool,
+    showAxis: PropTypes.bool,
+    showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
     tooltipContent: PropTypes.func,
     tiltLabels: PropTypes.bool,
@@ -65,18 +66,20 @@ const defaultProps = {
     valueLabelFormat: undefined,
     bandPadding: 0.2,
     colorSelector: undefined,
-    showGridLines: false,
+    addShadow: true,
+    showAxis: true,
     showTooltip: false,
     tooltipContent: undefined,
     className: '',
     tiltLabels: false,
     scaleType: 'linear',
+    showLabels: true,
     exponent: 1,
     margins: {
-        top: 24,
-        right: 24,
-        bottom: 24,
-        left: 72,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
     },
     colorScheme: schemeSet3,
 };
@@ -168,34 +171,6 @@ class HorizontalBar extends PureComponent {
             .attr('in', 'SourceGraphic');
     }
 
-    addGrid = (group) => {
-        const { valueLabelFormat } = this.props;
-
-        const xAxis = axisBottom(this.x)
-            .tickSizeInner(-this.height)
-            .tickSizeOuter(0)
-            .tickPadding(10)
-            .tickFormat(valueLabelFormat);
-
-        const yAxis = axisLeft(this.y)
-            .tickSizeInner(-this.width)
-            .tickSizeOuter(0)
-            .tickPadding(10);
-
-        group
-            .append('g')
-            .attr('id', 'xaxis')
-            .attr('class', styles.grid)
-            .attr('transform', `translate(0, ${this.height})`)
-            .call(xAxis);
-
-        group
-            .append('g')
-            .attr('id', 'yaxis')
-            .attr('class', styles.grid)
-            .call(yAxis);
-    }
-
     handleMouseOver = (d, node) => {
         const {
             showTooltip,
@@ -267,7 +242,9 @@ class HorizontalBar extends PureComponent {
             valueLabelFormat,
             colorScheme,
             labelSelector,
-            showGridLines,
+            addShadow,
+            showAxis,
+            showLabels,
             margins,
             tiltLabels,
         } = this.props;
@@ -276,7 +253,7 @@ class HorizontalBar extends PureComponent {
             return;
         }
 
-        const { width, height } = boundingClientRect;
+        const { width: svgWidth, height: svgHeight } = this.svg.getBoundingClientRect();
 
         const {
             top = 0,
@@ -285,70 +262,84 @@ class HorizontalBar extends PureComponent {
             left = 0,
         } = margins;
 
-        this.width = width - left - right;
-        this.height = height - top - bottom;
+        const width = svgWidth - left - right;
+        let height = svgHeight - top - bottom;
 
-        if (this.width < 0) this.width = 0;
-        if (this.height < 0) this.height = 0;
+        if (width < 0 || height < 0) {
+            return;
+        }
 
-        this.group = select(this.svg)
+        let group = select(this.svg)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
         const maxValue = max(data, d => valueSelector(d));
 
+        let x = scaleLinear()
+            .range([0, width])
+            .domain([0, maxValue]);
+
         if (scaleType === 'log') {
-            this.x = scaleLog()
-                .range([0, this.width])
+            x = scaleLog()
+                .range([0, width])
                 .clamp(true)
                 .domain([0.1, maxValue]);
-        } else if (scaleType === 'linear') {
-            this.x = scaleLinear()
-                .range([0, this.width])
-                .domain([0, maxValue]);
         } else if (scaleType === 'exponent') {
-            this.x = scalePow()
+            x = scalePow()
                 .exponent([exponent])
-                .range([0, this.width])
+                .range([0, width])
                 .clamp(true)
                 .domain([0, maxValue]);
         }
 
-        this.y = scaleBand()
-            .rangeRound([this.height, 0])
+        let y = scaleBand()
+            .rangeRound([height, 0])
             .domain(data.map(d => labelSelector(d)))
             .padding(bandPadding);
 
+        if (y.bandwidth() < 1) {
+            height = data.length * 2;
+
+            group = select(this.svg)
+                .attr('height', height)
+                .append('g');
+
+            y = scaleBand()
+                .rangeRound([height, 0])
+                .domain(data.map(d => labelSelector(d)))
+                .padding(0);
+        }
+
         this.colors = scaleOrdinal().range(colorScheme);
 
-        this.addShadow(this.group);
+        if (addShadow) {
+            this.addShadow(group);
+        }
 
-        if (showGridLines) {
-            this.addGrid(this.group);
-        } else {
-            this.group
+        if (showAxis) {
+            group
                 .append('g')
                 .attr('id', 'xaxis')
                 .attr('class', `x-axis ${styles.xAxis}`)
-                .attr('transform', `translate(0, ${this.height})`)
-                .call(axisBottom(this.x));
+                .attr('transform', `translate(0, ${height})`)
+                .call(axisBottom(x));
 
-            this.group
+            group
                 .append('g')
                 .attr('id', 'yaxis')
                 .attr('class', `y-axis ${styles.yAxis}`)
-                .call(axisLeft(this.y));
+                .call(axisLeft(y));
         }
 
         if (tiltLabels) {
-            this.group
+            group
                 .select('#xaxis')
                 .selectAll('text')
                 .attr('transform', 'rotate(-45)')
                 .style('text-anchor', 'end');
         }
 
-        const groups = this.group
+        const groups = group
             .selectAll('.bar')
             .data(data)
             .enter()
@@ -358,8 +349,8 @@ class HorizontalBar extends PureComponent {
         const bars = groups
             .append('rect')
             .attr('x', 0)
-            .attr('y', d => this.y(labelSelector(d)))
-            .attr('height', this.y.bandwidth())
+            .attr('y', d => y(labelSelector(d)))
+            .attr('height', y.bandwidth())
             .style('fill', d => this.getColor(d))
             .style('cursor', 'pointer')
             .on('mouseover', (d, i, nodes) => this.handleMouseOver(d, nodes[i]))
@@ -369,41 +360,44 @@ class HorizontalBar extends PureComponent {
         bars
             .transition()
             .duration(750)
-            .attr('width', d => this.x(valueSelector(d)));
+            .attr('width', d => x(valueSelector(d)));
 
-        this.group
+        group
             .selectAll('.x-axis')
             .selectAll('.tick line')
             .style('visibility', 'hidden');
 
-        this.group
+        group
             .selectAll('.y-axis')
             .selectAll('.tick line')
             .style('visibility', 'hidden');
 
-        groups
-            .append('text')
-            .attr('x', d => this.x(valueSelector(d)))
-            .attr('y', d => this.y(labelSelector(d)) + (this.y.bandwidth() / 2))
-            .attr('dy', '.35em')
-            .attr('text-anchor', 'end')
-            .style('fill', 'none')
-            .transition()
-            .delay(750)
-            .text(d => (valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d)))
-            .on('end', (d, i, nodes) => {
-                const barWidth = bars.nodes()[i].width.baseVal.value || 0;
-                const textWidth = nodes[i].getComputedTextLength() || 0;
-                const longText = textWidth > barWidth;
-                const fillColor = longText ? '#000' : getColorOnBgColor(this.getColor(d));
-                const newX = longText ? (barWidth + textWidth) : (barWidth);
-                select(nodes[i])
-                    .attr('x', newX)
-                    .style('fill', fillColor);
-            });
+        if (showLabels) {
+            groups
+                .append('text')
+                .attr('x', d => x(valueSelector(d)))
+                .attr('y', d => y(labelSelector(d)) + (y.bandwidth() / 2))
+                .attr('dy', '.35em')
+                .attr('text-anchor', 'end')
+                .style('fill', 'none')
+                .transition()
+                .delay(750)
+                .text(d => (
+                    valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d)))
+                .on('end', (d, i, nodes) => {
+                    const barWidth = bars.nodes()[i].width.baseVal.value || 0;
+                    const textWidth = nodes[i].getComputedTextLength() || 0;
+                    const longText = textWidth > barWidth;
+                    const fillColor = longText ? '#000' : getColorOnBgColor(this.getColor(d));
+                    const newX = longText ? (barWidth + textWidth) : (barWidth);
+                    select(nodes[i])
+                        .attr('x', newX)
+                        .style('fill', fillColor);
+                });
+        }
 
         if (scaleType === 'log') {
-            this.group
+            group
                 .select('#xaxis')
                 .selectAll('.tick text')
                 .text(null)
@@ -416,21 +410,22 @@ class HorizontalBar extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
-        const svgClassName = [
+        const { className: classNameFromProps } = this.props;
+        const className = [
             'horizontal-bar',
             styles.horizontalBar,
-            className,
+            classNameFromProps,
         ].join(' ');
 
         const tooltipClassName = [
             'horizontal-bar-tooltip',
             styles.horizontalBarTooltip,
         ].join(' ');
+
         return (
-            <Fragment>
+            <div className={className}>
                 <svg
-                    className={svgClassName}
+                    className={styles.chart}
                     ref={(elem) => { this.svg = elem; }}
                 />
                 <Float>
@@ -439,7 +434,7 @@ class HorizontalBar extends PureComponent {
                         className={tooltipClassName}
                     />
                 </Float>
-            </Fragment>
+            </div>
         );
     }
 }

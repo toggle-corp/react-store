@@ -1,34 +1,40 @@
 @import '../../../stylesheets/base';
 
 .horizontal-bar {
+    overflow: auto;
 
-    .grid line {
-        stroke: $color-grid-path;
-        shape-rendering: crispEdges;
-    }
+    .chart {
+        min-width: 95%;
+        min-height: 95%;
 
-    .grid {
-        path {
-            stroke: $color-axis-path;
-        }
-    }
-
-    .x-axis {
-        path {
-            stroke: $color-axis-path;
+        .grid line {
+            stroke: $color-grid-path;
+            shape-rendering: crispEdges;
         }
 
-        .tick line {
-            visibility: hidden;
+        .grid {
+            path {
+                stroke: $color-axis-path;
+            }
         }
-    }
 
-    .y-axis {
-        path {
-            stroke: $color-axis-path;
+        .x-axis {
+            path {
+                stroke: $color-axis-path;
+            }
 
             .tick line {
                 visibility: hidden;
+            }
+        }
+
+        .y-axis {
+            path {
+                stroke: $color-axis-path;
+
+                .tick line {
+                    visibility: hidden;
+                }
             }
         }
     }
