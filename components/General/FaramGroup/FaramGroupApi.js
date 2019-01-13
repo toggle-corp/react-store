@@ -1,5 +1,6 @@
 import FormElementApi from '../Form/FormElementApi';
 
+import { isTruthy } from '../../../utils/common';
 import { analyzeErrors } from '../Faram/validator';
 
 const emptyObject = {};
@@ -18,7 +19,7 @@ export default class FaramGroupApi extends FormElementApi {
             ...super.getHandler(),
             input: {
                 getPropsFromApi: ({ faramElementName, faramInfo, ...otherProps }) => ({
-                    apiProps: faramElementName
+                    apiProps: isTruthy(faramElementName)
                         ? { faramElementName, faramInfo }
                         : undefined,
                     otherProps,
@@ -34,7 +35,7 @@ export default class FaramGroupApi extends FormElementApi {
             },
             output: {
                 getPropsFromApi: ({ faramElementName, ...otherProps }) => ({
-                    apiProps: faramElementName
+                    apiProps: isTruthy(faramElementName)
                         ? { faramElementName }
                         : undefined,
                     otherProps,
@@ -45,7 +46,7 @@ export default class FaramGroupApi extends FormElementApi {
             },
             errorMessage: {
                 getPropsFromApi: ({ faramElement, ...otherProps }) => ({
-                    apiProps: faramElement
+                    apiProps: isTruthy(faramElement)
                         ? {}
                         : undefined,
                     otherProps,
@@ -56,7 +57,7 @@ export default class FaramGroupApi extends FormElementApi {
             },
             errorIndicator: {
                 getPropsFromApi: ({ faramElementName, ...otherProps }) => ({
-                    apiProps: faramElementName
+                    apiProps: isTruthy(faramElementName)
                         ? { faramElementName }
                         : undefined,
                     otherProps,
@@ -72,7 +73,7 @@ export default class FaramGroupApi extends FormElementApi {
             },
             action: {
                 getPropsFromApi: ({ faramElementName, faramAction, ...otherProps }) => ({
-                    apiProps: faramElementName !== undefined && faramAction
+                    apiProps: isTruthy(faramElementName) && faramAction
                         ? { faramElementName, faramAction }
                         : undefined,
                     otherProps,

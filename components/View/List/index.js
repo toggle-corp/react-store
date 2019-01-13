@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FaramListElement } from '../../General/FaramElements';
-import { groupList } from '../../../utils/common';
+import {
+    groupList,
+    isFalsy,
+} from '../../../utils/common';
 import ListItem from './ListItem';
 import GroupItem from './GroupItem';
 
@@ -65,7 +68,8 @@ export class NormalList extends React.Component {
             rendererParams,
         } = this.props;
 
-        const key = (keySelector && keySelector(datum, i)) || datum;
+        const keyFromKeySelector = keySelector && keySelector(datum, i);
+        const key = keyFromKeySelector === undefined ? datum : keyFromKeySelector;
 
         if (modifier) {
             return modifier(key, datum, i, data);

@@ -54,6 +54,7 @@ const propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
+        PropTypes.bool,
     ]),
 
     name: PropTypes.string,
@@ -114,22 +115,27 @@ class SegmentInput extends React.PureComponent {
         const {
             onChange,
             disabled,
+            options,
+            keySelector,
             readOnly,
         } = this.props;
         const { value } = changeEvent.target;
 
+        const finalValue = options
+            .map(val => keySelector(val))
+            .find(val => String(val) === value);
+
         if (onChange && !disabled && !readOnly) {
-            onChange(value);
+            onChange(finalValue);
         }
     }
 
     rendererParams = (key, data) => ({
         label: this.props.labelSelector(data),
-        id: this.props.keySelector(data),
-        selected: this.props.value,
+        id: String(this.props.keySelector(data)),
         onChange: this.handleInputChange,
         name: this.props.name,
-        checked: this.props.value === key,
+        checked: String(this.props.value) === String(key),
         error: this.props.error,
         readOnly: this.props.readOnly,
         disabled: this.props.disabled,
