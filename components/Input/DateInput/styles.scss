@@ -22,7 +22,8 @@ $width-date-input: 180px;
             flex-grow: 1;
             $width-input-spinner: 16px;
 
-            .day-unit, .month-unit {
+            .day-unit,
+            .month-unit {
                 @extend %input-base;
                 width: calc(2ch + #{$width-input-spinner});
                 font-family: $font-family-monospace;
