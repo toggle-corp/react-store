@@ -9,6 +9,7 @@ $width-select-all-button: 14px;
 .multi-select-input {
     .input-and-actions {
         position: relative;
+        border-bottom: $width-separator-medium solid $color-separator-alt;
 
         .input {
             @extend %input-base;
@@ -48,10 +49,6 @@ $width-select-all-button: 14px;
     }
 
     &:not(.disabled) {
-        .input-and-actions {
-            @extend %input-border;
-        }
-
         &.filled {
             .input-and-actions {
                 .input::placeholder {
@@ -110,7 +107,7 @@ $width-select-all-button: 14px;
             }
 
             .input-and-actions {
-                border-bottom: $width-separator-medium solid $color-accent;
+                border-bottom-color: $color-accent;
             }
         }
 
@@ -120,7 +117,7 @@ $width-select-all-button: 14px;
             }
 
             .input-and-actions {
-                border-bottom: $width-separator-medium solid $color-danger;
+                border-bottom-color: $color-danger;
             }
         }
     }
@@ -131,7 +128,7 @@ $width-select-all-button: 14px;
         }
 
         .input-and-actions {
-            border-bottom: $width-separator-medium solid $color-separator;
+            border-bottom-color: $color-separator;
 
             .input {
                 color: $color-text-disabled;

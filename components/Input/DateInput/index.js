@@ -147,6 +147,7 @@ class DateInput extends React.PureComponent {
         if (yearInputFocused || monthInputFocused || dayInputFocused) {
             classNames.push(styles.focused);
             classNames.push('input-focused');
+            classNames.push('input-in-focus');
         }
 
         if (disabled) {
@@ -342,6 +343,10 @@ class DateInput extends React.PureComponent {
         } = decodeDate(value, separator);
 
         const FloatingDatePicker = this.renderDatePicker;
+        const inputAndActionsClassName = `
+            ${styles.input}
+            input-and-actions
+        `;
 
         return (
             <div
@@ -354,7 +359,7 @@ class DateInput extends React.PureComponent {
                     show={showLabel}
                     text={label}
                 />
-                <div className={styles.input}>
+                <div className={inputAndActionsClassName}>
                     <div className={styles.units}>
                         <DigitalInput
                             onFocus={this.handleDayInputFocus}
