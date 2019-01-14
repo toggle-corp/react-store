@@ -15,6 +15,8 @@ $color-text-on-light: rgba(0, 0, 0, .7) !default;
 $color-text-on-dark: rgba(255, 255, 255, .7) !default;
 $color-text: get-color($color-text-on-light, $color-text-on-dark) !default;
 
+$color-text-alt: $color-text;
+
 $color-text-placeholder-on-light: rgba(0, 0, 0, .4) !default;
 $color-text-placeholder-on-dark: rgba(255, 255, 255, .3) !default;
 $color-text-placeholder: get-color($color-text-placeholder-on-light, $color-text-placeholder-on-dark) !default;
