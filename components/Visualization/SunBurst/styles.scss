@@ -1,10 +1,5 @@
 @import '../../../stylesheets/utils';
 
-.sunburst {
-    display: flex;
-    flex: 1 1 auto;
-}
-
 .sunburst-tooltip {
     @include shadow-medium;
     position: fixed;
