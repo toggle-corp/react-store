@@ -233,15 +233,10 @@ class SunBurst extends PureComponent {
     handleArcMouseMove = () => {
         const { style } = this.tooltip;
 
-        const { width, height } = this.tooltip.getBoundingClientRect();
-        const x = event.pageX;
-        const y = event.pageY;
+        const { height, width } = this.tooltip.getBoundingClientRect();
 
-        const posX = x - (width / 2);
-        const posY = y - (height + 10);
-
-        style.top = `${posY}px`;
-        style.left = `${posX}px`;
+        style.top = `${event.pageY - height - tooltipOffset.y}px`;
+        style.left = `${event.pageX - (width / 2)}px`;
     }
 
     handleArcMouseOut = () => {
@@ -322,6 +317,9 @@ class SunBurst extends PureComponent {
             .on('mouseover', this.handleArcMouseOver)
             .on('mousemove', this.handleArcMouseMove)
             .on('mouseout', this.handleArcMouseOut);
+            .style('fill', d => this.color(labelSelector(d.children ? d.data : d.parent.data)))
+            .style('cursor', 'pointer')
+            .on('click', d => this.handleSliceClick(slices, d));
 
         newSlice
             .append('path')
