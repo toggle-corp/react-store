@@ -1,3 +1,5 @@
+import { isFalsy } from './common';
+
 const SYNC_KEY = 'ACTION_DISPATCHED';
 
 // Start listening to actions from other tabs and synchronize.
@@ -26,7 +28,10 @@ export const createActionSyncMiddleware = (actionPrefixes, tabId) => () => next 
     const containsPrefix = prefix => type.startsWith(prefix);
 
     // do not set to local storage
-    if (!actionPrefixes.find(containsPrefix) || (senderId && resenderId)) {
+    if (
+        !actionPrefixes.find(containsPrefix) ||
+        (!isFalsy(senderId, ['']) && !isFalsy(resenderId, ['']))
+    ) {
         return next(action);
     }
 
@@ -34,7 +39,7 @@ export const createActionSyncMiddleware = (actionPrefixes, tabId) => () => next 
     // Two successive actions with same body won't propagate twice.
     // So, we add timestamp to make sure the body is unique.
 
-    if (!senderId) {
+    if (isFalsy(senderId, [''])) {
         // this is original message to be sent
         timestampedAction = {
             action: {

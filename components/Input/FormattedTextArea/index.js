@@ -18,6 +18,7 @@ const propTypes = {
     required: PropTypes.bool,
     readOnly: PropTypes.bool,
     showFormatButton: PropTypes.bool,
+    value: PropTypes.string,
 };
 
 const defaultProps = {
@@ -27,6 +28,7 @@ const defaultProps = {
     onChange: undefined,
     required: false,
     showFormatButton: true,
+    value: undefined,
 };
 
 

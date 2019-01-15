@@ -68,8 +68,8 @@ export class NormalList extends React.Component {
             rendererParams,
         } = this.props;
 
-        const keyFromKeySelector = keySelector && keySelector(datum, i);
-        const key = keyFromKeySelector === undefined ? datum : keyFromKeySelector;
+        const keyFromSelector = keySelector && keySelector(datum, i);
+        const key = keyFromSelector === undefined ? datum : keyFromSelector;
 
         if (modifier) {
             return modifier(key, datum, i, data);

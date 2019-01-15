@@ -104,8 +104,10 @@ class RotatingInput extends React.PureComponent {
             required && styles.required,
         );
 
-        const currentRenderer = rendererSelector(options.find(o => keySelector(o) === value)
-            || emptyObject);
+        // FIXME: unsafe if options is list of number
+        const currentRenderer = rendererSelector(
+            options.find(o => keySelector(o) === value) || emptyObject,
+        );
 
         return (
             <div className={classNames}>

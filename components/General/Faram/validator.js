@@ -17,9 +17,10 @@ const hasNoValues = array => (
     isFalsy(array) || array.length <= 0 || array.every(e => isFalsy(e))
 );
 
-const getIdentifierName = (element, identifier) => (
-    identifier(element) || 'default'
-);
+const getIdentifierName = (element, identifier) => {
+    const identifierName = identifier(element);
+    return isFalsy(identifierName, ['']) ? 'default' : identifierName;
+};
 
 const getIdentifierChoice = (element, identifier, fieldsOrMember) => {
     const name = getIdentifierName(element, identifier);
@@ -40,7 +41,8 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
     const hasIdentifierFunction = !!identifier;
 
     if (isSchemaForLeaf) {
-        if (isFalsy(obj) && !noFalsyValues) {
+        // NOTE: don't use isFalsy here
+        if (obj === undefined && !noFalsyValues) {
             return falsyValue;
         }
         return obj;
@@ -84,7 +86,6 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
 };
 
 export const accumulateErrors = (obj, schema = {}) => {
-    // NOTE: if schema is array, the object is the node element
     const { member, fields, validation, keySelector, identifier } = schema;
     const isSchemaForLeaf = isList(schema);
     const isSchemaForArray = (!!member && !!keySelector);
@@ -204,18 +205,17 @@ export const accumulateDifferentialErrors = (
         });
 
         modified.forEach((e) => {
-            const forgetOldError = (
-                hasIdentifierFunction &&
-                getIdentifierName(e.new, identifier) !== getIdentifierName(e.old, identifier)
-            );
-
             const localMember = hasIdentifierFunction
                 ? getIdentifierChoice(e.new, identifier, member)
                 : member;
 
             const index = keySelector(e.new);
 
-            // TODO: clear out errors if different localMember for e.old and e.new
+            // NOTE: clear out errors if different localMember for e.old and e.new
+            const forgetOldError = (
+                hasIdentifierFunction &&
+                getIdentifierName(e.new, identifier) !== getIdentifierName(e.old, identifier)
+            );
 
             const fieldError = accumulateDifferentialErrors(
                 e.old,

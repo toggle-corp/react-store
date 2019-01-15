@@ -14,6 +14,7 @@ import {
     leftPad,
     getErrorForDateValues,
     getNumDaysInMonthX,
+    isFalsy,
     decodeDate as decodeAsDate,
 } from '../../../utils/common';
 import {
@@ -71,14 +72,14 @@ const createDate = (y, m, d) => {
 
 
 // y, m, d is string
-const encodeDate = ({ y, m, d }, separator) => {
-    const year = y || '';
-    const month = m || '';
-    const day = d || '';
-    if (year === '' && month === '' && day === '') {
+const encodeDate = ({ y = '', m = '', d = '' }, separator) => {
+    if (isFalsy(y, [0, '']) && isFalsy(m, [0, '']) && isFalsy(d, [0], '')) {
         return undefined;
     }
-    return `${year}${separator}${month}${separator}${day}`;
+    if (y === '' && m === '' && d === '') {
+        return undefined;
+    }
+    return `${y}${separator}${m}${separator}${d}`;
 };
 
 // value is string
@@ -96,7 +97,7 @@ const decodeDate = (value, separator) => {
 
 // value is string
 const isValidDateString = (value, separator) => {
-    if (value === '' || value === undefined) {
+    if (isFalsy(value, [''])) {
         return true;
     }
     const { y, m, d } = decodeDate(value, separator);

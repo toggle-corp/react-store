@@ -96,7 +96,7 @@ export class NormalListSelection extends React.PureComponent {
         const { value, onChange } = this.props;
         const newValue = [...value];
 
-        if (!selected) {
+        if (selected === undefined || selected === null) {
             const index = newValue.indexOf(key);
             newValue.splice(index, 1);
         } else {
@@ -118,7 +118,7 @@ export class NormalListSelection extends React.PureComponent {
 
         const selected = value.indexOf(key) >= 0;
         const classNames = [styles.item];
-        if (selected) {
+        if (selected !== undefined && selected !== null) {
             classNames.push(styles.checked);
         }
 

@@ -15,6 +15,7 @@ import {
 import {
     caseInsensitiveSubmatch,
     getRatingForContentInString,
+    isFalsy,
 } from '../../../utils/common';
 
 import Options from './Options';
@@ -85,7 +86,7 @@ const getInputValue = ({
         d => keySelector(d) === value,
     );
 
-    if (!activeOption) {
+    if (activeOption === undefined) {
         return '';
     }
 
@@ -190,7 +191,7 @@ class SelectInput extends React.PureComponent {
             classNames.push('disabled');
         }
 
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push(styles.error);
             classNames.push('error');
         }
@@ -205,6 +206,7 @@ class SelectInput extends React.PureComponent {
             classNames.push('hide-clear-button');
         }
 
+        // FIXME: consider condition where inputValue is 0 (number)
         if (inputValue && inputValue.length !== 0) {
             classNames.push(styles.filled);
             classNames.push('filled');
@@ -262,7 +264,7 @@ class SelectInput extends React.PureComponent {
             value,
         } = this.props;
 
-        if (value) {
+        if (value !== undefined) {
             onChange(undefined);
         }
     }

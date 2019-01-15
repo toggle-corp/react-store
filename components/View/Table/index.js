@@ -182,7 +182,7 @@ export default class Table extends React.PureComponent {
         // NOTE: should only be called when header has changed
         // Determine new active sort if there is no active sort
         // Priority: state > nextDefaultSort > first sortable header
-        if (isFalsy(newActiveSort.key)) {
+        if (isFalsy(newActiveSort.key, [''])) {
             newActiveSort = nextDefaultSort || this.getActiveSort(newHeaders);
         }
 
@@ -209,7 +209,7 @@ export default class Table extends React.PureComponent {
     // eslint-disable-next-line react/sort-comp
     handleHeaderClick = (key) => {
         const clickedHeader = this.state.headers.find(d => d.key === key);
-        if (!clickedHeader) {
+        if (clickedHeader === undefined) {
             console.error(`Header with key '${key}' not found.`);
             return;
         } else if (!clickedHeader.sortable) {
@@ -270,13 +270,13 @@ export default class Table extends React.PureComponent {
     });
 
     getSortedData = (headers, data = [], activeSort) => {
-        if (isFalsy(activeSort) || !activeSort.key) {
+        if (isFalsy(activeSort) || isFalsy(activeSort.key, [''])) {
             return data;
         }
 
         const activeHeader = headers.find(header => header.key === activeSort.key);
 
-        if (!activeHeader) {
+        if (activeHeader === undefined) {
             return data;
         }
 

@@ -166,8 +166,7 @@ export default class MultiViewContainer extends React.Component {
         }
 
         if (lazyMount) {
-            let LazyContainer = this.lazyContainers[key] || null;
-
+            let LazyContainer = this.lazyContainers[key];
             if (!LazyContainer) {
                 if (!isActive) {
                     return null;

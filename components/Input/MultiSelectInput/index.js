@@ -117,7 +117,7 @@ const validateValue = (prop) => {
 
     value.forEach((v) => {
         const val = optionsMap[v];
-        if (val) {
+        if (val !== undefined) {
             validValues.push(val);
         } else {
             valid = false;
@@ -140,7 +140,7 @@ const getInputPlaceholder = (props) => {
     if (value.length === 1) {
         const key = value[0];
         const option = options.find(o => keySelector(o) === key);
-        if (!option) {
+        if (option === undefined) {
             // FIXME: better error message
             return 'ERROR';
         }

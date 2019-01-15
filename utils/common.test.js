@@ -352,6 +352,10 @@ test('should get unique elements in array', () => {
 
     const uniqueArray = ['Apple', 'Ball', 'Cat', 'Dog', 'Elephant', 'Fish'];
     expect(unique(uniqueArray, d => d)).toEqual(uniqueArray);
+
+    const nonuniqueArray1 = [1, 2, 0, 2, 3];
+    const uniqueArray1 = [1, 2, 0, 3];
+    expect(unique(nonuniqueArray1, d => d)).toEqual(uniqueArray1);
 });
 
 test('should return true for valid hex colors', () => {

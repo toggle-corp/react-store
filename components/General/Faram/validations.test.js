@@ -20,6 +20,8 @@ test('required condition', () => {
     expect(requiredCondition(NaN).ok).toBe(false);
     expect(requiredCondition(undefined).ok).toBe(false);
     expect(requiredCondition(null).ok).toBe(false);
+    expect(requiredCondition(false).ok).toBe(true);
+    expect(requiredCondition(true).ok).toBe(true);
     expect(requiredCondition(1).ok).toBe(true);
     expect(requiredCondition('hari').ok).toBe(true);
     expect(requiredCondition({ some: 'key' }).ok).toBe(true);

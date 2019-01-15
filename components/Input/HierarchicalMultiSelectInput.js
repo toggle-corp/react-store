@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { isFalsy } from '../../../../utils/common';
 import MultiSelectInput from './MultiSelectInput';
 
 const propTypes = {
@@ -41,7 +42,7 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
         }
     }
 
-    deflateList = (list, parentLabel = undefined) => (
+    deflateList = (list, parentLabel) => (
         list.reduce(
             (acc, c) => ([
                 ...acc,
@@ -51,7 +52,7 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
         )
     )
 
-    deflateObj = (obj, parentLabel = undefined) => {
+    deflateObj = (obj, parentLabel) => {
         const {
             childrenSelector,
             keySelector,
@@ -61,7 +62,7 @@ export default class HierarchicalMultiSelectInput extends React.PureComponent {
         const children = childrenSelector(obj) || [];
 
         let label = labelSelector(obj);
-        if (parentLabel) {
+        if (!isFalsy(parentLabel, [''])) {
             label = `${parentLabel} / ${label}`;
         }
 

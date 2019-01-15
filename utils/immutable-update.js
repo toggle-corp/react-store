@@ -60,6 +60,7 @@ update.extend(
     (value, object) => {
         const memory = {};
         const newArr = [];
+        // FIXME: use unique from common
         object.forEach((o) => {
             const id = value(o);
             if (!memory[id]) {

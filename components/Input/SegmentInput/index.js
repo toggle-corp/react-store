@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { FaramInputElement } from '../../General/FaramElements';
+import { isFalsy } from '../../../utils/common';
 import ListView from '../../View/List/ListView';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
@@ -100,7 +101,7 @@ class SegmentInput extends React.PureComponent {
             classNames.push('disabled');
             classNames.push(styles.disabled);
         }
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push('error');
             classNames.push(styles.error);
         }

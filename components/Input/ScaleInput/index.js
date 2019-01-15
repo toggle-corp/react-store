@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { FaramInputElement } from '../../General/FaramElements';
+import { isFalsy } from '../../../utils/common';
 import List from '../../View/List';
 
 import styles from './styles.scss';
@@ -110,7 +111,7 @@ class ScaleInput extends React.PureComponent {
         }
 
         const defaultOption = options.find(option => isDefaultSelector(option));
-        if (!value && defaultOption) {
+        if (isFalsy(value, ['']) && !isFalsy(defaultOption, [''])) {
             onChange(keySelector(defaultOption));
         }
     }

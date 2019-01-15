@@ -1,6 +1,7 @@
 import {
     isFalsy,
     isTruthy,
+    isDefined,
     isInteger,
     splitInWhitespace,
     getErrorForDateValues,
@@ -15,7 +16,7 @@ export const exclusiveInBetweenCondition = (min, max) => (value) => {
         || (isFalsy(max) && value > min)
         || (value < max && value > min);
 
-    const message = ((isFalsy(min) && isFalsy(max)) || '')
+    const message = ((isFalsy(min) && isFalsy(max)) && '')
         || (isFalsy(min) && `Value must be less than ${max}`)
         || (isFalsy(max) && `Value must be greater than ${min}`)
         || `Value must be exclusively in between ${min} and ${max}`;
@@ -30,7 +31,7 @@ export const inclusiveInBetweenCondition = (min, max) => (value) => {
         || (isFalsy(max) && value >= min)
         || (value <= max && value >= min);
 
-    const message = ((isFalsy(min) && isFalsy(max)) || '')
+    const message = ((isFalsy(min) && isFalsy(max)) && '')
         || (isFalsy(min) && `Value must be less than or equal to ${max}`)
         || (isFalsy(max) && `Value must be greater than or equal to ${min}`)
         || `Value must be in between ${min} and ${max}`;
@@ -95,16 +96,10 @@ export const lengthEqualToCondition = n => (value) => {
     };
 };
 
-
 export const requiredCondition = (value) => {
-    const ok = isTruthy(value) && !(
-        (
-            typeof value === 'string' &&
-            splitInWhitespace(value).length <= 0
-        ) || (
-            Array.isArray(value) &&
-            value.length <= 0
-        )
+    const ok = isDefined(value) && !(
+        (typeof value === 'string' && splitInWhitespace(value).length <= 0) ||
+        (Array.isArray(value) && value.length <= 0)
     );
     return {
         ok,
@@ -130,7 +125,7 @@ export const integerCondition = (value) => {
 
 export const emailCondition = (value) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const ok = isFalsy(value) || value === '' || re.test(value);
+    const ok = isFalsy(value, ['']) || re.test(value);
     return {
         ok,
         message: 'Value must be a valid email',
@@ -139,7 +134,7 @@ export const emailCondition = (value) => {
 
 export const urlCondition = (value) => {
     const re = urlRegex;
-    const ok = isFalsy(value) || value === '' || re.test(value);
+    const ok = isFalsy(value, ['']) || re.test(value);
     return {
         ok,
         message: 'Value must be a valid URL',
@@ -149,7 +144,7 @@ export const urlCondition = (value) => {
 export const dateCondition = (value) => {
     let error;
 
-    if (value) {
+    if (isTruthy(value, '')) {
         const dates = value.split('-');
         const yearValue = dates[0];
         const monthValue = dates[1];
@@ -175,7 +170,7 @@ const TIME_SEPARATOR = ':';
 export const timeCondition = (value) => {
     let error;
 
-    if (value !== undefined) {
+    if (isTruthy(value)) {
         const values = value.split(TIME_SEPARATOR);
         const h = values[0];
         const m = values[1];
