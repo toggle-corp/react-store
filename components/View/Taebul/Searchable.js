@@ -20,11 +20,11 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static searchData = memoize((data, searchFunction, searchString) => {
-            if (isFalsy(searchString, [''])) {
+        static searchData = memoize((data, searchFunction, searchTerm) => {
+            if (isFalsy(searchTerm, [''])) {
                 return data;
             }
-            return data.filter(datum => searchFunction(datum, searchString));
+            return data.filter(datum => searchFunction(datum, searchTerm));
         })
 
         render() {
@@ -38,7 +38,7 @@ export default (WrappedComponent) => {
             const newData = SearchedComponent.searchData(
                 data,
                 searchFunction,
-                settings.searchString,
+                settings.searchTerm,
             );
 
             return (
