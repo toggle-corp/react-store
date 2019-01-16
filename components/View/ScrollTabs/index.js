@@ -40,7 +40,7 @@ const defaultProps = {
 };
 
 
-export default class FixedTabs extends React.Component {
+export default class ScrollTabs extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
