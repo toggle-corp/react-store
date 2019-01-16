@@ -229,20 +229,25 @@ class SelectInput extends React.PureComponent {
             offset.top = 12;
         }
 
-        const optionsContainerPosition = (
-            calcFloatPositionInMainWindow({
-                parentRect,
-                contentRect,
-                offset,
-                limit: {
-                    ...defaultLimit,
-                    minW: parentRect.width,
-                    maxW: parentRect.width,
-                },
-            })
-        );
+        // const optionsContainerPosition = (
+        //     calcFloatPositionInMainWindow({
+        //         parentRect,
+        //         contentRect,
+        //         offset,
+        //         limit: {
+        //             ...defaultLimit,
+        //             minW: parentRect.width,
+        //             maxW: parentRect.width,
+        //         },
+        //     })
+        // );
 
-        return optionsContainerPosition;
+        // return optionsContainerPosition;
+        return {
+            top: `${parentRect.bottom + window.scrollY}px`,
+            left: `${parentRect.left + window.scrollX}px`,
+            width: `${parentRect.width}px`,
+        };
     };
 
     handleOptionsBlur = () => {
