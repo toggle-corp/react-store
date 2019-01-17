@@ -1,11 +1,17 @@
 @import '~base-scss/base';
 
 .segment-input {
+    max-width: 100%;
+
     .segment-container {
-        display: inline-flex;
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
         margin: $spacing-extra-small-alt 0;
         border: $width-separator-thin solid $color-accent;
+
+        .label {
+            word-break: break-all;
+        }
     }
 
     &.error {
