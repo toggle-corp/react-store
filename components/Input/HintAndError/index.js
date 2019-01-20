@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
+import { isFalsy } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -21,7 +22,7 @@ export default class HintAndError extends React.PureComponent {
     renderError = () => {
         const { error } = this.props;
 
-        if (!error) {
+        if (isFalsy(error, [''])) {
             return null;
         }
 
@@ -38,7 +39,7 @@ export default class HintAndError extends React.PureComponent {
             hint,
         } = this.props;
 
-        if (error || !hint) {
+        if (!isFalsy(error, ['']) || isFalsy(hint, [''])) {
             return null;
         }
 
@@ -55,7 +56,7 @@ export default class HintAndError extends React.PureComponent {
             error,
         } = this.props;
 
-        if (hint || error) {
+        if (!isFalsy(error, ['']) || !isFalsy(hint, [''])) {
             return null;
         }
 

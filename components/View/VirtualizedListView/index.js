@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { isFalsy } from '../../../utils/common';
 import Message from '../Message';
 import styles from './styles.scss';
 
@@ -140,7 +141,8 @@ export default class VirtualizedListView extends React.Component {
             rendererParams,
         } = this.props;
 
-        const key = (keySelector && keySelector(datum, i)) || datum;
+        const keyFromSelector = keySelector && keySelector(datum, i);
+        const key = keyFromSelector === undefined ? datum : keyFromSelector;
 
         if (modifier) {
             return modifier(key, datum, i, data);
@@ -179,7 +181,7 @@ export default class VirtualizedListView extends React.Component {
             itemHeight,
         } = this.state;
 
-        if (!itemHeight) {
+        if (isFalsy(itemHeight)) {
             return (
                 <div ref={this.item}>
                     { this.renderItem(data[0], 0) }

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { FaramInputElement } from '../../General/FaramElements';
+import { isFalsy } from '../../../utils/common';
 import ListView from '../../View/List/ListView';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
@@ -54,6 +55,7 @@ const propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
+        PropTypes.bool,
     ]),
 
     name: PropTypes.string,
@@ -99,7 +101,7 @@ class SegmentInput extends React.PureComponent {
             classNames.push('disabled');
             classNames.push(styles.disabled);
         }
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push('error');
             classNames.push(styles.error);
         }
@@ -114,22 +116,27 @@ class SegmentInput extends React.PureComponent {
         const {
             onChange,
             disabled,
+            options,
+            keySelector,
             readOnly,
         } = this.props;
         const { value } = changeEvent.target;
 
+        const finalValue = options
+            .map(val => keySelector(val))
+            .find(val => String(val) === value);
+
         if (onChange && !disabled && !readOnly) {
-            onChange(value);
+            onChange(finalValue);
         }
     }
 
     rendererParams = (key, data) => ({
         label: this.props.labelSelector(data),
-        id: this.props.keySelector(data),
-        selected: this.props.value,
+        id: String(this.props.keySelector(data)),
         onChange: this.handleInputChange,
         name: this.props.name,
-        checked: this.props.value === key,
+        checked: String(this.props.value) === String(key),
         error: this.props.error,
         readOnly: this.props.readOnly,
         disabled: this.props.disabled,

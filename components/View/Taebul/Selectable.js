@@ -8,6 +8,7 @@ import Checkbox from '../../Input/Checkbox';
 
 import update from '../../../utils/immutable-update';
 import { iconNames } from '../../../constants';
+import { isFalsy } from '../../../utils/common';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -37,8 +38,8 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static selectData = memoize((data = [], selectedKeys = {}, keySelector) => {
-            if (!selectedKeys) {
+        static selectData = memoize((data = [], selectedKeys, keySelector) => {
+            if (isFalsy(selectedKeys)) {
                 return data;
             }
 
@@ -96,6 +97,7 @@ export default (WrappedComponent) => {
             } = this.props;
             const updateSettings = {
                 selectedKeys: { $auto: {
+                    // NOTE: keys injected here
                 } },
             };
             data.forEach((datum) => {

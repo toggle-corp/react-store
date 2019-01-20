@@ -5,6 +5,7 @@ import DismissableListItem from '../../Action/DismissableListItem';
 import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
 import { FaramInputElement } from '../../General/FaramElements';
+import { isFalsy } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -53,8 +54,8 @@ const defaultProps = {
     listClassName: '',
     selectClassName: '',
     listProps: {},
-    keySelector: d => (d || {}).key,
-    labelSelector: d => (d || {}).label,
+    keySelector: (d = {}) => d.key,
+    labelSelector: (d = {}) => d.label,
     onChange: undefined,
     options: [],
     value: [],
@@ -118,7 +119,7 @@ class SelectInputWithList extends React.PureComponent {
             'select-input-with-list',
         ];
 
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push(styles.error);
             classNames.push('error');
         }
@@ -216,7 +217,8 @@ class SelectInputWithList extends React.PureComponent {
         const Item = (
             hideRemoveFromListButton ||
             readOnly ||
-            disabled) ? ListItem : DismissableListItem;
+            disabled
+        ) ? ListItem : DismissableListItem;
 
         return (
             <div className={this.getClassName()}>

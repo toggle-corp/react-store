@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { randomString } from '../../../../utils/common';
+import { randomString, isFalsy } from '../../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -59,7 +59,7 @@ export default class SegmentOption extends React.PureComponent {
             classNames.push('disabled');
             classNames.push(styles.disabled);
         }
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push('error');
             classNames.push(styles.error);
         }

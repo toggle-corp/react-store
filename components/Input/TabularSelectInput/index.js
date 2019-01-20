@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { listToMap } from '../../../utils/common';
+import { listToMap, isFalsy } from '../../../utils/common';
 import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
 
@@ -195,7 +195,7 @@ class TabularSelectInput extends React.PureComponent {
             'tabular-select-input',
         ];
 
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push(styles.error);
             classNames.push('error');
         }

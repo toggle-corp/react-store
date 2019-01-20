@@ -1,4 +1,5 @@
 import FaramGroupApi from '../FaramGroup/FaramGroupApi';
+import { isDefined } from '../../../utils/common';
 
 const emptyArray = [];
 
@@ -50,7 +51,7 @@ export default class FaramListApi extends FaramGroupApi {
 
     getError = (faramElementName) => {
         const val = this.getValue(faramElementName);
-        const index = val ? this.props.keySelector(val) : undefined;
+        const index = isDefined(val) ? this.props.keySelector(val) : undefined;
         return this.props.error
             ? this.props.error[index]
             : undefined;

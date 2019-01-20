@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { leftPad } from '../../../utils/common';
+import {
+    leftPad,
+    isFalsy,
+} from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
@@ -49,14 +52,12 @@ const MAX_MINUTE = 59;
 const STEP = 1;
 
 // h, m is string
-const encodeTime = ({ h, m }, separator) => {
-    const hour = h || '';
-    const minute = m || '';
-    if (hour === '' && minute === '') {
+const encodeTime = ({ h = '', m = '' }, separator) => {
+    if (isFalsy(h, [0, '']) && isFalsy(m, [0, ''])) {
         return undefined;
     }
     // NOTE: added default value '00' for second
-    return `${hour}${separator}${minute}${separator}00`;
+    return `${h}${separator}${m}${separator}00`;
 };
 
 // value is string
@@ -77,10 +78,10 @@ const isValidTimeString = (value, separator) => {
         return true;
     }
     const { h, m } = decodeTime(value, separator);
-    if (h === undefined || h === '' || m === undefined || m === '') {
+
+    if (isFalsy(h, ['']) || isFalsy(m, [''])) {
         return false;
     }
-
     return !(
         (+h < MIN_HOUR || +h > MAX_HOUR) ||
         (+m < MIN_MINUTE || +m > MAX_MINUTE)
@@ -142,7 +143,7 @@ class TimeInput extends React.PureComponent {
             classNames.push('invalid');
         }
 
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push(styles.error);
             classNames.push('error');
         }

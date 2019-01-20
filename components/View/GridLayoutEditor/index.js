@@ -177,8 +177,10 @@ export default class GridLayoutEditor extends React.PureComponent {
             const l1 = this.layouts[k1];
             const l2 = this.layouts[k2];
 
-            return ((l1.top + l1.height) - (l2.top + l2.height)
-                || (l1.left + l1.width) - (l2.left + l2.width));
+            return (
+                (l1.top + l1.height) - (l2.top + l2.height) ||
+                (l1.left + l1.width) - (l2.left + l2.width)
+            );
         };
 
         const layoutKeyList = Object.keys(this.layouts)

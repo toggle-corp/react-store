@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '../../View/List/ListView';
-import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
+import { isNotDefined, isDefined } from '../../../utils/common';
+import { iconNames } from '../../../constants';
 import Checkbox from '../Checkbox';
 
 import Label from '../Label';
@@ -96,7 +97,7 @@ export class NormalListSelection extends React.PureComponent {
         const { value, onChange } = this.props;
         const newValue = [...value];
 
-        if (!selected) {
+        if (isNotDefined(selected)) {
             const index = newValue.indexOf(key);
             newValue.splice(index, 1);
         } else {
@@ -118,7 +119,7 @@ export class NormalListSelection extends React.PureComponent {
 
         const selected = value.indexOf(key) >= 0;
         const classNames = [styles.item];
-        if (selected) {
+        if (isDefined(selected)) {
             classNames.push(styles.checked);
         }
 

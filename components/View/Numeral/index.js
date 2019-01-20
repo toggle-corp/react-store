@@ -117,11 +117,11 @@ class Numeral extends React.PureComponent {
         const {
             normal,
             precision,
-            prefix,
+            prefix = '',
             separator,
             showSeparator,
             showSign,
-            suffix,
+            suffix = '',
             value,
             invalidText,
             lang,
@@ -131,11 +131,11 @@ class Numeral extends React.PureComponent {
             return invalidText;
         }
 
-        const { number, normalizeSuffix } = Numeral.getNormalizedNumber({
+        const { number, normalizeSuffix = '' } = Numeral.getNormalizedNumber({
             value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
-        return `${prefix || ''}${number}${normalizeSuffix || ''}${suffix || ''}`;
+        return `${prefix}${number}${normalizeSuffix}${suffix}`;
     }
 
     render() {

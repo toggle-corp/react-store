@@ -3,6 +3,7 @@ import React from 'react';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
+import { isFalsy } from '../../../utils/common';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
@@ -119,7 +120,7 @@ class TextInput extends React.PureComponent {
             classNames.push('focused');
             classNames.push(styles.focused);
         }
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push('error');
             classNames.push(styles.error);
         }

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '../../../utils/common';
+import { randomString, isFalsy } from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
@@ -115,7 +115,7 @@ export class NormalTextArea extends React.PureComponent {
             classNames.push('focused');
         }
 
-        if (error) {
+        if (!isFalsy(error, [''])) {
             classNames.push(styles.error);
             classNames.push('error');
         }

@@ -43,7 +43,7 @@ export default class Coordinator {
 
     add = (id, nativeActor) => {
         const oldActor = this.getActorById(id);
-        if (oldActor) {
+        if (oldActor !== undefined) {
             // console.warn(`Uploder with id '${id}' already registered.`);
             return false;
         }

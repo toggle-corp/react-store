@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { isEqualAndTruthy } from '../../../../utils/common';
+import {
+    isEqualAndTruthy,
+    isFalsy,
+} from '../../../../utils/common';
 
 import List from '../../List';
 
@@ -145,7 +148,7 @@ export default class Body extends React.PureComponent {
 
         // FIXME: returning an array of components will unmount those components
         // on any change
-        if (expandRowId && expandRowId === key) {
+        if (!isFalsy(expandRowId, ['']) && expandRowId === key) {
             return ([
                 myRow,
                 <ExpandedRow

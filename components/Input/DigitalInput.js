@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { leftPad } from '../../utils/common';
+import {
+    leftPad,
+    isFalsy,
+} from '../../utils/common';
 
 const propTypes = {
     onChange: PropTypes.func,
@@ -19,7 +22,7 @@ export default class DigitalInput extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static padAndTrim = (value, padLength) => {
-        if (value === '' || value === undefined) {
+        if (isFalsy(value, [''])) {
             return '';
         }
         return leftPad(+value % (10 ** padLength), padLength, '0');
@@ -31,8 +34,7 @@ export default class DigitalInput extends React.PureComponent {
         // However, when value is changed from arrows in number input,
         // this algorithm cannot differentiate between the two.
         if (
-            newValue === '' ||
-            newValue === undefined ||
+            isFalsy(newValue, ['']) ||
             (
                 oldValue !== undefined &&
                 oldValue.length > newValue.length &&

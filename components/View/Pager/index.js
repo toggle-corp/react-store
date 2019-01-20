@@ -3,6 +3,7 @@ import React from 'react';
 
 import SelectInput from '../../Input/SelectInput';
 import { iconNames } from '../../../constants';
+import { isFalsy } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -181,7 +182,7 @@ export default class Pager extends React.PureComponent {
     renderSpan = (className, index, key) => (
         <span
             className={`${styles.paginateSpan} ${className}`}
-            key={key || index}
+            key={isFalsy(key, ['']) ? key : index}
         >
             {index}
         </span>

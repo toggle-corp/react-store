@@ -55,8 +55,10 @@ export default class Locker {
         const getYTime = y => y.split('|')[1];
 
         localStorage[this.xKey] = this.uniqueId;
-        if (localStorage[this.yKey] &&
-            (Date.now() - getYTime(localStorage[this.yKey]) < maxLockTime)) {
+        if (
+            localStorage[this.yKey] &&
+            (Date.now() - getYTime(localStorage[this.yKey]) < maxLockTime)
+        ) {
             this.timeouts.push(setTimeout(() => {
                 this.lamportFastLock(callback, maxLockTime);
             }, 100));

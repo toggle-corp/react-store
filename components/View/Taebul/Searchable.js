@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
+import { isFalsy } from '../../../utils/common';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -19,11 +20,11 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static searchData = memoize((data, searchFunction, searchString) => {
-            if (!searchString) {
+        static searchData = memoize((data, searchFunction, searchTerm) => {
+            if (isFalsy(searchTerm, [''])) {
                 return data;
             }
-            return data.filter(datum => searchFunction(datum, searchString));
+            return data.filter(datum => searchFunction(datum, searchTerm));
         })
 
         render() {
@@ -37,7 +38,7 @@ export default (WrappedComponent) => {
             const newData = SearchedComponent.searchData(
                 data,
                 searchFunction,
-                settings.searchString,
+                settings.searchTerm,
             );
 
             return (

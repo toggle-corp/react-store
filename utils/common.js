@@ -3,15 +3,23 @@
  */
 import { formatDate } from './date';
 
-
 // CHECKER
 
-export const isFalsy = val => (
-    val === undefined || val === null || Number.isNaN(val) || val === false
+export const isNotDefined = val => (
+    val === undefined || val === null || Number.isNaN(val)
 );
 
-export const isTruthy = val => !isFalsy(val);
+export const isDefined = val => !isNotDefined(val);
 
+export const isFalsy = (val, override = []) => (
+    isNotDefined(val) || val === false || override.includes(val)
+);
+
+export const isTruthy = (val, override = []) => (
+    !isFalsy(val) || override.includes(val)
+);
+
+// FIXME: probably unused
 export const isEmpty = val => val === undefined || val === '';
 
 export const isInteger = value => (
@@ -108,9 +116,8 @@ export const removeKey = (obj, key) => {
 // STRING
 
 // Match two strings
-export const caseInsensitiveSubmatch = (longText, shortText) => (
-    !shortText ||
-    (String(longText || '').toLowerCase()).includes(String(shortText || '').toLowerCase())
+export const caseInsensitiveSubmatch = (longText = '', shortText = '') => (
+    (String(longText).trim().toLowerCase()).includes(String(shortText).trim().toLowerCase())
 );
 
 /**
@@ -326,7 +333,7 @@ export const formattedNormalize = (number, lang = 'np') => {
 };
 
 export const leftPad = (number, length, pad = '0') => {
-    if (number === '' || number === undefined) {
+    if (isFalsy(number, [''])) {
         return '';
     }
     const numStr = String(number);
@@ -445,7 +452,7 @@ export const getObjectChildren = (object, keys) => {
     // object: object, keys: (string | number | undefined)[], defaultValue: any,
     // ): any => {
     const key = keys[0];
-    if (!object || !key || !object[key]) {
+    if (!object || isFalsy(key, ['']) || object[key] === undefined) {
         return undefined;
     }
     if (keys.length === 1) {
@@ -489,7 +496,7 @@ export const findDuplicates = (list = [], keySelector) => {
     const counts = list.reduce(
         (acc, item) => {
             const key = keySelector(item);
-            if (isTruthy(key) && key !== '') {
+            if (!isFalsy(key, [''])) {
                 acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
             }
             return acc;
@@ -503,7 +510,7 @@ export const listToMap = (list = [], keySelector, modifier) => (
     list.reduce(
         (acc, elem) => {
             const key = keySelector(elem);
-            if (isTruthy(key)) {
+            if (!isFalsy(key, [''])) {
                 acc[key] = modifier ? modifier(elem, key) : elem;
             }
             return acc;
@@ -530,7 +537,7 @@ export const mapToMap = (obj = {}, keySelector, modifier) => (
         (acc, k) => {
             const elem = obj[k];
             const key = keySelector ? keySelector(k, elem) : k;
-            if (isTruthy(key)) {
+            if (!isFalsy(key, [''])) {
                 acc[key] = modifier ? modifier(elem, key) : elem;
             }
             return acc;
@@ -549,7 +556,7 @@ export const groupList = (list = [], keySelector, modifier) => (
         (acc, elem, index) => {
             const key = keySelector(elem);
             const e = modifier ? modifier(elem, key, index) : elem;
-            if (acc[key]) {
+            if (acc[key] !== undefined) {
                 acc[key].push(e);
             } else {
                 acc[key] = [e];
