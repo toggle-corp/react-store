@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import memoize from 'memoize-one';
 
 import update from '../../../../utils/immutable-update';
 import { isFalsy } from '../../../../utils/common';
@@ -19,7 +20,7 @@ class ResizableHeader extends React.PureComponent {
     render() {
         const {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
-            _headerRenderer: Header,
+            _headerRenderer: Header, // eslint-disable-line no-unused-vars
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
             className: classNameFromProps,
             ...otherProps
@@ -45,6 +46,9 @@ class ResizableHeader extends React.PureComponent {
     }
 }
 
+const DEFAULT_WIDTH = 200;
+
+// NOTE: for now default width cannot be set
 const propTypes = {
     columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -76,13 +80,15 @@ export default (WrappedComponent) => {
                 onChange,
             } = this.props;
 
+            const { defaultColumnWidth = DEFAULT_WIDTH } = settings;
+
             const dx = e.clientX - this.lastMouseX;
             this.lastMouseX = e.clientX;
 
             const updateSettings = {
                 columnWidths: { $auto: {
                     [this.resizingColumnKey]: {
-                        $apply: val => (isFalsy(val) ? dx : val + dx),
+                        $apply: val => (isFalsy(val) ? defaultColumnWidth + dx : val + dx),
                     },
                 } },
             };
@@ -103,32 +109,20 @@ export default (WrappedComponent) => {
             window.addEventListener('mouseup', this.handleMouseUp);
         }
 
-        render() {
-            const {
-                columns,
-                settings,
-                ...otherProps
-            } = this.props;
+        modifyColumns = memoize((columns = [], columnWidths = {}, defaultWidth) => {
+            if (!columns || columns.length <= 0) {
+                return columns;
+            }
 
-            const { columnWidths } = settings;
-
-            const updateSettings = {};
+            const settings = {};
             columns.forEach((column, i) => {
                 // NOTE: column key is assumed to be column.key
                 const columnKey = column.key;
+                const width = isFalsy(columnWidths[columnKey])
+                    ? defaultWidth
+                    : columnWidths[columnKey];
 
-                const {
-                    [column.key]: {
-                        headerStyle,
-                        cellStyle,
-                    } = {},
-                } = settings;
-
-                if (headerStyle && cellStyle) {
-                    return;
-                }
-
-                updateSettings[i] = {
+                settings[i] = {
                     headerRendererParams: {
                         $set: (...params) => ({
                             ...column.headerRendererParams(...params),
@@ -138,13 +132,27 @@ export default (WrappedComponent) => {
                         }),
                     },
                     headerRenderer: { $set: ResizableHeader },
-                    headerStyle: { $set: { width: columnWidths[columnKey] } },
-                    cellStyle: { $set: { width: columnWidths[columnKey] } },
+                    headerStyle: { $set: { width } },
+                    cellStyle: { $set: { width } },
                 };
             });
 
-            const newColumns = update(columns, updateSettings);
+            return update(columns, settings);
+        })
 
+        render() {
+            const {
+                columns,
+                settings,
+                ...otherProps
+            } = this.props;
+
+            const {
+                columnWidths,
+                defaultColumnWidth = DEFAULT_WIDTH,
+            } = settings;
+
+            const newColumns = this.modifyColumns(columns, columnWidths, defaultColumnWidth);
             return (
                 <WrappedComponent
                     columns={newColumns}
