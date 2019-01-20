@@ -14,6 +14,8 @@ import {
     listToMap,
     caseInsensitiveSubmatch,
     getRatingForContentInString,
+    isDefined,
+    isNotDefined,
 } from '../../../utils/common';
 
 import {
@@ -117,7 +119,7 @@ const validateValue = (prop) => {
 
     value.forEach((v) => {
         const val = optionsMap[v];
-        if (val !== undefined) {
+        if (isDefined(val)) {
             validValues.push(val);
         } else {
             valid = false;
@@ -140,7 +142,7 @@ const getInputPlaceholder = (props) => {
     if (value.length === 1) {
         const key = value[0];
         const option = options.find(o => keySelector(o) === key);
-        if (option === undefined) {
+        if (isNotDefined(option)) {
             // FIXME: better error message
             return 'ERROR';
         }

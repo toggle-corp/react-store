@@ -4,6 +4,7 @@ import {
     isFalsy,
     isTruthy,
     findDifferenceInList,
+    isNotDefined,
 } from '../../../utils/common';
 
 const emptyObject = {};
@@ -41,8 +42,7 @@ export const accumulateValues = (obj, schema = {}, settings = {}) => {
     const hasIdentifierFunction = !!identifier;
 
     if (isSchemaForLeaf) {
-        // NOTE: don't use isFalsy here
-        if (obj === undefined && !noFalsyValues) {
+        if (isNotDefined(obj) && !noFalsyValues) {
             return falsyValue;
         }
         return obj;

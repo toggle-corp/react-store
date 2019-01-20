@@ -56,9 +56,6 @@ const encodeTime = ({ h = '', m = '' }, separator) => {
     if (isFalsy(h, [0, '']) && isFalsy(m, [0, ''])) {
         return undefined;
     }
-    if (h === '' && m === '') {
-        return undefined;
-    }
     // NOTE: added default value '00' for second
     return `${h}${separator}${m}${separator}00`;
 };
@@ -77,7 +74,7 @@ const decodeTime = (value, separator) => {
 
 // value is string
 const isValidTimeString = (value, separator) => {
-    if (isFalsy(value, [''])) {
+    if (value === '' || value === undefined) {
         return true;
     }
     const { h, m } = decodeTime(value, separator);

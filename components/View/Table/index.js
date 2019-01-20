@@ -276,7 +276,7 @@ export default class Table extends React.PureComponent {
 
         const activeHeader = headers.find(header => header.key === activeSort.key);
 
-        if (activeHeader === undefined) {
+        if (activeHeader !== undefined) {
             return data;
         }
 

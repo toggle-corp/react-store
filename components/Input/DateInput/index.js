@@ -73,10 +73,7 @@ const createDate = (y, m, d) => {
 
 // y, m, d is string
 const encodeDate = ({ y = '', m = '', d = '' }, separator) => {
-    if (isFalsy(y, [0, '']) && isFalsy(m, [0, '']) && isFalsy(d, [0], '')) {
-        return undefined;
-    }
-    if (y === '' && m === '' && d === '') {
+    if (isFalsy(y, [0, '']) && isFalsy(m, [0, '']) && isFalsy(d, [0, ''])) {
         return undefined;
     }
     return `${y}${separator}${m}${separator}${d}`;
@@ -97,7 +94,7 @@ const decodeDate = (value, separator) => {
 
 // value is string
 const isValidDateString = (value, separator) => {
-    if (isFalsy(value, [''])) {
+    if (value === '' || value === undefined) {
         return true;
     }
     const { y, m, d } = decodeDate(value, separator);

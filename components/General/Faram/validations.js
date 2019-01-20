@@ -144,7 +144,7 @@ export const urlCondition = (value) => {
 export const dateCondition = (value) => {
     let error;
 
-    if (isTruthy(value, '')) {
+    if (!isFalsy(value, '')) {
         const dates = value.split('-');
         const yearValue = dates[0];
         const monthValue = dates[1];
@@ -170,7 +170,7 @@ const TIME_SEPARATOR = ':';
 export const timeCondition = (value) => {
     let error;
 
-    if (isTruthy(value)) {
+    if (!isFalsy(value, '')) {
         const values = value.split(TIME_SEPARATOR);
         const h = values[0];
         const m = values[1];
