@@ -156,8 +156,8 @@ class StackedBarChart extends PureComponent {
 
     mouseMove = () => {
         select(this.tooltip)
-            .style('top', `${event.pageY - 30}px`)
-            .style('left', `${event.pageX + 20}px`);
+            .style('top', `${event.pageY - window.scrollY - 30}px`)
+            .style('left', `${event.pageX - window.scrollX + 20}px`);
     }
 
     mouseOutRect = () => {
@@ -209,8 +209,7 @@ class StackedBarChart extends PureComponent {
             .attr('width', x.bandwidth)
             .attr('x', d => x(labelSelector(d.data)))
             .attr('y', d => y(d[1]))
-            .attr('height', d => y(d[0]) - y(d[1]))
-            .attr('cursor', 'pointer');
+            .attr('height', d => y(d[0]) - y(d[1]));
 
         group
             .append('g')
@@ -222,29 +221,6 @@ class StackedBarChart extends PureComponent {
             .append('g')
             .attr('class', styles.yAxis)
             .call(axisLeft(y).tickSize(0).tickPadding(6));
-
-        const legend = group
-            .append('g')
-            .attr('text-anchor', 'end')
-            .selectAll('g')
-            .data(this.dimensions)
-            .enter()
-            .append('g')
-            .attr('transform', (d, i) => `translate(0, ${i * 20})`);
-
-        legend
-            .append('rect')
-            .attr('x', width - 19)
-            .attr('width', 19)
-            .attr('height', 19)
-            .attr('fill', d => colors(d));
-
-        legend
-            .append('text')
-            .attr('x', width - 24)
-            .attr('y', 10)
-            .attr('dy', '0.32em')
-            .text(d => d);
     }
 
     redrawChart = () => {

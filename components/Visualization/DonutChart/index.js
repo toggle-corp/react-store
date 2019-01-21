@@ -184,7 +184,6 @@ class DonutChart extends PureComponent {
             })
             .attr('d', arcs)
             .style('fill', d => colors(labelSelector(d.data)))
-            .attr('cursor', 'pointer')
             .attr('pointer-events', 'none')
             .on('mouseover', (d, i, nodes) => {
                 this.arcTween(nodes[i], arcs, outerRadius, 0);

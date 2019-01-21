@@ -13,10 +13,10 @@
 .tooltip {
     @include shadow-medium;
     @include background-color($color-foreground);
+    display: block;
     position: fixed;
     z-index: 10;
     padding: $spacing-small $spacing-medium-alt;
     animation: fade-in .2s ease-in;
-    display: block;
     text-align: center;
 }
