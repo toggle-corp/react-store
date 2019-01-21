@@ -361,7 +361,6 @@ class HorizontalBar extends PureComponent {
             .attr('y', d => this.y(labelSelector(d)))
             .attr('height', this.y.bandwidth())
             .style('fill', d => this.getColor(d))
-            .style('cursor', 'pointer')
             .on('mouseover', (d, i, nodes) => this.handleMouseOver(d, nodes[i]))
             .on('mousemove', this.handleMouseMove)
             .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
