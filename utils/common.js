@@ -468,14 +468,15 @@ export const normalize = (value, max, min) => (
 
 // TRANSFORM
 
-export const unique = (object, getValue) => {
+export const unique = (object, getValue, getComparisionValue) => {
     const memory = {};
     const newArr = [];
     object.forEach((o) => {
-        const id = getValue ? getValue(o) : o;
+        const comparator = getComparisionValue || getValue;
+        const id = comparator ? comparator(o) : o;
         if (!memory[id]) {
             memory[id] = true;
-            newArr.push(id);
+            newArr.push(getValue ? getValue(o) : o);
         }
     });
     // for efficiency
