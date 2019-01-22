@@ -96,7 +96,7 @@ export default class VerticalTabs extends React.Component {
         onClick(key);
     }
 
-    renderTab = (_, data) => {
+    renderTab = (_, data, index) => {
         const {
             active,
             tabs,
@@ -109,7 +109,7 @@ export default class VerticalTabs extends React.Component {
         }
 
         const onClick = (e) => { this.handleTabClick(data, e); };
-        const content = modifier ? modifier(data, tabs[data]) : tabs[data];
+        const content = modifier ? modifier(data, tabs[data], index) : tabs[data];
 
         if (!useHash) {
             const isActive = data === active;
