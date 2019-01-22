@@ -356,6 +356,11 @@ test('should get unique elements in array', () => {
     const nonuniqueArray1 = [1, 2, 0, 2, 3];
     const uniqueArray1 = [1, 2, 0, 3];
     expect(unique(nonuniqueArray1, d => d)).toEqual(uniqueArray1);
+
+    const objectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }, { id: 1, name: 'Apple' }];
+    const expectedObjectArray = [{ id: 1, name: 'Apple' }, { id: 2, name: 'Ball' }];
+
+    expect(unique(objectArray, undefined, d => d.id)).toEqual(expectedObjectArray);
 });
 
 test('should return true for valid hex colors', () => {
