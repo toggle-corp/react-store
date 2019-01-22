@@ -23,12 +23,14 @@ const propTypes = {
      * container for which clicks are ignored for blur
      */
     parent: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    focusTrap: PropTypes.bool,
 
     onInvalidate: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    focusTrap: false,
     onBlur: undefined,
     onMouseDown: undefined,
     parent: undefined,
@@ -96,11 +98,15 @@ export default class FloatingContainer extends React.PureComponent {
     render() {
         const {
             className,
+            focusTrap,
             children,
         } = this.props;
 
         return (
-            <Float onInvalidate={this.handleContainerInvalidate}>
+            <Float
+                onInvalidate={this.handleContainerInvalidate}
+                focusTrap={focusTrap}
+            >
                 <div
                     className={`${className} ${styles.floatingContainer}`}
                     ref={(el) => { this.container = el; }}

@@ -10,10 +10,13 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
     ]).isRequired,
 
+    focusTrap: PropTypes.bool,
+
     onInvalidate: PropTypes.func,
 };
 
 const defaultProps = {
+    focusTrap: false,
     onInvalidate: () => {}, // no-op
 };
 
@@ -49,7 +52,18 @@ export default class Float extends React.PureComponent {
     }
 
     render() {
-        const { children } = this.props;
+        const {
+            children,
+            focusTrap,
+        } = this.props;
+
+        if (!focusTrap) {
+            return (
+                <Portal>
+                    { children }
+                </Portal>
+            );
+        }
 
         return (
             <Portal>
