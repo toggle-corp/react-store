@@ -36,6 +36,9 @@ const propTypes = {
     tooltipContent: PropTypes.func,
     colorSelector: PropTypes.func,
     valueSelector: PropTypes.func.isRequired,
+    colorScheme: PropTypes.arrayOf(PropTypes.string),
+    colorSelector: PropTypes.func,
+    showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
@@ -53,6 +56,7 @@ const defaultProps = {
     colorScheme: schemePaired,
     colorSelector: undefined,
     tooltipContent: undefined,
+    showLabels: true,
     showTooltip: true,
     className: '',
     margins: {
@@ -268,6 +272,9 @@ class SunBurst extends PureComponent {
             childrenSelector,
             labelSelector,
             valueSelector,
+            colorSelector,
+            showLabels,
+            showTooltip,
         } = this.props;
 
         if (!boundingClientRect.width || isObjectEmpty(data)) {
@@ -321,7 +328,15 @@ class SunBurst extends PureComponent {
             .style('stroke', 'white')
             .on('mouseover', this.handleArcMouseOver)
             .on('mousemove', this.handleArcMouseMove)
-            .on('mouseout', this.handleArcMouseOut);
+            .on('mouseout', this.handleArcMouseOut)
+            .style('fill', (d) => {
+                if (colorSelector) {
+                    return colorSelector(d.data);
+                }
+                return this.color(labelSelector(d.children ? d.data : d.parent.data));
+            })
+            .style('cursor', 'pointer')
+            .on('click', d => this.handleSliceClick(slices, d));
 
         newSlice
             .append('path')
@@ -345,6 +360,29 @@ class SunBurst extends PureComponent {
                 const colorBg = this.getColor(d);
                 return getColorOnBgColor(colorBg);
             });
+
+        if (showLabels) {
+            const labels = slices
+                .append('text')
+                .attr('class', 'labels')
+                .attr('transform', this.calculateLabelTransformation)
+                .attr('pointer-events', 'none')
+                .attr('text-anchor', 'middle')
+                .text(d => labelSelector(d.data))
+                .style('fill', (d) => {
+                    let colorBg = '#fff';
+                    if (colorSelector) {
+                        colorBg = colorSelector(d.data);
+                    } else {
+                        colorBg = this.color(labelSelector(d.children ? d.data : d.parent.data));
+                    }
+                    return getColorOnBgColor(colorBg);
+                });
+
+            labels.filter((e, i, textNodes) => (
+                this.filterText(e, textNodes[i])
+            )).attr('opacity', 0);
+        }
     }
 
     redrawChart = () => {
