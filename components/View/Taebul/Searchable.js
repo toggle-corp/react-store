@@ -20,7 +20,7 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static searchData = memoize((data, searchFunction, searchTerm) => {
+        searchData = memoize((data, searchFunction, searchTerm) => {
             if (isFalsy(searchTerm, [''])) {
                 return data;
             }
@@ -35,7 +35,7 @@ export default (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
-            const newData = SearchedComponent.searchData(
+            const newData = this.searchData(
                 data,
                 searchFunction,
                 settings.searchTerm,

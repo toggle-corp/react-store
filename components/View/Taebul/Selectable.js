@@ -38,21 +38,6 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static selectData = memoize((data = [], selectedKeys, keySelector) => {
-            if (isFalsy(selectedKeys)) {
-                return data;
-            }
-
-            const settings = {};
-            data.forEach((datum, index) => {
-                const datumKey = keySelector(datum);
-                if (selectedKeys[datumKey]) {
-                    settings[index] = { _isSelected: { $set: true } };
-                }
-            });
-            return update(data, settings);
-        })
-
         handleSelectableClick = (datumKey, isSelected) => {
             const {
                 settings,
@@ -107,6 +92,21 @@ export default (WrappedComponent) => {
             const newSettings = update(settings, updateSettings);
             onChange(newSettings);
         }
+
+        selectData = memoize((data = [], selectedKeys, keySelector) => {
+            if (isFalsy(selectedKeys)) {
+                return data;
+            }
+
+            const settings = {};
+            data.forEach((datum, index) => {
+                const datumKey = keySelector(datum);
+                if (selectedKeys[datumKey]) {
+                    settings[index] = { _isSelected: { $set: true } };
+                }
+            });
+            return update(data, settings);
+        })
 
         modifyColumns = memoize((columns = [], data = [], selectClassName, keySelector) => {
             const settings = {
@@ -192,7 +192,7 @@ export default (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
-            const newData = SelectedComponent.selectData(
+            const newData = this.selectData(
                 data,
                 settings.selectedKeys,
                 keySelector,
