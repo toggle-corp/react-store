@@ -46,6 +46,7 @@ const propTypes = {
     labelSelector: PropTypes.func.isRequired,
     valueSelector: PropTypes.func.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    colorSelector: PropTypes.func,
     showLabels: PropTypes.bool,
     showTooltip: PropTypes.bool,
     className: PropTypes.string,
@@ -61,6 +62,7 @@ const defaultProps = {
     setSaveFunction: () => {},
     childrenSelector: d => d.children,
     colorScheme: schemePaired,
+    colorSelector: undefined,
     showLabels: true,
     showTooltip: true,
     className: '',
@@ -283,6 +285,7 @@ class SunBurst extends PureComponent {
             childrenSelector,
             labelSelector,
             valueSelector,
+            colorSelector,
             showLabels,
             showTooltip,
         } = this.props;
@@ -325,7 +328,12 @@ class SunBurst extends PureComponent {
             .attr('d', this.arch)
             .style('stroke-width', d => d.height + 2)
             .style('stroke', 'white')
-            .style('fill', d => this.color(labelSelector(d.children ? d.data : d.parent.data)))
+            .style('fill', (d) => {
+                if (colorSelector) {
+                    return colorSelector(d.data);
+                }
+                return this.color(labelSelector(d.children ? d.data : d.parent.data));
+            })
             .style('cursor', 'pointer')
             .on('click', d => this.handleSliceClick(slices, d));
 
@@ -344,7 +352,12 @@ class SunBurst extends PureComponent {
                 .attr('text-anchor', 'middle')
                 .text(d => labelSelector(d.data))
                 .style('fill', (d) => {
-                    const colorBg = this.color(labelSelector(d.children ? d.data : d.parent.data));
+                    let colorBg = '#fff';
+                    if (colorSelector) {
+                        colorBg = colorSelector(d.data);
+                    } else {
+                        colorBg = this.color(labelSelector(d.children ? d.data : d.parent.data));
+                    }
                     return getColorOnBgColor(colorBg);
                 });
 
