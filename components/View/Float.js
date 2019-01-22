@@ -1,3 +1,4 @@
+import FocusTrap from 'react-focus-trap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -52,7 +53,9 @@ export default class Float extends React.PureComponent {
 
         return (
             <Portal>
-                { children }
+                <FocusTrap>
+                    { children }
+                </FocusTrap>
             </Portal>
         );
     }
