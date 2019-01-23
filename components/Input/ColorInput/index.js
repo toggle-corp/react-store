@@ -186,6 +186,7 @@ class ColorInput extends React.PureComponent {
                             parent={this.container}
                             onBlur={this.handleColorPickerBlur}
                             onInvalidate={this.handleColorPickerInvalidate}
+                            focusTrap
                         >
                             <SketchPicker
                                 color={value}

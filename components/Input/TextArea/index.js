@@ -58,12 +58,14 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
 
     value: PropTypes.string,
+    resize: PropTypes.string,
 
     selectOnFocus: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    resize: 'none',
     disabled: false,
     error: '',
     hint: '',
@@ -180,6 +182,7 @@ export class NormalTextArea extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            resize,
             ...otherProps
         } = this.props;
 
@@ -203,6 +206,7 @@ export class NormalTextArea extends React.PureComponent {
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
+                    style={{ resize }}
                     {...otherProps}
                 />
                 {
