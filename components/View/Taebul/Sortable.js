@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
-
-import update from '../../../utils/immutable-update';
+import produce from 'immer';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -29,7 +28,7 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static sortData = memoize((data, columns = [], sortOrder) => {
+        sortData = memoize((data, columns = [], sortOrder) => {
             if (!sortOrder) {
                 return data;
             }
@@ -44,23 +43,6 @@ export default (WrappedComponent) => {
             return [...data].sort((foo, bar) => comparator(foo, bar, order === ORDER.dsc ? -1 : 1));
         })
 
-        static getAction = (columnKey, sortOrder) => {
-            if (!sortOrder || columnKey !== sortOrder.key) {
-                const newEntry = {
-                    key: columnKey,
-                    order: ORDER.asc,
-                };
-                return {
-                    sortOrder: { $set: newEntry },
-                };
-            }
-            return {
-                sortOrder: {
-                    order: { $apply: val => (val === ORDER.asc ? ORDER.dsc : ORDER.asc) },
-                },
-            };
-        }
-
         handleHeaderClick = (columnKey) => {
             const {
                 settings,
@@ -68,8 +50,23 @@ export default (WrappedComponent) => {
             } = this.props;
 
             const { sortOrder } = settings;
-            const updateSettings = SortedComponent.getAction(columnKey, sortOrder);
-            onChange(update(settings, updateSettings));
+
+            const newSettings = produce(settings, (draftSettings) => {
+                if (!sortOrder || columnKey !== sortOrder.key) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrder = {
+                        key: columnKey,
+                        order: ORDER.asc,
+                    };
+                } else {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrder.order = draftSettings.sortOrder.order === ORDER.asc
+                        ? ORDER.dsc
+                        : ORDER.asc;
+                }
+            });
+
+            onChange(newSettings);
         }
 
         modifyColumns = memoize((columns = [], sortOrder = {}) => {
@@ -77,17 +74,19 @@ export default (WrappedComponent) => {
                 return columns;
             }
 
-            const settings = {};
-            columns.forEach((column, index) => {
-                const { order } = sortOrder.key === column.key ? sortOrder : {};
-                settings[index] = {
-                    sortOrder: { $set: order },
-                    sortable: { $set: !!column.comparator },
-                    onSortClick: { $set: this.handleHeaderClick },
-                };
+            const newColumns = produce(columns, (draftColumns) => {
+                draftColumns.forEach((column, index) => {
+                    const { order } = sortOrder.key === column.key ? sortOrder : {};
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].sortOrder = order;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].sortable = !!column.comparator;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].onSortClick = this.handleHeaderClick;
+                });
             });
 
-            return update(columns, settings);
+            return newColumns;
         })
 
         render() {
@@ -99,7 +98,7 @@ export default (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
-            const newData = SortedComponent.sortData(data, columns, settings.sortOrder);
+            const newData = this.sortData(data, columns, settings.sortOrder);
             const newColumns = this.modifyColumns(columns, settings.sortOrder);
 
             return (

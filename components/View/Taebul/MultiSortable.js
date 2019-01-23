@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
+import produce from 'immer';
 
 import { mapToList } from '../../../utils/common';
-import update from '../../../utils/immutable-update';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -30,7 +30,7 @@ export default (WrappedComponent) => {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
-        static sortData = memoize((data, columns = [], sortOrders = {}) => {
+        sortData = memoize((data, columns = [], sortOrders = {}) => {
             if (Object.keys(sortOrders).length <= 0) {
                 return data;
             }
@@ -54,52 +54,40 @@ export default (WrappedComponent) => {
             });
         })
 
-        static getAction = (columnKey, sortOrders = {}) => {
-            const logicalOrderList = mapToList(sortOrders, s => s.logicalOrder);
-            const maxOrder = Math.max(...logicalOrderList, 0) + 1;
-
-            const sortOrder = sortOrders[columnKey];
-            if (!sortOrder) {
-                const newEntry = {
-                    key: columnKey,
-                    order: ORDER.asc,
-                    logicalOrder: maxOrder,
-                };
-                return {
-                    sortOrders: { $auto: {
-                        [columnKey]: { $set: newEntry },
-                    } },
-                };
-            }
-
-            const { order } = sortOrder;
-            if (order === ORDER.dsc) {
-                return {
-                    sortOrders: {
-                        $unset: [columnKey],
-                    },
-                };
-            }
-
-            return {
-                sortOrders: {
-                    [columnKey]: {
-                        order: { $set: ORDER.dsc },
-                        logicalOrder: { $set: maxOrder },
-                    },
-                },
-            };
-        }
-
         handleHeaderClick = (columnKey) => {
             const {
                 settings,
                 onChange,
             } = this.props;
 
-            const { sortOrders } = settings;
-            const updateSettings = MultiSortedComponent.getAction(columnKey, sortOrders);
-            onChange(update(settings, updateSettings));
+            const newSettings = produce(settings, (draftSettings) => {
+                if (!draftSettings.sortOrders) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrders = {};
+                }
+
+                const logicalOrderList = mapToList(draftSettings.sortOrders, s => s.logicalOrder);
+                const maxOrder = Math.max(...logicalOrderList, 0) + 1;
+                const sortOrder = draftSettings.sortOrders[columnKey];
+                if (!sortOrder) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrders[columnKey] = {
+                        key: columnKey,
+                        order: ORDER.asc,
+                        logicalOrder: maxOrder,
+                    };
+                } else if (sortOrder.order === ORDER.dsc) {
+                    // eslint-disable-next-line no-param-reassign
+                    delete draftSettings.sortOrders[columnKey];
+                } else {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrders[columnKey].order = ORDER.dsc;
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.sortOrders[columnKey].logicalOrder = maxOrder;
+                }
+            });
+
+            onChange(newSettings);
         }
 
         modifyColumns = memoize((columns = [], sortOrders = {}) => {
@@ -107,17 +95,19 @@ export default (WrappedComponent) => {
                 return columns;
             }
 
-            const settings = {};
-            columns.forEach((column, index) => {
-                const { order } = sortOrders[column.key] || {};
-                settings[index] = {
-                    sortOrder: { $set: order },
-                    sortable: { $set: !!column.comparator },
-                    onSortClick: { $set: this.handleHeaderClick },
-                };
+            const newColumns = produce(columns, (draftColumns) => {
+                draftColumns.forEach((column, index) => {
+                    const { order } = sortOrders[column.key] || {};
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].sortOrder = order;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].sortable = !!column.comparator;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].onSortClick = this.handleHeaderClick;
+                });
             });
 
-            return update(columns, settings);
+            return newColumns;
         })
 
         render() {
@@ -129,7 +119,7 @@ export default (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
-            const newData = MultiSortedComponent.sortData(data, columns, settings.sortOrders);
+            const newData = this.sortData(data, columns, settings.sortOrders);
             const newColumns = this.modifyColumns(columns, settings.sortOrders);
 
             return (
