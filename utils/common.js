@@ -710,10 +710,10 @@ const comparision = (extractor, func) => (x, y, direction = 1) => {
     const b = extractor(y);
     if (a === b) {
         return 0;
-    } else if (isFalsy(a)) {
-        return -1;
-    } else if (isFalsy(b)) {
-        return 1;
+    } else if (isNotDefined(a)) {
+        return direction * 1;
+    } else if (isNotDefined(b)) {
+        return direction * -1;
     }
     return direction * func(a, b);
 };

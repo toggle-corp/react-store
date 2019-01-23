@@ -145,6 +145,7 @@ export default class Pager extends React.PureComponent {
             ...lst,
             this.renderSpan(styles.active, active),
         ];
+        console.warn(active);
 
         if (left.capacity > 0) {
             if (left.excess >= 0) {
@@ -182,7 +183,7 @@ export default class Pager extends React.PureComponent {
     renderSpan = (className, index, key) => (
         <span
             className={`${styles.paginateSpan} ${className}`}
-            key={isFalsy(key, ['']) ? key : index}
+            key={isFalsy(key, ['']) ? index : key}
         >
             {index}
         </span>
