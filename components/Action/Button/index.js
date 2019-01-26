@@ -96,11 +96,14 @@ const defaultProps = {
 };
 
 const emptyObject = {};
+
+// FIXME: move to utils
 const isFunction = functionToCheck => (
     functionToCheck
     && {}.toString.call(functionToCheck) === '[object Function]'
 );
 
+// FIXME: move to utils
 const resolveToObject = (d) => {
     if (isFunction(d)) {
         return d();

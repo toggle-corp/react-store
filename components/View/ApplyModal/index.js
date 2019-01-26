@@ -28,6 +28,7 @@ const defaultProps = {
 };
 
 
+// FIXME: remove this or move this to better place
 export default class ApplyModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
