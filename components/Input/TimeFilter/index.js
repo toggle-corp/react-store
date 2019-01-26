@@ -43,6 +43,7 @@ class TimeFilter extends React.PureComponent {
         },
     };
 
+    // FIXME: add startDate smaller than endDate condition
     static rangeModalSchema = {
         fields: {
             startTime: [requiredCondition],
