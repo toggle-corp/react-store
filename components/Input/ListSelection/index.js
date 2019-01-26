@@ -93,11 +93,11 @@ export class NormalListSelection extends React.PureComponent {
         return classNames.join(' ');
     }
 
-    handleItemChange = (key, selected) => {
+    handleItemChange = (key, isSelected) => {
         const { value, onChange } = this.props;
-        const newValue = [...value];
 
-        if (isNotDefined(selected)) {
+        const newValue = [...value];
+        if (!isSelected) {
             const index = newValue.indexOf(key);
             newValue.splice(index, 1);
         } else {
