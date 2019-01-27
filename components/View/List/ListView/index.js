@@ -13,9 +13,11 @@ const defaultEmptyComponent = () => {
     ];
 
     return (
-        <Message className={classNames.join(' ')}>
-            Nothing to show.
-        </Message>
+        <div className={classNames.join(' ')}>
+            <Message>
+                Nothing to show.
+            </Message>
+        </div>
     );
 };
 
