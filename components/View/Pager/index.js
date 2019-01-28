@@ -182,7 +182,7 @@ export default class Pager extends React.PureComponent {
     renderSpan = (className, index, key) => (
         <span
             className={`${styles.paginateSpan} ${className}`}
-            key={isFalsy(key, ['']) ? key : index}
+            key={isFalsy(key, ['']) ? index : key}
         >
             {index}
         </span>
