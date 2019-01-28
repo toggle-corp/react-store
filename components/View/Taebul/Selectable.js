@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
+import produce from 'immer';
 
 import AccentButton from '../../Action/Button/AccentButton';
 import Checkbox from '../../Input/Checkbox';
@@ -43,21 +44,21 @@ export default (WrappedComponent) => {
                 settings,
                 onChange,
             } = this.props;
-            let updateSettings;
-            if (isSelected) {
-                updateSettings = {
-                    selectedKeys: { $auto: {
-                        [datumKey]: { $set: true },
-                    } },
-                };
-            } else {
-                updateSettings = {
-                    selectedKeys: { $auto: {
-                        $unset: [datumKey],
-                    } },
-                };
-            }
-            const newSettings = update(settings, updateSettings);
+
+            const newSettings = produce(settings, (draftSettings) => {
+                if (!draftSettings.selectedKeys) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.selectedKeys = {};
+                }
+                if (isSelected) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.selectedKeys[datumKey] = true;
+                } else {
+                    // eslint-disable-next-line no-param-reassign
+                    delete draftSettings.selectedKeys[datumKey];
+                }
+            });
+
             onChange(newSettings);
         }
 
@@ -66,10 +67,12 @@ export default (WrappedComponent) => {
                 settings,
                 onChange,
             } = this.props;
-            const updateSettings = {
-                selectedKeys: { $set: {} },
-            };
-            const newSettings = update(settings, updateSettings);
+
+            const newSettings = produce(settings, (draftSettings) => {
+                // eslint-disable-next-line no-param-reassign
+                draftSettings.selectedKeys = {};
+            });
+
             onChange(newSettings);
         }
 
@@ -80,105 +83,113 @@ export default (WrappedComponent) => {
                 data,
                 keySelector,
             } = this.props;
-            const updateSettings = {
-                selectedKeys: { $auto: {
-                    // NOTE: keys injected here
-                } },
-            };
-            data.forEach((datum) => {
-                const key = keySelector(datum);
-                updateSettings.selectedKeys.$auto[key] = { $set: true };
+
+            const newSettings = produce(settings, (draftSettings) => {
+                if (!draftSettings.selectedKeys) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.selectedKeys = {};
+                }
+                data.forEach((datum) => {
+                    const key = keySelector(datum);
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.selectedKeys[key] = true;
+                });
             });
-            const newSettings = update(settings, updateSettings);
+
             onChange(newSettings);
         }
 
         selectData = memoize((data = [], selectedKeys, keySelector) => {
-            if (isFalsy(selectedKeys)) {
+            if (isFalsy(selectedKeys) || Object.keys(selectedKeys).length <= 0) {
                 return data;
             }
-
-            const settings = {};
-            data.forEach((datum, index) => {
-                const datumKey = keySelector(datum);
-                if (selectedKeys[datumKey]) {
-                    settings[index] = { _isSelected: { $set: true } };
-                }
+            const newData = produce(data, (draftData) => {
+                draftData.forEach((datum, index) => {
+                    const key = keySelector(datum);
+                    if (selectedKeys[key]) {
+                        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+                        draftData[index]._isSelected = true;
+                    }
+                });
             });
-            return update(data, settings);
+
+            return newData;
         })
 
         modifyColumns = memoize((columns = [], data = [], selectClassName, keySelector) => {
-            const settings = {
-                $unshift: [{
-                    key: '_select',
-                    title: '',
+            const selectColumn = {
+                key: '_select',
+                title: '',
 
-                    headerRendererParams: (params) => {
-                        const { settings: settingsFromProps } = params;
+                headerRendererParams: (params) => {
+                    const { settings: settingsFromProps } = params;
 
-                        const { selectedKeys } = settingsFromProps;
+                    const { selectedKeys } = settingsFromProps;
 
-                        const isEverySelected = selectedKeys
-                            ? data.every(datum => selectedKeys[keySelector(datum)])
-                            : false;
+                    const isEverySelected = selectedKeys
+                        ? data.every(datum => selectedKeys[keySelector(datum)])
+                        : false;
 
-                        const isNoneSelected = selectedKeys
-                            ? data.every(datum => !selectedKeys[keySelector(datum)])
-                            : true;
+                    const isNoneSelected = selectedKeys
+                        ? data.every(datum => !selectedKeys[keySelector(datum)])
+                        : true;
 
-                        return {
-                            className: selectClassName,
-                            isEverySelected,
-                            isNoneSelected,
-                            onUnselectAllClick: this.handleUnselectAllClick,
-                            onSelectAllClick: this.handleSelectAllClick,
-                        };
-                    },
-
-                    headerRenderer: ({
-                        className,
-                        isEverySelected,
-                        onUnselectAllClick,
-                        onSelectAllClick,
-                        isNoneSelected,
-                    }) => {
-                        let buttonClassName;
-                        let buttonAction;
-                        if (isEverySelected) {
-                            buttonClassName = iconNames.checkbox;
-                            buttonAction = onUnselectAllClick;
-                        } else if (isNoneSelected) {
-                            buttonClassName = iconNames.checkboxOutlineBlank;
-                            buttonAction = onSelectAllClick;
-                        } else {
-                            buttonClassName = iconNames.checkboxBlank;
-                            buttonAction = onUnselectAllClick;
-                        }
-
-                        return (
-                            <div className={className}>
-                                <AccentButton
-                                    className={buttonClassName}
-                                    onClick={buttonAction}
-                                    transparent
-                                />
-                            </div>
-                        );
-                    },
-
-                    cellRendererParams: ({ datum, datumKey }) => ({
-                        label: '',
-                        // eslint-disable-next-line no-underscore-dangle
-                        value: datum._isSelected,
+                    return {
                         className: selectClassName,
-                        onChange: value => this.handleSelectableClick(datumKey, value),
-                    }),
+                        isEverySelected,
+                        isNoneSelected,
+                        onUnselectAllClick: this.handleUnselectAllClick,
+                        onSelectAllClick: this.handleSelectAllClick,
+                    };
+                },
 
-                    cellRenderer: Checkbox,
-                }],
+                headerRenderer: ({
+                    className,
+                    isEverySelected,
+                    onUnselectAllClick,
+                    onSelectAllClick,
+                    isNoneSelected,
+                }) => {
+                    let buttonClassName;
+                    let buttonAction;
+                    if (isEverySelected) {
+                        buttonClassName = iconNames.checkbox;
+                        buttonAction = onUnselectAllClick;
+                    } else if (isNoneSelected) {
+                        buttonClassName = iconNames.checkboxOutlineBlank;
+                        buttonAction = onSelectAllClick;
+                    } else {
+                        buttonClassName = iconNames.checkboxBlank;
+                        buttonAction = onUnselectAllClick;
+                    }
+
+                    return (
+                        <div className={className}>
+                            <AccentButton
+                                className={buttonClassName}
+                                onClick={buttonAction}
+                                transparent
+                            />
+                        </div>
+                    );
+                },
+
+                cellRendererParams: ({ datum, datumKey }) => ({
+                    label: '',
+                    // eslint-disable-next-line no-underscore-dangle
+                    value: datum._isSelected,
+                    className: selectClassName,
+                    onChange: value => this.handleSelectableClick(datumKey, value),
+                }),
+
+                cellRenderer: Checkbox,
             };
-            return update(columns, settings);
+
+            const newColumns = produce(columns, (draftColumns) => {
+                draftColumns.unshift(selectColumn);
+            });
+
+            return newColumns;
         })
 
         render() {
@@ -198,6 +209,7 @@ export default (WrappedComponent) => {
                 keySelector,
             );
             const newColumns = this.modifyColumns(
+
                 columns,
                 data,
                 selectClassName,

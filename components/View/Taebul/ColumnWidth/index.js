@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
+import produce from 'immer';
 
-import update from '../../../../utils/immutable-update';
 import { isFalsy } from '../../../../utils/common';
 
 import styles from './styles.scss';
@@ -20,8 +20,8 @@ class ResizableHeader extends React.PureComponent {
     render() {
         const {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
-            _headerRenderer: Header, // eslint-disable-line no-unused-vars
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
+            _headerRenderer: Header, // eslint-disable-line no-unused-vars
             className: classNameFromProps,
             ...otherProps
         } = this.props;
@@ -80,20 +80,22 @@ export default (WrappedComponent) => {
                 onChange,
             } = this.props;
 
-            const { defaultColumnWidth = DEFAULT_WIDTH } = settings;
-
             const dx = e.clientX - this.lastMouseX;
             this.lastMouseX = e.clientX;
 
-            const updateSettings = {
-                columnWidths: { $auto: {
-                    [this.resizingColumnKey]: {
-                        $apply: val => (isFalsy(val) ? defaultColumnWidth + dx : val + dx),
-                    },
-                } },
-            };
+            const { defaultColumnWidth = DEFAULT_WIDTH } = settings;
+            const newSettings = produce(settings, (draftSettings) => {
+                if (!draftSettings.columnWidths) {
+                    // eslint-disable-next-line no-param-reassign
+                    draftSettings.columnWidths = {};
+                }
 
-            const newSettings = update(settings, updateSettings);
+                const value = draftSettings.columnWidths[this.resizingColumnKey];
+                // eslint-disable-next-line no-param-reassign
+                draftSettings.columnWidths[this.resizingColumnKey] = isFalsy(value)
+                    ? defaultColumnWidth + dx
+                    : value + dx;
+            });
             onChange(newSettings);
         }
 
@@ -114,30 +116,34 @@ export default (WrappedComponent) => {
                 return columns;
             }
 
-            const settings = {};
-            columns.forEach((column, i) => {
-                // NOTE: column key is assumed to be column.key
-                const columnKey = column.key;
-                const width = isFalsy(columnWidths[columnKey])
-                    ? defaultWidth
-                    : columnWidths[columnKey];
-
-                settings[i] = {
-                    headerRendererParams: {
-                        $set: (...params) => ({
-                            ...column.headerRendererParams(...params),
-                            _columnKey: columnKey,
-                            _headerRenderer: column.headerRenderer,
-                            _onSeparatorMouseDown: this.handleSeparatorMouseDown,
-                        }),
-                    },
-                    headerRenderer: { $set: ResizableHeader },
-                    headerStyle: { $set: { width } },
-                    cellStyle: { $set: { width } },
-                };
+            const newColumns = produce(columns, (draftColumns) => {
+                draftColumns.forEach((column, index) => {
+                    // NOTE: column key is assumed to be column.key
+                    const {
+                        key: columnKey,
+                        headerRendererParams,
+                        headerRenderer,
+                    } = column;
+                    const width = isFalsy(columnWidths[columnKey])
+                        ? defaultWidth
+                        : columnWidths[columnKey];
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerRendererParams = (...params) => ({
+                        ...headerRendererParams(...params),
+                        _columnKey: columnKey,
+                        _headerRenderer: headerRenderer,
+                        _onSeparatorMouseDown: this.handleSeparatorMouseDown,
+                    });
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerRenderer = ResizableHeader;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerStyle = { width };
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].cellStyle = { width };
+                });
             });
 
-            return update(columns, settings);
+            return newColumns;
         })
 
         render() {
