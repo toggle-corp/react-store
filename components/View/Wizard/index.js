@@ -9,10 +9,12 @@ const propTypes = {
         PropTypes.element,
         PropTypes.array,
     ]).isRequired,
+    initialPage: PropTypes.number,
 };
 
 const defaultProps = {
     className: '',
+    initialPage: 0,
 };
 
 export default class Wizard extends React.Component {
@@ -23,9 +25,16 @@ export default class Wizard extends React.Component {
         super(props);
 
         this.state = {
-            visiblePage: 0,
+            visiblePage: this.props.initialPage,
             className: '',
         };
+    }
+
+    handleJumpClick = (page) => {
+        this.setState({
+            visiblePage: page,
+            className: styles.next,
+        });
     }
 
     handleNextClick = () => {
@@ -73,17 +82,20 @@ export default class Wizard extends React.Component {
             props = {
                 ...props,
                 onNext: this.handleNextClick,
+                onJump: this.handleJumpClick,
             };
         } else if (visiblePage === childrenCount - 1) {
             props = {
                 ...props,
                 onPrev: this.handlePrevClick,
+                onJump: this.handleJumpClick,
             };
         } else {
             props = {
                 ...props,
                 onNext: this.handleNextClick,
                 onPrev: this.handlePrevClick,
+                onJump: this.handleJumpClick,
             };
         }
 
