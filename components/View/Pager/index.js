@@ -145,7 +145,6 @@ export default class Pager extends React.PureComponent {
             ...lst,
             this.renderSpan(styles.active, active),
         ];
-        console.warn(active);
 
         if (left.capacity > 0) {
             if (left.excess >= 0) {
