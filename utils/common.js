@@ -929,3 +929,5 @@ export const removeClassName = (el, className) => {
 
 // eslint-disable-next-line no-underscore-dangle
 export const _cs = (...props) => props.filter(c => !!c).join(' ');
+
+export const capitalize = str => str && str.replace(/\b\w/g, l => l.toUpperCase());

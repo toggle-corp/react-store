@@ -35,6 +35,7 @@ import {
     doesObjectHaveNoData,
     isParamRequired,
     _cs,
+    capitalize,
 } from './common';
 
 test('convert list to map without modifier', () => {
@@ -437,4 +438,13 @@ test('join classname using _cs', () => {
         'welldone',
         null,
     )).toEqual('awesome welldone');
+});
+
+test('capitalize strings using capitalize', () => {
+    expect(capitalize('class')).toEqual('Class');
+    expect(capitalize('class name')).toEqual('Class Name');
+    expect(capitalize('what Are you?')).toEqual('What Are You?');
+    expect(capitalize('? 12 w rT')).toEqual('? 12 W RT');
+    expect(capitalize(undefined)).toEqual(undefined);
+    expect(capitalize('')).toEqual('');
 });
