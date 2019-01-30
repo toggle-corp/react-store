@@ -19,6 +19,10 @@ export const isTruthy = (val, override = []) => (
     !isFalsy(val) || override.includes(val)
 );
 
+export const isFalsyString = val => isFalsy(val, ['']);
+export const isTruthyString = val => !isFalsyString(val);
+
+
 // FIXME: probably unused
 export const isEmpty = val => val === undefined || val === '';
 
