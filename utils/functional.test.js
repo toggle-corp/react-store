@@ -3,6 +3,11 @@ import {
     zip,
 } from './functional';
 
+import {
+    mapToMap,
+    mapToList,
+} from './common';
+
 test('zipWith', () => {
     const f = (x, y) => x * y;
     const a = [1, 2, 3];
@@ -25,17 +30,13 @@ test('interesting zipWith', () => {
         { apple: 3, mango: 6, banana: 9 },
     ];
 
-    const objkeys = Object.keys(obj);
+    const objCreator = (...zippedRow) => mapToMap(
+        obj,
+        k => k,
+        (k, v, i) => zippedRow[i],
+    );
 
-    const objCreator = (...zippedRow) => {
-        const rowobj = {};
-        objkeys.forEach((x, i) => {
-            rowobj[x] = zippedRow[i];
-        });
-        return rowobj;
-    };
-
-    const rows = zipWith(objCreator, ...objkeys.map(x => obj[x]));
+    const rows = zipWith(objCreator, ...mapToList(obj));
     expect([...rows]).toEqual(expectedRows);
 });
 
