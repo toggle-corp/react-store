@@ -1,0 +1,30 @@
+@import '../../../stylesheets/base';
+
+.histogram {
+    .bar {
+        rect {
+            fill: rgba(90, 198, 198, 1);
+        }
+        cursor: pointer;
+    }
+
+    .xaxis {
+        path {
+            stroke: $color-axis-path;
+        }
+
+        line {
+            visibility: hidden;
+        }
+    }
+
+    .yaxis {
+        path {
+            stroke: $color-axis-path;
+        }
+
+        line {
+            visibility: hidden;
+        }
+    }
+}
