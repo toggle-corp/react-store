@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { getRgbFromHex } from '#rsu/common';
+import {
+    getRgbFromHex,
+    _cs,
+} from '../../../../utils/common';
 
-import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -91,6 +93,7 @@ export default class Highlight extends React.PureComponent {
         const className = _cs(
             styles.highlight,
             classNameFromProps,
+            'tc-highlighted-text-highlight',
         );
 
         return (
