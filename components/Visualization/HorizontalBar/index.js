@@ -1,7 +1,4 @@
-import React, {
-    PureComponent,
-    Fragment,
-} from 'react';
+import React, { PureComponent } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import {
@@ -22,6 +19,7 @@ import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import {
+    _cs,
     getStandardFilename,
     getColorOnBgColor,
 } from '../../../utils/common';
@@ -90,6 +88,9 @@ class HorizontalBar extends PureComponent {
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
+
+        this.svgRef = React.createRef();
+        this.tooltipRef = React.createRef();
     }
 
     componentDidMount() {
@@ -113,7 +114,8 @@ class HorizontalBar extends PureComponent {
     }
 
     save = () => {
-        const svg = select(this.svg);
+        const { current: svgElement } = this.svgRef;
+        const svg = select(svgElement);
 
         const svgsaver = new SvgSaver();
         svgsaver.asSvg(svg.node(), `${getStandardFilename('horizontalbar', 'graph')}.svg`);
@@ -221,15 +223,17 @@ class HorizontalBar extends PureComponent {
                  ${value || ''}
             </span>`;
             const content = tooltipContent ? tooltipContent(d) : defaultTooltipContent;
-            this.tooltip.innerHTML = content;
-            const { style } = this.tooltip;
+            const { current: tooltip } = this.tooltipRef;
+            tooltip.innerHTML = content;
+            const { style } = tooltip;
             style.display = 'block';
         }
     }
 
     handleMouseMove = () => {
-        const { style } = this.tooltip;
-        const { width, height } = this.tooltip.getBoundingClientRect();
+        const { current: tooltip } = this.tooltipRef;
+        const { style } = tooltip;
+        const { width, height } = tooltip.getBoundingClientRect();
         // eslint-disable-next-line no-restricted-globals
         const x = event.pageX;
 
@@ -244,14 +248,16 @@ class HorizontalBar extends PureComponent {
     }
 
     handleMouseOut = (node) => {
-        const { style } = this.tooltip;
+        const { current: tooltip } = this.tooltipRef;
+        const { style } = tooltip;
         style.display = 'none';
         select(node)
             .style('filter', 'none');
     }
 
     redrawChart = () => {
-        const svg = select(this.svg);
+        const { current: svgElement } = this.svgRef;
+        const svg = select(svgElement);
         svg.selectAll('*').remove();
         this.drawChart();
     }
@@ -285,13 +291,18 @@ class HorizontalBar extends PureComponent {
             left = 0,
         } = margins;
 
+        const { current: svgElement } = this.svgRef;
+
+        svgElement.setAttribute('width', `${width}px`);
+        svgElement.setAttribute('height', `${height}px`);
+
         this.width = width - left - right;
         this.height = height - top - bottom;
 
         if (this.width < 0) this.width = 0;
         if (this.height < 0) this.height = 0;
 
-        this.group = select(this.svg)
+        this.group = select(svgElement)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
@@ -416,30 +427,37 @@ class HorizontalBar extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
-        const svgClassName = [
-            'horizontal-bar',
-            styles.horizontalBar,
-            className,
-        ].join(' ');
+        const { className: classNameFromProps } = this.props;
 
-        const tooltipClassName = [
-            'horizontal-bar-tooltip',
-            styles.horizontalBarTooltip,
-        ].join(' ');
+        const className = _cs(
+            'horizontal-bar-chart',
+            styles.horizontalBarChart,
+            classNameFromProps,
+        );
+
+        const tooltipClassName = _cs(
+            'tooltip',
+            styles.tooltip,
+        );
+
+        const svgClassName = _cs(
+            'svg',
+            styles.svg,
+        );
+
         return (
-            <Fragment>
+            <div className={className}>
                 <svg
                     className={svgClassName}
-                    ref={(elem) => { this.svg = elem; }}
+                    ref={this.svgRef}
                 />
                 <Float>
                     <div
-                        ref={(el) => { this.tooltip = el; }}
                         className={tooltipClassName}
+                        ref={this.tooltipRef}
                     />
                 </Float>
-            </Fragment>
+            </div>
         );
     }
 }

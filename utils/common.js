@@ -509,10 +509,10 @@ export const findDuplicates = (list = [], keySelector) => {
 
 export const listToMap = (list = [], keySelector, modifier) => (
     list.reduce(
-        (acc, elem) => {
+        (acc, elem, i) => {
             const key = keySelector(elem);
             if (!isFalsy(key, [''])) {
-                acc[key] = modifier ? modifier(elem, key) : elem;
+                acc[key] = modifier ? modifier(elem, key, i) : elem;
             }
             return acc;
         },
@@ -522,11 +522,11 @@ export const listToMap = (list = [], keySelector, modifier) => (
 
 export const mapToList = (obj = {}, modifier) => (
     Object.keys(obj).reduce(
-        (acc, key) => {
+        (acc, key, i) => {
             const elem = obj[key];
             return [
                 ...acc,
-                modifier ? modifier(elem, key) : elem,
+                modifier ? modifier(elem, key, i) : elem,
             ];
         },
         [],
@@ -535,11 +535,11 @@ export const mapToList = (obj = {}, modifier) => (
 
 export const mapToMap = (obj = {}, keySelector, modifier) => (
     Object.keys(obj).reduce(
-        (acc, k) => {
+        (acc, k, i) => {
             const elem = obj[k];
             const key = keySelector ? keySelector(k, elem) : k;
             if (!isFalsy(key, [''])) {
-                acc[key] = modifier ? modifier(elem, key) : elem;
+                acc[key] = modifier ? modifier(elem, key, i) : elem;
             }
             return acc;
         },

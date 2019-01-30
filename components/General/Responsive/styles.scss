@@ -1,7 +1,8 @@
 .responsive {
     display: flex;
+    flex-direction: column;
 
     .responsive-child {
-        flex: 1;
+        flex-grow: 1;
     }
 }
