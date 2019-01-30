@@ -1,7 +1,4 @@
-import React, {
-    PureComponent,
-    Fragment,
-} from 'react';
+import React, { PureComponent } from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
@@ -21,7 +18,10 @@ import PropTypes from 'prop-types';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
-import { getStandardFilename } from '../../../utils/common';
+import {
+    getStandardFilename,
+    _cs,
+} from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -74,9 +74,13 @@ class VerticalBarChart extends PureComponent {
 
     constructor(props) {
         super(props);
+
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
+
+        this.svgRef = React.createRef();
+        this.tooltipRef = React.createRef();
     }
 
     componentDidMount() {
@@ -99,14 +103,18 @@ class VerticalBarChart extends PureComponent {
 
         return this.colors(labelSelector(d));
     }
+
     save = () => {
         const svgsaver = new SvgSaver();
-        const svg = select(this.svg);
+        const { current: svgElement } = this.svgRef;
+        const svg = select(svgElement);
         svgsaver.asSvg(svg.node(), `${getStandardFilename('barchart', 'graph')}.svg`);
     }
 
     redrawChart = () => {
-        const svg = select(this.svg);
+        const { current: svgElement } = this.svgRef;
+        const svg = select(svgElement);
+
         svg.selectAll('*').remove();
         this.drawChart();
     }
@@ -128,27 +136,28 @@ class VerticalBarChart extends PureComponent {
             const value = valueSelector(d);
             const label = labelSelector(d);
             const defaultTooltip = `
-            <span class="${styles.label}">
-                 ${label || ''}
-            </span>
-            <span class="${styles.value}">
-                 ${value || ''}
-            </span>`;
+                <span class="${styles.label}">
+                     ${label || ''}
+                </span>
+                <span class="${styles.value}">
+                     ${value || ''}
+                </span>
+            `;
             const content = tooltipContent ? tooltipContent(d) : defaultTooltip;
-            this.tooltip.innerHTML = content;
-            const { style } = this.tooltip;
+            const { current: tooltip } = this.tooltipRef;
+            tooltip.innerHTML = content;
+            const { style } = tooltip;
             style.display = 'block';
         }
     }
 
     handleMouseMove = () => {
-        const {
-            showTooltip,
-        } = this.props;
+        const { showTooltip } = this.props;
 
         if (showTooltip) {
-            const { style } = this.tooltip;
-            const { width, height } = this.tooltip.getBoundingClientRect();
+            const { current: tooltip } = this.tooltipRef;
+            const { style } = tooltip;
+            const { width, height } = tooltip.getBoundingClientRect();
             // eslint-disable-next-line no-restricted-globals
             const x = event.pageX;
 
@@ -169,7 +178,8 @@ class VerticalBarChart extends PureComponent {
         } = this.props;
 
         if (showTooltip) {
-            const { style } = this.tooltip;
+            const { current: tooltip } = this.tooltipRef;
+            const { style } = tooltip;
             style.display = 'none';
         }
     }
@@ -203,7 +213,11 @@ class VerticalBarChart extends PureComponent {
 
         this.colors = scaleOrdinal().range(colorScheme);
 
-        const group = select(this.svg)
+        const { current: svgElement } = this.svgRef;
+        svgElement.setAttribute('width', `${fullWidth}px`);
+        svgElement.setAttribute('height', `${fullHeight}px`);
+
+        const group = select(svgElement)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
@@ -252,30 +266,35 @@ class VerticalBarChart extends PureComponent {
     render() {
         const { className: classNameFromProps } = this.props;
 
-        const className = [
+        const className = _cs(
             'vertical-bar-chart',
-            styles.barChart,
+            styles.verticalBarChart,
             classNameFromProps,
-        ].join(' ');
+        );
 
-        const tooltipClassName = [
+        const tooltipClassName = _cs(
             'tooltip',
             styles.tooltip,
-        ].join(' ');
+        );
+
+        const svgClassName = _cs(
+            'svg',
+            styles.svg,
+        );
 
         return (
-            <Fragment>
+            <div className={className}>
                 <svg
-                    className={className}
-                    ref={(elem) => { this.svg = elem; }}
+                    className={svgClassName}
+                    ref={this.svgRef}
                 />
                 <Float>
                     <div
-                        ref={(el) => { this.tooltip = el; }}
+                        ref={this.tooltipRef}
                         className={tooltipClassName}
                     />
                 </Float>
-            </Fragment>
+            </div>
         );
     }
 }
