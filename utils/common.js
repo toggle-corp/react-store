@@ -491,7 +491,7 @@ export const unique = (object, getValue, getComparisionValue) => {
         }
     });
     // for efficiency
-    if (newArr.length === object.length) {
+    if (!getValue && newArr.length === object.length) {
         return object;
     }
     return newArr;

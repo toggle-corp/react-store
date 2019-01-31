@@ -53,6 +53,7 @@ export default class Highlight extends React.PureComponent {
             highlightKey,
             highlight,
         } = this.props;
+
         onClick(
             e,
             {
