@@ -23,6 +23,7 @@ const propTypes = {
     useHash: PropTypes.bool,
     modifier: PropTypes.func,
     inverted: PropTypes.bool,
+    showBeforeTabs: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -37,6 +38,7 @@ const defaultProps = {
     useHash: false,
     modifier: undefined,
     inverted: false,
+    showBeforeTabs: false,
 };
 
 
@@ -130,7 +132,7 @@ export default class ScrollTabs extends React.Component {
         tabsContainer.scrollLeft += 48;
     }
 
-    renderTab = (_, data) => {
+    renderTab = (_, data, index) => {
         const {
             active,
             tabs,
@@ -143,21 +145,24 @@ export default class ScrollTabs extends React.Component {
         }
 
         const onClick = (e) => { this.handleTabClick(data, e); };
-        const content = modifier ? modifier(data) : tabs[data];
+        const content = modifier ? modifier(data, tabs[data], index) : tabs[data];
 
         if (!useHash) {
             const isActive = data === active;
             const className = this.getTabClassName(isActive);
 
             return (
-                <button
+                <div
+                    role="button"
+                    tabIndex="-1"
                     onClick={onClick}
+                    onKeyDown={onClick}
                     className={className}
                     key={data}
                     type="button"
                 >
                     { content }
-                </button>
+                </div>
             );
         }
 
@@ -183,6 +188,8 @@ export default class ScrollTabs extends React.Component {
             tabs,
             useHash,
             defaultHash,
+            showBeforeTabs,
+            children,
         } = this.props;
 
         // FIXME: generate tabList when tabs change
@@ -209,12 +216,17 @@ export default class ScrollTabs extends React.Component {
                     ref={this.tabsContainerRef}
                     className={styles.tabsContainer}
                 >
+                    { showBeforeTabs &&
+                        <div className={styles.nonBlank}>
+                            { children }
+                        </div>
+                    }
                     <List
                         data={tabList}
                         modifier={this.renderTab}
                     />
                     <div className={styles.blank}>
-                        { this.props.children }
+                        { !showBeforeTabs && children }
                     </div>
                 </div>
                 <Button
