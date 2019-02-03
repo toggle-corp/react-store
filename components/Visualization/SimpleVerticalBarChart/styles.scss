@@ -1,0 +1,24 @@
+@import '../../../stylesheets/base';
+
+.vertical-bar-chart {
+    overflow: hidden;
+
+    .svg {
+        .bars {
+            .bar {
+                fill: $color-separator;
+
+                &:hover {
+                    fill: $color-accent;
+                    opacity: .3;
+                }
+            }
+
+        }
+
+        .y-axis {
+            stroke-width: $width-separator-medium;
+            stroke: $color-accent;
+        }
+    }
+}
