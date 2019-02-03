@@ -20,3 +20,10 @@ export function* zipWith(func, ...args) {
     }
 }
 
+export function* getNaturalNumbers(startIndex = 0, step = 1) {
+    let currentValue = startIndex - step;
+    while (true) {
+        currentValue += step;
+        yield currentValue;
+    }
+}

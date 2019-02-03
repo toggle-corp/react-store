@@ -42,6 +42,12 @@
             user-select: none;
         }
 
+        .basic-tab {
+            flex-shrink: 0;
+            cursor: pointer;
+            padding: 0;
+        }
+
         .non-blank {
             display: flex;
             align-items: center;
@@ -61,7 +67,7 @@
 
     &:not(.inverted) {
         .tabs-container {
-            .tab {
+            .tab, .basic-tab {
                 border-bottom: $width-separator-medium solid $color-separator;
 
                 &.active {
@@ -70,7 +76,8 @@
                 }
             }
 
-            .blank {
+
+            .blank, .non-blank {
                 border-bottom: $width-separator-medium solid $color-separator;
             }
         }
@@ -78,7 +85,7 @@
 
     &.inverted {
         .tabs-container {
-            .tab {
+            .tab, .basic-tab {
                 border-top: $width-separator-medium solid $color-separator;
 
                 &.active {
@@ -87,7 +94,7 @@
                 }
             }
 
-            .blank {
+            .blank, .non-blank {
                 border-top: $width-separator-medium solid $color-separator;
             }
         }
