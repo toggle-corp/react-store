@@ -10,7 +10,7 @@ import { addClassName, _cs } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
-    active: PropTypes.string,
+    active: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     children: PropTypes.node,
     className: PropTypes.string,
     itemClassName: PropTypes.string,
@@ -167,7 +167,7 @@ export default class ScrollTabs extends React.Component {
         // const otherContent = modifier ? modifier(data, tabs[data], index) : tabs[data];
 
         if (!useHash) {
-            const isActive = data === active;
+            const isActive = data === String(active);
 
             if (Renderer) {
                 const className = this.getTabClassName(isActive, true);
