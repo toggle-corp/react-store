@@ -72,8 +72,6 @@ class SimpleVerticalBarChart extends PureComponent {
             };
         });
 
-        console.warn('render data', renderData);
-
         return renderData;
     })
 
@@ -186,8 +184,8 @@ class SimpleVerticalBarChart extends PureComponent {
                 >
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
-                            <React.Fragment key={d.y}>
-                                <rect // eslint-disable-line
+                            <React.Fragment key={d.x}>
+                                <rect
                                     className={_cs(styles.bar, 'bar')}
                                     x={d.x}
                                     y={d.y}
@@ -195,7 +193,7 @@ class SimpleVerticalBarChart extends PureComponent {
                                     height={d.height}
                                 >
                                     <title>
-                                        { d.label } - {d.value }
+                                        { d.label } {'\n'} {d.value }
                                     </title>
                                 </rect>
                             </React.Fragment>

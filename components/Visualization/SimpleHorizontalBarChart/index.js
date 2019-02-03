@@ -189,7 +189,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     height={d.height}
                                 >
                                     <title>
-                                        { d.label } - {d.value }
+                                        { d.label } {'\n'} {d.value }
                                     </title>
                                 </rect>
                                 { d.height > minBarHeightToRenderText && (
@@ -200,7 +200,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                         dy={d.height / 2}
                                         dx={horizontalTextOffset}
                                     >
-                                        {d.value } : { d.label }
+                                        { d.label }
                                     </text>
                                 )}
                             </React.Fragment>
