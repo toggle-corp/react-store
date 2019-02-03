@@ -10,11 +10,13 @@ const propTypes = {
         PropTypes.array,
     ]).isRequired,
     initialPage: PropTypes.number,
+    onPageChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     initialPage: 0,
+    onPageChange: undefined,
 };
 
 export default class Wizard extends React.Component {
@@ -31,26 +33,29 @@ export default class Wizard extends React.Component {
     }
 
     handleJumpClick = (page) => {
+        const { onPageChange } = this.props;
         this.setState({
             visiblePage: page,
             className: styles.next,
-        });
+        }, () => onPageChange && onPageChange(page));
     }
 
     handleNextClick = () => {
         const { visiblePage } = this.state;
+        const { onPageChange } = this.props;
         this.setState({
             visiblePage: visiblePage + 1,
             className: styles.next,
-        });
+        }, () => onPageChange && onPageChange(visiblePage + 1));
     }
 
     handlePrevClick = () => {
         const { visiblePage } = this.state;
+        const { onPageChange } = this.props;
         this.setState({
             visiblePage: visiblePage - 1,
             className: styles.prev,
-        });
+        }, () => onPageChange && onPageChange(visiblePage + 1));
     }
 
     render() {
