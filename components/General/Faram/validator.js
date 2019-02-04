@@ -232,10 +232,21 @@ export const accumulateDifferentialErrors = (
     } else if (isSchemaForObject) {
         const safeOldObj = oldObj || emptyObject;
         const safeNewObj = newObj || emptyObject;
-        const safeOldError = oldError || emptyObject;
+
+        // NOTE: clear out errors if different localMember for e.old and e.new
+        const forgetOldError = (
+            hasIdentifierFunction &&
+            getIdentifierName(safeNewObj, identifier) !== getIdentifierName(safeOldObj, identifier)
+        );
+
+        // FIXME: forgetOldError can be made a lot better if it only clears
+        // error for fields that have validations changed
+        const safeOldError = (!forgetOldError && oldError) || emptyObject;
         const localFields = hasIdentifierFunction
             ? getIdentifierChoice(safeNewObj, identifier, fields)
             : fields;
+
+
         Object.keys(localFields).forEach((fieldName) => {
             if (safeOldObj[fieldName] === safeNewObj[fieldName] && safeOldError[fieldName]) {
                 errors[fieldName] = safeOldError[fieldName];

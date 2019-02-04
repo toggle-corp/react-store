@@ -5,12 +5,12 @@ import Button from '../../Action/Button';
 import HashManager from '../../General/HashManager';
 import List from '../List';
 import iconNames from '../../../constants/iconNames';
-import { addClassName } from '../../../utils/common';
+import { addClassName, _cs } from '../../../utils/common';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    active: PropTypes.string,
+    active: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     children: PropTypes.node,
     className: PropTypes.string,
     itemClassName: PropTypes.string,
@@ -21,8 +21,13 @@ const propTypes = {
         dummy: PropTypes.string,
     }),
     useHash: PropTypes.bool,
-    modifier: PropTypes.func,
+
+    renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
+    rendererParams: PropTypes.func,
+
     inverted: PropTypes.bool,
+    showBeforeTabs: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -35,8 +40,13 @@ const defaultProps = {
     replaceHistory: false,
     tabs: {},
     useHash: false,
-    modifier: undefined,
+
+    renderer: undefined,
+    rendererClassName: '',
+    rendererParams: undefined,
+
     inverted: false,
+    showBeforeTabs: false,
 };
 
 
@@ -82,7 +92,7 @@ export default class ScrollTabs extends React.Component {
         return classNames.join(' ');
     }
 
-    getTabClassName = (isActive) => {
+    getTabClassName = (isActive, isBasic) => {
         const { itemClassName } = this.props;
 
         const classNames = [
@@ -90,6 +100,11 @@ export default class ScrollTabs extends React.Component {
             styles.tab,
             'scroll-tab',
         ];
+        if (isBasic) {
+            classNames.push(styles.basicTab);
+        } else {
+            classNames.push(styles.tab);
+        }
 
         if (isActive) {
             classNames.push(styles.active);
@@ -130,33 +145,52 @@ export default class ScrollTabs extends React.Component {
         tabsContainer.scrollLeft += 48;
     }
 
-    renderTab = (_, data) => {
+    renderTab = (_, data, index) => {
         const {
             active,
             tabs,
             useHash,
-            modifier,
+            renderer: Renderer,
+            rendererClassName,
+            rendererParams,
         } = this.props;
 
         if (!tabs[data]) {
             return null;
         }
 
+        const extraProps = rendererParams
+            ? rendererParams(data, tabs[data], index)
+            : undefined;
+
         const onClick = (e) => { this.handleTabClick(data, e); };
-        const content = modifier ? modifier(data) : tabs[data];
+        // const otherContent = modifier ? modifier(data, tabs[data], index) : tabs[data];
 
         if (!useHash) {
-            const isActive = data === active;
-            const className = this.getTabClassName(isActive);
+            const isActive = data === String(active);
 
+            if (Renderer) {
+                const className = this.getTabClassName(isActive, true);
+                return (
+                    <Renderer
+                        key={data}
+                        className={_cs(rendererClassName, className)}
+                        isActive
+                        onClick={onClick}
+                        {...extraProps}
+                    />
+                );
+            }
+
+            const className = this.getTabClassName(isActive);
             return (
                 <button
-                    onClick={onClick}
-                    className={className}
                     key={data}
-                    type="button"
+                    className={className}
+                    onClick={onClick}
+                    tabIndex="-1"
                 >
-                    { content }
+                    {tabs[data]}
                 </button>
             );
         }
@@ -164,16 +198,30 @@ export default class ScrollTabs extends React.Component {
         const { hash } = this.state;
 
         const isActive = hash === data;
-        const className = this.getTabClassName(isActive);
 
+        if (Renderer) {
+            const className = this.getTabClassName(isActive, true);
+            return (
+                <Renderer
+                    key={data}
+                    className={_cs(rendererClassName, className)}
+                    isActive
+                    href={`#/${data}`}
+                    onClick={onClick}
+                    {...extraProps}
+                />
+            );
+        }
+
+        const className = this.getTabClassName(isActive);
         return (
             <a
+                key={data}
+                className={className}
                 onClick={onClick}
                 href={`#/${data}`}
-                className={className}
-                key={data}
             >
-                { content }
+                { tabs[data] }
             </a>
         );
     }
@@ -183,6 +231,8 @@ export default class ScrollTabs extends React.Component {
             tabs,
             useHash,
             defaultHash,
+            showBeforeTabs,
+            children,
         } = this.props;
 
         // FIXME: generate tabList when tabs change
@@ -209,12 +259,17 @@ export default class ScrollTabs extends React.Component {
                     ref={this.tabsContainerRef}
                     className={styles.tabsContainer}
                 >
+                    { showBeforeTabs &&
+                        <div className={styles.nonBlank}>
+                            { children }
+                        </div>
+                    }
                     <List
                         data={tabList}
                         modifier={this.renderTab}
                     />
                     <div className={styles.blank}>
-                        { this.props.children }
+                        { !showBeforeTabs && children }
                     </div>
                 </div>
                 <Button
