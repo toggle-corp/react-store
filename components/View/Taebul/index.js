@@ -40,13 +40,18 @@ export default class Taebul extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    handleScroll = (e) => {
-        const body = e.target;
-        if (body.className && body.className.includes(styles.body)) {
+    handleScroll = ({ target }) => {
+        if (target.className && target.className.includes(styles.body)) {
             const head = document.getElementsByClassName(styles.head)[0];
 
             if (head) {
-                head.scrollLeft = body.scrollLeft;
+                head.scrollLeft = target.scrollLeft;
+            }
+        } else if (target.className && target.className.includes(styles.head)) {
+            const body = document.getElementsByClassName(styles.body)[0];
+
+            if (body) {
+                body.scrollLeft = target.scrollLeft;
             }
         }
     }
