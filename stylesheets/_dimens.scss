@@ -1,96 +1,96 @@
-$font-size-super-small: 7px;
-$font-size-super-small-alt: 8px;
-$font-size-extra-small: 9px;
-$font-size-extra-small-alt: 10px;
-$font-size-small: 11px;
-$font-size-small-alt: 12px;
-$font-size-medium: 13px;
-$font-size-medium-alt: 14px;
-$font-size-large: 16px;
-$font-size-large-alt: 18px;
-$font-size-extra-large: 20px;
-$font-size-extra-large-alt: 22px;
-$font-size-super-large: 26px;
-$font-size-super-large-alt: 28px;
+$font-size-super-small: 7px !default;
+$font-size-super-small-alt: 8px !default;
+$font-size-extra-small: 9px !default;
+$font-size-extra-small-alt: 10px !default;
+$font-size-small: 11px !default;
+$font-size-small-alt: 12px !default;
+$font-size-medium: 13px !default;
+$font-size-medium-alt: 14px !default;
+$font-size-large: 16px !default;
+$font-size-large-alt: 18px !default;
+$font-size-extra-large: 20px !default;
+$font-size-extra-large-alt: 22px !default;
+$font-size-super-large: 26px !default;
+$font-size-super-large-alt: 28px !default;
 
-$font-size-default: $font-size-medium;
+$font-size-default: $font-size-medium !default;
 
-$font-weight-light: 300;
-$font-weight-normal: 400;
-$font-weight-medium: 400;
-$font-weight-bold: 600;
-$font-weight-default: $font-weight-medium;
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 400 !default;
+$font-weight-bold: 600 !default;
+$font-weight-default: $font-weight-medium !default;
 
-$spacing-super-small: 1px;
-$spacing-extra-small: 2px;
-$spacing-extra-small-alt: 3px;
-$spacing-small: 6px;
-$spacing-small-alt: 8px;
-$spacing-medium: 10px;
-$spacing-medium-alt: 12px;
-$spacing-large: 18px;
-$spacing-large-alt: 22px;
-$spacing-extra-large: 26px;
-$spacing-extra-large-alt: 30px;
-$spacing-super-large: 36px;
-$spacing-super-large-alt: 42px;
+$spacing-super-small: 1px !default;
+$spacing-extra-small: 2px !default;
+$spacing-extra-small-alt: 3px !default;
+$spacing-small: 6px !default;
+$spacing-small-alt: 8px !default;
+$spacing-medium: 10px !default;
+$spacing-medium-alt: 12px !default;
+$spacing-large: 18px !default;
+$spacing-large-alt: 22px !default;
+$spacing-extra-large: 26px !default;
+$spacing-extra-large-alt: 30px !default;
+$spacing-super-large: 36px !default;
+$spacing-super-large-alt: 42px !default;
 
-$spacing-default: $spacing-medium;
+$spacing-default: $spacing-medium !default;
 
-$height-navbar: 48px;
-$height-progress-bar: 3px;
+$height-navbar: 48px !default;
+$height-progress-bar: 3px !default;
 
-$width-separator-thin: 1px;
-$width-separator-medium: 2px;
-$width-separator-thick: 4px;
+$width-separator-thin: 1px !default;
+$width-separator-medium: 2px !default;
+$width-separator-thick: 4px !default;
 
-$width-icon-medium: 16px;
-$width-icon-large-alt: 24px;
-$width-icon-large: 24px;
-$width-icon-extra-large: 32px;
-$width-icon-extra-large-alt: 40px;
-$width-icon-super-large: 48px;
+$width-icon-medium: 16px !default;
+$width-icon-large-alt: 24px !default;
+$width-icon-large: 24px !default;
+$width-icon-extra-large: 32px !default;
+$width-icon-extra-large-alt: 40px !default;
+$width-icon-super-large: 48px !default;
 
-$width-login-form: 360px;
-$width-register-form: 520px;
+$width-login-form: 360px !default;
+$width-register-form: 520px !default;
 
-$width-matrix-1d-title: 108px;
+$width-matrix-1d-title: 108px !default;
 
-$z-index-region-detail-view: 3;
+$z-index-region-detail-view: 3 !default;
 
-$height-scale-widget-unit: 20px;
-$width-scale-widget-unit: 10px;
-$height-scale-widget-unit-selected: 24px;
-$width-scale-widget-unit-selected: 12px;
+$height-scale-widget-unit: 20px !default;
+$width-scale-widget-unit: 10px !default;
+$height-scale-widget-unit-selected: 24px !default;
+$width-scale-widget-unit-selected: 12px !default;
 
-$width-scrollbar: 10px;
+$width-scrollbar: 10px !default;
 
-$duration-slow: .3s;
-$duration-medium: .2s;
-$duration-fast: .1s;
+$duration-slow: .3s !default;
+$duration-medium: .2s !default;
+$duration-fast: .1s !default;
 
-$width-modal-medium: 640px;
-$width-modal-small: 480px;
-$width-modal-extra-small: 320px;
+$width-modal-medium: 640px !default;
+$width-modal-small: 480px !default;
+$width-modal-extra-small: 320px !default;
 
-$width-navbar-icon: 24px;
-$height-navbar-icon: 24px;
+$width-navbar-icon: 24px !default;
+$height-navbar-icon: 24px !default;
 
-$radius-blur-medium: 10px;
-$radius-blur-small: 7px;
-$radius-blur-large: 15px;
+$radius-blur-medium: 10px !default;
+$radius-blur-small: 7px !default;
+$radius-blur-large: 15px !default;
 
-$radius-spread-medium: -3px;
-$radius-spread-small: -2px;
-$radius-spread-large: -5px;
+$radius-spread-medium: -3px !default;
+$radius-spread-small: -2px !default;
+$radius-spread-large: -5px !default;
 
-$radius-border-medium: 3px;
-$radius-border-small: 2px;
-$radius-border-large: 5px;
+$radius-border-medium: 3px !default;
+$radius-border-small: 2px !default;
+$radius-border-large: 5px !default;
 
-$duration-transition-slow: .4s;
-$duration-transition-medium: .2s;
-$duration-transition-fast: .1s;
+$duration-transition-slow: .4s !default;
+$duration-transition-medium: .2s !default;
+$duration-transition-fast: .1s !default;
 
 $width-segment-button: 42px !default;
 $height-segment-button: 32px !default;
