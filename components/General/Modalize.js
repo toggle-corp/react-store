@@ -9,10 +9,12 @@ import {
 const propTypes = {
     disabled: PropTypes.bool,
     modal: PropTypes.element.isRequired,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     disabled: false,
+    className: '',
 };
 
 const modalize = (WrappedButtonComponent) => {
@@ -78,7 +80,8 @@ const modalize = (WrappedButtonComponent) => {
                         className={className}
                         {...otherProps}
                     />
-                    { showModal && React.cloneElement(modal,
+                    { showModal && React.cloneElement(
+                        modal,
                         {
                             closeModal: this.handleModalClose,
                             parentBCR: this.wrappedButtonBCR,
