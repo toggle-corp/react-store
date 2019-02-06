@@ -31,6 +31,7 @@ const propTypes = {
     title: PropTypes.string,
 
     dropdownClassName: PropTypes.string,
+    showDropdown: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -40,6 +41,7 @@ const defaultProps = {
     hideDropdownIcon: false,
     title: '',
     dropdownClassName: '',
+    showDropdown: false,
 };
 
 export default class DropdownMenu extends React.PureComponent {
@@ -58,6 +60,19 @@ export default class DropdownMenu extends React.PureComponent {
 
     componentWillMount() {
         window.addEventListener('click', this.handleWindowClick);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.container) {
+            this.boundingClientRect = this.container.getBoundingClientRect();
+        }
+        const { showDropdown } = nextProps;
+
+        if (this.props.showDropdown !== showDropdown) {
+            this.setState({
+                showDropdown: nextProps.showDropdown,
+            });
+        }
     }
 
     componentWillUnmount() {
