@@ -44,6 +44,7 @@
 
             &.active {
                 border-bottom-color: $color-accent;
+                background-color: lighten($color-accent, 46%);
                 color: $color-text;
             }
         }
