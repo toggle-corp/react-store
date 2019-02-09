@@ -2,26 +2,32 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '../../../utils/common';
+import { FaramInputElement } from '../../General/FaramElements';
+import HintAndError from '../HintAndError';
 import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * Show preview?
-     */
-    showPreview: PropTypes.bool,
-
     /**
      * Show file status? (eg: File name, 'No file selected')
      */
     showStatus: PropTypes.bool,
 
     /**
-     * a function that return Promise object
-     * which will resolve a preview for give file
+     * String to show in case of error
      */
-    previewExtractor: PropTypes.func,
+    error: PropTypes.string,
+
+    value: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.arrayOf(PropTypes.object),
+    ]),
+
+    hint: PropTypes.string,
+    multiple: PropTypes.bool,
 
     className: PropTypes.string,
+
+    showHintAndError: PropTypes.bool,
 
     children: PropTypes.oneOfType([
         PropTypes.node,
@@ -32,18 +38,22 @@ const propTypes = {
 
     accept: PropTypes.string,
 
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    previewExtractor: undefined,
-    showPreview: false,
+    error: '',
+    hint: '',
+    onChange: undefined,
     showStatus: true,
+    showHintAndError: true,
     accept: undefined,
+    multiple: false,
+    value: undefined,
 };
 
-export default class FileInput extends React.PureComponent {
+class FileInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -68,75 +78,56 @@ export default class FileInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            files: [],
-            preview: undefined,
-        };
-
         this.inputId = randomString();
     }
 
     handleChange = () => {
+        const {
+            accept,
+            onChange,
+            multiple,
+        } = this.props;
         const filesFromInput = Array.from(this.fileInput.files);
         const files = filesFromInput.filter(
-            file => FileInput.isValidFile(file.name, file.type, this.props.accept),
+            file => FileInput.isValidFile(file.name, file.type, accept),
         );
         const invalidFiles = filesFromInput.length - files.length;
 
-        if (files.length > 0 && this.props.showPreview) {
-            this.props.previewExtractor(files[0])
-                .then((preview) => {
-                    this.setState({ preview });
-                });
+        if (onChange) {
+            onChange(multiple ? files : files[0], { invalidFiles });
         }
+    }
 
-        this.setState(
-            {
-                files,
-                preview: undefined,
-            },
-            () => {
-                this.props.onChange(files, { invalidFiles });
-            },
-        );
+    getFileStatus = (value) => {
+        if (Array.isArray(value) && value.length > 0) {
+            return value.map(file => file.name).join(', ');
+        }
+        if (value) {
+            return value.name;
+        }
+        return 'No file choosen';
     }
 
     render() {
         const {
-            showPreview,
             showStatus,
             className,
             children,
+            error,
+            hint,
+            showHintAndError,
+            value,
+            changeDelay, // eslint-disable-line
 
-            previewExtractor, // eslint-disable-line
             onChange, // eslint-disable-line
 
             ...otherProps
         } = this.props;
 
-        const { files, preview } = this.state;
+        const fileStatus = this.getFileStatus(value);
 
         return (
-            <div className={`file-input ${className} ${styles.fileInputWrapper}`} >
-                {
-                    showPreview && (
-                        <div className={`${styles.preview} image-input-preview`}>
-                            {
-                                preview ? (
-                                    <img
-                                        alt="No preview available"
-                                        className={`img ${styles.img}`}
-                                        src={preview}
-                                    />
-                                ) : (
-                                    <p className="no-preview-text">
-                                        No preview available
-                                    </p>
-                                )
-                            }
-                        </div>
-                    )
-                }
+            <div className={`file-input ${className} ${styles.fileInputWrapper}`}>
                 <label
                     className={`label ${styles.label}`}
                     htmlFor={this.inputId}
@@ -154,11 +145,18 @@ export default class FileInput extends React.PureComponent {
                 {
                     showStatus && (
                         <p className={styles.status}>
-                            { files.length > 0 ? files[0].name : 'No file choosen' }
+                            {fileStatus}
                         </p>
                     )
                 }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
             </div>
         );
     }
 }
+
+export default FaramInputElement(FileInput);
