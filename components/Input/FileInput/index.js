@@ -100,12 +100,12 @@ class FileInput extends React.PureComponent {
 
     getFileStatus = (value) => {
         if (Array.isArray(value) && value.length > 0) {
-            return value.map(file => file.name).join(', ');
+            return `Selected: ${value.map(file => file.name).join(', ')}`;
         }
         if (value) {
-            return value.name;
+            return `Selected: ${value.name}`;
         }
-        return 'No file choosen';
+        return 'No file chosen';
     }
 
     render() {

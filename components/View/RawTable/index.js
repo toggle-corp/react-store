@@ -15,9 +15,11 @@ const defaultEmptyComponent = () => {
     ];
 
     return (
-        <Message className={classNames.join(' ')}>
-            Nothing to show
-        </Message>
+        <div className={classNames.join(' ')}>
+            <Message>
+                Nothing to show
+            </Message>
+        </div>
     );
 };
 
@@ -199,7 +201,11 @@ export default class RawTable extends React.Component {
                             />
                         </table>
                     ) : (
-                        EmptyComponent && <EmptyComponent className={emptyClassName} />
+                        EmptyComponent && (
+                            <div className={styles.emptyContainer}>
+                                <EmptyComponent className={emptyClassName} />
+                            </div>
+                        )
                     )
                 }
             </Fragment>

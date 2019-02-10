@@ -133,7 +133,7 @@ class StackedBarChart extends PureComponent {
 
         this.x = scaleBand()
             .domain(this.labels)
-            .rangeRound([0, width])
+            .rangeRound([0, this.width])
             .padding(0.1);
 
         const stackMin = row => min(row, d => d[0]);
@@ -220,7 +220,7 @@ class StackedBarChart extends PureComponent {
         group
             .append('g')
             .attr('class', styles.yAxis)
-            .call(axisLeft(y).tickSize(0).tickPadding(6));
+            .call(axisLeft(y).tickSize(0).tickPadding(6).ticks(5));
     }
 
     redrawChart = () => {
