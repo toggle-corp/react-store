@@ -8,6 +8,8 @@ const propTypes = {
     className: PropTypes.string,
     error: PropTypes.bool,
     show: PropTypes.bool,
+    active: PropTypes.bool,
+    disabled: PropTypes.bool,
     text: PropTypes.string,
 };
 
@@ -16,6 +18,8 @@ const defaultProps = {
     error: false,
     show: true,
     text: '',
+    active: false,
+    disabled: false,
 };
 
 const emptyText = '-';
@@ -30,6 +34,8 @@ export default class InputLabel extends React.PureComponent {
             text,
             error,
             className: classNameFromProps,
+            active,
+            disabled,
             ...otherProps
         } = this.props;
 
@@ -44,6 +50,11 @@ export default class InputLabel extends React.PureComponent {
             !text && 'empty',
             !text && styles.empty,
             error && styles.error,
+            error && 'error',
+            active && styles.active,
+            active && 'active',
+            disabled && styles.disabled,
+            disabled && 'disabled',
         );
 
         return (

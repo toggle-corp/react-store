@@ -8,6 +8,9 @@ import { isFalsy } from '../../../../utils/common';
 
 import styles from './styles.scss';
 
+const DEFAULT_MIN_COLUMN_WIDTH = 96;
+const DEFAULT_COLUMN_WIDTH = 204;
+
 class ResizableHeader extends React.PureComponent {
     handleSeparatorMouseDown = (e) => {
         const {
@@ -22,6 +25,7 @@ class ResizableHeader extends React.PureComponent {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
             _headerRenderer: Header, // eslint-disable-line no-unused-vars
+            _isResizing,
             className: classNameFromProps,
             ...otherProps
         } = this.props;
@@ -29,6 +33,7 @@ class ResizableHeader extends React.PureComponent {
         const className = `
             ${classNameFromProps}
             ${styles.newHeader}
+            ${_isResizing ? styles.resizing : ''}
         `;
 
         return (
@@ -46,7 +51,6 @@ class ResizableHeader extends React.PureComponent {
     }
 }
 
-const DEFAULT_WIDTH = 200;
 
 // NOTE: for now default width cannot be set
 const propTypes = {
@@ -83,7 +87,11 @@ export default (WrappedComponent) => {
             const dx = e.clientX - this.lastMouseX;
             this.lastMouseX = e.clientX;
 
-            const { defaultColumnWidth = DEFAULT_WIDTH } = settings;
+            const {
+                defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
+                minColumnWidth = DEFAULT_MIN_COLUMN_WIDTH,
+            } = settings;
+
             const newSettings = produce(settings, (draftSettings) => {
                 if (!draftSettings.columnWidths) {
                     // eslint-disable-next-line no-param-reassign
@@ -91,22 +99,30 @@ export default (WrappedComponent) => {
                 }
 
                 const value = draftSettings.columnWidths[this.resizingColumnKey];
-                // eslint-disable-next-line no-param-reassign
-                draftSettings.columnWidths[this.resizingColumnKey] = isFalsy(value)
+                let newValue = isFalsy(value)
                     ? defaultColumnWidth + dx
                     : value + dx;
+
+                if (newValue < minColumnWidth) {
+                    newValue = minColumnWidth;
+                }
+
+                // eslint-disable-next-line no-param-reassign
+                draftSettings.columnWidths[this.resizingColumnKey] = newValue;
             });
             onChange(newSettings);
         }
 
         handleMouseUp = () => {
             window.removeEventListener('mousemove', this.handleMouseMove);
+            this.resizingColumnKey = undefined;
         }
 
         handleSeparatorMouseDown = (e, columnKey) => {
             this.resizingColumnKey = columnKey;
             this.startMouseX = e.clientX;
             this.lastMouseX = e.clientX;
+
             window.addEventListener('mousemove', this.handleMouseMove);
             window.addEventListener('mouseup', this.handleMouseUp);
         }
@@ -130,6 +146,7 @@ export default (WrappedComponent) => {
                     // eslint-disable-next-line no-param-reassign
                     draftColumns[index].headerRendererParams = (...params) => ({
                         ...headerRendererParams(...params),
+                        _isResizing: !!this.resizingColumnKey,
                         _columnKey: columnKey,
                         _headerRenderer: headerRenderer,
                         _onSeparatorMouseDown: this.handleSeparatorMouseDown,
@@ -155,7 +172,7 @@ export default (WrappedComponent) => {
 
             const {
                 columnWidths,
-                defaultColumnWidth = DEFAULT_WIDTH,
+                defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
             } = settings;
 
             const newColumns = this.modifyColumns(columns, columnWidths, defaultColumnWidth);

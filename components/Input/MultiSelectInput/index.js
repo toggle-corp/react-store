@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
 
+import RawInput from '../RawInput';
 import Label from '../Label';
 import HintAndError from '../HintAndError';
 import Button from '../../Action/Button';
@@ -16,6 +17,7 @@ import {
     getRatingForContentInString,
     isDefined,
     isNotDefined,
+    _cs,
 } from '../../../utils/common';
 
 import {
@@ -141,17 +143,15 @@ const getInputPlaceholder = (props) => {
         options,
     } = props;
 
-    // NOTE: if there is only one value selected, show its label instead
-    if (value.length === 1) {
-        const key = value[0];
-        const option = options.find(o => keySelector(o) === key);
-        if (isNotDefined(option)) {
-            // FIXME: better error message
-            return 'ERROR';
-        }
-        return labelSelector(option);
-    } else if (value.length > 0) {
-        return `${value.length} selected`;
+    const optionsMap = listToMap(
+        options,
+        keySelector,
+        element => element,
+    );
+
+    if (value.length !== 0) {
+        const selectedOptions = value.map(k => labelSelector(optionsMap[k]));
+        return selectedOptions.join(', ');
     }
 
     return placeholder;
@@ -248,7 +248,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
             disabled,
             error,
             clearable,
-            className,
+            className: classNameFromProps,
             value,
             options,
             hideClearButton,
@@ -260,57 +260,30 @@ export class NormalMultiSelectInput extends React.PureComponent {
             inputInFocus,
         } = this.state;
 
-        const classNames = [
-            className,
+        const className = _cs(
+            classNameFromProps,
             'multi-select-input',
             styles.multiSelectInput,
-        ];
+            showOptions && styles.showOptions,
+            showOptions && 'show-options',
+            disabled && 'disabled',
+            disabled && styles.disabled,
+            inputInFocus && styles.inputInFocus,
+            inputInFocus && 'input-in-focus',
+            error && styles.error,
+            error && 'error',
+            hideClearButton && styles.hideClearButton,
+            hideClearButton && 'hide-clear-button',
+            hideSelectAllButton && styles.hideSelectAllButton,
+            hideSelectAllButton && 'hide-select-all-button',
+            clearable && 'clearable',
+            value.length !== 0 && styles.filled,
+            value.length !== 0 && 'filled',
+            value.length === options.length && styles.completelyFilled,
+            value.length === options.length && 'completely-filled',
+        );
 
-        if (showOptions) {
-            classNames.push(styles.showOptions);
-            classNames.push('show-options');
-        }
-
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-
-        if (inputInFocus) {
-            classNames.push(styles.inputInFocus);
-            classNames.push('input-in-focus');
-        }
-
-        if (error) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        if (hideClearButton) {
-            classNames.push(styles.hideClearButton);
-            classNames.push('hide-clear-button');
-        }
-
-        if (hideSelectAllButton) {
-            classNames.push(styles.hideSelectAllButton);
-            classNames.push('hide-select-all-button');
-        }
-
-        if (clearable) {
-            classNames.push('clearable');
-        }
-
-        if (value.length !== 0) {
-            classNames.push(styles.filled);
-            classNames.push('filled');
-        }
-
-        if (value.length === options.length) {
-            classNames.push(styles.completelyFilled);
-            classNames.push('completely-filled');
-        }
-
-        return classNames.join(' ');
+        return className;
     };
 
     toggleDropdown = () => {
@@ -356,7 +329,6 @@ export class NormalMultiSelectInput extends React.PureComponent {
     handleInputKeyDown = (e) => {
         const { focusedKey, displayOptions, showOptions } = this.state;
         const { keySelector } = this.props;
-
         // Keycodes:
         // 9: Tab
         // 27: Escape
@@ -405,7 +377,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
         // And then calculate new option to focus
         let newFocusedKey;
         if (e.keyCode === 40) {
-            if (index < displayOptions.length) {
+            if (index < displayOptions.length - 1) {
                 newFocusedKey = keySelector(displayOptions[index + 1]);
             }
         } else if (e.keyCode === 38) {
@@ -566,14 +538,9 @@ export class NormalMultiSelectInput extends React.PureComponent {
             placeholder,
         } = this.state;
 
-        const className = `
-            input
-            ${styles.input}
-        `;
-
         return (
-            <input
-                className={className}
+            <RawInput
+                className={styles.input}
                 disabled={disabled || readOnly}
                 onBlur={this.handleInputBlur}
                 onChange={this.handleInputValueChange}
@@ -583,7 +550,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={autoFocus}
                 placeholder={placeholder}
-                ref={this.input}
+                elementRef={this.input}
                 type="text"
                 value={inputValue}
             />
@@ -691,12 +658,14 @@ export class NormalMultiSelectInput extends React.PureComponent {
             showLabel,
             title,
             value,
+            disabled,
         } = this.props;
 
         const {
             displayOptions,
             showOptions,
             focusedKey,
+            inputInFocus,
         } = this.state;
 
         const { current: container } = this.container;
@@ -708,9 +677,11 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 title={title}
             >
                 <Label
-                    className={styles.label}
                     show={showLabel}
                     text={label}
+                    error={!!error}
+                    disabled={disabled}
+                    active={inputInFocus || showOptions}
                 />
                 <InputAndActions />
                 <HintAndError

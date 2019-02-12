@@ -3,7 +3,8 @@
 @import '../../../stylesheets/input-border';
 
 $width-date-picker-container-min: 208px;
-$width-date-input: 180px;
+$width-spinner: 16px;
+$width-date-input: 112px;
 
 .date-picker-container {
     min-width: $width-date-picker-container-min;
@@ -13,33 +14,26 @@ $width-date-input: 180px;
     min-width: $width-date-input;
 
     .input {
-        @extend %input-border;
-        display: flex;
-        align-items: center;
+        position: relative;
 
         .units {
-            display: flex;
-            flex-grow: 1;
-            $width-input-spinner: 16px;
-
             .day-unit,
             .month-unit {
-                @extend %input-base;
-                width: calc(2ch + #{$width-input-spinner});
+                width: calc(2ch + #{$width-spinner});
                 font-family: $font-family-monospace;
             }
 
             .year-unit {
-                @extend %input-base;
-                width: calc(4ch + #{$width-input-spinner});
+                width: calc(4ch + #{$width-spinner});
                 font-family: $font-family-monospace;
             }
         }
 
         .action-buttons {
             @include transition-medium;
-            display: inline;
-            flex-shrink: 0;
+            position: absolute;
+            right: 0;
+            bottom: -$font-size-medium - $spacing-medium;
             opacity: 0;
         }
 

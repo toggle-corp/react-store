@@ -1,18 +1,30 @@
 @import '../../../../stylesheets/base';
 
 .new-header {
-    display: flex;
+    position: relative;
+    width: 100%;
 
     .original-header-container {
-        flex-grow: 1;
+        padding-right: $spacing-extra-small;
+        width: 100%;
     }
 
     .separator {
+        position: absolute;
+        top: $spacing-small;
+        right: 0;
         align-self: center;
         flex-shrink: 0;
+        z-index: 1;
         border-right: $width-separator-thin solid $color-separator-alt;
         cursor: col-resize;
-        padding: 0 $spacing-extra-small;
-        height: $font-size-medium;
+        width: $spacing-small;
+        height: calc(100% - #{$spacing-small * 2});
+    }
+
+    &.resizing {
+        .original-header-container {
+            pointer-events: none;
+        }
     }
 }

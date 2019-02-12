@@ -3,10 +3,7 @@ import React from 'react';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
-import {
-    isFalsy,
-    _cs,
-} from '../../../utils/common';
+import { _cs } from '../../../utils/common';
 
 import RawInput from '../RawInput';
 import HintAndError from '../HintAndError';
@@ -137,9 +134,12 @@ class TextInput extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            disabled,
             title,
             ...otherProps
         } = this.props;
+
+        const { isFocused } = this.state;
 
         const className = this.getClassName();
 
@@ -149,16 +149,18 @@ class TextInput extends React.PureComponent {
                 title={title}
             >
                 <Label
-                    className={styles.label}
                     show={showLabel}
                     text={label}
                     error={!!error}
+                    active={isFocused}
+                    disabled={disabled}
                 />
                 <RawInput
                     className={styles.input}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
+                    disabled={disabled}
                     type="text"
                     {...otherProps}
                 />

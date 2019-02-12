@@ -3,6 +3,10 @@
     border: 0;
     background-color: transparent;
     padding: $spacing-extra-small 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: $color-text;
     font-family: inherit;
     font-size: inherit;

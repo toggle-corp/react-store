@@ -8,7 +8,15 @@
         visibility: hidden;
     }
 
+    &.active {
+        color: $color-accent;
+    }
+
     &.error {
         color: $color-danger;
+    }
+
+    &.disabled {
+        color: $color-text-disabled;
     }
 }
