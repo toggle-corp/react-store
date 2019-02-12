@@ -29,10 +29,7 @@ import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
-
-import {
-    getStandardFilename,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 

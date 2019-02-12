@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { listToMap } from '@togglecorp/fujs';
 
 import { FaramInputElement } from '../General/FaramElements';
-import { listToMap } from '../../utils/common';
 
 const propTypes = {
     value: PropTypes.any, // eslint-disable-line react/forbid-prop-types

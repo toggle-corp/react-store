@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-
 import {
     isTruthy,
     addSeparator,
-} from '../../../utils/common';
+} from '@togglecorp/fujs';
+
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 

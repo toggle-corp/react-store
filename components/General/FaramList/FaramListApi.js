@@ -1,5 +1,6 @@
+import { isDefined } from '@togglecorp/fujs';
+
 import FaramGroupApi from '../FaramGroup/FaramGroupApi';
-import { isDefined } from '../../../utils/common';
 
 const emptyArray = [];
 

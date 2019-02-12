@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import {
+    formatDateToString,
+    encodeDate,
+    decodeDate,
+} from '@togglecorp/fujs';
 
 import { requiredCondition } from '../../General/Faram';
 import { FaramInputElement } from '../../General/FaramElements';
 import ApplyModal from '../../View/ApplyModal';
 
-import { encodeDate, decodeDate } from '../../../utils/common';
-import { formatDate as formatDateByMode } from '../../../utils/date';
 
 import SelectInput from '../SelectInput';
 import DateInput from '../DateInput';
@@ -30,8 +33,6 @@ const defaultProps = {
     value: {},
     onChange: noOp,
 };
-
-const formatDate = date => formatDateByMode(decodeDate(date), 'dd-MM-yyyy');
 
 const presets = {
     today: () => {
@@ -133,6 +134,8 @@ class DateFilter extends React.PureComponent {
         },
     };
 
+    static formatDate = date => formatDateToString(decodeDate(date), 'dd-MM-yyyy');
+
     static calculateOptionsAndValue = memoize((value) => {
         const options = DateFilter.defaultOptions;
         const { startDate, endDate: actualEndDate } = value;
@@ -170,7 +173,10 @@ class DateFilter extends React.PureComponent {
         return {
             options: [
                 ...options,
-                { key: 'selectedRange', label: `${formatDate(startDate)} - ${formatDate(endDate)}` },
+                {
+                    key: 'selectedRange',
+                    label: `${DateFilter.formatDate(startDate)} - ${DateFilter.formatDate(endDate)}`,
+                },
             ],
             value: 'selectedRange',
         };

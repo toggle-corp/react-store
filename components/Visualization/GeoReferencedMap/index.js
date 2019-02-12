@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { getDifferenceInDays } from '@togglecorp/fujs';
 import mapboxgl from 'mapbox-gl';
 
 import LoadingAnimation from '../../View/LoadingAnimation';
-import { getDifferenceInDays } from '../../../utils/common';
 
 import styles from './styles.scss';
 

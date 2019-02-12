@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { randomString, isFalsy } from '@togglecorp/fujs';
 
-import { randomString, isFalsy } from '../../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {

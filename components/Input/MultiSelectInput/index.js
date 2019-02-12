@@ -1,5 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+    listToMap,
+    caseInsensitiveSubmatch,
+    getRatingForContentInString,
+    isDefined,
+    isNotDefined,
+    _cs,
+} from '@togglecorp/fujs';
 
 import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
@@ -10,15 +18,6 @@ import HintAndError from '../HintAndError';
 import Button from '../../Action/Button';
 import DangerButton from '../../Action/Button/DangerButton';
 import Options from './Options';
-
-import {
-    listToMap,
-    caseInsensitiveSubmatch,
-    getRatingForContentInString,
-    isDefined,
-    isNotDefined,
-    _cs,
-} from '../../../utils/common';
 
 import {
     calcFloatPositionInMainWindow,

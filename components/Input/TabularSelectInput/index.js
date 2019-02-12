@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { listToMap, isFalsy } from '@togglecorp/fujs';
 
-import { listToMap, isFalsy } from '../../../utils/common';
 import { iconNames } from '../../../constants';
 import { FaramInputElement } from '../../General/FaramElements';
 

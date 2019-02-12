@@ -12,16 +12,13 @@ import {
     axisLeft,
     axisBottom,
 } from 'd3-axis';
-
+import { _cs } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
-import {
-    getStandardFilename,
-    _cs,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 

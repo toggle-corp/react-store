@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import ResizeObserver from 'resize-observer-polyfill';
+import { randomString } from '@togglecorp/fujs';
 
-import { randomString } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {

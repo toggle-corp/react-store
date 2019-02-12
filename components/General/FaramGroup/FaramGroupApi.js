@@ -1,6 +1,6 @@
-import FormElementApi from '../Form/FormElementApi';
+import { isFalsy, isTruthy } from '@togglecorp/fujs';
 
-import { isFalsy, isTruthy } from '../../../utils/common';
+import FormElementApi from '../Form/FormElementApi';
 import { analyzeErrors } from '../Faram/validator';
 
 const emptyObject = {};

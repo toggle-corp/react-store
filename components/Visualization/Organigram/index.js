@@ -7,13 +7,11 @@ import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
+import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
 
-import {
-    getColorOnBgColor,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { isObjectEmpty } from '../../../utils/common';
 import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';

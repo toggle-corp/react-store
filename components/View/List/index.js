@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { listToGroupList } from '@togglecorp/fujs';
 
 import { FaramListElement } from '../../General/FaramElements';
-import {
-    groupList,
-    isFalsy,
-} from '../../../utils/common';
+
 import ListItem from './ListItem';
 import GroupItem from './GroupItem';
 
@@ -129,7 +127,7 @@ export class NormalList extends React.Component {
         }
 
         // TODO: memoize this operation
-        const groups = groupList(
+        const groups = listToGroupList(
             data,
             groupKeySelector,
             this.renderListItemFromGroup,

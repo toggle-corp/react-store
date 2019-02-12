@@ -2,10 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SketchPicker } from 'react-color';
 
-import {
-    randomString,
-    calcFloatingPositionInMainWindow,
-} from '../../../utils/common';
+import { randomString } from '@togglecorp/fujs';
+import { calcFloatingPositionInMainWindow } from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
 
 import FloatingContainer from '../../View/FloatingContainer';

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { insertValues, breakFormat } from '../../../utils/date';
+import { populateFormat, breakFormat } from '@togglecorp/fujs';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -38,7 +38,7 @@ export default class FormattedDate extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static formatDate = (date, mode) => (
-        insertValues(breakFormat(mode), date)
+        populateFormat(breakFormat(mode), date)
             .map((e, i) => {
                 const key = String(i);
                 if (e.type === 'date') {

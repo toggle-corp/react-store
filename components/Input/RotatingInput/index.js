@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import Button from '../../Action/Button';
 import HintAndError from '../HintAndError';
 import { iconNames } from '../../../constants';
-import { _cs } from '../../../utils/common';
 
 import Label from '../Label';
 

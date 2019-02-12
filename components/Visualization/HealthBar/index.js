@@ -1,16 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { _cs, getColorOnBgColor } from '@togglecorp/fujs';
 
 import ListView from '../../View/List/ListView';
-
-import {
-    _cs,
-    getColorOnBgColor,
-} from '../../../utils/common';
-
-
 import Segment from './Segment';
-
 import styles from './styles.scss';
 
 const propTypes = {

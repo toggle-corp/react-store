@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-
-import { _cs } from '../../../../utils/common';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 

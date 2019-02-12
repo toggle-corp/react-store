@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { isFalsy } from '@togglecorp/fujs';
 
 import Confirm from '../../View/Modal/Confirm';
 import TextInput from '../../Input/TextInput';
-import { isFalsy } from '../../../utils/common';
 
 import styles from './styles.scss';
 

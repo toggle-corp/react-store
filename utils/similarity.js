@@ -1,3 +1,5 @@
+console.warn('similarity.js is deprecated');
+
 export const union = (seta, setb) => new Set([
     ...seta,
     ...setb,

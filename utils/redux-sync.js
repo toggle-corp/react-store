@@ -1,4 +1,4 @@
-import { isFalsy } from './common';
+import { isFalsy } from '@togglecorp/fujs';
 
 const SYNC_KEY = 'ACTION_DISPATCHED';
 

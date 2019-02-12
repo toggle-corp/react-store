@@ -1,5 +1,9 @@
 import update from '../../../utils/immutable-update';
-import { isEqual } from '../../../utils/common';
+
+const isEqual = (a, b) => (
+    a === b ||
+    (Number.isNaN(a) && Number.isNaN(b))
+);
 
 const emptyObject = {};
 const emptyList = [];

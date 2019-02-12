@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import Faram, { detachedFaram } from '#rscg/Faram';
+import Faram, { detachedFaram } from './Faram';
 
 const propTypes = {
     faramClassName: PropTypes.string,

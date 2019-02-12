@@ -13,11 +13,14 @@ import {
     treemap,
 } from 'd3-hierarchy';
 import SvgSaver from 'svgsaver';
+import {
+    getColorOnBgColor,
+    getHexFromRgb,
+} from '@togglecorp/fujs';
+
 import Responsive from '../../General/Responsive';
 import {
     getStandardFilename,
-    getColorOnBgColor,
-    getHexFromRgb,
     isObjectEmpty,
 } from '../../../utils/common';
 

@@ -1,3 +1,5 @@
+console.warn('stats.js is deprecated');
+
 export const sum = values => values.reduce(
     (acc, b) => acc + b,
     0,

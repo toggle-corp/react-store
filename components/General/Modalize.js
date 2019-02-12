@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-import {
-    _cs,
-    randomString,
-} from '../../utils/common';
+import { _cs, randomString } from '@togglecorp/fujs';
 
 const propTypes = {
     disabled: PropTypes.bool,

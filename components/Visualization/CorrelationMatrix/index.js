@@ -11,12 +11,15 @@ import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import Responsive from '../../General/Responsive';
 import {
-    getStandardFilename,
     getColorOnBgColor,
     getHexFromRgb,
     isValidHexColor,
+} from '@togglecorp/fujs';
+
+import Responsive from '../../General/Responsive';
+import {
+    getStandardFilename,
     isObjectEmpty,
 } from '../../../utils/common';
 

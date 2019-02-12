@@ -11,12 +11,12 @@ import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
 import { path } from 'd3-path';
 import SvgSaver from 'svgsaver';
+import { getColorOnBgColor, randomString } from '@togglecorp/fujs';
+
 import Responsive from '../../General/Responsive';
 import {
     getStandardFilename,
-    getColorOnBgColor,
     isObjectEmpty,
-    randomString,
 } from '../../../utils/common';
 import Float from '../../View/Float';
 

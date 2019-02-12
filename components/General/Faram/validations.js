@@ -1,11 +1,10 @@
 import {
     isFalsy,
-    isTruthy,
     isDefined,
     isInteger,
     splitInWhitespace,
     getErrorForDateValues,
-} from '../../../utils/common';
+} from '@togglecorp/fujs';
 import urlRegex from '../../../utils/regexForWeburl';
 
 

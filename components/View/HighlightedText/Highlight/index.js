@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import {
-    getRgbFromHex,
-    _cs,
-} from '../../../../utils/common';
+import { getRgbFromHex, _cs } from '@togglecorp/fujs';
 
 
 import styles from './styles.scss';

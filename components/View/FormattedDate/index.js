@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { isTruthy } from '@togglecorp/fujs';
 
 import FormattedDate from './FormattedDate';
-import { isTruthy } from '../../../utils/common';
 
 const HackedFormattedDate = ({ value, ...otherProps }) => {
     if (isTruthy(value)) {

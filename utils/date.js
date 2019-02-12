@@ -1,3 +1,5 @@
+console.warn('date.js is deprecated');
+
 const getStartEnd = (mode, matches) => {
     let minStart;
     let maxEnd;

@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { isListEqual } from '@togglecorp/fujs';
 
-import { isArrayEqual } from '../../../utils/common';
 import Message from '../Message';
-
 import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
@@ -119,7 +118,7 @@ export default class RawTable extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         // FIXME: why is data mutated here @frozenhelium?
-        if (!isArrayEqual(this.props.data, nextProps.data)) {
+        if (!isListEqual(this.props.data, nextProps.data)) {
             if (this.props.onDataSort) {
                 this.props.onDataSort(nextProps.data);
             }
@@ -129,7 +128,7 @@ export default class RawTable extends React.Component {
             const newHeadersOrder = newHeaders.map(RawTable.headerKeyExtractor);
 
             this.setState({ headers: newHeaders });
-            if (!isArrayEqual(newHeadersOrder, this.state.headersOrder)) {
+            if (!isListEqual(newHeadersOrder, this.state.headersOrder)) {
                 this.setState({ headersOrder: newHeadersOrder });
             }
         }

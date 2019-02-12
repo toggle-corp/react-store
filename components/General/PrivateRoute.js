@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-import { RestRequest } from '#rsu/rest';
+import { RestRequest } from '../../utils/rest';
 
 const propTypes = {
     /*

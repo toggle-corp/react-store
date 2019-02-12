@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
 import produce from 'immer';
-
-import { isFalsy } from '../../../../utils/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 

@@ -1,7 +1,6 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
 import { formatDate } from './date';
+
+console.warn('common.js is deprecated');
 
 // CHECKER
 

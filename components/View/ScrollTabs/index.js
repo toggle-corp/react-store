@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
 import HashManager from '../../General/HashManager';
 import List from '../List';
 import iconNames from '../../../constants/iconNames';
-import { addClassName, _cs } from '../../../utils/common';
+import { addClassName } from '../../../utils/common';
 
 import styles from './styles.scss';
 

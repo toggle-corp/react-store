@@ -16,13 +16,10 @@ import { max } from 'd3-array';
 import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import { _cs, getColorOnBgColor } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
-import {
-    _cs,
-    getStandardFilename,
-    getColorOnBgColor,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 import Float from '../../View/Float';
 
 import styles from './styles.scss';
