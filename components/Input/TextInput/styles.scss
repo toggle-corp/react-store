@@ -4,7 +4,6 @@
 
 .text-input {
     .input {
-        @extend %input-base;
         @extend %input-border;
     }
 
@@ -17,10 +16,6 @@
     &.error {
         .input {
             border-bottom-color: $color-danger;
-        }
-
-        .label {
-            color: $color-danger;
         }
     }
 

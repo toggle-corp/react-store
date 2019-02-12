@@ -1,6 +1,14 @@
 @import '../../../stylesheets/base';
 @import '../../../stylesheets/input-label';
 
-.label {
+.input-label {
     @extend %input-label;
+
+    &.empty {
+        visibility: hidden;
+    }
+
+    &.error {
+        color: $color-danger;
+    }
 }

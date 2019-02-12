@@ -3,69 +3,34 @@ import React from 'react';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
-import { isFalsy } from '../../../utils/common';
+import {
+    isFalsy,
+    _cs,
+} from '../../../utils/common';
 
+import RawInput from '../RawInput';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
+
 import styles from './styles.scss';
 
 const propTypes = {
-    /**
-     * required for style override
-     */
     className: PropTypes.string,
-
-    /**
-     * Is input disabled?
-     */
     disabled: PropTypes.bool,
-
-    /**
-     * String to show in case of error
-     */
     error: PropTypes.string,
-
-    /**
-     * Hint text
-     */
     hint: PropTypes.string,
-
-    /**
-     * Input label
-     */
     label: PropTypes.string,
-
-    /**
-     * A callback for when the input loses focus
-     */
     onBlur: PropTypes.func,
-
-    /**
-     * A callback for when the input changes its content
-     */
     onChange: PropTypes.func,
-
-    /**
-     * A callback for when the input gets focus
-     */
     onFocus: PropTypes.func,
-
-    /**
-     * Is a required element for form
-     */
     required: PropTypes.bool,
-
     showLabel: PropTypes.bool,
-
     showHintAndError: PropTypes.bool,
-
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
-
     selectOnFocus: PropTypes.bool,
-
     title: PropTypes.string,
 };
 
@@ -98,7 +63,7 @@ class TextInput extends React.PureComponent {
 
     getClassName = () => {
         const {
-            className,
+            className: classNameFromProps,
             disabled,
             error,
             required,
@@ -106,29 +71,21 @@ class TextInput extends React.PureComponent {
 
         const { isFocused } = this.state;
 
-        const classNames = [
-            className,
-            'text-input',
+        const className = _cs(
+            classNameFromProps,
             styles.textInput,
-        ];
+            'text-input',
+            disabled && styles.disabled,
+            disabled && 'disabled',
+            isFocused && styles.focused,
+            isFocused && 'focused',
+            error && styles.error,
+            error && 'error',
+            required && styles.required,
+            required && 'required',
+        );
 
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-        if (isFocused) {
-            classNames.push('focused');
-            classNames.push(styles.focused);
-        }
-        if (!isFalsy(error, [''])) {
-            classNames.push('error');
-            classNames.push(styles.error);
-        }
-        if (required) {
-            classNames.push('required');
-            classNames.push(styles.required);
-        }
-        return classNames.join(' ');
+        return className;
     }
 
     handleChange = (event) => {
@@ -159,6 +116,7 @@ class TextInput extends React.PureComponent {
 
     handleBlur = () => {
         const { onBlur } = this.props;
+
         this.setState({ isFocused: false });
         if (onBlur) {
             onBlur();
@@ -194,12 +152,14 @@ class TextInput extends React.PureComponent {
                     className={styles.label}
                     show={showLabel}
                     text={label}
+                    error={!!error}
                 />
-                <input
-                    className={`${styles.input} input`}
+                <RawInput
+                    className={styles.input}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
+                    type="text"
                     {...otherProps}
                 />
                 <HintAndError
