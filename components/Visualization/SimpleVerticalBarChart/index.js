@@ -143,15 +143,17 @@ class SimpleVerticalBarChart extends PureComponent {
             left = 0,
         } = margins;
 
-        // console.warn(data);
-
         const width = containerWidth - left - right;
         const height = containerHeight - top - bottom;
+
+        if (height <= 0) {
+            return null;
+        }
 
         const maxValue = this.getMaxValue(data, valueSelector);
         const scaleY = this.getScaleY(scaleType, height, maxValue, exponent);
         const scaleX = this.getScaleX(data, width, labelSelector, bandPadding);
-        const scaleColor = this.getScaleColor(colorScheme);
+        // const scaleColor = this.getScaleColor(colorScheme);
         const renderData = this.getRenderData(
             data,
             height,
@@ -202,9 +204,9 @@ class SimpleVerticalBarChart extends PureComponent {
                     <line
                         className={_cs(styles.yAxis, 'y-axis')}
                         x1={0}
-                        y1={containerHeight}
-                        x2={containerWidth}
-                        y2={containerHeight}
+                        y1={height}
+                        x2={width}
+                        y2={height}
                     />
                 </svg>
             </div>

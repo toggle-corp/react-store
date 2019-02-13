@@ -197,7 +197,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                         className={_cs(styles.label, 'label')}
                                         x={d.x}
                                         y={d.y}
-                                        dy={d.height / 2}
+                                        dy={(d.height / 2) + 5}
                                         dx={horizontalTextOffset}
                                     >
                                         { d.label }
@@ -211,7 +211,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                         x1={0}
                         y1={0}
                         x2={0}
-                        y2={containerHeight}
+                        y2={height}
                     />
                 </svg>
             </div>
