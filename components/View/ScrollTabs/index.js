@@ -189,6 +189,7 @@ export default class ScrollTabs extends React.Component {
                     className={className}
                     onClick={onClick}
                     tabIndex="-1"
+                    type="button"
                 >
                     {tabs[data]}
                 </button>
