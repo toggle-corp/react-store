@@ -1,5 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+    caseInsensitiveSubmatch,
+    getRatingForContentInString,
+    _cs,
+} from '@togglecorp/fujs';
 
 import { iconNames } from '../../../constants';
 import DangerButton from '../../Action/Button/DangerButton';
@@ -15,11 +20,6 @@ import {
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
-import {
-    caseInsensitiveSubmatch,
-    getRatingForContentInString,
-    _cs,
-} from '../../../utils/common';
 
 import Options from './Options';
 import styles from './styles.scss';

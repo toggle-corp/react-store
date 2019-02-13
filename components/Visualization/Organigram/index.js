@@ -7,13 +7,10 @@ import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
 import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
+import { getColorOnBgColor, doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
 
-import {
-    getColorOnBgColor,
-    isObjectEmpty,
-} from '../../../utils/common';
 import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
@@ -247,7 +244,7 @@ class Organigram extends PureComponent {
             toggleSelection,
         } = this;
 
-        if (!boundingClientRect.width || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || doesObjectHaveNoData(data)) {
             return;
         }
 

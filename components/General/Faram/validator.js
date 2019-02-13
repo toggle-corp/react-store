@@ -5,7 +5,7 @@ import {
     isTruthy,
     findDifferenceInList,
     isNotDefined,
-} from '../../../utils/common';
+} from '@togglecorp/fujs';
 
 const emptyObject = {};
 const emptyArray = [];

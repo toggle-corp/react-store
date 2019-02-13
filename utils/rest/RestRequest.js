@@ -1,8 +1,4 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
-
-import { isTruthy } from '../common';
+import { isTruthy } from '@togglecorp/fujs';
 
 const noop = () => {};
 

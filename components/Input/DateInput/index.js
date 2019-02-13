@@ -1,5 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import {
+    padStart,
+    getErrorForDateValues,
+    getNumDaysInMonthX,
+    isFalsy,
+    decodeDate as decodeAsDate,
+} from '@togglecorp/fujs';
 
 import { FaramInputElement } from '../../General/FaramElements';
 import FloatingContainer from '../../View/FloatingContainer';
@@ -10,13 +17,6 @@ import HintAndError from '../HintAndError';
 import Label from '../Label';
 import DigitalInput from '../DigitalInput';
 
-import {
-    leftPad,
-    getErrorForDateValues,
-    getNumDaysInMonthX,
-    isFalsy,
-    decodeDate as decodeAsDate,
-} from '../../../utils/common';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -219,9 +219,9 @@ class DateInput extends React.PureComponent {
     handleTodayButtonClick = () => {
         const date = new Date();
         this.handleChange({
-            y: leftPad(String(date.getFullYear()), 4).slice(-4),
-            m: leftPad(String(date.getMonth() + 1), 2).slice(-2),
-            d: leftPad(String(date.getDate()), 2).slice(-2),
+            y: padStart(String(date.getFullYear()), 4).slice(-4),
+            m: padStart(String(date.getMonth() + 1), 2).slice(-2),
+            d: padStart(String(date.getDate()), 2).slice(-2),
         });
     }
 
@@ -268,9 +268,9 @@ class DateInput extends React.PureComponent {
             { showDatePicker: false },
             () => {
                 this.handleChange({
-                    y: leftPad(String(newDate.getFullYear()), 4).slice(-4),
-                    m: leftPad(String(newDate.getMonth() + 1), 2).slice(-2),
-                    d: leftPad(String(newDate.getDate()), 2).slice(-2),
+                    y: padStart(String(newDate.getFullYear()), 4).slice(-4),
+                    m: padStart(String(newDate.getMonth() + 1), 2).slice(-2),
+                    d: padStart(String(newDate.getDate()), 2).slice(-2),
                 });
             },
         );

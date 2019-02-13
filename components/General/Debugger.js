@@ -1,5 +1,19 @@
 import React from 'react';
-import { findDifferenceInObject } from '../../utils/common';
+
+const findDifferenceInObject = (o, n) => {
+    const allKeys = new Set([
+        ...Object.keys(o),
+        ...Object.keys(n),
+    ]);
+
+    const changes = [];
+    allKeys.forEach((key) => {
+        if (o[key] !== n[key]) {
+            changes.push({ key, old: o[key], new: n[key] });
+        }
+    });
+    return changes;
+};
 
 export default function (name) {
     return WrappedComponent => (

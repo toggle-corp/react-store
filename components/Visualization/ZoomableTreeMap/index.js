@@ -13,13 +13,14 @@ import {
     treemap,
 } from 'd3-hierarchy';
 import SvgSaver from 'svgsaver';
-import Responsive from '../../General/Responsive';
 import {
-    getStandardFilename,
     getColorOnBgColor,
     getHexFromRgb,
-    isObjectEmpty,
-} from '../../../utils/common';
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
+
+import Responsive from '../../General/Responsive';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -133,7 +134,7 @@ class ZoomableTreeMap extends React.PureComponent {
             colorScheme,
         } = this.props;
 
-        if (!boundingClientRect.width || !data || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || !data || doesObjectHaveNoData(data)) {
             return;
         }
 

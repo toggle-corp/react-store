@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { randomString, isFalsy } from '@togglecorp/fujs';
 
-import { randomString, isFalsy } from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 

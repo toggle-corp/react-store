@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
-import { _cs } from '../../../utils/common';
 
 const propTypes = {
     className: PropTypes.string,

@@ -1,12 +1,9 @@
+import { mapToMap, mapToList } from '@togglecorp/fujs';
+
 import {
     zipWith,
     zip,
 } from './functional';
-
-import {
-    mapToMap,
-    mapToList,
-} from './common';
 
 test('zipWith', () => {
     const f = (x, y) => x * y;

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { pick } from '../../../utils/common';
+import { pick } from '@togglecorp/fujs';
 
 const emptyObject = {};
 

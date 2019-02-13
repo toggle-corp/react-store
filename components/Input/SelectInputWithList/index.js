@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { isFalsy } from '@togglecorp/fujs';
+
 import MultiSelectInput from '../../Input/MultiSelectInput';
 import DismissableListItem from '../../Action/DismissableListItem';
 import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
 import { FaramInputElement } from '../../General/FaramElements';
-import { isFalsy } from '../../../utils/common';
 
 import styles from './styles.scss';
 

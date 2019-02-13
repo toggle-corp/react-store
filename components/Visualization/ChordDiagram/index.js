@@ -15,15 +15,12 @@ import { arc } from 'd3-shape';
 import { descending } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
+import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
-import {
-    saveSvg,
-    getStandardFilename,
-    getColorOnBgColor,
-} from '../../../utils/common';
+import { saveSvg, getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 

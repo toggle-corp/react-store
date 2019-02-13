@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { isFalsy } from '@togglecorp/fujs';
 
 import { FaramInputElement } from '../../General/FaramElements';
-import { isFalsy } from '../../../utils/common';
 import List from '../../View/List';
 
 import styles from './styles.scss';

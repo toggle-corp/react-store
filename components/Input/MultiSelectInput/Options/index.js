@@ -1,13 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { listToMap, isListEqual } from '@togglecorp/fujs';
+
 import FloatingContainer from '../../../View/FloatingContainer';
 import List from '../../../View/List';
-
 import Option from '../Option';
-import {
-    listToMap,
-    isArrayEqual,
-} from '../../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -46,7 +43,7 @@ export default class Options extends React.PureComponent {
         const { activeKeys: oldActiveKeys } = this.props;
         const { activeKeys: newActiveKeys } = nextProps;
 
-        if (!isArrayEqual(oldActiveKeys, newActiveKeys)) {
+        if (!isListEqual(oldActiveKeys, newActiveKeys)) {
             this.generateActiveMap(nextProps);
         }
     }

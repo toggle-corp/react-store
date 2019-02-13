@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { padStart, isFalsy } from '@togglecorp/fujs';
 
-import {
-    leftPad,
-    isFalsy,
-} from '../../../utils/common';
 import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
@@ -185,8 +182,8 @@ class TimeInput extends React.PureComponent {
     handleTodayButtonClick = () => {
         const date = new Date();
         this.handleChange({
-            h: leftPad(String(date.getHours()), 2).slice(-2),
-            m: leftPad(String(date.getMinutes()), 2).slice(-2),
+            h: padStart(String(date.getHours()), 2).slice(-2),
+            m: padStart(String(date.getMinutes()), 2).slice(-2),
         });
     }
 

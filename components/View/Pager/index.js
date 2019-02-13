@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { isFalsy } from '@togglecorp/fujs';
 
 import SelectInput from '../../Input/SelectInput';
 import { iconNames } from '../../../constants';
-import { isFalsy } from '../../../utils/common';
 
 import styles from './styles.scss';
 

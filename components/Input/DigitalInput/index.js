@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import {
+    padStart,
+    isFalsy,
+    _cs,
+} from '@togglecorp/fujs';
 
 import RawInput from '../RawInput';
 
-import {
-    leftPad,
-    isFalsy,
-    _cs,
-} from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -30,7 +30,7 @@ export default class DigitalInput extends React.PureComponent {
         if (isFalsy(value, [''])) {
             return '';
         }
-        return leftPad(+value % (10 ** padLength), padLength, '0');
+        return padStart(+value % (10 ** padLength), padLength, '0');
     }
 
     static getNewValue = (newValue, oldValue, padLength) => {

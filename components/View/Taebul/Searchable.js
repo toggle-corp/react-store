@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
-import { isFalsy } from '../../../utils/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types

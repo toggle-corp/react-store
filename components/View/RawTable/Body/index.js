@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    isEqualAndTruthy,
-    isFalsy,
-} from '../../../../utils/common';
+import { isFalsy, isTruthy } from '@togglecorp/fujs';
 
 import List from '../../List';
 
@@ -137,7 +134,7 @@ export default class Body extends React.PureComponent {
                 headersOrder={headersOrder}
                 highlightCellKey={cellKey}
                 highlightColumnKey={highlightColumnKey}
-                highlighted={isEqualAndTruthy(key, highlightRowKey)}
+                highlighted={isTruthy(key) && key === highlightRowKey}
                 hoverable={areRowsHoverable}
                 onClick={this.handleRowClick}
                 onHover={this.handleRowHover}

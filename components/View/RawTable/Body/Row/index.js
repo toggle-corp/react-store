@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { isTruthy } from '@togglecorp/fujs';
 
-import { isEqualAndTruthy } from '../../../../../utils/common';
 import List from '../../../List';
 
 import Cell from '../Cell';
@@ -128,8 +128,8 @@ export default class Row extends React.PureComponent {
                 onHover={this.handleCellHover}
                 onHoverOut={onHoverOut}
                 hoverable={areCellsHoverable}
-                highlighted={isEqualAndTruthy(key, highlightCellKey)}
-                columnHighlighted={isEqualAndTruthy(key, highlightColumnKey)}
+                highlighted={isTruthy(key) && key === highlightCellKey}
+                columnHighlighted={isTruthy(key) && key === highlightColumnKey}
             >
                 { data }
             </Cell>

@@ -29,14 +29,12 @@ import {
 } from 'd3-array';
 import { areaLabel } from 'd3-area-label';
 import { axisBottom } from 'd3-axis';
+import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
-import {
-    getStandardFilename,
-    getColorOnBgColor,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 

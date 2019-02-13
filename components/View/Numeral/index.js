@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { FaramOutputElement } from '../../General/FaramElements';
-import styles from './styles.scss';
-
 import {
     addSeparator,
     isFalsy,
     isTruthy,
     formattedNormalize,
-} from '../../../utils/common';
+} from '@togglecorp/fujs';
+
+import { FaramOutputElement } from '../../General/FaramElements';
+import styles from './styles.scss';
+
 
 const propTypes = {
     /**

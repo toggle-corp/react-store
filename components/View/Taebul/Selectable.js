@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import memoize from 'memoize-one';
 import produce from 'immer';
+import { isFalsy } from '@togglecorp/fujs';
 
 import AccentButton from '../../Action/Button/AccentButton';
 import Checkbox from '../../Input/Checkbox';
-
-import update from '../../../utils/immutable-update';
 import { iconNames } from '../../../constants';
-import { isFalsy } from '../../../utils/common';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types

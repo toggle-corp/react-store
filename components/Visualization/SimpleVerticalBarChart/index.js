@@ -10,9 +10,9 @@ import {
 import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
-import { _cs } from '../../../utils/common';
 
 import styles from './styles.scss';
 

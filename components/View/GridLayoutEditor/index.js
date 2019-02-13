@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { listToMap } from '@togglecorp/fujs';
 
 import List from '../List';
 import GridItem from './GridItem';
 import { getLayoutBounds } from '../../../utils/grid-layout';
-import { listToMap } from '../../../utils/common';
 
 import styles from './styles.scss';
 

@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
-    isEqualAndTruthy,
+    isTruthy,
     isFalsy,
-    isArrayEqual,
-} from '../../../utils/common';
+    isListEqual,
+} from '@togglecorp/fujs';
 import RawTable from '../RawTable';
 import TableHeader from '../TableHeader';
 
@@ -174,7 +174,7 @@ export default class Table extends React.PureComponent {
         } = this.state;
 
         // check if headers has changed
-        const headersChanged = !isArrayEqual(nextHeaders, newHeaders);
+        const headersChanged = !isListEqual(nextHeaders, newHeaders);
         if (headersChanged) {
             newHeaders = nextHeaders;
         }
@@ -192,7 +192,7 @@ export default class Table extends React.PureComponent {
             newHeaders = stateHeaders;
         }
 
-        const dataChanged = !isArrayEqual(nextData, newData);
+        const dataChanged = !isListEqual(nextData, newData);
         if (dataChanged || headersChanged) {
             newData = this.getSortedData(nextHeaders, nextData, newActiveSort);
         } else {
@@ -256,8 +256,8 @@ export default class Table extends React.PureComponent {
 
     // add isActiveSort and currentSortOrder in headers
     getStateHeaders = (headers, activeSort) => headers.map((header) => {
-        const isActiveSort = isEqualAndTruthy(header.key, activeSort.key);
-        const currentSortOrder = isEqualAndTruthy(header.key, activeSort.key) ? activeSort.order : '';
+        const isActiveSort = isTruthy(header.key) && header.key === activeSort.key;
+        const currentSortOrder = (isTruthy(header.key) && header.key === activeSort.key) ? activeSort.order : '';
 
         if (header.isActiveSort === isActiveSort && header.currentSortOrder === currentSortOrder) {
             return header;

@@ -4,6 +4,8 @@ import React, {
 } from 'react';
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
+import { listToGroupList } from '@togglecorp/fujs';
+
 import { drag } from 'd3-drag';
 import {
     select,
@@ -29,10 +31,7 @@ import { forceCluster } from 'd3-force-cluster/index';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
-import {
-    groupList,
-    getStandardFilename,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -180,7 +179,7 @@ class ClusterForceLayout extends PureComponent {
 
         const padding = 2;
 
-        const clusterGroup = groupList(this.data, valueSelector);
+        const clusterGroup = listToGroupList(this.data, valueSelector);
 
         const noOfClusters = Object.keys(clusterGroup).length;
 
