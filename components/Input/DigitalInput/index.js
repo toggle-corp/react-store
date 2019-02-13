@@ -1,10 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import RawInput from '../RawInput';
+
 import {
     leftPad,
     isFalsy,
-} from '../../utils/common';
+    _cs,
+} from '../../../utils/common';
+
+import styles from './styles.scss';
 
 const propTypes = {
     onChange: PropTypes.func,
@@ -63,13 +68,21 @@ export default class DigitalInput extends React.PureComponent {
 
     render() {
         const {
+            className: classNameFromProps,
             onChange, // eslint-disable-line no-unused-vars
             padLength, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
 
+        const className = _cs(
+            classNameFromProps,
+            'digital-input',
+            styles.digitalInput,
+        );
+
         return (
-            <input
+            <RawInput
+                className={className}
                 type="number"
                 onChange={this.handleChange}
                 {...otherProps}

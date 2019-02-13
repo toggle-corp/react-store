@@ -5,8 +5,11 @@ import { iconNames } from '../../../constants';
 import DangerButton from '../../Action/Button/DangerButton';
 import Button from '../../Action/Button';
 import { FaramInputElement } from '../../General/FaramElements';
+
 import Label from '../Label';
+import RawInput from '../RawInput';
 import HintAndError from '../HintAndError';
+
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -15,7 +18,7 @@ import {
 import {
     caseInsensitiveSubmatch,
     getRatingForContentInString,
-    isFalsy,
+    _cs,
 } from '../../../utils/common';
 
 import Options from './Options';
@@ -128,12 +131,12 @@ class SelectInput extends React.PureComponent {
             showOptions: false,
         };
 
-        this.container = React.createRef();
-        this.input = React.createRef();
+        this.containerRef = React.createRef();
+        this.inputRef = React.createRef();
     }
 
     componentDidMount() {
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
         if (container) {
             this.boundingClientRect = container.getBoundingClientRect();
         }
@@ -164,7 +167,7 @@ class SelectInput extends React.PureComponent {
     getClassName = () => {
         const {
             error,
-            className,
+            className: classNameFromProps,
             disabled,
             hideClearButton,
         } = this.props;
@@ -175,50 +178,33 @@ class SelectInput extends React.PureComponent {
             inputInFocus,
         } = this.state;
 
-        const classNames = [
-            className,
+        const isFilled = inputValue && inputValue.length !== 0;
+
+        const className = _cs(
+            classNameFromProps,
             'select-input',
             styles.selectInput,
-        ];
+            showOptions && styles.showOptions,
+            showOptions && 'show-options',
+            disabled && styles.disabled,
+            disabled && 'disabled',
+            error && styles.error,
+            error && 'error',
+            inputInFocus && styles.inputInFocus,
+            inputInFocus && 'input-in-focus',
+            hideClearButton && styles.hideClearButton,
+            hideClearButton && 'hide-clear-button',
+            isFilled && styles.filled,
+            isFilled && 'filled',
+        );
 
-        if (showOptions) {
-            classNames.push(styles.showOptions);
-            classNames.push('show-options');
-        }
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-            classNames.push('disabled');
-        }
-
-        if (!isFalsy(error, [''])) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        if (inputInFocus) {
-            classNames.push(styles.inputInFocus);
-            classNames.push('input-in-focus');
-        }
-
-        if (hideClearButton) {
-            classNames.push(styles.hideClearButton);
-            classNames.push('hide-clear-button');
-        }
-
-        // FIXME: consider condition where inputValue is 0 (number)
-        if (inputValue && inputValue.length !== 0) {
-            classNames.push(styles.filled);
-            classNames.push('filled');
-        }
-
-        return classNames.join(' ');
+        return className;
     }
 
     handleOptionsInvalidate = (optionsContainer) => {
         const contentRect = optionsContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
 
         if (container) {
             parentRect = container.getBoundingClientRect();
@@ -270,8 +256,8 @@ class SelectInput extends React.PureComponent {
     }
 
     toggleDropdown = () => {
-        const { current: container } = this.container;
-        const { current: input } = this.input;
+        const { current: container } = this.containerRef;
+        const { current: input } = this.inputRef;
         const { options, value } = this.props;
         const { showOptions } = this.state;
 
@@ -365,7 +351,7 @@ class SelectInput extends React.PureComponent {
         // And then calculate new option to focus
         let newFocusedKey;
         if (e.keyCode === 40) {
-            if (index < displayOptions.length) {
+            if (index < displayOptions.length - 1) {
                 newFocusedKey = keySelector(displayOptions[index + 1]);
             }
         } else if (e.keyCode === 38) {
@@ -474,10 +460,10 @@ class SelectInput extends React.PureComponent {
     }
 
     renderInputAndActions = () => {
-        const className = `
-            ${styles.inputAndActions}
-            input-and-actions
-        `;
+        const className = _cs(
+            styles.inputAndActions,
+            'input-and-actions',
+        );
 
         const {
             disabled,
@@ -489,15 +475,10 @@ class SelectInput extends React.PureComponent {
         const { inputValue } = this.state;
         const Actions = this.renderActions;
 
-        const inputClassName = `
-            input
-            ${styles.input}
-        `;
-
         return (
             <div className={className}>
-                <input
-                    className={inputClassName}
+                <RawInput
+                    className={styles.input}
                     disabled={disabled || readOnly}
                     onBlur={this.handleInputBlur}
                     onChange={this.handleInputChange}
@@ -507,7 +488,7 @@ class SelectInput extends React.PureComponent {
                     // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus={autoFocus}
                     placeholder={placeholder}
-                    ref={this.input}
+                    elementRef={this.inputRef}
                     type="text"
                     value={inputValue}
                 />
@@ -530,28 +511,32 @@ class SelectInput extends React.PureComponent {
             showLabel,
             title,
             value,
+            disabled,
         } = this.props;
 
         const {
             displayOptions,
             showOptions,
             focusedKey,
+            inputInFocus,
         } = this.state;
 
         const InputAndActions = this.renderInputAndActions;
         const className = this.getClassName();
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
 
         return (
             <div
                 className={className}
-                ref={this.container}
+                ref={this.containerRef}
                 title={title}
             >
                 <Label
-                    className={styles.label}
                     show={showLabel}
                     text={label}
+                    error={!!error}
+                    disabled={disabled}
+                    active={inputInFocus || showOptions}
                 />
                 <InputAndActions />
                 <HintAndError

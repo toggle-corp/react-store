@@ -1,44 +1,18 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
 .text-input {
     .input {
-        @extend %input-base;
         @extend %input-border;
-    }
-
-    &.focused {
-        .label {
-            color: $color-accent;
-        }
     }
 
     &.error {
         .input {
             border-bottom-color: $color-danger;
         }
-
-        .label {
-            color: $color-danger;
-        }
-    }
-
-    &.required {
-        .label {
-            font-weight: $font-weight-medium;
-
-            &::after {
-                content: '*';
-            }
-        }
     }
 
     &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
         .input {
             border-bottom-color: $color-separator;
             color: $color-text-disabled;

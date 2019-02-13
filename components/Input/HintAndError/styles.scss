@@ -1,21 +1,20 @@
 @import '../../../stylesheets/base';
 
-%base {
-    margin: $spacing-extra-small 0 0;
+.input-hint-and-error {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: $font-size-extra-small;
-}
 
-.hint {
-    @extend %base;
-    color: $color-text-label;
-}
+    &.input-hint {
+        color: $color-text-label;
+    }
 
-.error {
-    @extend %base;
-    color: $color-danger;
-}
+    &.input-error {
+        color: $color-danger;
+    }
 
-.empty {
-    @extend %base;
-    visibility: hidden;
+    &.empty {
+        visibility: hidden;
+    }
 }

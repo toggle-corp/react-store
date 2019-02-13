@@ -1,90 +1,56 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import { isFalsy } from '../../../utils/common';
+import { _cs } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
-    show: PropTypes.bool.isRequired,
+    show: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
 };
 
 const defaultProps = {
+    show: true,
     error: undefined,
     hint: undefined,
 };
 
-export default class HintAndError extends React.PureComponent {
+const emptyText = '-';
+
+export default class InputHintAndError extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderError = () => {
-        const { error } = this.props;
-
-        if (isFalsy(error, [''])) {
-            return null;
-        }
-
-        return (
-            <p className={`error ${styles.error}`}>
-                {error}
-            </p>
-        );
-    }
-
-    renderHint = () => {
-        const {
-            error,
-            hint,
-        } = this.props;
-
-        if (!isFalsy(error, ['']) || isFalsy(hint, [''])) {
-            return null;
-        }
-
-        return (
-            <p className={`hint ${styles.hint}`}>
-                {hint}
-            </p>
-        );
-    }
-
-    renderEmpty = () => {
-        const {
-            hint,
-            error,
-        } = this.props;
-
-        if (!isFalsy(error, ['']) || !isFalsy(hint, [''])) {
-            return null;
-        }
-
-        const emptyText = '-';
-        return (
-            <p className={`empty ${styles.empty}`}>
-                { emptyText }
-            </p>
-        );
-    }
-
     render() {
-        const { show } = this.props;
+        const {
+            show,
+            error,
+            hint,
+        } = this.props;
 
         if (!show) {
             return null;
         }
 
-        const Error = this.renderError;
-        const Hint = this.renderHint;
-        const Empty = this.renderEmpty;
+        const className = _cs(
+            styles.inputHintAndError,
+            'input-hint-and-error',
+            error && styles.inputError,
+            error && 'input-error',
+            hint && styles.inputHint,
+            hint && 'input-hint',
+            !(hint || error) && styles.empty,
+            !(hint || error) && 'empty',
+        );
 
         return (
-            <Fragment>
-                <Hint />
-                <Error />
-                <Empty />
-            </Fragment>
+            <div
+                className={className}
+                title={error || hint}
+            >
+                { error || hint || emptyText }
+            </div>
         );
     }
 }

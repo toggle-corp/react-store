@@ -9,13 +9,10 @@ $width-select-all-button: 14px;
 .multi-select-input {
     .input-and-actions {
         position: relative;
-        border-bottom: $width-separator-medium solid $color-separator-alt;
+        border-bottom: $width-separator-thin solid $color-separator;
 
         .input {
-            @extend %input-base;
             width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .actions {
@@ -50,9 +47,11 @@ $width-select-all-button: 14px;
 
     &:not(.disabled) {
         &.filled {
-            .input-and-actions {
-                .input::placeholder {
-                    color: $color-text;
+            &:not(.input-in-focus) {
+                .input-and-actions {
+                    .input::placeholder {
+                        color: $color-text;
+                    }
                 }
             }
 
@@ -102,20 +101,12 @@ $width-select-all-button: 14px;
 
         &.show-options,
         &.input-in-focus {
-            .label {
-                color: $color-accent;
-            }
-
             .input-and-actions {
                 border-bottom-color: $color-accent;
             }
         }
 
         &.error {
-            .label {
-                color: $color-danger;
-            }
-
             .input-and-actions {
                 border-bottom-color: $color-danger;
             }
@@ -123,10 +114,6 @@ $width-select-all-button: 14px;
     }
 
     &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
         .input-and-actions {
             border-bottom-color: $color-separator;
 

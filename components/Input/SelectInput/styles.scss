@@ -1,6 +1,4 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/input-base';
-@import '../../../stylesheets/input-border';
 
 $width-dropdown-button: 10px;
 $width-clear-button: 14px;
@@ -8,13 +6,10 @@ $width-clear-button: 14px;
 .select-input {
     .input-and-actions {
         position: relative;
-        border-bottom: $width-separator-medium solid $color-separator-alt;
+        border-bottom: $width-separator-thin solid $color-separator;
 
         .input {
-            @extend %input-base;
             width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .actions {
@@ -40,10 +35,38 @@ $width-clear-button: 14px;
                 @extend %button;
             }
         }
+    }
 
+    &.disabled {
+        .input-and-actions {
+            border-bottom-color: $color-separator;
+
+            .input {
+                color: $color-text-disabled;
+            }
+
+            .actions {
+                .dropdown-button {
+                    color: $color-text-disabled;
+                }
+            }
+        }
     }
 
     &:not(.disabled) {
+        &.show-options,
+        &.input-in-focus {
+            .input-and-actions {
+                border-bottom-color: $color-accent;
+            }
+        }
+
+        &.error {
+            .input-and-actions {
+                border-bottom-color: $color-danger;
+            }
+        }
+
         &:not(.hide-clear-button) {
             &.filled {
                 .input-and-actions {
@@ -58,47 +81,6 @@ $width-clear-button: 14px;
                             }
                         }
                     }
-                }
-            }
-        }
-
-        &.show-options,
-        &.input-in-focus {
-            .label {
-                color: $color-accent;
-            }
-
-            .input-and-actions {
-                border-bottom-color: $color-accent;
-            }
-        }
-
-        &.error {
-            .label {
-                color: $color-danger;
-            }
-
-            .input-and-actions {
-                border-bottom-color: $color-danger;
-            }
-        }
-    }
-
-    &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
-        .input-and-actions {
-            border-bottom-color: $color-separator;
-
-            .input {
-                color: $color-text-disabled;
-            }
-
-            .actions {
-                .dropdown-button {
-                    color: $color-text-disabled;
                 }
             }
         }
