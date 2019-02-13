@@ -13,10 +13,11 @@ import { extent } from 'd3-array';
 import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
+
 import Responsive from '../../General/Responsive';
 import {
     getStandardFilename,
-    isObjectEmpty,
     addClassName,
     removeClassName,
 } from '../../../utils/common';
@@ -470,7 +471,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .selectAll(styles.tooltip)
             .remove();
 
-        if (!boundingClientRect.width || !data || data.length === 0 || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || !data || data.length === 0 || doesObjectHaveNoData(data)) {
             return;
         }
 

@@ -15,11 +15,10 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
+
 import Responsive from '../../General/Responsive';
-import {
-    getStandardFilename,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
@@ -347,7 +346,7 @@ class CollapsibleTree extends React.PureComponent {
             return;
         }
 
-        if (!data || data.length === 0 || isObjectEmpty(data)) {
+        if (!data || data.length === 0 || doesObjectHaveNoData(data)) {
             return;
         }
 

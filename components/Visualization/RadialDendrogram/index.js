@@ -6,8 +6,10 @@ import { schemePaired } from 'd3-scale-chromatic';
 import { scalePow, scaleOrdinal } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
+
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 /**
@@ -105,7 +107,7 @@ class RadialDendrogram extends React.PureComponent {
         }
         let { width, height } = boundingClientRect;
 
-        if (!data || data.length === 0 || isObjectEmpty(data)) {
+        if (!data || data.length === 0 || doesObjectHaveNoData(data)) {
             return;
         }
 

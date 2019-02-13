@@ -10,13 +10,10 @@ import {
     treemap,
 } from 'd3-hierarchy';
 import SvgSaver from 'svgsaver';
-import { getColorOnBgColor } from '@togglecorp/fujs';
+import { getColorOnBgColor, doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
-import {
-    getStandardFilename,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -97,7 +94,7 @@ class TreeMap extends React.PureComponent {
             colorScheme,
         } = this.props;
 
-        if (!boundingClientRect.width || !data || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || !data || doesObjectHaveNoData(data)) {
             return;
         }
 

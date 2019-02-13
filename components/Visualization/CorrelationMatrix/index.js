@@ -15,13 +15,11 @@ import {
     getColorOnBgColor,
     getHexFromRgb,
     isValidHexColor,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
-import {
-    getStandardFilename,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 /**
  * boundingClientRect: the width and height of the container.
@@ -127,7 +125,7 @@ class CorrelationMatrix extends React.PureComponent {
             return;
         }
 
-        if (!data || data.length === 0 || isObjectEmpty(data)) {
+        if (!data || data.length === 0 || doesObjectHaveNoData(data)) {
             return;
         }
         let { width, height } = boundingClientRect;

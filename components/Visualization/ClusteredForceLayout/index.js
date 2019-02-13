@@ -31,13 +31,11 @@ import {
     forceManyBody,
     forceCenter,
 } from 'd3-force';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
-import {
-    getStandardFilename,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -327,7 +325,7 @@ class ClusteredForceLayout extends PureComponent {
             valueSelector,
         } = this.props;
 
-        if (!boundingClientRect.width || isObjectEmpty(this.data)) {
+        if (!boundingClientRect.width || doesObjectHaveNoData(this.data)) {
             return;
         }
 

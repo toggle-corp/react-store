@@ -10,10 +10,11 @@ import { extent } from 'd3-array';
 import { voronoi } from 'd3-voronoi';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Float from '../../View/Float';
 import Responsive from '../../General/Responsive';
-import { getStandardFilename, isObjectEmpty } from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 
 // FIXME: don't use globals
 // eslint-disable-next-line no-unused-vars
@@ -134,7 +135,7 @@ class ForceDirectedGraph extends React.PureComponent {
         if (!boundingClientRect.width) {
             return;
         }
-        if (!data || data.length === 0 || isObjectEmpty(data)) {
+        if (!data || data.length === 0 || doesObjectHaveNoData(data)) {
             return;
         }
         let { width, height } = boundingClientRect;

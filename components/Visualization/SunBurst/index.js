@@ -11,13 +11,10 @@ import { PropTypes } from 'prop-types';
 import { schemePaired } from 'd3-scale-chromatic';
 import { path } from 'd3-path';
 import SvgSaver from 'svgsaver';
-import { getColorOnBgColor, randomString } from '@togglecorp/fujs';
+import { getColorOnBgColor, randomString, doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Responsive from '../../General/Responsive';
-import {
-    getStandardFilename,
-    isObjectEmpty,
-} from '../../../utils/common';
+import { getStandardFilename } from '../../../utils/common';
 import Float from '../../View/Float';
 
 import styles from './styles.scss';
@@ -270,7 +267,7 @@ class SunBurst extends PureComponent {
             valueSelector,
         } = this.props;
 
-        if (!boundingClientRect.width || isObjectEmpty(data)) {
+        if (!boundingClientRect.width || doesObjectHaveNoData(data)) {
             return;
         }
 

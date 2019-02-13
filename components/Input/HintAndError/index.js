@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isFalsy } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
-<<<<<<< HEAD
-import { _cs } from '../../../utils/common';
-=======
->>>>>>> Use fujs
 import styles from './styles.scss';
 
 const propTypes = {
