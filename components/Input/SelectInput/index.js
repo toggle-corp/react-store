@@ -7,21 +7,22 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../constants';
-import DangerButton from '../../Action/Button/DangerButton';
+
 import Button from '../../Action/Button';
+import DangerButton from '../../Action/Button/DangerButton';
 import { FaramInputElement } from '../../General/FaramElements';
 import handleKeyboard from '../../General/HandleKeyboard';
-
+import HintAndError from '../HintAndError';
 import Label from '../Label';
 import RawInput from '../RawInput';
-import HintAndError from '../HintAndError';
 
+import { iconNames } from '../../../constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
+
 
 import Options from './Options';
 import styles from './styles.scss';
@@ -32,6 +33,7 @@ const propTypeKey = PropTypes.oneOfType([
 ]);
 
 const RawKeyInput = handleKeyboard(RawInput);
+const emptyList = [];
 
 // NOTE: labelSelector must return string
 // NOTE: optionLabelSelector may return renderable node
@@ -53,11 +55,12 @@ const propTypes = {
 
     options: PropTypes.arrayOf(PropTypes.object),
     value: propTypeKey,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
 
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
     optionLabelSelector: PropTypes.func,
+
     renderEmpty: PropTypes.func,
 };
 
@@ -65,18 +68,18 @@ const defaultProps = {
     autoFocus: undefined,
     className: '',
     disabled: false,
-    readOnly: false,
     error: undefined,
     hideClearButton: false,
     hint: undefined,
-    keySelector: (d = {}) => d.key,
-    label: undefined,
-    labelSelector: (d = {}) => d.label,
-    onChange: () => {},
+    keySelector: d => d.key,
+    label: '',
+    labelSelector: d => d.label,
+    onChange: undefined,
     optionLabelSelector: undefined,
-    options: [],
+    options: emptyList,
     optionsClassName: '',
     placeholder: 'Select an option',
+    readOnly: false,
     renderEmpty: undefined,
     showHintAndError: true,
     showLabel: true,
@@ -94,11 +97,10 @@ class SelectInput extends React.PureComponent {
         this.state = {
             // FIXME: this may break
             inputInFocus: props.autoFocus,
+            focusedKey: undefined,
 
             showOptionsPopup: false,
             searchValue: undefined,
-
-            focusedKey: undefined,
         };
 
         this.containerRef = React.createRef();
@@ -201,6 +203,8 @@ class SelectInput extends React.PureComponent {
         });
     }
 
+    // Options
+
     handleOptionsInvalidate = (optionsContainer) => {
         const contentRect = optionsContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
@@ -299,8 +303,8 @@ class SelectInput extends React.PureComponent {
             : searchValue;
 
         const isFilled = finalSearchValue && finalSearchValue.length !== 0;
-
         const showClearButton = isFilled && !(hideClearButton || disabled || readOnly);
+
         const { current: container } = this.containerRef;
 
         const filteredOptions = this.filterOptions(
