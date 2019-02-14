@@ -11,15 +11,15 @@
 
     .separator {
         position: absolute;
-        top: $spacing-small;
+        top: 0;
         right: 0;
         align-self: center;
         flex-shrink: 0;
         z-index: 1;
-        border-right: $width-separator-thin solid $color-separator-alt;
+        border-right: $width-separator-thin solid $color-separator;
         cursor: col-resize;
         width: $spacing-small;
-        height: calc(100% - #{$spacing-small * 2});
+        height: 100%;
     }
 
     &.resizing {
