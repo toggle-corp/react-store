@@ -1,18 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-// import { modulo } from '@togglecorp/fujs';
-
-// FIXME: use from togglecorp fujs
-function modulo(x, length) {
-    const value = x % length;
-    if (value < 0) {
-        return length + value;
-    }
-    // Because -0 is not less than 0
-    return Math.abs(value);
-}
-
+import { modulo } from '@togglecorp/fujs';
 
 const propTypes = {
     focusedKey: PropTypes.string,
