@@ -22,5 +22,11 @@
         .row {
             border-bottom: $width-separator-thin solid $color-separator;
         }
+
+        :global {
+            .virtual-div {
+                background: none;
+            }
+        }
     }
 }

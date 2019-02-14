@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFalsy } from '@togglecorp/fujs';
+import {
+    isFalsy,
+    _cs,
+} from '@togglecorp/fujs';
 
 import Message from '../Message';
 import styles from './styles.scss';
@@ -201,7 +204,7 @@ export default class VirtualizedListView extends React.Component {
 
         items.push(
             <div
-                className={styles.virtualDiv}
+                className={_cs(styles.virtualDiv, 'virtual-div')}
                 key="virtualized-list-item-start-div"
                 style={{
                     height: `${itemHeight * startIndex}px`,
@@ -216,7 +219,7 @@ export default class VirtualizedListView extends React.Component {
 
         items.push(
             <div
-                className={styles.virtualDiv}
+                className={_cs(styles.virtualDiv, 'virtual-div')}
                 key="virtualized-list-item-end-div"
                 style={{
                     height: `${itemHeight * (data.length - endIndex)}px`,
