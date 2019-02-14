@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import {
     listToMap,
     caseInsensitiveSubmatch,
-    getRatingForContentInString,
+    getRatingForContentInString as rate,
     isDefined,
-    isNotDefined,
     _cs,
 } from '@togglecorp/fujs';
 
@@ -97,7 +96,6 @@ const filterAndSortOptions = ({
         ),
     );
 
-    const rate = getRatingForContentInString;
     newOptions.sort((a, b) => (
         rate(value, labelSelector(a)) - rate(value, labelSelector(b))
     ));
