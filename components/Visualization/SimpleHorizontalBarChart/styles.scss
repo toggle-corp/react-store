@@ -6,10 +6,10 @@
     .svg {
         .bars {
             .bar {
-                fill: $color-separator;
+                fill: $color-accent;
+                opacity: .2;
 
                 &:hover {
-                    fill: $color-accent;
                     opacity: .3;
                 }
             }
