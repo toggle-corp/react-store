@@ -14,20 +14,23 @@ const propTypes = {
     data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     keySelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
+    optionLabelSelector: PropTypes.func,
     onBlur: PropTypes.func.isRequired,
     onInvalidate: PropTypes.func.isRequired,
     onOptionClick: PropTypes.func.isRequired,
     onOptionFocus: PropTypes.func.isRequired,
     parentContainer: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    renderEmpty: PropTypes.func.isRequired,
+    renderEmpty: PropTypes.func,
     show: PropTypes.bool.isRequired,
     focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 const defaultProps = {
     className: '',
+    renderEmpty: () => 'No option available',
     parentContainer: undefined,
     focusedKey: undefined,
+    optionLabelSelector: undefined,
 };
 
 export default class Options extends React.PureComponent {
@@ -75,11 +78,16 @@ export default class Options extends React.PureComponent {
             labelSelector,
             onOptionClick,
             onOptionFocus,
+            optionLabelSelector,
             focusedKey,
         } = this.props;
 
         const key = keySelector(data);
-        const label = labelSelector(data);
+        const label = optionLabelSelector ? (
+            optionLabelSelector(data)
+        ) : (
+            labelSelector(data)
+        );
         const isActive = !!this.activeKeysMap[key];
         const isFocused = key === focusedKey;
 

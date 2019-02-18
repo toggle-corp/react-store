@@ -1,25 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 import {
     caseInsensitiveSubmatch,
-    getRatingForContentInString,
+    getRatingForContentInString as rate,
     _cs,
 } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../constants';
-import DangerButton from '../../Action/Button/DangerButton';
-import Button from '../../Action/Button';
-import { FaramInputElement } from '../../General/FaramElements';
 
+import Button from '../../Action/Button';
+import DangerButton from '../../Action/Button/DangerButton';
+import { FaramInputElement } from '../../General/FaramElements';
+import handleKeyboard from '../../General/HandleKeyboard';
+import HintAndError from '../HintAndError';
 import Label from '../Label';
 import RawInput from '../RawInput';
-import HintAndError from '../HintAndError';
 
+import { iconNames } from '../../../constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
+
 
 import Options from './Options';
 import styles from './styles.scss';
@@ -29,91 +32,59 @@ const propTypeKey = PropTypes.oneOfType([
     PropTypes.number,
 ]);
 
+const RawKeyInput = handleKeyboard(RawInput);
+const emptyList = [];
+
+// NOTE: labelSelector must return string
+// NOTE: optionLabelSelector may return renderable node
 const propTypes = {
     autoFocus: PropTypes.bool,
-    className: PropTypes.string,
     disabled: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    error: PropTypes.string,
     hideClearButton: PropTypes.bool,
-    hint: PropTypes.string,
-    keySelector: PropTypes.func,
-    label: PropTypes.string,
-
-    // Note labelSelector must return string
-    labelSelector: PropTypes.func,
-    onChange: PropTypes.func,
-
-    // optionLabelSelector may return renderable node
-    optionLabelSelector: PropTypes.func,
-    options: PropTypes.arrayOf(PropTypes.object),
-    optionsClassName: PropTypes.string,
-    placeholder: PropTypes.string,
-    renderEmpty: PropTypes.func,
+    readOnly: PropTypes.bool,
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
+
+    className: PropTypes.string,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    label: PropTypes.string,
+    optionsClassName: PropTypes.string,
+    placeholder: PropTypes.string,
     title: PropTypes.string,
+
+    options: PropTypes.arrayOf(PropTypes.object),
     value: propTypeKey,
+    onChange: PropTypes.func.isRequired,
+
+    keySelector: PropTypes.func,
+    labelSelector: PropTypes.func,
+    optionLabelSelector: PropTypes.func,
+
+    renderEmpty: PropTypes.func,
 };
 
 const defaultProps = {
     autoFocus: undefined,
     className: '',
     disabled: false,
-    readOnly: false,
     error: undefined,
     hideClearButton: false,
     hint: undefined,
-    keySelector: (d = {}) => d.key,
-    label: undefined,
-    labelSelector: (d = {}) => d.label,
-    onChange: () => {},
+    keySelector: d => d.key,
+    label: '',
+    labelSelector: d => d.label,
+    onChange: undefined,
     optionLabelSelector: undefined,
-    options: [],
+    options: emptyList,
     optionsClassName: '',
     placeholder: 'Select an option',
+    readOnly: false,
     renderEmpty: undefined,
     showHintAndError: true,
     showLabel: true,
     title: undefined,
     value: undefined,
-};
-
-const getInputValue = ({
-    value,
-    labelSelector,
-    keySelector,
-    options,
-}) => {
-    const activeOption = options.find(
-        d => keySelector(d) === value,
-    );
-
-    if (activeOption === undefined) {
-        return '';
-    }
-
-    return labelSelector(activeOption);
-};
-
-const filterAndSortOptions = ({
-    options,
-    value = '',
-    labelSelector,
-}) => {
-    const newOptions = options.filter(
-        option => caseInsensitiveSubmatch(
-            labelSelector(option),
-            value,
-        ),
-    );
-
-    const rate = getRatingForContentInString;
-    newOptions.sort((a, b) => (
-        rate(value, labelSelector(a)) - rate(value, labelSelector(b))
-    ));
-
-    return newOptions;
 };
 
 class SelectInput extends React.PureComponent {
@@ -124,11 +95,12 @@ class SelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            focusedKey: undefined,
-            displayOptions: props.options,
+            // FIXME: this may break
             inputInFocus: props.autoFocus,
-            inputValue: getInputValue(props),
-            showOptions: false,
+            focusedKey: undefined,
+
+            showOptionsPopup: false,
+            searchValue: undefined,
         };
 
         this.containerRef = React.createRef();
@@ -142,64 +114,97 @@ class SelectInput extends React.PureComponent {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            value: newValue,
-            options: newOptions,
-        } = nextProps;
+    filterOptions = memoize((
+        options,
+        labelSelector,
+        value,
+    ) => {
+        const newOptions = options
+            .filter(
+                option => (
+                    value === undefined || caseInsensitiveSubmatch(labelSelector(option), value)
+                ),
+            )
+            .sort((a, b) => (
+                rate(value, labelSelector(a)) - rate(value, labelSelector(b))
+            ));
+        return newOptions;
+    });
 
-        const {
-            value: oldValue,
-            options: oldOptions,
-        } = this.props;
-
-        if (oldValue !== newValue || oldOptions !== newOptions) {
-            // NOTE: filter will be cleared
-            this.setState({
-                inputValue: getInputValue(nextProps),
-                displayOptions: newOptions,
-            });
-        }
-
-        // FIXME: check if value is in options?
-    }
-
-    getClassName = () => {
-        const {
-            error,
-            className: classNameFromProps,
-            disabled,
-            hideClearButton,
-        } = this.props;
-
-        const {
-            inputValue,
-            showOptions,
-            inputInFocus,
-        } = this.state;
-
-        const isFilled = inputValue && inputValue.length !== 0;
-
-        const className = _cs(
-            classNameFromProps,
-            'select-input',
-            styles.selectInput,
-            showOptions && styles.showOptions,
-            showOptions && 'show-options',
-            disabled && styles.disabled,
-            disabled && 'disabled',
-            error && styles.error,
-            error && 'error',
-            inputInFocus && styles.inputInFocus,
-            inputInFocus && 'input-in-focus',
-            hideClearButton && styles.hideClearButton,
-            hideClearButton && 'hide-clear-button',
-            isFilled && styles.filled,
-            isFilled && 'filled',
+    findDefaultSearchValue = memoize((
+        options,
+        labelSelector,
+        keySelector,
+        value,
+    ) => {
+        const activeOption = options.find(
+            d => keySelector(d) === value,
         );
 
-        return className;
+        if (activeOption === undefined) {
+            return '';
+        }
+
+        return labelSelector(activeOption);
+    });
+
+    // Helper
+
+    handleShowOptionsPopup = () => {
+        const { current: input } = this.inputRef;
+        if (input) {
+            input.select();
+        }
+
+        /*
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
+        }
+        */
+
+        this.setState({
+            showOptionsPopup: true,
+            searchValue: undefined,
+        });
     }
+
+    handleHideOptionsPopup = () => {
+        this.setState({
+            showOptionsPopup: false,
+            searchValue: undefined,
+        });
+    }
+
+    // Input
+
+    handleInputFocus = () => {
+        this.setState({ inputInFocus: true });
+    }
+
+    handleInputBlur = () => {
+        this.setState({ inputInFocus: false });
+    }
+
+    handleInputChange = (e) => {
+        const { value } = e.target;
+
+        /*
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
+        }
+        */
+
+        this.setState({
+            showOptionsPopup: true,
+            searchValue: value,
+        });
+    }
+
+    // Options
 
     handleOptionsInvalidate = (optionsContainer) => {
         const contentRect = optionsContainer.getBoundingClientRect();
@@ -217,31 +222,38 @@ class SelectInput extends React.PureComponent {
             offset.top = 12;
         }
 
+        const limit = {
+            ...defaultLimit,
+            minW: parentRect.width,
+            maxW: parentRect.width,
+        };
+
         const optionsContainerPosition = (
             calcFloatPositionInMainWindow({
                 parentRect,
                 contentRect,
                 offset,
-                limit: {
-                    ...defaultLimit,
-                    minW: parentRect.width,
-                    maxW: parentRect.width,
-                },
+                limit,
             })
         );
 
         return optionsContainerPosition;
     };
 
-    handleOptionsBlur = () => {
-        const { options } = this.props;
-        const inputValue = getInputValue(this.props);
+    handleOptionSelect = (optionKey) => {
+        const {
+            value,
+            onChange,
+        } = this.props;
 
         this.setState({
-            showOptions: false,
-            displayOptions: options,
-            inputValue,
+            showOptionsPopup: false,
+            searchValue: undefined,
         });
+
+        if (optionKey !== value) {
+            onChange(optionKey);
+        }
     }
 
     handleClearButtonClick = () => {
@@ -255,246 +267,8 @@ class SelectInput extends React.PureComponent {
         }
     }
 
-    toggleDropdown = () => {
-        const { current: container } = this.containerRef;
-        const { current: input } = this.inputRef;
-        const { options, value } = this.props;
-        const { showOptions } = this.state;
-
-        if (showOptions) {
-            this.handleOptionsBlur();
-        } else {
-            if (input) {
-                input.select();
-            }
-
-            if (container) {
-                this.boundingClientRect = container.getBoundingClientRect();
-            }
-        }
-
-        this.setState({
-            displayOptions: options,
-            showOptions: !showOptions,
-            focusedKey: value,
-        });
-    }
-
-    handleDropdownButtonClick = () => {
-        this.toggleDropdown();
-    }
-
-    handleInputChange = (e) => {
-        const { value } = e.target;
-        const displayOptions = filterAndSortOptions({
-            ...this.props,
-            value,
-        });
-
-        this.setState({
-            displayOptions,
-            inputValue: value,
-            showOptions: true,
-            focusedKey: undefined,
-        });
-    }
-
-    handleInputKeyDown = (e) => {
-        const { focusedKey, displayOptions, showOptions } = this.state;
-        const { keySelector } = this.props;
-
-        // Keycodes:
-        // 9: Tab
-        // 27: Escape
-        // 13: Enter
-        // 32: Space
-        // 38: Down
-        // 40: Up
-
-        // If tab or escape was pressed and dropdown is being shown,
-        // hide the dropdown.
-        if ((e.keyCode === 9 || e.keyCode === 27) && showOptions) {
-            this.toggleDropdown();
-            return;
-        }
-
-        // List of special keys, we are going to handle
-        const specialKeys = [40, 38, 13, 32];
-        if (displayOptions.length === 0 || specialKeys.indexOf(e.keyCode) === -1) {
-            return;
-        }
-
-        // Handle space and enter keys only if an option is focused
-        if ((e.keyCode === 13 || e.keyCode === 32) && !focusedKey) {
-            return;
-        }
-
-        // First, disable default behaviour for these keys
-        e.stopPropagation();
-        e.preventDefault();
-
-        // If any of the special keys was pressed but the dropdown is currently hidden,
-        // show the dropdown.
-        if (!showOptions) {
-            this.toggleDropdown();
-            return;
-        }
-
-        if (e.keyCode === 13 || e.keyCode === 32) {
-            this.handleOptionClick(focusedKey);
-            return;
-        }
-
-        // For up and down key, find which option is currently focused
-        const index = displayOptions.findIndex(o => keySelector(o) === focusedKey);
-
-        // And then calculate new option to focus
-        let newFocusedKey;
-        if (e.keyCode === 40) {
-            if (index < displayOptions.length - 1) {
-                newFocusedKey = keySelector(displayOptions[index + 1]);
-            }
-        } else if (e.keyCode === 38) {
-            if (index === -1) {
-                newFocusedKey = keySelector(displayOptions[displayOptions.length - 1]);
-            } else if (index > 0) {
-                newFocusedKey = keySelector(displayOptions[index - 1]);
-            }
-        }
-
-        this.setState({ focusedKey: newFocusedKey });
-    }
-
-    handleInputClick = () => {
-        this.toggleDropdown();
-    }
-
-    handleInputFocus = () => {
-        this.setState({ inputInFocus: true });
-    }
-
-    handleInputBlur = () => {
-        this.setState({ inputInFocus: false });
-    }
-
-    handleOptionClick = (optionKey) => {
-        const {
-            value,
-            onChange,
-        } = this.props;
-
-        this.setState({
-            inputValue: getInputValue(this.props),
-            showOptions: false,
-        });
-
-        if (optionKey !== value) {
-            onChange(optionKey);
-        }
-    }
-
-    handleOptionFocus = (focusedKey) => {
+    handleFocusChange = (focusedKey) => {
         this.setState({ focusedKey });
-    }
-
-    renderClearButton = () => {
-        const {
-            disabled,
-            readOnly,
-            value,
-            hideClearButton,
-        } = this.props;
-
-        const showClearButton = value && !(hideClearButton || disabled || readOnly);
-
-        if (!showClearButton) {
-            return null;
-        }
-
-        const className = `
-            clear-button
-            ${styles.clearButton}
-        `;
-
-        return (
-            <DangerButton
-                tabIndex="-1"
-                iconName={iconNames.close}
-                className={className}
-                onClick={this.handleClearButtonClick}
-                transparent
-            />
-        );
-    }
-
-    renderActions = () => {
-        const {
-            disabled,
-            readOnly,
-        } = this.props;
-
-        const className = `
-            actions
-            ${styles.actions}
-        `;
-        const dropdownButtonClassName = `
-            dropdown-button
-            ${styles.dropdownButton}
-        `;
-
-        const ClearButton = this.renderClearButton;
-
-        return (
-            <div className={className}>
-                <ClearButton />
-                <Button
-                    tabIndex="-1"
-                    iconName={iconNames.arrowDropdown}
-                    className={dropdownButtonClassName}
-                    onClick={this.handleDropdownButtonClick}
-                    disabled={disabled || readOnly}
-                    transparent
-                />
-            </div>
-        );
-    }
-
-    renderInputAndActions = () => {
-        const className = _cs(
-            styles.inputAndActions,
-            'input-and-actions',
-        );
-
-        const {
-            disabled,
-            readOnly,
-            placeholder,
-            autoFocus,
-        } = this.props;
-
-        const { inputValue } = this.state;
-        const Actions = this.renderActions;
-
-        return (
-            <div className={className}>
-                <RawInput
-                    className={styles.input}
-                    disabled={disabled || readOnly}
-                    onBlur={this.handleInputBlur}
-                    onChange={this.handleInputChange}
-                    onClick={this.handleInputClick}
-                    onFocus={this.handleInputFocus}
-                    onKeyDown={this.handleInputKeyDown}
-                    // eslint-disable-next-line jsx-a11y/no-autofocus
-                    autoFocus={autoFocus}
-                    placeholder={placeholder}
-                    elementRef={this.inputRef}
-                    type="text"
-                    value={inputValue}
-                />
-                <Actions />
-            </div>
-        );
     }
 
     render() {
@@ -512,18 +286,75 @@ class SelectInput extends React.PureComponent {
             title,
             value,
             disabled,
+            readOnly,
+            placeholder,
+            autoFocus,
+            hideClearButton,
+            className: classNameFromProps,
+            options,
         } = this.props;
 
         const {
-            displayOptions,
-            showOptions,
+            showOptionsPopup,
             focusedKey,
             inputInFocus,
+            searchValue,
         } = this.state;
 
-        const InputAndActions = this.renderInputAndActions;
-        const className = this.getClassName();
+        const finalSearchValue = searchValue === undefined
+            ? this.findDefaultSearchValue(options, labelSelector, keySelector, value)
+            : searchValue;
+
+        const isFilled = finalSearchValue && finalSearchValue.length !== 0;
+        const showClearButton = isFilled && !(hideClearButton || disabled || readOnly);
+
         const { current: container } = this.containerRef;
+
+        const filteredOptions = this.filterOptions(
+            options,
+            labelSelector,
+            // NOTE: Using value instead of finalSearchValue
+            // this will display all options at first
+            searchValue,
+        );
+
+        const className = _cs(
+            classNameFromProps,
+            'select-input',
+            styles.selectInput,
+            showOptionsPopup && styles.showOptions,
+            showOptionsPopup && 'show-options',
+            disabled && styles.disabled,
+            disabled && 'disabled',
+            error && styles.error,
+            error && 'error',
+            inputInFocus && styles.inputInFocus,
+            inputInFocus && 'input-in-focus',
+            hideClearButton && styles.hideClearButton,
+            hideClearButton && 'hide-clear-button',
+            isFilled && styles.filled,
+            isFilled && 'filled',
+        );
+
+        const inputClassName = _cs(
+            styles.inputAndActions,
+            'input-and-actions',
+        );
+
+        const actionsClassName = `
+            actions
+            ${styles.actions}
+        `;
+
+        const dropdownButtonClassName = `
+            dropdown-button
+            ${styles.dropdownButton}
+        `;
+
+        const clearClassName = `
+            clear-button
+            ${styles.clearButton}
+        `;
 
         return (
             <div
@@ -531,33 +362,78 @@ class SelectInput extends React.PureComponent {
                 ref={this.containerRef}
                 title={title}
             >
-                <Label
-                    show={showLabel}
-                    text={label}
-                    error={!!error}
-                    disabled={disabled}
-                    active={inputInFocus || showOptions}
-                />
-                <InputAndActions />
-                <HintAndError
-                    show={showHintAndError}
-                    error={error}
-                    hint={hint}
-                />
+                { showLabel &&
+                    <Label
+                        text={label}
+                        error={!!error}
+                        disabled={disabled}
+                        active={inputInFocus || showOptionsPopup}
+                    />
+                }
+                <div className={inputClassName}>
+                    <RawKeyInput
+                        className={styles.input}
+                        type="text"
+                        elementRef={this.inputRef}
+                        onBlur={this.handleInputBlur}
+                        onFocus={this.handleInputFocus}
+                        onClick={this.handleShowOptionsPopup}
+                        onChange={this.handleInputChange}
+                        value={finalSearchValue}
+                        autoFocus={autoFocus}
+                        placeholder={placeholder}
+                        disabled={disabled || readOnly}
+
+                        focusedKey={focusedKey}
+                        options={filteredOptions}
+                        keySelector={keySelector}
+                        isOptionsShown={showOptionsPopup}
+                        onFocusChange={this.handleFocusChange}
+                        onHideOptions={this.handleHideOptionsPopup}
+                        onShowOptions={this.handleShowOptionsPopup}
+                        onOptionSelect={this.handleOptionSelect}
+                    />
+                    <div className={actionsClassName}>
+                        { showClearButton &&
+                            <DangerButton
+                                tabIndex="-1"
+                                iconName={iconNames.close}
+                                className={clearClassName}
+                                onClick={this.handleClearButtonClick}
+                                transparent
+                            />
+                        }
+                        <Button
+                            tabIndex="-1"
+                            iconName={iconNames.arrowDropdown}
+                            className={dropdownButtonClassName}
+                            onClick={this.handleShowOptionsPopup}
+                            disabled={disabled || readOnly}
+                            transparent
+                        />
+                    </div>
+                </div>
+                { showHintAndError &&
+                    <HintAndError
+                        error={error}
+                        hint={hint}
+                    />
+                }
                 <Options
                     className={optionsClassName}
-                    data={displayOptions}
-                    keySelector={keySelector}
                     labelSelector={labelSelector}
-                    onBlur={this.handleOptionsBlur}
+                    onBlur={this.handleHideOptionsPopup}
                     onInvalidate={this.handleOptionsInvalidate}
-                    onOptionClick={this.handleOptionClick}
-                    onOptionFocus={this.handleOptionFocus}
+                    onOptionClick={this.handleOptionSelect}
                     optionLabelSelector={optionLabelSelector}
                     parentContainer={container}
                     renderEmpty={renderEmpty}
-                    show={showOptions}
                     value={value}
+
+                    show={showOptionsPopup}
+                    keySelector={keySelector}
+                    data={filteredOptions}
+                    onOptionFocus={this.handleFocusChange}
                     focusedKey={focusedKey}
                 />
             </div>

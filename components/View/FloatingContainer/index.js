@@ -52,7 +52,7 @@ export default class FloatingContainer extends React.PureComponent {
         window.removeEventListener('mousedown', this.handleMouseDown);
     }
 
-    invalidate() {
+    invalidate = () => {
         const { onInvalidate } = this.props;
 
         if (this.container) {

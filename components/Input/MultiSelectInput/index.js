@@ -1,69 +1,70 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 import {
     listToMap,
     caseInsensitiveSubmatch,
-    getRatingForContentInString,
+    getRatingForContentInString as rate,
     isDefined,
-    isNotDefined,
     _cs,
 } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../constants';
-import { FaramInputElement } from '../../General/FaramElements';
-
-import RawInput from '../RawInput';
-import Label from '../Label';
-import HintAndError from '../HintAndError';
 import Button from '../../Action/Button';
 import DangerButton from '../../Action/Button/DangerButton';
-import Options from './Options';
+import { FaramInputElement } from '../../General/FaramElements';
+import handleKeyboard from '../../General/HandleKeyboard';
+import HintAndError from '../HintAndError';
+import Label from '../Label';
+import RawInput from '../RawInput';
 
+import { iconNames } from '../../../constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
     defaultLimit,
 } from '../../../utils/bounds';
 
+import Options from './Options';
 import styles from './styles.scss';
 
-export const emptyList = [];
-export const numberOrStringPropType = PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-]);
-export const keyPropType = numberOrStringPropType;
+const RawKeyInput = handleKeyboard(RawInput);
+const emptyList = [];
 
+// NOTE: labelSelector must return string
+// NOTE: optionLabelSelector may return renderable node
 export const propTypes = {
     autoFocus: PropTypes.bool,
-    className: PropTypes.string,
-    clearable: PropTypes.bool,
     disabled: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    error: PropTypes.string,
     hideClearButton: PropTypes.bool,
     hideSelectAllButton: PropTypes.bool,
-    hint: PropTypes.string,
-    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    labelSelector: PropTypes.func,
-    onChange: PropTypes.func.isRequired,
-    options: PropTypes.arrayOf(PropTypes.object),
-    optionsClassName: PropTypes.string,
-    placeholder: PropTypes.string,
-    renderEmpty: PropTypes.func,
+    readOnly: PropTypes.bool,
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
+
+    className: PropTypes.string,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    optionsClassName: PropTypes.string,
+    placeholder: PropTypes.string,
     title: PropTypes.string,
-    value: PropTypes.arrayOf(keyPropType),
+
+    options: PropTypes.arrayOf(PropTypes.object),
+    // eslint-disable-next-line react/forbid-prop-types
+    value: PropTypes.array,
+    onChange: PropTypes.func.isRequired,
+
     keySelector: PropTypes.func,
+    labelSelector: PropTypes.func,
+    optionLabelSelector: PropTypes.func,
+
+    renderEmpty: PropTypes.func,
 };
 
 export const defaultProps = {
     autoFocus: undefined,
     className: '',
-    clearable: false,
     disabled: false,
-    readOnly: false,
     error: undefined,
     hideClearButton: false,
     hideSelectAllButton: false,
@@ -72,88 +73,16 @@ export const defaultProps = {
     label: '',
     labelSelector: d => d.label,
     onChange: undefined,
+    optionLabelSelector: undefined,
     options: emptyList,
     optionsClassName: '',
     placeholder: 'Select option(s)',
-    renderEmpty: () => 'No option available',
+    readOnly: false,
+    renderEmpty: undefined,
     showHintAndError: true,
     showLabel: true,
     title: undefined,
     value: emptyList,
-};
-
-const filterAndSortOptions = ({
-    options,
-    value,
-    labelSelector,
-}) => {
-    if (!value) {
-        return options;
-    }
-    const newOptions = options.filter(
-        option => caseInsensitiveSubmatch(
-            labelSelector(option),
-            value,
-        ),
-    );
-
-    const rate = getRatingForContentInString;
-    newOptions.sort((a, b) => (
-        rate(value, labelSelector(a)) - rate(value, labelSelector(b))
-    ));
-
-    return newOptions;
-};
-
-const validateValue = (prop) => {
-    const {
-        value,
-        options,
-        keySelector,
-    } = prop;
-
-    let valid = true;
-    const validValues = [];
-
-    const optionsMap = listToMap(
-        options,
-        keySelector,
-        (element, key) => key,
-    );
-
-    value.forEach((v) => {
-        const val = optionsMap[v];
-        if (isDefined(val)) {
-            validValues.push(val);
-        } else {
-            valid = false;
-        }
-    });
-
-    return { valid, value: validValues };
-};
-
-const getInputPlaceholder = (props) => {
-    const {
-        value,
-        placeholder,
-        labelSelector,
-        keySelector,
-        options,
-    } = props;
-
-    const optionsMap = listToMap(
-        options,
-        keySelector,
-        element => element,
-    );
-
-    if (value.length !== 0) {
-        const selectedOptions = value.map(k => labelSelector(optionsMap[k]));
-        return selectedOptions.join(', ');
-    }
-
-    return placeholder;
 };
 
 export class NormalMultiSelectInput extends React.PureComponent {
@@ -164,231 +93,85 @@ export class NormalMultiSelectInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            focusedKey: undefined,
-            displayOptions: props.options,
+            // FIXME: this may break
             inputInFocus: props.autoFocus,
-            inputValue: '',
-            placeholder: getInputPlaceholder(props),
-            showOptions: false,
+            focusedKey: undefined,
+
+            showOptionsPopup: false,
+            searchValue: undefined,
         };
 
-        this.container = React.createRef();
-        this.input = React.createRef();
-    }
-
-    componentWillMount() {
-        const {
-            valid,
-            value,
-        } = validateValue(this.props);
-
-        const { onChange } = this.props;
-
-        if (!valid) {
-            onChange(value);
-        }
+        this.containerRef = React.createRef();
+        this.inputRef = React.createRef();
     }
 
     componentDidMount() {
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
         if (container) {
             this.boundingClientRect = container.getBoundingClientRect();
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            value: newValue,
-            placeholder: newPlaceholder,
-            options: newOptions,
-            onChange,
-        } = nextProps;
-
-        const {
-            value: oldValue,
-            placeholder: oldPlaceholder,
-            options: oldOptions,
-        } = this.props;
-
-        const areValuesEqual = newValue === oldValue;
-        const areOptionsEqual = newOptions === oldOptions;
-
-        if (!areValuesEqual || !areOptionsEqual) {
-            const {
-                valid,
-                value,
-            } = validateValue(nextProps);
-
-            if (!valid) {
-                onChange(value);
-                return;
-            }
-        }
-
-        const arePlaceholdersEqual = newPlaceholder === oldPlaceholder;
-
-        if (!areValuesEqual || !arePlaceholdersEqual) {
-            const placeholder = getInputPlaceholder(nextProps);
-            this.setState({ placeholder });
-        }
-
-        if (!areOptionsEqual) {
-            const { inputValue } = this.state;
-            const displayOptions = filterAndSortOptions({
-                ...nextProps,
-                value: inputValue,
-            });
-            this.setState({ displayOptions });
-        }
-    }
-
-    getClassName = () => {
-        const {
-            disabled,
-            error,
-            clearable,
-            className: classNameFromProps,
-            value,
+    findPlaceholderValue = memoize((
+        options,
+        labelSelector,
+        keySelector,
+        value = [],
+    ) => {
+        const optionsMap = listToMap(
             options,
-            hideClearButton,
-            hideSelectAllButton,
-        } = this.props;
-
-        const {
-            showOptions,
-            inputInFocus,
-        } = this.state;
-
-        const className = _cs(
-            classNameFromProps,
-            'multi-select-input',
-            styles.multiSelectInput,
-            showOptions && styles.showOptions,
-            showOptions && 'show-options',
-            disabled && 'disabled',
-            disabled && styles.disabled,
-            inputInFocus && styles.inputInFocus,
-            inputInFocus && 'input-in-focus',
-            error && styles.error,
-            error && 'error',
-            hideClearButton && styles.hideClearButton,
-            hideClearButton && 'hide-clear-button',
-            hideSelectAllButton && styles.hideSelectAllButton,
-            hideSelectAllButton && 'hide-select-all-button',
-            clearable && 'clearable',
-            value.length !== 0 && styles.filled,
-            value.length !== 0 && 'filled',
-            value.length === options.length && styles.completelyFilled,
-            value.length === options.length && 'completely-filled',
+            keySelector,
+            element => element,
         );
+        const selectedOptions = value.map(k => labelSelector(optionsMap[k]));
+        return selectedOptions.join(', ');
+    })
 
-        return className;
-    };
+    filterOptions = memoize((
+        options,
+        labelSelector,
+        value,
+    ) => {
+        const newOptions = options
+            .filter(
+                option => (
+                    value === undefined || caseInsensitiveSubmatch(labelSelector(option), value)
+                ),
+            )
+            .sort((a, b) => (
+                rate(value, labelSelector(a)) - rate(value, labelSelector(b))
+            ));
+        return newOptions;
+    })
 
-    toggleDropdown = () => {
-        const { current: container } = this.container;
-        const { current: input } = this.input;
-        const { options } = this.props;
-        const { showOptions } = this.state;
+    // Helper
 
-        if (showOptions) {
-            this.handleOptionsBlur();
-        } else {
-            if (input) {
-                input.select();
-            }
+    handleShowOptionsPopup = () => {
+        const { current: input } = this.inputRef;
+        if (input) {
+            input.select();
+        }
 
-            if (container) {
-                this.boundingClientRect = container.getBoundingClientRect();
-            }
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
         }
 
         this.setState({
-            displayOptions: options,
-            showOptions: !showOptions,
-            focusedKey: undefined,
+            showOptionsPopup: true,
+            searchValue: undefined,
         });
     }
 
-    handleInputValueChange = (e) => {
-        const { value } = e.target;
-        const displayOptions = filterAndSortOptions({
-            ...this.props,
-            value,
-        });
-
+    handleHideOptionsPopup = () => {
         this.setState({
-            displayOptions,
-            inputValue: value,
-            showOptions: true,
-            focusedKey: undefined,
+            showOptionsPopup: false,
+            searchValue: undefined,
         });
     }
 
-    handleInputKeyDown = (e) => {
-        const { focusedKey, displayOptions, showOptions } = this.state;
-        const { keySelector } = this.props;
-        // Keycodes:
-        // 9: Tab
-        // 27: Escape
-        // 13: Enter
-        // 32: Space
-        // 38: Down
-        // 40: Up
-
-        // If tab or escape was pressed and dropdown is being shown,
-        // hide the dropdown.
-        if ((e.keyCode === 9 || e.keyCode === 27) && showOptions) {
-            this.toggleDropdown();
-            return;
-        }
-
-        // List of special keys, we are going to handle
-        const specialKeys = [40, 38, 13, 32];
-        if (displayOptions.length === 0 || specialKeys.indexOf(e.keyCode) === -1) {
-            return;
-        }
-
-        // Handle space and enter keys only if an option is focused
-        if ((e.keyCode === 13 || e.keyCode === 32) && !focusedKey) {
-            return;
-        }
-
-        // First, disable default behaviour for these keys
-        e.stopPropagation();
-        e.preventDefault();
-
-        // If any of the special keys was pressed but the dropdown is currently hidden,
-        // show the dropdown.
-        if (!showOptions) {
-            this.toggleDropdown();
-            return;
-        }
-
-        if (e.keyCode === 13 || e.keyCode === 32) {
-            this.handleOptionClick(focusedKey);
-            return;
-        }
-
-        // For up and down key, find which option is currently focused
-        const index = displayOptions.findIndex(o => keySelector(o) === focusedKey);
-
-        // And then calculate new option to focus
-        let newFocusedKey;
-        if (e.keyCode === 40) {
-            if (index < displayOptions.length - 1) {
-                newFocusedKey = keySelector(displayOptions[index + 1]);
-            }
-        } else if (e.keyCode === 38) {
-            if (index === -1) {
-                newFocusedKey = keySelector(displayOptions[displayOptions.length - 1]);
-            } else if (index > 0) {
-                newFocusedKey = keySelector(displayOptions[index - 1]);
-            }
-        }
-
-        this.setState({ focusedKey: newFocusedKey });
-    }
+    // Input
 
     handleInputFocus = () => {
         this.setState({ inputInFocus: true });
@@ -398,18 +181,27 @@ export class NormalMultiSelectInput extends React.PureComponent {
         this.setState({ inputInFocus: false });
     }
 
-    handleInputClick = () => {
-        this.toggleDropdown();
+    handleInputChange = (e) => {
+        const { value } = e.target;
+
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
+        }
+
+        this.setState({
+            showOptionsPopup: true,
+            searchValue: value,
+        });
     }
 
-    handleDropdownButtonClick = () => {
-        this.toggleDropdown();
-    }
+    // Options
 
     handleOptionsInvalidate = (optionsContainer) => {
         const contentRect = optionsContainer.getBoundingClientRect();
         let parentRect = this.boundingClientRect;
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
 
         if (container) {
             parentRect = container.getBoundingClientRect();
@@ -422,57 +214,46 @@ export class NormalMultiSelectInput extends React.PureComponent {
             offset.top = 12;
         }
 
+        const limit = {
+            ...defaultLimit,
+            minW: parentRect.width,
+            maxW: parentRect.width,
+        };
+
         const optionsContainerPosition = (
             calcFloatPositionInMainWindow({
                 parentRect,
                 contentRect,
                 offset,
-                limit: {
-                    ...defaultLimit,
-                    minW: parentRect.width,
-                    maxW: parentRect.width,
-                },
+                limit,
             })
         );
 
         return optionsContainerPosition;
     };
 
-    handleOptionsBlur = () => {
-        const { options } = this.props;
-
-        this.setState({
-            showOptions: false,
-            displayOptions: options,
-            inputValue: '',
-            placeholder: getInputPlaceholder(this.props),
-        });
-    }
-
-    handleOptionClick = (key) => {
+    handleOptionSelect = (key) => {
         const {
             value,
             onChange,
         } = this.props;
-        const { current: input } = this.input;
 
         const newValue = [...value];
         const optionIndex = newValue.findIndex(d => d === key);
-
         if (optionIndex === -1) {
             newValue.push(key);
         } else {
             newValue.splice(optionIndex, 1);
         }
 
-        input.select();
-        this.setState({ focusedKey: key }, () => {
-            onChange(newValue);
-        });
+        // No need to close modal or reset sort
+        // No need to check if same option was clicked
+        onChange(newValue);
     }
 
-    handleOptionFocus = (focusedKey) => {
-        this.setState({ focusedKey });
+    handleClearButtonClick = () => {
+        const { onChange } = this.props;
+        onChange(emptyList);
     }
 
     handleSelectAllButtonClick = () => {
@@ -486,165 +267,11 @@ export class NormalMultiSelectInput extends React.PureComponent {
         onChange(newValue);
     }
 
-    handleClearButtonClick = () => {
-        const { onChange } = this.props;
-        onChange(emptyList);
-    }
-
-    renderActions = () => {
-        const {
-            disabled,
-            readOnly,
-        } = this.props;
-
-        const className = `
-            actions
-            ${styles.actions}
-        `;
-        const dropdownButtonClassName = `
-            dropdown-button
-            ${styles.dropdownButton}
-        `;
-
-        const ClearButton = this.renderClearButton;
-        const SelectAllButton = this.renderSelectAllButton;
-
-        return (
-            <div className={className}>
-                <SelectAllButton />
-                <ClearButton />
-                <Button
-                    tabIndex="-1"
-                    iconName={iconNames.arrowDropdown}
-                    className={dropdownButtonClassName}
-                    onClick={this.handleDropdownButtonClick}
-                    transparent
-                    disabled={disabled || readOnly}
-                />
-            </div>
-        );
-    }
-
-    renderInput = () => {
-        const {
-            readOnly,
-            disabled,
-            autoFocus,
-        } = this.props;
-
-        const {
-            inputValue,
-            placeholder,
-        } = this.state;
-
-        return (
-            <RawInput
-                className={styles.input}
-                disabled={disabled || readOnly}
-                onBlur={this.handleInputBlur}
-                onChange={this.handleInputValueChange}
-                onClick={this.handleInputClick}
-                onFocus={this.handleInputFocus}
-                onKeyDown={this.handleInputKeyDown}
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus={autoFocus}
-                placeholder={placeholder}
-                elementRef={this.input}
-                type="text"
-                value={inputValue}
-            />
-        );
-    }
-
-    renderClearButton = () => {
-        const {
-            readOnly,
-            disabled,
-            value,
-            hideClearButton,
-        } = this.props;
-
-        const hide = (hideClearButton || disabled || readOnly || value.length === 0);
-        if (hide) {
-            return null;
-        }
-
-        const tooltipText = 'Clear selected option(s)';
-        const className = `
-            clear-button
-            ${styles.clearButton}
-        `;
-
-        return (
-            <DangerButton
-                transparent
-                tabIndex="-1"
-                className={className}
-                onClick={this.handleClearButtonClick}
-                title={tooltipText}
-                disabled={disabled || readOnly}
-                iconName={iconNames.close}
-            />
-        );
-    }
-
-    renderSelectAllButton = () => {
-        const {
-            value,
-            options,
-            disabled,
-            readOnly,
-            hideSelectAllButton,
-        } = this.props;
-
-        const hide = (
-            hideSelectAllButton || disabled || readOnly || value.length === options.length
-        );
-
-        if (hide) {
-            return null;
-        }
-
-        const tooltipText = 'Select all options';
-        const className = `
-            select-all-button
-            ${styles.selectAllButton}
-        `;
-
-        return (
-            <Button
-                transparent
-                tabIndex="-1"
-                className={className}
-                onClick={this.handleSelectAllButtonClick}
-                title={tooltipText}
-                disabled={disabled || readOnly}
-                type="button"
-                iconName={iconNames.checkAll}
-            />
-        );
-    }
-
-    renderInputAndActions = () => {
-        const InputElement = this.renderInput;
-        const Actions = this.renderActions;
-
-        const className = `
-            input-and-actions
-            ${styles.inputAndActions}
-        `;
-
-        return (
-            <div className={className}>
-                <InputElement />
-                <Actions />
-            </div>
-        );
+    handleFocusChange = (focusedKey) => {
+        this.setState({ focusedKey });
     }
 
     render() {
-        const className = this.getClassName();
-
         const {
             error,
             hint,
@@ -658,49 +285,180 @@ export class NormalMultiSelectInput extends React.PureComponent {
             title,
             value,
             disabled,
+            className: classNameFromProps,
+            options,
+            hideClearButton,
+            hideSelectAllButton,
+            readOnly,
+            autoFocus,
+            placeholder,
+            optionLabelSelector,
         } = this.props;
 
         const {
-            displayOptions,
-            showOptions,
+            showOptionsPopup,
             focusedKey,
             inputInFocus,
+            searchValue,
         } = this.state;
 
-        const { current: container } = this.container;
-        const InputAndActions = this.renderInputAndActions;
+
+        const isFilled = value && value.length !== 0;
+        const isAllFilled = value && value.length === options.length;
+
+        const showClearButton = isFilled && !(hideClearButton || disabled || readOnly);
+        const showSelectAllButton = !isAllFilled && !(hideSelectAllButton || disabled || readOnly);
+
+        const { current: container } = this.containerRef;
+
+        const finalPlaceholder = (
+            this.findPlaceholderValue(options, labelSelector, keySelector, value) ||
+            placeholder
+        );
+
+        const filteredOptions = this.filterOptions(
+            options,
+            labelSelector,
+            searchValue,
+        );
+
+        const className = _cs(
+            classNameFromProps,
+            'multi-select-input',
+            styles.multiSelectInput,
+            showOptionsPopup && styles.showOptions,
+            showOptionsPopup && 'show-options',
+            disabled && 'disabled',
+            disabled && styles.disabled,
+            inputInFocus && styles.inputInFocus,
+            inputInFocus && 'input-in-focus',
+            error && styles.error,
+            error && 'error',
+            hideClearButton && styles.hideClearButton,
+            hideClearButton && 'hide-clear-button',
+            hideSelectAllButton && styles.hideSelectAllButton,
+            hideSelectAllButton && 'hide-select-all-button',
+            value.length !== 0 && styles.filled,
+            value.length !== 0 && 'filled',
+            value.length === options.length && styles.completelyFilled,
+            value.length === options.length && 'completely-filled',
+        );
+
+        const inputAndActionClassName = `
+            input-and-actions
+            ${styles.inputAndActions}
+        `;
+
+        const actionsClassName = `
+            actions
+            ${styles.actions}
+        `;
+        const dropdownButtonClassName = `
+            dropdown-button
+            ${styles.dropdownButton}
+        `;
+
+        const clearButtonClassName = `
+            clear-button
+            ${styles.clearButton}
+        `;
+
+        const selectAllButtonClassName = `
+            select-all-button
+            ${styles.selectAllButton}
+        `;
+
         return (
             <div
                 className={className}
-                ref={this.container}
+                ref={this.containerRef}
                 title={title}
             >
-                <Label
-                    show={showLabel}
-                    text={label}
-                    error={!!error}
-                    disabled={disabled}
-                    active={inputInFocus || showOptions}
-                />
-                <InputAndActions />
-                <HintAndError
-                    show={showHintAndError}
-                    error={error}
-                    hint={hint}
-                />
+                { showLabel &&
+                    <Label
+                        text={label}
+                        error={!!error}
+                        disabled={disabled}
+                        active={inputInFocus || showOptionsPopup}
+                    />
+                }
+                <div className={inputAndActionClassName}>
+                    <RawKeyInput
+                        className={styles.input}
+                        type="text"
+                        elementRef={this.inputRef}
+                        onBlur={this.handleInputBlur}
+                        onFocus={this.handleInputFocus}
+                        onClick={this.handleShowOptionsPopup}
+                        onChange={this.handleInputChange}
+                        value={searchValue}
+                        autoFocus={autoFocus}
+                        placeholder={finalPlaceholder}
+                        disabled={disabled || readOnly}
+
+                        focusedKey={focusedKey}
+                        options={filteredOptions}
+                        keySelector={keySelector}
+                        isOptionsShown={showOptionsPopup}
+                        onFocusChange={this.handleFocusChange}
+                        onHideOptions={this.handleHideOptionsPopup}
+                        onShowOptions={this.handleShowOptionsPopup}
+                        onOptionSelect={this.handleOptionSelect}
+                    />
+                    <div className={actionsClassName}>
+                        { showSelectAllButton &&
+                            <Button
+                                transparent
+                                tabIndex="-1"
+                                className={selectAllButtonClassName}
+                                onClick={this.handleSelectAllButtonClick}
+                                title="Select all options"
+                                disabled={disabled || readOnly}
+                                type="button"
+                                iconName={iconNames.checkAll}
+                            />
+                        }
+                        { showClearButton &&
+                            <DangerButton
+                                transparent
+                                tabIndex="-1"
+                                className={clearButtonClassName}
+                                onClick={this.handleClearButtonClick}
+                                title="Clear selected option(s)"
+                                disabled={disabled || readOnly}
+                                iconName={iconNames.close}
+                            />
+                        }
+                        <Button
+                            tabIndex="-1"
+                            iconName={iconNames.arrowDropdown}
+                            className={dropdownButtonClassName}
+                            onClick={this.handleShowOptionsPopup}
+                            transparent
+                            disabled={disabled || readOnly}
+                        />
+                    </div>
+                </div>
+                { showHintAndError &&
+                    <HintAndError
+                        error={error}
+                        hint={hint}
+                    />
+                }
                 <Options
                     activeKeys={value}
-                    data={displayOptions}
+                    data={filteredOptions}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
-                    onBlur={this.handleOptionsBlur}
+                    optionLabelSelector={optionLabelSelector}
+                    onBlur={this.handleHideOptionsPopup}
                     onInvalidate={this.handleOptionsInvalidate}
-                    onOptionClick={this.handleOptionClick}
-                    onOptionFocus={this.handleOptionFocus}
+                    onOptionClick={this.handleOptionSelect}
+                    onOptionFocus={this.handleFocusChange}
                     className={optionsClassName}
                     parentContainer={container}
                     renderEmpty={renderEmpty}
-                    show={showOptions}
+                    show={showOptionsPopup}
                     focusedKey={focusedKey}
                 />
             </div>
