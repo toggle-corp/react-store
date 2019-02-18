@@ -18,7 +18,7 @@ const propTypes = {
 
 const defaultProps = {
     focusedKey: undefined,
-    options: undefined,
+    options: [],
     isOptionsShown: false,
 };
 
@@ -30,6 +30,10 @@ const UP = 40;
 const specialKeys = [UP, DOWN, ENTER];
 
 const getNewKey = (oldKey, increment, options, keySelector) => {
+    if (options.length <= 0) {
+        return undefined;
+    }
+
     const index = options.findIndex(o => keySelector(o) === oldKey);
     // NOTE: index should never to -1 to begin with
 

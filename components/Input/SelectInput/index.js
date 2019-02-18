@@ -157,8 +157,8 @@ class SelectInput extends React.PureComponent {
         }
 
         /*
-        // const { current: container } = this.containerRef;
-        NOTE: this may not be required
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
         if (container) {
             this.boundingClientRect = container.getBoundingClientRect();
         }
@@ -191,7 +191,8 @@ class SelectInput extends React.PureComponent {
         const { value } = e.target;
 
         /*
-        NOTE: this may not be required
+        // NOTE: this may not be required
+        const { current: container } = this.containerRef;
         if (container) {
             this.boundingClientRect = container.getBoundingClientRect();
         }
@@ -221,16 +222,18 @@ class SelectInput extends React.PureComponent {
             offset.top = 12;
         }
 
+        const limit = {
+            ...defaultLimit,
+            minW: parentRect.width,
+            maxW: parentRect.width,
+        };
+
         const optionsContainerPosition = (
             calcFloatPositionInMainWindow({
                 parentRect,
                 contentRect,
                 offset,
-                limit: {
-                    ...defaultLimit,
-                    minW: parentRect.width,
-                    maxW: parentRect.width,
-                },
+                limit,
             })
         );
 
