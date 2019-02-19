@@ -6,10 +6,10 @@ import {
     SortableHandle,
     arrayMove,
 } from 'react-sortable-hoc';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import { iconNames } from '../../../constants';
 import Button from '../../Action/Button';
-import { FaramInputElement } from '../../General/FaramElements';
 import Select from './Select';
 import ExtraRoot from './ExtraRoot';
 import SeparateDataValue from './SeparateDataValue';

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { padStart, isFalsy } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';

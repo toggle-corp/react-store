@@ -5,8 +5,8 @@ import {
     isTruthy,
     addSeparator,
 } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import HintAndError from '../HintAndError';

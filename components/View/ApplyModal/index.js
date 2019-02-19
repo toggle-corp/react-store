@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram from '@togglecorp/faram';
 
-import Faram from '../../General/Faram';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
 

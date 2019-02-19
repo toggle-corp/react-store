@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 import { formatPdfText } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import { iconNames } from '../../../constants';
-import { FaramInputElement } from '../../General/FaramElements';
 import AccentButton from '../../Action/Button/AccentButton.js';
 import Delay from '../../General/Delay';
 import { NormalTextArea as TextArea } from '../TextArea';

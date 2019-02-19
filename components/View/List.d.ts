@@ -1,3 +1,4 @@
+/*
 import * as React from 'react';
 import { ExternalProps } from '../General/Form/FormElement';
 
@@ -21,3 +22,4 @@ export type ListProps<T> = Props<T> & ExternalProps;
 declare class List<T> extends React.Component<ListProps<T>, any> {
 }
 export default List;
+ */

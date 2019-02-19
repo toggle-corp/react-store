@@ -6,9 +6,8 @@ import {
     encodeDate,
     decodeDate,
 } from '@togglecorp/fujs';
+import { FaramInputElement, requiredCondition } from '@togglecorp/faram';
 
-import { requiredCondition } from '../../General/Faram';
-import { FaramInputElement } from '../../General/FaramElements';
 import ApplyModal from '../../View/ApplyModal';
 
 

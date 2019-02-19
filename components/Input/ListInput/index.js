@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramInputElement } from '@togglecorp/faram';
+
 import Button from '../../Action/Button';
 import ListView from '../../View/List/ListView';
 import iconNames from '../../../constants/iconNames';
-import { FaramInputElement } from '../../General/FaramElements';
 
 import styles from './styles.scss';
 

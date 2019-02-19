@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { FaramInputElement } from '../../General/FaramElements';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import DayPicker from './DayPicker';
 import MonthPicker from './MonthPicker';

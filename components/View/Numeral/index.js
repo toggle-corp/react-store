@@ -6,8 +6,8 @@ import {
     isTruthy,
     formattedNormalize,
 } from '@togglecorp/fujs';
+import { FaramOutputElement } from '@togglecorp/faram';
 
-import { FaramOutputElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 

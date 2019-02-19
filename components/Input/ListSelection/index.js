@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isDefined } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
-import { FaramInputElement } from '../../General/FaramElements';
 import { iconNames } from '../../../constants';
 import Checkbox from '../Checkbox';
 

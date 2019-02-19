@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import { requiredCondition, FaramInputElement } from '@togglecorp/faram';
 
-import { requiredCondition } from '../../General/Faram';
-import { FaramInputElement } from '../../General/FaramElements';
 import ApplyModal from '../../View/ApplyModal';
 
 import SelectInput from '../SelectInput';

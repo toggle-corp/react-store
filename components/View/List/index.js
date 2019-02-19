@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { listToGroupList } from '@togglecorp/fujs';
-
-import { FaramListElement } from '../../General/FaramElements';
+import { FaramListElement } from '@togglecorp/faram';
 
 import ListItem from './ListItem';
 import GroupItem from './GroupItem';

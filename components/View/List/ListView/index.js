@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramListElement } from '@togglecorp/faram';
 
-import { FaramListElement } from '../../../General/FaramElements';
 import { NormalList } from '../index';
 import Message from '../../Message';
 import styles from './styles.scss';
