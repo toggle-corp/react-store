@@ -3,8 +3,9 @@ import React from 'react';
 import { SketchPicker } from 'react-color';
 
 import { randomString } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
+
 import { calcFloatingPositionInMainWindow } from '../../../utils/common';
-import { FaramInputElement } from '../../General/FaramElements';
 
 import FloatingContainer from '../../View/FloatingContainer';
 import HintAndError from '../HintAndError';

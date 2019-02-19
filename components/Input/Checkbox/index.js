@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { randomString } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import { iconNames } from '../../../constants';
-import { FaramInputElement } from '../../General/FaramElements';
 
 import styles from './styles.scss';
 

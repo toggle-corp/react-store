@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
+import { FaramSortableListElement } from '@togglecorp/faram';
 
-import { FaramSortableListElement } from '../../General/FaramElements';
 import ListView from './ListView';
 
 const propTypes = {

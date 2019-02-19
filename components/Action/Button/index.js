@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramActionElement } from '@togglecorp/faram';
 
 import { iconNames } from '../../../constants';
-import { FaramActionElement } from '../../General/FaramElements';
 
 /*
 eslint css-modules/no-unused-class: [

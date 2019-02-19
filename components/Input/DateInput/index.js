@@ -7,8 +7,8 @@ import {
     isFalsy,
     decodeDate as decodeAsDate,
 } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import FloatingContainer from '../../View/FloatingContainer';
 import Delay from '../../General/Delay';
 import DatePicker from '../DatePicker';

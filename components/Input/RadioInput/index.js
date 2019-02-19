@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
-import { FaramInputElement } from '../../General/FaramElements';
 
 import Option from './Option';
 import styles from './styles.scss';

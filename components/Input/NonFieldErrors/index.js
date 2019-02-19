@@ -4,8 +4,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramErrorMessageElement } from '@togglecorp/faram';
 
-import { FaramErrorMessageElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {

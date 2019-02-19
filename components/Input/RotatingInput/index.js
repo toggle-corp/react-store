@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import Button from '../../Action/Button';
 import HintAndError from '../HintAndError';
 import { iconNames } from '../../../constants';

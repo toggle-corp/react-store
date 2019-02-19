@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {

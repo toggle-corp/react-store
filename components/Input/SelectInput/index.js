@@ -6,11 +6,11 @@ import {
     getRatingForContentInString as rate,
     _cs,
 } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
 
 import Button from '../../Action/Button';
 import DangerButton from '../../Action/Button/DangerButton';
-import { FaramInputElement } from '../../General/FaramElements';
 import handleKeyboard from '../../General/HandleKeyboard';
 import HintAndError from '../HintAndError';
 import Label from '../Label';

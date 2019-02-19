@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '../../General/FaramElements';
 import Delay from '../../General/Delay';
 
 import RawInput from '../RawInput';
