@@ -1,7 +1,9 @@
 import FocusTrap from 'react-focus-trap';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
+import Haze from '../Haze';
 import Portal from '../Portal';
 import styles from './styles.scss';
 
@@ -27,6 +29,7 @@ const defaultProps = {
     onClose: noop,
 };
 
+// eslint-disable-next-line react/no-multi-comp
 export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -34,89 +37,65 @@ export default class Modal extends React.PureComponent {
     constructor(props) {
         super(props);
         this.wrapperRef = React.createRef();
-        this.syncViewWithBody(true);
     }
 
     componentDidMount() {
         document.addEventListener('keydown', this.handleKeyPressed);
         document.addEventListener('mousedown', this.handleClickOutside);
-
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach((modal, i) => {
-            if (i === modals.length - 1) {
-                // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'true';
-            } else {
-                // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'false';
-            }
-        });
     }
 
     componentWillUnmount() {
-        this.syncViewWithBody(false);
         document.removeEventListener('keydown', this.handleKeyPressed);
         document.removeEventListener('mousedown', this.handleClickOutside);
-
-        const modals = Array.from(document.querySelectorAll('.modal'))
-            .filter(n => n !== this.wrapperRef.current);
-        modals.forEach((modal, i) => {
-            if (i === modals.length - 1) {
-                // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'true';
-            } else {
-                // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'false';
-            }
-        });
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-        const classNames = [className, 'modal', styles.modal];
-        return classNames.join(' ');
     }
 
     handleClickOutside = (event) => {
-        const { closeOnOutsideClick } = this.props;
-        if (closeOnOutsideClick && !this.wrapperRef.current.contains(event.target)) {
-            this.props.onClose({ outsideClick: true });
+        const {
+            closeOnOutsideClick,
+            onClose,
+        } = this.props;
+
+        const { current: wrapper } = this.wrapperRef;
+
+        if (closeOnOutsideClick && !wrapper.contains(event.target)) {
+            onClose({ outsideClick: true });
         }
     }
 
     handleKeyPressed = (event) => {
-        const { closeOnEscape } = this.props;
+        const {
+            closeOnEscape,
+            onClose,
+        } = this.props;
+
         if (closeOnEscape && event.keyCode === ESCAPE_KEY) {
-            this.props.onClose({ escape: true });
+            onClose({ escape: true });
         }
-    }
-
-    syncViewWithBody = (show) => {
-        const shownClassName = 'modal-shown';
-        const classNames = document.body.className.split(' ');
-
-        if (show) {
-            classNames.push(shownClassName);
-        } else {
-            const index = classNames.findIndex(d => d === shownClassName);
-            if (index !== -1) {
-                classNames.splice(index, 1);
-            }
-        }
-
-        document.body.className = classNames.join(' ');
     }
 
     render() {
+        const {
+            children,
+            className: classNameFromProps,
+        } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
+            styles.modal,
+            'modal',
+        );
+
         return (
             <Portal>
                 <FocusTrap>
-                    <div
-                        className={this.getClassName()}
-                        ref={this.wrapperRef}
-                    >
-                        { this.props.children }
-                    </div>
+                    <Haze>
+                        <div
+                            ref={this.wrapperRef}
+                            className={className}
+                        >
+                            { children }
+                        </div>
+                    </Haze>
                 </FocusTrap>
             </Portal>
         );
