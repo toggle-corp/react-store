@@ -16,6 +16,10 @@
         line {
             visibility: hidden;
         }
+
+        text {
+            transform: rotate(-40deg) translateX(-5px);
+        }
     }
 
     .yaxis {

@@ -9,6 +9,7 @@ import {
     histogram,
 } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
+import { timeFormat } from 'd3-time-format';
 import {
     axisBottom,
     axisLeft,
@@ -118,7 +119,7 @@ class Histogram extends PureComponent {
                 .append('g')
                 .attr('class', `xaxis ${styles.xaxis}`)
                 .attr('transform', `translate(0, ${height})`)
-                .call(axisBottom(x));
+                .call(axisBottom(x).tickFormat(timeFormat('%m/%d')));
 
             group
                 .append('g')
