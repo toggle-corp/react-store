@@ -68,22 +68,25 @@ export default class MapLayer extends React.PureComponent {
 
     componentDidMount() {
         this.create(this.props);
+        console.warn('Mounted layer', this.props.layerKey);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.map !== nextProps.map) {
             this.destroy();
             this.create(nextProps);
-        } else if (this.layer) {
-            if (this.props.layout !== nextProps.layout) {
-                this.reloadLayout(nextProps);
-            }
-            if (this.props.paint !== nextProps.paint) {
-                this.reloadPaint(nextProps);
-            }
-            if (this.props.filter !== nextProps.filter) {
-                this.reloadFilter(nextProps);
-            }
+        } else if (this.layer && this.props.layout !== nextProps.layout) {
+            this.reloadLayout(nextProps);
+        } else if (this.layer && this.props.paint !== nextProps.paint) {
+            this.reloadPaint(nextProps);
+        } else if (this.layer && this.props.filter !== nextProps.filter) {
+            this.reloadFilter(nextProps);
+        } else if (this.props.mapStyle !== nextProps.mapStyle) {
+            this.eventHandlers = {};
+            this.layer = undefined;
+            this.hoverLayer = undefined;
+            this.popup = undefined;
+            this.create(nextProps);
         }
     }
 
@@ -94,6 +97,8 @@ export default class MapLayer extends React.PureComponent {
     eventHandlers = {};
 
     destroy = () => {
+        console.warn('Destroying layer', this.props.layerKey);
+
         const { map, layerKey } = this.props;
         if (map) {
             Object.keys(this.eventHandlers).forEach((type) => {

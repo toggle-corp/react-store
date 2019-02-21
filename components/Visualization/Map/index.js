@@ -1,14 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
+import { _cs } from '@togglecorp/fujs';
 
-import MapContext from './context';
-
+import { forEach } from '../../../utils/common';
 import Message from '../../View/Message';
-
+import MapContext from './context';
 import styles from './styles.scss';
 
+
 const nullComponent = () => null;
+
+const UNSUPPORTED_BROWSER = !mapboxgl.supported();
+
+const DEFAULT_ZOOM_LEVEL = 3;
+
+const {
+    REACT_APP_MAPBOX_ACCESS_TOKEN: TOKEN,
+    REACT_APP_MAPBOX_STYLE: DEFAULT_STYLE,
+} = process.env;
+
+// Add the mapbox map
+if (TOKEN) {
+    mapboxgl.accessToken = TOKEN;
+}
+
+const WAIT_FOR_RESIZE = 200;
+const DEFAULT_CENTER = [84.1240, 28.3949];
+
 
 const propTypes = {
     className: PropTypes.string,
@@ -20,9 +39,9 @@ const propTypes = {
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
     ]),
-    mapStyle: PropTypes.string,
     navControlPosition: PropTypes.string,
     hideNavControl: PropTypes.bool,
+    mapStyle: PropTypes.string,
 };
 
 const defaultProps = {
@@ -32,9 +51,9 @@ const defaultProps = {
     fitBoundsDuration: 1000,
     panelsRenderer: nullComponent,
     children: false,
-    mapStyle: undefined,
     navControlPosition: 'top-left',
     hideNavControl: false,
+    mapStyle: DEFAULT_STYLE,
 };
 
 export default class Map extends React.Component {
@@ -44,43 +63,35 @@ export default class Map extends React.Component {
     constructor(props) {
         super(props);
 
-        this.mapContainer = React.createRef();
-        this.leftBottomPanels = React.createRef();
         this.state = {
             map: undefined,
-            zoomLevel: 3,
+            zoomLevel: undefined,
+            mapStyle: props.mapStyle,
         };
 
-        this.unsupportedBrowser = !mapboxgl.supported();
         this.childDestroyers = {};
+        this.mapContainerRef = React.createRef();
     }
 
     componentDidMount() {
-        if (this.unsupportedBrowser) {
+        this.mounted = true;
+        if (UNSUPPORTED_BROWSER) {
             return;
         }
 
-        this.mounted = true;
-
         const {
-            REACT_APP_MAPBOX_ACCESS_TOKEN: token,
-            REACT_APP_MAPBOX_STYLE: styleFromEnv,
-        } = process.env;
+            navControlPosition,
+            hideNavControl,
+            mapStyle: mapStyleFromProps,
+        } = this.props;
 
-        // Add the mapbox map
-        if (token) {
-            mapboxgl.accessToken = token;
-        }
-
-        const { mapStyle: styleFromProps } = this.props;
-
-        const style = styleFromProps || styleFromEnv;
+        const { current: mapContainer } = this.mapContainerRef;
 
         const map = new mapboxgl.Map({
-            center: [84.1240, 28.3949],
-            container: this.mapContainer.current,
-            style,
-            zoom: 3,
+            container: mapContainer,
+            style: mapStyleFromProps,
+            zoom: DEFAULT_ZOOM_LEVEL,
+            center: DEFAULT_CENTER,
             minZoom: 3,
             maxZoom: 10,
             logoPosition: 'bottom-right',
@@ -88,86 +99,73 @@ export default class Map extends React.Component {
             preserveDrawingBuffer: true,
         });
 
-        const { navControlPosition, hideNavControl } = this.props;
         if (!hideNavControl) {
-            map.addControl(new mapboxgl.NavigationControl(), navControlPosition);
+            // NOTE: do we need to remove control on unmount?
+            map.addControl(
+                new mapboxgl.NavigationControl(),
+                navControlPosition,
+            );
         }
 
-        map.on('load', () => {
-            // Since the map is loaded asynchronously, make sure
-            // we are still mounted before doing setState
-            if (this.mounted) {
-                const { bounds, boundsPadding, fitBoundsDuration } = this.props;
-                if (bounds) {
-                    map.fitBounds(
-                        [[
-                            bounds[0],
-                            bounds[1],
-                        ], [
-                            bounds[2],
-                            bounds[3],
-                        ]],
-                        {
-                            padding: boundsPadding,
-                            duration: fitBoundsDuration,
-                        },
-                    );
-                }
+        map.on('load', () => this.handleLoad(map));
+        map.on('zoom', () => this.handleZoom(map));
+        map.on(
+            'style.load',
+            (event) => {
+                const mapStyle = event.style.stylesheet.sprite;
+                this.setState({ mapStyle });
+            },
+        );
 
-                this.setState({ map });
-            }
-        });
-
-        map.on('zoom', () => {
-            this.setState({
-                zoomLevel: map.getZoom(),
-            });
-        });
-
-        this.timeout = setTimeout(() => {
-            map.resize();
-        }, 200);
+        // NOTE: sometimes the map doesn't take the full width
+        this.resizeTimeout = setTimeout(
+            () => map.resize(),
+            WAIT_FOR_RESIZE,
+        );
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.bounds !== nextProps.bounds && this.state.map) {
-            const { bounds, boundsPadding, fitBoundsDuration } = nextProps;
-            const { map } = this.state;
-
-            if (bounds) {
-                map.fitBounds(
-                    [[
-                        bounds[0],
-                        bounds[1],
-                    ], [
-                        bounds[2],
-                        bounds[3],
-                    ]],
-                    {
-                        padding: boundsPadding,
-                        duration: fitBoundsDuration,
-                    },
-                );
-            }
+        if (UNSUPPORTED_BROWSER) {
+            return;
         }
-        if (this.props.mapStyle !== nextProps.mapStyle && this.state.map) {
-            const { mapStyle } = nextProps;
-            const { map } = this.state;
-            if (mapStyle) {
-                map.setStyle(mapStyle);
-            }
+
+        const { map } = this.state;
+
+        const {
+            bounds: oldBounds,
+            mapStyle: oldMapStyle,
+        } = this.props;
+
+        const {
+            bounds: newBounds,
+            mapStyle: newMapStyle,
+            boundsPadding,
+            fitBoundsDuration,
+        } = nextProps;
+
+        if (oldBounds !== newBounds) {
+            this.setBounds(map, newBounds, boundsPadding, fitBoundsDuration);
+        }
+
+        if (oldMapStyle !== newMapStyle && newMapStyle && map) {
+            map.setStyle(newMapStyle);
+            // NOTE: removing child destroyers
+            this.childDestroyers = {};
         }
     }
 
     componentWillUnmount() {
         this.mounted = false;
-        clearTimeout(this.timeout);
+        if (UNSUPPORTED_BROWSER) {
+            return;
+        }
 
-        Object.keys(this.childDestroyers).forEach((key) => {
-            this.childDestroyers[key]();
+        clearTimeout(this.resizeTimeout);
+
+        forEach(this.childDestroyers, (key, childDestroyer) => {
+            childDestroyer();
         });
 
-        // Remove the mapbox map
         const { map } = this.state;
         if (map) {
             map.remove();
@@ -178,63 +176,92 @@ export default class Map extends React.Component {
         this.childDestroyers[key] = destroyer;
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.map,
-        ];
-
-        return classNames.join(' ');
+    setBounds = (map, bounds, padding, duration) => {
+        if (!map || !bounds) {
+            return;
+        }
+        const [fooLon, fooLat, barLon, barLat] = bounds;
+        map.fitBounds(
+            [[fooLon, fooLat], [barLon, barLat]],
+            {
+                padding,
+                duration,
+            },
+        );
     }
 
-    renderChildren = childrenProps => (
-        <MapContext.Provider value={childrenProps}>
-            {this.props.children}
-        </MapContext.Provider>
-    )
+    handleLoad = (map) => {
+        // Since the map is loaded asynchronously, make sure
+        // we are still mounted before doing setState
+        if (!this.mounted) {
+            return;
+        }
+
+        const {
+            bounds,
+            boundsPadding,
+            fitBoundsDuration,
+        } = this.props;
+
+        this.setBounds(map, bounds, boundsPadding, fitBoundsDuration);
+        this.setState({ map, zoomLevel: DEFAULT_ZOOM_LEVEL });
+    }
+
+    handleZoom = (map) => {
+        this.setState({
+            zoomLevel: map.getZoom(),
+        });
+    }
 
     render() {
         const {
             panelsRenderer,
+            className: classNameFromProps,
+            children,
         } = this.props;
-        const { map } = this.state;
+        const {
+            map,
+            zoomLevel,
+            mapStyle,
+        } = this.state;
 
-        const className = this.getClassName();
-        const Children = this.renderChildren;
-        const Panels = panelsRenderer;
+        const className = _cs(
+            classNameFromProps,
+            styles.map,
+        );
 
-        if (this.unsupportedBrowser) {
+        if (UNSUPPORTED_BROWSER) {
             return (
-                <div
-                    className={className}
-                    ref={this.mapContainer}
-                >
+                <div className={className}>
                     <Message>
                         {'Your browser doesn\'t support Mapbox!'}
                     </Message>
+                    {children}
                 </div>
             );
         }
 
+        const Panels = panelsRenderer;
+
+        const childrenProps = {
+            map,
+            zoomLevel,
+            setDestroyer: this.setChildDestroyer,
+            mapStyle,
+        };
+
         return (
             <div
                 className={className}
-                ref={this.mapContainer}
+                ref={this.mapContainerRef}
             >
-                <Children
-                    map={map}
-                    zoomLevel={this.state.zoomLevel}
-                    setDestroyer={this.setChildDestroyer}
-                />
-                <div
-                    className={styles.leftBottomPanels}
-                    ref={this.leftBottomPanels}
-                >
+                <MapContext.Provider value={childrenProps}>
+                    {children}
+                </MapContext.Provider>
+                <div className={styles.leftBottomPanels}>
                     <Panels
                         map={map}
-                        zoomLevel={this.state.zoomLevel}
+                        zoomLevel={zoomLevel}
                     />
                 </div>
             </div>

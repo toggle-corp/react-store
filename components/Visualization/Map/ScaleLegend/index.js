@@ -21,7 +21,7 @@ const defaultProps = {
     maxLabel: '',
 };
 
-export default class Legend extends React.PureComponent {
+export default class ScaleLegend extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -60,12 +60,23 @@ export default class Legend extends React.PureComponent {
 
         return (
             <div className={className}>
-                <h5 className={styles.header}>{ title }</h5>
-                <div className={styles.scale} style={this.getScaleStyle()} />
+                <h5 className={styles.header}>
+                    { title }
+                </h5>
+                <div
+                    className={styles.scale}
+                    style={this.getScaleStyle()}
+                />
                 <div className={styles.scaleValues}>
-                    <span className={styles.value}>{ minLabel || minValue }</span>
-                    <span className={styles.title}>{ subTitle }</span>
-                    <span className={styles.value}>{ maxLabel || maxValue }</span>
+                    <span className={styles.value}>
+                        { minLabel || minValue }
+                    </span>
+                    <span className={styles.title}>
+                        { subTitle }
+                    </span>
+                    <span className={styles.value}>
+                        { maxLabel || maxValue }
+                    </span>
                 </div>
             </div>
         );

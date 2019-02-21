@@ -51,6 +51,7 @@ export default class MapSource extends React.PureComponent {
 
     componentDidMount() {
         this.create(this.props);
+        console.warn('Mounted source', this.props.sourceKey);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -62,6 +63,11 @@ export default class MapSource extends React.PureComponent {
             if (this.source && map) {
                 map.getSource(this.source).setData(nextProps.geoJson);
             }
+        } else if (this.props.mapStyle !== nextProps.mapStyle) {
+            this.childDestroyers = {};
+            this.source = undefined;
+            this.hoverLayer = undefined;
+            this.create(nextProps);
         }
     }
 
@@ -74,6 +80,8 @@ export default class MapSource extends React.PureComponent {
     }
 
     destroy = () => {
+        console.warn('Destroying source', this.props.sourceKey);
+
         Object.keys(this.childDestroyers).forEach((key) => {
             this.childDestroyers[key]();
         });
@@ -87,6 +95,7 @@ export default class MapSource extends React.PureComponent {
                 map.removeSource(this.hoverSource);
             }
         }
+
         if (onSourceRemoved) {
             onSourceRemoved();
         }
@@ -120,6 +129,8 @@ export default class MapSource extends React.PureComponent {
         if (onSourceAdded) {
             onSourceAdded();
         }
+
+        this.setState({ createdAt: new Date().getTime() });
     }
 
     render() {
@@ -127,12 +138,20 @@ export default class MapSource extends React.PureComponent {
             return null;
         }
 
-        const { map, zoomLevel, sourceKey, children } = this.props;
+        const {
+            map,
+            zoomLevel,
+            sourceKey,
+            children,
+            mapStyle,
+        } = this.props;
+
         const childrenProps = {
             map,
             zoomLevel,
             sourceKey,
             setDestroyer: this.setChildDestroyer,
+            mapStyle,
         };
 
         return (

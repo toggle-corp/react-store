@@ -10,8 +10,12 @@ export default (ChildComponent) => {
             if (!map) {
                 return null;
             }
-
-            return <ChildComponent {...injectedProps} {...this.props} />;
+            return (
+                <ChildComponent
+                    {...injectedProps}
+                    {...this.props}
+                />
+            );
         }
 
         render() {
