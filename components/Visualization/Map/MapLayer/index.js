@@ -131,6 +131,7 @@ export default class MapLayer extends React.PureComponent {
             filter,
             onClick,
             property,
+            bounds,
         } = props;
 
         const layerInfo = {
@@ -143,6 +144,7 @@ export default class MapLayer extends React.PureComponent {
         if (layout) {
             layerInfo.layout = layout;
         }
+
         if (filter) {
             layerInfo.filter = filter;
         }

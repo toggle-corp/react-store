@@ -110,13 +110,19 @@ export default class MapSource extends React.PureComponent {
             geoJson,
             onSourceAdded,
             supportHover,
+            bounds,
         } = props;
 
         map.addSource(sourceKey, {
             type: 'geojson',
             data: geoJson,
         });
+
         this.source = sourceKey;
+
+        if (bounds) {
+            map.fitBounds(bounds);
+        }
 
         if (supportHover) {
             map.addSource(`${sourceKey}-hover`, {
