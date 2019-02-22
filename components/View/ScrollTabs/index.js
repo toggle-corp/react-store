@@ -15,6 +15,7 @@ const propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     itemClassName: PropTypes.string,
+    activeClassName: PropTypes.string,
     defaultHash: PropTypes.string,
     onClick: PropTypes.func,
     replaceHistory: PropTypes.bool,
@@ -29,6 +30,7 @@ const propTypes = {
 
     inverted: PropTypes.bool,
     showBeforeTabs: PropTypes.bool,
+    hideBlank: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -36,6 +38,7 @@ const defaultProps = {
     children: null,
     className: '',
     itemClassName: '',
+    activeClassName: '',
     defaultHash: undefined,
     onClick: () => {},
     replaceHistory: false,
@@ -48,6 +51,7 @@ const defaultProps = {
 
     inverted: false,
     showBeforeTabs: false,
+    hideBlank: false,
 };
 
 
@@ -94,7 +98,10 @@ export default class ScrollTabs extends React.Component {
     }
 
     getTabClassName = (isActive, isBasic) => {
-        const { itemClassName } = this.props;
+        const {
+            itemClassName,
+            activeClassName,
+        } = this.props;
 
         const classNames = [
             itemClassName,
@@ -110,6 +117,7 @@ export default class ScrollTabs extends React.Component {
         if (isActive) {
             classNames.push(styles.active);
             classNames.push('active');
+            classNames.push(activeClassName);
         }
 
         return classNames.join(' ');
@@ -176,7 +184,7 @@ export default class ScrollTabs extends React.Component {
                     <Renderer
                         key={data}
                         className={_cs(rendererClassName, className)}
-                        isActive
+                        isActive={isActive}
                         onClick={onClick}
                         {...extraProps}
                     />
@@ -234,6 +242,7 @@ export default class ScrollTabs extends React.Component {
             useHash,
             defaultHash,
             showBeforeTabs,
+            hideBlank,
             children,
         } = this.props;
 
@@ -270,9 +279,11 @@ export default class ScrollTabs extends React.Component {
                         data={tabList}
                         modifier={this.renderTab}
                     />
-                    <div className={styles.blank}>
-                        { !showBeforeTabs && children }
-                    </div>
+                    {!hideBlank &&
+                        <div className={styles.blank}>
+                            { !showBeforeTabs && children }
+                        </div>
+                    }
                 </div>
                 <Button
                     iconName={iconNames.chevronRight}
