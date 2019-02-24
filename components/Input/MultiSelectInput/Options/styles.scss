@@ -4,15 +4,15 @@ $height-options-max: 240px;
 
 .options {
     background-color: $color-foreground;
-color: $color-text-on-foreground;
     padding: $spacing-small 0;
     max-height: $height-options-max;
     overflow-x: hidden;
     overflow-y: auto;
+    color: $color-text-on-foreground;
 
     .empty {
         padding: $spacing-small-alt $spacing-small;
         text-align: center;
-        color: get-text-color($color-foreground, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
+        color: $color-text-placeholder;
     }
 }

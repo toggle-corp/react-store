@@ -74,6 +74,8 @@ const widthModalExtraSmall = '320px';
 
 const widthNavbarIcon = '24px';
 const heightNavbarIcon = '24px';
+const widthNavbarAvatar = '32px';
+const heightNavbarAvatar = '32px';
 
 const radiusBlurMedium = '10px';
 const radiusBlurSmall = '7px';
@@ -190,6 +192,8 @@ const dimens = {
 
     widthNavbarIcon,
     heightNavbarIcon,
+    widthNavbarAvatar,
+    heightNavbarAvatar,
 
     radiusBlurMedium,
     radiusBlurSmall,

@@ -3,7 +3,10 @@
 $radius-button-border: 2px !default;
 
 @mixin button-props($base-color) {
-    @include background-color($base-color);
+    border: $width-separator-thin solid $base-color;
+    background-color: $color-foreground;
+    color: $color-text;
+    // @include background-color($base-color);
 
     &:focus {
         @include outline-button($base-color);
@@ -11,7 +14,8 @@ $radius-button-border: 2px !default;
 
     &:not(:disabled) {
         &:hover {
-            background-color: get-hover-color($base-color);
+            color: $base-color;
+            // background-color: get-hover-color($base-color);
         }
     }
 }
@@ -26,6 +30,7 @@ $radius-button-border: 2px !default;
 
 .button {
     border: 0;
+    // border: width-separator-thin solid $color-separator;
     border-radius: $radius-button-border;
     background-color: transparent;
     padding: $spacing-small $spacing-small-alt;
@@ -43,17 +48,31 @@ $radius-button-border: 2px !default;
     }
 
     &:active {
-        @include shadow-button-active;
+        // @include shadow-button-active;
         transform: translateY(1px);
     }
 
     &:not(.transparent) {
         &:not(:disabled) {
-            @include shadow-button;
+            // @include shadow-button;
         }
 
         &.button-default {
-            @include button-props($color-foreground);
+            border: $width-separator-thin solid $color-separator-alt;
+            background-color: $color-foreground;
+            color: $color-text-label;
+
+            &:focus {
+                @include outline-button($color-separator-alt);
+            }
+
+            &:not(:disabled) {
+                &:hover {
+                    color: $color-text;
+                    // background-color: get-hover-color($base-color);
+                }
+            }
+            // @include button-props($color-foreground-alt);
         }
 
         &.button-accent {

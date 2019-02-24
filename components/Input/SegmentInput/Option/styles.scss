@@ -15,16 +15,16 @@
 
     &.checked {
         background-color: $color-accent;
-color: $color-text-on-accent;
+        color: $color-text-on-accent;
 
         &.error {
             background-color: $color-danger;
-color: $color-text-on-danger;
+            color: $color-text-on-danger;
         }
 
         &.disabled {
-            background-color: $color-text-disabled;
-color: $color-text-on-text-disabled
+            background-color: $color-background-disabled;
+            color: $color-text-disabled;
         }
     }
 
