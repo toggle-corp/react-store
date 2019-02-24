@@ -7,7 +7,8 @@
 
 .sunburst-tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     position: fixed;
     z-index: 10;
     padding: $spacing-small $spacing-medium-alt;

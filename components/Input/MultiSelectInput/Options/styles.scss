@@ -3,7 +3,8 @@
 $height-options-max: 240px;
 
 .options {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     padding: $spacing-small 0;
     max-height: $height-options-max;
     overflow-x: hidden;

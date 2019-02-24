@@ -2,7 +2,8 @@
 
 .donut-tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
 
     display: none;
     position: absolute;

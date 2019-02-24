@@ -12,6 +12,7 @@
     }
 
     &.highlighted {
-        @include background-color($color-accent);
+        background-color: $color-accent;
+color: $color-text-on-accent;
     }
 }
