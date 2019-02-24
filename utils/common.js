@@ -154,3 +154,9 @@ export const saveSvg = (svgElement, name) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
 };
+
+export const forEach = (obj, func) => {
+    Object.keys(obj).forEach((key) => {
+        func(key, obj[key]);
+    });
+};

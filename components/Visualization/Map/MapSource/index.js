@@ -22,6 +22,7 @@ const propTypes = {
     setDestroyer: PropTypes.func,
     // eslint-disable-next-line react/forbid-prop-types
     geoJson: PropTypes.object.isRequired,
+    mapStyle: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -43,31 +44,38 @@ export default class MapSource extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.childDestroyers = {};
         if (props.setDestroyer) {
             props.setDestroyer(props.sourceKey, this.destroy);
         }
+
+        this.layerDestroyers = {};
+        this.source = undefined;
+        this.hoverSource = undefined;
     }
 
     componentDidMount() {
         this.create(this.props);
-        console.warn('Mounted source', this.props.sourceKey);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.map !== nextProps.map) {
+        const {
+            map: oldMap,
+            mapStyle: oldMapStyle,
+            geoJson: oldGeoJson,
+        } = this.props;
+        const {
+            map: newMap,
+            mapStyle: newMapStyle,
+            geoJson: newGeoJson,
+        } = this.props;
+
+        if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
             this.destroy();
             this.create(nextProps);
-        } else if (this.props.geoJson !== nextProps.geoJson) {
-            const { map } = this.props;
-            if (this.source && map) {
-                map.getSource(this.source).setData(nextProps.geoJson);
-            }
-        } else if (this.props.mapStyle !== nextProps.mapStyle) {
-            this.childDestroyers = {};
-            this.source = undefined;
-            this.hoverLayer = undefined;
-            this.create(nextProps);
+        } else if (this.source && newMap && oldGeoJson !== newGeoJson) {
+            newMap
+                .getSource(this.source)
+                .setData(newGeoJson);
         }
     }
 
@@ -75,32 +83,41 @@ export default class MapSource extends React.PureComponent {
         this.destroy();
     }
 
-    setChildDestroyer = (key, destroyer) => {
-        this.childDestroyers[key] = destroyer;
+    setLayerDestroyer = (key, destroyer) => {
+        this.layerDestroyers[key] = destroyer;
+    }
+
+    destroyLayers = () => {
+        Object.keys(this.layerDestroyers).forEach((key) => {
+            this.layerDestroyers[key]();
+        });
+        this.layerDestroyers = {};
     }
 
     destroy = () => {
-        console.warn('Destroying source', this.props.sourceKey);
+        const {
+            map,
+            onSourceRemoved,
+        } = this.props;
 
-        Object.keys(this.childDestroyers).forEach((key) => {
-            this.childDestroyers[key]();
-        });
+        if (!map) {
+            return;
+        }
 
-        const { map, onSourceRemoved } = this.props;
-        if (map) {
-            if (this.source) {
-                map.removeSource(this.source);
-            }
-            if (this.hoverSource) {
-                map.removeSource(this.hoverSource);
-            }
+        this.destroyLayers();
+
+        if (this.source) {
+            map.removeSource(this.source);
+            this.source = undefined;
+        }
+        if (this.hoverSource) {
+            map.removeSource(this.hoverSource);
+            this.hoverSource = undefined;
         }
 
         if (onSourceRemoved) {
             onSourceRemoved();
         }
-        this.source = undefined;
-        this.hoverSource = undefined;
     }
 
     create = (props) => {
@@ -118,11 +135,11 @@ export default class MapSource extends React.PureComponent {
             data: geoJson,
         });
 
-        this.source = sourceKey;
-
         if (bounds) {
             map.fitBounds(bounds);
         }
+
+        this.source = sourceKey;
 
         if (supportHover) {
             map.addSource(`${sourceKey}-hover`, {
@@ -136,7 +153,8 @@ export default class MapSource extends React.PureComponent {
             onSourceAdded();
         }
 
-        this.setState({ createdAt: new Date().getTime() });
+        // change in this.source needs to re-render
+        this.forceUpdate();
     }
 
     render() {
@@ -156,7 +174,7 @@ export default class MapSource extends React.PureComponent {
             map,
             zoomLevel,
             sourceKey,
-            setDestroyer: this.setChildDestroyer,
+            setDestroyer: this.setLayerDestroyer,
             mapStyle,
         };
 
