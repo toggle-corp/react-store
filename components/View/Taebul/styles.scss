@@ -13,12 +13,14 @@
         border-bottom: $width-separator-thin solid $color-separator;
         background-color: $color-foreground;
         overflow: hidden;
+        overflow-y: scroll;
     }
 
     .body {
         flex-grow: 1;
         padding: 0;
         overflow: auto;
+        overflow-y: scroll;
 
         .row {
             border-bottom: $width-separator-thin solid $color-separator;

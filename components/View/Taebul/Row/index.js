@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '../../List/ListView';
+import VirtualizedList from '../../VirtualizedList';
 
 import Cell from '../Cell';
 import styles from './styles.scss';
@@ -57,6 +58,11 @@ export default class Row extends React.PureComponent {
             columns,
             columnKeySelector,
             className: classNameFromProps,
+            containerScrollLeft,
+            startIndex,
+            endIndex,
+            startVirtualContainerWidth,
+            endVirtualContainerWidth,
         } = this.props;
 
         const className = `
@@ -66,13 +72,21 @@ export default class Row extends React.PureComponent {
 
         return (
             <div className={className}>
-                <ListView
-                    className={styles.row}
-                    data={columns}
-                    keySelector={columnKeySelector}
-                    renderer={Cell}
-                    rendererParams={this.cellRendererParams}
-                />
+                <div className={styles.row}>
+                    <VirtualizedList
+                        data={columns}
+                        className={styles.visibleSection}
+                        keySelector={columnKeySelector}
+                        renderer={Cell}
+                        rendererParams={this.cellRendererParams}
+                        startIndex={startIndex}
+                        endIndex={endIndex}
+                        startVirtualContainerClassName={styles.startVirtualContainer}
+                        startVirtualContainerWidth={startVirtualContainerWidth}
+                        endVirtualContainerClassName={styles.endVirtualContainer}
+                        endVirtualContainerWidth={endVirtualContainerWidth}
+                    />
+                </div>
             </div>
         );
     }

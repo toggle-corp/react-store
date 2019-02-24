@@ -63,6 +63,8 @@ const defaultProps = {
     settings: {},
 };
 
+const MAX_IDLE_TIMEOUT = 200;
+
 export default (WrappedComponent) => {
     // eslint-disable-next-line react/no-multi-comp
     const ColumnWidthComponent = class extends React.PureComponent {
@@ -83,33 +85,37 @@ export default (WrappedComponent) => {
                 onChange,
             } = this.props;
 
-            const dx = e.clientX - this.lastMouseX;
-            this.lastMouseX = e.clientX;
+            window.cancelIdleCallback(this.idleCallback);
+            this.idleCallback = window.requestIdleCallback(() => {
+                const dx = e.clientX - this.lastMouseX;
+                this.lastMouseX = e.clientX;
 
-            const {
-                defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
-                minColumnWidth = DEFAULT_MIN_COLUMN_WIDTH,
-            } = settings;
+                const {
+                    defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
+                    minColumnWidth = DEFAULT_MIN_COLUMN_WIDTH,
+                } = settings;
 
-            const newSettings = produce(settings, (draftSettings) => {
-                if (!draftSettings.columnWidths) {
+                const newSettings = produce(settings, (draftSettings) => {
+                    if (!draftSettings.columnWidths) {
+                        // eslint-disable-next-line no-param-reassign
+                        draftSettings.columnWidths = {};
+                    }
+
+                    const value = draftSettings.columnWidths[this.resizingColumnKey];
+                    let newValue = isFalsy(value)
+                        ? defaultColumnWidth + dx
+                        : value + dx;
+
+                    if (newValue < minColumnWidth) {
+                        newValue = minColumnWidth;
+                    }
+
                     // eslint-disable-next-line no-param-reassign
-                    draftSettings.columnWidths = {};
-                }
+                    draftSettings.columnWidths[this.resizingColumnKey] = newValue;
+                });
 
-                const value = draftSettings.columnWidths[this.resizingColumnKey];
-                let newValue = isFalsy(value)
-                    ? defaultColumnWidth + dx
-                    : value + dx;
-
-                if (newValue < minColumnWidth) {
-                    newValue = minColumnWidth;
-                }
-
-                // eslint-disable-next-line no-param-reassign
-                draftSettings.columnWidths[this.resizingColumnKey] = newValue;
-            });
-            onChange(newSettings);
+                onChange(newSettings);
+            }, { timeout: MAX_IDLE_TIMEOUT });
         }
 
         handleMouseUp = () => {
