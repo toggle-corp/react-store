@@ -30,7 +30,6 @@ const propTypes = {
 
     inverted: PropTypes.bool,
     showBeforeTabs: PropTypes.bool,
-    hideBlank: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,7 +50,6 @@ const defaultProps = {
 
     inverted: false,
     showBeforeTabs: false,
-    hideBlank: false,
 };
 
 
@@ -242,7 +240,6 @@ export default class ScrollTabs extends React.Component {
             useHash,
             defaultHash,
             showBeforeTabs,
-            hideBlank,
             children,
         } = this.props;
 
@@ -279,11 +276,9 @@ export default class ScrollTabs extends React.Component {
                         data={tabList}
                         modifier={this.renderTab}
                     />
-                    {!hideBlank &&
-                        <div className={styles.blank}>
-                            { !showBeforeTabs && children }
-                        </div>
-                    }
+                    <div className={styles.blank}>
+                        { !showBeforeTabs && children }
+                    </div>
                 </div>
                 <Button
                     iconName={iconNames.chevronRight}

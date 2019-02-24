@@ -1,0 +1,67 @@
+@import '../../../../../stylesheets/base';
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 186px;
+
+    .left-child {
+        display: flex;
+        align-items: center;
+
+        .icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: $font-size-medium-alt;
+            height: $font-size-medium-alt;
+            overflow-y: hidden;
+
+            .icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                font-size: 12px;
+            }
+        }
+
+        .label {
+            margin: 0 $spacing-small;
+            color: $color-text-label;
+            font-size: $font-size-small;
+            font-weight: 600;
+        }
+    }
+
+    &.circle {
+        padding: $spacing-small;
+
+        .left-child {
+            .icon-container {
+                .icon {
+                    border-radius: 50%;
+                }
+            }
+        }
+    }
+
+    &.square {
+        padding: $spacing-small-alt;
+
+        .left-child {
+            .icon-container {
+                .icon {
+                    border: $width-separator-thin solid $color-separator-alt;
+
+                    &:not(:last-child) {
+                        border-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}
