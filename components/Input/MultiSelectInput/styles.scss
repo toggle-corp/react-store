@@ -12,7 +12,7 @@ $width-select-all-button: 14px;
         border-bottom: $width-separator-thin solid $color-separator;
 
         .input {
-            width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
+            width: calc(100% - var(--width-dropdown-button) + var(--spacing-extra-small));
         }
 
         .actions {
@@ -21,7 +21,7 @@ $width-select-all-button: 14px;
             top: $spacing-extra-small;
             right: 0;
             align-items: center;
-            height: calc(100% - #{$spacing-extra-small * 2});
+            height: calc(100% - var(--spacing-extra-small) * 2);
 
             %button {
                 display: inline-block;

@@ -8,9 +8,9 @@ const colorTextPlaceholder = 'rgba(0, 0, 0, .4)';
 const colorTextDisabled = 'rgba(0, 0, 0, .3)';
 const colorTextLabel = 'rgba(0, 0, 0, .6)';
 
-const colorPrimary = '#008975';
+const colorPrimary = '#1672c6';
 const colorTextOnPrimary = colorTextOnDark;
-const colorAccent = '#c2185b';
+const colorAccent = '#008975';
 const colorTextOnAccent = colorTextOnDark;
 const colorInfo = '#41a1f0';
 const colorTextOnInfo = colorTextOnDark;
@@ -22,16 +22,24 @@ const colorDanger = '#d3575e';
 const colorTextOnDanger = colorTextOnDark;
 
 const colorBackground = '#e0e0e0';
+const colorTextOnBackground = colorTextOnLight;
 const colorBackgroundAlt = '#f0f0f0';
+const colorTextOnBackgroundAlt = colorTextOnLight;
 
 const colorForeground = '#fff';
+const colorTextOnForeground = colorTextOnLight;
 const colorForegroundAlt = '#f5f5f5';
+const colorTextOnForegroundAlt = colorTextOnLight;
 
-const colorBackgroundHeader = '#bbdefb';
+const colorBackgroundHeader = '#f0f5f5';
+const colorTextOnBackgroundHeader = colorTextOnLight;
 const colorBackgroundHeaderAlt = '#90caf9';
+const colorTextOnBackgroundHeaderAlt = colorTextOnLight;
 
 const colorBackgroundHover = 'rgba(0, 0, 0, .03)';
+const colorTextOnBackgroundHover = colorTextOnLight;
 const colorBackgroundDisabled = 'rgba(0, 0, 0, .05)';
+const colorTextOnBackgroundDisabled = colorTextOnLight;
 
 const colorBackgroundSelected = colorAccent;
 
@@ -83,16 +91,24 @@ const colors = {
     colorTextOnDanger,
 
     colorBackground,
+    colorTextOnBackground,
     colorBackgroundAlt,
+    colorTextOnBackgroundAlt,
 
     colorForeground,
+    colorTextOnForeground,
     colorForegroundAlt,
+    colorTextOnForegroundAlt,
 
     colorBackgroundHeader,
+    colorTextOnBackgroundHeader,
     colorBackgroundHeaderAlt,
+    colorTextOnBackgroundHeaderAlt,
 
     colorBackgroundHover,
+    colorTextOnBackgroundHover,
     colorBackgroundDisabled,
+    colorTextOnBackgroundDisabled,
 
     colorBackgroundSelected,
 

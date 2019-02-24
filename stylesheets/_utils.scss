@@ -73,6 +73,7 @@
     @return $l;
 }
 
+/*
 @function get-text-color($background-color, $color-for-light: $color-text-on-light, $color-for-dark: $color-text-on-dark) {
     $l: get-luminance($background-color);
     @if ($l > 176) {
@@ -80,6 +81,11 @@
     }
 
     @return $color-for-dark;
+}
+*/
+
+@function get-text-color($background-color, $color: $color-text) {
+    @return $color;
 }
 
 @mixin background-color($background-color) {
@@ -93,16 +99,19 @@
 }
 
 @function get-hover-color($color) {
-    @return darken($color, 10%);
+    @return $color;
+    // @return darken($color, 10%);
 }
 
 %background-alternating-row {
     background-color: $color-background-row;
-color: $color-text-on-background-row
+    color: $color-text;
+    // color: $color-text-on-background-row;
 
     &:nth-child(odd) {
         background-color: $color-background-row-alt;
-color: $color-text-on-background-row-alt
+        color: $color-text;
+        // color: $color-text-on-background-row-alt;
     }
 }
 
