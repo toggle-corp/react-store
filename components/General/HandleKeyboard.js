@@ -4,7 +4,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import { modulo } from '@togglecorp/fujs';
 
 const propTypes = {
-    focusedKey: PropTypes.string,
+    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // eslint-disable-next-line react/forbid-prop-types
     options: PropTypes.array,
     keySelector: PropTypes.func.isRequired,
