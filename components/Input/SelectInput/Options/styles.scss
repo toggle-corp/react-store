@@ -1,7 +1,8 @@
 @import '../../../../stylesheets/base';
 
 .options {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     padding: $spacing-small 0;
     max-height: 200px;
     overflow-x: hidden;

@@ -4,7 +4,8 @@ $width-toast-medium: 480px;
 $z-index-toast: 11111;
 
 .toast {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     @include transition-slow;
     position: fixed;
     bottom: 2%;

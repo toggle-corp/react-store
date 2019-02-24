@@ -97,10 +97,12 @@
 }
 
 %background-alternating-row {
-    @include background-color($color-background-row);
+    background-color: $color-background-row;
+color: $color-text-on-background-row
 
     &:nth-child(odd) {
-        @include background-color($color-background-row-alt);
+        background-color: $color-background-row-alt;
+color: $color-text-on-background-row-alt
     }
 }
 

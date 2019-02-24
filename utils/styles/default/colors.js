@@ -1,10 +1,3 @@
-/*
-@include background-color($color-primary);
-
-background-color: $color-primary;
-color: $color-text-primary;
-*/
-
 const colorTextOnLight = 'rgba(0, 0, 0, .7)';
 const colorTextOnDark = 'rgba(255, 255, 255, .8)';
 

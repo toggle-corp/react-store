@@ -90,7 +90,8 @@ $width-item-per-page-input: 48px;
             user-select: none;
 
             &.active {
-                @include background-color($color-accent);
+                background-color: $color-accent;
+color: $color-text-on-accent;
             }
         }
     }

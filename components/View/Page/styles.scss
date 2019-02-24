@@ -12,7 +12,8 @@ $width-sidebar: 300px;
         flex-shrink: 0;
         border-bottom: $width-separator-thin solid $color-separator;
         padding: $spacing-small $spacing-medium;
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
     }
 
     .main-content {
@@ -21,14 +22,16 @@ $width-sidebar: 300px;
         flex-grow: 1;
         margin: $page-margin;
         overflow: auto;
-        @include background-color($color-foreground-alt);
+        background-color: $color-foreground-alt;
+color: $color-text-on-foreground-alt
     }
 
     .footer {
         flex-shrink: 0;
         border-top: $width-separator-thin solid $color-separator;
         padding: $spacing-small $spacing-medium;
-        @include background-color($color-foreground);
+        background-color: $color-foreground;
+color: $color-text-on-foreground;
     }
 }
 
@@ -41,7 +44,8 @@ $width-sidebar: 300px;
         flex-basis: $width-sidebar;
         flex-grow: 0;
         flex-shrink: 0;
-        @include background-color($color-foreground);
+        background-color: $color-foreground;
+color: $color-text-on-foreground;
     }
 
     .content {
@@ -54,7 +58,8 @@ $width-sidebar: 300px;
             flex-shrink: 0;
             border-bottom: $width-separator-thin solid $color-separator;
             padding: $spacing-small $spacing-medium;
-            @include background-color($color-background-header);
+            background-color: $color-background-header;
+color: $color-text-on-background-header
         }
 
         .main-content {
@@ -63,14 +68,16 @@ $width-sidebar: 300px;
             flex-grow: 1;
             margin: $page-margin;
             overflow: auto;
-            @include background-color($color-foreground-alt);
+            background-color: $color-foreground-alt;
+color: $color-text-on-foreground-alt
         }
 
         .footer {
             flex-shrink: 0;
             border-top: $width-separator-thin solid $color-separator;
             padding: $spacing-small $spacing-medium;
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
         }
     }
 }
