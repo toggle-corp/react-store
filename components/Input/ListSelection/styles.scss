@@ -59,8 +59,8 @@ $width-checkmark: $font-size-extra-small + $spacing-small;
 
             &.checked {
                 background-color: $color-accent;
-color: $color-text-on-accent;
                 padding: $spacing-extra-small $spacing-small;
+                color: $color-text-on-accent;
 
                 &:not(:last-child) {
                     border-right-color: $color-foreground;
@@ -79,7 +79,7 @@ color: $color-text-on-accent;
             &:hover {
                 &:not(&.checked) {
                     background-color: $color-background-disabled;
-color: $color-text-on-background-disabled
+                    color: $color-text-on-background-disabled;
                 }
             }
         }

@@ -5,11 +5,11 @@
 
 .forced-tooltip {
     @include shadow-medium;
-    background-color: $color-foreground;
-color: $color-text-on-foreground;
     position: fixed;
     z-index: 10;
+    background-color: $color-foreground;
     padding: $spacing-small $spacing-medium-alt;
+    color: $color-text-on-foreground;
 }
 
 .slider {

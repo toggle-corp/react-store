@@ -4,19 +4,19 @@ $width-toast-medium: 480px;
 $z-index-toast: 11111;
 
 .toast {
-    background-color: $color-foreground;
-color: $color-text-on-foreground;
-    @include transition-slow;
     position: fixed;
     bottom: 2%;
     left: 50%;
     transform: translate(-50%, 100%);
     opacity: 0;
     z-index: $z-index-toast;
+    background-color: $color-foreground;
     width: $width-toast-medium;
     height: auto;
     overflow: hidden;
+    color: $color-text-on-foreground;
     pointer-events: none;
+    @include transition-slow;
 
     .container {
         .header {
