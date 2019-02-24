@@ -11,9 +11,9 @@ $width-sidebar: 300px;
     .header {
         flex-shrink: 0;
         border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
         background-color: $color-background-header;
-color: $color-text-on-background-header
+        padding: $spacing-small $spacing-medium;
+        color: $color-text-on-background-header;
     }
 
     .main-content {
@@ -21,17 +21,17 @@ color: $color-text-on-background-header
         position: relative;
         flex-grow: 1;
         margin: $page-margin;
-        overflow: auto;
         background-color: $color-foreground-alt;
-color: $color-text-on-foreground-alt
+        overflow: auto;
+        color: $color-text-on-foreground-alt;
     }
 
     .footer {
         flex-shrink: 0;
         border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
         background-color: $color-foreground;
-color: $color-text-on-foreground;
+        padding: $spacing-small $spacing-medium;
+        color: $color-text-on-foreground;
     }
 }
 
@@ -45,7 +45,7 @@ color: $color-text-on-foreground;
         flex-grow: 0;
         flex-shrink: 0;
         background-color: $color-foreground;
-color: $color-text-on-foreground;
+        color: $color-text-on-foreground;
     }
 
     .content {
@@ -57,9 +57,9 @@ color: $color-text-on-foreground;
         .header {
             flex-shrink: 0;
             border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium;
             background-color: $color-background-header;
-color: $color-text-on-background-header
+            padding: $spacing-small $spacing-medium;
+            color: $color-text-on-background-header
         }
 
         .main-content {
@@ -67,17 +67,17 @@ color: $color-text-on-background-header
             position: relative;
             flex-grow: 1;
             margin: $page-margin;
-            overflow: auto;
             background-color: $color-foreground-alt;
-color: $color-text-on-foreground-alt
+            overflow: auto;
+            color: $color-text-on-foreground-alt
         }
 
         .footer {
             flex-shrink: 0;
             border-top: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium;
             background-color: $color-foreground;
-color: $color-text-on-foreground;
+            padding: $spacing-small $spacing-medium;
+            color: $color-text-on-foreground;
         }
     }
 }
