@@ -90,12 +90,11 @@ export default class Taebul extends React.PureComponent {
         this.state = {
             scrollLeft: 0,
         };
-
-        // this.calculateRowVirtualizationParams(props);
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
+        this.calculateRowVirtualizationParams(this.props, this.state.scrollLeft);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -125,7 +124,9 @@ export default class Taebul extends React.PureComponent {
     ) => {
         const itemWidths = {};
         columns.forEach((c) => {
-            itemWidths[c.key] = columnWidths[c.key] || defaultColumnWidth;
+            itemWidths[c.key] = isDefined(columnWidths[c.key])
+                ? columnWidths[c.key]
+                : defaultColumnWidth;
         });
 
         return itemWidths;

@@ -18,8 +18,6 @@ export default class VirtualizedList extends React.PureComponent {
 
     getRenderData = memoize((data, startIndex, endIndex) => {
         const filteredData = data.slice(startIndex, endIndex + 1);
-        // console.warn(data, startIndex, endIndex);
-
         return filteredData;
     })
 
