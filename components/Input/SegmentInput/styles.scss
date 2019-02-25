@@ -5,7 +5,6 @@
         display: inline-flex;
         flex-wrap: wrap;
         margin: 0;
-        border: $width-separator-thin solid $color-accent;
     }
 
     .label {
@@ -13,32 +12,14 @@
     }
 
     &.error {
-        .label {
-            color: $color-danger;
-        }
-
         .segment-container {
-            border: $width-separator-thin solid $color-danger;
-        }
-    }
-
-    &.required {
-        .label {
-            font-weight: $font-weight-medium;
-
-            &::after {
-                content: '*';
-            }
+            // border: $width-separator-thin solid $color-danger;
         }
     }
 
     &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
         .segment-container {
-            border: $width-separator-thin solid $color-text-disabled;
+            // border: $width-separator-thin solid $color-separator-light;
         }
     }
 }

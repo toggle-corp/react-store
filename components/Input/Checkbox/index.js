@@ -123,9 +123,9 @@ class Checkbox extends React.PureComponent {
                     disabled={disabled || readOnly}
                     {...otherProps}
                 />
-                <span className={labelClassName}>
+                <div className={labelClassName}>
                     { label }
-                </span>
+                </div>
             </label>
         );
     }
