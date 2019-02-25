@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+
 import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
@@ -46,8 +47,8 @@ export default class Segment extends PureComponent {
         return (
             <div
                 className={classNames}
-                title={title}
                 style={style}
+                title={title}
             >
                 {!hideLabel &&
                     <div className={styles.value}>

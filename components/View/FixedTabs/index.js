@@ -11,6 +11,7 @@ const propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     itemClassName: PropTypes.string,
+    activeClassName: PropTypes.string,
     defaultHash: PropTypes.string,
     onClick: PropTypes.func,
     replaceHistory: PropTypes.bool,
@@ -27,6 +28,7 @@ const defaultProps = {
     children: null,
     className: '',
     itemClassName: '',
+    activeClassName: '',
     defaultHash: undefined,
     onClick: () => {},
     replaceHistory: false,
@@ -70,7 +72,10 @@ export default class FixedTabs extends React.Component {
     }
 
     getTabClassName = (isActive) => {
-        const { itemClassName } = this.props;
+        const {
+            itemClassName,
+            activeClassName,
+        } = this.props;
 
         const classNames = [
             itemClassName,
@@ -80,6 +85,7 @@ export default class FixedTabs extends React.Component {
 
         if (isActive) {
             classNames.push(styles.active);
+            classNames.push(activeClassName);
             classNames.push('active');
         }
 

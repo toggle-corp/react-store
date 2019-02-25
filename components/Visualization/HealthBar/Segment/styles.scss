@@ -2,11 +2,12 @@
 
 .segment {
     @include transition-medium;
+    position: relative;
     flex-grow: 0;
     flex-shrink: 0;
-    position: relative;
     transform-origin: 50% 50%;
     cursor: pointer;
+    min-width: $spacing-extra-small;
     height: 100%;
 
     &:hover {
