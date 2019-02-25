@@ -3,9 +3,8 @@
 $radius-button-border: 2px !default;
 
 @mixin button-props($base-color) {
-    border: $width-separator-thin solid $base-color;
-    background-color: $color-foreground;
-    color: $color-text;
+    border: $width-separator-thin solid $color-separator-alt;
+    // color: $color-text;
     // @include background-color($base-color);
 
     &:focus {
@@ -13,8 +12,13 @@ $radius-button-border: 2px !default;
     }
 
     &:not(:disabled) {
+        border: $width-separator-thin solid $base-color;
+        background-color: $color-foreground;
+        color: $base-color;
+
         &:hover {
-            color: $base-color;
+            background-color: $color-background-hover;
+            // color: $base-color;
             // background-color: get-hover-color($base-color);
         }
     }
@@ -48,9 +52,11 @@ $radius-button-border: 2px !default;
         cursor: pointer;
     }
 
-    &:active {
-        // @include shadow-button-active;
-        transform: translateY(1px);
+    &:not(:disabled) {
+        &:active {
+            // @include shadow-button-active;
+            transform: translateY(1px);
+        }
     }
 
     &:not(.transparent) {
