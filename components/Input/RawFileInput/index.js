@@ -39,6 +39,9 @@ const propTypes = {
     accept: PropTypes.string,
 
     onChange: PropTypes.func,
+
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,6 +54,8 @@ const defaultProps = {
     accept: undefined,
     multiple: false,
     value: undefined,
+    disabled: false,
+    readOnly: false,
 };
 
 class RawFileInput extends React.PureComponent {
@@ -81,6 +86,16 @@ class RawFileInput extends React.PureComponent {
         this.inputId = randomString();
     }
 
+    getFileStatus = (value) => {
+        if (Array.isArray(value) && value.length > 0) {
+            return `Selected: ${value.map(file => file.name).join(', ')}`;
+        }
+        if (value) {
+            return `Selected: ${value.name}`;
+        }
+        return 'No file chosen';
+    }
+
     handleChange = () => {
         const {
             accept,
@@ -98,15 +113,6 @@ class RawFileInput extends React.PureComponent {
         }
     }
 
-    getFileStatus = (value) => {
-        if (Array.isArray(value) && value.length > 0) {
-            return `Selected: ${value.map(file => file.name).join(', ')}`;
-        }
-        if (value) {
-            return `Selected: ${value.name}`;
-        }
-        return 'No file chosen';
-    }
 
     render() {
         const {
@@ -117,14 +123,10 @@ class RawFileInput extends React.PureComponent {
             hint,
             showHintAndError,
             value,
-            changeDelay, // eslint-disable-line
-
-            onChange, // eslint-disable-line
-
+            changeDelay, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
-
-        const fileStatus = this.getFileStatus(value);
 
         return (
             <div className={`file-input ${className} ${styles.fileInputWrapper}`}>
@@ -138,6 +140,7 @@ class RawFileInput extends React.PureComponent {
                     className={`input ${styles.input}`}
                     id={this.inputId}
                     onChange={this.handleChange}
+                    // FIXME: ref may not be needed
                     ref={(el) => { this.fileInput = el; }}
                     type="file"
                     {...otherProps}
@@ -145,7 +148,7 @@ class RawFileInput extends React.PureComponent {
                 {
                     showStatus && (
                         <p className={styles.status}>
-                            {fileStatus}
+                            {this.getFileStatus(value)}
                         </p>
                     )
                 }
