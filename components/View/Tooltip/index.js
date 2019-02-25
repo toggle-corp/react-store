@@ -1,12 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import FloatingContainer from '../FloatingContainer';
 import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+    tooltip: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.node,
+    ]),
+    children: PropTypes.node.isRequired,
+};
+
+const defaultProps = {
+    className: '',
+    tooltip: '',
+};
+
 const noOp = () => {};
 
-export default class ComponentWithTooltip extends React.PureComponent {
+export default class Tooltip extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
         this.parentBCR = undefined;
@@ -16,10 +35,7 @@ export default class ComponentWithTooltip extends React.PureComponent {
     }
 
     handleInvalidate = (container) => {
-        // Note: pass through prop
-        // eslint-disable-next-line react/prop-types
-        const { parentBCR } = this;
-        if (!parentBCR) {
+        if (!this.parentBCR) {
             return null;
         }
 
@@ -28,13 +44,13 @@ export default class ComponentWithTooltip extends React.PureComponent {
             width: window.innerWidth,
             height: window.innerHeight,
         };
-        let topCalc = parentBCR.top - 12 - contentRect.height;
-        let leftCalc = parentBCR.left - (contentRect.width / 2);
+        let topCalc = this.parentBCR.top - 12 - contentRect.height;
+        let leftCalc = this.parentBCR.left - (contentRect.width / 2);
 
-        const leftBoundMax = parentBCR.left + (contentRect.width / 2);
+        const leftBoundMax = this.parentBCR.left + (contentRect.width / 2);
 
         if (topCalc < 0) {
-            topCalc = parentBCR.bottom + 12;
+            topCalc = this.parentBCR.bottom + 12;
         }
         if (leftCalc < 0) {
             leftCalc = 0;
@@ -63,8 +79,9 @@ export default class ComponentWithTooltip extends React.PureComponent {
 
     render() {
         const {
-            title,
+            tooltip,
             children: child,
+            className,
         } = this.props;
 
         const { showTooltip } = this.state;
@@ -75,17 +92,22 @@ export default class ComponentWithTooltip extends React.PureComponent {
             onFocus: noOp,
             onBlur: noOp,
         };
+        const isTooltipNode = typeof tooltip === 'object';
 
         return (
             <React.Fragment>
                 {React.cloneElement(child, props)}
                 {showTooltip &&
                     <FloatingContainer
-                        className={styles.container}
+                        className={_cs(
+                            styles.container,
+                            !isTooltipNode && styles.textTooltip,
+                            className,
+                        )}
                         onInvalidate={this.handleInvalidate}
                         focusTrap
                     >
-                        {title}
+                        {tooltip}
                     </FloatingContainer>
                 }
             </React.Fragment>

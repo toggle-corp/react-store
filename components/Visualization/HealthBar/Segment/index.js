@@ -43,8 +43,14 @@ export default class Segment extends PureComponent {
             'tc-health-bar-segment',
         );
 
+        const tooltip = (
+            <div className={styles.tooltip} >
+                {title}
+            </div>
+        );
+
         return (
-            <Tooltip title={title} >
+            <Tooltip tooltip={tooltip} >
                 <div
                     className={classNames}
                     style={style}

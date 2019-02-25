@@ -1,8 +1,11 @@
 @import '../../../stylesheets/base';
 
+$border-radius-tooltip: 4px;
+
 .container {
     background-color: $color-foreground;
-    padding: $spacing-medium;
+    animation: slide-in $duration-fast ease forwards;
+    pointer-events: none;
 
     // &:after {
     //     position: absolute;
@@ -15,4 +18,21 @@
     //     height: 0;
     //     content: '';
     // }
+
+    &.text-tooltip {
+        border-radius: $border-radius-tooltip;
+        padding: $spacing-medium;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateY(-4px);
+        opacity: .5;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
 }

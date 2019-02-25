@@ -12,6 +12,7 @@ import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
+import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
 
 import styles from './styles.scss';
@@ -181,17 +182,17 @@ class SimpleHorizontalBarChart extends PureComponent {
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
                             <React.Fragment key={d.y}>
-                                <rect // eslint-disable-line
-                                    className={_cs(styles.bar, 'bar')}
-                                    x={d.x}
-                                    y={d.y}
-                                    width={d.width}
-                                    height={d.height}
+                                <Tooltip
+                                    tooltip={`${d.label}: ${d.value}`}
                                 >
-                                    <title>
-                                        { d.label } {'\n'} {d.value }
-                                    </title>
-                                </rect>
+                                    <rect // eslint-disable-line
+                                        className={_cs(styles.bar, 'bar')}
+                                        x={d.x}
+                                        y={d.y}
+                                        width={d.width}
+                                        height={d.height}
+                                    />
+                                </Tooltip>
                                 { d.height > minBarHeightToRenderText && (
                                     <text
                                         className={_cs(styles.label, 'label')}
