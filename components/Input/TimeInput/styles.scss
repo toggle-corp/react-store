@@ -19,7 +19,7 @@ $width-time-input: 120px;
 
             .unit {
                 @extend %input-base;
-                width: calc(2ch + #{$width-input-spinner});
+                width: calc(2ch + var(--width-input-spinner));
                 font-family: $font-family-monospace;
             }
 

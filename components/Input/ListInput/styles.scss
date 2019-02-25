@@ -12,7 +12,7 @@
 
         .label {
             padding: $spacing-small $spacing-small-alt;
-            width: calc(100% - #{$width-icon-large});
+            width: calc(100% - var(--width-icon-large));
         }
 
         .action {
