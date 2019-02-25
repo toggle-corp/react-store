@@ -3,7 +3,7 @@
 $radius-button-border: 2px !default;
 
 @mixin button-props($base-color) {
-    border: $width-separator-thin solid $color-separator-alt;
+    // border: $width-separator-thin solid $color-separator-light;
     // color: $color-text;
     // @include background-color($base-color);
 
@@ -33,8 +33,7 @@ $radius-button-border: 2px !default;
 }
 
 .button {
-    border: 0;
-    // border: width-separator-thin solid $color-separator;
+    border: $width-separator-thin solid $color-separator-light;
     border-radius: $radius-button-border;
     background-color: transparent;
     padding: $spacing-small $spacing-small-alt;
@@ -64,17 +63,19 @@ $radius-button-border: 2px !default;
         }
 
         &.button-default {
-            border: $width-separator-thin solid $color-separator-alt;
             background-color: $color-foreground;
-            color: $color-text-label;
+            color: $color-text;
 
             &:focus {
                 @include outline-button($color-separator-alt);
             }
 
             &:not(:disabled) {
+                border: $width-separator-thin solid $color-separator-alt;
+
                 &:hover {
-                    color: $color-text;
+                    background-color: $color-background-hover;
+                    // color: $color-text;
                     // background-color: get-hover-color($base-color);
                 }
             }
@@ -108,6 +109,8 @@ $radius-button-border: 2px !default;
     }
 
     &.transparent {
+        border: 0;
+
         &:focus {
             border-bottom: 0;
         }

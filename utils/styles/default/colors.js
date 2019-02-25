@@ -53,6 +53,7 @@ const colorTextActiveTab = colorPrimary;
 const colorNegative = colorDanger;
 const colorPositive = colorSuccess;
 
+const colorSeparatorLight = 'rgba(0, 0, 0, .06)';
 const colorSeparator = 'rgba(0, 0, 0, .1)';
 const colorSeparatorAlt = 'rgba(0, 0, 0, .2)';
 const colorSeparatorHover = 'rgba(0, 0, 0, .3)';
@@ -123,6 +124,7 @@ const colors = {
     colorPositive,
 
     colorSeparator,
+    colorSeparatorLight,
     colorSeparatorAlt,
     colorSeparatorHover,
 

@@ -77,17 +77,19 @@ const heightNavbarIcon = '24px';
 const widthNavbarAvatar = '32px';
 const heightNavbarAvatar = '32px';
 
-const radiusBlurMedium = '10px';
-const radiusBlurSmall = '7px';
-const radiusBlurLarge = '15px';
+const radiusBlurMedium = '9px';
+const radiusBlurSmall = '6px';
+const radiusBlurLarge = '12px';
 
-const radiusSpreadMedium = '3px';
-const radiusSpreadSmall = '2px';
-const radiusSpreadLarge = '5px';
+const radiusSpreadMedium = '-6px';
+const radiusSpreadSmall = '-3px';
+const radiusSpreadLarge = '-9px';
 
 const radiusBorderMedium = '3px';
 const radiusBorderSmall = '2px';
 const radiusBorderLarge = '5px';
+
+const radiusButtonBorder = radiusBorderSmall;
 
 const durationTransitionSlow = '.4s';
 const durationTransitionMedium = '.2s';
@@ -206,6 +208,8 @@ const dimens = {
     radiusBorderMedium,
     radiusBorderSmall,
     radiusBorderLarge,
+
+    radiusButtonBorder,
 
     durationTransitionSlow,
     durationTransitionMedium,

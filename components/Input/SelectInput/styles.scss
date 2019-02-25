@@ -1,5 +1,10 @@
 @import '../../../stylesheets/base';
 
+:root {
+    --width-select-input-dropdown-button: 10px;
+    --width-select-input-clear-button: 14px;
+}
+
 $width-dropdown-button: 10px;
 $width-clear-button: 14px;
 
@@ -9,7 +14,7 @@ $width-clear-button: 14px;
         border-bottom: $width-separator-thin solid $color-separator;
 
         .input {
-            width: calc(100% - var(--width-dropdown-button) + var(--spacing-extra-small));
+            width: calc(100% - var(--width-select-input-dropdown-button) - var(--spacing-extra-small));
         }
 
         .actions {
@@ -72,7 +77,7 @@ $width-clear-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                            width: calc(100% - var(--width-select-input-dropdown-button) - var(--width-select-input-clear-button) - var(--spacing-extra-small));
                         }
 
                         .actions {
