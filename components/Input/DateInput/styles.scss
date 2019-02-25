@@ -19,12 +19,12 @@ $width-date-input: 112px;
         .units {
             .day-unit,
             .month-unit {
-                width: calc(2ch + #{$width-spinner});
+                width: calc(2ch + var(--width-spinner));
                 font-family: $font-family-monospace;
             }
 
             .year-unit {
-                width: calc(4ch + #{$width-spinner});
+                width: calc(4ch + var(--width-spinner));
                 font-family: $font-family-monospace;
             }
         }
