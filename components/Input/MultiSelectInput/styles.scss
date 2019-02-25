@@ -2,6 +2,12 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
+:root {
+    --width-multiselect-dropdown-button: 10px;
+    --width-multiselect-clear-button: 14px;
+    --width-multiselect-select-all-button: 14px;
+}
+
 $width-dropdown-button: 10px;
 $width-clear-button: 14px;
 $width-select-all-button: 14px;
@@ -12,7 +18,7 @@ $width-select-all-button: 14px;
         border-bottom: $width-separator-thin solid $color-separator;
 
         .input {
-            width: calc(100% - var(--width-dropdown-button) + var(--spacing-extra-small));
+            width: calc(100% - var(--width-multiselect-dropdown-button) + var(--spacing-extra-small));
         }
 
         .actions {
@@ -59,7 +65,7 @@ $width-select-all-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                            width: calc(100% - var(--width-multiselect-dropdown-button) - var(--width-multiselect-clear-button) - var(--spacing-extra-small));
                         }
 
                         .actions {
@@ -78,7 +84,7 @@ $width-select-all-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-select-all-button + $spacing-extra-small});
+                            width: calc(100% - var(--width-multiselect-dropdown-button) - var(--width-multiselect-select-all-button) - var(--spacing-extra-small));
                         }
 
                         .actions {
@@ -93,7 +99,7 @@ $width-select-all-button: 14px;
             &.filled:not(.hide-select-all-button):not(.hide-clear-button) {
                 &:hover {
                     .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $width-select-all-button + $spacing-extra-small});
+                        width: calc(100% - var(--width-multiselect-dropdown-button) - var(--width-multiselect-clear-button) - var(--width-multiselect-select-all-button) - var(--spacing-extra-small));
                     }
                 }
             }

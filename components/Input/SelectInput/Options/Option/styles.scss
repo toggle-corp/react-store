@@ -10,7 +10,8 @@
     text-align: left;
 
     &.focused {
-        background-color: get-hover-color($color-foreground);
+        background-color: $color-background-hover;
+        // background-color: get-hover-color($color-foreground);
     }
 
     &.active {
