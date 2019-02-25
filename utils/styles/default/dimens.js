@@ -49,6 +49,7 @@ const widthIconLarge = '24px';
 const widthIconExtraLarge = '32px';
 const widthIconExtraLargeAlt = '40px';
 const widthIconSuperLarge = '48px';
+const widthIconExtremeLarge = '96px';
 
 const widthLoginForm = '360px';
 const widthRegisterForm = '520px';
@@ -169,6 +170,7 @@ const dimens = {
     widthIconExtraLarge,
     widthIconExtraLargeAlt,
     widthIconSuperLarge,
+    widthIconExtremeLarge,
 
     widthLoginForm,
     widthRegisterForm,

@@ -1,15 +1,15 @@
 @import '../../../stylesheets/base';
 
+$width-checkmark: $font-size-medium;
+
 .checkbox {
     display: flex;
     cursor: pointer;
-    width: 100%;
     user-select: none;
 
     .checkmark {
-        display: inline-block;
-        margin-right: $spacing-small;
-        font-size: $font-size-medium-alt;
+        margin-right: $spacing-extra-small;
+        width: $width-checkmark;
     }
 
     .input {
@@ -17,6 +17,7 @@
     }
 
     .label {
+        color: $color-text;
         font-weight: $font-weight-normal;
     }
 

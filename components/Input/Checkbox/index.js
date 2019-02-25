@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { randomString } from '@togglecorp/fujs';
+import {
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import { iconNames } from '../../../constants';
@@ -69,65 +72,63 @@ class Checkbox extends React.PureComponent {
         const {
             label,
             tooltip,
-            className,
+            className: classNameFromProps,
             value,
             disabled,
             readOnly,
             onChange, // eslint-disable-line no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars
-            checkboxType, // eslint-disable-line no-unused-vars
+            checkboxType,
             ...otherProps
         } = this.props;
 
-        const classNames = [
+        const className = _cs(
             styles.checkbox,
-            value ? styles.checked : '',
-            className,
-        ];
+            'checkbox',
+            classNameFromProps,
+            value && styles.checked,
+            value && 'checked',
+            disabled && styles.disabled,
+            disabled && 'disabled',
+            readOnly && styles.readOnly,
+            readOnly && 'read-only',
+        );
 
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-
-        if (readOnly) {
-            classNames.push('read-only');
-            classNames.push(styles.readOnly);
-        }
-
-        const spanClassNames = [
+        const iconClassName = _cs(
             styles.checkmark,
             'checkmark',
-            value ? this.props.checkboxType : iconNames.checkboxOutlineBlank,
-        ];
-        const inputClassNames = [
-            'input',
+            value ? checkboxType : iconNames.checkboxOutlineBlank,
+        );
+
+        const inputClassName = _cs(
+            'raw-input',
             styles.input,
-        ];
-        const labelClassNames = [
+        );
+
+        const labelClassName = _cs(
             'label',
             styles.label,
-        ];
+        );
 
         return (
             <label
                 htmlFor={this.inputId}
-                className={classNames.join(' ')}
+                className={className}
                 title={tooltip}
             >
-                <span className={spanClassNames.join(' ')} />
+                <div className={iconClassName} />
                 <input
                     onChange={this.handleInputChange}
-                    className={inputClassNames.join(' ')}
+                    className={inputClassName}
                     type="checkbox"
                     checked={value}
                     id={this.inputId}
                     disabled={disabled || readOnly}
                     {...otherProps}
                 />
-                <span className={labelClassNames.join(' ')}>
+                <div className={labelClassName}>
                     { label }
-                </span>
+                </div>
             </label>
         );
     }

@@ -1,86 +1,19 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/input-base';
+
 
 .list-selection {
-    .label {
-        padding-bottom: $spacing-extra-small-alt;
-    }
-
-    .item {
-        padding: $spacing-extra-small-alt 0;
-    }
-
-    &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-    }
-
-    &.error {
-        .label {
-            color: $color-danger;
-        }
-    }
-}
-
-$width-checkmark: $font-size-extra-small + $spacing-small;
-
-.multi-segment {
     .options {
+        display: flex;
+
         .item {
-            display: inline;
-            position: relative;
-            margin: 0;
-            border: $width-separator-thin solid $color-accent;
-            background-color: $color-foreground;
-            cursor: pointer;
-            padding: $spacing-extra-small $spacing-small + $width-checkmark / 2;
-            color: $color-text-label;
-            user-select: none;
+            padding: $spacing-extra-small $spacing-small;
 
-            &:not(:first-child) {
-                border-left: 0;
+            &:first-child {
+                padding-left: 0;
             }
 
-            :global {
-                .label {
-                    flex-shrink: 0;
-                }
-
-                .checkmark {
-                    flex-shrink: 0;
-                    opacity: 0;
-                    margin-right: 0;
-                    width: 0;
-                    overflow: hidden;
-                    font-size: $font-size-extra-small;
-                }
-            }
-
-            &.checked {
-                background-color: $color-accent;
-                padding: $spacing-extra-small $spacing-small;
-                color: $color-text-on-accent;
-
-                &:not(:last-child) {
-                    border-right-color: $color-foreground;
-                }
-
-                :global {
-                    .checkmark {
-                        opacity: 1;
-                        width: $width-checkmark;
-                        overflow: initial;
-                        color: $color-foreground;
-                    }
-                }
-            }
-
-            &:hover {
-                &:not(&.checked) {
-                    background-color: $color-background-disabled;
-                    color: $color-text-on-background-disabled;
-                }
+            &:last-child {
+                padding-right: 0;
             }
         }
     }
