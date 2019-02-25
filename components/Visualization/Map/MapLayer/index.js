@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
+
 import MapChild from '../MapChild';
+import { forEach } from '../../../../utils/common';
+
 import styles from './styles.scss';
 
 const renderInto = (container, component) => {
@@ -41,6 +44,7 @@ const propTypes = {
     onClick: PropTypes.func,
 
     setDestroyer: PropTypes.func,
+    mapStyle: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -64,29 +68,42 @@ export default class MapLayer extends React.PureComponent {
         if (props.setDestroyer) {
             props.setDestroyer(props.layerKey, this.destroy);
         }
+
+        this.eventHandlers = {};
+        this.layer = undefined;
+        this.hoverLayer = undefined;
+        this.popup = undefined;
     }
 
     componentDidMount() {
         this.create(this.props);
-        console.warn('Mounted layer', this.props.layerKey);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.map !== nextProps.map) {
+        const {
+            map: oldMap,
+            mapStyle: oldMapStyle,
+            layout: oldLayout,
+            paint: oldPaint,
+            filter: oldFilter,
+        } = this.props;
+        const {
+            map: newMap,
+            mapStyle: newMapStyle,
+            layout: newLayout,
+            paint: newPaint,
+            filter: newFilter,
+        } = this.props;
+
+        if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
             this.destroy();
             this.create(nextProps);
-        } else if (this.layer && this.props.layout !== nextProps.layout) {
+        } else if (this.layer && oldLayout !== newLayout) {
             this.reloadLayout(nextProps);
-        } else if (this.layer && this.props.paint !== nextProps.paint) {
+        } else if (this.layer && oldPaint !== newPaint) {
             this.reloadPaint(nextProps);
-        } else if (this.layer && this.props.filter !== nextProps.filter) {
+        } else if (this.layer && oldFilter !== newFilter) {
             this.reloadFilter(nextProps);
-        } else if (this.props.mapStyle !== nextProps.mapStyle) {
-            this.eventHandlers = {};
-            this.layer = undefined;
-            this.hoverLayer = undefined;
-            this.popup = undefined;
-            this.create(nextProps);
         }
     }
 
@@ -94,30 +111,67 @@ export default class MapLayer extends React.PureComponent {
         this.destroy();
     }
 
-    eventHandlers = {};
+    reloadLayout = (props) => {
+        const {
+            map,
+            layerKey,
+            layout,
+        } = props;
+
+        forEach(layout, (key, lay) => {
+            map.setLayoutProperty(layerKey, key, lay);
+        });
+    }
+
+    reloadPaint = (props) => {
+        const {
+            map,
+            layerKey,
+            paint,
+        } = props;
+
+        forEach(paint, (key, pai) => {
+            map.setPaintProperty(layerKey, key, pai);
+        });
+    }
+
+    reloadFilter = (props) => {
+        const {
+            map,
+            layerKey,
+            filter,
+        } = props;
+
+        map.setFilter(layerKey, filter);
+    }
+
+    destroyHandlers = (map, layerKey) => {
+        forEach(this.eventHandlers, (type, listener) => {
+            map.off(type, layerKey, listener);
+        });
+        this.eventHandlers = {};
+    }
 
     destroy = () => {
-        console.warn('Destroying layer', this.props.layerKey);
-
         const { map, layerKey } = this.props;
-        if (map) {
-            Object.keys(this.eventHandlers).forEach((type) => {
-                const listener = this.eventHandlers[type];
-                map.off(type, layerKey, listener);
-            });
-            if (this.layer) {
-                map.removeLayer(this.layer);
-            }
-            if (this.hoverLayer) {
-                map.removeLayer(this.hoverLayer);
-            }
-            if (this.popup) {
-                this.popup.remove();
-            }
+        if (!map) {
+            return;
         }
-        this.layer = undefined;
-        this.hoverLayer = undefined;
-        this.popup = undefined;
+
+        this.destroyHandlers(map, layerKey);
+
+        if (this.layer) {
+            map.removeLayer(this.layer);
+            this.layer = undefined;
+        }
+        if (this.hoverLayer) {
+            map.removeLayer(this.hoverLayer);
+            this.hoverLayer = undefined;
+        }
+        if (this.popup) {
+            this.popup.remove();
+            this.popup = undefined;
+        }
     }
 
     create = (props) => {
@@ -140,29 +194,27 @@ export default class MapLayer extends React.PureComponent {
             type,
             paint,
         };
-
         if (layout) {
             layerInfo.layout = layout;
         }
-
         if (filter) {
             layerInfo.filter = filter;
         }
-
         map.addLayer(layerInfo);
+
         this.layer = layerKey;
+
+        // FIXME: this need refactoring
+        this.createHoverLayer(props);
 
         if (onClick) {
             this.eventHandlers.click = (e) => {
-                const feature = e.features[0];
+                const [feature] = e.features;
                 onClick(feature.properties[property]);
             };
         }
 
-        this.createHoverLayer(props);
-
-        Object.keys(this.eventHandlers).forEach((eventType) => {
-            const listener = this.eventHandlers[eventType];
+        forEach(this.eventHandlers, (eventType, listener) => {
             map.on(eventType, layerKey, listener);
         });
     }
@@ -268,41 +320,13 @@ export default class MapLayer extends React.PureComponent {
         };
     }
 
-    reloadLayout = (props) => {
-        const {
-            map,
-            layerKey,
-            layout,
-        } = props;
-
-        Object.keys(layout).forEach((key) => {
-            map.setLayoutProperty(layerKey, key, layout[key]);
-        });
-    }
-
-    reloadPaint = (props) => {
-        const {
-            map,
-            layerKey,
-            paint,
-        } = props;
-
-        Object.keys(paint).forEach((key) => {
-            map.setPaintProperty(layerKey, key, paint[key]);
-        });
-    }
-
-    reloadFilter = (props) => {
-        const {
-            map,
-            layerKey,
-            filter,
-        } = props;
-        map.setFilter(layerKey, filter);
-    }
-
     renderTooltip = (properties) => {
-        const { hoverInfo: { tooltipProperty, tooltipModifier } } = this.props;
+        const {
+            hoverInfo: {
+                tooltipProperty,
+                tooltipModifier,
+            },
+        } = this.props;
 
         if (tooltipModifier) {
             return tooltipModifier(properties);

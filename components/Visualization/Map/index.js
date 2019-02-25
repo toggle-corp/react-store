@@ -12,8 +12,9 @@ import styles from './styles.scss';
 const nullComponent = () => null;
 
 const UNSUPPORTED_BROWSER = !mapboxgl.supported();
-
 const DEFAULT_ZOOM_LEVEL = 3;
+const DEFAULT_CENTER = [84.1240, 28.3949];
+const WAIT_FOR_RESIZE = 200;
 
 const {
     REACT_APP_MAPBOX_ACCESS_TOKEN: TOKEN,
@@ -24,10 +25,6 @@ const {
 if (TOKEN) {
     mapboxgl.accessToken = TOKEN;
 }
-
-const WAIT_FOR_RESIZE = 200;
-const DEFAULT_CENTER = [84.1240, 28.3949];
-
 
 const propTypes = {
     className: PropTypes.string,
@@ -42,18 +39,26 @@ const propTypes = {
     navControlPosition: PropTypes.string,
     hideNavControl: PropTypes.bool,
     mapStyle: PropTypes.string,
+    defaultZoomLevel: PropTypes.number.isRequired,
+    defaultCenter: PropTypes.arrayOf(PropTypes.number),
 };
 
 const defaultProps = {
+    panelsRenderer: nullComponent,
+
     className: '',
+    children: undefined,
+
     bounds: undefined,
     boundsPadding: 64,
     fitBoundsDuration: 1000,
-    panelsRenderer: nullComponent,
-    children: false,
+
     navControlPosition: 'top-left',
     hideNavControl: false,
+
     mapStyle: DEFAULT_STYLE,
+    defaultZoomLevel: DEFAULT_ZOOM_LEVEL,
+    defaultCenter: DEFAULT_CENTER,
 };
 
 export default class Map extends React.Component {
@@ -69,7 +74,8 @@ export default class Map extends React.Component {
             mapStyle: props.mapStyle,
         };
 
-        this.childDestroyers = {};
+        this.mounted = false;
+        this.sourceDestroyers = {};
         this.mapContainerRef = React.createRef();
     }
 
@@ -83,6 +89,8 @@ export default class Map extends React.Component {
             navControlPosition,
             hideNavControl,
             mapStyle: mapStyleFromProps,
+            defaultZoomLevel,
+            defaultCenter,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -90,8 +98,8 @@ export default class Map extends React.Component {
         const map = new mapboxgl.Map({
             container: mapContainer,
             style: mapStyleFromProps,
-            zoom: DEFAULT_ZOOM_LEVEL,
-            center: DEFAULT_CENTER,
+            zoom: defaultZoomLevel,
+            center: defaultCenter,
             minZoom: 3,
             maxZoom: 10,
             logoPosition: 'bottom-right',
@@ -108,7 +116,7 @@ export default class Map extends React.Component {
         }
 
         map.on('load', () => this.handleLoad(map));
-        map.on('zoom', () => this.handleZoom(map));
+        map.on('zoom', () => this.handleZoomChange(map));
         map.on(
             'style.load',
             (event) => {
@@ -143,14 +151,11 @@ export default class Map extends React.Component {
             fitBoundsDuration,
         } = nextProps;
 
-        if (oldBounds !== newBounds) {
-            this.setBounds(map, newBounds, boundsPadding, fitBoundsDuration);
-        }
-
         if (oldMapStyle !== newMapStyle && newMapStyle && map) {
             map.setStyle(newMapStyle);
-            // NOTE: removing child destroyers
-            this.childDestroyers = {};
+            this.destroySources();
+        } else if (oldBounds !== newBounds) {
+            this.handleBoundChange(map, newBounds, boundsPadding, fitBoundsDuration);
         }
     }
 
@@ -162,9 +167,7 @@ export default class Map extends React.Component {
 
         clearTimeout(this.resizeTimeout);
 
-        forEach(this.childDestroyers, (key, childDestroyer) => {
-            childDestroyer();
-        });
+        this.destroySources();
 
         const { map } = this.state;
         if (map) {
@@ -172,22 +175,15 @@ export default class Map extends React.Component {
         }
     }
 
-    setChildDestroyer = (key, destroyer) => {
-        this.childDestroyers[key] = destroyer;
+    setSourceDestroyer = (key, destroyer) => {
+        this.sourceDestroyers[key] = destroyer;
     }
 
-    setBounds = (map, bounds, padding, duration) => {
-        if (!map || !bounds) {
-            return;
-        }
-        const [fooLon, fooLat, barLon, barLat] = bounds;
-        map.fitBounds(
-            [[fooLon, fooLat], [barLon, barLat]],
-            {
-                padding,
-                duration,
-            },
-        );
+    destroySources = () => {
+        forEach(this.sourceDestroyers, (key, sourceDestroyer) => {
+            sourceDestroyer();
+        });
+        this.sourceDestroyers = {};
     }
 
     handleLoad = (map) => {
@@ -201,16 +197,33 @@ export default class Map extends React.Component {
             bounds,
             boundsPadding,
             fitBoundsDuration,
+            defaultZoomLevel,
         } = this.props;
 
-        this.setBounds(map, bounds, boundsPadding, fitBoundsDuration);
-        this.setState({ map, zoomLevel: DEFAULT_ZOOM_LEVEL });
+        this.handleBoundChange(map, bounds, boundsPadding, fitBoundsDuration);
+
+        this.setState({
+            map,
+            zoomLevel: defaultZoomLevel,
+        });
     }
 
-    handleZoom = (map) => {
-        this.setState({
-            zoomLevel: map.getZoom(),
-        });
+    handleBoundChange = (map, bounds, padding, duration) => {
+        if (!map || !bounds) {
+            return;
+        }
+        const [fooLon, fooLat, barLon, barLat] = bounds;
+        map.fitBounds(
+            [[fooLon, fooLat], [barLon, barLat]],
+            {
+                padding,
+                duration,
+            },
+        );
+    }
+
+    handleZoomChange = (map) => {
+        this.setState({ zoomLevel: map.getZoom() });
     }
 
     render() {
@@ -246,7 +259,7 @@ export default class Map extends React.Component {
         const childrenProps = {
             map,
             zoomLevel,
-            setDestroyer: this.setChildDestroyer,
+            setDestroyer: this.setSourceDestroyer,
             mapStyle,
         };
 
