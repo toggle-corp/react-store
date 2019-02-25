@@ -6,5 +6,18 @@
 
     .row {
         display: flex;
+
+        .start-virtual-container {
+            flex-shrink: 0;
+        }
+
+        .visible-section {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .end-virtual-container {
+            flex-shrink: 0;
+        }
     }
 }
