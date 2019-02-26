@@ -33,6 +33,7 @@ const propTypeData = PropTypes.arrayOf(
 
 const propTypes = {
     className: PropTypes.string,
+    id: PropTypes.string,
     data: propTypeData,
 
     keySelector: PropTypes.func,
@@ -47,6 +48,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    id: undefined,
     data: [],
     modifier: undefined,
     keySelector: undefined,
@@ -237,6 +239,7 @@ export default class VirtualizedListView extends React.Component {
             className: classNameFromProps,
             emptyComponent: EmptyComponent,
             data,
+            id,
         } = this.props;
 
         const className = `
@@ -251,6 +254,7 @@ export default class VirtualizedListView extends React.Component {
             <div
                 ref={this.container}
                 className={className}
+                id={id}
             >
                 <Items />
                 { data.length === 0 && EmptyComponent && <EmptyComponent /> }

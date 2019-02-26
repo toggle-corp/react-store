@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 import {
     isDefined,
     sum,
+    randomString,
 } from '@togglecorp/fujs';
 
 import ListView from '../List/ListView';
@@ -90,6 +91,11 @@ export default class Taebul extends React.PureComponent {
         this.state = {
             scrollLeft: 0,
         };
+
+        const rand = randomString();
+        this.localContainerId = `taebul-container-${rand}`;
+        this.localHeadId = `taebul-head-${rand}`;
+        this.localBodyId = `taebul-body-${rand}`;
     }
 
     componentDidMount() {
@@ -153,7 +159,7 @@ export default class Taebul extends React.PureComponent {
             defaultColumnWidth,
         );
 
-        const container = document.getElementsByClassName(styles.taebul)[0];
+        const container = document.getElementById(this.localContainerId);
         let containerBCR = {};
 
         if (container) {
@@ -175,8 +181,11 @@ export default class Taebul extends React.PureComponent {
     }
 
     handleScroll = ({ target }) => {
-        if (target.className && target.className.includes(styles.body)) {
-            const head = document.getElementsByClassName(styles.head)[0];
+        if (!target.id) {
+            return;
+        }
+        if (target.id === this.localBodyId) {
+            const head = document.getElementById(this.localHeadId);
 
             if (head) {
                 head.scrollLeft = target.scrollLeft;
@@ -187,8 +196,8 @@ export default class Taebul extends React.PureComponent {
                     this.setState({ scrollLeft: target.scrollLeft });
                 }, { timeout: MAX_IDLE_TIMEOUT });
             }
-        } else if (target.className && target.className.includes(styles.head)) {
-            const body = document.getElementsByClassName(styles.body)[0];
+        } else if (target.id === this.localHeadId) {
+            const body = document.getElementById(this.localBodyId);
 
             if (body) {
                 body.scrollLeft = target.scrollLeft;
@@ -252,8 +261,12 @@ export default class Taebul extends React.PureComponent {
         const rowClassName = `${styles.row} ${rowClassNameFromProps}`;
 
         return (
-            <div className={className}>
+            <div
+                id={this.localContainerId}
+                className={className}
+            >
                 <ListView
+                    id={this.localHeadId}
                     className={styles.head}
                     data={columns}
                     keySelector={Taebul.columnKeySelector}
@@ -261,6 +274,7 @@ export default class Taebul extends React.PureComponent {
                     rendererParams={this.headerRendererParams}
                 />
                 <VirtualizedListView
+                    id={this.localBodyId}
                     className={styles.body}
                     data={data}
                     keySelector={keySelector}
