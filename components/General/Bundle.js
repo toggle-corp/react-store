@@ -1,31 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// NOTE: why this does't use className?
+const DefaultRenderer = ({ text }) => (
+    <div style={DefaultRenderer.loadingStyle}>
+        {text}
+    </div>
+);
+DefaultRenderer.loadingStyle = {
+    height: '100%',
+    fontSize: '18px',
+    color: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+};
+
+
 const propTypes = {
     load: PropTypes.func.isRequired,
     errorText: PropTypes.string,
     loadingText: PropTypes.string,
     decorator: PropTypes.func,
+    renderer: PropTypes.func,
 };
 const defaultProps = {
     errorText: 'Error while loading page.',
     loadingText: 'Loading...',
     decorator: undefined,
+    renderer: DefaultRenderer,
 };
 
 // NOTE: Intentionally opted out of PureComponent
 class Bundle extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static loadingStyle = {
-        height: '100%',
-        fontSize: '18px',
-        color: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
 
     constructor(props) {
         super(props);
@@ -71,19 +80,13 @@ class Bundle extends React.Component {
         console.warn('Bundle load failed.', err);
     }
 
-    // NOTE: why this does't use className?
-    renderLoading = ({ text }) => (
-        <div style={Bundle.loadingStyle}>
-            {text}
-        </div>
-    )
-
     render() {
         const {
             load, // eslint-disable-line no-unused-vars
             decorator, // eslint-disable-line no-unused-vars
             errorText,
             loadingText,
+            renderer: Loading,
             ...otherProps
         } = this.props;
         const {
@@ -93,7 +96,6 @@ class Bundle extends React.Component {
 
         if (!BundledComponent) {
             const message = failed ? errorText : loadingText;
-            const Loading = this.renderLoading;
             return <Loading text={message} />;
         }
 
