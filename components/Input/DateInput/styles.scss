@@ -33,8 +33,13 @@ $width-date-input: 112px;
             @include transition-medium;
             position: absolute;
             right: 0;
-            bottom: -$font-size-medium - $spacing-medium;
+            bottom: -$font-size-small - $spacing-medium - $spacing-extra-small * 2;
             opacity: 0;
+            z-index: 1111;
+            border: $width-separator-thin solid $color-separator;
+            border-radius: 0 0 $radius-border-small $radius-border-small;
+            background-color: $color-foreground;
+            padding: $spacing-extra-small;
         }
 
         &:hover {
