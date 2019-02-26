@@ -38,12 +38,14 @@ const propTypes = {
     data: propTypeData,
     /* Component to show when data is empty */
     emptyComponent: PropTypes.func,
+    id: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     data: [],
     emptyComponent: defaultEmptyComponent,
+    id: undefined,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -56,7 +58,7 @@ export class NormalListView extends React.Component {
             className: classNameFromProps,
             data,
             emptyComponent: EmptyComponent,
-
+            id,
             ...otherProps
         } = this.props;
 
@@ -87,7 +89,10 @@ export class NormalListView extends React.Component {
         `;
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                id={id}
+            >
                 <NormalList
                     data={data}
                     {...otherProps}
