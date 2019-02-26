@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { _cs } from '@togglecorp/fujs';
 
+import Tooltip from '../../../View/Tooltip';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -30,10 +32,7 @@ export default class Segment extends PureComponent {
             enlargeOnHover,
         } = this.props;
 
-        let title = value;
-        if (label !== '') {
-            title = `${label}: ${value}`;
-        }
+        const title = label === '' ? value : `${label}: ${value}`;
 
         if (value === 0 || value === undefined) {
             return null;
@@ -44,18 +43,25 @@ export default class Segment extends PureComponent {
             'tc-health-bar-segment',
         );
 
-        return (
-            <div
-                className={classNames}
-                style={style}
-                title={title}
-            >
-                {!hideLabel &&
-                    <div className={styles.value}>
-                        {value}
-                    </div>
-                }
+        const tooltip = (
+            <div className={styles.tooltip} >
+                {title}
             </div>
+        );
+
+        return (
+            <Tooltip tooltip={tooltip} >
+                <div
+                    className={classNames}
+                    style={style}
+                >
+                    {!hideLabel &&
+                        <div className={styles.value}>
+                            {value}
+                        </div>
+                    }
+                </div>
+            </Tooltip>
         );
     }
 }
