@@ -23,6 +23,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     geoJson: PropTypes.object.isRequired,
     mapStyle: PropTypes.string.isRequired,
+    bounds: PropTypes.arrayOf(PropTypes.number),
 };
 
 const defaultProps = {
@@ -33,6 +34,7 @@ const defaultProps = {
     onSourceRemoved: undefined,
     supportHover: false,
     setDestroyer: undefined,
+    bounds: undefined,
 };
 
 
@@ -62,26 +64,28 @@ export default class MapSource extends React.PureComponent {
             map: oldMap,
             mapStyle: oldMapStyle,
             geoJson: oldGeoJson,
+            bounds: oldBounds,
         } = this.props;
         const {
             map: newMap,
             mapStyle: newMapStyle,
             geoJson: newGeoJson,
-        } = this.props;
+            bounds: newBounds,
+        } = nextProps;
 
         if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
             this.destroy();
             this.create(nextProps);
-        } else if (this.source && newMap && oldGeoJson !== newGeoJson) {
+            return;
+        }
+
+        if (this.source && newMap && oldGeoJson !== newGeoJson) {
             newMap
                 .getSource(this.source)
                 .setData(newGeoJson);
         }
-
-        if (this.props.bounds !== nextProps.bounds) {
-            if (nextProps.bounds) {
-                nextProps.map.fitBounds(nextProps.bounds);
-            }
+        if (oldBounds !== newBounds && newBounds) {
+            newMap.fitBounds(newBounds);
         }
     }
 
@@ -95,9 +99,10 @@ export default class MapSource extends React.PureComponent {
 
     destroyLayers = () => {
         Object.keys(this.layerDestroyers).forEach((key) => {
+            console.warn('EXTERNAL layer removal', key);
             this.layerDestroyers[key]();
         });
-        this.layerDestroyers = {};
+        // this.layerDestroyers = {};
     }
 
     destroy = () => {
@@ -113,10 +118,12 @@ export default class MapSource extends React.PureComponent {
         this.destroyLayers();
 
         if (this.source) {
+            console.info('Removing source', this.props.sourceKey);
             map.removeSource(this.source);
             this.source = undefined;
         }
         if (this.hoverSource) {
+            console.info('Removing hover source', this.props.sourceKey);
             map.removeSource(this.hoverSource);
             this.hoverSource = undefined;
         }
@@ -136,6 +143,7 @@ export default class MapSource extends React.PureComponent {
             bounds,
         } = props;
 
+        console.info('Adding source', this.props.sourceKey);
         map.addSource(sourceKey, {
             type: 'geojson',
             data: geoJson,
@@ -148,6 +156,7 @@ export default class MapSource extends React.PureComponent {
         this.source = sourceKey;
 
         if (supportHover) {
+            console.info('Adding hover source', this.props.sourceKey);
             map.addSource(`${sourceKey}-hover`, {
                 type: 'geojson',
                 data: geoJson,

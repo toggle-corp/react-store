@@ -61,7 +61,7 @@ const defaultProps = {
     defaultCenter: DEFAULT_CENTER,
 };
 
-export default class Map extends React.Component {
+export default class Map extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -121,6 +121,7 @@ export default class Map extends React.Component {
             'style.load',
             (event) => {
                 const mapStyle = event.style.stylesheet.sprite;
+                console.info('Style has changed to', mapStyle);
                 this.setState({ mapStyle });
             },
         );
@@ -152,9 +153,12 @@ export default class Map extends React.Component {
         } = nextProps;
 
         if (oldMapStyle !== newMapStyle && newMapStyle && map) {
-            map.setStyle(newMapStyle);
+            console.info('New style from props', newMapStyle);
             this.destroySources();
-        } else if (oldBounds !== newBounds) {
+            map.setStyle(newMapStyle);
+            return;
+        }
+        if (oldBounds !== newBounds) {
             this.handleBoundChange(map, newBounds, boundsPadding, fitBoundsDuration);
         }
     }
@@ -180,10 +184,12 @@ export default class Map extends React.Component {
     }
 
     destroySources = () => {
+        console.info('EXTERNAL map removal');
         forEach(this.sourceDestroyers, (key, sourceDestroyer) => {
+            console.info('EXTERNAL source removal', key);
             sourceDestroyer();
         });
-        this.sourceDestroyers = {};
+        // this.sourceDestroyers = {};
     }
 
     handleLoad = (map) => {

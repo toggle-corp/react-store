@@ -93,16 +93,20 @@ export default class MapLayer extends React.PureComponent {
             layout: newLayout,
             paint: newPaint,
             filter: newFilter,
-        } = this.props;
+        } = nextProps;
 
         if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
             this.destroy();
             this.create(nextProps);
-        } else if (this.layer && oldLayout !== newLayout) {
+            return;
+        }
+        if (this.layer && oldLayout !== newLayout) {
             this.reloadLayout(nextProps);
-        } else if (this.layer && oldPaint !== newPaint) {
+        }
+        if (this.layer && oldPaint !== newPaint) {
             this.reloadPaint(nextProps);
-        } else if (this.layer && oldFilter !== newFilter) {
+        }
+        if (this.layer && oldFilter !== newFilter) {
             this.reloadFilter(nextProps);
         }
     }
@@ -147,6 +151,7 @@ export default class MapLayer extends React.PureComponent {
 
     destroyHandlers = (map, layerKey) => {
         forEach(this.eventHandlers, (type, listener) => {
+            console.info('Removing layer event handler', layerKey);
             map.off(type, layerKey, listener);
         });
         this.eventHandlers = {};
@@ -161,14 +166,17 @@ export default class MapLayer extends React.PureComponent {
         this.destroyHandlers(map, layerKey);
 
         if (this.layer) {
+            console.info('Removing layer', layerKey);
             map.removeLayer(this.layer);
             this.layer = undefined;
         }
         if (this.hoverLayer) {
+            console.info('Removing hover layer', layerKey);
             map.removeLayer(this.hoverLayer);
             this.hoverLayer = undefined;
         }
         if (this.popup) {
+            console.info('Removing popup layer', layerKey);
             this.popup.remove();
             this.popup = undefined;
         }
@@ -185,7 +193,6 @@ export default class MapLayer extends React.PureComponent {
             filter,
             onClick,
             property,
-            bounds,
         } = props;
 
         const layerInfo = {
@@ -200,6 +207,7 @@ export default class MapLayer extends React.PureComponent {
         if (filter) {
             layerInfo.filter = filter;
         }
+        console.info('Adding layer', layerKey);
         map.addLayer(layerInfo);
 
         this.layer = layerKey;
@@ -215,6 +223,7 @@ export default class MapLayer extends React.PureComponent {
         }
 
         forEach(this.eventHandlers, (eventType, listener) => {
+            console.info('Adding layer event handler', layerKey);
             map.on(eventType, layerKey, listener);
         });
     }
@@ -238,6 +247,7 @@ export default class MapLayer extends React.PureComponent {
             showTooltip,
         } = hoverInfo;
 
+        console.info('Adding hover layer', layerKey);
         map.addLayer({
             id: hoverLayerKey,
             source: sourceKey,
