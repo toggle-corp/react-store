@@ -77,6 +77,12 @@ export default class MapSource extends React.PureComponent {
                 .getSource(this.source)
                 .setData(newGeoJson);
         }
+
+        if (this.props.bounds !== nextProps.bounds) {
+            if (nextProps.bounds) {
+                nextProps.map.fitBounds(nextProps.bounds);
+            }
+        }
     }
 
     componentWillUnmount() {
