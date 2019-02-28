@@ -99,7 +99,7 @@ export default class MapSource extends React.PureComponent {
 
     destroyLayers = () => {
         Object.keys(this.layerDestroyers).forEach((key) => {
-            console.warn('EXTERNAL layer removal', key);
+            console.info('EXTERNAL layer removal', key);
             this.layerDestroyers[key]();
         });
         // this.layerDestroyers = {};

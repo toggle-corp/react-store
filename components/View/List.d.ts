@@ -1,6 +1,8 @@
-/*
 import * as React from 'react';
-import { ExternalProps } from '../General/Form/FormElement';
+// import { ExternalProps } from '../General/Form/FormElement';
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ExternalProps {
+}
 
 interface RendererProps<T> {
     className: string;
@@ -22,4 +24,3 @@ export type ListProps<T> = Props<T> & ExternalProps;
 declare class List<T> extends React.Component<ListProps<T>, any> {
 }
 export default List;
- */
