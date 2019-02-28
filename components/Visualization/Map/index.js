@@ -101,7 +101,7 @@ export default class Map extends React.PureComponent {
             zoom: defaultZoomLevel,
             center: defaultCenter,
             minZoom: 3,
-            maxZoom: 10,
+            maxZoom: 13,
             logoPosition: 'bottom-right',
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
