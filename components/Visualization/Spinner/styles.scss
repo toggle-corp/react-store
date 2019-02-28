@@ -1,0 +1,20 @@
+@import '~base-scss/base';
+
+.spinner {
+    background: transparent !important;
+    width: $width-icon-medium;
+    height: $width-icon-medium;
+    border-radius: 100%;
+    border: 2px solid;
+    border-color: $color-primary;
+    border-bottom-color: transparent;
+    display: inline-block;
+    animation: clip 0.75s 0s infinite linear;
+    animation-fill-mode: both;
+}
+
+@keyframes clip {
+    0% { transform: rotate(0deg) scale(1)}
+    50% { transform: rotate(180deg) scale(0.8)}
+    100% { transform: rotate(360deg) scale(1)}
+}
