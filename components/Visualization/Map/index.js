@@ -39,8 +39,10 @@ const propTypes = {
     navControlPosition: PropTypes.string,
     hideNavControl: PropTypes.bool,
     mapStyle: PropTypes.string,
-    defaultZoomLevel: PropTypes.number.isRequired,
-    defaultCenter: PropTypes.arrayOf(PropTypes.number),
+    zoom: PropTypes.number.isRequired,
+    center: PropTypes.arrayOf(PropTypes.number),
+    minZoom: PropTypes.number,
+    maxZoom: PropTypes.number,
 };
 
 const defaultProps = {
@@ -57,8 +59,10 @@ const defaultProps = {
     hideNavControl: false,
 
     mapStyle: DEFAULT_STYLE,
-    defaultZoomLevel: DEFAULT_ZOOM_LEVEL,
-    defaultCenter: DEFAULT_CENTER,
+    zoom: DEFAULT_ZOOM_LEVEL,
+    center: DEFAULT_CENTER,
+    minZoom: undefined,
+    maxZoom: undefined,
 };
 
 export default class Map extends React.PureComponent {
@@ -89,8 +93,10 @@ export default class Map extends React.PureComponent {
             navControlPosition,
             hideNavControl,
             mapStyle: mapStyleFromProps,
-            defaultZoomLevel,
-            defaultCenter,
+            zoom,
+            center,
+            minZoom,
+            maxZoom,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -98,10 +104,12 @@ export default class Map extends React.PureComponent {
         const map = new mapboxgl.Map({
             container: mapContainer,
             style: mapStyleFromProps,
-            zoom: defaultZoomLevel,
-            center: defaultCenter,
-            minZoom: 3,
-            maxZoom: 13,
+
+            zoom,
+            center,
+            minZoom,
+            maxZoom,
+
             logoPosition: 'bottom-right',
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
@@ -203,14 +211,14 @@ export default class Map extends React.PureComponent {
             bounds,
             boundsPadding,
             fitBoundsDuration,
-            defaultZoomLevel,
+            zoom,
         } = this.props;
 
         this.handleBoundChange(map, bounds, boundsPadding, fitBoundsDuration);
 
         this.setState({
             map,
-            zoomLevel: defaultZoomLevel,
+            zoomLevel: zoom,
         });
     }
 
