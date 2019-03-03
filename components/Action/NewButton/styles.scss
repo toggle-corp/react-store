@@ -1,0 +1,30 @@
+@import '../../../stylesheets/base';
+@import '../../../stylesheets/button-base';
+
+$color-background-hover-layer: rgba(0, 0, 0, .16);
+
+.button {
+    @extend %button-base;
+    position: relative;
+    border-radius: $radius-border-small;
+    padding: $spacing-small $spacing-medium;
+    text-transform: uppercase;
+    font-size: $font-size-small;
+
+    .hover-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        background-color: $color-background-hover-layer;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    &:hover {
+        .hover-layer {
+            opacity: 1;
+        }
+    }
+}
