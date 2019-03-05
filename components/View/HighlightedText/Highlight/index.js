@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getRgbFromHex, _cs } from '@togglecorp/fujs';
+import { getRgbRawFromHex, _cs } from '@togglecorp/fujs';
 
 
 import styles from './styles.scss';
@@ -29,7 +29,7 @@ export default class Highlight extends React.PureComponent {
 
     // FIXME: memoize this
     static getHighlightColors = (color) => {
-        const { r, g, b } = getRgbFromHex(color);
+        const [r, g, b] = getRgbRawFromHex(color);
 
         const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
         const borderColor = color;
