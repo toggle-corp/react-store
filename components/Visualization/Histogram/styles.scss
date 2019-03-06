@@ -2,9 +2,6 @@
 
 .histogram {
     .bar {
-        rect {
-            fill: rgba(90, 198, 198, 1);
-        }
         cursor: pointer;
     }
 
@@ -31,4 +28,17 @@
             visibility: hidden;
         }
     }
+}
+
+.tooltip {
+    @include shadow-medium;
+    position: fixed;
+    z-index: 10;
+    background-color: $color-foreground;
+    padding: $spacing-small $spacing-medium-alt;
+    animation: fade-in .2s ease-in;
+    color: $color-text-on-foreground;
+    display: block;
+    pointer-events: none;
+    text-align: center;
 }
