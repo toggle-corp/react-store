@@ -7,10 +7,10 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import Responsive from '../../General/Responsive';
 import update from '../../../utils/immutable-update';
 import { getStandardFilename } from '../../../utils/common';
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -326,13 +326,13 @@ class OrgChart extends React.PureComponent {
         const infoIconClassName = [
             styles.infoIcon,
             'info-icon',
-            iconNames.info,
         ].join(' ');
 
         return (
             <div className={containerClassName}>
-                <span
+                <Icon
                     className={infoIconClassName}
+                    name="info"
                     title="Use mouse to pan and zoom"
                 />
                 <svg

@@ -7,8 +7,9 @@ import {
     arrayMove,
 } from 'react-sortable-hoc';
 import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../constants';
+import Icon from '../../General/Icon';
 import Button from '../../Action/Button';
 import Select from './Select';
 import ExtraRoot from './ExtraRoot';
@@ -40,7 +41,10 @@ const defaultProps = {
 };
 
 const DragHandle = SortableHandle(() => (
-    <span className={`${iconNames.dragHandle} ${styles.dragHandle} drag-handle`} />
+    <Icon
+        className={`${styles.dragHandle} drag-handle`}
+        name="dragHandle"
+    />
 ));
 
 
@@ -85,23 +89,6 @@ class NormalTreeSelection extends React.PureComponent {
         this.state = {
             expanded: props.initialExpandState,
         };
-    }
-
-    // Based on selected values (true/false/'fuzzy'), get class-name
-    // for checkbox
-    getCheckBoxStyle = (selected) => {
-        const classNames = [
-            styles.checkbox,
-            'checkbox',
-        ];
-        if (selected === 'fuzzy') {
-            classNames.push(iconNames.checkboxBlank);
-        } else if (selected) {
-            classNames.push(iconNames.checkbox);
-        } else {
-            classNames.push(iconNames.checkboxOutlineBlank);
-        }
-        return classNames.join(' ');
     }
 
     // Toggle expand state of a node
@@ -170,48 +157,59 @@ class NormalTreeSelection extends React.PureComponent {
 
     // End sortable stuffs
 
-    renderNode = node => (
-        <div className={`${styles.treeNode} tree-node`}>
-            <div className={`${styles.parentNode} parent-node`}>
-                {node.draggable && <DragHandle />}
-                <Button
-                    className={`${this.getCheckBoxStyle(node.selected)} checkbox`}
-                    onClick={() => this.handleCheckBox(node.key)}
-                    transparent
-                />
-                {node.nodes ? (
+    renderNode = ({ selected, key, nodes, title, draggable }) => {
+        // Based on selected values (true/false/'fuzzy'), get class-name
+        // for checkbox
+        const className = _cs(
+            styles.checkbox,
+            'checkbox',
+        );
+
+        const iconName = (
+            (selected === 'fuzzy' && 'checkboxBlank') ||
+            (selected && 'checkbox') ||
+            'checkboxOutlineBlank'
+        );
+        const isExpanded = this.state.expanded[key];
+
+        return (
+            <div className={`${styles.treeNode} tree-node`}>
+                <div className={`${styles.parentNode} parent-node`}>
+                    {draggable && <DragHandle />}
                     <Button
-                        className={`${styles.nodeTitle} node-title`}
-                        onClick={() => this.handleToggleExpand(node.key)}
+                        className={className}
+                        iconName={iconName}
+                        onClick={() => this.handleCheckBox(key)}
                         transparent
-                    >
-                        { node.title }
-                        <span
-                            className={
-                                `expand-arrow
-                                ${styles.expandArrow}
-                                ${this.state.expanded[node.key]
-                                    ? iconNames.chevronUp
-                                    : iconNames.chevronDown
-                                }`
-                            }
-                        />
-                    </Button>
-                ) : (
-                    <span className={`${styles.nodeTitle} node-title`}>
-                        {node.title}
-                    </span>
+                    />
+                    { nodes ? (
+                        <Button
+                            className={`${styles.nodeTitle} node-title`}
+                            onClick={() => this.handleToggleExpand(key)}
+                            transparent
+                        >
+                            { title }
+                            <Icon
+                                className={`expand-arrow ${styles.expandArrow}`}
+                                name={isExpanded ? 'chevronUp' : 'chevronDown'}
+                            />
+                        </Button>
+                    ) : (
+                        <span className={`${styles.nodeTitle} node-title`}>
+                            {title}
+                        </span>
+                    )}
+                </div>
+
+                {nodes && this.state.expanded[key] && (
+                    <TreeSelection
+                        value={nodes}
+                        onChange={children => this.handleChildrenChange(key, children)}
+                    />
                 )}
             </div>
-
-            {node.nodes && this.state.expanded[node.key] && (
-                <TreeSelection
-                    value={node.nodes && node.nodes}
-                    onChange={children => this.handleChildrenChange(node.key, children)}
-                />
-            )}
-        </div>
-    )
+        );
+    }
 
     render() {
         const { className, value } = this.props;

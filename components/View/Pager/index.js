@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { isFalsy } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import SelectInput from '../../Input/SelectInput';
-import { iconNames } from '../../../constants';
 
 import styles from './styles.scss';
 
@@ -120,7 +120,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active - 1 < startIndex || disabled}
                     className={styles.paginateBtn}
                 >
-                    <span className={iconNames.chevronLeft} />
+                    <Icon name="chevronLeft" />
                 </button>
             ),
         ];
@@ -172,7 +172,7 @@ export default class Pager extends React.PureComponent {
                     disabled={active + 1 > lastIndex || disabled}
                     className={styles.paginateBtn}
                 >
-                    <span className={iconNames.chevronRight} />
+                    <Icon name="chevronRight" />
                 </button>
             ),
         ];

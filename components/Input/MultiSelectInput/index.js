@@ -17,7 +17,6 @@ import HintAndError from '../HintAndError';
 import Label from '../Label';
 import RawInput from '../RawInput';
 
-import { iconNames } from '../../../constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -415,7 +414,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                                 title="Select all options"
                                 disabled={disabled || readOnly}
                                 type="button"
-                                iconName={iconNames.checkAll}
+                                iconName="checkAll"
                             />
                         }
                         { showClearButton &&
@@ -426,12 +425,12 @@ export class NormalMultiSelectInput extends React.PureComponent {
                                 onClick={this.handleClearButtonClick}
                                 title="Clear selected option(s)"
                                 disabled={disabled || readOnly}
-                                iconName={iconNames.close}
+                                iconName="close"
                             />
                         }
                         <Button
                             tabIndex="-1"
-                            iconName={iconNames.arrowDropdown}
+                            iconName="arrowDropdown"
                             className={dropdownButtonClassName}
                             onClick={this.handleShowOptionsPopup}
                             transparent

@@ -3,7 +3,6 @@ import React from 'react';
 import styles from './styles.scss';
 
 import Button from '../../../Action/Button';
-import iconNames from '../../../../constants/iconNames';
 
 const propTypes = {
     className: PropTypes.string,
@@ -76,7 +75,7 @@ export default class YearPicker extends React.PureComponent {
                         className={styles.left}
                         onClick={this.handlePrevious}
                         transparent
-                        iconName={iconNames.chevronLeft}
+                        iconName="chevronLeft"
                     />
                     <Button
                         className={styles.title}
@@ -88,7 +87,7 @@ export default class YearPicker extends React.PureComponent {
                         className={styles.right}
                         onClick={this.handleNext}
                         transparent
-                        iconName={iconNames.chevronRight}
+                        iconName="chevronRight"
                     />
                 </header>
                 <div className={styles.years}>

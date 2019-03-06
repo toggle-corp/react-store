@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../constants';
+
+import Icon from '../../General/Icon';
 import { calcFloatPositionInMainWindow } from '../../../utils/bounds';
 import FloatingContainer from '../../View/FloatingContainer';
 
@@ -35,6 +37,7 @@ const propTypes = {
     dropdownClassName: PropTypes.string,
 
     dropdownIcon: PropTypes.string,
+    dropdownIconClassName: PropTypes.string,
 
     onClick: PropTypes.func,
 
@@ -48,7 +51,8 @@ const defaultProps = {
     hideDropdownIcon: false,
     title: '',
     dropdownClassName: '',
-    dropdownIcon: iconNames.chevronDown,
+    dropdownIcon: 'chevronDown',
+    dropdownIconClassName: '',
     onClick: noOp,
     closeOnClick: false,
 };
@@ -73,24 +77,6 @@ export default class DropdownMenu extends React.PureComponent {
 
     componentWillUnmount() {
         window.removeEventListener('click', this.handleWindowClick);
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-        const { showDropdown } = this.state;
-
-        const classNames = [
-            className,
-            'dropdown-menu',
-            styles.dropdownMenu,
-        ];
-
-        if (showDropdown) {
-            classNames.push('active');
-            classNames.push(styles.active);
-        }
-
-        return classNames.join(' ');
     }
 
     handleDropdownClick = (e) => {
@@ -135,103 +121,74 @@ export default class DropdownMenu extends React.PureComponent {
         return optionsContainerPosition;
     }
 
-    renderLeftIcon = () => {
-        const { iconName } = this.props;
-
-        if (!iconName) {
-            return null;
-        }
-
-        const className = [
-            iconName,
-            'left-icon',
-            styles.leftIcon,
-        ].join(' ');
-
-        return <i className={className} />;
-    }
-
-    renderLeftComponent = () => {
-        const { leftComponent } = this.props;
-
-        if (!leftComponent) {
-            return null;
-        }
-
-        return leftComponent;
-    }
-
-    renderDropdownIcon = () => {
+    renderDropdownButton = () => {
         const {
+            title,
             hideDropdownIcon,
             dropdownIcon,
+            iconName,
+            leftComponent,
+            dropdownIconClassName,
         } = this.props;
 
-        if (hideDropdownIcon) {
-            return null;
-        }
+        const leftIconClassName = _cs(
+            'left-icon',
+            styles.leftIcon,
+        );
 
-        const className = [
-            dropdownIcon,
-            'dropdown-icon',
-            styles.dropdownIcon,
-        ].join(' ');
-
-        return <i className={className} />;
-    }
-
-    renderDropdownButton = () => {
-        const { title } = this.props;
-
-        const LeftIcon = this.renderLeftIcon;
-        const LeftComponent = this.renderLeftComponent;
-        const DropdownIcon = this.renderDropdownIcon;
-
-        const classNames = [
+        const className = _cs(
             'dropdown-button',
             styles.dropdownButton,
-        ];
-        if (this.props.leftComponent || this.props.iconName) {
-            classNames.push(styles.hasLeft);
-        }
+            (leftComponent || iconName) && styles.hasLeft,
+        );
 
-        const titleClassNames = [
+        const titleClassName = _cs(
             'title',
             styles.title,
-        ];
+        );
+
+        const iconClassName = _cs(
+            'dropdown-icon',
+            styles.dropdownIcon,
+            dropdownIconClassName,
+        );
 
         return (
             <button
                 onClick={this.handleDropdownClick}
-                className={classNames.join(' ')}
+                className={className}
             >
-                <LeftIcon />
-                <LeftComponent />
-                <span className={titleClassNames.join(' ')}>
+                { iconName &&
+                    <Icon
+                        className={leftIconClassName}
+                        name={iconName}
+                    />
+                }
+                { leftComponent }
+                <span className={titleClassName}>
                     {title}
                 </span>
-                <DropdownIcon />
+                { !hideDropdownIcon &&
+                    <Icon
+                        className={iconClassName}
+                        name={dropdownIcon}
+                    />
+                }
             </button>
         );
     }
 
     renderDropdownContainer = () => {
-        const { showDropdown } = this.state;
-
-        if (!showDropdown) {
-            return null;
-        }
-
         const {
             dropdownClassName,
             children,
         } = this.props;
 
-        const className = [
+        const className = _cs(
             dropdownClassName,
             'dropdown-container',
             styles.dropdownContainer,
-        ].join(' ');
+        );
 
         return (
             <FloatingContainer
@@ -247,7 +204,17 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName();
+        const { className: classNameFromProps } = this.props;
+        const { showDropdown } = this.state;
+
+        const className = _cs(
+            classNameFromProps,
+            'dropdown-menu',
+            styles.dropdownMenu,
+            showDropdown && 'active',
+            showDropdown && styles.active,
+        );
+
         const DropdownButton = this.renderDropdownButton;
         const DropdownContainer = this.renderDropdownContainer;
 
@@ -257,7 +224,9 @@ export default class DropdownMenu extends React.PureComponent {
                 className={className}
             >
                 <DropdownButton />
-                <DropdownContainer />
+                { showDropdown &&
+                    <DropdownContainer />
+                }
             </div>
         );
     }

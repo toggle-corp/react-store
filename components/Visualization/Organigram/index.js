@@ -9,9 +9,8 @@ import { zoom } from 'd3-zoom';
 import { PropTypes } from 'prop-types';
 import { getColorOnBgColor, doesObjectHaveNoData } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import Responsive from '../../General/Responsive';
-
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -331,8 +330,9 @@ class Organigram extends PureComponent {
                     ref={(elem) => { this.svg = elem; }}
                     className={svgClassName}
                 />
-                <span
-                    className={`${styles.info} ${iconNames.info}`}
+                <Icon
+                    className={styles.info}
+                    name="info"
                     title="Use mouse to pan and zoom"
                 />
             </Fragment>

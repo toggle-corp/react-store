@@ -16,7 +16,6 @@ import HintAndError from '../HintAndError';
 import Label from '../Label';
 import RawInput from '../RawInput';
 
-import { iconNames } from '../../../constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -397,7 +396,7 @@ class SelectInput extends React.PureComponent {
                         { showClearButton &&
                             <DangerButton
                                 tabIndex="-1"
-                                iconName={iconNames.close}
+                                iconName="close"
                                 className={clearClassName}
                                 onClick={this.handleClearButtonClick}
                                 transparent
@@ -405,7 +404,7 @@ class SelectInput extends React.PureComponent {
                         }
                         <Button
                             tabIndex="-1"
-                            iconName={iconNames.arrowDropdown}
+                            iconName="arrowDropdown"
                             className={dropdownButtonClassName}
                             onClick={this.handleShowOptionsPopup}
                             disabled={disabled || readOnly}

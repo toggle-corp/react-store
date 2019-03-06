@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from '../../Action/Button';
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -98,13 +97,13 @@ export default class Image extends React.PureComponent {
                         <ActionButton
                             title="Zoom in"
                             className={styles.action}
-                            iconName={iconNames.plusOutline}
+                            iconName="plusOutline"
                             onClick={this.handlePlusButtonClick}
                         />
                         <ActionButton
                             title="Zoom out"
                             className={styles.action}
-                            iconName={iconNames.minusOutline}
+                            iconName="minusOutline"
                             onClick={this.handleMinusButtonClick}
                         />
                     </div>

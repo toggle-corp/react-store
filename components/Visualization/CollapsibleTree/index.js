@@ -17,9 +17,9 @@ import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename } from '../../../utils/common';
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -373,8 +373,9 @@ class CollapsibleTree extends React.PureComponent {
                     className={treeStyle}
                     ref={(elem) => { this.svg = elem; }}
                 />
-                <span
-                    className={`${styles.info} ${iconNames.info}`}
+                <Icon
+                    className={styles.info}
+                    name="info"
                     title="Use Ctrl + mouse to pan and zoom"
                 />
             </Fragment>

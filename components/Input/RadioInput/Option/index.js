@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { randomString } from '@togglecorp/fujs';
+import { _cs, randomString } from '@togglecorp/fujs';
 
-import { iconNames } from '../../../../constants';
+import Icon from '../../../General/Icon';
 
 import styles from './styles.scss';
 
@@ -32,39 +32,9 @@ export default class Option extends React.PureComponent {
         this.inputId = randomString();
     }
 
-    getClassNames = () => {
-        const {
-            checked,
-            className,
-            disabled,
-            readOnly,
-        } = this.props;
-
-        const classNames = [
-            styles.option,
-            className,
-            'radio-option',
-        ];
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-        }
-
-        if (readOnly) {
-            classNames.push(styles.readOnly);
-        }
-
-        if (checked) {
-            classNames.push('checked');
-            classNames.push(styles.checked);
-        }
-
-        return classNames.join(' ');
-    }
-
     render() {
         const {
-            className, // eslint-disable-line no-unused-vars
+            className: classNameFromProps,
             checked,
             label,
             disabled,
@@ -72,21 +42,25 @@ export default class Option extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const radioClassNames = [
+        const className = _cs(
+            styles.option,
+            'radio-option',
+            classNameFromProps,
+            disabled && styles.disabled,
+            readOnly && styles.readOnly,
+            checked && styles.checked,
+            checked && 'checked',
+        );
+
+        const radioClassName = _cs(
             styles.radio,
             'radio',
-        ];
-
-        if (checked) {
-            radioClassNames.push(iconNames.radioOn);
-        } else {
-            radioClassNames.push(iconNames.radioOff);
-        }
+        );
 
         return (
             <label
                 htmlFor={this.inputId}
-                className={this.getClassNames()}
+                className={className}
             >
                 <input
                     className={`${styles.input} input`}
@@ -96,7 +70,10 @@ export default class Option extends React.PureComponent {
                     disabled={disabled || readOnly}
                     {...otherProps}
                 />
-                <span className={radioClassNames.join(' ')} />
+                <Icon
+                    className={radioClassName}
+                    name={checked ? 'radioOn' : 'radioOff'}
+                />
                 <span className={`${styles.label} label`}>
                     { label }
                 </span>

@@ -7,7 +7,6 @@ import { isFalsy } from '@togglecorp/fujs';
 
 import AccentButton from '../../Action/Button/AccentButton';
 import Checkbox from '../../Input/Checkbox';
-import { iconNames } from '../../../constants';
 
 const propTypes = {
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -148,23 +147,23 @@ export default (WrappedComponent) => {
                     onSelectAllClick,
                     isNoneSelected,
                 }) => {
-                    let buttonClassName;
+                    let buttonIcon;
                     let buttonAction;
                     if (isEverySelected) {
-                        buttonClassName = iconNames.checkbox;
+                        buttonIcon = 'checkbox';
                         buttonAction = onUnselectAllClick;
                     } else if (isNoneSelected) {
-                        buttonClassName = iconNames.checkboxOutlineBlank;
+                        buttonIcon = 'checkboxOutlineBlank';
                         buttonAction = onSelectAllClick;
                     } else {
-                        buttonClassName = iconNames.checkboxBlank;
+                        buttonIcon = 'checkboxBlank';
                         buttonAction = onUnselectAllClick;
                     }
 
                     return (
                         <div className={className}>
                             <AccentButton
-                                className={buttonClassName}
+                                className={buttonIcon}
                                 onClick={buttonAction}
                                 transparent
                             />

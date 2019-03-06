@@ -5,7 +5,6 @@ import { FaramInputElement } from '@togglecorp/faram';
 
 import Button from '../../Action/Button';
 import HintAndError from '../HintAndError';
-import { iconNames } from '../../../constants';
 
 import Label from '../Label';
 
@@ -118,7 +117,7 @@ class RotatingInput extends React.PureComponent {
                 />
                 <Button
                     className={styles.button}
-                    iconName={iconNames.swap}
+                    iconName="swap"
                     onClick={this.handleButtonClick}
                     transparent
                 >

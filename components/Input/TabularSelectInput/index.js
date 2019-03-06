@@ -3,8 +3,6 @@ import React from 'react';
 import { listToMap, isFalsy } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
-import { iconNames } from '../../../constants';
-
 import DangerButton from '../../Action/Button/DangerButton';
 import MultiSelectInput from '../../Input/MultiSelectInput';
 import Table from '../../View/Table';
@@ -256,7 +254,7 @@ class TabularSelectInput extends React.PureComponent {
                     <DangerButton
                         className="delete-button"
                         onClick={() => this.handleRemoveButtonClick(row)}
-                        iconName={iconNames.delete}
+                        iconName="delete"
                         smallVerticalPadding
                         transparent
                         disabled={this.props.disabled || this.props.readOnly}

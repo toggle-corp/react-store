@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { iconNames } from '../../../../constants';
+import Icon from '../../../General/Icon';
+
 import styles from './styles.scss';
 
 const ActionButtons = ({
@@ -34,7 +35,7 @@ const ActionButtons = ({
                 tabIndex="-1"
                 disabled={disabled || readOnly}
             >
-                <span className={iconNames.closeRound} />
+                <Icon name="closeRound" />
             </button>
             <button
                 onClick={onTodayButtonClick}
@@ -44,7 +45,7 @@ const ActionButtons = ({
                 tabIndex="-1"
                 disabled={disabled || readOnly}
             >
-                <span className={iconNames.clock} />
+                <Icon name="clock" />
             </button>
             {/*
             <button
@@ -55,7 +56,7 @@ const ActionButtons = ({
                 tabIndex="-1"
                 disabled={disabled}
             >
-                <span className={iconNames.calendar} />
+                <Icon name="calendar" />
             </button>
             */}
         </div>

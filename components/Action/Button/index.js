@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { resolve, _cs } from '@togglecorp/fujs';
 import { FaramActionElement } from '@togglecorp/faram';
 
-import { iconNames } from '../../../constants';
+import Icon from '../../General/Icon';
 
 /*
 eslint css-modules/no-unused-class: [
@@ -58,6 +59,7 @@ const propTypes = {
      * action to invoke when the button is clicked
      */
     onClick: PropTypes.func,
+    onClickParams: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 
 
     /**
@@ -93,23 +95,7 @@ const defaultProps = {
     smallVerticalPadding: false,
     transparent: false,
     changeDelay: 0,
-};
-
-const emptyObject = {};
-
-// FIXME: move to utils
-const isFunction = functionToCheck => (
-    functionToCheck
-    && {}.toString.call(functionToCheck) === '[object Function]'
-);
-
-// FIXME: move to utils
-const resolveToObject = (d) => {
-    if (isFunction(d)) {
-        return d();
-    }
-
-    return d || emptyObject;
+    onClickParams: undefined,
 };
 
 /**
@@ -119,65 +105,6 @@ class Button extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getClassName = (props) => {
-        const {
-            buttonType,
-            className,
-            iconName,
-            children,
-            smallHorizontalPadding,
-            smallVerticalPadding,
-            transparent,
-        } = props;
-
-        const classNames = [
-            className,
-            'button',
-            styles.button,
-        ];
-
-        if (buttonType) {
-            classNames.push(buttonType);
-            classNames.push(styles[buttonType]);
-        }
-
-        if (iconName && children) {
-            classNames.push('with-icon-and-children');
-            classNames.push(styles.withIconAndChildren);
-        }
-
-        if (smallHorizontalPadding) {
-            classNames.push('small-horizontal-padding');
-            classNames.push(styles.smallHorizontalPadding);
-        }
-
-        if (smallVerticalPadding) {
-            classNames.push('small-vertical-padding');
-            classNames.push(styles.smallVerticalPadding);
-        }
-
-        if (transparent) {
-            classNames.push('transparent');
-            classNames.push(styles.transparent);
-        }
-
-        return classNames.join(' ');
-    }
-
-    static getIconClassName = (props) => {
-        const { iconName, className } = props;
-
-        const classNames = [];
-        classNames.push('icon');
-        classNames.push(styles.icon);
-        classNames.push(iconName);
-        if (className) {
-            classNames.push(className);
-        }
-
-        return classNames.join(' ');
-    }
-
     componentWillUnmount() {
         if (this.changeTimeout) {
             clearTimeout(this.changeTimeout);
@@ -186,7 +113,6 @@ class Button extends React.PureComponent {
 
     handleClick = (e) => {
         clearTimeout(this.changeTimeout);
-        this.pendingChange = true;
         const {
             onClick,
             onClickParams,
@@ -194,25 +120,12 @@ class Button extends React.PureComponent {
 
         this.changeTimeout = setTimeout(
             () => {
-                this.pendingChange = false;
                 onClick({
                     event: e,
-                    params: resolveToObject(onClickParams),
+                    params: resolve(onClickParams),
                 });
             },
             this.props.changeDelay,
-        );
-    }
-
-    renderIcon = (props) => {
-        const { iconName } = props;
-        if (!iconName) {
-            return null;
-        }
-        const iconClassName = Button.getIconClassName(props);
-
-        return (
-            <i className={iconClassName} />
         );
     }
 
@@ -223,39 +136,52 @@ class Button extends React.PureComponent {
             disabled,
             pending,
             type,
+            buttonType,
+            className: classNameFromProps,
+            smallHorizontalPadding,
+            smallVerticalPadding,
+            transparent,
 
             onClick, // eslint-disable-line no-unused-vars
             onClickParams, // eslint-disable-line no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars
-            buttonType, // eslint-disable-line no-unused-vars
-            className: captureClassName, // eslint-disable-line no-unused-vars
-            smallHorizontalPadding, // eslint-disable-line no-unused-vars
-            smallVerticalPadding, // eslint-disable-line no-unused-vars
-            transparent, // eslint-disable-line no-unused-vars
-
             ...otherProps
         } = this.props;
 
-        const className = Button.getClassName(this.props);
+        const buttonClassName = _cs(
+            classNameFromProps,
+            'button',
+            styles.button,
+            buttonType,
+            buttonType && styles[buttonType],
+            iconName && children && 'with-icon-and-children',
+            iconName && children && styles.withIconAndChildren,
+            smallHorizontalPadding && 'small-horizontal-padding',
+            smallHorizontalPadding && styles.smallHorizontalPadding,
+            smallVerticalPadding && 'small-vertical-padding',
+            smallVerticalPadding && styles.smallVerticalPadding,
+            transparent && 'transparent',
+            transparent && styles.transparent,
+        );
 
-        const Icon = this.renderIcon;
+        const iconClassName = _cs(
+            'icon',
+            styles.icon,
+            pending && styles.pendingIcon,
+        );
 
         return (
             <button
-                className={className}
+                className={buttonClassName}
                 disabled={disabled || pending}
                 onClick={this.handleClick}
                 type={type}
                 {...otherProps}
             >
-                { pending ? (
-                    <Icon
-                        className={styles.pendingIcon}
-                        iconName={iconNames.spinner}
-                    />
-                ) : (
-                    <Icon iconName={iconName} />
-                )}
+                <Icon
+                    name={pending ? 'spinner' : iconName}
+                    className={iconClassName}
+                />
                 { children }
             </button>
         );

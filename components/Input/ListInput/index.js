@@ -4,7 +4,6 @@ import { FaramInputElement } from '@togglecorp/faram';
 
 import Button from '../../Action/Button';
 import ListView from '../../View/List/ListView';
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -90,7 +89,7 @@ class ListInput extends React.PureComponent {
                 </div>
                 <Button
                     className={styles.action}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     onClick={() => this.deleteItem(key)}
                     disabled={disabled || readOnly}
                     transparent

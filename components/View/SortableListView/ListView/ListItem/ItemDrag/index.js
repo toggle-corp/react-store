@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SortableHandle } from 'react-sortable-hoc';
 
-import { iconNames } from '../../../../../../constants';
+import Icon from '../../../../../General/Icon';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -17,7 +17,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    dragIcon: iconNames.hamburger,
+    dragIcon: 'hamburger',
     dragHandleModifier: undefined,
     className: '',
 };
@@ -42,7 +42,13 @@ export default class ItemDrag extends React.Component {
         if (dragHandleModifier) {
             return dragHandleModifier(dataKey, data, dataIndex);
         }
-        const className = `${classNameFromProps} ${dragIcon} ${styles.dragHandle} drag-handle`;
-        return (<span className={className} />);
+
+        const className = `${classNameFromProps} ${styles.dragHandle} drag-handle`;
+        return (
+            <Icon
+                className={className}
+                name={dragIcon}
+            />
+        );
     }
 }
