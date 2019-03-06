@@ -310,8 +310,9 @@ export class NormalMultiSelectInput extends React.PureComponent {
 
         const { current: container } = this.containerRef;
 
+        const inputTitle = this.findPlaceholderValue(options, labelSelector, keySelector, value);
         const finalPlaceholder = (
-            this.findPlaceholderValue(options, labelSelector, keySelector, value) ||
+            inputTitle ||
             placeholder
         );
 
@@ -392,6 +393,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                         onChange={this.handleInputChange}
                         value={searchValue}
                         autoFocus={autoFocus}
+                        title={inputTitle}
                         placeholder={finalPlaceholder}
                         disabled={disabled || readOnly}
 
