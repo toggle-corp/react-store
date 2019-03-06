@@ -36,6 +36,7 @@ $radius-button-border: 2px !default;
 
     .pending-icon {
         animation: spin 1s linear infinite;
+        font-size: inherit;
     }
 
     &:not(:disabled) {

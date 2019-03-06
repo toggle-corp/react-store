@@ -12,7 +12,6 @@ import LoadingAnimation from '../../View/LoadingAnimation';
 
 import Label from '../../Input/Label';
 
-import iconNames from '../../../constants/iconNames';
 import {
     getCategoricalColorNames,
     getDivergingColorNames,
@@ -211,21 +210,21 @@ const wrapViz = (WrappedComponent) => {
                             <PrimaryButton
                                 title="Download diagram"
                                 onClick={handleSave}
-                                iconName={iconNames.download}
+                                iconName="download"
                                 transparent
                             />
                             { fullScreen ? (
                                 <DangerButton
                                     title="Close fullscreen"
                                     onClick={removeFullScreen}
-                                    iconName={iconNames.close}
+                                    iconName="close"
                                     transparent
                                 />
                             ) : (
                                 <AccentButton
                                     title="Show on fullscreen"
                                     onClick={setFullScreen}
-                                    iconName={iconNames.expand}
+                                    iconName="expand"
                                     transparent
                                 />
                             )}

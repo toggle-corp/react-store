@@ -4,7 +4,6 @@ import memoize from 'memoize-one';
 import { formatPdfText } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
-import { iconNames } from '../../../constants';
 import AccentButton from '../../Action/Button/AccentButton.js';
 import Delay from '../../General/Delay';
 import { NormalTextArea as TextArea } from '../TextArea';
@@ -71,7 +70,7 @@ class FormattedTextArea extends React.PureComponent {
                     <AccentButton
                         tabIndex="-1"
                         className={styles.formatButton}
-                        iconName={iconNames.textFormat}
+                        iconName="textFormat"
                         onClick={this.handleFormatText}
                         title="Click here to format the text"
                         smallVerticalPadding

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from '../../../Action/Button';
-import iconNames from '../../../../constants/iconNames';
 
 import DaysHeader from './DaysHeader';
 import styles from './styles.scss';
@@ -189,7 +188,7 @@ export default class DayPicker extends React.PureComponent {
                         className={styles.left}
                         onClick={this.handlePrevious}
                         transparent
-                        iconName={iconNames.chevronLeft}
+                        iconName="chevronLeft"
                     />
                     <Button
                         className={styles.month}
@@ -202,7 +201,7 @@ export default class DayPicker extends React.PureComponent {
                         className={styles.right}
                         onClick={this.handleNext}
                         transparent
-                        iconName={iconNames.chevronRight}
+                        iconName="chevronRight"
                     />
                     <DaysHeader className={styles.days} />
                 </header>

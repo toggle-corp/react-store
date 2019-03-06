@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import Delay from '../../General/Delay';
 
 import TextInput from '../TextInput';
-import iconNames from '../../../constants/iconNames.js';
 
 import styles from './styles.scss';
 
@@ -23,43 +24,32 @@ class SearchInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = () => {
-        const {
-            className,
-            disabled,
-        } = this.props;
-
-        const classNames = [
-            className,
-            'search-input',
-            styles.searchInput,
-        ];
-
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-
-        return classNames.join(' ');
-    }
-
     render() {
         const {
-            className: dummy, // eslint-disable-line no-unused-vars
+            className: classNameFromProps,
             disabled,
             ...otherProps
         } = this.props;
 
-        const className = this.getClassName();
-        const iconClassName = `
-            icon
-            ${styles.icon}
-            ${iconNames.search}
-        `;
+        const className = _cs(
+            classNameFromProps,
+            'search-input',
+            styles.searchInput,
+            disabled && 'disabled',
+            disabled && styles.disabled,
+        );
+
+        const iconClassName = _cs(
+            'icon',
+            styles.icon,
+        );
 
         return (
             <div className={className}>
-                <span className={iconClassName} />
+                <Icon
+                    className={iconClassName}
+                    name="search"
+                />
                 <TextInput
                     className={styles.textInput}
                     type="search"

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '../../../constants';
+import Icon from '../../General/Icon';
 import Button from '../../Action/Button';
 import Portal from '../Portal';
 
@@ -21,10 +21,10 @@ export const NOTIFICATION = {
 };
 
 const iconMap = {
-    [NOTIFICATION.INFO]: iconNames.info,
-    [NOTIFICATION.ERROR]: iconNames.error,
-    [NOTIFICATION.WARNING]: iconNames.warning,
-    [NOTIFICATION.SUCCESS]: iconNames.check,
+    [NOTIFICATION.INFO]: 'info',
+    [NOTIFICATION.ERROR]: 'error',
+    [NOTIFICATION.WARNING]: 'warning',
+    [NOTIFICATION.SUCCESS]: 'check',
 };
 
 const propTypes = {
@@ -156,14 +156,16 @@ export default class Toast extends React.Component {
                                                 className={styles.closeButton}
                                                 onClick={this.handleDissmissButtonClick}
                                                 transparent
-                                            >
-                                                <span className={iconNames.close} />
-                                            </Button>
+                                                iconName="close"
+                                            />
                                         )
                                     }
                                 </header>
                                 <div className={styles.mainContent}>
-                                    <span className={`${styles.icon} ${this.getIconName()}`} />
+                                    <Icon
+                                        className={styles.icon}
+                                        name={this.getIconName()}
+                                    />
                                     <div className={styles.message}>
                                         { notification.message }
                                     </div>

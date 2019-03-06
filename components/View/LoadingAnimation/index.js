@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '../../../constants';
+import Icon from '../../General/Icon';
 import Message from '../Message';
 
 import styles from './styles.scss';
@@ -37,14 +37,16 @@ export default class LoadingAnimation extends React.PureComponent {
 
         const className = this.getClassName();
         const iconClassName = `
-            ${iconNames.loading}
             ${styles.icon}
             loading-icon
         `;
 
         return (
             <Message className={className}>
-                <span className={iconClassName} />
+                <Icon
+                    className={iconClassName}
+                    name="loading"
+                />
                 { message && (
                     <span className={styles.message}>
                         {message}

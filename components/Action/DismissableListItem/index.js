@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ListItem from '../../View/ListItem';
 import DangerButton from '../../Action/Button/DangerButton';
-import iconNames from '../../../constants/iconNames';
 
 import styles from './styles.scss';
 
@@ -57,7 +56,7 @@ export default class DismissableListItem extends React.PureComponent {
                     className={styles.dismissButton}
                     onClick={this.handleDismissButtonClick}
                     transparent
-                    iconName={iconNames.close}
+                    iconName="close"
                     smallVerticalPadding
                     smallHorizontalPadding
                 />

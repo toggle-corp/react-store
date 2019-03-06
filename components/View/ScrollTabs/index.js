@@ -5,7 +5,6 @@ import { _cs } from '@togglecorp/fujs';
 import Button from '../../Action/Button';
 import HashManager from '../../General/HashManager';
 import List from '../List';
-import iconNames from '../../../constants/iconNames';
 import { addClassName } from '../../../utils/common';
 
 import styles from './styles.scss';
@@ -258,7 +257,7 @@ export default class ScrollTabs extends React.Component {
                     onHashChange={this.handleHashChange}
                 />
                 <Button
-                    iconName={iconNames.chevronLeft}
+                    iconName="chevronLeft"
                     transparent
                     className={styles.leftButton}
                     onClick={this.handleLeftButtonClick}
@@ -281,7 +280,7 @@ export default class ScrollTabs extends React.Component {
                     </div>
                 </div>
                 <Button
-                    iconName={iconNames.chevronRight}
+                    iconName="chevronRight"
                     transparent
                     className={styles.rightButton}
                     onClick={this.handleRightButtonClick}

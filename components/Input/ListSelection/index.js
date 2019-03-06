@@ -4,7 +4,6 @@ import { isDefined } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
-import { iconNames } from '../../../constants';
 import Checkbox from '../Checkbox';
 
 import Label from '../Label';
@@ -129,7 +128,7 @@ export class NormalListSelection extends React.PureComponent {
             tooltip: tooltipSelector(itemData),
             value: selected,
             onChange: val => this.handleItemChange(key, val),
-            checkboxType: segment ? iconNames.check : iconNames.checkbox,
+            checkboxType: segment ? 'check' : 'checkbox',
             disabled,
             readOnly,
         };
