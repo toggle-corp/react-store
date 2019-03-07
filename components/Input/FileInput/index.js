@@ -76,8 +76,8 @@ export default class FileInput extends React.PureComponent {
         this.inputId = randomString();
     }
 
-    handleChange = () => {
-        const filesFromInput = Array.from(this.fileInput.files);
+    handleChange = (e) => {
+        const filesFromInput = Array.from(e.target.files);
         const files = filesFromInput.filter(
             file => FileInput.isValidFile(file.name, file.type, this.props.accept),
         );
@@ -99,6 +99,9 @@ export default class FileInput extends React.PureComponent {
                 this.props.onChange(files, { invalidFiles });
             },
         );
+
+        // Clearout all values
+        e.target.value = '';
     }
 
     render() {
@@ -147,7 +150,6 @@ export default class FileInput extends React.PureComponent {
                     className={`input ${styles.input}`}
                     id={this.inputId}
                     onChange={this.handleChange}
-                    ref={(el) => { this.fileInput = el; }}
                     type="file"
                     {...otherProps}
                 />
