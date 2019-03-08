@@ -2,18 +2,20 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
+import { format } from 'd3-format';
 import {
     extent,
     max,
+    min,
     histogram,
 } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
-import { timeFormat } from 'd3-time-format';
 import {
     axisBottom,
     axisLeft,
 } from 'd3-axis';
+import { color } from 'd3-color';
 
 import PropTypes from 'prop-types';
 
@@ -28,17 +30,24 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    colorRange: PropTypes.arrayOf(PropTypes.string),
     showAxis: PropTypes.bool,
+    tooltipContent: PropTypes.func,
+    tickFormat: PropTypes.func,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+
 };
 
 const defaultProps = {
+    colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
+    tickFormat: format('0.2f'),
+    tooltipContent: undefined,
     margins: {
         top: 10,
         right: 20,
@@ -59,12 +68,40 @@ class Histogram extends PureComponent {
         this.redrawChart();
     }
 
+    onMouseOver = (d, breadth) => {
+        const { style } = this.tooltip;
+        const { tooltipContent } = this.props;
+
+        const defaultContent = `
+            <span>
+              ${d.length}
+            </span>
+        `;
+
+        const content = tooltipContent ? tooltipContent(d) : defaultContent;
+
+        this.tooltip.innerHTML = content;
+        this.tooltip.style.display = 'block';
+        const { width, height } = this.tooltip.getBoundingClientRect();
+
+        const { top, left } = event.target.getBoundingClientRect();
+
+        style.top = `${top - height}px`;
+        style.left = `${(left + (breadth / 2)) - (width / 2)}px`;
+    }
+
+    onMouseOut = () => {
+        this.tooltip.style.display = 'none';
+    }
+
     drawChart = () => {
         const {
             data,
+            colorRange,
             boundingClientRect,
             margins,
             showAxis,
+            tickFormat,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -98,6 +135,13 @@ class Histogram extends PureComponent {
             .domain([0, max(bins, d => d.length)]).nice()
             .range([height, 0]);
 
+        const yMax = max(bins, d => d.length);
+        const yMin = min(bins, d => d.length);
+
+        const colorScale = scaleLinear()
+            .domain([yMin, yMax])
+            .range(colorRange);
+
         const group = select(this.svg)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
@@ -112,14 +156,20 @@ class Histogram extends PureComponent {
             .attr('x', d => x(d.x0) + 1)
             .attr('width', d => Math.max(0, x(d.x1) - x(d.x0) - 1))
             .attr('y', d => y(d.length))
-            .attr('height', d => y(0) - y(d.length));
+            .attr('height', d => y(0) - y(d.length))
+            .attr('fill', d => colorScale(d.length))
+            .on('mouseover', (d) => {
+                const breadth = Math.max(0, x(d.x1) - x(d.x0) - 1);
+                this.onMouseOver(d, breadth);
+            })
+            .on('mouseout', this.onMouseOut);
 
         if (showAxis) {
             group
                 .append('g')
                 .attr('class', `xaxis ${styles.xaxis}`)
                 .attr('transform', `translate(0, ${height})`)
-                .call(axisBottom(x).tickFormat(timeFormat('%m/%d')));
+                .call(axisBottom(x).tickFormat(tickFormat));
 
             group
                 .append('g')
