@@ -19,12 +19,14 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    labelSelector: PropTypes.func,
+    frequencySelector: PropTypes.func,
+
     font: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     rotate: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
     setSaveFunction: PropTypes.func,
-    textSelector: PropTypes.func,
-    fontSizeSelector: PropTypes.func,
     // onWordMouseOver: PropTypes.func,
     // onWordClick: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -37,8 +39,8 @@ const defaultProps = {
     setSaveFunction: undefined,
     onWordClick: undefined,
     onWordMouseOver: undefined,
-    textSelector: d => d.text,
-    fontSizeSelector: d => d.size,
+    labelSelector: d => d.text,
+    frequencySelector: d => d.size,
     colorScheme: schemeSet1,
 };
 
@@ -77,8 +79,8 @@ class WordCloud extends PureComponent {
         data,
         font,
         rotate,
-        textSelector,
-        fontSizeSelector,
+        labelSelector,
+        frequencySelector,
     }) => {
         const isContainerInvalid = !containerWidth;
         const isDataInvalid = !data || data.length === 0;
@@ -93,8 +95,8 @@ class WordCloud extends PureComponent {
             font,
             data,
             rotate,
-            textSelector,
-            fontSizeSelector,
+            labelSelector,
+            frequencySelector,
         );
     }
 
@@ -115,38 +117,46 @@ class WordCloud extends PureComponent {
         font,
         data,
         rotate,
-        textSelector,
-        sizeSelector,
+        labelSelector,
+        frequencySelector,
     ) => {
         this.setState({ calculatedWords: undefined });
+
+        const words = data.map(labelSelector);
+        const frequencies = data.map(frequencySelector);
+
         const renderArea = width * height;
-
-        const words = data.map(d => textSelector(d));
-        const frequencies = data.map(d => sizeSelector(d));
-
         const totalLetterLength = words.join(' ').length;
+        const renderAreaFactor = renderArea / totalLetterLength;
 
         const minFont = 3;
-        const maxFont = Math.max(minFont * 2, Math.sqrt(renderArea / totalLetterLength));
-        const maxSize = Math.max(Math.max(...frequencies), 1);
+        const maxFont = Math.max(
+            2 * minFont,
+            Math.sqrt(renderAreaFactor),
+        );
 
-        const renderAreaFactor = renderArea / totalLetterLength;
         const paddingFactor = 5;
-        const padding = paddingFactor > 0 ? Math.sqrt(renderAreaFactor) / paddingFactor : 0;
+        const padding = paddingFactor > 0
+            ? Math.sqrt(renderAreaFactor) / paddingFactor
+            : 0;
 
+        const maxSize = Math.max(...frequencies, 1);
         const sizeOffset = maxFont / maxSize;
+        const fontSizeSelector = d => Math.max(
+            minFont,
+            Math.min(frequencySelector(d) * sizeOffset, maxFont),
+        );
 
-        const fontSizeSelector = d => Math.max(3, Math.min(d.size * sizeOffset, maxFont));
+        const layoutData = JSON.parse(JSON.stringify(data));
 
         const layout = cloud();
-        const layoutData = JSON.parse(JSON.stringify(data));
         layout.size([width, height])
             .font(font)
             .words(layoutData)
             .padding(padding)
             .rotate(rotate)
+            .text(labelSelector)
             .fontSize(fontSizeSelector)
-            .text(textSelector)
             .on('end', this.handleWordCloudCalculationEnd);
 
         setTimeout(layout.start, 0);
@@ -164,8 +174,8 @@ class WordCloud extends PureComponent {
             font,
             padding,
             rotate,
-            fontSizeSelector,
-            textSelector,
+            labelSelector,
+            frequencySelector,
         } = this.props;
 
         const isContainerInvalid = !containerWidth;
