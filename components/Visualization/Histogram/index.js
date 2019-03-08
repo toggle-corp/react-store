@@ -2,7 +2,7 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { format } from 'd3-format';
 import {
     extent,
@@ -32,6 +32,7 @@ const propTypes = {
     }).isRequired,
     colorRange: PropTypes.arrayOf(PropTypes.string),
     showAxis: PropTypes.bool,
+    tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -46,6 +47,7 @@ const defaultProps = {
     colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
     tickFormat: format('0.2f'),
+    tooltipContent: undefined,
     margins: {
         top: 10,
         right: 20,
@@ -66,20 +68,26 @@ class Histogram extends PureComponent {
         this.redrawChart();
     }
 
-    onMouseOver = (d, xpos, ypos) => {
+    onMouseOver = (d, breadth) => {
         const { style } = this.tooltip;
+        const { tooltipContent } = this.props;
 
-        const content = `
+        const defaultContent = `
             <span>
               ${d.length}
             </span>
         `;
+
+        const content = tooltipContent ? tooltipContent(d) : defaultContent;
+
         this.tooltip.innerHTML = content;
         this.tooltip.style.display = 'block';
-        const { width } = this.tooltip.getBoundingClientRect();
+        const { width, height } = this.tooltip.getBoundingClientRect();
 
-        style.top = `${ypos}px`;
-        style.left = `${xpos - (width / 2)}px`;
+        const { top, left } = event.target.getBoundingClientRect();
+
+        style.top = `${top - height}px`;
+        style.left = `${(left + (breadth / 2)) - (width / 2)}px`;
     }
 
     onMouseOut = () => {
@@ -152,9 +160,7 @@ class Histogram extends PureComponent {
             .attr('fill', d => colorScale(d.length))
             .on('mouseover', (d) => {
                 const breadth = Math.max(0, x(d.x1) - x(d.x0) - 1);
-                const xpos = x(d.x0) + (breadth);
-                const ypos = (height - (y(0) - y(d.length))) + (top - bottom);
-                this.onMouseOver(d, xpos, ypos);
+                this.onMouseOver(d, breadth);
             })
             .on('mouseout', this.onMouseOut);
 

@@ -32,13 +32,13 @@
 
 .tooltip {
     @include shadow-medium;
+    display: block;
     position: fixed;
     z-index: 10;
     background-color: $color-foreground;
     padding: $spacing-small $spacing-medium-alt;
     animation: fade-in .2s ease-in;
-    color: $color-text-on-foreground;
-    display: block;
-    pointer-events: none;
     text-align: center;
+    color: $color-text;
+    pointer-events: none;
 }
