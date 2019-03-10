@@ -39,6 +39,14 @@ const Icon = ({
                     src={icon.value}
                 />
             );
+        case 'image':
+            return (
+                <img
+                    alt={icon.altText}
+                    className={_cs(className, styles.image)}
+                    src={icon.value}
+                />
+            );
         default:
             console.warn('TODO: add other icon types');
             return <span>ICO</span>;
