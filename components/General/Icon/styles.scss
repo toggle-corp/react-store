@@ -1,0 +1,11 @@
+@import '../../../stylesheets/base';
+
+.svg {
+    height: $font-size-medium;
+    color: inherit;
+
+    path {
+        color: inherit;
+        fill: currentColor;
+    }
+}
