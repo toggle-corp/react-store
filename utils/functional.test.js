@@ -43,3 +43,15 @@ test('zip', () => {
     const c = [...zip(a, b)];
     expect(c).toEqual([[1, 4], [2, 5], [3, 6]]);
 });
+
+test('zip', () => {
+    const a = [1, 2, 3];
+    const b = [...zip(a)];
+    expect(b).toEqual([]);
+});
+
+test('zip', () => {
+    const a = [];
+    const b = [...zip(a)];
+    expect(b).toEqual([]);
+});
