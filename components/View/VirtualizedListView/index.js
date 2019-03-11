@@ -44,6 +44,8 @@ const propTypes = {
 
     rendererParams: PropTypes.func,
     emptyComponent: PropTypes.func,
+
+    minWidth: PropTypes.number,
 };
 
 const defaultProps = {
@@ -56,6 +58,7 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
     emptyComponent: DefaultEmptyComponent,
+    minWidth: undefined,
 };
 
 const MAX_IDLE_TIMEOUT = 200;
@@ -240,6 +243,7 @@ export default class VirtualizedListView extends React.Component {
             emptyComponent: EmptyComponent,
             data,
             id,
+            minWidth,
         } = this.props;
 
         const className = `
@@ -257,7 +261,19 @@ export default class VirtualizedListView extends React.Component {
                 id={id}
             >
                 <Items />
-                { data.length === 0 && EmptyComponent && <EmptyComponent /> }
+                { data.length === 0 && (
+                    <React.Fragment>
+                        { EmptyComponent && <EmptyComponent /> }
+                        { minWidth && (
+                            <div
+                                style={{
+                                    width: minWidth,
+                                }}
+                                className={styles.emptyMinWidthContainer}
+                            />
+                        )}
+                    </React.Fragment>
+                )}
             </div>
         );
     }

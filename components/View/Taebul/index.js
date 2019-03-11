@@ -122,7 +122,6 @@ export default class Taebul extends React.PureComponent {
         return defaultColumnWidthSum + definedColumnWidthSum;
     })
 
-
     getItemWidths = memoize((
         columns,
         columnWidths,
@@ -139,13 +138,11 @@ export default class Taebul extends React.PureComponent {
     })
 
     calculateRowVirtualizationParams = ({
-        data,
         columns,
         settings: {
             columnWidths = emptyObject,
             defaultColumnWidth,
         },
-        keySelector,
     }, scrollLeft) => {
         const rowWidth = this.getTotalWidth(
             columns,
@@ -255,10 +252,19 @@ export default class Taebul extends React.PureComponent {
             keySelector,
             className: classNameFromProps,
             rowClassName: rowClassNameFromProps,
+            settings: {
+                columnWidths = emptyObject,
+                defaultColumnWidth,
+            },
         } = this.props;
 
         const className = `${styles.taebul} ${classNameFromProps}`;
         const rowClassName = `${styles.row} ${rowClassNameFromProps}`;
+        const minWidth = this.getTotalWidth(
+            columns,
+            columnWidths,
+            defaultColumnWidth,
+        );
 
         return (
             <div
@@ -281,6 +287,7 @@ export default class Taebul extends React.PureComponent {
                     renderer={Row}
                     rendererParams={this.rowRendererParams}
                     rendererClassName={rowClassName}
+                    minWidth={minWidth}
                 />
             </div>
         );
