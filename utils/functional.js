@@ -1,4 +1,7 @@
 export function* zip(...args) {
+    if (args.length <= 1) {
+        return;
+    }
     const iterators = [...args].map(x => x[Symbol.iterator]());
     while (true) {
         const current = iterators.map(x => x.next());
