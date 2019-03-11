@@ -13,6 +13,7 @@ const propTypes = {
     date: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
+        PropTypes.instanceOf(Date),
     ]),
     /**
      * Options
