@@ -34,6 +34,7 @@ const propTypes = {
     showAxis: PropTypes.bool,
     tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
+    showTooltip: PropTypes.bool,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -48,6 +49,7 @@ const defaultProps = {
     showAxis: true,
     tickFormat: format('0.2f'),
     tooltipContent: undefined,
+    showTooltip: true,
     margins: {
         top: 10,
         right: 20,
@@ -68,26 +70,35 @@ class Histogram extends PureComponent {
         this.redrawChart();
     }
 
-    onMouseOver = (d, breadth) => {
-        const { style } = this.tooltip;
-        const { tooltipContent } = this.props;
+    onMouseOver = (d) => {
+        const {
+            showTooltip,
+            tooltipContent,
+        } = this.props;
 
-        const defaultContent = `
+        if (showTooltip) {
+            const defaultContent = `
             <span>
               ${d.length}
             </span>
-        `;
+            `;
 
-        const content = tooltipContent ? tooltipContent(d) : defaultContent;
+            const content = tooltipContent ? tooltipContent(d) : defaultContent;
 
-        this.tooltip.innerHTML = content;
-        this.tooltip.style.display = 'block';
+            this.tooltip.innerHTML = content;
+            this.tooltip.style.display = 'block';
+        }
+    }
+
+    onMouseMove = () => {
+        const { style } = this.tooltip;
+
         const { width, height } = this.tooltip.getBoundingClientRect();
 
-        const { top, left } = event.target.getBoundingClientRect();
+        const { pageX: xpos, pageY: ypos } = event;
 
-        style.top = `${top - height}px`;
-        style.left = `${(left + (breadth / 2)) - (width / 2)}px`;
+        style.top = `${ypos - height - 10}px`;
+        style.left = `${(xpos - (width / 2))}px`;
     }
 
     onMouseOut = () => {
@@ -158,10 +169,8 @@ class Histogram extends PureComponent {
             .attr('y', d => y(d.length))
             .attr('height', d => y(0) - y(d.length))
             .attr('fill', d => colorScale(d.length))
-            .on('mouseover', (d) => {
-                const breadth = Math.max(0, x(d.x1) - x(d.x0) - 1);
-                this.onMouseOver(d, breadth);
-            })
+            .on('mouseover', this.onMouseOver)
+            .on('mousemove', this.onMouseMove)
             .on('mouseout', this.onMouseOut);
 
         if (showAxis) {
