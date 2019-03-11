@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGInjector from 'svg-injector';
+import { randomString } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 const propTypes = {
@@ -31,30 +32,44 @@ export default class ScalableVectorGraphics extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.svgRef = React.createRef();
+        this.id = randomString();
     }
 
     componentDidMount() {
         const {
+            src,
             evalScripts,
             onEnject,
         } = this.props;
 
-        const { current: svg } = this.svgRef;
-        this.injectSVG(svg, evalScripts, onEnject);
+        const svg = document.getElementById(this.id);
+        if (svg) {
+            this.injectSVG(svg, src, evalScripts, onEnject);
+        }
     }
 
     componentDidUpdate() {
         const {
             evalScripts,
             onEnject,
+            src,
         } = this.props;
 
-        const { current: svg } = this.svgRef;
-        this.injectSVG(svg, evalScripts, onEnject);
+        const svg = document.getElementById(this.id);
+        if (svg) {
+            svg.setAttribute('data-src', src);
+            this.injectSVG(svg, src, evalScripts, onEnject);
+        }
     }
 
-    injectSVG = memoize((svg, evalScripts, onEnject) => {
+    componentWillUnmount() {
+        const svg = document.getElementById(this.id);
+        if (svg) {
+            svg.remove();
+        }
+    }
+
+    injectSVG = memoize((svg, src, evalScripts, onEnject) => {
         if (!svg) {
             return;
         }
@@ -75,7 +90,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
 
         return (
             <svg
-                ref={this.svgRef}
+                id={this.id}
                 className={className}
                 data-src={src}
                 data-fallback={fallback}
