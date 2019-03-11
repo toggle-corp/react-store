@@ -1,6 +1,7 @@
 @import '../../../stylesheets/base';
 
 .virtualized-list-view {
+    position: relative;
     padding: 0;
     overflow: auto;
 
@@ -20,6 +21,14 @@
 
     .empty {
         @extend %empty-text;
+        position: sticky;
+        top: 0;
+        left: 0;
+    }
+
+    .empty-min-width-container {
+        visibility: hidden;
+        height: 1px;
     }
 }
 
