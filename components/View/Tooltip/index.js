@@ -13,11 +13,13 @@ const propTypes = {
         PropTypes.node,
     ]),
     children: PropTypes.node.isRequired,
+    delay: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
     className: '',
     tooltip: '',
+    delay: 200,
 };
 
 const noOp = () => {};
@@ -68,11 +70,19 @@ export default class Tooltip extends React.PureComponent {
     }
 
     handleHover = (e) => {
+        const { delay } = this.props;
+        clearTimeout(this.timeout);
+        this.hoverIn = true;
         this.parentBCR = { left: e.clientX, top: e.clientY };
-        this.setState({ showTooltip: true });
+        this.timeout = setTimeout(() => {
+            if (this.hoverIn) {
+                this.setState({ showTooltip: true });
+            }
+        }, delay);
     }
 
     handleHoverOut = () => {
+        this.hoverIn = false;
         this.parentBCR = undefined;
         this.setState({ showTooltip: false });
     }

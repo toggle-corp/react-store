@@ -24,6 +24,7 @@ HackedFormattedDate.propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
+        PropTypes.instanceOf(Date),
     ]),
 };
 HackedFormattedDate.defaultProps = {
