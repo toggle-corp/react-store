@@ -21,6 +21,7 @@ Object.keys(iconNames).forEach((key) => {
 const Icon = ({
     className,
     name,
+    ...otherProps
 }) => {
     const icon = iconMapping[name];
     if (!icon) {
@@ -30,12 +31,25 @@ const Icon = ({
     switch (icon.type) {
         case 'font':
             return (
-                <span className={_cs(className, icon.value)} />
+                <span
+                    {...otherProps}
+                    className={_cs(className, icon.value)}
+                />
             );
         case 'svg':
             return (
                 <ScalableVectorGraphics
+                    {...otherProps}
                     className={_cs(className, styles.svg)}
+                    src={icon.value}
+                />
+            );
+        case 'image':
+            return (
+                <img
+                    alt={icon.altText}
+                    {...otherProps}
+                    className={_cs(className, styles.image)}
                     src={icon.value}
                 />
             );
