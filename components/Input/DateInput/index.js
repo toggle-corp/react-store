@@ -114,10 +114,18 @@ class DateInput extends React.PureComponent {
             monthInputFocused: false,
             dayInputFocused: false,
             showDatePicker: false,
+            containerHover: false,
         };
 
         this.containerRef = React.createRef();
         this.boundingClientRect = {};
+    }
+
+    componentDidMount() {
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
+        }
     }
 
     getClassName = () => {
@@ -295,6 +303,32 @@ class DateInput extends React.PureComponent {
         }
     }
 
+    handleActionButtonsInvalidate = (actionButtonsContainer) => {
+        const { current: container } = this.containerRef;
+        const parentRect = container
+            ? container.getBoundingClientRect()
+            : this.boundingClientRect;
+
+        const contentRect = actionButtonsContainer.getBoundingClientRect();
+
+        const { showHintAndError } = this.props;
+
+        const actionButtonsContainerPosition = {
+            left: `${(parentRect.left + parentRect.width) - contentRect.width}px`,
+            top: `${(parentRect.top + parentRect.height) - (showHintAndError ? 12 : 0)}px`,
+        };
+
+        return actionButtonsContainerPosition;
+    }
+
+    handleContainerHover = () => {
+        this.setState({ containerHover: true });
+    }
+
+    handleContainerLeave = () => {
+        this.setState({ containerHover: false });
+    }
+
     renderDatePicker = ({ y, m, d }) => {
         const date = createDate(+y, +m, +d);
         const datetime = date && date.getTime();
@@ -327,7 +361,10 @@ class DateInput extends React.PureComponent {
             readOnly,
             separator,
         } = this.props;
-        const { showDatePicker } = this.state;
+        const {
+            showDatePicker,
+            containerHover,
+        } = this.state;
 
         const className = this.getClassName();
         const yearPlaceholder = 'yyyy';
@@ -347,10 +384,13 @@ class DateInput extends React.PureComponent {
         `;
 
         return (
+            // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
             <div
                 ref={this.containerRef}
                 title={title}
                 className={className}
+                onMouseOver={this.handleContainerHover}
+                onMouseLeave={this.handleContainerLeave}
             >
                 <Label
                     className={styles.label}
@@ -399,14 +439,17 @@ class DateInput extends React.PureComponent {
                             onChange={this.handleYearInputChange}
                         />
                     </div>
-                    <ActionButtons
-                        className={styles.actionButtons}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        onClearButtonClick={this.handleClearButtonClick}
-                        onTodayButtonClick={this.handleTodayButtonClick}
-                        onCalendarButtonClick={this.handleCalendarButtonClick}
-                    />
+                    { containerHover && (
+                        <ActionButtons
+                            className={styles.actionButtons}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            onClearButtonClick={this.handleClearButtonClick}
+                            onTodayButtonClick={this.handleTodayButtonClick}
+                            onCalendarButtonClick={this.handleCalendarButtonClick}
+                            onInvalidate={this.handleActionButtonsInvalidate}
+                        />
+                    )}
                 </div>
                 <HintAndError
                     show={showHintAndError}

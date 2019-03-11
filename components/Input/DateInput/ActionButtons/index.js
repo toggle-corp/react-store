@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import FloatingContainer from '../../../View/FloatingContainer';
 import Icon from '../../../General/Icon';
 
 import styles from './styles.scss';
@@ -12,6 +13,7 @@ const ActionButtons = ({
     onTodayButtonClick,
     onCalendarButtonClick,
     className,
+    onInvalidate,
 }) => {
     const classNames = [
         className,
@@ -26,7 +28,10 @@ const ActionButtons = ({
     ].join(' ');
 
     return (
-        <div className={classNames.join(' ')}>
+        <FloatingContainer
+            className={classNames.join(' ')}
+            onInvalidate={onInvalidate}
+        >
             <button
                 className={clearButtonClassName}
                 type="button"
@@ -57,7 +62,7 @@ const ActionButtons = ({
             >
                 <Icon name="calendar" />
             </button>
-        </div>
+        </FloatingContainer>
     );
 };
 
@@ -68,6 +73,7 @@ ActionButtons.propTypes = {
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     className: PropTypes.string,
+    onInvalidate: PropTypes.func.isRequired,
 };
 
 ActionButtons.defaultProps = {
