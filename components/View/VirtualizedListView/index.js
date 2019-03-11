@@ -95,48 +95,68 @@ export default class VirtualizedListView extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        clearTimeout(this.containerHeightTimeout);
     }
 
     setItemHeight = () => {
+        clearTimeout(this.containerHeightTimeout);
+
         const { current: container } = this.container;
         const { current: item } = this.item;
         const { itemHeight: itemHeightFromState } = this.state;
 
-        if (item) {
-            const itemBCR = item.getBoundingClientRect();
-            const itemHeight = itemBCR.height;
+        if (!item) {
+            return;
+        }
 
-            if (itemHeightFromState !== itemHeight) {
-                const containerBCR = container.getBoundingClientRect();
-                const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+        const itemBCR = item.getBoundingClientRect();
+        const itemHeight = itemBCR.height;
 
-                // eslint-disable-next-line react/no-did-mount-set-state
-                this.setState({
-                    itemsPerPage,
-                    itemHeight,
-                });
-            }
+        if (itemHeightFromState === itemHeight) {
+            return;
+        }
+
+        const containerBCR = container.getBoundingClientRect();
+
+        if (itemHeight === 0 && containerBCR.height === 0) {
+            // NOTE: this is a hack
+            this.containerHeightTimeout = setTimeout(this.setItemHeight, 500);
+        } else {
+            const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+            // eslint-disable-next-line react/no-did-mount-set-state
+            this.setState({
+                itemsPerPage,
+                itemHeight,
+            });
         }
     }
 
     handleScroll = (e) => {
         const { itemHeight } = this.state;
 
-        if (itemHeight) {
-            const { current: container } = this.container;
-            const { offset } = this.state;
-
-            if (e.target === container) {
-                const newOffset = Math.floor(container.scrollTop / itemHeight);
-                if (newOffset !== offset) {
-                    window.cancelIdleCallback(this.idleCallback);
-
-                    this.idleCallback = window.requestIdleCallback(() => {
-                        this.setState({ offset: newOffset });
-                    }, { timeout: MAX_IDLE_TIMEOUT });
-                }
-            }
+        if (!itemHeight) {
+            return;
         }
+        const { current: container } = this.container;
+        const { offset } = this.state;
+
+        if (e.target !== container) {
+            return;
+        }
+
+        const newOffset = Math.floor(container.scrollTop / itemHeight);
+        if (newOffset === offset) {
+            return;
+        }
+
+        window.cancelIdleCallback(this.idleCallback);
+
+        this.idleCallback = window.requestIdleCallback(
+            () => {
+                this.setState({ offset: newOffset });
+            },
+            { timeout: MAX_IDLE_TIMEOUT },
+        );
     }
 
     renderItem = (datum, i) => {
@@ -257,8 +277,8 @@ export default class VirtualizedListView extends React.Component {
         return (
             <div
                 ref={this.container}
-                className={className}
                 id={id}
+                className={className}
             >
                 <Items />
                 { data.length === 0 && (
