@@ -18,54 +18,75 @@ Object.keys(iconNames).forEach((key) => {
     addIcon('font', key, iconNames[key]);
 });
 
-const Icon = ({
-    className,
-    name,
-    ...otherProps
-}) => {
-    const icon = iconMapping[name];
-    if (!icon) {
-        return null;
-    }
-
-    switch (icon.type) {
-        case 'font':
-            return (
-                <span
-                    {...otherProps}
-                    className={_cs(className, icon.value)}
-                />
-            );
-        case 'svg':
-            return (
-                <ScalableVectorGraphics
-                    {...otherProps}
-                    className={_cs(className, styles.svg)}
-                    src={icon.value}
-                />
-            );
-        case 'image':
-            return (
-                <img
-                    alt={icon.altText}
-                    {...otherProps}
-                    className={_cs(className, styles.image)}
-                    src={icon.value}
-                />
-            );
-        default:
-            console.warn('TODO: add other icon types');
-            return <span>ICO</span>;
-    }
-};
-
-Icon.propTypes = {
+const propTypes = {
     className: PropTypes.string,
     name: PropTypes.string,
 };
-Icon.defaultProps = {
+
+const defaultProps = {
     className: undefined,
     name: undefined,
 };
 
-export default Icon;
+
+export default class Icon extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dummy: false,
+        };
+    }
+
+
+    componentDidCatch() {
+        // shamelessly ignored the error and initiated the re-render
+        this.setState({ dummy: !this.state.dummy });
+    }
+
+    render() {
+        const {
+            className,
+            name,
+            ...otherProps
+        } = this.props;
+
+        const icon = iconMapping[name];
+        if (!icon) {
+            return null;
+        }
+
+        switch (icon.type) {
+            case 'font':
+                return (
+                    <span
+                        {...otherProps}
+                        className={_cs(className, icon.value)}
+                    />
+                );
+            case 'svg':
+                return (
+                    <ScalableVectorGraphics
+                        {...otherProps}
+                        className={_cs(className, styles.svg)}
+                        src={icon.value}
+                    />
+                );
+            case 'image':
+                return (
+                    <img
+                        alt={icon.altText}
+                        {...otherProps}
+                        className={_cs(className, styles.image)}
+                        src={icon.value}
+                    />
+                );
+            default:
+                console.warn('TODO: add other icon types');
+                return <span>ICO</span>;
+        }
+    }
+}
