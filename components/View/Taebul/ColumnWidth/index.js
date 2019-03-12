@@ -24,7 +24,6 @@ class ResizableHeader extends React.PureComponent {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
             _headerRenderer: Header, // eslint-disable-line no-unused-vars
-            _isResizing,
             className: classNameFromProps,
             ...otherProps
         } = this.props;
@@ -32,7 +31,6 @@ class ResizableHeader extends React.PureComponent {
         const className = `
             ${classNameFromProps}
             ${styles.newHeader}
-            ${_isResizing ? styles.resizing : ''}
         `;
 
         return (
@@ -160,7 +158,6 @@ export default (WrappedComponent) => {
                     // eslint-disable-next-line no-param-reassign
                     draftColumns[index].headerRendererParams = (...params) => ({
                         ...headerRendererParams(...params),
-                        _isResizing: !!this.resizingColumnKey,
                         _columnKey: columnKey,
                         _headerRenderer: headerRenderer,
                         _onSeparatorMouseDown: this.handleSeparatorMouseDown,
