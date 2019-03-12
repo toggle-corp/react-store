@@ -34,7 +34,12 @@ export default (WrappedComponent) => {
             }
 
             const { key, order } = sortOrder;
-            const { comparator } = columns.find(c => c.key === key);
+            const column = columns.find(c => c.key === key);
+            if (!column) {
+                console.warn(`column not defined for column ${key}`);
+                return data;
+            }
+            const { comparator } = column;
             if (!comparator) {
                 console.warn(`comparator not defined for column ${key}`);
                 return data;
