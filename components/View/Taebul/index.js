@@ -113,13 +113,28 @@ export default class Taebul extends React.PureComponent {
     }
 
     getTotalWidth = memoize((columns, columnWidths, defaultColumnWidth) => {
+        /*
+        // This optimization algorithm failed because
+        // columnWidths contained a value with undefined key
+
         const definedColumnWidthList = Object.values(columnWidths).filter(isDefined);
         const definedColumnWidthSum = sum(definedColumnWidthList);
 
         const defaultColumnWidthSum = (columns.length - definedColumnWidthList.length)
-            * defaultColumnWidth;
+         * defaultColumnWidth;
 
         return defaultColumnWidthSum + definedColumnWidthSum;
+        */
+
+        let totalWidth = 0;
+
+        columns.forEach((c) => {
+            totalWidth += isDefined(columnWidths[c.key])
+                ? columnWidths[c.key]
+                : defaultColumnWidth;
+        });
+
+        return totalWidth;
     })
 
     getItemWidths = memoize((
