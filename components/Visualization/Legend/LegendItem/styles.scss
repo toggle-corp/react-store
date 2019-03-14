@@ -1,0 +1,19 @@
+@import '~base-scss/base';
+
+.legend-item {
+    display: flex;
+    align-items: center;
+
+    .color {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        width: $font-size-medium;
+        height: $font-size-medium;
+    }
+
+    .label {
+        flex-grow: 1;
+        text-transform: capitalize;
+        color: $color-text-label;
+    }
+}
