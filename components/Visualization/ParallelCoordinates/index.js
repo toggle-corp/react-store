@@ -36,8 +36,9 @@ const propTypes = {
         }).isRequired,
     ).isRequired,
     setSaveFunction: PropTypes.func,
-    labelName: PropTypes.string.isRequired,
+    ignoreProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
     labelSelector: PropTypes.func.isRequired,
+    colorSelector: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     margins: PropTypes.shape({
@@ -52,6 +53,7 @@ const defaultProps = {
     data: [],
     setSaveFunction: () => {},
     colorScheme: schemePaired,
+    colorSelector: undefined,
     className: '',
     margins: {
         top: 40,
@@ -102,7 +104,7 @@ class ParallelCoordinates extends PureComponent {
             margins,
             boundingClientRect,
             data,
-            labelName,
+            ignoreProperties,
             colorScheme,
         } = this.props;
 
@@ -120,7 +122,7 @@ class ParallelCoordinates extends PureComponent {
 
         width = width - left - right;
         height = height - top - bottom;
-        this.dimensions = keys(data[0]).filter(d => d !== labelName);
+        this.dimensions = keys(data[0]).filter(d => !ignoreProperties.includes(d));
         this.x = scalePoint()
             .domain(this.dimensions)
             .range([0, width])
@@ -178,6 +180,7 @@ class ParallelCoordinates extends PureComponent {
             data,
             boundingClientRect,
             labelSelector,
+            colorSelector,
             margins,
         } = this.props;
 
@@ -207,7 +210,12 @@ class ParallelCoordinates extends PureComponent {
             .append('path')
             .attr('class', 'bg')
             .style('fill', 'none')
-            .style('stroke', d => colors(labelSelector(d)))
+            .style('stroke', (d) => {
+                if (colorSelector) {
+                    return colorSelector(d);
+                }
+                return colors(labelSelector(d));
+            })
             .style('stroke-opacity', 0.2)
             .attr('d', path);
 
@@ -219,7 +227,12 @@ class ParallelCoordinates extends PureComponent {
             .enter()
             .append('path')
             .attr('class', 'fg')
-            .style('stroke', d => colors(labelSelector(d)))
+            .style('stroke', (d) => {
+                if (colorSelector) {
+                    return colorSelector(d);
+                }
+                return colors(labelSelector(d));
+            })
             .style('fill', 'none')
             .attr('d', path);
 
@@ -233,14 +246,13 @@ class ParallelCoordinates extends PureComponent {
 
         axes
             .append('g')
-            .attr('class', styles.axis)
+            .attr('class', `${styles.axis} axis`)
             .each((d, i, nodes) => select(nodes[i]).call(axisLeft(y[d])))
             .append('text')
+            .attr('class', `${styles.text} text`)
             .attr('y', -10)
             .attr('text-anchor', 'middle')
-            .text(d => d)
-            .style('font-size', '1.5em')
-            .style('fill', '#000');
+            .text(d => d);
 
         axes
             .append('g')

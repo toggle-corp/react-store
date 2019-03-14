@@ -1,8 +1,14 @@
 @import '../../../stylesheets/base';
 
 .parallel {
+    .axis {
+        path {
+            stroke: $color-axis-path;
+        }
 
-    .axis path {
-        stroke: $color-axis-path;
+        .text {
+            font-size: $font-size-large;
+            fill: $color-text;
+        }
     }
 }
