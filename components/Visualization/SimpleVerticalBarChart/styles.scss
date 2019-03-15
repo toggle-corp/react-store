@@ -1,12 +1,14 @@
 
 .vertical-bar-chart {
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .svg {
         .bars {
             .bar {
-                fill: var(--color-accent);
                 opacity: .2;
+                fill: var(--color-accent);
 
                 &:hover {
                     opacity: .3;

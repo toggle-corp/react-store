@@ -39,6 +39,7 @@ export default class Legend extends React.PureComponent {
             data,
             className,
             keySelector,
+            emptyComponent,
         } = this.props;
 
         return (
@@ -48,6 +49,7 @@ export default class Legend extends React.PureComponent {
                 renderer={LegendItem}
                 keySelector={keySelector}
                 rendererParams={this.legendItemRendererParams}
+                emptyComponent={emptyComponent}
             />
         );
     }
