@@ -24,6 +24,7 @@ const propTypes = {
     geoJson: PropTypes.object.isRequired,
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
+    boundsPadding: PropTypes.number,
 };
 
 const defaultProps = {
@@ -35,6 +36,7 @@ const defaultProps = {
     supportHover: false,
     setDestroyer: undefined,
     bounds: undefined,
+    boundsPadding: 64,
 };
 
 
@@ -65,12 +67,14 @@ export default class MapSource extends React.PureComponent {
             mapStyle: oldMapStyle,
             geoJson: oldGeoJson,
             bounds: oldBounds,
+            boundsPadding: oldPadding,
         } = this.props;
         const {
             map: newMap,
             mapStyle: newMapStyle,
             geoJson: newGeoJson,
             bounds: newBounds,
+            boundsPadding: newPadding,
         } = nextProps;
 
         if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
@@ -84,8 +88,8 @@ export default class MapSource extends React.PureComponent {
                 .getSource(this.source)
                 .setData(newGeoJson);
         }
-        if (oldBounds !== newBounds && newBounds) {
-            newMap.fitBounds(newBounds);
+        if ((oldBounds !== newBounds && newBounds) || oldPadding !== newPadding) {
+            newMap.fitBounds(newBounds, { padding: newPadding });
         }
     }
 
@@ -141,6 +145,7 @@ export default class MapSource extends React.PureComponent {
             onSourceAdded,
             supportHover,
             bounds,
+            boundsPadding,
         } = props;
 
         console.info('Adding source', this.props.sourceKey);
@@ -150,7 +155,7 @@ export default class MapSource extends React.PureComponent {
         });
 
         if (bounds) {
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, { padding: boundsPadding });
         }
 
         this.source = sourceKey;

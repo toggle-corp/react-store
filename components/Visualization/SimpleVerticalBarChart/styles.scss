@@ -1,13 +1,15 @@
 @import '../../../stylesheets/base';
 
 .vertical-bar-chart {
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .svg {
         .bars {
             .bar {
-                fill: $color-accent;
                 opacity: .2;
+                fill: $color-accent;
 
                 &:hover {
                     opacity: .3;
