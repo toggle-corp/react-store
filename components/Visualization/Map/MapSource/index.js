@@ -18,13 +18,15 @@ const propTypes = {
     onSourceAdded: PropTypes.func,
     onSourceRemoved: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
-    supportHover: PropTypes.bool,
     setDestroyer: PropTypes.func,
     // eslint-disable-next-line react/forbid-prop-types
     geoJson: PropTypes.object.isRequired,
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
-    boundsPadding: PropTypes.number,
+    boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+
+    // eslint-disable-next-line react/forbid-prop-types
+    images: PropTypes.array,
 };
 
 const defaultProps = {
@@ -33,10 +35,10 @@ const defaultProps = {
     children: false,
     onSourceAdded: undefined,
     onSourceRemoved: undefined,
-    supportHover: false,
     setDestroyer: undefined,
     bounds: undefined,
     boundsPadding: 64,
+    images: undefined,
 };
 
 
@@ -54,7 +56,16 @@ export default class MapSource extends React.PureComponent {
 
         this.layerDestroyers = {};
         this.source = undefined;
-        this.hoverSource = undefined;
+
+        if (this.props.images) {
+            // FIXME: should check if component is unmounted before image is loaded
+            // FIXME: should cleanup after wards
+            this.props.images.forEach(({ name, icon }) => {
+                const img = new Image(10, 10);
+                img.onload = () => this.props.map.addImage(name, img);
+                img.src = icon;
+            });
+        }
     }
 
     componentDidMount() {
@@ -89,6 +100,7 @@ export default class MapSource extends React.PureComponent {
                 .setData(newGeoJson);
         }
         if ((oldBounds !== newBounds && newBounds) || oldPadding !== newPadding) {
+            console.warn('Bounds change');
             newMap.fitBounds(newBounds, { padding: newPadding });
         }
     }
@@ -126,12 +138,6 @@ export default class MapSource extends React.PureComponent {
             map.removeSource(this.source);
             this.source = undefined;
         }
-        if (this.hoverSource) {
-            console.info('Removing hover source', this.props.sourceKey);
-            map.removeSource(this.hoverSource);
-            this.hoverSource = undefined;
-        }
-
         if (onSourceRemoved) {
             onSourceRemoved();
         }
@@ -143,7 +149,6 @@ export default class MapSource extends React.PureComponent {
             sourceKey,
             geoJson,
             onSourceAdded,
-            supportHover,
             bounds,
             boundsPadding,
         } = props;
@@ -159,15 +164,6 @@ export default class MapSource extends React.PureComponent {
         }
 
         this.source = sourceKey;
-
-        if (supportHover) {
-            console.info('Adding hover source', this.props.sourceKey);
-            map.addSource(`${sourceKey}-hover`, {
-                type: 'geojson',
-                data: geoJson,
-            });
-            this.hoverSource = `${sourceKey}-hover`;
-        }
 
         if (onSourceAdded) {
             onSourceAdded();
