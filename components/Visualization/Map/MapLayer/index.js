@@ -1,17 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
+import ReactDOM from 'react-dom';
 
 import MapChild from '../MapChild';
 import { forEach } from '../../../../utils/common';
 
 import styles from './styles.scss';
-
-const renderInto = (container, component) => {
-    ReactDOM.render(component, container);
-};
-
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -28,17 +23,6 @@ const propTypes = {
     layerKey: PropTypes.string.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     sourceKey: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    property: PropTypes.string,
-
-    hoverInfo: PropTypes.shape({
-        paint: PropTypes.object,
-        showTooltip: PropTypes.bool,
-        tooltipProperty: PropTypes.string,
-        tooltipModifier: PropTypes.func,
-
-        onMouseOver: PropTypes.func,
-    }),
 
     // eslint-disable-next-line react/no-unused-prop-types
     onClick: PropTypes.func,
@@ -50,8 +34,6 @@ const propTypes = {
 const defaultProps = {
     layout: undefined,
     filter: undefined,
-    property: undefined,
-    hoverInfo: undefined,
     onClick: undefined,
     setDestroyer: undefined,
 };
@@ -71,11 +53,12 @@ export default class MapLayer extends React.PureComponent {
 
         this.eventHandlers = {};
         this.layer = undefined;
-        this.hoverLayer = undefined;
         this.popup = undefined;
     }
 
     componentDidMount() {
+        this.tooltipContainer = document.createElement('div');
+
         this.create(this.props);
     }
 
@@ -112,6 +95,10 @@ export default class MapLayer extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        if (this.tooltipContainer) {
+            this.tooltipContainer.remove();
+        }
+
         this.destroy();
     }
 
@@ -170,11 +157,6 @@ export default class MapLayer extends React.PureComponent {
             map.removeLayer(this.layer);
             this.layer = undefined;
         }
-        if (this.hoverLayer) {
-            console.info('Removing hover layer', layerKey);
-            map.removeLayer(this.hoverLayer);
-            this.hoverLayer = undefined;
-        }
         if (this.popup) {
             console.info('Removing popup layer', layerKey);
             this.popup.remove();
@@ -191,16 +173,20 @@ export default class MapLayer extends React.PureComponent {
             paint,
             layout,
             filter,
+            enableHover,
+            tooltipRenderer,
+            tooltipRendererParams,
             onClick,
-            property,
         } = props;
 
         const layerInfo = {
             id: layerKey,
             source: sourceKey,
             type,
-            paint,
         };
+        if (paint) {
+            layerInfo.paint = paint;
+        }
         if (layout) {
             layerInfo.layout = layout;
         }
@@ -212,141 +198,93 @@ export default class MapLayer extends React.PureComponent {
 
         this.layer = layerKey;
 
-        // FIXME: this need refactoring
-        this.createHoverLayer(props);
+        let hoveredStateId;
 
-        if (onClick) {
-            this.eventHandlers.click = (e) => {
-                const [feature] = e.features;
-                onClick(feature.properties[property]);
-            };
-        }
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        this.eventHandlers.mouseenter = () => {
+            if (enableHover || tooltipRenderer) {
+                // eslint-disable-next-line no-param-reassign
+                map.getCanvas().style.cursor = 'pointer';
+            }
+        };
+
+        // When the user moves their mouse over the state-fill layer, we'll update the
+        // feature state for the feature under the mouse.
+        this.eventHandlers.mousemove = (e) => {
+            const { features } = e;
+            if (features.length > 0 && enableHover) {
+                if (hoveredStateId) {
+                    map.setFeatureState(
+                        { source: sourceKey, id: hoveredStateId },
+                        { hover: false },
+                    );
+                }
+                const [
+                    { id },
+                ] = features;
+                hoveredStateId = id;
+                map.setFeatureState(
+                    { source: sourceKey, id: hoveredStateId },
+                    { hover: true },
+                );
+            }
+        };
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        this.eventHandlers.click = (e) => {
+            const {
+                lngLat: coordinates,
+                features: [
+                    { id, properties },
+                ],
+            } = e;
+
+            if (tooltipRenderer) {
+                const Tooltip = tooltipRenderer;
+                const params = tooltipRendererParams(id, properties);
+
+                ReactDOM.render(
+                    React.createElement(Tooltip, params),
+                    this.tooltipContainer,
+                );
+
+                this.popup = new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setDOMContent(this.tooltipContainer);
+
+                this.popup.addTo(map);
+            }
+
+            if (onClick) {
+                onClick(id, properties);
+            }
+        };
+
+        // When the mouse leaves the state-fill layer, update the feature state of the
+        // previously hovered feature.
+        this.eventHandlers.mouseleave = () => {
+            if (enableHover) {
+                if (hoveredStateId) {
+                    map.setFeatureState(
+                        { source: sourceKey, id: hoveredStateId },
+                        { hover: false },
+                    );
+                }
+                hoveredStateId = undefined;
+            }
+
+            if (enableHover || tooltipRenderer) {
+                // Change it back to a pointer when it leaves.
+                // eslint-disable-next-line no-param-reassign
+                map.getCanvas().style.cursor = '';
+            }
+        };
 
         forEach(this.eventHandlers, (eventType, listener) => {
             console.info('Adding layer event handler', layerKey);
             map.on(eventType, layerKey, listener);
         });
-    }
-
-    createHoverLayer = ({
-        map,
-        sourceKey,
-        layerKey,
-        property,
-        type,
-        hoverInfo,
-    }) => {
-        if (!hoverInfo) {
-            return;
-        }
-        const hoverLayerKey = `${layerKey}-hover`;
-
-        const {
-            onMouseOver,
-            paint,
-            showTooltip,
-        } = hoverInfo;
-
-        console.info('Adding hover layer', layerKey);
-        map.addLayer({
-            id: hoverLayerKey,
-            source: sourceKey,
-            type,
-            paint,
-            filter: ['==', property, ''],
-        });
-
-        this.hoverLayer = hoverLayerKey;
-
-        let popup;
-        let tooltipContainer;
-
-        if (showTooltip) {
-            tooltipContainer = document.createElement('div');
-            popup = new mapboxgl.Marker(tooltipContainer, {
-                offset: [0, -10],
-            }).setLngLat([0, 0]);
-            this.popup = popup;
-
-            map.on('zoom', (e) => {
-                if (e.originalEvent && this.popup) {
-                    this.popup.setLngLat(map.unproject([
-                        e.originalEvent.offsetX,
-                        e.originalEvent.offsetY - 8,
-                    ]));
-                }
-            });
-        }
-
-        this.eventHandlers.mouseenter = (e) => {
-            const feature = e.features[0];
-            if (popup) {
-                popup.addTo(map);
-                renderInto(tooltipContainer, this.renderTooltip(feature.properties));
-                popup.setOffset([0, -tooltipContainer.clientHeight / 2]);
-            }
-
-            if (onMouseOver) {
-                const propertyValue = feature.properties[property];
-                this.lastHoverValue = propertyValue;
-                onMouseOver(feature.properties);
-            }
-        };
-
-        this.eventHandlers.mousemove = (e) => {
-            const feature = e.features[0];
-            const propertyValue = feature.properties[property];
-            map.setFilter(hoverLayerKey, ['==', property, propertyValue]);
-            // eslint-disable-next-line no-param-reassign
-            map.getCanvas().style.cursor = 'pointer';
-
-            if (popup) {
-                popup.setLngLat(map.unproject([
-                    e.point.x,
-                    e.point.y - 8,
-                ]));
-                renderInto(tooltipContainer, this.renderTooltip(feature.properties));
-                popup.setOffset([0, -tooltipContainer.clientHeight / 2]);
-            }
-
-            if (onMouseOver && this.lastHoverValue !== propertyValue) {
-                this.lastHoverValue = propertyValue;
-                onMouseOver(feature.properties);
-            }
-        };
-
-        this.eventHandlers.mouseleave = () => {
-            map.setFilter(hoverLayerKey, ['==', property, '']);
-            // eslint-disable-next-line no-param-reassign
-            map.getCanvas().style.cursor = '';
-
-            if (popup) {
-                popup.remove();
-            }
-
-            if (onMouseOver) {
-                onMouseOver(undefined);
-            }
-        };
-    }
-
-    renderTooltip = (properties) => {
-        const {
-            hoverInfo: {
-                tooltipProperty,
-                tooltipModifier,
-            },
-        } = this.props;
-
-        if (tooltipModifier) {
-            return tooltipModifier(properties);
-        }
-
-        return (
-            <div className={styles.tooltip}>
-                { properties[tooltipProperty] }
-            </div>
-        );
     }
 
     render() {
