@@ -5,6 +5,7 @@ import {
     listToMap,
     caseInsensitiveSubmatch,
     getRatingForContentInString as rate,
+    isNotDefined,
     isDefined,
     _cs,
 } from '@togglecorp/fujs';
@@ -122,7 +123,10 @@ export class NormalMultiSelectInput extends React.PureComponent {
             keySelector,
             element => element,
         );
-        const selectedOptions = value.map(k => labelSelector(optionsMap[k]));
+        const selectedOptions = value
+            .map(k => optionsMap[k])
+            .filter(isDefined)
+            .map(v => labelSelector(v));
         return selectedOptions.join(', ');
     })
 
