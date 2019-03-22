@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import ReactDOM from 'react-dom';
 
+import { isDefined, difference } from '@togglecorp/fujs';
+
 import MapChild from '../MapChild';
 import { forEach } from '../../../../utils/common';
 
 import styles from './styles.scss';
+
+const emptyList = [];
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -23,21 +27,85 @@ const propTypes = {
     layerKey: PropTypes.string.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     sourceKey: PropTypes.string.isRequired,
+    sourceLayer: PropTypes.string,
+
+    setDestroyer: PropTypes.func,
+    mapStyle: PropTypes.string.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
     onClick: PropTypes.func,
 
-    setDestroyer: PropTypes.func,
-    mapStyle: PropTypes.string.isRequired,
+    enableHover: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
+    hoveredId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    // eslint-disable-next-line react/no-unused-prop-types
+    onHoverChange: PropTypes.func,
+
+    enableSelection: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
+    selectedIds: PropTypes.array,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onSelectionChange: PropTypes.func,
 };
 
 const defaultProps = {
     layout: undefined,
     filter: undefined,
     onClick: undefined,
+    sourceLayer: undefined,
     setDestroyer: undefined,
+    onHoverChange: undefined,
+    enableHover: undefined,
+    hoveredId: undefined,
+    onSelectionChange: undefined,
+    enableSelection: undefined,
+    selectedIds: emptyList,
 };
 
+
+const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredId) => {
+    if (oldHoveredId) {
+        map.setFeatureState(
+            { source: sourceKey, id: oldHoveredId, sourceLayer },
+            { hover: false },
+        );
+    }
+
+    map.setFeatureState(
+        { source: sourceKey, id: newHoveredId, sourceLayer },
+        { hover: true },
+    );
+};
+
+const changeSelectionState = (map, sourceKey, sourceLayer, oldSelectedIds, newSelectedIds) => {
+    const oldSelectionIdSet = new Set(oldSelectedIds);
+    const newSelectionIdSet = new Set(newSelectedIds);
+
+    const toRemove = difference(oldSelectionIdSet, newSelectionIdSet);
+    const toAdd = difference(newSelectionIdSet, oldSelectionIdSet);
+
+    toRemove.forEach((id) => {
+        map.setFeatureState(
+            { source: sourceKey, id, sourceLayer },
+            { selected: false },
+        );
+    });
+    toAdd.forEach((id) => {
+        map.setFeatureState(
+            { source: sourceKey, id, sourceLayer },
+            { selected: true },
+        );
+    });
+};
+
+const clearHoverState = (map, sourceKey, sourceLayer, oldHoveredId) => {
+    if (oldHoveredId) {
+        map.setFeatureState(
+            { source: sourceKey, id: oldHoveredId, sourceLayer },
+            { hover: false },
+        );
+    }
+};
 
 @MapChild
 export default class MapLayer extends React.PureComponent {
@@ -58,7 +126,6 @@ export default class MapLayer extends React.PureComponent {
 
     componentDidMount() {
         this.tooltipContainer = document.createElement('div');
-
         this.create(this.props);
     }
 
@@ -69,6 +136,9 @@ export default class MapLayer extends React.PureComponent {
             layout: oldLayout,
             paint: oldPaint,
             filter: oldFilter,
+            hoveredId: oldHoveredId,
+            selectedIds: oldSelectedIds,
+            sourceLayer: oldSourceLayer,
         } = this.props;
         const {
             map: newMap,
@@ -76,9 +146,15 @@ export default class MapLayer extends React.PureComponent {
             layout: newLayout,
             paint: newPaint,
             filter: newFilter,
+            hoveredId: newHoveredId,
+            selectedIds: newSelectedIds,
+            enableHover,
+            enableSelection,
+            sourceKey,
+            sourceLayer: newSourceLayer,
         } = nextProps;
 
-        if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
+        if (oldMap !== newMap || oldMapStyle !== newMapStyle || oldSourceLayer !== newSourceLayer) {
             this.destroy();
             this.create(nextProps);
             return;
@@ -91,6 +167,26 @@ export default class MapLayer extends React.PureComponent {
         }
         if (this.layer && oldFilter !== newFilter) {
             this.reloadFilter(nextProps);
+        }
+
+        if (
+            enableHover
+            && oldHoveredId !== newHoveredId
+            && this.stateHoveredId !== newHoveredId
+        ) {
+            changeHoverState(newMap, sourceKey, newSourceLayer, this.stateHoveredId, newHoveredId);
+            this.stateHoveredId = newHoveredId;
+        }
+
+        if (
+            enableSelection
+            && oldSelectedIds !== newSelectedIds
+            && this.stateSelectedIds !== newSelectedIds
+        ) {
+            changeSelectionState(
+                newMap, sourceKey, newSourceLayer, this.stateSelectedIds, newSelectedIds,
+            );
+            this.stateSelectedIds = newSelectedIds;
         }
     }
 
@@ -169,14 +265,20 @@ export default class MapLayer extends React.PureComponent {
             map,
             sourceKey,
             layerKey,
+            sourceLayer,
             type,
             paint,
             layout,
             filter,
             enableHover,
+            enableSelection,
             tooltipRenderer,
             tooltipRendererParams,
             onClick,
+            hoveredId,
+            selectedIds,
+            onHoverChange,
+            onSelectionChange,
         } = props;
 
         const layerInfo = {
@@ -193,16 +295,20 @@ export default class MapLayer extends React.PureComponent {
         if (filter) {
             layerInfo.filter = filter;
         }
+        if (sourceLayer) {
+            layerInfo['source-layer'] = sourceLayer;
+        }
         console.info('Adding layer', layerKey);
         map.addLayer(layerInfo);
 
         this.layer = layerKey;
 
-        let hoveredStateId;
+        this.stateHoveredId = undefined;
+        this.stateSelectedIds = emptyList;
 
         // Change the cursor to a pointer when the mouse is over the places layer.
         this.eventHandlers.mouseenter = () => {
-            if (enableHover || tooltipRenderer) {
+            if (enableSelection || enableHover || tooltipRenderer) {
                 // eslint-disable-next-line no-param-reassign
                 map.getCanvas().style.cursor = 'pointer';
             }
@@ -213,20 +319,14 @@ export default class MapLayer extends React.PureComponent {
         this.eventHandlers.mousemove = (e) => {
             const { features } = e;
             if (features.length > 0 && enableHover) {
-                if (hoveredStateId) {
-                    map.setFeatureState(
-                        { source: sourceKey, id: hoveredStateId },
-                        { hover: false },
-                    );
+                const [{ id }] = features;
+                if (id !== this.stateHoveredId) {
+                    changeHoverState(map, sourceKey, sourceLayer, this.stateHoveredId, id);
+                    this.stateHoveredId = id;
+                    if (onHoverChange) {
+                        onHoverChange(id);
+                    }
                 }
-                const [
-                    { id },
-                ] = features;
-                hoveredStateId = id;
-                map.setFeatureState(
-                    { source: sourceKey, id: hoveredStateId },
-                    { hover: true },
-                );
             }
         };
 
@@ -235,9 +335,7 @@ export default class MapLayer extends React.PureComponent {
         this.eventHandlers.click = (e) => {
             const {
                 lngLat: coordinates,
-                features: [
-                    { id, properties },
-                ],
+                features: [{ id, properties }],
             } = e;
 
             if (tooltipRenderer) {
@@ -252,8 +350,27 @@ export default class MapLayer extends React.PureComponent {
                 this.popup = new mapboxgl.Popup()
                     .setLngLat(coordinates)
                     .setDOMContent(this.tooltipContainer);
-
                 this.popup.addTo(map);
+            }
+
+            if (enableSelection) {
+                const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
+
+                let newSelectedIds;
+                if (index === -1) {
+                    newSelectedIds = [...this.stateSelectedIds, id];
+                } else {
+                    newSelectedIds = [...this.stateSelectedIds];
+                    newSelectedIds.splice(index, 1);
+                }
+
+                changeSelectionState(
+                    map, sourceKey, sourceLayer, this.stateSelectedIds, newSelectedIds,
+                );
+                this.stateSelectedIds = newSelectedIds;
+                if (onSelectionChange) {
+                    onSelectionChange(newSelectedIds);
+                }
             }
 
             if (onClick) {
@@ -264,17 +381,15 @@ export default class MapLayer extends React.PureComponent {
         // When the mouse leaves the state-fill layer, update the feature state of the
         // previously hovered feature.
         this.eventHandlers.mouseleave = () => {
-            if (enableHover) {
-                if (hoveredStateId) {
-                    map.setFeatureState(
-                        { source: sourceKey, id: hoveredStateId },
-                        { hover: false },
-                    );
+            if (enableHover && this.stateHoveredId) {
+                clearHoverState(map, sourceKey, sourceLayer, this.stateHoveredId);
+                this.stateHoveredId = undefined;
+                if (onHoverChange) {
+                    onHoverChange(undefined);
                 }
-                hoveredStateId = undefined;
             }
 
-            if (enableHover || tooltipRenderer) {
+            if (enableSelection || enableHover || tooltipRenderer) {
                 // Change it back to a pointer when it leaves.
                 // eslint-disable-next-line no-param-reassign
                 map.getCanvas().style.cursor = '';
@@ -285,6 +400,16 @@ export default class MapLayer extends React.PureComponent {
             console.info('Adding layer event handler', layerKey);
             map.on(eventType, layerKey, listener);
         });
+
+        if (enableHover && isDefined(hoveredId)) {
+            changeHoverState(map, sourceKey, sourceLayer, this.stateHoveredId, hoveredId);
+            this.stateHoveredId = hoveredId;
+        }
+
+        if (enableSelection && isDefined(selectedIds) && selectedIds.length > 0) {
+            changeSelectionState(map, sourceKey, sourceLayer, this.stateSelectedIds, selectedIds);
+            this.stateSelectedIds = selectedIds;
+        }
     }
 
     render() {

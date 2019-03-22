@@ -14,6 +14,10 @@ const nullComponent = () => null;
 const UNSUPPORTED_BROWSER = !mapboxgl.supported();
 const DEFAULT_ZOOM_LEVEL = 3;
 const DEFAULT_CENTER = [84.1240, 28.3949];
+const DEFAULT_BOUNDS = [
+    80.05858661752784, 26.347836996368667,
+    88.20166918432409, 30.44702867091792,
+];
 const WAIT_FOR_RESIZE = 200;
 
 const {
@@ -51,7 +55,7 @@ const defaultProps = {
     className: '',
     children: undefined,
 
-    bounds: undefined,
+    bounds: DEFAULT_BOUNDS,
     boundsPadding: 64,
     fitBoundsDuration: 1000,
 
