@@ -20,7 +20,9 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setDestroyer: PropTypes.func,
     // eslint-disable-next-line react/forbid-prop-types
-    geoJson: PropTypes.object.isRequired,
+    geoJson: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    url: PropTypes.string,
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
     boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
@@ -39,6 +41,8 @@ const defaultProps = {
     bounds: undefined,
     boundsPadding: 64,
     images: undefined,
+    geoJson: undefined,
+    url: undefined,
 };
 
 
@@ -148,16 +152,24 @@ export default class MapSource extends React.PureComponent {
             map,
             sourceKey,
             geoJson,
+            url,
             onSourceAdded,
             bounds,
             boundsPadding,
         } = props;
 
         console.info('Adding source', this.props.sourceKey);
-        map.addSource(sourceKey, {
-            type: 'geojson',
-            data: geoJson,
-        });
+        if (geoJson) {
+            map.addSource(sourceKey, {
+                type: 'geojson',
+                data: geoJson,
+            });
+        } else if (url) {
+            map.addSource(sourceKey, {
+                type: 'vector',
+                url,
+            });
+        }
 
         if (bounds) {
             map.fitBounds(bounds, { padding: boundsPadding });
