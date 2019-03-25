@@ -61,6 +61,11 @@ export const createActionSyncMiddleware = (actionPrefixes, tabId) => () => next 
         return next(action);
     }
 
-    localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
+    try {
+        localStorage.setItem(SYNC_KEY, JSON.stringify(timestampedAction));
+    } catch (e) {
+        // NOTE: error occurs if size of timestampedAction is very large
+        console.error(e);
+    }
     return next(action);
 };

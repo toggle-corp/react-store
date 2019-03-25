@@ -300,6 +300,7 @@ class SelectInput extends React.PureComponent {
             searchValue,
         } = this.state;
 
+        // NOTE: finalSearchValue shouldn't be undefined
         const finalSearchValue = searchValue === undefined
             ? this.findDefaultSearchValue(options, labelSelector, keySelector, value)
             : searchValue;
