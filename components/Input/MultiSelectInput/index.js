@@ -320,6 +320,8 @@ export class NormalMultiSelectInput extends React.PureComponent {
             placeholder
         );
 
+        const finalSearchValue = searchValue || '';
+
         const filteredOptions = this.filterOptions(
             options,
             labelSelector,
@@ -395,7 +397,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                         onFocus={this.handleInputFocus}
                         onClick={this.handleShowOptionsPopup}
                         onChange={this.handleInputChange}
-                        value={searchValue}
+                        value={finalSearchValue}
                         autoFocus={autoFocus}
                         title={inputTitle}
                         placeholder={finalPlaceholder}
