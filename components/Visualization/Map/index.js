@@ -40,6 +40,7 @@ const propTypes = {
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
     ]),
+    logoPosition: PropTypes.string,
     navControlPosition: PropTypes.string,
     geoControlPosition: PropTypes.string,
     scaleControlPosition: PropTypes.string,
@@ -64,6 +65,7 @@ const defaultProps = {
     boundsPadding: 64,
     fitBoundsDuration: 1000,
 
+    logoPosition: 'bottom-right',
     navControlPosition: 'bottom-right',
     geoControlPosition: 'bottom-right',
     scaleControlPosition: 'bottom-right',
@@ -122,6 +124,8 @@ export default class Map extends React.PureComponent {
             scaleOptions,
             scaleControlPosition,
             showScaleControl,
+
+            logoPosition,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -135,7 +139,7 @@ export default class Map extends React.PureComponent {
             minZoom,
             maxZoom,
 
-            logoPosition: 'bottom-left',
+            logoPosition,
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
