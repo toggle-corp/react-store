@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
 .horizontal-bar-chart {
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .svg {
         .bars {

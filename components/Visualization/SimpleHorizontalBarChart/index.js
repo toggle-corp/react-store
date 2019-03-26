@@ -173,11 +173,15 @@ class SimpleHorizontalBarChart extends PureComponent {
         const minBarHeightToRenderText = 16;
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                width={containerWidth}
+                height={containerHeight}
+            >
                 <svg
                     className={svgClassName}
-                    width={containerWidth}
-                    height={containerHeight}
+                    width={width}
+                    height={height}
                 >
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (

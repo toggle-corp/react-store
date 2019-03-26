@@ -103,8 +103,8 @@ export default class MapSource extends React.PureComponent {
                 .getSource(this.source)
                 .setData(newGeoJson);
         }
+
         if ((oldBounds !== newBounds && newBounds) || oldPadding !== newPadding) {
-            console.warn('Bounds change');
             newMap.fitBounds(newBounds, { padding: newPadding });
         }
     }
