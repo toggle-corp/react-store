@@ -133,16 +133,18 @@ class SparkLine extends React.PureComponent {
         root.append('path')
             .attr('d', line(data));
 
-        root.append('g').selectAll('circle')
-            .data(data)
-            .enter()
-            .append('circle')
-            .attr('cx', (d, index) => this.scaleX(index))
-            .attr('cy', d => this.scaleY(d.value))
-            .attr('r', circleRadius)
-            .on('mouseenter', d => this.onMouseOver(d.label))
-            .on('mousemove', this.onMouseMove)
-            .on('mouseleave', this.onMouseOut);
+        if (circleRadius > 0) {
+            root.append('g').selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', (d, index) => this.scaleX(index))
+                .attr('cy', d => this.scaleY(d.value))
+                .attr('r', circleRadius)
+                .on('mouseenter', d => this.onMouseOver(d.label))
+                .on('mousemove', this.onMouseMove)
+                .on('mouseleave', this.onMouseOut);
+        }
     }
 
     render() {
