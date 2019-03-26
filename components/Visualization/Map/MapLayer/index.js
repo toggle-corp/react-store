@@ -234,7 +234,7 @@ export default class MapLayer extends React.PureComponent {
 
     destroyHandlers = (map, layerKey) => {
         forEach(this.eventHandlers, (type, listener) => {
-            console.info('Removing layer event handler', layerKey);
+            // console.info('Removing layer event handler', layerKey);
             map.off(type, layerKey, listener);
         });
         this.eventHandlers = {};
@@ -249,12 +249,12 @@ export default class MapLayer extends React.PureComponent {
         this.destroyHandlers(map, layerKey);
 
         if (this.layer) {
-            console.info('Removing layer', layerKey);
+            // console.info('Removing layer', layerKey);
             map.removeLayer(this.layer);
             this.layer = undefined;
         }
         if (this.popup) {
-            console.info('Removing popup layer', layerKey);
+            // console.info('Removing popup layer', layerKey);
             this.popup.remove();
             this.popup = undefined;
         }
@@ -298,7 +298,7 @@ export default class MapLayer extends React.PureComponent {
         if (sourceLayer) {
             layerInfo['source-layer'] = sourceLayer;
         }
-        console.info('Adding layer', layerKey);
+        // console.info('Adding layer', layerKey);
         map.addLayer(layerInfo);
 
         this.layer = layerKey;
@@ -403,7 +403,7 @@ export default class MapLayer extends React.PureComponent {
         };
 
         forEach(this.eventHandlers, (eventType, listener) => {
-            console.info('Adding layer event handler', layerKey);
+            // console.info('Adding layer event handler', layerKey);
             map.on(eventType, layerKey, listener);
         });
 

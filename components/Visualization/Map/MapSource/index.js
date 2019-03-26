@@ -129,7 +129,7 @@ export default class MapSource extends React.PureComponent {
 
     destroyLayers = () => {
         Object.keys(this.layerDestroyers).forEach((key) => {
-            console.info('EXTERNAL layer removal', key);
+            // console.info('EXTERNAL layer removal', key);
             this.layerDestroyers[key]();
         });
         // this.layerDestroyers = {};
@@ -148,7 +148,7 @@ export default class MapSource extends React.PureComponent {
         this.destroyLayers();
 
         if (this.source) {
-            console.info('Removing source', this.props.sourceKey);
+            // console.info('Removing source', this.props.sourceKey);
             map.removeSource(this.source);
             this.source = undefined;
         }
@@ -168,7 +168,7 @@ export default class MapSource extends React.PureComponent {
             boundsPadding,
         } = props;
 
-        console.info('Adding source', this.props.sourceKey);
+        // console.info('Adding source', this.props.sourceKey);
         if (geoJson) {
             map.addSource(sourceKey, {
                 type: 'geojson',

@@ -170,7 +170,7 @@ export default class Map extends React.PureComponent {
             'style.load',
             (event) => {
                 const mapStyle = event.style.stylesheet.sprite;
-                console.info('Style has changed to', mapStyle);
+                // console.info('Style has changed to', mapStyle);
                 this.setState({ mapStyle });
             },
         );
@@ -202,7 +202,7 @@ export default class Map extends React.PureComponent {
         } = nextProps;
 
         if (oldMapStyle !== newMapStyle && newMapStyle && map) {
-            console.info('New style from props', newMapStyle);
+            // console.info('New style from props', newMapStyle);
             this.destroySources();
             map.setStyle(newMapStyle);
             return;
@@ -233,9 +233,9 @@ export default class Map extends React.PureComponent {
     }
 
     destroySources = () => {
-        console.info('EXTERNAL map removal');
+        // console.info('EXTERNAL map removal');
         forEach(this.sourceDestroyers, (key, sourceDestroyer) => {
-            console.info('EXTERNAL source removal', key);
+            // console.info('EXTERNAL source removal', key);
             sourceDestroyer();
         });
         // this.sourceDestroyers = {};
