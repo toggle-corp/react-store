@@ -48,6 +48,11 @@ const propTypes = {
     selectedIds: PropTypes.array,
     // eslint-disable-next-line react/no-unused-prop-types
     onSelectionChange: PropTypes.func,
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    minzoom: PropTypes.number,
+    // eslint-disable-next-line react/no-unused-prop-types
+    maxzoom: PropTypes.number,
 };
 
 const defaultProps = {
@@ -62,6 +67,8 @@ const defaultProps = {
     onSelectionChange: undefined,
     enableSelection: undefined,
     selectedIds: emptyList,
+    minzoom: undefined,
+    maxzoom: undefined,
 };
 
 
@@ -279,6 +286,8 @@ export default class MapLayer extends React.PureComponent {
             selectedIds,
             onHoverChange,
             onSelectionChange,
+            minzoom,
+            maxzoom,
         } = props;
 
         const layerInfo = {
@@ -297,6 +306,12 @@ export default class MapLayer extends React.PureComponent {
         }
         if (sourceLayer) {
             layerInfo['source-layer'] = sourceLayer;
+        }
+        if (isDefined(minzoom)) {
+            layerInfo.minzoom = minzoom;
+        }
+        if (isDefined(maxzoom)) {
+            layerInfo.maxzoom = maxzoom;
         }
         // console.info('Adding layer', layerKey);
         map.addLayer(layerInfo);
