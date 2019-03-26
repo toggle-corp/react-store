@@ -41,7 +41,12 @@ const propTypes = {
         PropTypes.arrayOf(PropTypes.node),
     ]),
     navControlPosition: PropTypes.string,
-    hideNavControl: PropTypes.bool,
+    geoControlPosition: PropTypes.string,
+    scaleControlPosition: PropTypes.string,
+    geoOnStartup: PropTypes.bool,
+    showNavControl: PropTypes.bool,
+    showGeolocationControl: PropTypes.bool,
+    showScaleControl: PropTypes.bool,
     mapStyle: PropTypes.string,
     zoom: PropTypes.number.isRequired,
     center: PropTypes.arrayOf(PropTypes.number),
@@ -59,8 +64,13 @@ const defaultProps = {
     boundsPadding: 64,
     fitBoundsDuration: 1000,
 
-    navControlPosition: 'top-left',
-    hideNavControl: false,
+    navControlPosition: 'bottom-right',
+    geoControlPosition: 'bottom-right',
+    scaleControlPosition: 'bottom-right',
+    showNavControl: false,
+    showGeolocationControl: false,
+    showScaleControl: false,
+    geoOnStartup: false,
 
     mapStyle: DEFAULT_STYLE,
     zoom: DEFAULT_ZOOM_LEVEL,
@@ -94,13 +104,24 @@ export default class Map extends React.PureComponent {
         }
 
         const {
-            navControlPosition,
-            hideNavControl,
             mapStyle: mapStyleFromProps,
             zoom,
             center,
             minZoom,
             maxZoom,
+
+            navOptions,
+            navControlPosition,
+            showNavControl,
+
+            geoOnStartup,
+            geoOptions,
+            geoControlPosition,
+            showGeolocationControl,
+
+            scaleOptions,
+            scaleControlPosition,
+            showScaleControl,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -114,20 +135,36 @@ export default class Map extends React.PureComponent {
             minZoom,
             maxZoom,
 
-            logoPosition: 'bottom-right',
+            logoPosition: 'bottom-left',
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
 
-        if (!hideNavControl) {
-            // NOTE: do we need to remove control on unmount?
+        if (showScaleControl) {
+            const scale = new mapboxgl.ScaleControl(scaleOptions);
+            map.addControl(scale, scaleControlPosition);
+        }
+
+        if (showNavControl) {
+            // NOTE: don't we need to remove control on unmount?
+            const nav = new mapboxgl.NavigationControl(navOptions);
             map.addControl(
-                new mapboxgl.NavigationControl(),
+                nav,
                 navControlPosition,
             );
         }
 
-        map.on('load', () => this.handleLoad(map));
+        let geolocate;
+        if (showGeolocationControl) {
+            // NOTE: don't we need to remove control on unmount?
+            geolocate = new mapboxgl.GeolocateControl(geoOptions);
+            map.addControl(
+                geolocate,
+                geoControlPosition,
+            );
+        }
+
+        map.on('load', () => this.handleLoad(map, geoOnStartup, geolocate));
         map.on('zoom', () => this.handleZoomChange(map));
         map.on(
             'style.load',
@@ -204,7 +241,7 @@ export default class Map extends React.PureComponent {
         // this.sourceDestroyers = {};
     }
 
-    handleLoad = (map) => {
+    handleLoad = (map, geoOnStartup, geolocate) => {
         // Since the map is loaded asynchronously, make sure
         // we are still mounted before doing setState
         if (!this.mounted) {
@@ -224,6 +261,10 @@ export default class Map extends React.PureComponent {
             map,
             zoomLevel: zoom,
         });
+
+        if (geolocate && geoOnStartup) {
+            geolocate.trigger();
+        }
     }
 
     handleBoundChange = (map, bounds, padding, duration) => {

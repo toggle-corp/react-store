@@ -60,19 +60,29 @@ export default class MapSource extends React.PureComponent {
 
         this.layerDestroyers = {};
         this.source = undefined;
-
-        if (this.props.images) {
-            // FIXME: should check if component is unmounted before image is loaded
-            // FIXME: should cleanup after wards
-            this.props.images.forEach(({ name, icon }) => {
-                const img = new Image(10, 10);
-                img.onload = () => this.props.map.addImage(name, img);
-                img.src = icon;
-            });
-        }
     }
 
     componentDidMount() {
+        const {
+            images,
+        } = this.props;
+
+        if (images) {
+            // FIXME: namespace image with source
+            // FIXME: remove image on component unmount
+            images.forEach(({ name, icon }) => {
+                if (this.props.map.hasImage(name)) {
+                    return;
+                }
+
+                const img = new Image(10, 10);
+                img.onload = () => {
+                    this.props.map.addImage(name, img);
+                };
+                img.src = icon;
+            });
+        }
+
         this.create(this.props);
     }
 
