@@ -3,6 +3,13 @@
 .legend-item {
     display: flex;
     align-items: center;
+    justify-content: center;
+
+    .icon {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        font-size: $font-size-large;
+    }
 
     .color {
         flex-shrink: 0;

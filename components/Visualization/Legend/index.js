@@ -9,11 +9,13 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     itemClassName: PropTypes.string,
+    iconSelector: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     itemClassName: '',
+    iconSelector: () => undefined,
 };
 
 export default class Legend extends React.PureComponent {
@@ -22,12 +24,14 @@ export default class Legend extends React.PureComponent {
 
     legendItemRendererParams = (_, d) => {
         const {
+            iconSelector,
             labelSelector,
             colorSelector,
             itemClassName,
         } = this.props;
 
         return ({
+            icon: iconSelector(d),
             label: labelSelector(d),
             color: colorSelector(d),
             className: itemClassName,
