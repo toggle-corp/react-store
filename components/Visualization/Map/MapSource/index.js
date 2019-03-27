@@ -114,7 +114,7 @@ export default class MapSource extends React.PureComponent {
                 .setData(newGeoJson);
         }
 
-        if ((oldBounds !== newBounds && newBounds) || oldPadding !== newPadding) {
+        if (newBounds && (oldBounds !== newBounds || oldPadding !== newPadding)) {
             newMap.fitBounds(newBounds, { padding: newPadding });
         }
     }

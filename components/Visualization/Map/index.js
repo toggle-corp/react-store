@@ -40,10 +40,11 @@ const propTypes = {
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
     ]),
+    logoPosition: PropTypes.string,
     navControlPosition: PropTypes.string,
     geoControlPosition: PropTypes.string,
     scaleControlPosition: PropTypes.string,
-    geoOnStartup: PropTypes.bool,
+    locateOnStartup: PropTypes.bool,
     showNavControl: PropTypes.bool,
     showGeolocationControl: PropTypes.bool,
     showScaleControl: PropTypes.bool,
@@ -64,13 +65,14 @@ const defaultProps = {
     boundsPadding: 64,
     fitBoundsDuration: 1000,
 
+    logoPosition: 'bottom-right',
     navControlPosition: 'bottom-right',
     geoControlPosition: 'bottom-right',
     scaleControlPosition: 'bottom-right',
     showNavControl: false,
     showGeolocationControl: false,
     showScaleControl: false,
-    geoOnStartup: false,
+    locateOnStartup: false,
 
     mapStyle: DEFAULT_STYLE,
     zoom: DEFAULT_ZOOM_LEVEL,
@@ -114,14 +116,17 @@ export default class Map extends React.PureComponent {
             navControlPosition,
             showNavControl,
 
-            geoOnStartup,
+            locateOnStartup,
             geoOptions,
             geoControlPosition,
             showGeolocationControl,
+            onGeolocationChange,
 
             scaleOptions,
             scaleControlPosition,
             showScaleControl,
+
+            logoPosition,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -135,7 +140,7 @@ export default class Map extends React.PureComponent {
             minZoom,
             maxZoom,
 
-            logoPosition: 'bottom-left',
+            logoPosition,
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
@@ -162,9 +167,10 @@ export default class Map extends React.PureComponent {
                 geolocate,
                 geoControlPosition,
             );
+            geolocate.on('geolocate', onGeolocationChange);
         }
 
-        map.on('load', () => this.handleLoad(map, geoOnStartup, geolocate));
+        map.on('load', () => this.handleLoad(map, locateOnStartup, geolocate));
         map.on('zoom', () => this.handleZoomChange(map));
         map.on(
             'style.load',
@@ -241,7 +247,7 @@ export default class Map extends React.PureComponent {
         // this.sourceDestroyers = {};
     }
 
-    handleLoad = (map, geoOnStartup, geolocate) => {
+    handleLoad = (map, locateOnStartup, geolocate) => {
         // Since the map is loaded asynchronously, make sure
         // we are still mounted before doing setState
         if (!this.mounted) {
@@ -262,7 +268,7 @@ export default class Map extends React.PureComponent {
             zoomLevel: zoom,
         });
 
-        if (geolocate && geoOnStartup) {
+        if (geolocate && locateOnStartup) {
             geolocate.trigger();
         }
     }
