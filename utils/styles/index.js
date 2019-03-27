@@ -24,6 +24,7 @@ export const initializeStyles = ({
     setStyleProperties(colors);
     setStyleProperties(dimens);
 
+    // NOTE: have to look into this
     Object.assign(currentStyle, colors);
     Object.assign(currentStyle, dimens);
 };
