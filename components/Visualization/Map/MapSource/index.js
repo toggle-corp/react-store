@@ -26,7 +26,6 @@ const propTypes = {
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
     boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
-
     // eslint-disable-next-line react/forbid-prop-types
     images: PropTypes.array,
 };

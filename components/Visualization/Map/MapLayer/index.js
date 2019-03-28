@@ -35,6 +35,9 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onClick: PropTypes.func,
 
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    mapState: PropTypes.array,
+
     // eslint-disable-next-line react/no-unused-prop-types
     enableHover: PropTypes.bool,
     // eslint-disable-next-line react/no-unused-prop-types
@@ -69,24 +72,27 @@ const defaultProps = {
     selectedIds: emptyList,
     minzoom: undefined,
     maxzoom: undefined,
+    mapState: undefined,
 };
 
-
-const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredId) => {
-    if (oldHoveredId) {
-        map.setFeatureState(
-            { source: sourceKey, id: oldHoveredId, sourceLayer },
-            { hover: false },
-        );
+/*
+const clearHoverAndSelectionStates = (map, sourceKey, sourceLayer, hoveredId, selectedIds) => {
+    if (isDefined(selectedIds)) {
+        selectedIds.forEach((selectedId) => {
+            map.removeFeatureState(
+                { source: sourceKey, id: selectedId, sourceLayer },
+                'selected',
+            );
+        });
     }
-
-    if (newHoveredId) {
-        map.setFeatureState(
-            { source: sourceKey, id: newHoveredId, sourceLayer },
-            { hover: true },
+    if (isDefined(hoveredId)) {
+        map.removeFeatureState(
+            { source: sourceKey, id: hoveredId, sourceLayer },
+            'hover',
         );
     }
 };
+*/
 
 const changeSelectionState = (map, sourceKey, sourceLayer, oldSelectedIds, newSelectedIds) => {
     const oldSelectionIdSet = new Set(oldSelectedIds);
@@ -96,9 +102,9 @@ const changeSelectionState = (map, sourceKey, sourceLayer, oldSelectedIds, newSe
     const toAdd = difference(newSelectionIdSet, oldSelectionIdSet);
 
     toRemove.forEach((id) => {
-        map.setFeatureState(
+        map.removeFeatureState(
             { source: sourceKey, id, sourceLayer },
-            { selected: false },
+            'selected',
         );
     });
     toAdd.forEach((id) => {
@@ -111,9 +117,20 @@ const changeSelectionState = (map, sourceKey, sourceLayer, oldSelectedIds, newSe
 
 const clearHoverState = (map, sourceKey, sourceLayer, oldHoveredId) => {
     if (oldHoveredId) {
-        map.setFeatureState(
+        map.removeFeatureState(
             { source: sourceKey, id: oldHoveredId, sourceLayer },
-            { hover: false },
+            'hover',
+        );
+    }
+};
+
+const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredId) => {
+    clearHoverState(map, sourceKey, sourceLayer, oldHoveredId);
+
+    if (newHoveredId) {
+        map.setFeatureState(
+            { source: sourceKey, id: newHoveredId, sourceLayer },
+            { hover: true },
         );
     }
 };
@@ -150,6 +167,7 @@ export default class MapLayer extends React.PureComponent {
             hoveredId: oldHoveredId,
             selectedIds: oldSelectedIds,
             sourceLayer: oldSourceLayer,
+            mapState: oldMapState,
         } = this.props;
         const {
             map: newMap,
@@ -161,12 +179,16 @@ export default class MapLayer extends React.PureComponent {
             selectedIds: newSelectedIds,
             sourceKey,
             sourceLayer: newSourceLayer,
+            mapState: newMapState,
         } = nextProps;
 
         if (oldMap !== newMap || oldMapStyle !== newMapStyle || oldSourceLayer !== newSourceLayer) {
             this.destroy();
             this.create(nextProps);
             return;
+        }
+        if (oldMapState !== newMapState) {
+            this.setMapState(nextProps);
         }
         if (this.layer && oldLayout !== newLayout) {
             this.reloadLayout(nextProps);
@@ -203,6 +225,24 @@ export default class MapLayer extends React.PureComponent {
         }
 
         this.destroy();
+    }
+
+    setMapState = (props) => {
+        const {
+            map,
+            sourceKey,
+            sourceLayer,
+            mapState,
+        } = props;
+        if (!mapState) {
+            return;
+        }
+        mapState.forEach((item) => {
+            map.setFeatureState(
+                { source: sourceKey, id: item.id, sourceLayer },
+                item.value,
+            );
+        });
     }
 
     reloadLayout = (props) => {
@@ -248,10 +288,19 @@ export default class MapLayer extends React.PureComponent {
     }
 
     destroy = () => {
-        const { map, layerKey } = this.props;
+        const {
+            map,
+            sourceKey,
+            layerKey,
+            hoveredId,
+            selectedIds,
+            sourceLayer,
+        } = this.props;
         if (!map) {
             return;
         }
+
+        // clearHoverAndSelectionStates(map, sourceKey, sourceLayer, hoveredId, selectedIds);
 
         this.destroyHandlers(map, layerKey);
 
@@ -431,6 +480,8 @@ export default class MapLayer extends React.PureComponent {
             changeSelectionState(map, sourceKey, sourceLayer, this.stateSelectedIds, selectedIds);
             this.stateSelectedIds = selectedIds;
         }
+
+        this.setMapState(props);
     }
 
     render() {
