@@ -18,6 +18,11 @@ $color: #008080;
         circle {
             fill: $color;
             stroke: $color;
+            opacity: 0;
+
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 }
