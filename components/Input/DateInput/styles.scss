@@ -33,7 +33,7 @@ $width-date-input: 112px;
             @include transition-medium;
             position: absolute;
             right: 0;
-            bottom: -$font-size-small - $spacing-medium - $spacing-extra-small * 2;
+            bottom: calc(-var(--font-size-small) - var(--spacing-medium) - var(--spacing-extra-small) * 2);
             opacity: 0;
             z-index: 1111;
             border: $width-separator-thin solid $color-separator;
