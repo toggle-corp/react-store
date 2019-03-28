@@ -18,6 +18,11 @@
         circle {
             fill: var(--sparkline-color);
             stroke: var(--sparkline-color);
+            opacity: 0;
+
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 }
