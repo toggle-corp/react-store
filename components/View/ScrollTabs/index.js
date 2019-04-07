@@ -136,7 +136,7 @@ export default class ScrollTabs extends React.Component {
             e.preventDefault();
         }
 
-        onClick(key);
+        onClick(key, e);
     }
 
     handleLeftButtonClick = () => {

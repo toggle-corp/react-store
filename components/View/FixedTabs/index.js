@@ -108,7 +108,7 @@ export default class FixedTabs extends React.Component {
             e.preventDefault();
         }
 
-        onClick(key);
+        onClick(key, e);
     }
 
     renderTab = (_, data, index) => {
