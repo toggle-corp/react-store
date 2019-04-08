@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { listToMap, isFalsy } from '@togglecorp/fujs';
+import { listToMap, isFalsy, _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import DangerButton from '../../Action/Button/DangerButton';
@@ -361,7 +361,7 @@ class TabularSelectInput extends React.PureComponent {
                     showHintAndError={false}
                     {...otherProps}
                 />
-                <div className={styles.tableContainer}>
+                <div className={_cs(styles.tableContainer, 'table-container')}>
                     <Table
                         data={selectedOptions}
                         headers={tableHeadersWithRemove}
