@@ -10,7 +10,10 @@ import {
 import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    addSeparator,
+} from '@togglecorp/fujs';
 
 import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
@@ -54,26 +57,34 @@ const defaultProps = {
     colorScheme: schemeSet3,
 };
 
+const MIN_BAR_HEIGHT = 16;
+
 class SimpleHorizontalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector) => (
-        data.map((d) => {
-            const label = labelSelector(d);
-            const value = valueSelector(d);
+    getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector, maxValue) => {
+        const bandwidth = scaleY.bandwidth();
+        const step = scaleY.step();
 
-            return {
-                x: 0,
-                y: scaleY(label),
-                height: scaleY.bandwidth(),
-                yOffset: scaleY.step(),
-                width: scaleX(value),
-                label,
-                value,
-            };
-        })
-    ))
+        return (
+            data.map((d, i) => {
+                const label = labelSelector(d);
+                const value = valueSelector(d);
+
+                return {
+                    x: 0,
+                    y: scaleY(label),
+                    height: bandwidth,
+                    yOffset: step,
+                    width: scaleX(value),
+                    label,
+                    value,
+                    percent: parseFloat(value / maxValue).toFixed(2),
+                };
+            })
+        );
+    })
 
     getMaxValue = memoize((data, valueSelector) => max(data, valueSelector))
 
@@ -101,12 +112,23 @@ class SimpleHorizontalBarChart extends PureComponent {
         return scaleX;
     })
 
-    getScaleY = memoize((data, height, labelSelector, bandPadding) => (
-        scaleBand()
+    getScaleY = memoize((data, height, labelSelector, bandPadding) => {
+        const scale = scaleBand()
             .range([height, 0])
             .domain(data.map(labelSelector))
-            .padding(bandPadding)
-    ))
+            .padding(bandPadding);
+
+        const stepOffset = MIN_BAR_HEIGHT - scale.bandwidth();
+        if (stepOffset > 0) {
+            const newHeight = (scale.paddingOuter() * 2)
+                + ((scale.step() + stepOffset) * data.length);
+            scale.range([newHeight, 0]);
+
+            this.svgHeight = newHeight;
+        }
+
+        return scale;
+    })
 
     getScaleColor = memoize(colorScheme => scaleOrdinal().range(colorScheme))
 
@@ -145,17 +167,21 @@ class SimpleHorizontalBarChart extends PureComponent {
 
         const width = containerWidth - left - right;
         const height = containerHeight - top - bottom;
+        this.svgHeight = height;
 
         const maxValue = this.getMaxValue(data, valueSelector);
         const scaleX = this.getScaleX(scaleType, width, maxValue, exponent);
         const scaleY = this.getScaleY(data, height, labelSelector, bandPadding);
-        const scaleColor = this.getScaleColor(colorScheme);
+
+        // const scaleColor = this.getScaleColor(colorScheme);
+
         const renderData = this.getRenderData(
             data,
             scaleX,
             scaleY,
             labelSelector,
             valueSelector,
+            maxValue,
         );
 
         const className = _cs(
@@ -170,20 +196,24 @@ class SimpleHorizontalBarChart extends PureComponent {
         );
 
         const horizontalTextOffset = 6;
-        const minBarHeightToRenderText = 16;
+        // const minBarHeightToRenderText = 16;
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                width={containerWidth}
+                height={containerHeight}
+            >
                 <svg
                     className={svgClassName}
-                    width={containerWidth}
-                    height={containerHeight}
+                    width={width}
+                    height={this.svgHeight}
                 >
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
                             <React.Fragment key={d.y}>
                                 <Tooltip
-                                    tooltip={`${d.label}: ${d.value}`}
+                                    tooltip={`${d.label}: ${addSeparator(d.value, ',')} (${d.percent}%)`}
                                 >
                                     <rect // eslint-disable-line
                                         className={_cs(styles.bar, 'bar')}
@@ -193,7 +223,16 @@ class SimpleHorizontalBarChart extends PureComponent {
                                         height={d.height}
                                     />
                                 </Tooltip>
-                                { d.height > minBarHeightToRenderText && (
+                                <text
+                                    className={_cs(styles.label, 'label')}
+                                    x={d.x}
+                                    y={d.y}
+                                    dy={(d.height / 2) + 4}
+                                    dx={horizontalTextOffset}
+                                >
+                                    { d.label }: {addSeparator(d.value, ',')}
+                                </text>
+                                {/* d.height > minBarHeightToRenderText && (
                                     <text
                                         className={_cs(styles.label, 'label')}
                                         x={d.x}
@@ -203,7 +242,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     >
                                         { d.label }
                                     </text>
-                                )}
+                                ) */}
                             </React.Fragment>
                         ))}
                     </g>
@@ -212,7 +251,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                         x1={0}
                         y1={0}
                         x2={0}
-                        y2={height}
+                        y2={this.svgHeight}
                     />
                 </svg>
             </div>

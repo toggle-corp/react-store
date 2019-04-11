@@ -1,7 +1,7 @@
 @import '../../../stylesheets/base';
 
 .horizontal-bar-chart {
-    overflow: hidden;
+    overflow: auto; 
 
     .svg {
         .bars {
@@ -13,6 +13,11 @@
                     opacity: .3;
                 }
             }
+        }
+
+        .label {
+            color: $color-text-label;
+            font-size: $font-size-small;
         }
 
         .x-axis {
