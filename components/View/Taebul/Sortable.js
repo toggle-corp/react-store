@@ -29,7 +29,7 @@ export default (WrappedComponent) => {
         static defaultProps = defaultProps;
 
         sortData = memoize((data, columns = [], sortOrder) => {
-            if (!sortOrder) {
+            if (!sortOrder || !sortOrder.key || !sortOrder.order) {
                 return data;
             }
 
