@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 
 import Message from '../Message';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 
 const DefaultEmptyComponent = () => {
@@ -63,7 +64,7 @@ const defaultProps = {
 
 const MAX_IDLE_TIMEOUT = 200;
 
-export default class VirtualizedListView extends React.Component {
+class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -83,6 +84,15 @@ export default class VirtualizedListView extends React.Component {
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
         this.setItemHeight();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { boundingClientRect } = this.props;
+        const { boundingClientRect: newBoundingClientRect } = nextProps;
+
+        if (boundingClientRect !== newBoundingClientRect) {
+            this.updateItemsPerPage(newBoundingClientRect);
+        }
     }
 
     componentDidUpdate() {
@@ -129,6 +139,20 @@ export default class VirtualizedListView extends React.Component {
                 itemHeight,
             });
         }
+    }
+
+    updateItemsPerPage = (containerBCR) => {
+        const { height } = containerBCR;
+        const { itemHeight } = this.state;
+
+        if (!itemHeight) {
+            return;
+        }
+
+        const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+        this.setState({
+            itemsPerPage,
+        });
     }
 
     handleScroll = (e) => {
@@ -222,8 +246,8 @@ export default class VirtualizedListView extends React.Component {
         }
 
         const items = [];
-        const bufferSpace = 0;
-        // const bufferSpace = itemsPerPage;
+        // const bufferSpace = 0;
+        const bufferSpace = itemsPerPage;
 
         const startIndex = Math.max(offset - bufferSpace, 0);
         const endIndex = Math.min(offset + itemsPerPage + bufferSpace, data.length);
@@ -298,3 +322,5 @@ export default class VirtualizedListView extends React.Component {
         );
     }
 }
+
+export default Responsive(VirtualizedListView);
