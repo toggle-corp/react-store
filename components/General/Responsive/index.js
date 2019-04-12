@@ -54,7 +54,7 @@ const removeResizeHandler = (element) => {
 const _cs = (...args) => args.join(' '); // eslint-disable-line no-underscore-dangle
 
 export default (WrappedComponent) => {
-    class ResponsiveElement extends React.PureComponent {
+    class ResponsiveElement extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
