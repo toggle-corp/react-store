@@ -155,6 +155,10 @@ export default class MapLayer extends React.PureComponent {
     componentDidMount() {
         this.tooltipContainer = document.createElement('div');
         this.create(this.props);
+
+        if (this.props.onAnimationKeyframe) {
+            this.animationKey = requestAnimationFrame(this.animate);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -223,6 +227,8 @@ export default class MapLayer extends React.PureComponent {
         if (this.tooltipContainer) {
             this.tooltipContainer.remove();
         }
+
+        cancelAnimationFrame(this.animationKey);
 
         this.destroy();
     }
@@ -482,6 +488,24 @@ export default class MapLayer extends React.PureComponent {
         }
 
         this.setMapState(props);
+    }
+
+    animate = (timestamp) => {
+        // TODO: handle componentWillRecieveProps
+        const {
+            onAnimationKeyframe,
+            map,
+            layerKey,
+        } = this.props;
+
+        const values = onAnimationKeyframe(timestamp);
+        if (values) {
+            forEach(values, (key, pai) => {
+                map.setPaintProperty(layerKey, key, pai);
+            });
+        }
+
+        this.animationKey = requestAnimationFrame(this.animate);
     }
 
     render() {
