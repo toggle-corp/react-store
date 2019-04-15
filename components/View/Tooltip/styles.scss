@@ -1,9 +1,11 @@
 @import '../../../stylesheets/base';
 
 $border-radius-tooltip: 4px;
+$tooltip-max-width: 480px;
 
 .container {
     background-color: $color-foreground;
+    max-width: $tooltip-max-width;
     animation: slide-in $duration-fast ease forwards;
     pointer-events: none;
 
