@@ -14,12 +14,14 @@ const propTypes = {
     ]),
     children: PropTypes.node.isRequired,
     delay: PropTypes.number.isRequired,
+    center: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     tooltip: '',
     delay: 200,
+    center: false,
 };
 
 const noOp = () => {};
@@ -42,10 +44,12 @@ export default class Tooltip extends React.PureComponent {
         }
 
         const contentRect = container.getBoundingClientRect();
+
         const windowRect = {
             width: window.innerWidth,
             height: window.innerHeight,
         };
+
         let topCalc = this.parentBCR.top - 12 - contentRect.height;
         let leftCalc = this.parentBCR.left - (contentRect.width / 2);
 
@@ -70,10 +74,24 @@ export default class Tooltip extends React.PureComponent {
     }
 
     handleHover = (e) => {
-        const { delay } = this.props;
+        const {
+            delay,
+            center,
+        } = this.props;
         clearTimeout(this.timeout);
+
+        if (center) {
+            const hoverBox = e.target.getBoundingClientRect();
+
+            this.parentBCR = {
+                left: hoverBox.left + (hoverBox.width / 2),
+                top: hoverBox.top,
+            };
+        } else {
+            this.parentBCR = { left: e.clientX, top: e.clientY };
+        }
+
         this.hoverIn = true;
-        this.parentBCR = { left: e.clientX, top: e.clientY };
         this.timeout = setTimeout(() => {
             if (this.hoverIn) {
                 this.setState({ showTooltip: true });

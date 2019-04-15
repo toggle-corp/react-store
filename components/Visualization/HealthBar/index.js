@@ -16,6 +16,7 @@ const propTypes = {
     keySelector: PropTypes.func,
     valueSelector: PropTypes.func,
     enlargeOnHover: PropTypes.bool,
+    centerTooltip: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -23,6 +24,7 @@ const defaultProps = {
     enlargeOnHover: true,
     title: undefined,
     hideLabel: false,
+    centerTooltip: false,
     labelSelector: e => e.label,
     keySelector: e => e.key,
     valueSelector: e => e.value,
@@ -50,6 +52,7 @@ export default class HealthBar extends PureComponent {
             colorScheme,
             hideLabel,
             enlargeOnHover,
+            centerTooltip,
         } = this.props;
 
         const value = valueSelector(segment) || 0;
@@ -60,6 +63,7 @@ export default class HealthBar extends PureComponent {
             value,
             hideLabel,
             enlargeOnHover,
+            centerTooltip,
             label: labelSelector && labelSelector(segment),
             segment,
             style: {
