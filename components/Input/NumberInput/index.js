@@ -125,7 +125,7 @@ const getNumberAndSign = (value = '') => {
     return { number: sanitizeNumber(stringValue) };
 };
 
-class NumberInput extends React.PureComponent {
+export class NormalNumberInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -277,4 +277,4 @@ class NumberInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(Delay(NumberInput));
+export default FaramInputElement(Delay(NormalNumberInput));
