@@ -26,7 +26,7 @@ const propTypes = {
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
     boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
-    // eslint-disable-next-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     images: PropTypes.array,
 };
 
@@ -62,26 +62,6 @@ export default class MapSource extends React.PureComponent {
     }
 
     componentDidMount() {
-        const {
-            images,
-        } = this.props;
-
-        if (images) {
-            // FIXME: namespace image with source
-            // FIXME: remove image on component unmount
-            images.forEach(({ name, icon }) => {
-                if (this.props.map.hasImage(name)) {
-                    return;
-                }
-
-                const img = new Image(10, 10);
-                img.onload = () => {
-                    this.props.map.addImage(name, img);
-                };
-                img.src = icon;
-            });
-        }
-
         this.create(this.props);
     }
 
@@ -165,7 +145,24 @@ export default class MapSource extends React.PureComponent {
             onSourceAdded,
             bounds,
             boundsPadding,
+            images,
         } = props;
+
+        if (images) {
+            // FIXME: namespace image with source
+            // FIXME: remove image on component unmount
+            images.forEach(({ name, icon }) => {
+                if (map.hasImage(name)) {
+                    return;
+                }
+
+                const img = new Image(10, 10);
+                img.onload = () => {
+                    map.addImage(name, img);
+                };
+                img.src = icon;
+            });
+        }
 
         // console.info('Adding source', this.props.sourceKey);
         if (geoJson) {
