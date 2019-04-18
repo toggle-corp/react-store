@@ -155,10 +155,6 @@ export default class MapLayer extends React.PureComponent {
     componentDidMount() {
         this.tooltipContainer = document.createElement('div');
         this.create(this.props);
-
-        if (this.props.onAnimationKeyframe) {
-            this.animationKey = requestAnimationFrame(this.animate);
-        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -343,7 +339,12 @@ export default class MapLayer extends React.PureComponent {
             onSelectionChange,
             minzoom,
             maxzoom,
+            onAnimationKeyframe,
         } = props;
+
+        if (this.animationKey) {
+            cancelAnimationFrame(this.animationKey);
+        }
 
         const layerInfo = {
             id: layerKey,
@@ -488,6 +489,10 @@ export default class MapLayer extends React.PureComponent {
         }
 
         this.setMapState(props);
+
+        if (onAnimationKeyframe) {
+            this.animationKey = requestAnimationFrame(this.animate);
+        }
     }
 
     animate = (timestamp) => {
