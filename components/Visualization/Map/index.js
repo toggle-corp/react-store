@@ -18,6 +18,11 @@ const DEFAULT_BOUNDS = [
     80.05858661752784, 26.347836996368667,
     88.20166918432409, 30.44702867091792,
 ];
+const PADDING = 3;
+const DEFAULT_MAX_BOUNDS = [
+    [80.05858661752784 - PADDING, 26.347836996368667 - PADDING],
+    [88.20166918432409 + PADDING, 30.44702867091792 + PADDING],
+];
 const WAIT_FOR_RESIZE = 200;
 
 const {
@@ -53,6 +58,8 @@ const propTypes = {
     center: PropTypes.arrayOf(PropTypes.number),
     minZoom: PropTypes.number,
     maxZoom: PropTypes.number,
+
+    maxBounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
 };
 
 const defaultProps = {
@@ -79,6 +86,8 @@ const defaultProps = {
     center: DEFAULT_CENTER,
     minZoom: undefined,
     maxZoom: undefined,
+
+    maxBounds: DEFAULT_MAX_BOUNDS,
 };
 
 export default class Map extends React.PureComponent {
@@ -111,6 +120,7 @@ export default class Map extends React.PureComponent {
             center,
             minZoom,
             maxZoom,
+            maxBounds,
 
             navOptions,
             navControlPosition,
@@ -139,6 +149,7 @@ export default class Map extends React.PureComponent {
             center,
             minZoom,
             maxZoom,
+            maxBounds,
 
             logoPosition,
             doubleClickZoom: false,
