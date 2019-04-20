@@ -151,14 +151,14 @@ export default class MapSource extends React.PureComponent {
         if (images) {
             // FIXME: namespace image with source
             // FIXME: remove image on component unmount
-            images.forEach(({ name, icon }) => {
+            images.forEach(({ name, icon, ...otherProps }) => {
                 if (map.hasImage(name)) {
                     return;
                 }
 
                 const img = new Image(10, 10);
                 img.onload = () => {
-                    map.addImage(name, img);
+                    map.addImage(name, img, otherProps);
                 };
                 img.src = icon;
             });
