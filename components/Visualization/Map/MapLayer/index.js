@@ -390,7 +390,9 @@ export default class MapLayer extends React.PureComponent {
         this.eventHandlers.mousemove = (e) => {
             const { features } = e;
             if (features.length > 0 && enableHover) {
-                const [{ id }] = features;
+                // Get first feature (it looks to be the top-most)
+                const { id } = features[0];
+
                 if (id !== this.stateHoveredId) {
                     changeHoverState(map, sourceKey, sourceLayer, this.stateHoveredId, id);
                     this.stateHoveredId = id;
@@ -406,8 +408,11 @@ export default class MapLayer extends React.PureComponent {
         this.eventHandlers.click = (e) => {
             const {
                 lngLat: coordinates,
-                features: [{ id, properties }],
+                features,
             } = e;
+
+            // Get first feature (it looks to be the top-most)
+            const { id, properties } = features[0];
 
             if (tooltipRenderer) {
                 const Tooltip = tooltipRenderer;

@@ -1,14 +1,14 @@
 @import '~base-scss/base';
 
 .spinner {
+    display: inline-block;
+    border: 2px solid;
+    border-radius: 100%;
+    border-color: $color-primary;
+    border-bottom-color: transparent;
     background: transparent !important;
     width: $width-icon-medium;
     height: $width-icon-medium;
-    border-radius: 100%;
-    border: 2px solid;
-    border-color: $color-primary;
-    border-bottom-color: transparent;
-    display: inline-block;
     animation: clip 0.75s 0s infinite linear;
     animation-fill-mode: both;
 }
