@@ -29,6 +29,7 @@ const propTypes = {
 
     inverted: PropTypes.bool,
     showBeforeTabs: PropTypes.bool,
+    onHashChange: PropTypes.func,
 };
 
 const defaultProps = {
@@ -49,6 +50,7 @@ const defaultProps = {
 
     inverted: false,
     showBeforeTabs: false,
+    onHashChange: undefined,
 };
 
 
@@ -122,6 +124,12 @@ export default class ScrollTabs extends React.Component {
 
     handleHashChange = (hash) => {
         this.setState({ hash });
+
+        const { onHashChange } = this.props;
+
+        if (onHashChange) {
+            onHashChange(hash);
+        }
     }
 
     handleTabClick = (key, e) => {
