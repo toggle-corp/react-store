@@ -199,8 +199,8 @@ export default class VirtualizedListView extends React.Component {
         }
 
         const items = [];
-        // const bufferSpace = 0;
-        const bufferSpace = itemsPerPage;
+        const bufferSpace = 0;
+        // const bufferSpace = itemsPerPage;
 
         const startIndex = Math.max(offset - bufferSpace, 0);
         const endIndex = Math.min(offset + itemsPerPage + bufferSpace, data.length);
