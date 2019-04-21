@@ -63,6 +63,7 @@ export default class Row extends React.PureComponent {
             endIndex,
             startVirtualContainerWidth,
             endVirtualContainerWidth,
+            itemHeight,
         } = this.props;
 
         const className = `
@@ -71,7 +72,12 @@ export default class Row extends React.PureComponent {
         `;
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                style={{
+                    height: `${itemHeight}px`,
+                }}
+            >
                 <div className={styles.row}>
                     <VirtualizedList
                         data={columns}

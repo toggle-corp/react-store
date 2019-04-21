@@ -19,7 +19,7 @@
         flex-grow: 1;
         padding: 0;
         overflow: auto;
-        overflow-y: scroll;
+        font-size: 0;
 
         .row {
             border-bottom: var(--width-separator-thin) solid var(--color-separator);

@@ -16,7 +16,6 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     rowClassName: PropTypes.string,
-    headClassName: PropTypes.string,
 
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -27,7 +26,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     rowClassName: '',
-    headClassName: '',
     data: [],
     columns: [],
     settings: {},
@@ -49,7 +47,7 @@ const getVirtualizedRenderParams = (
         const newStartX = startX + itemWidths[columns[i].key];
         startIndex = i;
 
-        if (scrollOffset < newStartX) {
+        if (scrollOffset <= newStartX) {
             break;
         }
 
@@ -273,6 +271,7 @@ export default class Taebul extends React.PureComponent {
                 defaultColumnWidth,
             },
             headClassName: headClassNameFromProps,
+            rowHeight,
         } = this.props;
 
         const className = `${styles.taebul} ${classNameFromProps}`;
@@ -293,7 +292,7 @@ export default class Taebul extends React.PureComponent {
             >
                 <ListView
                     id={this.localHeadId}
-                    className={headClassName}
+                    className={styles.head}
                     data={columns}
                     keySelector={Taebul.columnKeySelector}
                     renderer={Header}
@@ -308,6 +307,7 @@ export default class Taebul extends React.PureComponent {
                     rendererParams={this.rowRendererParams}
                     rendererClassName={rowClassName}
                     minWidth={minWidth}
+                    itemHeight={rowHeight}
                 />
             </div>
         );
