@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 
 import Message from '../Message';
+import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 
 const DefaultEmptyComponent = () => {
@@ -44,6 +45,8 @@ const propTypes = {
 
     rendererParams: PropTypes.func,
     emptyComponent: PropTypes.func,
+
+    minWidth: PropTypes.number,
 };
 
 const defaultProps = {
@@ -56,11 +59,12 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
     emptyComponent: DefaultEmptyComponent,
+    minWidth: undefined,
 };
 
 const MAX_IDLE_TIMEOUT = 200;
 
-export default class VirtualizedListView extends React.Component {
+class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -70,7 +74,7 @@ export default class VirtualizedListView extends React.Component {
         this.state = {
             itemsPerPage: undefined,
             offset: 0,
-            itemHeight: undefined,
+            itemHeight: props.itemHeight,
         };
 
         this.container = React.createRef();
@@ -80,6 +84,26 @@ export default class VirtualizedListView extends React.Component {
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
         this.setItemHeight();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            itemHeight,
+            boundingClientRect,
+        } = this.props;
+
+        const {
+            boundingClientRect: newBoundingClientRect,
+            itemHeight: newItemHeight,
+        } = nextProps;
+
+        if (boundingClientRect !== newBoundingClientRect) {
+            this.updateItemsPerPage(newBoundingClientRect);
+        }
+
+        if (itemHeight !== newItemHeight) {
+            this.setState({ itemHeight: newItemHeight });
+        }
     }
 
     componentDidUpdate() {
@@ -92,48 +116,82 @@ export default class VirtualizedListView extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        clearTimeout(this.containerHeightTimeout);
     }
 
     setItemHeight = () => {
+        clearTimeout(this.containerHeightTimeout);
+
         const { current: container } = this.container;
         const { current: item } = this.item;
         const { itemHeight: itemHeightFromState } = this.state;
 
-        if (item) {
-            const itemBCR = item.getBoundingClientRect();
-            const itemHeight = itemBCR.height;
-
-            if (itemHeightFromState !== itemHeight) {
-                const containerBCR = container.getBoundingClientRect();
-                const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
-
-                // eslint-disable-next-line react/no-did-mount-set-state
-                this.setState({
-                    itemsPerPage,
-                    itemHeight,
-                });
-            }
+        if (!item) {
+            return;
         }
+
+        const itemBCR = item.getBoundingClientRect();
+        const itemHeight = itemBCR.height;
+
+        if (itemHeightFromState === itemHeight) {
+            return;
+        }
+
+        const containerBCR = container.getBoundingClientRect();
+
+        if (itemHeight === 0 && containerBCR.height === 0) {
+            // NOTE: this is a hack
+            this.containerHeightTimeout = setTimeout(this.setItemHeight, 500);
+        } else {
+            const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+            // eslint-disable-next-line react/no-did-mount-set-state
+            this.setState({
+                itemsPerPage,
+                itemHeight,
+            });
+        }
+    }
+
+    updateItemsPerPage = (containerBCR) => {
+        const { height } = containerBCR;
+        const { itemHeight } = this.state;
+
+        if (!itemHeight) {
+            return;
+        }
+
+        const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+        this.setState({
+            itemsPerPage,
+        });
     }
 
     handleScroll = (e) => {
         const { itemHeight } = this.state;
 
-        if (itemHeight) {
-            const { current: container } = this.container;
-            const { offset } = this.state;
-
-            if (e.target === container) {
-                const newOffset = Math.floor(container.scrollTop / itemHeight);
-                if (newOffset !== offset) {
-                    window.cancelIdleCallback(this.idleCallback);
-
-                    this.idleCallback = window.requestIdleCallback(() => {
-                        this.setState({ offset: newOffset });
-                    }, { timeout: MAX_IDLE_TIMEOUT });
-                }
-            }
+        if (!itemHeight) {
+            return;
         }
+        const { current: container } = this.container;
+        const { offset } = this.state;
+
+        if (e.target !== container) {
+            return;
+        }
+
+        const newOffset = Math.floor(container.scrollTop / itemHeight);
+        if (newOffset === offset) {
+            return;
+        }
+
+        window.cancelIdleCallback(this.idleCallback);
+
+        this.idleCallback = window.requestIdleCallback(
+            () => {
+                this.setState({ offset: newOffset });
+            },
+            { timeout: MAX_IDLE_TIMEOUT },
+        );
     }
 
     renderItem = (datum, i) => {
@@ -145,6 +203,8 @@ export default class VirtualizedListView extends React.Component {
             rendererClassName: rendererClassNameFromProps,
             rendererParams,
         } = this.props;
+
+        const { itemHeight } = this.state;
 
         const keyFromSelector = keySelector && keySelector(datum, i);
         const key = keyFromSelector === undefined ? datum : keyFromSelector;
@@ -164,6 +224,7 @@ export default class VirtualizedListView extends React.Component {
                 <Renderer
                     className={rendererClassName}
                     key={key}
+                    itemHeight={itemHeight}
                     {...extraProps}
                 />
             );
@@ -199,8 +260,8 @@ export default class VirtualizedListView extends React.Component {
         }
 
         const items = [];
-        const bufferSpace = 0;
-        // const bufferSpace = itemsPerPage;
+        // const bufferSpace = 0;
+        const bufferSpace = itemsPerPage;
 
         const startIndex = Math.max(offset - bufferSpace, 0);
         const endIndex = Math.min(offset + itemsPerPage + bufferSpace, data.length);
@@ -240,6 +301,7 @@ export default class VirtualizedListView extends React.Component {
             emptyComponent: EmptyComponent,
             data,
             id,
+            minWidth,
         } = this.props;
 
         const className = `
@@ -253,12 +315,26 @@ export default class VirtualizedListView extends React.Component {
         return (
             <div
                 ref={this.container}
-                className={className}
                 id={id}
+                className={className}
             >
                 <Items />
-                { data.length === 0 && EmptyComponent && <EmptyComponent /> }
+                { data.length === 0 && (
+                    <React.Fragment>
+                        { EmptyComponent && <EmptyComponent /> }
+                        { minWidth && (
+                            <div
+                                style={{
+                                    width: minWidth,
+                                }}
+                                className={styles.emptyMinWidthContainer}
+                            />
+                        )}
+                    </React.Fragment>
+                )}
             </div>
         );
     }
 }
+
+export default Responsive(VirtualizedListView);
