@@ -23,6 +23,8 @@
     }
 
     &.resizing {
+        cursor: col-resize;
+
         .original-header-container {
             pointer-events: none;
         }

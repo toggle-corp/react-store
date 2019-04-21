@@ -24,7 +24,6 @@ class ResizableHeader extends React.PureComponent {
             _columnKey: columnKey, // eslint-disable-line no-unused-vars
             _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
             _headerRenderer: Header, // eslint-disable-line no-unused-vars
-            _isResizing,
             className: classNameFromProps,
             ...otherProps
         } = this.props;
@@ -32,7 +31,6 @@ class ResizableHeader extends React.PureComponent {
         const className = `
             ${classNameFromProps}
             ${styles.newHeader}
-            ${_isResizing ? styles.resizing : ''}
         `;
 
         return (
@@ -87,7 +85,7 @@ export default (WrappedComponent) => {
 
             window.cancelIdleCallback(this.idleCallback);
             this.idleCallback = window.requestIdleCallback(() => {
-                const dx = e.clientX - this.lastMouseX;
+                const dx = e.clientX - this.startMouseX;
                 this.lastMouseX = e.clientX;
 
                 const {
@@ -101,7 +99,8 @@ export default (WrappedComponent) => {
                         draftSettings.columnWidths = {};
                     }
 
-                    const value = draftSettings.columnWidths[this.resizingColumnKey];
+                    // const value = draftSettings.columnWidths[this.resizingColumnKey];
+                    const value = this.resizingColumnInitialWidth;
                     let newValue = isFalsy(value)
                         ? defaultColumnWidth + dx
                         : value + dx;
@@ -124,7 +123,15 @@ export default (WrappedComponent) => {
         }
 
         handleSeparatorMouseDown = (e, columnKey) => {
+            const {
+                settings: {
+                    columnWidths = {},
+                    defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
+                },
+            } = this.props;
+
             this.resizingColumnKey = columnKey;
+            this.resizingColumnInitialWidth = columnWidths[columnKey] || defaultColumnWidth;
             this.startMouseX = e.clientX;
             this.lastMouseX = e.clientX;
 
@@ -151,7 +158,6 @@ export default (WrappedComponent) => {
                     // eslint-disable-next-line no-param-reassign
                     draftColumns[index].headerRendererParams = (...params) => ({
                         ...headerRendererParams(...params),
-                        _isResizing: !!this.resizingColumnKey,
                         _columnKey: columnKey,
                         _headerRenderer: headerRenderer,
                         _onSeparatorMouseDown: this.handleSeparatorMouseDown,

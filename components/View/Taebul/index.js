@@ -17,7 +17,6 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     rowClassName: PropTypes.string,
-    headClassName: PropTypes.string,
 
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -28,7 +27,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     rowClassName: '',
-    headClassName: '',
     data: [],
     columns: [],
     settings: {},
@@ -50,7 +48,7 @@ const getVirtualizedRenderParams = (
         const newStartX = startX + itemWidths[columns[i].key];
         startIndex = i;
 
-        if (scrollOffset < newStartX) {
+        if (scrollOffset <= newStartX) {
             break;
         }
 
@@ -115,15 +113,29 @@ export default class Taebul extends React.PureComponent {
     }
 
     getTotalWidth = memoize((columns, columnWidths, defaultColumnWidth) => {
+        /*
+        // This optimization algorithm failed because
+        // columnWidths contained a value with undefined key
+
         const definedColumnWidthList = Object.values(columnWidths).filter(isDefined);
         const definedColumnWidthSum = sum(definedColumnWidthList);
 
         const defaultColumnWidthSum = (columns.length - definedColumnWidthList.length)
-            * defaultColumnWidth;
+         * defaultColumnWidth;
 
         return defaultColumnWidthSum + definedColumnWidthSum;
-    })
+        */
 
+        let totalWidth = 0;
+
+        columns.forEach((c) => {
+            totalWidth += isDefined(columnWidths[c.key])
+                ? columnWidths[c.key]
+                : defaultColumnWidth;
+        });
+
+        return totalWidth;
+    })
 
     getItemWidths = memoize((
         columns,
@@ -141,13 +153,11 @@ export default class Taebul extends React.PureComponent {
     })
 
     calculateRowVirtualizationParams = ({
-        data,
         columns,
         settings: {
             columnWidths = emptyObject,
             defaultColumnWidth,
         },
-        keySelector,
     }, scrollLeft) => {
         const rowWidth = this.getTotalWidth(
             columns,
@@ -257,12 +267,20 @@ export default class Taebul extends React.PureComponent {
             keySelector,
             className: classNameFromProps,
             rowClassName: rowClassNameFromProps,
-            headClassName: headClassNameFromProps,
+            settings: {
+                columnWidths = emptyObject,
+                defaultColumnWidth,
+            },
+            rowHeight,
         } = this.props;
 
         const className = `${styles.taebul} ${classNameFromProps}`;
         const rowClassName = `${styles.row} ${rowClassNameFromProps}`;
-        const headClassName = `${styles.head} ${headClassNameFromProps}`;
+        const minWidth = this.getTotalWidth(
+            columns,
+            columnWidths,
+            defaultColumnWidth,
+        );
 
         return (
             <div
@@ -271,7 +289,7 @@ export default class Taebul extends React.PureComponent {
             >
                 <ListView
                     id={this.localHeadId}
-                    className={headClassName}
+                    className={styles.head}
                     data={columns}
                     keySelector={Taebul.columnKeySelector}
                     renderer={Header}
@@ -285,6 +303,8 @@ export default class Taebul extends React.PureComponent {
                     renderer={Row}
                     rendererParams={this.rowRendererParams}
                     rendererClassName={rowClassName}
+                    minWidth={minWidth}
+                    itemHeight={rowHeight}
                 />
             </div>
         );

@@ -6,6 +6,8 @@
 
     .row {
         display: flex;
+        height: 100%;
+        font-size: $font-size-medium;
 
         .start-virtual-container {
             flex-shrink: 0;
