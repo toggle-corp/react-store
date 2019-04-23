@@ -1,7 +1,7 @@
 @import '../../../stylesheets/base';
 
 .floating-container {
-    @include shadow-medium;
+    @include shadow-small;
     position: absolute;
     top: 0;
     left: 0;

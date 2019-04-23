@@ -4,22 +4,25 @@ $border-radius-tooltip: 4px;
 $tooltip-max-width: 480px;
 
 .container {
+    @include shadow-small;
     background-color: $color-foreground;
     max-width: $tooltip-max-width;
     animation: slide-in $duration-fast ease forwards;
     pointer-events: none;
 
-    // &:after {
-    //     position: absolute;
-    //     bottom: -6px;
-    //     left: calc(50% - 6px);
-    //     border-top: 6px solid $color-foreground;
-    //     border-right: 6px solid transparent;
-    //     border-left: 6px solid transparent;
-    //     width: 0;
-    //     height: 0;
-    //     content: '';
-    // }
+    &.center {
+        &:after {
+            position: absolute;
+            bottom: -6px;
+            left: calc(50% - 6px);
+            border-top: 6px solid $color-foreground;
+            border-right: 6px solid transparent;
+            border-left: 6px solid transparent;
+            width: 0;
+            height: 0;
+            content: '';
+        }
+    }
 
     &.text-tooltip {
         border-radius: $border-radius-tooltip;

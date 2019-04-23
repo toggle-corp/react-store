@@ -26,6 +26,8 @@ const defaultProps = {
 
 const noOp = () => {};
 
+const TOOLTIP_WINDOW_PADDING = 4;
+
 export default class Tooltip extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -59,9 +61,9 @@ export default class Tooltip extends React.PureComponent {
             topCalc = this.parentBCR.bottom + 12;
         }
         if (leftCalc < 0) {
-            leftCalc = 0;
+            leftCalc = TOOLTIP_WINDOW_PADDING;
         } else if (leftBoundMax > windowRect.width) {
-            leftCalc = windowRect.width - contentRect.width;
+            leftCalc = windowRect.width - contentRect.width - TOOLTIP_WINDOW_PADDING;
         }
 
         const optionsContainerPosition = {
@@ -110,6 +112,7 @@ export default class Tooltip extends React.PureComponent {
             tooltip,
             children: child,
             className,
+            center,
         } = this.props;
 
         const { showTooltip } = this.state;
@@ -129,6 +132,7 @@ export default class Tooltip extends React.PureComponent {
                     <FloatingContainer
                         className={_cs(
                             styles.container,
+                            center && styles.center,
                             !isTooltipNode && styles.textTooltip,
                             className,
                         )}
