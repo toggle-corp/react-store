@@ -15,6 +15,7 @@ const propTypes = {
     labelSelector: PropTypes.func.isRequired,
     colorSelector: PropTypes.func.isRequired,
     valueSelector: PropTypes.func,
+    symbolClassNameSelector: PropTypes.func,
     data: PropTypes.array, // eslint-disable-next-line react/forbid-prop-types
 };
 
@@ -23,6 +24,7 @@ const defaultProps = {
     itemClassName: '',
     iconSelector: () => undefined,
     valueSelector: undefined,
+    symbolClassNameSelector: undefined,
     data: [],
 };
 
@@ -36,6 +38,7 @@ export default class Legend extends React.PureComponent {
             labelSelector,
             colorSelector,
             itemClassName,
+            symbolClassNameSelector,
         } = this.props;
 
         return ({
@@ -43,6 +46,8 @@ export default class Legend extends React.PureComponent {
             label: labelSelector(d),
             color: colorSelector(d),
             className: itemClassName,
+            symbolClassName: symbolClassNameSelector ?
+                symbolClassNameSelector(d) : '',
         });
     }
 
