@@ -1,0 +1,17 @@
+@import '../../../../stylesheets/base';
+
+$height-options-max: 240px;
+
+.options {
+    @include background-color($color-foreground);
+    padding: $spacing-small 0;
+    max-height: $height-options-max;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .empty {
+        padding: $spacing-small-alt $spacing-small;
+        text-align: center;
+        color: get-text-color($color-foreground, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
+    }
+}
