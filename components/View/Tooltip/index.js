@@ -14,15 +14,19 @@ const propTypes = {
     ]),
     children: PropTypes.node.isRequired,
     delay: PropTypes.number.isRequired,
+    center: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     tooltip: '',
     delay: 200,
+    center: false,
 };
 
 const noOp = () => {};
+
+const TOOLTIP_WINDOW_PADDING = 4;
 
 export default class Tooltip extends React.PureComponent {
     static propTypes = propTypes;
@@ -42,10 +46,12 @@ export default class Tooltip extends React.PureComponent {
         }
 
         const contentRect = container.getBoundingClientRect();
+
         const windowRect = {
             width: window.innerWidth,
             height: window.innerHeight,
         };
+
         let topCalc = this.parentBCR.top - 12 - contentRect.height;
         let leftCalc = this.parentBCR.left - (contentRect.width / 2);
 
@@ -55,9 +61,9 @@ export default class Tooltip extends React.PureComponent {
             topCalc = this.parentBCR.bottom + 12;
         }
         if (leftCalc < 0) {
-            leftCalc = 0;
+            leftCalc = TOOLTIP_WINDOW_PADDING;
         } else if (leftBoundMax > windowRect.width) {
-            leftCalc = windowRect.width - contentRect.width;
+            leftCalc = windowRect.width - contentRect.width - TOOLTIP_WINDOW_PADDING;
         }
 
         const optionsContainerPosition = {
@@ -70,10 +76,24 @@ export default class Tooltip extends React.PureComponent {
     }
 
     handleHover = (e) => {
-        const { delay } = this.props;
+        const {
+            delay,
+            center,
+        } = this.props;
         clearTimeout(this.timeout);
+
+        if (center) {
+            const hoverBox = e.target.getBoundingClientRect();
+
+            this.parentBCR = {
+                left: hoverBox.left + (hoverBox.width / 2),
+                top: hoverBox.top,
+            };
+        } else {
+            this.parentBCR = { left: e.clientX, top: e.clientY };
+        }
+
         this.hoverIn = true;
-        this.parentBCR = { left: e.clientX, top: e.clientY };
         this.timeout = setTimeout(() => {
             if (this.hoverIn) {
                 this.setState({ showTooltip: true });
@@ -92,6 +112,7 @@ export default class Tooltip extends React.PureComponent {
             tooltip,
             children: child,
             className,
+            center,
         } = this.props;
 
         const { showTooltip } = this.state;
@@ -111,6 +132,7 @@ export default class Tooltip extends React.PureComponent {
                     <FloatingContainer
                         className={_cs(
                             styles.container,
+                            center && styles.center,
                             !isTooltipNode && styles.textTooltip,
                             className,
                         )}

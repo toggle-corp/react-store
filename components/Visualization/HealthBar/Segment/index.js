@@ -9,6 +9,7 @@ import Numeral from '../../../View/Numeral';
 import styles from './styles.scss';
 
 const propTypes = {
+    centerTooltip: PropTypes.bool,
     value: PropTypes.number.isRequired,
     hideLabel: PropTypes.bool.isRequired,
     label: PropTypes.string,
@@ -18,6 +19,7 @@ const propTypes = {
 
 const defaultProps = {
     label: '',
+    centerTooltip: false,
 };
 
 export default class Segment extends PureComponent {
@@ -29,6 +31,7 @@ export default class Segment extends PureComponent {
             value,
             label,
             style,
+            centerTooltip,
             hideLabel,
             enlargeOnHover,
         } = this.props;
@@ -59,7 +62,10 @@ export default class Segment extends PureComponent {
         );
 
         return (
-            <Tooltip tooltip={tooltip} >
+            <Tooltip
+                tooltip={tooltip}
+                center={centerTooltip}
+            >
                 <div
                     className={classNames}
                     style={style}
