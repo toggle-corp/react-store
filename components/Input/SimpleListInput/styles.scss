@@ -1,0 +1,21 @@
+@import '../../../stylesheets/base';
+
+.list-input {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .label {
+        flex-shrink: 0;
+        margin-bottom: $spacing-small;
+    }
+
+    .list {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    .hint-and-error {
+        flex-shrink: 0;
+    }
+}
