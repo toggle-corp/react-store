@@ -85,7 +85,7 @@ const defaultProps = {
     maxDisplayOptions: 100,
 };
 
-class SelectInput extends React.PureComponent {
+class SearchSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -116,6 +116,7 @@ class SelectInput extends React.PureComponent {
         options,
         labelSelector,
         value,
+        maxDisplayOptions,
     ) => {
         if (!value || value.length === 0) {
             return [];
@@ -129,7 +130,7 @@ class SelectInput extends React.PureComponent {
             )
             .sort((a, b) => (
                 rate(value, labelSelector(a)) - rate(value, labelSelector(b))
-            ));
+            )).slice(0, maxDisplayOptions);
 
         return newOptions;
     });
@@ -321,6 +322,7 @@ class SelectInput extends React.PureComponent {
             // NOTE: Using value instead of finalSearchValue
             // this will display all options at first
             searchValue,
+            maxDisplayOptions,
         );
 
         const className = _cs(
@@ -427,11 +429,10 @@ class SelectInput extends React.PureComponent {
                     data={filteredOptions}
                     onOptionFocus={this.handleFocusChange}
                     focusedKey={focusedKey}
-                    maxDisplayOptions={maxDisplayOptions}
                 />
             </div>
         );
     }
 }
 
-export default FaramInputElement(SelectInput);
+export default FaramInputElement(SearchSelectInput);

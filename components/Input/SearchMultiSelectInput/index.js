@@ -86,7 +86,7 @@ export const defaultProps = {
     maxDisplayOptions: 100,
 };
 
-export class NormalMultiSelectInput extends React.PureComponent {
+class SearchMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -135,6 +135,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
         options,
         labelSelector,
         value,
+        maxDisplayOptions,
     ) => {
         if (!value || value.length === 0) {
             return [];
@@ -148,7 +149,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
             )
             .sort((a, b) => (
                 rate(value, labelSelector(a)) - rate(value, labelSelector(b))
-            ));
+            )).slice(0, maxDisplayOptions);
         return newOptions;
     })
 
@@ -332,7 +333,8 @@ export class NormalMultiSelectInput extends React.PureComponent {
             options,
             labelSelector,
             searchValue,
-        ).slice(0, maxDisplayOptions);
+            maxDisplayOptions,
+        );
 
         const className = _cs(
             classNameFromProps,
@@ -364,10 +366,6 @@ export class NormalMultiSelectInput extends React.PureComponent {
         const actionsClassName = `
             actions
             ${styles.actions}
-        `;
-        const dropdownButtonClassName = `
-            dropdown-button
-            ${styles.dropdownButton}
         `;
 
         const clearButtonClassName = `
@@ -471,4 +469,4 @@ export class NormalMultiSelectInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(NormalMultiSelectInput);
+export default FaramInputElement(SearchMultiSelectInput);

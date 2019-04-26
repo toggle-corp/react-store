@@ -110,7 +110,6 @@ export default class Options extends React.PureComponent {
             onBlur,
             onInvalidate,
             parentContainer,
-            maxDisplayOptions,
         } = this.props;
 
         if (!show) {
@@ -133,7 +132,7 @@ export default class Options extends React.PureComponent {
                 className={className}
             >
                 <List
-                    data={data.slice(0, maxDisplayOptions)}
+                    data={data}
                     modifier={this.renderOption}
                 />
                 <Empty />
