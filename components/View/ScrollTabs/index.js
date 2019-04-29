@@ -159,6 +159,7 @@ export default class ScrollTabs extends React.Component {
             renderer: Renderer,
             rendererClassName,
             rendererParams,
+            disabled,
         } = this.props;
 
         if (!tabs[data]) {
@@ -183,6 +184,7 @@ export default class ScrollTabs extends React.Component {
                         className={_cs(rendererClassName, className)}
                         isActive={isActive}
                         onClick={onClick}
+                        disabled={disabled}
                         {...extraProps}
                     />
                 );
@@ -196,6 +198,7 @@ export default class ScrollTabs extends React.Component {
                     onClick={onClick}
                     tabIndex="-1"
                     type="button"
+                    disabled={disabled}
                 >
                     {tabs[data]}
                 </button>
@@ -215,6 +218,7 @@ export default class ScrollTabs extends React.Component {
                     isActive
                     href={`#/${data}`}
                     onClick={onClick}
+                    disabled={disabled}
                     {...extraProps}
                 />
             );
@@ -224,7 +228,7 @@ export default class ScrollTabs extends React.Component {
         return (
             <a
                 key={data}
-                className={className}
+                className={_cs(className, disabled && styles.disabledLink)}
                 onClick={onClick}
                 href={`#/${data}`}
             >
