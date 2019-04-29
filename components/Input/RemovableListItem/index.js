@@ -10,12 +10,20 @@ const propTypes = {
     className: PropTypes.string,
     value: PropTypes.string,
     singleLine: PropTypes.bool,
+    onRemoveButtonClick: PropTypes.func,
+    itemKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: undefined,
     value: '',
+    disabled: false,
     singleLine: false,
+    onRemoveButtonClick: () => {},
 };
 
 export default class RemovableListItem extends React.PureComponent {

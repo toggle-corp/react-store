@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import {
     _cs,
     listToMap,
@@ -18,12 +19,15 @@ const propTypes = {
     disabled: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
-    label: PropTypes.string,
-    showLabel: PropTypes.bool,
-    showHintAndError: PropTypes.bool,
-    value: PropTypes.array,
+    itemClassName: PropTypes.string,
     keySelector: PropTypes.func,
+    label: PropTypes.string,
     labelSelector: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
+    options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    showHintAndError: PropTypes.bool,
+    showLabel: PropTypes.bool,
+    value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -31,12 +35,14 @@ const defaultProps = {
     disabled: false,
     error: '',
     hint: '',
-    label: '',
-    showLabel: true,
-    showHintAndError: true,
-    value: '',
+    itemClassName: undefined,
     keySelector: d => (d || {}).key,
+    label: '',
     labelSelector: d => (d || {}).label,
+    options: [],
+    showHintAndError: true,
+    showLabel: true,
+    value: '',
 };
 
 const itemKeySelector = d => d;
@@ -45,15 +51,15 @@ class DroppableListInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getOptionsMap = (options, keySelector) => (
+    getOptionsMap = memoize((options, keySelector) => (
         listToMap(
             options,
             keySelector,
             d => d,
         )
-    )
+    ))
 
-    getRendererParams = (key, data) => {
+    getRendererParams = (key) => {
         const {
             options,
             labelSelector,
@@ -93,9 +99,7 @@ class DroppableListInput extends React.PureComponent {
             label,
             showHintAndError,
             showLabel,
-            options,
             value,
-            keySelector,
         } = this.props;
 
         return (
