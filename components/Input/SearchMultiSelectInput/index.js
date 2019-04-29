@@ -29,6 +29,10 @@ import styles from './styles.scss';
 const RawKeyInput = handleKeyboard(RawInput);
 const emptyList = [];
 
+const typeToSearch = () => 'Type to search';
+const noMatchingResults = () => 'No matching results';
+const noOptionsAvailable = () => 'No options available';
+
 // NOTE: labelSelector must return string
 // NOTE: optionLabelSelector may return renderable node
 export const propTypes = {
@@ -168,7 +172,7 @@ class SearchMultiSelectInput extends React.PureComponent {
         }
 
         this.setState({
-            // showOptionsPopup: true,
+            showOptionsPopup: true,
             searchValue: undefined,
         });
     }
@@ -288,7 +292,7 @@ class SearchMultiSelectInput extends React.PureComponent {
             label,
             labelSelector,
             optionsClassName,
-            renderEmpty,
+            renderEmpty: renderEmptyFromProps,
             showHintAndError,
             showLabel,
             title,
@@ -312,6 +316,16 @@ class SearchMultiSelectInput extends React.PureComponent {
             searchValue,
         } = this.state;
 
+
+        let renderEmpty = renderEmptyFromProps;
+
+        if (!renderEmptyFromProps) {
+            renderEmpty = !searchValue ? typeToSearch : noMatchingResults;
+        }
+
+        if (!renderEmptyFromProps && options.length === 0) {
+            renderEmpty = noOptionsAvailable;
+        }
 
         const isFilled = value && value.length !== 0;
         const isAllFilled = value && value.length === options.length;
