@@ -119,6 +119,7 @@ class RotatingInput extends React.PureComponent {
                     className={styles.button}
                     onClick={this.handleButtonClick}
                     transparent
+                    disabled={disabled}
                 >
                     {currentRenderer}
                 </Button>

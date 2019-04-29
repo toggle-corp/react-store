@@ -61,6 +61,11 @@
             flex-grow: 1;
             justify-content: flex-end;
         }
+
+        .disabled-link {
+            pointer-events: none;
+            cursor: default;
+        }
     }
 
     &:not(.inverted) {
