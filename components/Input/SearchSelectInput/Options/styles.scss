@@ -1,0 +1,15 @@
+@import '../../../../stylesheets/base';
+
+.options {
+    @include background-color($color-foreground);
+    padding: $spacing-small 0;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .empty {
+        padding: $spacing-small-alt $spacing-small;
+        text-align: center;
+        color: get-text-color($color-foreground, $color-text-disabled-on-light, $color-text-disabled-on-dark);
+    }
+}

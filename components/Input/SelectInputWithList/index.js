@@ -4,6 +4,7 @@ import { isFalsy } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import MultiSelectInput from '../../Input/MultiSelectInput';
+import SearchMultiSelectInput from '../../Input/SearchMultiSelectInput';
 import DismissableListItem from '../../Action/DismissableListItem';
 import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
@@ -48,6 +49,7 @@ const propTypes = {
     topRightChild: PropTypes.func,
 
     emptyComponent: PropTypes.func,
+    maxDisplayOptions: PropTypes.number,
 };
 
 const defaultProps = {
@@ -66,6 +68,7 @@ const defaultProps = {
     disabled: false,
     readOnly: false,
     emptyComponent: undefined,
+    maxDisplayOptions: undefined,
 };
 
 const emptyList = [];
@@ -193,6 +196,7 @@ class SelectInputWithList extends React.PureComponent {
             listClassName,
             topRightChild: TopRightChild,
             hideRemoveFromListButton,
+            maxDisplayOptions,
 
             ...otherProps
         } = this.props;
@@ -224,18 +228,34 @@ class SelectInputWithList extends React.PureComponent {
         return (
             <div className={this.getClassName()}>
                 <div className={styles.headerContainer}>
-                    <MultiSelectInput
-                        className={selectClassNames.join(' ')}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        keySelector={keySelector}
-                        label={label}
-                        labelSelector={labelSelector}
-                        onChange={this.handleSelectInputChange}
-                        options={options}
-                        value={value}
-                        {...otherProps}
-                    />
+                    { maxDisplayOptions === undefined ? (
+                        <MultiSelectInput
+                            className={selectClassNames.join(' ')}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            keySelector={keySelector}
+                            label={label}
+                            labelSelector={labelSelector}
+                            onChange={this.handleSelectInputChange}
+                            options={options}
+                            value={value}
+                            {...otherProps}
+                        />
+                    ) : (
+                        <SearchMultiSelectInput
+                            className={selectClassNames.join(' ')}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            keySelector={keySelector}
+                            label={label}
+                            labelSelector={labelSelector}
+                            onChange={this.handleSelectInputChange}
+                            options={options}
+                            value={value}
+                            maxDisplayOptions={maxDisplayOptions}
+                            {...otherProps}
+                        />
+                    )}
                     {TopRightChild && <TopRightChild />}
                 </div>
                 <ListView

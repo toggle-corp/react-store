@@ -1,0 +1,88 @@
+@import '../../../stylesheets/base';
+
+$width-dropdown-button: 10px;
+$width-clear-button: 14px;
+
+.select-input {
+    .input-and-actions {
+        position: relative;
+        border-bottom: $width-separator-thin solid $color-separator;
+
+        .input {
+            width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
+        }
+
+        .actions {
+            display: flex;
+            position: absolute;
+            top: $spacing-extra-small;
+            right: 0;
+            align-items: center;
+            height: calc(100% - #{$spacing-extra-small * 2});
+
+            %button {
+                display: inline-block;
+                transition: $duration-transition-medium opacity ease-in-out;
+                padding: $spacing-extra-small-alt;
+            }
+
+            .clear-button {
+                @extend %button;
+                opacity: 0;
+            }
+
+            .dropdown-button {
+                @extend %button;
+            }
+        }
+    }
+
+    &.disabled {
+        .input-and-actions {
+            border-bottom-color: $color-separator;
+
+            .input {
+                color: $color-text-disabled;
+            }
+
+            .actions {
+                .dropdown-button {
+                    color: $color-text-disabled;
+                }
+            }
+        }
+    }
+
+    &:not(.disabled) {
+        &.show-options,
+        &.input-in-focus {
+            .input-and-actions {
+                border-bottom-color: $color-accent;
+            }
+        }
+
+        &.error {
+            .input-and-actions {
+                border-bottom-color: $color-danger;
+            }
+        }
+
+        &:not(.hide-clear-button) {
+            &.filled {
+                .input-and-actions {
+                    &:hover {
+                        .input {
+                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                        }
+
+                        .actions {
+                            .clear-button {
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
