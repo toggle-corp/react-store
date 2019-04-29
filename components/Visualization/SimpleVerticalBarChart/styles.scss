@@ -9,16 +9,45 @@
             .bar {
                 opacity: .2;
                 fill: var(--color-accent);
+                cursor: pointer;
 
                 &:hover {
-                    opacity: .3;
+                    opacity: .7;
                 }
             }
         }
 
         .y-axis {
+            .line {
+                stroke-width: var(--width-separator-medium);
+                stroke: var(--color-accent);
+            }
+
+            .ticks {
+                text-anchor: end;
+
+                .line {
+                    stroke-width: var(--width-separator-thin);
+                    stroke: var(--color-accent);
+                }
+                .text {
+                    fill: var(--color-text);
+                }
+            }
+        }
+
+        .x-axis {
             stroke-width: var(--width-separator-medium);
             stroke: var(--color-accent);
+        }
+
+        .grid {
+            .x-grid {
+                fill: none;
+                stroke-width: var(--width-separator-thin);
+                stroke: var(--color-separator);
+                stroke-dasharray: 5,5;
+            }
         }
     }
 }

@@ -6,9 +6,11 @@
             .bar {
                 fill: var(--color-accent);
                 opacity: .2;
+                cursor: pointer;
+                fill: $color-accent;
 
                 &:hover {
-                    opacity: .3;
+                    opacity: .7;
                 }
             }
         }
@@ -21,6 +23,37 @@
         .x-axis {
             stroke-width: var(--width-separator-medium);
             stroke: var(--color-accent);
+
+            .line {
+                stroke-width: $width-separator-medium;
+                stroke: $color-accent;
+            }
+
+            .ticks {
+                text-anchor: middle;
+
+                .line {
+                    stroke-width: $width-separator-thin;
+                    stroke: $color-accent;
+                }
+                .text {
+                    fill: $color-text;
+                }
+            }
+        }
+
+        .y-axis {
+            stroke-width: $width-separator-medium;
+            stroke: $color-separator-light;
+        }
+
+        .grid {
+            .y-grid {
+                fill: none;
+                stroke-width: $width-separator-thin;
+                stroke: $color-separator;
+                stroke-dasharray: 5, 5;
+            }
         }
     }
 }

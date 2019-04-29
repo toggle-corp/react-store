@@ -14,6 +14,7 @@ import {
     _cs,
     addSeparator,
 } from '@togglecorp/fujs';
+import { axisBottom } from 'd3-axis';
 
 import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
@@ -39,7 +40,11 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    tickFormat: PropTypes.func,
+    noOfTicks: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    showTicks: PropTypes.bool,
+    showGrids: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -48,6 +53,8 @@ const defaultProps = {
     className: '',
     scaleType: 'linear',
     exponent: 1,
+    noOfTicks: 5,
+    tickFormat: undefined,
     margins: {
         top: 16,
         right: 16,
@@ -55,6 +62,13 @@ const defaultProps = {
         left: 16,
     },
     colorScheme: schemeSet3,
+    showTicks: true,
+    showGrids: true,
+};
+
+const translateX = (scale, d, height) => {
+    const x = scale(d);
+    return `translate(${x}, ${height})`;
 };
 
 const MIN_BAR_HEIGHT = 16;
@@ -63,28 +77,31 @@ class SimpleHorizontalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector, maxValue) => {
-        const bandwidth = scaleY.bandwidth();
-        const step = scaleY.step();
+    getRenderData = memoize(
+        (data, scaleX, scaleY, labelSelector, valueSelector, maxValue, margins) => {
+            const { left } = margins;
+            const bandwidth = scaleY.bandwidth();
+            const step = scaleY.step();
 
-        return (
-            data.map((d, i) => {
-                const label = labelSelector(d);
-                const value = valueSelector(d);
+            return (
+                data.map((d, i) => {
+                    const label = labelSelector(d);
+                    const value = valueSelector(d);
 
-                return {
-                    x: 0,
-                    y: scaleY(label),
-                    height: bandwidth,
-                    yOffset: step,
-                    width: scaleX(value),
-                    label,
-                    value,
-                    percent: parseFloat(value / maxValue).toFixed(2),
-                };
-            })
-        );
-    })
+                    return {
+                        x: left,
+                        y: scaleY(label),
+                        height: bandwidth,
+                        yOffset: step,
+                        width: scaleX(value),
+                        label,
+                        value,
+                        percent: parseFloat(value / maxValue).toFixed(2),
+                    };
+                })
+            );
+        },
+    )
 
     getMaxValue = memoize((data, valueSelector) => max(data, valueSelector))
 
@@ -103,7 +120,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                 break;
             case 'linear':
             default:
-                scaleX = scaleLinear();
+                scaleX = scaleLinear().clamp(true);
         }
 
         scaleX.range([0, width]);
@@ -132,6 +149,15 @@ class SimpleHorizontalBarChart extends PureComponent {
 
     getScaleColor = memoize(colorScheme => scaleOrdinal().range(colorScheme))
 
+    getAxisBottomData = memoize((scaleX, height, margins, noOfTicks, tickFormat) => {
+        const { left = 0 } = margins;
+        return scaleX.ticks(noOfTicks).map(v => ({
+            value: tickFormat ? tickFormat(v) : v,
+            x: scaleX(v) + left,
+            y: height,
+        }));
+    })
+
     render() {
         const {
             className: classNameFromProps,
@@ -144,6 +170,10 @@ class SimpleHorizontalBarChart extends PureComponent {
             scaleType,
             bandPadding,
             colorScheme,
+            tickFormat,
+            noOfTicks,
+            showTicks,
+            showGrids,
         } = this.props;
 
         const {
@@ -182,6 +212,15 @@ class SimpleHorizontalBarChart extends PureComponent {
             labelSelector,
             valueSelector,
             maxValue,
+            margins,
+        );
+
+        const axisBottomData = this.getAxisBottomData(
+            scaleX,
+            height,
+            margins,
+            noOfTicks,
+            tickFormat,
         );
 
         const className = _cs(
@@ -189,7 +228,6 @@ class SimpleHorizontalBarChart extends PureComponent {
             styles.horizontalBarChart,
             classNameFromProps,
         );
-
         const svgClassName = _cs(
             'svg',
             styles.svg,
@@ -206,9 +244,25 @@ class SimpleHorizontalBarChart extends PureComponent {
             >
                 <svg
                     className={svgClassName}
-                    width={width}
-                    height={this.svgHeight}
+                    // width={width}
+                    // height={this.svgHeight}
+                    width={width + left + right}
+                    height={height + top + bottom}
                 >
+                    <g className={_cs(styles.grid, 'grid')}>
+                        { showGrids &&
+                            axisBottomData.map((d, i) => (
+                                <line
+                                    key={`grid-${d.x}`}
+                                    className={_cs(styles.yGrid, 'y-grid')}
+                                    x1={d.x}
+                                    y1={top}
+                                    x2={d.x}
+                                    y2={height}
+                                />
+                            ))
+                        }
+                    </g>
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
                             <React.Fragment key={d.y}>
@@ -232,17 +286,6 @@ class SimpleHorizontalBarChart extends PureComponent {
                                 >
                                     { d.label }: {addSeparator(d.value, ',')}
                                 </text>
-                                {/* d.height > minBarHeightToRenderText && (
-                                    <text
-                                        className={_cs(styles.label, 'label')}
-                                        x={d.x}
-                                        y={d.y}
-                                        dy={(d.height / 2) + 5}
-                                        dx={horizontalTextOffset}
-                                    >
-                                        { d.label }
-                                    </text>
-                                ) */}
                             </React.Fragment>
                         ))}
                     </g>
@@ -253,10 +296,50 @@ class SimpleHorizontalBarChart extends PureComponent {
                         x2={0}
                         y2={this.svgHeight}
                     />
+                    <g>
+                        <line
+                            className={_cs(styles.yAxis, 'y-axis')}
+                            x1={left}
+                            y1={top}
+                            x2={left}
+                            y2={height}
+                        />
+                        <g className={_cs(styles.xAxis, 'x-axis')}>
+                            <line
+                                className={_cs(styles.line, 'line')}
+                                x1={left}
+                                y1={height}
+                                x2={width + left}
+                                y2={height}
+                            />
+                            { showTicks &&
+                                axisBottomData.map((d, i) => (
+                                    <g
+                                        className={_cs(styles.ticks, 'ticks')}
+                                        key={`tick-${d.value}`}
+                                        transform={`translate(${d.x}, ${d.y})`}
+                                    >
+                                        <line
+                                            className={_cs(styles.line, 'line')}
+                                            y1={5}
+                                            y2={0}
+                                        />
+                                        <text
+                                            className={_cs(styles.label, 'label')}
+                                            y={6}
+                                            x={0.5}
+                                            dy="0.71em"
+                                        >
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                ))
+                            }
+                        </g>
+                    </g>
                 </svg>
             </div>
         );
     }
 }
-
 export default Responsive(SimpleHorizontalBarChart);
