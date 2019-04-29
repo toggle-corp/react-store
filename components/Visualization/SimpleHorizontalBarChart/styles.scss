@@ -18,8 +18,27 @@
         }
 
         .x-axis {
+            .line {
+                stroke-width: $width-separator-medium;
+                stroke: $color-accent;
+            }
+
+            .ticks {
+                text-anchor: middle;
+
+                .line {
+                    stroke-width: $width-separator-thin;
+                    stroke: $color-accent;
+                }
+                .text {
+                    fill: $color-text;
+                }
+            }
+        }
+        .y-axis {
             stroke-width: $width-separator-medium;
             stroke: $color-accent;
         }
+
     }
 }

@@ -10,6 +10,7 @@ import {
 import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
+import { axisBottom } from 'd3-axis';
 import { _cs } from '@togglecorp/fujs';
 
 import Tooltip from '../../View/Tooltip';
@@ -36,6 +37,8 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    tickFormat: PropTypes.func,
+    noOfTicks: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
@@ -45,6 +48,8 @@ const defaultProps = {
     className: '',
     scaleType: 'linear',
     exponent: 1,
+    noOfTicks: 5,
+    tickFormat: undefined,
     margins: {
         top: 16,
         right: 16,
@@ -54,17 +59,23 @@ const defaultProps = {
     colorScheme: schemeSet3,
 };
 
+const translateX = (scale, d, height) => {
+    const x = scale(d);
+    return `translate(${x}, ${height})`;
+};
+
 class SimpleHorizontalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector) => (
-        data.map((d) => {
+    getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector, margins) => {
+        const { left, top, bottom } = margins;
+        return data.map((d) => {
             const label = labelSelector(d);
             const value = valueSelector(d);
 
             return {
-                x: 0,
+                x: left,
                 y: scaleY(label),
                 height: scaleY.bandwidth(),
                 yOffset: scaleY.step(),
@@ -72,8 +83,8 @@ class SimpleHorizontalBarChart extends PureComponent {
                 label,
                 value,
             };
-        })
-    ))
+        });
+    });
 
     getMaxValue = memoize((data, valueSelector) => max(data, valueSelector))
 
@@ -92,7 +103,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                 break;
             case 'linear':
             default:
-                scaleX = scaleLinear();
+                scaleX = scaleLinear().clamp(true);
         }
 
         scaleX.range([0, width]);
@@ -110,6 +121,15 @@ class SimpleHorizontalBarChart extends PureComponent {
 
     getScaleColor = memoize(colorScheme => scaleOrdinal().range(colorScheme))
 
+    getAxisBottomData = memoize((scaleX, height, margins, noOfTicks, tickFormat) => {
+        const { left = 0 } = margins;
+        return scaleX.ticks(noOfTicks).map(v => ({
+            value: tickFormat ? tickFormat(v) : v,
+            x: scaleX(v) + left,
+            y: height,
+        }));
+    })
+
     render() {
         const {
             className: classNameFromProps,
@@ -122,6 +142,8 @@ class SimpleHorizontalBarChart extends PureComponent {
             scaleType,
             bandPadding,
             colorScheme,
+            tickFormat,
+            noOfTicks,
         } = this.props;
 
         const {
@@ -156,6 +178,14 @@ class SimpleHorizontalBarChart extends PureComponent {
             scaleY,
             labelSelector,
             valueSelector,
+            margins,
+        );
+        const axisBottomData = this.getAxisBottomData(
+            scaleX,
+            height,
+            margins,
+            noOfTicks,
+            tickFormat,
         );
 
         const className = _cs(
@@ -163,7 +193,6 @@ class SimpleHorizontalBarChart extends PureComponent {
             styles.horizontalBarChart,
             classNameFromProps,
         );
-
         const svgClassName = _cs(
             'svg',
             styles.svg,
@@ -180,8 +209,8 @@ class SimpleHorizontalBarChart extends PureComponent {
             >
                 <svg
                     className={svgClassName}
-                    width={width}
-                    height={height}
+                    width={width + left + right}
+                    height={height + top + bottom}
                 >
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
@@ -211,13 +240,47 @@ class SimpleHorizontalBarChart extends PureComponent {
                             </React.Fragment>
                         ))}
                     </g>
-                    <line
-                        className={_cs(styles.xAxis, 'x-axis')}
-                        x1={0}
-                        y1={0}
-                        x2={0}
-                        y2={height}
-                    />
+                    <g>
+                        <line
+                            className={_cs(styles.yAxis, 'y-axis')}
+                            x1={left}
+                            y1={top}
+                            x2={left}
+                            y2={height}
+                        />
+                        <g className={_cs(styles.xAxis, 'x-axis')}>
+                            <line
+                                className={_cs(styles.line, 'line')}
+                                x1={left}
+                                y1={height}
+                                x2={width + left}
+                                y2={height}
+                            />
+                            {
+                                axisBottomData.map((d, i) => (
+                                    <g
+                                        className={_cs(styles.ticks, 'ticks')}
+                                        key={`tick-${d.value}`}
+                                        transform={`translate(${d.x}, ${d.y})`}
+                                    >
+                                        <line
+                                            className={_cs(styles.line, 'line')}
+                                            y1={5}
+                                            y2={0}
+                                        />
+                                        <text
+                                            className={_cs(styles.label, 'label')}
+                                            y={6}
+                                            x={0.5}
+                                            dy="0.71em"
+                                        >
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                ))
+                            }
+                        </g>
+                    </g>
                 </svg>
             </div>
         );
