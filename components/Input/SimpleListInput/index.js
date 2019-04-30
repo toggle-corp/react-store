@@ -42,12 +42,12 @@ const defaultProps = {
     options: [],
     showHintAndError: true,
     showLabel: true,
-    value: '',
+    value: [],
 };
 
 const itemKeySelector = d => d;
 
-class DroppableListInput extends React.PureComponent {
+class SimpleListInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -134,4 +134,4 @@ class DroppableListInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(DroppableListInput);
+export default FaramInputElement(SimpleListInput);
