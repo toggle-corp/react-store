@@ -36,6 +36,8 @@ const propTypes = {
         left: PropTypes.number,
     }),
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    noOfTicks: PropTypes.number,
+    showTicks: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -44,6 +46,8 @@ const defaultProps = {
     className: '',
     scaleType: 'linear',
     exponent: 1,
+    noOfTicks: 5,
+    tickFormat: undefined,
     margins: {
         top: 16,
         right: 16,
@@ -51,21 +55,24 @@ const defaultProps = {
         left: 16,
     },
     colorScheme: schemeSet3,
+    showTicks: true,
 };
 
 class SimpleVerticalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getRenderData = memoize((data, height, scaleX, scaleY, labelSelector, valueSelector) => {
+    getRenderData = memoize((
+        data, height, scaleX, scaleY, labelSelector, valueSelector, margins) => {
+        const { left, top, bottom } = margins;
         const renderData = data.map((d) => {
             const label = labelSelector(d);
             const value = valueSelector(d);
             const barHeight = scaleY(value);
 
             return {
-                x: scaleX(label),
-                y: height - barHeight,
+                x: scaleX(label) + left,
+                y: (height + top) - barHeight,
                 height: barHeight,
                 width: scaleX.bandwidth(),
                 label,
@@ -74,6 +81,15 @@ class SimpleVerticalBarChart extends PureComponent {
         });
 
         return renderData;
+    })
+
+    getAxisLeftData = memoize((scaleY, height, margins, noOfTicks, tickFormat) => {
+        const { left, top } = margins;
+        return scaleY.ticks(noOfTicks).map(v => ({
+            value: tickFormat ? tickFormat(v) : v,
+            x: left,
+            y: (height + top) - scaleY(v),
+        }));
     })
 
     getMaxValue = memoize((data, valueSelector) => max(data, valueSelector))
@@ -123,6 +139,9 @@ class SimpleVerticalBarChart extends PureComponent {
             scaleType,
             bandPadding,
             colorScheme,
+            tickFormat,
+            noOfTicks,
+            showTicks,
         } = this.props;
 
         const {
@@ -162,6 +181,15 @@ class SimpleVerticalBarChart extends PureComponent {
             scaleY,
             labelSelector,
             valueSelector,
+            margins,
+        );
+
+        const axisLeftData = this.getAxisLeftData(
+            scaleY,
+            height,
+            margins,
+            noOfTicks,
+            tickFormat,
         );
 
         const className = _cs(
@@ -186,11 +214,11 @@ class SimpleVerticalBarChart extends PureComponent {
             >
                 <svg
                     className={svgClassName}
-                    width={width}
-                    height={height}
+                    width={width + left + right}
+                    height={height + top + bottom}
                 >
                     <g className={_cs(styles.bars, 'bars')}>
-                        { renderData.map(d => (
+                        {renderData.map(d => (
                             <React.Fragment key={d.x}>
                                 <Tooltip
                                     tooltip={`${d.label}: ${d.value}`}
@@ -206,13 +234,47 @@ class SimpleVerticalBarChart extends PureComponent {
                             </React.Fragment>
                         ))}
                     </g>
-                    <line
-                        className={_cs(styles.yAxis, 'y-axis')}
-                        x1={0}
-                        y1={height}
-                        x2={width}
-                        y2={height}
-                    />
+                    <g>
+                        <line
+                            className={_cs(styles.xAxis, 'x-axis')}
+                            x1={left}
+                            y1={height + top}
+                            x2={width + left}
+                            y2={height + top}
+                        />
+                        <g className={_cs(styles.yAxis, 'y-axis')}>
+                            <line
+                                className={_cs(styles.line, 'line')}
+                                x1={left}
+                                y1={top}
+                                x2={left}
+                                y2={height + top}
+                            />
+                            { showTicks &&
+                                axisLeftData.map((d, i) => (
+                                    <g
+                                        className={_cs(styles.ticks, 'ticks')}
+                                        key={`tick-${d.value}`}
+                                        transform={`translate(${d.x}, ${d.y})`}
+                                    >
+                                        <line
+                                            className={_cs(styles.line, 'line')}
+                                            x1={0}
+                                            x2={-5}
+                                        />
+                                        <text
+                                            className={_cs(styles.label, 'label')}
+                                            y={0.5}
+                                            x={-6}
+                                            dy="0.32em"
+                                        >
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                ))
+                            }
+                        </g>
+                    </g>
                 </svg>
             </div>
         );

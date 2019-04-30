@@ -17,9 +17,27 @@
             }
         }
 
-        .y-axis {
+        .x-axis {
             stroke-width: $width-separator-medium;
             stroke: $color-accent;
+        }
+
+        .y-axis {
+            .line {
+                stroke-width: $width-separator-medium;
+                stroke: $color-accent;
+            }
+            .ticks {
+                text-anchor: end;
+
+                .line {
+                    stroke-width: $width-separator-thin;
+                    stroke: $color-accent;
+                }
+                .text {
+                    fill: $color-text;
+                }
+            }
         }
     }
 }

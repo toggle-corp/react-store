@@ -40,6 +40,7 @@ const propTypes = {
     tickFormat: PropTypes.func,
     noOfTicks: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    showTicks: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -57,6 +58,7 @@ const defaultProps = {
         left: 16,
     },
     colorScheme: schemeSet3,
+    showTicks: false,
 };
 
 const translateX = (scale, d, height) => {
@@ -69,7 +71,7 @@ class SimpleHorizontalBarChart extends PureComponent {
     static defaultProps = defaultProps;
 
     getRenderData = memoize((data, scaleX, scaleY, labelSelector, valueSelector, margins) => {
-        const { left, top, bottom } = margins;
+        const { left } = margins;
         return data.map((d) => {
             const label = labelSelector(d);
             const value = valueSelector(d);
@@ -144,6 +146,7 @@ class SimpleHorizontalBarChart extends PureComponent {
             colorScheme,
             tickFormat,
             noOfTicks,
+            showTicks,
         } = this.props;
 
         const {
@@ -256,7 +259,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                 x2={width + left}
                                 y2={height}
                             />
-                            {
+                            { showTicks &&
                                 axisBottomData.map((d, i) => (
                                     <g
                                         className={_cs(styles.ticks, 'ticks')}
@@ -286,5 +289,4 @@ class SimpleHorizontalBarChart extends PureComponent {
         );
     }
 }
-
 export default Responsive(SimpleHorizontalBarChart);
