@@ -6,11 +6,13 @@ const propTypes = {
     disabled: PropTypes.bool,
     modal: PropTypes.element.isRequired,
     className: PropTypes.string,
+    initialShowModal: PropTypes.bool,
 };
 
 const defaultProps = {
     disabled: false,
     className: '',
+    initialShowModal: false,
 };
 
 const modalize = (WrappedButtonComponent) => {
@@ -21,7 +23,7 @@ const modalize = (WrappedButtonComponent) => {
         constructor(props) {
             super(props);
 
-            this.state = { showModal: false };
+            this.state = { showModal: props.initialShowModal };
 
             this.wrappedButtonRef = React.createRef();
             this.wrappedButtonClassName = randomString();
@@ -58,6 +60,7 @@ const modalize = (WrappedButtonComponent) => {
                 disabled,
                 modal,
                 className: classNameFromProps,
+                initialShowModal,
                 ...otherProps
             } = this.props;
 
