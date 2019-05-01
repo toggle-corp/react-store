@@ -149,9 +149,9 @@ class OrgChart extends React.PureComponent {
         const newSelection = this.props.idSelector(item.data);
 
         const settings = {
-            var(--bulk): [
-                { var(--push): [newSelection] },
-                { var(--unique): selection => selection },
+            $bulk: [
+                { $push: [newSelection] },
+                { $unique: selection => selection },
             ],
         };
         const selected = update(this.state.selected, settings);
@@ -164,7 +164,7 @@ class OrgChart extends React.PureComponent {
         const index = this.findIndexInSelectedList(item.data);
 
         const settings = {
-            var(--splice): [[index, 1]],
+            $splice: [[index, 1]],
         };
         const selected = update(this.state.selected, settings);
 

@@ -3,7 +3,7 @@
     text-transform: uppercase;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: $color-text-label;
-    font-size: $font-size-extra-small;
-    font-weight: $font-weight-bold;
+    color: var(--color-text-label);
+    font-size: var(--font-size-extra-small);
+    font-weight: var(--font-weight-bold);
 }
