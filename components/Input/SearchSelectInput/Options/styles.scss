@@ -1,3 +1,4 @@
+@import '../../../stylesheets/utils';
 
 .options {
     @include background-color(var(--color-foreground));
