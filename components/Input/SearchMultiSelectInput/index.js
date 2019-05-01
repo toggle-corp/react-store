@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 import {
     listToMap,
     caseInsensitiveSubmatch,
-    getRatingForContentInString as rate,
+    compareStringSearch,
     isDefined,
     _cs,
 } from '@togglecorp/fujs';
@@ -151,9 +151,12 @@ class SearchMultiSelectInput extends React.PureComponent {
                     value === undefined || caseInsensitiveSubmatch(labelSelector(option), value)
                 ),
             )
-            .sort((a, b) => (
-                rate(value, labelSelector(a)) - rate(value, labelSelector(b))
-            )).slice(0, maxDisplayOptions);
+            .sort((a, b) => compareStringSearch(
+                labelSelector(a),
+                labelSelector(b),
+                value,
+            ))
+            .slice(0, maxDisplayOptions);
         return newOptions;
     })
 
