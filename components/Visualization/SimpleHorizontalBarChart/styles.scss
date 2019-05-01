@@ -8,11 +8,10 @@
     .svg {
         .bars {
             .bar {
+                cursor: pointer;
                 fill: $color-accent;
-                opacity: .2;
-
                 &:hover {
-                    opacity: .3;
+                    opacity: .7;
                 }
             }
         }
@@ -35,9 +34,19 @@
                 }
             }
         }
+
         .y-axis {
             stroke-width: $width-separator-medium;
-            stroke: $color-accent;
+            stroke: $color-separator-light;
+        }
+
+        .grid {
+            .y-grid {
+                fill: none;
+                stroke-width: $width-separator-thin;
+                stroke: $color-separator;
+                stroke-dasharray: 5,5;
+            }
         }
 
     }

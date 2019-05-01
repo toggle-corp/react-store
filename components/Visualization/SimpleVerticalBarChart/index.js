@@ -38,6 +38,7 @@ const propTypes = {
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     noOfTicks: PropTypes.number,
     showTicks: PropTypes.bool,
+    showGrids: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -56,6 +57,7 @@ const defaultProps = {
     },
     colorScheme: schemeSet3,
     showTicks: true,
+    showGrids: true,
 };
 
 class SimpleVerticalBarChart extends PureComponent {
@@ -142,6 +144,7 @@ class SimpleVerticalBarChart extends PureComponent {
             tickFormat,
             noOfTicks,
             showTicks,
+            showGrids,
         } = this.props;
 
         const {
@@ -217,6 +220,20 @@ class SimpleVerticalBarChart extends PureComponent {
                     width={width + left + right}
                     height={height + top + bottom}
                 >
+                    <g className={_cs(styles.grid, 'grid')}>
+                        { showGrids &&
+                            axisLeftData.map((d, i) => (
+                                <line
+                                    key={`grid-${d.y}`}
+                                    className={_cs(styles.xGrid, 'x-grid')}
+                                    x1={left}
+                                    y1={d.y}
+                                    x2={width + left}
+                                    y2={d.y}
+                                />
+                            ))
+                        }
+                    </g>
                     <g className={_cs(styles.bars, 'bars')}>
                         {renderData.map(d => (
                             <React.Fragment key={d.x}>

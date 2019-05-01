@@ -41,6 +41,7 @@ const propTypes = {
     noOfTicks: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     showTicks: PropTypes.bool,
+    showGrids: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -58,7 +59,8 @@ const defaultProps = {
         left: 16,
     },
     colorScheme: schemeSet3,
-    showTicks: false,
+    showTicks: true,
+    showGrids: true,
 };
 
 const translateX = (scale, d, height) => {
@@ -147,6 +149,7 @@ class SimpleHorizontalBarChart extends PureComponent {
             tickFormat,
             noOfTicks,
             showTicks,
+            showGrids,
         } = this.props;
 
         const {
@@ -215,6 +218,20 @@ class SimpleHorizontalBarChart extends PureComponent {
                     width={width + left + right}
                     height={height + top + bottom}
                 >
+                    <g className={_cs(styles.grid, 'grid')}>
+                        { showGrids &&
+                            axisBottomData.map((d, i) => (
+                                <line
+                                    key={`grid-${d.x}`}
+                                    className={_cs(styles.yGrid, 'y-grid')}
+                                    x1={d.x}
+                                    y1={top}
+                                    x2={d.x}
+                                    y2={height}
+                                />
+                            ))
+                        }
+                    </g>
                     <g className={_cs(styles.bars, 'bars')}>
                         { renderData.map(d => (
                             <React.Fragment key={d.y}>
