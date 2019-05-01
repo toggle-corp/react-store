@@ -1,6 +1,6 @@
-@import '../../../stylesheets/base';
-
-var(--width-sidebar): 300px;
+:root {
+    --width-sidebar: 300px;
+}
 
 .page {
     display: flex;

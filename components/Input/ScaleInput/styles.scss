@@ -1,15 +1,16 @@
 @import '../../../stylesheets/base';
 
-var(--width-value): 12px;
-var(--height-value): 20px;
-
-var(--width-value-active): 16px;
-var(--height-value-active): 30px;
+:root {
+    --width-scale-input-value: 12px;
+    --height-scale-input-value: 20px;
+    --width-scale-input-value-active: 16px;
+    --height-scale-input-value-active: 30px;
+}
 
 .scale-input {
     display: flex;
     align-items: center;
-    min-height: var(--height-value-active);
+    min-height: var(--height-scale-input-value-active);
 
     .value {
         transition: var(--duration-transition-medium) all ease-in-out;
@@ -18,8 +19,8 @@ var(--height-value-active): 30px;
         border: 0;
         border-radius: var(--radius-button-border);
         cursor: pointer;
-        width: var(--width-value);
-        height: var(--height-value);
+        width: var(--width-scale-input-value);
+        height: var(--height-scale-input-value);
 
         &:focus {
             // FIXME: this is a hack (scale has mostly dark colors similar to primary color)
@@ -27,8 +28,8 @@ var(--height-value-active): 30px;
         }
 
         &.active {
-            width: var(--width-value-active);
-            height: var(--height-value-active);
+            width: var(--width-scale-input-value-active);
+            height: var(--height-scale-input-value-active);
         }
     }
 

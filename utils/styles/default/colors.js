@@ -72,6 +72,8 @@ const colorVizBlue = '#3182bd';
 const colorVizGrey = '#d3d3d3';
 const colorVizOrange = '#FA6900';
 
+const colorBackgroundHoverLayer = 'rgba(0, 0, 0, 0.16)';
+
 const colors = {
     colorText,
     colorTextPlaceholder,
@@ -143,6 +145,8 @@ const colors = {
     colorVizOrange,
 
     colorTextAlt,
+
+    colorBackgroundHoverLayer,
 };
 
 export default colors;

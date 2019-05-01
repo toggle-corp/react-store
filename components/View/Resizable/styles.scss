@@ -1,6 +1,6 @@
-@import '../../../stylesheets/base';
-
-var(--width-resizable-separator): 8px;
+:root {
+    --width-resizable-separator: 8px;
+}
 
 .resizable-h {
     .first {

@@ -1,12 +1,10 @@
-@import '../../../stylesheets/base';
-
+// TODO: move this to js 
 :root {
     --width-select-input-dropdown-button: 10px;
     --width-select-input-clear-button: 14px;
+    --width-dropdown-button: 10px;
+    --width-clear-button: 14px;
 }
-
-var(--width-dropdown-button): 10px;
-var(--width-clear-button): 14px;
 
 .select-input {
     .input-and-actions {

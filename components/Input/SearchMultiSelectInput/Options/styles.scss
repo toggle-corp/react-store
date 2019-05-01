@@ -1,6 +1,8 @@
 @import '../../../../stylesheets/base';
 
-var(--height-options-max): 240px;
+:root {
+    --height-options-max: 240px;
+}
 
 .options {
     @include background-color(var(--color-foreground));

@@ -6,11 +6,11 @@
     --width-multiselect-dropdown-button: 10px;
     --width-multiselect-clear-button: 14px;
     --width-multiselect-select-all-button: 14px;
+    --width-dropdown-button: 10px;
+    --width-clear-button: 14px;
+    --width-select-all-button: 14px;
 }
 
-var(--width-dropdown-button): 10px;
-var(--width-clear-button): 14px;
-var(--width-select-all-button): 14px;
 
 .multi-select-input {
     .input-and-actions {

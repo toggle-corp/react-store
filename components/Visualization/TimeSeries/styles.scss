@@ -1,9 +1,11 @@
 @import '../../../stylesheets/base';
 
-var(--timeseries-area-color): rgba(0, 128, 128, .6) !default;
-var(--timeseries-line-color): #008080 !default;
-var(--timeseries-color-overlay): var(--timeseries-line-color) !default;
-var(--timeseries-stroke-overlay): #fff !default;
+:root {
+    --timeseries-area-color: rgba(0, 128, 128, .6);
+    --timeseries-line-color: #008080;
+    --timeseries-color-overlay: var(--timeseries-line-color);
+    --timeseries-stroke-overlay: #fff;
+}
 
 .time-series {
     display: flex;

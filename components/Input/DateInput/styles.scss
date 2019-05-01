@@ -2,9 +2,11 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-var(--width-date-picker-container-min): 208px;
-var(--width-spinner): 16px;
-var(--width-date-input): 112px;
+:root {
+    --width-date-picker-container-min: 208px;
+    --width-spinner: 16px;
+    --width-date-input: 112px;
+}
 
 .date-picker-container {
     min-width: var(--width-date-picker-container-min);

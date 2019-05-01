@@ -1,6 +1,6 @@
-@import '../../../stylesheets/base';
-
-var(--color): #008080;
+:root {
+    --sparkline-color: var(--color-accent);
+}
 
 .spark-lines {
     width: 100%;
@@ -12,12 +12,12 @@ var(--color): #008080;
 
         path {
             fill: none;
-            stroke: var(--color);
+            stroke: var(--sparkline-color);
         }
 
         circle {
-            fill: var(--color);
-            stroke: var(--color);
+            fill: var(--sparkline-color);
+            stroke: var(--sparkline-color);
         }
     }
 }

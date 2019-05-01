@@ -1,7 +1,9 @@
 @import '../../../../stylesheets/base';
 
-var(--width-resize-handle): 10px;
-var(--height-resize-handle): 10px;
+:root {
+    --width-resize-handle: 10px;
+    --height-resize-handle: 10px;
+}
 
 .grid-item {
     position: absolute;

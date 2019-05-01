@@ -1,7 +1,4 @@
-@import '../../../stylesheets/base';
 @import '../../../stylesheets/button-base';
-
-var(--color-background-hover-layer): rgba(0, 0, 0, .16);
 
 .button {
     @extend %button-base;

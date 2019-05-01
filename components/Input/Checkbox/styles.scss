@@ -1,6 +1,8 @@
 @import '../../../stylesheets/base';
 
-var(--width-checkmark): var(--font-size-medium);
+:root {
+    --width-checkbox-checkmark: var(--font-size-medium);
+}
 
 .checkbox {
     display: flex;
@@ -9,7 +11,7 @@ var(--width-checkmark): var(--font-size-medium);
 
     .checkmark {
         margin-right: var(--spacing-extra-small);
-        width: var(--width-checkmark);
+        width: var(--width-checkbox-checkmark);
     }
 
     .input {

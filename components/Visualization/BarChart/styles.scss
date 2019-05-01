@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
-var(--color-bar-hovered): var(--color-primary) !default;
-var(--color-bar-selected): var(--color-accent) !default;
+:root {
+    --color-bar-hovered: var(--color-primary);
+    --color-bar-selected: var(--color-accent);
+}
 
 .bar-chart {
     display: flex;

@@ -1,8 +1,10 @@
-@import '../../../stylesheets/base';
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-var(--width-time-input): 120px;
+:root {
+    --width-time-input: 120px;
+    --width-input-spinner: 16px;
+}
 
 .time-input {
     min-width: var(--width-time-input);
@@ -15,7 +17,6 @@ var(--width-time-input): 120px;
         .units {
             display: flex;
             flex-grow: 1;
-            var(--width-input-spinner): 16px;
 
             .unit {
                 @extend %input-base;

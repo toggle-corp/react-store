@@ -1,6 +1,8 @@
 @import '../../../../stylesheets/base';
 
-var(--width-modal-small): 420px !default;
+:root {
+    --width-modal-small: 420px;
+}
 
 .alert {
     display: flex;
@@ -13,11 +15,5 @@ var(--width-modal-small): 420px !default;
         box-shadow: none;
         min-width: 72px;
     }
-
-    /*
-    .cancel-button {
-        box-shadow: none;
-    }
-    */
 }
 

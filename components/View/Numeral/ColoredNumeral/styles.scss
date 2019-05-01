@@ -1,7 +1,9 @@
 @import '../../../../stylesheets/base';
 
-var(--color-text-on-positive): rgba(0, 0, 0, .5);
-var(--color-text-on-negative): rgba(0, 0, 0, .5);
+:root {
+    --color-text-on-positive: rgba(0, 0, 0, .5);
+    --color-text-on-negative: rgba(0, 0, 0, .5);
+}
 
 .gain-positive {
     &.colored-numeral {

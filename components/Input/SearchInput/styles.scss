@@ -1,6 +1,8 @@
 @import '../../../stylesheets/base';
 
-var(--width-icon): 16px;
+:root {
+    --width-search-input-icon: 16px;
+}
 
 .search-input {
     position: relative;
@@ -13,7 +15,7 @@ var(--width-icon): 16px;
         left: 0;
         align-items: flex-end;
         justify-content: flex-start;
-        width: var(--width-icon);
+        width: var(--width-search-input-icon);
         color: var(--color-text-label);
     }
 
@@ -25,7 +27,7 @@ var(--width-icon): 16px;
 
     :global {
         .raw-input {
-            padding-left: var(--width-icon);
+            padding-left: var(--width-search-input-icon);
         }
     }
 }

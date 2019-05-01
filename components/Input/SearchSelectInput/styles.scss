@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
-var(--width-dropdown-button): 10px;
-var(--width-clear-button): 14px;
+:root {
+    --width-dropdown-button: 10px;
+    --width-clear-button: 14px;
+}
 
 .select-input {
     .input-and-actions {

@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
-var(--width-toast-medium): 480px;
-var(--z-index-toast): 11111;
+:root {
+    --width-toast-medium: 480px;
+    --z-index-toast: 11111;
+}
 
 .toast {
     position: fixed;

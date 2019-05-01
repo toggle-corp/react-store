@@ -1,10 +1,11 @@
-@import '../../../stylesheets/base';
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-var(--width-dropdown-button): 10px;
-var(--width-clear-button): 14px;
-var(--width-select-all-button): 14px;
+:root {
+    --width-dropdown-button: 10px;
+    --width-clear-button: 14px;
+    --width-select-all-button: 14px;
+}
 
 .multi-select-input {
     .input-and-actions {
@@ -12,7 +13,7 @@ var(--width-select-all-button): 14px;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .input {
-            width: calc(100% - #{var(--width-dropdown-button) + var(--spacing-extra-small)});
+            width: calc(100% - var(--width-dropdown-button) - var(--spacing-extra-small));
         }
 
         .actions {
@@ -21,7 +22,7 @@ var(--width-select-all-button): 14px;
             top: var(--spacing-extra-small);
             right: 0;
             align-items: center;
-            height: calc(100% - #{var(--spacing-extra-small) * 2});
+            height: calc(100% - var(--spacing-extra-small) * 2);
 
             %button {
                 display: inline-block;

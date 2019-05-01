@@ -1,6 +1,8 @@
 @import '../../../stylesheets/base';
 
-var(--radius-button-border): 2px !default;
+:root {
+    --radius-button-border: 2px;
+}
 
 @mixin button-props(var(--base-color)) {
     // border: var(--width-separator-thin) solid var(--color-separator-light);

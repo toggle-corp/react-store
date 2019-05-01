@@ -1,4 +1,6 @@
-var(--tooltip-background-color): rgba(0, 0, 0, .75) !default;
+:root {
+    --tooltip-background-color: rgba(0, 0, 0, .75);
+}
 
 .tooltip {
     position: fixed;

@@ -1,7 +1,9 @@
 @import '../../../stylesheets/base';
 
-var(--border-radius-tooltip): 4px;
-var(--tooltip-max-width): 480px;
+:root {
+    --border-radius-tooltip: 4px;
+    --tooltip-max-width: 480px;
+}
 
 .container {
     @include shadow-small;

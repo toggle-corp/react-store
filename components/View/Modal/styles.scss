@@ -1,6 +1,6 @@
-@import '../../../stylesheets/base';
-
-var(--width-modal-small): 420px !default;
+:root {
+    --width-modal-small: 420px;
+}
 
 .modal {
     display: flex;
@@ -13,7 +13,6 @@ var(--width-modal-small): 420px !default;
     background-color: var(--color-foreground);
     width: var(--width-modal-medium);
     max-height: 96vh;
-    // animation: fade-in-from-top var(--duration-transition-medium) ease forwards;
 }
 
 @keyframes fade-in-from-top {
