@@ -24,7 +24,7 @@
 
         &:focus {
             // FIXME: this is a hack (scale has mostly dark colors similar to primary color)
-            @include outline-button(var(--color-primary));
+            // @include outline-button(var(--color-primary));
         }
 
         &.active {

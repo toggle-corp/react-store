@@ -35,7 +35,7 @@
             @include transition-medium;
             position: absolute;
             right: 0;
-            bottom: -var(--font-size-small) - var(--spacing-medium) - var(--spacing-extra-small) * 2;
+            bottom: -calc(var(--font-size-small) + var(--spacing-medium) + calc(var(--spacing-extra-small) * 2));
             opacity: 0;
             z-index: 1111;
             border: var(--width-separator-thin) solid var(--color-separator);

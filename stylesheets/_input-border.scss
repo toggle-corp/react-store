@@ -1,5 +1,5 @@
 %input-border {
-    border-bottom: var(--width-separator-thin solid) var(--color-separator);
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
     &:hover {
         border-bottom-color: var(--color-separator-hover);

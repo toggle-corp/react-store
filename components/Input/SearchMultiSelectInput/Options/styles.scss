@@ -1,19 +1,20 @@
-@import '../../../stylesheets/utils';
+@import '../../../../stylesheets/utils';
 
 :root {
     --height-options-max: 240px;
 }
 
 .options {
-    @include background-color(var(--color-foreground));
+    background-color: var(--color-foreground);
     padding: var(--spacing-small) 0;
     max-height: var(--height-options-max);
     overflow-x: hidden;
     overflow-y: auto;
+    color: var(--color-text);
 
     .empty {
         padding: var(--spacing-small-alt) var(--spacing-small);
         text-align: center;
-        color: get-text-color(var(--color-foreground), var(--color-text-placeholder-on-light), var(--color-text-placeholder-on-dark));
+        color: var(--color-text-placeholder);
     }
 }

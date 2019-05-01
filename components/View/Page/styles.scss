@@ -17,7 +17,7 @@
     }
 
     .main-content {
-        @extend %main-content;
+        // @extend %main-content;
         position: relative;
         flex-grow: 1;
         margin: var(--page-margin);
@@ -63,7 +63,7 @@
         }
 
         .main-content {
-            @extend %main-content;
+            // @extend %main-content;
             position: relative;
             flex-grow: 1;
             margin: var(--page-margin);
