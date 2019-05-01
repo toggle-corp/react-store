@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$width-resizable-separator: 8px;
+var(--width-resizable-separator): 8px;
 
 .resizable-h {
     .first {
@@ -18,13 +18,13 @@ $width-resizable-separator: 8px;
             top: 0;
             left: 0;
             z-index: 1111;
-            border-left: $width-separator-medium solid transparent;
+            border-left: var(--width-separator-medium) solid transparent;
             cursor: col-resize;
-            width: $width-resizable-separator;
+            width: var(--width-resizable-separator);
             height: 100%;
 
             &:hover {
-                border-left-color: $color-accent;
+                border-left-color: var(--color-accent);
             }
         }
     }
@@ -34,7 +34,7 @@ $width-resizable-separator: 8px;
         top: 0;
         left: 0;
         opacity: .1;
-        background-color: $color-foreground;
+        background-color: var(--color-foreground);
         width: 100%;
         height: 100%;
     }
@@ -44,7 +44,7 @@ $width-resizable-separator: 8px;
         user-select: none;
 
         .separator {
-            border-right-color: $color-accent;
+            border-right-color: var(--color-accent);
         }
     }
 }
@@ -65,13 +65,13 @@ $width-resizable-separator: 8px;
             top: 0;
             left: 0;
             z-index: 1111;
-            border-top: $width-separator-medium solid transparent;
+            border-top: var(--width-separator-medium) solid transparent;
             cursor: row-resize;
             width: 100%;
-            height: $width-resizable-separator;
+            height: var(--width-resizable-separator);
 
             &:hover {
-                border-top-color: $color-accent;
+                border-top-color: var(--color-accent);
             }
         }
     }
@@ -81,7 +81,7 @@ $width-resizable-separator: 8px;
         user-select: none;
 
         .separator {
-            border-bottom-color: $color-accent;
+            border-bottom-color: var(--color-accent);
         }
     }
 
@@ -90,7 +90,7 @@ $width-resizable-separator: 8px;
         top: 0;
         left: 0;
         opacity: .1;
-        background-color: $color-foreground;
+        background-color: var(--color-foreground);
         width: 100%;
         height: 100%;
     }

@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$width-item-per-page-input: 48px;
+var(--width-item-per-page-input): 48px;
 
 .pager {
     display: flex;
@@ -10,11 +10,11 @@ $width-item-per-page-input: 48px;
         display: flex;
         align-items: baseline;
         flex-shrink: 0;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
 
         .input {
-            width: $width-item-per-page-input;
-            font-family: $font-family-monospace;
+            width: var(--width-item-per-page-input);
+            font-family: var(--font-family-monospace);
 
             :global {
                 input {
@@ -24,42 +24,42 @@ $width-item-per-page-input: 48px;
         }
 
         .per-page {
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
         }
     }
 
     .current-range-information {
         display: flex;
         flex-shrink: 0;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
 
         .showing {
-            padding-right: $spacing-small;
+            padding-right: var(--spacing-small);
         }
 
         .current-items-start {
-            font-family: $font-family-monospace;
+            font-family: var(--font-family-monospace);
         }
 
         .range-indicator {
-            padding: 0 $spacing-extra-small;
+            padding: 0 var(--spacing-extra-small);
         }
 
         .current-items-end {
-            font-family: $font-family-monospace;
+            font-family: var(--font-family-monospace);
         }
 
         .of {
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
         }
 
         .item-count {
-            font-family: $font-family-monospace;
+            font-family: var(--font-family-monospace);
         }
     }
 
     .page-list {
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
 
         .paginate-btn {
             display: inline-flex;
@@ -69,13 +69,13 @@ $width-item-per-page-input: 48px;
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-extra-small 0;
-            min-width: $width-icon-extra-large;
+            padding: var(--spacing-extra-small) 0;
+            min-width: var(--width-icon-extra-large);
             font-family: inherit;
             font-size: inherit;
 
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
 
@@ -83,15 +83,15 @@ $width-item-per-page-input: 48px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: $spacing-extra-small 0;
-            min-width: $width-icon-extra-large;
-            color: $color-text-label;
-            font-weight: $font-weight-bold;
+            padding: var(--spacing-extra-small) 0;
+            min-width: var(--width-icon-extra-large);
+            color: var(--color-text-label);
+            font-weight: var(--font-weight-bold);
             user-select: none;
 
             &.active {
-                background-color: $color-accent;
-                color: $color-text-on-accent;
+                background-color: var(--color-accent);
+                color: var(--color-text-on-accent);
             }
         }
     }

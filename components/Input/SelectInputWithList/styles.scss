@@ -11,7 +11,7 @@
 
         .input {
             flex-grow: 1;
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
         }
     }
 
@@ -20,18 +20,18 @@
         overflow-y: auto;
 
         .list-item {
-            padding: $spacing-extra-small $spacing-small;
+            padding: var(--spacing-extra-small) var(--spacing-small);
         }
     }
 
     &.error {
-        border-bottom-color: $color-danger;
+        border-bottom-color: var(--color-danger);
     }
 
     &.disabled {
         .list {
             .list-item {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
         }
     }

@@ -9,7 +9,7 @@
 
     .radio {
         display: inline-block;
-        margin-right: $spacing-small;
+        margin-right: var(--spacing-small);
     }
 
     .label {
@@ -18,27 +18,27 @@
 
     &.checked {
         .radio {
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
     &:not(:last-child) {
-        margin-right: $spacing-medium;
+        margin-right: var(--spacing-medium);
     }
 
     &.disabled {
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         .radio {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 
     &.read-only {
         .radio {
-            color: $color-text;
+            color: var(--color-text);
         }
     }
 }

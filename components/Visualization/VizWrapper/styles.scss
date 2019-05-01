@@ -23,7 +23,7 @@
 
                 .color-scheme-label {
                     flex-shrink: 0;
-                    padding-right: $spacing-small;
+                    padding-right: var(--spacing-small);
                     width: auto;
                 }
 
@@ -35,7 +35,7 @@
 
             .action-buttons {
                 flex-shrink: 0;
-                padding-left: $spacing-large;
+                padding-left: var(--spacing-large);
             }
         }
     }

@@ -2,17 +2,17 @@
 
 .row {
     @extend %background-alternating-row;
-    transition: $duration-transition-medium background-color ease-in-out, $duration-transition-medium color ease-in-out;
+    transition: var(--duration-transition-medium) background-color ease-in-out, var(--duration-transition-medium) color ease-in-out;
 
     &.hoverable {
         &:hover {
-            background-color: $color-background-hover;
-            color: $color-text;
+            background-color: var(--color-background-hover);
+            color: var(--color-text);
         }
     }
 
     &.highlighted {
-        background-color: $color-accent;
-        color: $color-text-on-accent;
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
     }
 }

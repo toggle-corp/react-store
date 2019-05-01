@@ -1,11 +1,11 @@
 @import '../../../stylesheets/base';
 
 .next {
-    animation: slide-from-right $duration-slow ease-in;
+    animation: slide-from-right var(--duration-slow) ease-in;
 }
 
 .prev {
-    animation: slide-from-left $duration-slow ease-in;
+    animation: slide-from-left var(--duration-slow) ease-in;
 }
 
 @keyframes slide-from-right {

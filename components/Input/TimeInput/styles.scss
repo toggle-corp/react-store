@@ -2,10 +2,10 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-$width-time-input: 120px;
+var(--width-time-input): 120px;
 
 .time-input {
-    min-width: $width-time-input;
+    min-width: var(--width-time-input);
 
     .input {
         @extend %input-border;
@@ -15,19 +15,19 @@ $width-time-input: 120px;
         .units {
             display: flex;
             flex-grow: 1;
-            $width-input-spinner: 16px;
+            var(--width-input-spinner): 16px;
 
             .unit {
                 @extend %input-base;
                 width: calc(2ch + var(--width-input-spinner));
-                font-family: $font-family-monospace;
+                font-family: var(--font-family-monospace);
             }
 
             .separator {
                 display: flex;
                 align-items: center;
                 flex-shrink: 0;
-                padding-right: $spacing-small;
+                padding-right: var(--spacing-small);
             }
         }
 
@@ -48,19 +48,19 @@ $width-time-input: 120px;
     &:not(.disabled) {
         &.focused {
             .input {
-                border-bottom-color: $color-accent;
+                border-bottom-color: var(--color-accent);
             }
         }
 
         &.invalid {
             .input {
-                border-bottom-color: $color-warning;
+                border-bottom-color: var(--color-warning);
             }
         }
 
         &.error {
             .input {
-                border-bottom-color: $color-danger;
+                border-bottom-color: var(--color-danger);
             }
         }
     }
@@ -70,7 +70,7 @@ $width-time-input: 120px;
         .input {
             .units {
                 .unit {
-                    color: $color-text-disabled;
+                    color: var(--color-text-disabled);
                 }
             }
         }
@@ -79,7 +79,7 @@ $width-time-input: 120px;
     &.readOnly,
     &.disabled {
         .input {
-            border-bottom-color: $color-separator;
+            border-bottom-color: var(--color-separator);
         }
 
         &:hover {
@@ -90,7 +90,7 @@ $width-time-input: 120px;
         }
 
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 }

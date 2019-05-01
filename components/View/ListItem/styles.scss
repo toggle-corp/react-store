@@ -3,12 +3,12 @@
 
 .list-item {
     display: flex;
-    padding: $spacing-extra-small 0;
+    padding: var(--spacing-extra-small) 0;
 
     .marker {
         align-self: flex-start;
         flex-shrink: 0;
-        padding-right: $spacing-small;
+        padding-right: var(--spacing-small);
     }
 
     .label {

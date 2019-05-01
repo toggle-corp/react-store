@@ -5,10 +5,10 @@
     align-items: center;
     flex-shrink: 0;
     justify-content: flex-end;
-    border-top: $width-separator-thin solid $color-separator;
-    padding: $spacing-medium $spacing-medium-alt;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-medium) var(--spacing-medium-alt);
 
     >* {
-        margin-left: $spacing-medium;
+        margin-left: var(--spacing-medium);
     }
 }

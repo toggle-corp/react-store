@@ -1,6 +1,6 @@
 @import '../../../../stylesheets/base';
 
 .tooltip {
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium);
 }

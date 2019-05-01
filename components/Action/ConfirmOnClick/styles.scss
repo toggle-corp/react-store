@@ -2,10 +2,10 @@
 
 .confirm-content {
     .challenge-form {
-        margin-top: $spacing-large;
+        margin-top: var(--spacing-large);
 
         .challenge-text {
-            margin-top: $spacing-medium-alt;
+            margin-top: var(--spacing-medium-alt);
         }
     }
 }

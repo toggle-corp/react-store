@@ -3,7 +3,7 @@
 .force-directed-graph {
 
     .links {
-        stroke: $color-links;
+        stroke: var(--color-links);
     }
 
     .nodes :hover {
@@ -21,9 +21,9 @@
     display: block;
     position: fixed;
     z-index: 10;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium-alt;
-    color: $color-text;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
+    color: var(--color-text);
     pointer-events: none;
 
     .value {

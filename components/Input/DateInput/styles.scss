@@ -2,16 +2,16 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-$width-date-picker-container-min: 208px;
-$width-spinner: 16px;
-$width-date-input: 112px;
+var(--width-date-picker-container-min): 208px;
+var(--width-spinner): 16px;
+var(--width-date-input): 112px;
 
 .date-picker-container {
-    min-width: $width-date-picker-container-min;
+    min-width: var(--width-date-picker-container-min);
 }
 
 .date-input {
-    min-width: $width-date-input;
+    min-width: var(--width-date-input);
 
     .input {
         position: relative;
@@ -20,12 +20,12 @@ $width-date-input: 112px;
             .day-unit,
             .month-unit {
                 width: calc(2ch + var(--width-spinner));
-                font-family: $font-family-monospace;
+                font-family: var(--font-family-monospace);
             }
 
             .year-unit {
                 width: calc(4ch + var(--width-spinner));
-                font-family: $font-family-monospace;
+                font-family: var(--font-family-monospace);
             }
         }
 
@@ -33,13 +33,13 @@ $width-date-input: 112px;
             @include transition-medium;
             position: absolute;
             right: 0;
-            bottom: -$font-size-small - $spacing-medium - $spacing-extra-small * 2;
+            bottom: -var(--font-size-small) - var(--spacing-medium) - var(--spacing-extra-small) * 2;
             opacity: 0;
             z-index: 1111;
-            border: $width-separator-thin solid $color-separator;
-            border-radius: 0 0 $radius-border-small $radius-border-small;
-            background-color: $color-foreground;
-            padding: $spacing-extra-small;
+            border: var(--width-separator-thin) solid var(--color-separator);
+            border-radius: 0 0 var(--radius-border-small) var(--radius-border-small);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-extra-small);
         }
 
         &:hover {
@@ -56,19 +56,19 @@ $width-date-input: 112px;
 
         &.focused {
             .input {
-                border-bottom-color: $color-accent;
+                border-bottom-color: var(--color-accent);
             }
         }
 
         &.invalid {
             .input {
-                border-bottom-color: $color-warning;
+                border-bottom-color: var(--color-warning);
             }
         }
 
         &.error {
             .input {
-                border-bottom-color: $color-danger;
+                border-bottom-color: var(--color-danger);
             }
         }
     }
@@ -76,7 +76,7 @@ $width-date-input: 112px;
     &.disabled,
     &.readOnly {
         .input {
-            border-bottom-color: $color-separator;
+            border-bottom-color: var(--color-separator);
 
             &:hover {
                 .action-buttons {
@@ -86,7 +86,7 @@ $width-date-input: 112px;
             }
         }
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 
@@ -95,7 +95,7 @@ $width-date-input: 112px;
             .day-unit,
             .month-unit,
             .year-unit {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
         }
     }

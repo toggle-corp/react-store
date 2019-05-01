@@ -7,7 +7,7 @@
     flex-shrink: 0;
     transform-origin: 50% 50%;
     cursor: pointer;
-    min-width: $spacing-extra-small;
+    min-width: var(--spacing-extra-small);
     height: 100%;
 
     &:hover {
@@ -28,14 +28,14 @@
 
     &:nth-child(2) {
         .value {
-            left: $spacing-small;
+            left: var(--spacing-small);
             transform: translate(0, -50%);
         }
     }
 
     &:last-child {
         .value {
-            right: $spacing-small;
+            right: var(--spacing-small);
             left: auto;
             transform: translate(0, -50%);
         }
@@ -43,6 +43,6 @@
 }
 
 .tooltip {
-    padding: $spacing-medium;
+    padding: var(--spacing-medium);
     text-transform: capitalize;
 }

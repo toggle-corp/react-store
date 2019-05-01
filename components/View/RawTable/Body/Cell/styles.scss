@@ -1,22 +1,22 @@
 @import '../../../../../stylesheets/base';
 
 .cell {
-    padding: $spacing-small $spacing-medium;
+    padding: var(--spacing-small) var(--spacing-medium);
 
     &.hoverable {
         &:hover {
-            background-color: $color-background-hover;
-            color: $color-text;
+            background-color: var(--color-background-hover);
+            color: var(--color-text);
         }
     }
 
     &.highlighted,
     &.column-highlighted {
-        background-color: $color-accent;
-        color: $color-text-on-accent;
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
     }
 
     &:not(:last-child) {
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
     }
 }

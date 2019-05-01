@@ -4,20 +4,20 @@
     .item {
         display: flex;
         align-items: center;
-        background-color: $color-background-row;
+        background-color: var(--color-background-row);
 
         &:nth-child(even) {
-            background-color: $color-background-row-alt;
+            background-color: var(--color-background-row-alt);
         }
 
         .label {
-            padding: $spacing-small $spacing-small-alt;
+            padding: var(--spacing-small) var(--spacing-small-alt);
             width: calc(100% - var(--width-icon-large));
         }
 
         .action {
             display: none;
-            color: $color-danger;
+            color: var(--color-danger);
         }
 
         &:hover .action {
@@ -28,7 +28,7 @@
     &.disabled {
         .item {
             .label {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
         }
     }

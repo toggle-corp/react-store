@@ -1,6 +1,6 @@
 @import '../../../../stylesheets/base';
 
 .checkbox {
-    margin-right: $spacing-small;
-    color: $color-accent;
+    margin-right: var(--spacing-small);
+    color: var(--color-accent);
 }

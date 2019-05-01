@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$color: #008080;
+var(--color): #008080;
 
 .spark-lines {
     width: 100%;
@@ -12,12 +12,12 @@ $color: #008080;
 
         path {
             fill: none;
-            stroke: $color;
+            stroke: var(--color);
         }
 
         circle {
-            fill: $color;
-            stroke: $color;
+            fill: var(--color);
+            stroke: var(--color);
         }
     }
 }

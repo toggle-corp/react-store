@@ -7,7 +7,7 @@
 
     .label {
         flex-shrink: 0;
-        margin-bottom: $spacing-small;
+        margin-bottom: var(--spacing-small);
     }
 
     .list {

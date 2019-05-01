@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$width-icon: 16px;
+var(--width-icon): 16px;
 
 .search-input {
     position: relative;
@@ -13,19 +13,19 @@ $width-icon: 16px;
         left: 0;
         align-items: flex-end;
         justify-content: flex-start;
-        width: $width-icon;
-        color: $color-text-label;
+        width: var(--width-icon);
+        color: var(--color-text-label);
     }
 
     &.disabled {
         .icon {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 
     :global {
         .raw-input {
-            padding-left: $width-icon;
+            padding-left: var(--width-icon);
         }
     }
 }

@@ -5,11 +5,11 @@
     align-items: center;
     flex-shrink: 0;
     justify-content: space-between;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-medium $spacing-medium-alt;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-medium) var(--spacing-medium-alt);
 
     .heading {
-        font-size: $font-size-large;
-        font-weight: $font-weight-medium;
+        font-size: var(--font-size-large);
+        font-weight: var(--font-weight-medium);
     }
 }

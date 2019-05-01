@@ -4,12 +4,12 @@
     background-image:
         linear-gradient(
             to right,
-            $color-separator 1px,
+            var(--color-separator) 1px,
             transparent 1px
         ),
         linear-gradient(
             to bottom,
-            $color-separator 1px,
+            var(--color-separator) 1px,
             transparent 1px
         );
     overflow: auto;

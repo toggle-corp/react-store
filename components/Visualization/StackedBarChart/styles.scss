@@ -2,11 +2,11 @@
 
 .barchart {
     .y-axis path {
-        stroke: $color-axis-path;
+        stroke: var(--color-axis-path);
     }
 
     .x-axis path {
-        stroke: $color-axis-path;
+        stroke: var(--color-axis-path);
     }
 }
 
@@ -15,9 +15,9 @@
     display: block;
     position: fixed;
     z-index: 10;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
     animation: fade-in .2s ease-in;
     text-align: center;
-    color: $color-text-on-foreground;
+    color: var(--color-text-on-foreground);
 }

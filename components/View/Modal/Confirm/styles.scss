@@ -1,13 +1,13 @@
 @import '../../../../stylesheets/base';
 
-$width-modal-small: 420px !default;
+var(--width-modal-small): 420px !default;
 
 .confirm {
     display: flex;
     flex-direction: column;
     margin: auto;
-    background-color: $color-foreground;
-    width: $width-modal-small;
+    background-color: var(--color-foreground);
+    width: var(--width-modal-small);
 
     .ok-button {
         box-shadow: none;

@@ -2,31 +2,31 @@
 @import '../../../stylesheets/input-base';
 @import '../../../stylesheets/input-border';
 
-$width-dropdown-button: 10px;
-$width-clear-button: 14px;
-$width-select-all-button: 14px;
+var(--width-dropdown-button): 10px;
+var(--width-clear-button): 14px;
+var(--width-select-all-button): 14px;
 
 .multi-select-input {
     .input-and-actions {
         position: relative;
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .input {
-            width: calc(100% - #{$width-dropdown-button + $spacing-extra-small});
+            width: calc(100% - #{var(--width-dropdown-button) + var(--spacing-extra-small)});
         }
 
         .actions {
             display: flex;
             position: absolute;
-            top: $spacing-extra-small;
+            top: var(--spacing-extra-small);
             right: 0;
             align-items: center;
-            height: calc(100% - #{$spacing-extra-small * 2});
+            height: calc(100% - #{var(--spacing-extra-small) * 2});
 
             %button {
                 display: inline-block;
-                transition: $duration-transition-medium opacity ease-in-out;
-                padding: $spacing-extra-small-alt;
+                transition: var(--duration-transition-medium) opacity ease-in-out;
+                padding: var(--spacing-extra-small-alt);
             }
 
             .clear-button {
@@ -50,7 +50,7 @@ $width-select-all-button: 14px;
             &:not(.input-in-focus) {
                 .input-and-actions {
                     .input::placeholder {
-                        color: $color-text;
+                        color: var(--color-text);
                     }
                 }
             }
@@ -59,7 +59,7 @@ $width-select-all-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-clear-button + $spacing-extra-small});
+                            width: calc(100% - #{var(--width-dropdown-button) + var(--width-clear-button) + var(--spacing-extra-small)});
                         }
 
                         .actions {
@@ -78,7 +78,7 @@ $width-select-all-button: 14px;
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{$width-dropdown-button + $width-select-all-button + $spacing-extra-small});
+                            width: calc(100% - #{var(--width-dropdown-button) + var(--width-select-all-button) + var(--spacing-extra-small)});
                         }
 
                         .actions {
@@ -93,7 +93,7 @@ $width-select-all-button: 14px;
             &.filled:not(.hide-select-all-button):not(.hide-clear-button) {
                 &:hover {
                     .input {
-                        width: calc(100% - #{$width-dropdown-button + $width-clear-button + $width-select-all-button + $spacing-extra-small});
+                        width: calc(100% - #{var(--width-dropdown-button) + var(--width-clear-button) + var(--width-select-all-button) + var(--spacing-extra-small)});
                     }
                 }
             }
@@ -102,28 +102,28 @@ $width-select-all-button: 14px;
         &.show-options,
         &.input-in-focus {
             .input-and-actions {
-                border-bottom-color: $color-accent;
+                border-bottom-color: var(--color-accent);
             }
         }
 
         &.error {
             .input-and-actions {
-                border-bottom-color: $color-danger;
+                border-bottom-color: var(--color-danger);
             }
         }
     }
 
     &.disabled {
         .input-and-actions {
-            border-bottom-color: $color-separator;
+            border-bottom-color: var(--color-separator);
 
             .input {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
 
             .actions {
                 .dropdown-button {
-                    color: $color-text-disabled;
+                    color: var(--color-text-disabled);
                 }
             }
         }

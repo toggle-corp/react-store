@@ -1,18 +1,18 @@
 @import '../../../../stylesheets/base';
 
-$height-options-max: 240px;
+var(--height-options-max): 240px;
 
 .options {
-    background-color: $color-foreground;
-    padding: $spacing-small 0;
-    max-height: $height-options-max;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) 0;
+    max-height: var(--height-options-max);
     overflow-x: hidden;
     overflow-y: auto;
-    color: $color-text-on-foreground;
+    color: var(--color-text-on-foreground);
 
     .empty {
-        padding: $spacing-small-alt $spacing-small;
+        padding: var(--spacing-small-alt) var(--spacing-small);
         text-align: center;
-        color: $color-text-placeholder;
+        color: var(--color-text-placeholder);
     }
 }

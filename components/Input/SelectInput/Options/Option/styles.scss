@@ -5,17 +5,17 @@
     @extend %button-base;
     display: block;
     cursor: pointer;
-    padding: $spacing-small $spacing-small-alt;
+    padding: var(--spacing-small) var(--spacing-small-alt);
     width: 100%;
     text-align: left;
 
     &.focused {
-        background-color: $color-background-hover;
-        // background-color: get-hover-color($color-foreground);
+        background-color: var(--color-background-hover);
+        // background-color: get-hover-color(var(--color-foreground));
     }
 
     &.active {
-        background-color: $color-accent;
-        color: $color-text-on-accent;
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
     }
 }

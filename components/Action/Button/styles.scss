@@ -1,46 +1,46 @@
 @import '../../../stylesheets/base';
 
-$radius-button-border: 2px !default;
+var(--radius-button-border): 2px !default;
 
-@mixin button-props($base-color) {
-    // border: $width-separator-thin solid $color-separator-light;
-    // color: $color-text;
-    // @include background-color($base-color);
+@mixin button-props(var(--base-color)) {
+    // border: var(--width-separator-thin) solid var(--color-separator-light);
+    // color: var(--color-text);
+    // @include background-color(var(--base-color));
 
     &:focus {
-        @include outline-button($base-color);
+        @include outline-button(var(--base-color));
     }
 
     &:not(:disabled) {
-        border: $width-separator-thin solid $base-color;
-        background-color: $color-foreground;
-        color: $base-color;
+        border: var(--width-separator-thin) solid var(--base-color);
+        background-color: var(--color-foreground);
+        color: var(--base-color);
 
         &:hover {
-            background-color: $color-background-hover;
-            // color: $base-color;
-            // background-color: get-hover-color($base-color);
+            background-color: var(--color-background-hover);
+            // color: var(--base-color);
+            // background-color: get-hover-color(var(--base-color));
         }
     }
 }
 
-@mixin transparent-button-props ($base-color) {
-    color: $base-color;
+@mixin transparent-button-props (var(--base-color)) {
+    color: var(--base-color);
 
     &:focus {
-        @include outline-button($color-foreground);
+        @include outline-button(var(--color-foreground));
     }
 }
 
 .button {
-    border: $width-separator-thin solid $color-separator-light;
-    border-radius: $radius-button-border;
+    border: var(--width-separator-thin) solid var(--color-separator-light);
+    border-radius: var(--radius-button-border);
     background-color: transparent;
-    padding: $spacing-small $spacing-small-alt;
+    padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: uppercase;
     font-family: inherit;
-    font-size: $font-size-small;
-    font-weight: $font-weight-bold;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
 
     .pending-icon {
         animation: spin 1s linear infinite;
@@ -64,48 +64,48 @@ $radius-button-border: 2px !default;
         }
 
         &.button-default {
-            background-color: $color-foreground;
-            color: $color-text;
+            background-color: var(--color-foreground);
+            color: var(--color-text);
 
             &:focus {
-                @include outline-button($color-separator-alt);
+                @include outline-button(var(--color-separator-alt));
             }
 
             &:not(:disabled) {
-                border: $width-separator-thin solid $color-separator-alt;
+                border: var(--width-separator-thin) solid var(--color-separator-alt);
 
                 &:hover {
-                    background-color: $color-background-hover;
-                    // color: $color-text;
-                    // background-color: get-hover-color($base-color);
+                    background-color: var(--color-background-hover);
+                    // color: var(--color-text);
+                    // background-color: get-hover-color(var(--base-color));
                 }
             }
-            // @include button-props($color-foreground-alt);
+            // @include button-props(var(--color-foreground-alt));
         }
 
         &.button-accent {
-            @include button-props($color-accent);
+            @include button-props(var(--color-accent));
         }
 
         &.button-primary {
-            @include button-props($color-primary);
+            @include button-props(var(--color-primary));
         }
 
         &.button-danger {
-            @include button-props($color-danger);
+            @include button-props(var(--color-danger));
         }
 
         &.button-success {
-            @include button-props($color-success);
+            @include button-props(var(--color-success));
         }
 
         &.button-warning {
-            @include button-props($color-warning);
+            @include button-props(var(--color-warning));
         }
 
         &:disabled {
-            background-color: $color-background-disabled;
-            color: $color-text-disabled;
+            background-color: var(--color-background-disabled);
+            color: var(--color-text-disabled);
         }
     }
 
@@ -117,39 +117,39 @@ $radius-button-border: 2px !default;
         }
 
         &.button-default {
-            @include transparent-button-props($color-text);
+            @include transparent-button-props(var(--color-text));
         }
 
         &.button-accent {
-            @include transparent-button-props($color-accent);
+            @include transparent-button-props(var(--color-accent));
         }
 
         &.button-primary {
-            @include transparent-button-props($color-primary);
+            @include transparent-button-props(var(--color-primary));
         }
 
         &.button-danger {
-            @include transparent-button-props($color-danger);
+            @include transparent-button-props(var(--color-danger));
         }
 
         &.button-success {
-            @include transparent-button-props($color-success);
+            @include transparent-button-props(var(--color-success));
         }
 
         &.button-warning {
-            @include transparent-button-props($color-warning);
+            @include transparent-button-props(var(--color-warning));
         }
 
         &:disabled {
             cursor: default;
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
     }
 
     &.with-icon-and-children {
         .icon {
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
         }
     }
 

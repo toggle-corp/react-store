@@ -7,40 +7,40 @@
     .tab {
         @extend %button-base;
         display: block;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
         width: 100%;
         text-align: left;
         word-break: break-all;
-        color: $color-text-label;
+        color: var(--color-text-label);
 
         &:hover {
-            background-color: $color-background-hover;
-            color: $color-text;
+            background-color: var(--color-background-hover);
+            color: var(--color-text);
         }
 
         &.active {
-            background-color: $color-background-selected;
-            color: $color-text;
+            background-color: var(--color-background-selected);
+            color: var(--color-text);
         }
     }
 
     &:not(.inverted) {
         .tab {
-            border-left: $width-separator-thick solid transparent;
+            border-left: var(--width-separator-thick) solid transparent;
 
             &.active {
-                border-left-color: $color-accent;
+                border-left-color: var(--color-accent);
             }
         }
     }
 
     .inverted {
         .tab {
-            border-right: $width-separator-thick solid transparent;
+            border-right: var(--width-separator-thick) solid transparent;
 
             &.active {
-                border-right-color: $color-accent;
+                border-right-color: var(--color-accent);
             }
         }
     }

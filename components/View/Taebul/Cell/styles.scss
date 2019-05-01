@@ -2,5 +2,5 @@
 
 .cell {
     flex-shrink: 0;
-    border-right: $width-separator-thin solid $color-separator;
+    border-right: var(--width-separator-thin) solid var(--color-separator);
 }

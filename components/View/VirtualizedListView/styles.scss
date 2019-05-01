@@ -8,15 +8,15 @@
     .virtual-div {
         background: linear-gradient(
             to bottom,
-            $color-background-row,
-            $color-background-row 50%,
-            $color-background-row-alt 50%,
-            $color-background-row-alt
+            var(--color-background-row),
+            var(--color-background-row) 50%,
+            var(--color-background-row-alt) 50%,
+            var(--color-background-row-alt)
         );
     }
 
     .item {
-        animation: fade-in $duration-transition-medium forwards;
+        animation: fade-in var(--duration-transition-medium) forwards;
     }
 
     .empty {

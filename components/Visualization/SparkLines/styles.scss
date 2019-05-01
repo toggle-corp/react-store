@@ -5,25 +5,25 @@
 
     .spark-line {
         .area {
-            fill: $color-viz-blue;
+            fill: var(--color-viz-blue);
             stroke: none;
             stroke-width: 0;
             fill-opacity: 0.1;
         }
 
         .path {
-            stroke: $color-viz-blue;
+            stroke: var(--color-viz-blue);
             stroke-width: 1;
             stroke-linejoin: round;
             stroke-linecap: round;
         }
 
         .focus {
-            fill: $color-viz-blue;
-            stroke: $color-viz-grey;
+            fill: var(--color-viz-blue);
+            stroke: var(--color-viz-grey);
 
             .line {
-                stroke: $color-viz-grey;
+                stroke: var(--color-viz-grey);
             }
         }
     }
@@ -35,9 +35,9 @@
     display: block;
     position: fixed;
     z-index: 10;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium-alt;
-    color: $color-text;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
+    color: var(--color-text);
     pointer-events: none;
 
     .yvalue {

@@ -7,9 +7,9 @@
     @include shadow-medium;
     position: fixed;
     z-index: 10;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium-alt;
-    color: $color-text-on-foreground;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
+    color: var(--color-text-on-foreground);
 }
 
 .slider {

@@ -1,9 +1,9 @@
 @import '../../../../../stylesheets/base';
 
 .row {
-    background-color: $color-background-row-alt;
+    background-color: var(--color-background-row-alt);
 
     &:nth-child(odd) {
-        background-color: $color-background-row;
+        background-color: var(--color-background-row);
     }
 }

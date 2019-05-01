@@ -1,6 +1,6 @@
 @import '../../../stylesheets/base';
 
-$width-modal-small: 420px !default;
+var(--width-modal-small): 420px !default;
 
 .modal {
     display: flex;
@@ -9,11 +9,11 @@ $width-modal-small: 420px !default;
     left: 50%;
     flex-direction: column;
     transform: translate(-50%, -50%);
-    box-shadow: 0 $spacing-small $spacing-extra-large $color-shadow-medium;
-    background-color: $color-foreground;
-    width: $width-modal-medium;
+    box-shadow: 0 var(--spacing-small) var(--spacing-extra-large) var(--color-shadow-medium);
+    background-color: var(--color-foreground);
+    width: var(--width-modal-medium);
     max-height: 96vh;
-    // animation: fade-in-from-top $duration-transition-medium ease forwards;
+    // animation: fade-in-from-top var(--duration-transition-medium) ease forwards;
 }
 
 @keyframes fade-in-from-top {

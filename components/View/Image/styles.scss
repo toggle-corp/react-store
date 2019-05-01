@@ -10,20 +10,20 @@
 
     .action-buttons {
         position: absolute;
-        top: $spacing-medium;
-        left: $spacing-medium;
-        transition: $duration-transition-medium opacity ease-in-out;
+        top: var(--spacing-medium);
+        left: var(--spacing-medium);
+        transition: var(--duration-transition-medium) opacity ease-in-out;
         opacity: 0;
-        border: $width-separator-thin solid rgba(0, 0, 0, .3);
+        border: var(--width-separator-thin) solid rgba(0, 0, 0, .3);
         border-radius: 4px;
         background-color: rgb(0, 0, 0);
-        padding: $spacing-extra-small 0;
+        padding: var(--spacing-extra-small) 0;
 
         .action {
             display: block;
-            padding: 0 $spacing-small;
-            color: $color-foreground;
-            font-size: $font-size-large;
+            padding: 0 var(--spacing-small);
+            color: var(--color-foreground);
+            font-size: var(--font-size-large);
         }
     }
 

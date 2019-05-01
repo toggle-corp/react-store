@@ -4,11 +4,11 @@
     outline: 0;
     border: 0;
     background-color: transparent;
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
     text-align: left;
-    color: $color-accent;
+    color: var(--color-accent);
     font-family: inherit;
     font-size: inherit;
-    font-weight: $font-weight-bold;
+    font-weight: var(--font-weight-bold);
 }

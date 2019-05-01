@@ -4,6 +4,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: $width-separator-medium solid $color-separator;
-    color: $color-text-label;
+    border: var(--width-separator-medium) solid var(--color-separator);
+    color: var(--color-text-label);
 }

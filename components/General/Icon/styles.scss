@@ -2,7 +2,7 @@
 
 .svg {
     width: auto;
-    height: $font-size-medium;
+    height: var(--font-size-medium);
     color: inherit;
 
     path {
@@ -12,5 +12,5 @@
 }
 
 .image {
-    height: $font-size-medium;
+    height: var(--font-size-medium);
 }

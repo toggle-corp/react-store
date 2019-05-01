@@ -4,11 +4,11 @@
     display: inline-block;
     border: 2px solid;
     border-radius: 100%;
-    border-color: $color-primary;
+    border-color: var(--color-primary);
     border-bottom-color: transparent;
     background: transparent !important;
-    width: $width-icon-medium;
-    height: $width-icon-medium;
+    width: var(--width-icon-medium);
+    height: var(--width-icon-medium);
     animation: clip 0.75s 0s infinite linear;
     animation-fill-mode: both;
 }

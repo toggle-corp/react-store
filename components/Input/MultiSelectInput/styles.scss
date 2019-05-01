@@ -8,14 +8,14 @@
     --width-multiselect-select-all-button: 14px;
 }
 
-$width-dropdown-button: 10px;
-$width-clear-button: 14px;
-$width-select-all-button: 14px;
+var(--width-dropdown-button): 10px;
+var(--width-clear-button): 14px;
+var(--width-select-all-button): 14px;
 
 .multi-select-input {
     .input-and-actions {
         position: relative;
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .input {
             width: calc(100% - var(--width-multiselect-dropdown-button) + var(--spacing-extra-small));
@@ -24,15 +24,15 @@ $width-select-all-button: 14px;
         .actions {
             display: flex;
             position: absolute;
-            top: $spacing-extra-small;
+            top: var(--spacing-extra-small);
             right: 0;
             align-items: center;
             height: calc(100% - var(--spacing-extra-small) * 2);
 
             %button {
                 display: inline-block;
-                transition: $duration-transition-medium opacity ease-in-out;
-                padding: $spacing-extra-small-alt;
+                transition: var(--duration-transition-medium) opacity ease-in-out;
+                padding: var(--spacing-extra-small-alt);
             }
 
             .clear-button {
@@ -56,7 +56,7 @@ $width-select-all-button: 14px;
             &:not(.input-in-focus) {
                 .input-and-actions {
                     .input::placeholder {
-                        color: $color-text;
+                        color: var(--color-text);
                     }
                 }
             }
@@ -108,28 +108,28 @@ $width-select-all-button: 14px;
         &.show-options,
         &.input-in-focus {
             .input-and-actions {
-                border-bottom-color: $color-accent;
+                border-bottom-color: var(--color-accent);
             }
         }
 
         &.error {
             .input-and-actions {
-                border-bottom-color: $color-danger;
+                border-bottom-color: var(--color-danger);
             }
         }
     }
 
     &.disabled {
         .input-and-actions {
-            border-bottom-color: $color-separator;
+            border-bottom-color: var(--color-separator);
 
             .input {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
 
             .actions {
                 .dropdown-button {
-                    color: $color-text-disabled;
+                    color: var(--color-text-disabled);
                 }
             }
         }

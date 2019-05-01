@@ -6,11 +6,11 @@
 
     .title {
         flex-shrink: 0;
-        padding-right: $spacing-medium;
+        padding-right: var(--spacing-medium);
         width: 64px;
         text-transform: capitalize;
-        color: $color-text-label;
-        font-weight: $font-weight-bold;
+        color: var(--color-text-label);
+        font-weight: var(--font-weight-bold);
 
         &:after {
             content: ':',

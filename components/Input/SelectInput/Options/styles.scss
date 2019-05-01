@@ -1,16 +1,16 @@
 @import '../../../../stylesheets/base';
 
 .options {
-    background-color: $color-foreground;
-    padding: $spacing-small 0;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) 0;
     max-height: 200px;
     overflow-x: hidden;
     overflow-y: auto;
-    color: $color-text-on-foreground;
+    color: var(--color-text-on-foreground);
 
     .empty {
-        padding: $spacing-small-alt $spacing-small;
+        padding: var(--spacing-small-alt) var(--spacing-small);
         text-align: center;
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 }

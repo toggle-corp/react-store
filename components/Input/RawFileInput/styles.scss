@@ -6,12 +6,12 @@
 
     .label {
         display: block;
-        border: $width-separator-thin solid $color-separator;
+        border: var(--width-separator-thin) solid var(--color-separator);
         cursor: pointer;
-        padding: $spacing-medium;
+        padding: var(--spacing-medium);
         text-align: center;
         text-transform: capitalize;
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
 
     .input {
@@ -20,7 +20,7 @@
 
     .status {
         margin: 0;
-        color: $color-text-label;
+        color: var(--color-text-label);
         font-style: italic;
     }
 }

@@ -3,11 +3,11 @@
 .non-field-errors {
     display: flex;
     text-align: center;
-    color: $color-danger;
+    color: var(--color-danger);
 
     .error {
         flex-basis: 100%;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
 
         &.empty {
             color: transparent;

@@ -6,7 +6,7 @@
     .svg {
         .bars {
             .bar {
-                fill: $color-accent;
+                fill: var(--color-accent);
                 opacity: .2;
 
                 &:hover {
@@ -16,8 +16,8 @@
         }
 
         .y-axis {
-            stroke-width: $width-separator-medium;
-            stroke: $color-accent;
+            stroke-width: var(--width-separator-medium);
+            stroke: var(--color-accent);
         }
     }
 }

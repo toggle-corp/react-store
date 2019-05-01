@@ -2,7 +2,7 @@
 
 .dismissable-list-item {
     display: flex;
-    transition: $duration-transition-medium background-color ease-in-out;
+    transition: var(--duration-transition-medium) background-color ease-in-out;
     overflow: hidden;
 
     .list-item {
@@ -12,12 +12,12 @@
     .dismiss-button {
         flex-shrink: 0;
         transform: translateX(100%);
-        transition: $duration-transition-medium opacity $duration-transition-medium ease-in-out, $duration-transition-medium $duration-transition-medium transform ease-in-out;
+        transition: var(--duration-transition-medium) opacity var(--duration-transition-medium) ease-in-out, var(--duration-transition-medium) var(--duration-transition-medium) transform ease-in-out;
         opacity: 0;
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
         
         .dismiss-button {
             transform: translateX(0);

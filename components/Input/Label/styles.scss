@@ -9,14 +9,14 @@
     }
 
     &.active {
-        color: $color-accent;
+        color: var(--color-accent);
     }
 
     &.error {
-        color: $color-danger;
+        color: var(--color-danger);
     }
 
     &.disabled {
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 }

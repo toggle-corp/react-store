@@ -5,19 +5,19 @@
 
     .svg {
         .grid line {
-            stroke: $color-grid-path;
+            stroke: var(--color-grid-path);
             shape-rendering: crispEdges;
         }
 
         .grid {
             path {
-                stroke: $color-axis-path;
+                stroke: var(--color-axis-path);
             }
         }
 
         .x-axis {
             path {
-                stroke: $color-axis-path;
+                stroke: var(--color-axis-path);
             }
 
             .tick line {
@@ -27,7 +27,7 @@
 
         .y-axis {
             path {
-                stroke: $color-axis-path;
+                stroke: var(--color-axis-path);
 
                 .tick line {
                     visibility: hidden;
@@ -41,10 +41,10 @@
     @include shadow-medium;
     position: fixed;
     z-index: 10;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
     animation: fade-in .2s ease-in;
-    color: $color-text-on-foreground;
+    color: var(--color-text-on-foreground);
     pointer-events: none;
 
     .label {

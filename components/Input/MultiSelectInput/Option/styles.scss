@@ -6,7 +6,7 @@
     border: 0;
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-small $spacing-small-alt;
+    padding: var(--spacing-small) var(--spacing-small-alt);
     width: 100%;
     text-align: left;
     color: inherit;
@@ -14,7 +14,7 @@
     font-size: inherit;
 
     &.focused {
-        background-color: $color-background-hover;
-        // background-color: get-hover-color($color-foreground);
+        background-color: var(--color-background-hover);
+        // background-color: get-hover-color(var(--color-foreground));
     }
 }

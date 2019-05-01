@@ -8,18 +8,18 @@
     }
 
     .label {
-        padding-bottom: $spacing-extra-small;
+        padding-bottom: var(--spacing-extra-small);
     }
 
     &.error {
         .segment-container {
-            // border: $width-separator-thin solid $color-danger;
+            // border: var(--width-separator-thin) solid var(--color-danger);
         }
     }
 
     &.disabled {
         .segment-container {
-            // border: $width-separator-thin solid $color-separator-light;
+            // border: var(--width-separator-thin) solid var(--color-separator-light);
         }
     }
 }
