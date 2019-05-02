@@ -1,8 +1,8 @@
 .spinner {
     position: relative;
-    width: var(--font-size-super-large);
-    height: var(--font-size-super-large);
+    transform-origin: 50% 50%;
     animation: spin 1s linear infinite;
+    font-size: var(--font-size-large);
 }
 
 @keyframes spin {

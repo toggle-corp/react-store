@@ -72,7 +72,13 @@ export default class LoadingAnimation extends React.PureComponent {
     }
 
     render() {
-        const { message } = this.props;
+        const {
+            className: classNameFromProps,
+            delay,
+            message,
+            ...otherProps
+        } = this.props;
+
         const { showMessage } = this.state;
 
         const className = this.getClassName();
@@ -83,7 +89,10 @@ export default class LoadingAnimation extends React.PureComponent {
         const LoadingMessage = this.renderMessage;
 
         return (
-            <Message className={className}>
+            <Message
+                className={className}
+                {...otherProps}
+            >
                 <Spinner />
                 { message && showMessage && <LoadingMessage />}
             </Message>
