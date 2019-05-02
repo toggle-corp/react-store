@@ -4,6 +4,7 @@ import defaultColors from './default/colors';
 import defaultDimens from './default/dimens';
 
 const emptyObject = {};
+export const currentStyle = {};
 
 export const setStyleProperties = (properties) => {
     const propertyList = Object.keys(properties);
@@ -22,4 +23,7 @@ export const initializeStyles = ({
 } = emptyObject) => {
     setStyleProperties(colors);
     setStyleProperties(dimens);
+
+    Object.assign(currentStyle, colors);
+    Object.assign(currentStyle, dimens);
 };

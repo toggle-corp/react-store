@@ -21,19 +21,22 @@ const colorTextOnWarning = colorTextOnDark;
 const colorDanger = '#d3575e';
 const colorTextOnDanger = colorTextOnDark;
 
-const colorBackground = '#e0e0e0';
+const colorBackground = '#f6f6f6';
 const colorTextOnBackground = colorTextOnLight;
-const colorBackgroundAlt = '#f0f0f0';
+const colorBackgroundAlt = '#f2f2f2';
 const colorTextOnBackgroundAlt = colorTextOnLight;
+
+const colorBackgroundAccentHint = 'rgba(0, 137, 117, .05)';
+const colorTextOnAccentHint = colorTextOnLight;
 
 const colorForeground = '#fff';
 const colorTextOnForeground = colorTextOnLight;
-const colorForegroundAlt = '#f5f5f5';
+const colorForegroundAlt = '#fafafa';
 const colorTextOnForegroundAlt = colorTextOnLight;
 
-const colorBackgroundHeader = '#f0f5f5';
+const colorBackgroundHeader = '#fafafa';
 const colorTextOnBackgroundHeader = colorTextOnLight;
-const colorBackgroundHeaderAlt = '#90caf9';
+const colorBackgroundHeaderAlt = '#f5f5f5';
 const colorTextOnBackgroundHeaderAlt = colorTextOnLight;
 
 const colorBackgroundHover = 'rgba(0, 0, 0, .03)';
@@ -42,11 +45,12 @@ const colorBackgroundDisabled = 'rgba(0, 0, 0, .05)';
 const colorTextOnBackgroundDisabled = colorTextOnLight;
 
 const colorBackgroundSelected = colorAccent;
+const colorTextOnSelected = colorTextOnAccent;
 
-const colorBackgroundRow = '#fafafa';
-const colorBackgroundRowAlt = '#f0f0f0';
+const colorBackgroundRow = colorForeground;
+const colorBackgroundRowAlt = colorForeground;
 
-const colorNavbar = '#fff';
+const colorNavbar = colorForeground;
 const colorTextOnNavbar = colorTextOnLight;
 const colorTextActiveTab = colorPrimary;
 
@@ -98,6 +102,9 @@ const colors = {
     colorBackgroundAlt,
     colorTextOnBackgroundAlt,
 
+    colorBackgroundAccentHint,
+    colorTextOnAccentHint,
+
     colorForeground,
     colorTextOnForeground,
     colorForegroundAlt,
@@ -114,6 +121,7 @@ const colors = {
     colorTextOnBackgroundDisabled,
 
     colorBackgroundSelected,
+    colorTextOnSelected,
 
     colorBackgroundRow,
     colorBackgroundRowAlt,

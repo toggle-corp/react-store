@@ -17,10 +17,10 @@
     }
 
     .main-content {
-        // @extend %main-content;
         position: relative;
         flex-grow: 1;
         margin: var(--page-margin);
+        border: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground-alt);
         overflow: auto;
         color: var(--color-text-on-foreground-alt);
@@ -44,6 +44,7 @@
         flex-basis: var(--width-sidebar);
         flex-grow: 0;
         flex-shrink: 0;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
         color: var(--color-text-on-foreground);
     }
@@ -63,10 +64,10 @@
         }
 
         .main-content {
-            // @extend %main-content;
             position: relative;
             flex-grow: 1;
             margin: var(--page-margin);
+            border: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-foreground-alt);
             overflow: auto;
             color: var(--color-text-on-foreground-alt)

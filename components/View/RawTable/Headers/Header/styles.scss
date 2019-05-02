@@ -9,6 +9,6 @@
     font-weight: var(--font-weight-normal);
 
     &:not(:last-child) {
-        border-right: var(--width-separator-thin) solid var(--color-separator);
+        border-right: var(--width-separator-thin) solid var(--color-separator-light);
     }
 }

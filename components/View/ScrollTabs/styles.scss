@@ -74,7 +74,8 @@
 
                 &.active {
                     border-bottom-color: var(--color-accent);
-                    color: var(--color-text);
+                    background-color: var(--color-background-accent-hint);
+                    color: var(--color-text-accent-hint);
                 }
             }
 
@@ -92,7 +93,8 @@
 
                 &.active {
                     border-top-color: var(--color-accent);
-                    color: var(--color-text);
+                    background-color: var(--color-background-accent-hint);
+                    color: var(--color-text-accent-hint);
                 }
             }
 

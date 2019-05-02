@@ -15,4 +15,8 @@
         background-color: var(--color-accent);
         color: var(--color-text-on-accent);
     }
+
+    &:hover {
+        background-color: var(--color-background-accent-hint);
+    }
 }

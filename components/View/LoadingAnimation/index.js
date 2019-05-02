@@ -5,6 +5,7 @@ import { typeOf } from '@togglecorp/fujs';
 
 import Icon from '../../General/Icon';
 import Message from '../Message';
+import Spinner from '../../View/Spinner';
 
 import styles from './styles.scss';
 
@@ -83,10 +84,7 @@ export default class LoadingAnimation extends React.PureComponent {
 
         return (
             <Message className={className}>
-                <Icon
-                    className={iconClassName}
-                    name="loading"
-                />
+                <Spinner />
                 { message && showMessage && <LoadingMessage />}
             </Message>
         );
