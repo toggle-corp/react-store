@@ -1,4 +1,3 @@
-@import '../../../../stylesheets/base';
 
 .month-picker {
     display: flex;
@@ -10,14 +9,14 @@
         align-items: center;
         flex-shrink: 0;
         justify-content: center;
-        background-color: $color-background-header;
+        background-color: var(--color-background-header);
 
         button {
             border-radius: 0;
-            padding: $spacing-small $spacing-small-alt;
+            padding: var(--spacing-small) var(--spacing-small-alt);
 
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
 
@@ -36,22 +35,22 @@
         align-items: stretch;
         flex-grow: 1;
         flex-wrap: wrap;
-        padding: $spacing-extra-small;
+        padding: var(--spacing-extra-small);
         overflow: auto;
 
         .month {
             flex-basis: calc(100% / 3);
-            border: $width-separator-thin solid transparent;
+            border: var(--width-separator-thin) solid transparent;
             border-radius: 0;
             padding: 0;
 
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
 
             &.selected {
-                border-color: $color-accent;
-                color: $color-accent;
+                border-color: var(--color-accent);
+                color: var(--color-accent);
             }
         }
     }

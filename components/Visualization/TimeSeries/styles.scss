@@ -1,9 +1,10 @@
-@import '../../../stylesheets/base';
 
-$timeseries-area-color: rgba(0, 128, 128, .6) !default;
-$timeseries-line-color: #008080 !default;
-$timeseries-color-overlay: $timeseries-line-color !default;
-$timeseries-stroke-overlay: #fff !default;
+:root {
+    --timeseries-area-color: rgba(0, 128, 128, .6);
+    --timeseries-line-color: #008080;
+    --timeseries-color-overlay: var(--timeseries-line-color);
+    --timeseries-stroke-overlay: #fff;
+}
 
 .time-series {
     display: flex;
@@ -21,24 +22,24 @@ $timeseries-stroke-overlay: #fff !default;
             .axis {
                 line,
                 path {
-                    stroke: $color-background-header-alt;
+                    stroke: var(--color-background-header-alt);
                 }
 
                 text {
-                    fill: $color-text;
+                    fill: var(--color-text);
                 }
             }
 
             .time-area {
                 path {
-                    stroke: $timeseries-area-color;
-                    fill: $timeseries-area-color;
+                    stroke: var(--timeseries-area-color);
+                    fill: var(--timeseries-area-color);
                 }
             }
 
             .time-path {
                 path {
-                    stroke: $timeseries-line-color;
+                    stroke: var(--timeseries-line-color);
                     fill: transparent;
                     stroke-width: 1.5px;
                 }
@@ -51,14 +52,14 @@ $timeseries-stroke-overlay: #fff !default;
 
             .overlay-line {
                 opacity: 0;
-                stroke: $timeseries-color-overlay;
-                fill: $timeseries-color-overlay;
+                stroke: var(--timeseries-color-overlay);
+                fill: var(--timeseries-color-overlay);
             }
 
             .overlay-circle {
                 opacity: 0;
-                stroke: $timeseries-stroke-overlay;
-                fill: $timeseries-line-color;
+                stroke: var(--timeseries-stroke-overlay);
+                fill: var(--timeseries-line-color);
             }
         }
     }

@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import {
+    isDefined,
+    _cs,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
@@ -59,37 +62,25 @@ export class NormalListSelection extends React.PureComponent {
 
     getClassName = () => {
         const {
-            className,
+            className: classNameFromProps,
             disabled,
             error,
             segment,
         } = this.props;
 
-        const classNames = [
-            className,
+        const className = _cs(
+            classNameFromProps,
             styles.listSelection,
             'list-selection',
-        ];
+            segment ? styles.multiSegment : styles.singleSegment,
+            segment ? 'multi-segment' : 'single-segment',
+            disabled && styles.disabled,
+            disabled && 'disabled',
+            error && styles.error,
+            error && 'error',
+        );
 
-        if (segment) {
-            classNames.push(styles.multiSegment);
-            classNames.push('multi-segment');
-        } else {
-            classNames.push(styles.listSelection);
-            classNames.push('list-selection');
-        }
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-            classNames.push('disabled');
-        }
-
-        if (error) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        return classNames.join(' ');
+        return className;
     }
 
     handleItemChange = (key, isSelected) => {
@@ -117,13 +108,16 @@ export class NormalListSelection extends React.PureComponent {
         } = this.props;
 
         const selected = value.indexOf(key) >= 0;
-        const classNames = [styles.item];
-        if (isDefined(selected)) {
-            classNames.push(styles.checked);
-        }
+        /*
+        const className = _cs(
+            styles.item,
+            isDefined(selected) && styles.checked,
+        );
+        */
 
         return {
-            className: classNames.join(' '),
+            // className,
+            className: styles.item,
             label: labelSelector(itemData),
             tooltip: tooltipSelector(itemData),
             value: selected,
@@ -142,7 +136,7 @@ export class NormalListSelection extends React.PureComponent {
 
         return (
             <ListView
-                className={styles.options}
+                className={_cs(styles.options, 'list-selection-options')}
                 data={options}
                 renderer={Checkbox}
                 keySelector={keySelector}
@@ -158,6 +152,7 @@ export class NormalListSelection extends React.PureComponent {
             error,
             showHintAndError,
             showLabel,
+            disabled,
         } = this.props;
 
         const className = this.getClassName();
@@ -166,9 +161,10 @@ export class NormalListSelection extends React.PureComponent {
         return (
             <div className={className}>
                 <Label
-                    className={styles.label}
                     show={showLabel}
                     text={label}
+                    disabled={disabled}
+                    error={!!error}
                 />
                 <Input />
                 <HintAndError

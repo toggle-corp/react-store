@@ -1,9 +1,8 @@
-@import '../../../stylesheets/base';
 
 .table-header {
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-medium;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-medium);
     overflow: hidden;
     text-align: left;
     text-overflow: ellipsis;
@@ -14,15 +13,15 @@
         cursor: pointer;
 
         .icon {
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
         }
 
         &.active {
-            color: $color-accent;
+            color: var(--color-accent);
         }
 
         &:hover {
-            background-color: $color-background-hover;
+            background-color: var(--color-background-hover);
         }
     }
 }

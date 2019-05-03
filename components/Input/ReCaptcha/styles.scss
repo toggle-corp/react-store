@@ -1,31 +1,30 @@
-@import '../../../stylesheets/base';
 
 .recaptcha {
-    padding: $spacing-small 0;
+    padding: var(--spacing-small) 0;
 
     .g-recaptcha {
-        border: $width-separator-medium solid transparent;
+        border: var(--width-separator-medium) solid transparent;
 
         &.errored {
-            border-color: $color-danger;
+            border-color: var(--color-danger);
         }
     }
 
     %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
+        margin: var(--spacing-extra-small) 0 0;
+        font-size: var(--font-size-extra-small);
     }
 
     /*
     .hint {
         @extend %base;
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
     */
 
     .error {
         @extend %base;
-        color: $color-danger;
+        color: var(--color-danger);
     }
 
     .empty {

@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 
 .removable-list-item {
     display: flex;
@@ -18,14 +17,14 @@
 
     .remove-button {
         flex-shrink: 0;
-        transition: $duration-transition-medium opacity ease-in-out;
+        transition: var(--duration-transition-medium) opacity ease-in-out;
         opacity: 0;
-        padding: $spacing-extra-small $spacing-small;
-        font-size: $font-size-medium-alt;
+        padding: var(--spacing-extra-small) var(--spacing-small);
+        font-size: var(--font-size-medium-alt);
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
 
         .remove-button {
             opacity: 1;

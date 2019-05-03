@@ -1,15 +1,16 @@
-@import '../../../stylesheets/base';
+
+:root {
+    --width-checkbox-checkmark: var(--font-size-medium);
+}
 
 .checkbox {
     display: flex;
     cursor: pointer;
-    width: 100%;
     user-select: none;
 
     .checkmark {
-        display: inline-block;
-        margin-right: $spacing-small;
-        font-size: $font-size-medium-alt;
+        margin-right: var(--spacing-extra-small);
+        width: var(--width-checkbox-checkmark);
     }
 
     .input {
@@ -17,33 +18,34 @@
     }
 
     .label {
-        font-weight: $font-weight-normal;
+        color: var(--color-text);
+        font-weight: var(--font-weight-normal);
     }
 
     &.checked {
         .checkmark {
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
     &.disabled {
         .checkmark {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         .input {
-            border-bottom-color: $color-separator;
-            color: $color-text-disabled;
+            border-bottom-color: var(--color-separator);
+            color: var(--color-text-disabled);
         }
     }
 
     &.read-only {
         .checkmark {
-            color: $color-text;
+            color: var(--color-text);
         }
     }
 }

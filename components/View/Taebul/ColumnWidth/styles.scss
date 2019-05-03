@@ -1,11 +1,10 @@
-@import '../../../../stylesheets/base';
 
 .new-header {
     position: relative;
     width: 100%;
 
     .original-header-container {
-        padding-right: $spacing-extra-small;
+        padding-right: var(--spacing-extra-small);
         width: 100%;
     }
 
@@ -16,9 +15,9 @@
         align-self: center;
         flex-shrink: 0;
         z-index: 1;
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
         cursor: col-resize;
-        width: $spacing-small;
+        width: var(--spacing-small);
         height: 100%;
     }
 

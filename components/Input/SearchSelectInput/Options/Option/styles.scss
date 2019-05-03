@@ -1,19 +1,19 @@
-@import '../../../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 @import '../../../../../stylesheets/button-base';
 
 .option {
     @extend %button-base;
     display: block;
     cursor: pointer;
-    padding: $spacing-small $spacing-small-alt;
+    padding: var(--spacing-small) var(--spacing-small-alt);
     width: 100%;
     text-align: left;
 
     &.focused {
-        background-color: get-hover-color($color-foreground);
+        background-color: get-hover-color(var(--color-foreground));
     }
 
     &.active {
-        @include background-color($color-accent);
+        @include background-color(var(--color-accent));
     }
 }

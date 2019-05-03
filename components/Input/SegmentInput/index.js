@@ -151,6 +151,7 @@ class SegmentInput extends React.PureComponent {
             showHintAndError,
             options,
             keySelector,
+            disabled,
         } = this.props;
 
         const classNames = this.getClassName();
@@ -161,6 +162,8 @@ class SegmentInput extends React.PureComponent {
                     className={styles.label}
                     show={showLabel}
                     text={label}
+                    disabled={disabled}
+                    error={!!error}
                 />
                 <ListView
                     className={styles.segmentContainer}

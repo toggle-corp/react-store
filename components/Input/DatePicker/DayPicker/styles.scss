@@ -1,4 +1,3 @@
-@import '../../../../stylesheets/base';
 
 %button {
     outline: none;
@@ -14,15 +13,15 @@
     .header {
         display: flex;
         flex-wrap: wrap;
-        background-color: $color-background-header;
+        background-color: var(--color-background-header);
         width: 100%;
 
         button {
             border-radius: 0;
-            padding: $spacing-small $spacing-small-alt;
+            padding: var(--spacing-small) var(--spacing-small-alt);
 
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
 
@@ -39,13 +38,13 @@
         .days {
             display: flex;
             flex-basis: 100%;
-            background-color: $color-background-header-alt;
-            padding: $spacing-extra-small 0;
+            background-color: var(--color-background-header-alt);
+            padding: var(--spacing-extra-small) 0;
 
             > span {
                 flex-grow: 1;
                 text-align: center;
-                font-size: $font-size-small;
+                font-size: var(--font-size-small);
             }
         }
     }
@@ -62,22 +61,22 @@
                 display: table-cell;
 
                 button {
-                    border: $width-separator-thin solid transparent;
+                    border: var(--width-separator-thin) solid transparent;
                     border-radius: 0;
-                    padding: $spacing-small;
+                    padding: var(--spacing-small);
                     width: 100%;
                     height: 100%;
 
                     &:hover {
-                        // border-color: $color-separator-alt;
-                        background-color: $color-background-hover;
+                        // border-color: var(--color-separator-alt);
+                        background-color: var(--color-background-hover);
                     }
                 }
 
                 &.selected {
                     button {
-                        border-color: $color-accent;
-                        color: $color-accent;
+                        border-color: var(--color-accent);
+                        color: var(--color-accent);
                     }
                 }
             }

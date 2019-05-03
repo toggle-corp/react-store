@@ -2,16 +2,16 @@
     outline: 0;
     border: 0;
     background-color: transparent;
-    padding: $spacing-extra-small 0;
+    padding: var(--spacing-extra-small) 0;
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: $color-text;
+    color: var(--color-text);
     font-family: inherit;
     font-size: inherit;
 
     &::placeholder {
-        color: $color-text-placeholder;
+        color: var(--color-text-placeholder);
     }
 }

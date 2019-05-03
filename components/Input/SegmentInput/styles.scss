@@ -1,44 +1,24 @@
-@import '../../../stylesheets/base';
 
 .segment-input {
     .segment-container {
         display: inline-flex;
         flex-wrap: wrap;
         margin: 0;
-        border: $width-separator-thin solid $color-accent;
     }
 
     .label {
-        padding-bottom: $spacing-extra-small;
+        padding-bottom: var(--spacing-extra-small);
     }
 
     &.error {
-        .label {
-            color: $color-danger;
-        }
-
         .segment-container {
-            border: $width-separator-thin solid $color-danger;
-        }
-    }
-
-    &.required {
-        .label {
-            font-weight: $font-weight-medium;
-
-            &::after {
-                content: '*';
-            }
+            // border: var(--width-separator-thin) solid var(--color-danger);
         }
     }
 
     &.disabled {
-        .label {
-            color: $color-text-disabled;
-        }
-
         .segment-container {
-            border: $width-separator-thin solid $color-text-disabled;
+            // border: var(--width-separator-thin) solid var(--color-separator-light);
         }
     }
 }

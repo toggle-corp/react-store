@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 
 .treemap {
     display: flex;
@@ -12,23 +11,23 @@
         cursor: pointer;
 
         :hover {
-            fill: $color-viz-grey;
+            fill: var(--color-viz-grey);
         }
 
         rect {
-            fill: $color-accent;
+            fill: var(--color-accent);
         }
     }
 
     .child-label {
-        font-weight: $font-weight-normal;
+        font-weight: var(--font-weight-normal);
     }
     .parent-label {
-        font-weight: $font-weight-bold;
+        font-weight: var(--font-weight-bold);
     }
 
     .parent text{
-        font-size: $font-size-large;
+        font-size: var(--font-size-large);
     }
 
     .children rect.parent,

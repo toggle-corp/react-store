@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 @import '../../../stylesheets/input-border';
 
 .text-input {
@@ -8,14 +7,14 @@
 
     &.error {
         .input {
-            border-bottom-color: $color-danger;
+            border-bottom-color: var(--color-danger);
         }
     }
 
     &.disabled {
         .input {
-            border-bottom-color: $color-separator;
-            color: $color-text-disabled;
+            border-bottom-color: var(--color-separator);
+            color: var(--color-text-disabled);
         }
     }
 }

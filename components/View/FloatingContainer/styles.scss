@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .floating-container {
     @include shadow-small;
@@ -6,6 +6,6 @@
     top: 0;
     left: 0;
     z-index: 11;
-    border: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
 }

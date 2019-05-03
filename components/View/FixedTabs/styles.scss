@@ -1,8 +1,7 @@
-@import '../../../stylesheets/base';
 
 .fixed-tabs {
     display: flex;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: hidden;
 
     .tab {
@@ -11,9 +10,9 @@
         border: 0;
         background-color: transparent;
         cursor: pointer;
-        padding: $spacing-small-alt $spacing-medium;
+        padding: var(--spacing-small-alt) var(--spacing-medium);
         text-transform: uppercase;
-        color: $color-text-label;
+        color: var(--color-text-label);
         font-family: inherit;
         font-size: inherit;
     }
@@ -28,31 +27,31 @@
 
     &:not(.inverted) {
         .tab {
-            border-bottom: $width-separator-medium solid $color-separator;
+            border-bottom: var(--width-separator-medium) solid var(--color-separator);
 
             &.active {
-                border-bottom-color: $color-accent;
-                color: $color-text;
+                border-bottom-color: var(--color-accent);
+                color: var(--color-text);
             }
         }
 
         .blank {
-            border-bottom: $width-separator-medium solid $color-separator;
+            border-bottom: var(--width-separator-medium) solid var(--color-separator);
         }
     }
 
     &.inverted {
         .tab {
-            border-top: $width-separator-medium solid $color-separator;
+            border-top: var(--width-separator-medium) solid var(--color-separator);
 
             &.active {
-                border-top-color: $color-accent;
-                color: $color-text;
+                border-top-color: var(--color-accent);
+                color: var(--color-text);
             }
         }
 
         .blank {
-            border-top: $width-separator-medium solid $color-separator;
+            border-top: var(--width-separator-medium) solid var(--color-separator);
         }
     }
 

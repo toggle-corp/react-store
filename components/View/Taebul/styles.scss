@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 
 .taebul {
     display: flex;
@@ -9,9 +8,9 @@
     .head {
         display: flex;
         flex-shrink: 0;
-        border-top: $width-separator-thin solid $color-separator;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
         overflow: hidden;
         overflow-y: scroll;
     }
@@ -23,7 +22,7 @@
         overflow-y: scroll;
 
         .row {
-            border-bottom: $width-separator-thin solid $color-separator;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
         }
 
         :global {

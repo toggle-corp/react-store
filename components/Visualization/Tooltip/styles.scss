@@ -1,11 +1,13 @@
-$tooltip-background-color: rgba(0, 0, 0, .75) !default;
+:root {
+    --tooltip-background-color: rgba(0, 0, 0, .75);
+}
 
 .tooltip {
     position: fixed;
     opacity: 0;
     z-index: 10;
     border-radius: 6px;
-    background-color: $tooltip-background-color;
+    background-color: var(--tooltip-background-color);
     padding: 8px;
     text-align: center;
     color: white;

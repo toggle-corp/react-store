@@ -1,24 +1,23 @@
-@import '../../../../stylesheets/base';
 
 .list-item {
     outline: 0;
     border: 0;
-    border-bottom: $width-separator-thin solid $color-separator;
-    border-left: $width-separator-thick solid transparent;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    border-left: var(--width-separator-thick) solid transparent;
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
     text-align: left;
     font-family: inherit;
     font-size: inherit;
 
     &.active {
-        border-left: $width-separator-thick solid $color-accent;
-        background-color: $color-background-selected;
+        border-left: var(--width-separator-thick) solid var(--color-accent);
+        background-color: var(--color-background-accent-hint);
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
     }
 }

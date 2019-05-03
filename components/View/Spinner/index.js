@@ -2,24 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
+import Icon from '../../General/Icon';
 import styles from './styles.scss';
 
 const Spinner = (props) => {
-    const {
-        loading,
-        className,
-    } = props;
+    const { className } = props;
 
-    return loading ? <div className={_cs(styles.spinner, className)} /> : null;
+    return (
+        <Icon
+            name="loading"
+            className={_cs(styles.spinner, 'spinner', className)}
+        />
+    );
 };
 
 Spinner.propTypes = {
-    loading: PropTypes.bool,
     className: PropTypes.string,
 };
 
 Spinner.defaultProps = {
-    loading: true,
     className: '',
 };
 

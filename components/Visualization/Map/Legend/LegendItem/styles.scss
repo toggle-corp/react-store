@@ -1,4 +1,3 @@
-@import '../../../../../stylesheets/base';
 
 .legend-item {
     display: flex;
@@ -15,8 +14,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: $font-size-medium-alt;
-            height: $font-size-medium-alt;
+            width: var(--font-size-medium-alt);
+            height: var(--font-size-medium-alt);
             overflow-y: hidden;
 
             .icon {
@@ -30,15 +29,15 @@
         }
 
         .label {
-            margin: 0 $spacing-small;
-            color: $color-text-label;
-            font-size: $font-size-small;
+            margin: 0 var(--spacing-small);
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
             font-weight: 600;
         }
     }
 
     &.circle {
-        padding: $spacing-small;
+        padding: var(--spacing-small);
 
         .left-child {
             .icon-container {
@@ -50,12 +49,12 @@
     }
 
     &.square {
-        padding: $spacing-small-alt;
+        padding: var(--spacing-small-alt);
 
         .left-child {
             .icon-container {
                 .icon {
-                    border: $width-separator-thin solid $color-separator-alt;
+                    border: var(--width-separator-thin) solid var(--color-separator-alt);
 
                     &:not(:last-child) {
                         border-bottom: 0;

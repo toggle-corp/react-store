@@ -1,17 +1,16 @@
-@import '../../../stylesheets/base';
 
 .input-hint-and-error {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: $font-size-extra-small;
+    font-size: var(--font-size-extra-small);
 
     &.input-hint {
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
 
     &.input-error {
-        color: $color-danger;
+        color: var(--color-danger);
     }
 
     &.empty {

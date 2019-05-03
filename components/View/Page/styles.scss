@@ -1,6 +1,6 @@
-@import '../../../stylesheets/base';
-
-$width-sidebar: 300px;
+:root {
+    --width-sidebar: 300px;
+}
 
 .page {
     display: flex;
@@ -10,25 +10,28 @@ $width-sidebar: 300px;
 
     .header {
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
-        @include background-color($color-background-header);
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small) var(--spacing-medium);
+        color: var(--color-text-on-background-header);
     }
 
     .main-content {
-        @extend %main-content;
         position: relative;
         flex-grow: 1;
-        margin: $page-margin;
+        margin: var(--page-margin);
+        border: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground-alt);
         overflow: auto;
-        @include background-color($color-foreground-alt);
+        color: var(--color-text-on-foreground-alt);
     }
 
     .footer {
         flex-shrink: 0;
-        border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
-        @include background-color($color-foreground);
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small) var(--spacing-medium);
+        color: var(--color-text-on-foreground);
     }
 }
 
@@ -38,10 +41,12 @@ $width-sidebar: 300px;
     overflow: auto;
 
     .sidebar {
-        flex-basis: $width-sidebar;
+        flex-basis: var(--width-sidebar);
         flex-grow: 0;
         flex-shrink: 0;
-        @include background-color($color-foreground);
+        border-right: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        color: var(--color-text-on-foreground);
     }
 
     .content {
@@ -52,25 +57,28 @@ $width-sidebar: 300px;
 
         .header {
             flex-shrink: 0;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium;
-            @include background-color($color-background-header);
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-background-header);
+            padding: var(--spacing-small) var(--spacing-medium);
+            color: var(--color-text-on-background-header)
         }
 
         .main-content {
-            @extend %main-content;
             position: relative;
             flex-grow: 1;
-            margin: $page-margin;
+            margin: var(--page-margin);
+            border: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground-alt);
             overflow: auto;
-            @include background-color($color-foreground-alt);
+            color: var(--color-text-on-foreground-alt)
         }
 
         .footer {
             flex-shrink: 0;
-            border-top: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium;
-            @include background-color($color-foreground);
+            border-top: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-medium);
+            color: var(--color-text-on-foreground);
         }
     }
 }

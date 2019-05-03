@@ -20,7 +20,7 @@ const defaultProps = {
     maxFontSize: 20,
     minFontSize: 8,
     maxPaddingSize: 16,
-    minPaddingSize: 5,
+    minPaddingSize: 3,
     resizeFactor: 0.0001,
 };
 

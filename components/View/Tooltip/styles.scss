@@ -1,13 +1,15 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
-$border-radius-tooltip: 4px;
-$tooltip-max-width: 480px;
+:root {
+    --border-radius-tooltip: 4px;
+    --tooltip-max-width: 480px;
+}
 
 .container {
     @include shadow-small;
-    background-color: $color-foreground;
-    max-width: $tooltip-max-width;
-    animation: slide-in $duration-fast ease forwards;
+    background-color: var(--color-foreground);
+    max-width: var(--tooltip-max-width);
+    animation: slide-in var(--duration-fast) ease forwards;
     pointer-events: none;
 
     &.center {
@@ -15,7 +17,7 @@ $tooltip-max-width: 480px;
             position: absolute;
             bottom: -6px;
             left: calc(50% - 6px);
-            border-top: 6px solid $color-foreground;
+            border-top: 6px solid var(--color-foreground);
             border-right: 6px solid transparent;
             border-left: 6px solid transparent;
             width: 0;
@@ -25,8 +27,8 @@ $tooltip-max-width: 480px;
     }
 
     &.text-tooltip {
-        border-radius: $border-radius-tooltip;
-        padding: $spacing-medium;
+        border-radius: var(--border-radius-tooltip);
+        padding: var(--spacing-medium);
     }
 }
 

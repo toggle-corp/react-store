@@ -1,4 +1,4 @@
-@import '../../../../stylesheets/base';
+@import '../../../../stylesheets/utils';
 
 .segment-button-input {
     display: none;
@@ -7,21 +7,28 @@
 .segment-option {
     @include transition-medium;
     margin: 0;
-    background-color: $color-foreground;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
     cursor: pointer;
-    padding: $spacing-extra-small $spacing-medium;
-    color: $color-text-label;
+    padding: var(--spacing-extra-small) var(--spacing-medium);
+    color: var(--color-text-label);
     user-select: none;
 
     &.checked {
-        @include background-color($color-accent);
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+        // background-color: var(--color-accent);
+        // color: var(--color-text-on-accent);
 
         &.error {
-            @include background-color($color-danger);
+            background-color: var(--color-danger);
+            color: var(--color-text-on-danger);
         }
 
         &.disabled {
-            @include background-color($color-text-disabled);
+            border-color: var(--color-separator);
+            background-color: var(--color-background-disabled);
+            color: var(--color-text-disabled);
         }
     }
 
@@ -33,22 +40,33 @@
         pointer-events: none;
     }
 
+    &:first-child {
+        border-top-left-radius: var(--radius-border-small);
+        border-bottom-left-radius: var(--radius-border-small);
+    }
+
+    &:last-child {
+        border-top-right-radius: var(--radius-border-small);
+        border-bottom-right-radius: var(--radius-border-small);
+    }
+
     &:not(:last-child) {
-        border-right: $width-separator-thin solid $color-accent;
+        // border-right: var(--width-separator-thin) solid var(--color-accent);
+        // border: var(--width-separator-thin) solid var(--color-separator);
 
         &.error {
-            border-right: $width-separator-thin solid $color-danger;
+            // border-right: var(--width-separator-thin) solid var(--color-danger);
         }
 
         &.disabled {
-            border-right: $width-separator-thin solid $color-text-disabled;
+            // border-right: var(--width-separator-thin) solid var(--color-separator-light);
         }
     }
 
     &:not(.disabled):not(.checked) {
         &:hover {
-            background-color: $color-background-hover;
-            color: $color-text;
+            background-color: var(--color-background-hover);
+            color: var(--color-text);
         }
     }
 

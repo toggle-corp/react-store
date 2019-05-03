@@ -1,22 +1,23 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .barchart {
     .y-axis path {
-        stroke: $color-axis-path;
+        stroke: var(--color-axis-path);
     }
 
     .x-axis path {
-        stroke: $color-axis-path;
+        stroke: var(--color-axis-path);
     }
 }
 
 .tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
+    display: block;
     position: fixed;
     z-index: 10;
-    padding: $spacing-small $spacing-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
     animation: fade-in .2s ease-in;
-    display: block;
     text-align: center;
+    color: var(--color-text-on-foreground);
 }

@@ -1,23 +1,22 @@
-@import '../../../stylesheets/base';
 @import '../../../stylesheets/input-label';
 
 .color-input {
     .label {
         @extend %input-label;
-        padding-bottom: $spacing-extra-small;
+        padding-bottom: var(--spacing-extra-small);
     }
 
     .color-box {
         outline: none;
-        border: $width-separator-medium solid $color-separator;
+        border: var(--width-separator-medium) solid var(--color-separator);
         background-color: transparent;
         cursor: pointer;
-        padding: $spacing-extra-small;
+        padding: var(--spacing-extra-small);
 
         .color {
             display: block;
             width: 32px;
-            min-height: $font-size-medium;
+            min-height: var(--font-size-medium);
         }
 
         &.disabled {
@@ -29,23 +28,23 @@
         }
 
         &:hover {
-            border-bottom-color: $color-separator-hover;
+            border-bottom-color: var(--color-separator-hover);
         }
 
         &:focus {
-            border-bottom-color: $color-accent;
+            border-bottom-color: var(--color-accent);
         }
 
         &.error {
             .label {
-                color: $color-danger;
+                color: var(--color-danger);
             }
         }
     }
 
     %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
+        margin: var(--spacing-extra-small) 0 0;
+        font-size: var(--font-size-extra-small);
     }
 
     .empty {
@@ -55,7 +54,7 @@
 
     &.disabled {
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 }

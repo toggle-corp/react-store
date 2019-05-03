@@ -1,15 +1,14 @@
-@import '../../../../../stylesheets/base';
 
 .header {
     position: sticky;
     top: 0;
-    background-color: $color-background-header;
+    background-color: var(--color-background-header);
     padding: 0;
     text-transform: uppercase;
-    font-size: $font-size-small;
-    font-weight: $font-weight-normal;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-normal);
 
     &:not(:last-child) {
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator-light);
     }
 }

@@ -1,8 +1,7 @@
-@import '../../../../stylesheets/base';
 
 .group-header {
-    background-color: $color-background-header-alt;
-    padding: $spacing-small $spacing-medium;
+    background-color: var(--color-background-header-alt);
+    padding: var(--spacing-small) var(--spacing-medium);
     text-transform: uppercase;
 }
 

@@ -1,0 +1,11 @@
+.spinner {
+    position: relative;
+    transform-origin: 50% 50%;
+    animation: spin 1s linear infinite;
+    font-size: var(--font-size-large);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg)}
+    100% { transform: rotate(360deg)}
+}

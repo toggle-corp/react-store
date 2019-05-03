@@ -1,13 +1,14 @@
-@import '../../../stylesheets/base';
 
-$color-bar-hovered: $color-primary !default;
-$color-bar-selected: $color-accent !default;
+:root {
+    --color-bar-hovered: var(--color-primary);
+    --color-bar-selected: var(--color-accent);
+}
 
 .bar-chart {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
 
     .content {
         display: flex;
@@ -19,27 +20,27 @@ $color-bar-selected: $color-accent !default;
             width: 100%;
 
             .bar {
-                fill: $color-accent;
+                fill: var(--color-accent);
 
                 &:hover {
-                    fill: $color-bar-hovered;
+                    fill: var(--color-bar-hovered);
                 }
             }
 
             .bar-selected {
-                fill: $color-bar-selected;
+                fill: var(--color-bar-selected);
             }
 
             .axis {
 
                 text {
-                    fill: $color-text;
+                    fill: var(--color-text);
                 }
 
                 &.show {
                     line,
                     path {
-                        stroke: $color-background-header-alt;
+                        stroke: var(--color-background-header-alt);
                     }
                 }
 

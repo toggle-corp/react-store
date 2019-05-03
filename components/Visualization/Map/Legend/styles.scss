@@ -1,14 +1,13 @@
-@import '../../../../stylesheets/base';
 
 .legend {
-    border: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
 
     .header {
-        border-bottom: $width-separator-thin solid $color-accent;
-        padding: $spacing-small $spacing-medium;
-        color: $color-text-label;
-        font-size: $font-size-small;
-        font-weight: $font-weight-bold;
+        border-bottom: var(--width-separator-thin) solid var(--color-accent);
+        padding: var(--spacing-small) var(--spacing-medium);
+        color: var(--color-text-label);
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-bold);
     }
 }

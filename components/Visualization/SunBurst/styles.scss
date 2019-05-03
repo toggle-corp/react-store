@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .sunburst {
     display: flex;
@@ -7,11 +7,12 @@
 
 .sunburst-tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
     position: fixed;
     z-index: 10;
-    padding: $spacing-small $spacing-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
     animation: fade-in .2s ease-in;
+    color: var(--color-text-on-foreground);
     pointer-events: none;
 
     .label {
@@ -23,6 +24,6 @@
     .value {
         display: block;
         text-align: center;
-        font-size: $font-size-super-large;
+        font-size: var(--font-size-super-large);
     }
 }

@@ -1,24 +1,23 @@
-@import '../../../stylesheets/base';
 
 .orgChart {
     .node-class {
-        text-align: center;
-        vertical-align: middle;
+        border: var(--width-separator-medium) solid var(--color-foreground-alt);
+        background-color: var(--color-foreground-alt);
         cursor: pointer;
-        border: 2px solid $color-background-light;
-        color: $color-text-on-light;
-        background-color: $color-background-light;
+        vertical-align: middle;
+        text-align: center;
+        color: var(--color-text);
     }
 
     .disabled {
-        color: $color-text-on-light;
-        background-color: $color-background-light;
+        background-color: var(--color-background);
+        color: var(--color-text);
     }
 
     .selected-node-class {
+        border: var(--width-separator-medium) solid var(--color-accent);
+        background-color: var(--color-accent);
         cursor: pointer;
-        border: 2px solid $color-accent-light;
-        background-color: $color-accent-light;
-        color: $color-text-on-dark;
+        color: var(--color-text-on-accent);
     }
 }

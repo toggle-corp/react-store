@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .vertical-bar-chart {
     overflow: auto;
@@ -10,7 +10,7 @@
 
         .xaxis {
             path {
-                stroke: $color-axis-path;
+                stroke: var(--color-axis-path);
             }
 
             line {
@@ -20,7 +20,7 @@
 
         .yaxis {
             path {
-                stroke: $color-axis-path;
+                stroke: var(--color-axis-path);
             }
 
             line {
@@ -32,11 +32,12 @@
 
 .tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
     position: fixed;
     z-index: 10;
-    padding: $spacing-small $spacing-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
     animation: fade-in .2s ease-in;
+    color: var(--color-text-on-foreground);
     pointer-events: none;
 
     .label {

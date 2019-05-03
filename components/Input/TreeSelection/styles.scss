@@ -1,46 +1,46 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .tree-node {
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
 
     .drag-handle {
         cursor: move;
-        padding: $spacing-extra-small $spacing-medium;
-        color: $color-text-label;
+        padding: var(--spacing-extra-small) var(--spacing-medium);
+        color: var(--color-text-label);
     }
 
     .parent-node {
         display: flex;
         align-items: center;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
 
 
         .checkbox {
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
             background-color: transparent;
-            padding: $spacing-extra-small;
-            color: $color-accent;
-            font-size: $font-size-medium-alt;
+            padding: var(--spacing-extra-small);
+            color: var(--color-accent);
+            font-size: var(--font-size-medium-alt);
         }
 
         .node-title {
             background-color: transparent;
-            padding: $spacing-extra-small;
+            padding: var(--spacing-extra-small);
             text-transform: none;
             font-size: inherit;
             font-weight: inherit;
         }
 
         .expand-arrow {
-            margin-left: $spacing-small;
-            padding: $spacing-extra-small;
-            color: $color-text-label;
-            font-size: $font-size-small;
+            margin-left: var(--spacing-small);
+            padding: var(--spacing-extra-small);
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
         }
     }
 
     .tree-selection {
-        margin-left: $spacing-medium;
+        margin-left: var(--spacing-medium);
     }
 }
 

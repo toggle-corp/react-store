@@ -1,13 +1,13 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .force-directed-graph-container {
 
     .tooltip {
         @include shadow-medium;
         position: fixed;
-        background-color: $color-foreground;
-        padding: $spacing-small $spacing-medium-alt;
-        color: $color-text;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small) var(--spacing-medium-alt);
+        color: var(--color-text);
 
         .name {
             display: block;
@@ -16,13 +16,13 @@
         .value {
             display: block;
             text-align: center;
-            color: $color-text;
+            color: var(--color-text);
             font-size: 2em;
         }
     }
 
     .links {
-        stroke: $color-links;
+        stroke: var(--color-links);
     }
 
     .circle {

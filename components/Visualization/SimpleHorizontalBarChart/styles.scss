@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 
 .horizontal-bar-chart {
     overflow: auto; 
@@ -6,7 +5,7 @@
     .svg {
         .bars {
             .bar {
-                fill: $color-accent;
+                fill: var(--color-accent);
                 opacity: .2;
 
                 &:hover {
@@ -16,13 +15,13 @@
         }
 
         .label {
-            color: $color-text-label;
-            font-size: $font-size-small;
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
         }
 
         .x-axis {
-            stroke-width: $width-separator-medium;
-            stroke: $color-accent;
+            stroke-width: var(--width-separator-medium);
+            stroke: var(--color-accent);
         }
     }
 }

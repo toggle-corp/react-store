@@ -1,4 +1,3 @@
-@import '../../../stylesheets/base';
 
 .text-area {
     display: flex;
@@ -6,53 +5,53 @@
 
     .label {
         text-transform: uppercase;
-        color: $color-text-label;
-        font-size: $font-size-extra-small;
+        color: var(--color-text-label);
+        font-size: var(--font-size-extra-small);
     }
 
     .input {
         outline: none;
         border: 0;
-        border-bottom: $width-separator-medium solid $color-separator-alt;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: transparent;
-        padding: $spacing-extra-small 0;
-        color: $color-text;
+        padding: var(--spacing-extra-small) 0;
+        color: var(--color-text);
         font-family: inherit;
         font-size: inherit;
 
         &::placeholder {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         &:hover {
-            border-bottom-color: $color-separator-hover;
+            border-bottom-color: var(--color-separator-hover);
         }
 
         &:focus {
-            border-bottom-color: $color-accent;
+            border-bottom-color: var(--color-accent);
         }
     }
 
     &.focused {
         .label {
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
     &.error {
         .input {
-            border-bottom-color: $color-danger;
+            border-bottom-color: var(--color-danger);
         }
 
         .label {
-            color: $color-danger;
+            color: var(--color-danger);
         }
 
     }
 
     &.required {
         .label {
-            font-weight: $font-weight-medium;
+            font-weight: var(--font-weight-medium);
 
             &::after {
                 content: '*';
@@ -62,28 +61,28 @@
 
     &.disabled {
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         .input {
-            border-bottom-color: $color-separator;
-            color: $color-text-disabled;
+            border-bottom-color: var(--color-separator);
+            color: var(--color-text-disabled);
         }
     }
 
     %base {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
+        margin: var(--spacing-extra-small) 0 0;
+        font-size: var(--font-size-extra-small);
     }
 
     .hint {
         @extend %base;
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
 
     .error {
         @extend %base;
-        color: $color-danger;
+        color: var(--color-danger);
     }
 
     .empty {

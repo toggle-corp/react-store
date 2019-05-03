@@ -1,27 +1,30 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
-$width-toast-medium: 480px;
-$z-index-toast: 11111;
+:root {
+    --width-toast-medium: 480px;
+    --z-index-toast: 11111;
+}
 
 .toast {
-    @include background-color($color-foreground);
-    @include transition-slow;
     position: fixed;
     bottom: 2%;
     left: 50%;
     transform: translate(-50%, 100%);
     opacity: 0;
-    z-index: $z-index-toast;
-    width: $width-toast-medium;
+    z-index: var(--z-index-toast);
+    background-color: var(--color-foreground);
+    width: var(--width-toast-medium);
     height: auto;
     overflow: hidden;
+    color: var(--color-text-on-foreground);
     pointer-events: none;
+    @include transition-slow;
 
     .container {
         .header {
             display: flex;
             align-items: flex-start;
-            padding: $spacing-medium $spacing-large;
+            padding: var(--spacing-medium) var(--spacing-large);
 
             .heading {
                 flex-grow: 1;
@@ -29,30 +32,30 @@ $z-index-toast: 11111;
 
             .close-button {
                 position: absolute;
-                top: $spacing-small;
-                right: $spacing-medium;
+                top: var(--spacing-small);
+                right: var(--spacing-medium);
                 flex-shrink: 0;
                 padding: 0;
-                color: $color-text-label;
-                font-size: $font-size-medium-alt;
+                color: var(--color-text-label);
+                font-size: var(--font-size-medium-alt);
             }
         }
 
         .main-content {
             display: flex;
-            padding: $spacing-large $spacing-medium;
+            padding: var(--spacing-large) var(--spacing-medium);
 
             .icon {
                 align-self: flex-start;
                 flex-shrink: 0;
-                padding: 0 $spacing-medium;
-                font-size: $font-size-extra-large;
+                padding: 0 var(--spacing-medium);
+                font-size: var(--font-size-extra-large);
             }
 
             .message {
                 align-self: center;
                 flex-grow: 1;
-                padding: 0 $spacing-medium;
+                padding: 0 var(--spacing-medium);
             }
 
             .action-buttons {
@@ -65,53 +68,53 @@ $z-index-toast: 11111;
     &.shown {
         transform: translate(-50%, 0%);
         opacity: 1;
-        box-shadow: 0 (0 - $spacing-extra-small) $radius-blur-medium  $radius-spread-medium $color-shadow-medium;
+        box-shadow: 0 (0 - var(--spacing-extra-small)) var(--radius-blur-medium)  var(--radius-spread-medium) var(--color-shadow-medium);
         pointer-events: all;
     }
 
     &.success {
-        border: $width-separator-thin solid $color-success;
+        border: var(--width-separator-thin) solid var(--color-success);
 
         .container {
             .main-content {
                 .icon {
-                    color: $color-success;
+                    color: var(--color-success);
                 }
             }
         }
     }
 
     &.info {
-        border: $width-separator-thin solid $color-info;
+        border: var(--width-separator-thin) solid var(--color-info);
 
         .container {
             .main-content {
                 .icon {
-                    color: $color-info;
+                    color: var(--color-info);
                 }
             }
         }
     }
 
     &.warning {
-        box-shadow: 0 0 $spacing-small $color-warning;
+        box-shadow: 0 0 var(--spacing-small) var(--color-warning);
 
         .container {
             .main-content {
                 .icon {
-                    color: $color-warning;
+                    color: var(--color-warning);
                 }
             }
         }
     }
 
     &.error {
-        border: $width-separator-thin solid $color-danger;
+        border: var(--width-separator-thin) solid var(--color-danger);
 
         .container {
             .main-content {
                 .icon {
-                    color: $color-danger;
+                    color: var(--color-danger);
                 }
             }
         }

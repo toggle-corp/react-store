@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .formatted-text {
     position: relative;
@@ -11,10 +11,10 @@
     .format-button {
         @include transition-medium;
         position: absolute;
-        right: $spacing-large;
-        bottom: $spacing-extra-large;
+        right: var(--spacing-large);
+        bottom: var(--spacing-extra-large);
         opacity: .1;
-        font-size: $font-size-extra-large;
+        font-size: var(--font-size-extra-large);
     }
 
     &:hover {

@@ -1,6 +1,7 @@
-@import '../../../stylesheets/base';
 
-$width-icon: 16px;
+:root {
+    --width-search-input-icon: 16px;
+}
 
 .search-input {
     position: relative;
@@ -9,23 +10,23 @@ $width-icon: 16px;
         display: flex;
         position: absolute;
         top: 0;
-        bottom: $width-separator-medium + $spacing-extra-small-alt;
+        bottom: calc(var(--width-separator-medium) + var(--spacing-extra-small-alt));
         left: 0;
         align-items: flex-end;
         justify-content: flex-start;
-        width: $width-icon;
-        color: $color-text-label;
+        width: var(--width-search-input-icon);
+        color: var(--color-text-label);
     }
 
     &.disabled {
         .icon {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 
     :global {
         .raw-input {
-            padding-left: $width-icon;
+            padding-left: var(--width-search-input-icon);
         }
     }
 }

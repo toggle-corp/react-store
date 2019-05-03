@@ -1,12 +1,13 @@
-@import '../../../stylesheets/base';
+@import '../../../stylesheets/utils';
 
 .donut-tooltip {
     @include shadow-medium;
-    @include background-color($color-foreground);
 
     display: none;
     position: absolute;
     z-index: 10;
-    padding: $spacing-small $spacing-medium-alt;
-    font-size: $font-size-medium-alt;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
+    color: var(--color-text-on-foreground);
+    font-size: var(--font-size-medium-alt);
 }

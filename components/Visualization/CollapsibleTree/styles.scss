@@ -1,10 +1,9 @@
 
-@import '../../../stylesheets/base';
 
 .info {
     position: absolute;
-    top: $spacing-small;
-    right: $spacing-small;
+    top: var(--spacing-small);
+    right: var(--spacing-small);
     cursor: pointer;
-    color: $color-accent;
+    color: var(--color-accent);
 }
