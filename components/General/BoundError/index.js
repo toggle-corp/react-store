@@ -20,25 +20,24 @@ export default ErrorComponent => (WrappedComponent) => {
         }
 
         render() {
-            const { ...otherProps } = this.props;
-
             if (!this.state.hasError) {
                 return (
-                    <WrappedComponent {...otherProps} />
+                    <WrappedComponent {...this.props} />
                 );
             }
 
             if (ErrorComponent) {
                 return (
                     <ErrorComponent
-                        {...otherProps}
+                        {...this.props}
                     />
                 );
             }
 
             const defaultErrorText = '(x_x)';
+            const { className } = this.props;
             return (
-                <div>
+                <div className={className}>
                     { defaultErrorText }
                 </div>
             );
