@@ -7,20 +7,20 @@
 
     .icon {
         flex-shrink: 0;
-        margin-right: $spacing-small;
-        font-size: $font-size-large;
+        margin-right: var(--spacing-small);
+        font-size: var(--font-size-large);
     }
 
     .color {
         flex-shrink: 0;
-        margin-right: $spacing-small;
-        width: $font-size-medium;
-        height: $font-size-medium;
+        margin-right: var(--spacing-small);
+        width: var(--font-size-medium);
+        height: var(--font-size-medium);
     }
 
     .label {
         flex-grow: 1;
         text-transform: capitalize;
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
 }
