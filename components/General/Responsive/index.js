@@ -72,10 +72,15 @@ export default (WrappedComponent) => {
 
         componentWillUnmount() {
             removeResizeHandler(this.containerRef.current);
+            clearTimeout(this.timeout);
         }
 
         handleResize = (rect) => {
-            this.setState({ rect });
+            clearTimeout(this.timeout);
+
+            this.timeout = setTimeout(() => {
+                this.setState({ rect });
+            }, 200);
         }
 
         render() {

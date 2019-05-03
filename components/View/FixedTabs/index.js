@@ -20,6 +20,7 @@ const propTypes = {
     }),
     useHash: PropTypes.bool,
     modifier: PropTypes.func,
+    onHashChange: PropTypes.func,
     inverted: PropTypes.bool,
 };
 
@@ -36,6 +37,7 @@ const defaultProps = {
     useHash: false,
     modifier: undefined,
     inverted: false,
+    onHashChange: undefined,
 };
 
 
@@ -94,6 +96,12 @@ export default class FixedTabs extends React.Component {
 
     handleHashChange = (hash) => {
         this.setState({ hash });
+
+        const { onHashChange } = this.props;
+
+        if (onHashChange) {
+            onHashChange(hash);
+        }
     }
 
     handleTabClick = (key, e) => {

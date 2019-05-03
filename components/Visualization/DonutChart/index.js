@@ -34,6 +34,7 @@ const propTypes = {
     setSaveFunction: PropTypes.func,
     valueSelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
+    colorSelector: PropTypes.func,
     labelModifier: PropTypes.func,
     sideLengthRatio: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
@@ -44,6 +45,7 @@ const defaultProps = {
     data: [],
     setSaveFunction: () => {},
     colorScheme: schemeAccent,
+    colorSelector: undefined,
     className: '',
     sideLengthRatio: 0.4,
     labelModifier: undefined,
@@ -168,6 +170,7 @@ class DonutChart extends PureComponent {
 
         const {
             valueSelector,
+            colorSelector,
             labelSelector,
             labelModifier,
         } = this.props;
@@ -182,7 +185,12 @@ class DonutChart extends PureComponent {
                 d.outerRadius = outerRadius - 4;
             })
             .attr('d', arcs)
-            .style('fill', d => colors(labelSelector(d.data)))
+            .style('fill', (d) => {
+                if (colorSelector) {
+                    return colorSelector(d.data);
+                }
+                return colors(labelSelector(d.data));
+            })
             .attr('cursor', 'pointer')
             .attr('pointer-events', 'none')
             .on('mouseover', (d, i, nodes) => {

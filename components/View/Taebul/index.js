@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import {
     isDefined,
-    sum,
     randomString,
 } from '@togglecorp/fujs';
 
@@ -48,7 +47,7 @@ const getVirtualizedRenderParams = (
         const newStartX = startX + itemWidths[columns[i].key];
         startIndex = i;
 
-        if (scrollOffset < newStartX) {
+        if (scrollOffset <= newStartX) {
             break;
         }
 
@@ -271,15 +270,20 @@ export default class Taebul extends React.PureComponent {
                 columnWidths = emptyObject,
                 defaultColumnWidth,
             },
+            headClassName: headClassNameFromProps,
+            rowHeight,
         } = this.props;
 
         const className = `${styles.taebul} ${classNameFromProps}`;
         const rowClassName = `${styles.row} ${rowClassNameFromProps}`;
+
         const minWidth = this.getTotalWidth(
             columns,
             columnWidths,
             defaultColumnWidth,
         );
+
+        const headClassName = `${styles.head} ${headClassNameFromProps}`;
 
         return (
             <div
@@ -303,6 +307,7 @@ export default class Taebul extends React.PureComponent {
                     rendererParams={this.rowRendererParams}
                     rendererClassName={rowClassName}
                     minWidth={minWidth}
+                    itemHeight={rowHeight}
                 />
             </div>
         );

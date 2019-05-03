@@ -18,12 +18,16 @@ const propTypes = {
     onSourceAdded: PropTypes.func,
     onSourceRemoved: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
-    supportHover: PropTypes.bool,
     setDestroyer: PropTypes.func,
     // eslint-disable-next-line react/forbid-prop-types
-    geoJson: PropTypes.object.isRequired,
+    geoJson: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    url: PropTypes.string,
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
+    boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    images: PropTypes.array,
 };
 
 const defaultProps = {
@@ -32,9 +36,12 @@ const defaultProps = {
     children: false,
     onSourceAdded: undefined,
     onSourceRemoved: undefined,
-    supportHover: false,
     setDestroyer: undefined,
     bounds: undefined,
+    boundsPadding: 64,
+    images: undefined,
+    geoJson: undefined,
+    url: undefined,
 };
 
 
@@ -52,7 +59,6 @@ export default class MapSource extends React.PureComponent {
 
         this.layerDestroyers = {};
         this.source = undefined;
-        this.hoverSource = undefined;
     }
 
     componentDidMount() {
@@ -65,12 +71,14 @@ export default class MapSource extends React.PureComponent {
             mapStyle: oldMapStyle,
             geoJson: oldGeoJson,
             bounds: oldBounds,
+            boundsPadding: oldPadding,
         } = this.props;
         const {
             map: newMap,
             mapStyle: newMapStyle,
             geoJson: newGeoJson,
             bounds: newBounds,
+            boundsPadding: newPadding,
         } = nextProps;
 
         if (oldMap !== newMap || oldMapStyle !== newMapStyle) {
@@ -84,8 +92,9 @@ export default class MapSource extends React.PureComponent {
                 .getSource(this.source)
                 .setData(newGeoJson);
         }
-        if (oldBounds !== newBounds && newBounds) {
-            newMap.fitBounds(newBounds);
+
+        if (newBounds && (oldBounds !== newBounds || oldPadding !== newPadding)) {
+            newMap.fitBounds(newBounds, { padding: newPadding });
         }
     }
 
@@ -99,7 +108,7 @@ export default class MapSource extends React.PureComponent {
 
     destroyLayers = () => {
         Object.keys(this.layerDestroyers).forEach((key) => {
-            console.info('EXTERNAL layer removal', key);
+            // console.info('EXTERNAL layer removal', key);
             this.layerDestroyers[key]();
         });
         // this.layerDestroyers = {};
@@ -118,16 +127,10 @@ export default class MapSource extends React.PureComponent {
         this.destroyLayers();
 
         if (this.source) {
-            console.info('Removing source', this.props.sourceKey);
+            // console.info('Removing source', this.props.sourceKey);
             map.removeSource(this.source);
             this.source = undefined;
         }
-        if (this.hoverSource) {
-            console.info('Removing hover source', this.props.sourceKey);
-            map.removeSource(this.hoverSource);
-            this.hoverSource = undefined;
-        }
-
         if (onSourceRemoved) {
             onSourceRemoved();
         }
@@ -138,31 +141,47 @@ export default class MapSource extends React.PureComponent {
             map,
             sourceKey,
             geoJson,
+            url,
             onSourceAdded,
-            supportHover,
             bounds,
+            boundsPadding,
+            images,
         } = props;
 
-        console.info('Adding source', this.props.sourceKey);
-        map.addSource(sourceKey, {
-            type: 'geojson',
-            data: geoJson,
-        });
+        if (images) {
+            // FIXME: namespace image with source
+            // FIXME: remove image on component unmount
+            images.forEach(({ name, icon, ...otherProps }) => {
+                if (map.hasImage(name)) {
+                    return;
+                }
 
-        if (bounds) {
-            map.fitBounds(bounds);
+                const img = new Image(10, 10);
+                img.onload = () => {
+                    map.addImage(name, img, otherProps);
+                };
+                img.src = icon;
+            });
         }
 
-        this.source = sourceKey;
-
-        if (supportHover) {
-            console.info('Adding hover source', this.props.sourceKey);
-            map.addSource(`${sourceKey}-hover`, {
+        // console.info('Adding source', this.props.sourceKey);
+        if (geoJson) {
+            map.addSource(sourceKey, {
                 type: 'geojson',
                 data: geoJson,
             });
-            this.hoverSource = `${sourceKey}-hover`;
+        } else if (url) {
+            map.addSource(sourceKey, {
+                type: 'vector',
+                url,
+            });
         }
+
+        if (bounds) {
+            map.fitBounds(bounds, { padding: boundsPadding });
+        }
+
+        this.source = sourceKey;
 
         if (onSourceAdded) {
             onSourceAdded();

@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { randomString, _cs } from '@togglecorp/fujs';
+import {
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import Icon from '../../General/Icon';
@@ -81,12 +84,14 @@ class Checkbox extends React.PureComponent {
 
         const className = _cs(
             styles.checkbox,
-            value && styles.checked,
+            'checkbox',
             classNameFromProps,
-            disabled && 'disabled',
+            value && styles.checked,
+            value && 'checked',
             disabled && styles.disabled,
-            readOnly && 'read-only',
+            disabled && 'disabled',
             readOnly && styles.readOnly,
+            readOnly && 'read-only',
         );
 
         const spanClassName = _cs(

@@ -74,7 +74,7 @@ class VirtualizedListView extends React.Component {
         this.state = {
             itemsPerPage: undefined,
             offset: 0,
-            itemHeight: undefined,
+            itemHeight: props.itemHeight,
         };
 
         this.container = React.createRef();
@@ -87,11 +87,22 @@ class VirtualizedListView extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { boundingClientRect } = this.props;
-        const { boundingClientRect: newBoundingClientRect } = nextProps;
+        const {
+            itemHeight,
+            boundingClientRect,
+        } = this.props;
+
+        const {
+            itemHeight: newItemHeight,
+            boundingClientRect: newBoundingClientRect,
+        } = nextProps;
 
         if (boundingClientRect !== newBoundingClientRect) {
             this.updateItemsPerPage(newBoundingClientRect);
+        }
+
+        if (itemHeight !== newItemHeight) {
+            this.setState({ itemHeight: newItemHeight });
         }
     }
 
@@ -155,6 +166,20 @@ class VirtualizedListView extends React.Component {
         });
     }
 
+    updateItemsPerPage = (containerBCR) => {
+        const { height } = containerBCR;
+        const { itemHeight } = this.state;
+
+        if (!itemHeight) {
+            return;
+        }
+
+        const itemsPerPage = Math.ceil(containerBCR.height / itemHeight);
+        this.setState({
+            itemsPerPage,
+        });
+    }
+
     handleScroll = (e) => {
         const { itemHeight } = this.state;
 
@@ -193,6 +218,8 @@ class VirtualizedListView extends React.Component {
             rendererParams,
         } = this.props;
 
+        const { itemHeight } = this.state;
+
         const keyFromSelector = keySelector && keySelector(datum, i);
         const key = keyFromSelector === undefined ? datum : keyFromSelector;
 
@@ -211,6 +238,7 @@ class VirtualizedListView extends React.Component {
                 <Renderer
                     className={rendererClassName}
                     key={key}
+                    itemHeight={itemHeight}
                     {...extraProps}
                 />
             );

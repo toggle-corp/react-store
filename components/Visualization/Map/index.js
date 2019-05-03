@@ -14,6 +14,15 @@ const nullComponent = () => null;
 const UNSUPPORTED_BROWSER = !mapboxgl.supported();
 const DEFAULT_ZOOM_LEVEL = 3;
 const DEFAULT_CENTER = [84.1240, 28.3949];
+const DEFAULT_BOUNDS = [
+    80.05858661752784, 26.347836996368667,
+    88.20166918432409, 30.44702867091792,
+];
+const PADDING = 20;
+const DEFAULT_MAX_BOUNDS = [
+    [80.05858661752784 - PADDING, 26.347836996368667 - PADDING],
+    [88.20166918432409 + PADDING, 30.44702867091792 + PADDING],
+];
 const WAIT_FOR_RESIZE = 200;
 
 const {
@@ -36,13 +45,21 @@ const propTypes = {
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
     ]),
+    logoPosition: PropTypes.string,
     navControlPosition: PropTypes.string,
-    hideNavControl: PropTypes.bool,
+    geoControlPosition: PropTypes.string,
+    scaleControlPosition: PropTypes.string,
+    locateOnStartup: PropTypes.bool,
+    showNavControl: PropTypes.bool,
+    showGeolocationControl: PropTypes.bool,
+    showScaleControl: PropTypes.bool,
     mapStyle: PropTypes.string,
     zoom: PropTypes.number.isRequired,
     center: PropTypes.arrayOf(PropTypes.number),
     minZoom: PropTypes.number,
     maxZoom: PropTypes.number,
+
+    maxBounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
 };
 
 const defaultProps = {
@@ -51,18 +68,26 @@ const defaultProps = {
     className: '',
     children: undefined,
 
-    bounds: undefined,
+    bounds: DEFAULT_BOUNDS,
     boundsPadding: 64,
     fitBoundsDuration: 1000,
 
-    navControlPosition: 'top-left',
-    hideNavControl: false,
+    logoPosition: 'bottom-right',
+    navControlPosition: 'bottom-right',
+    geoControlPosition: 'bottom-right',
+    scaleControlPosition: 'bottom-right',
+    showNavControl: false,
+    showGeolocationControl: false,
+    showScaleControl: false,
+    locateOnStartup: false,
 
     mapStyle: DEFAULT_STYLE,
     zoom: DEFAULT_ZOOM_LEVEL,
     center: DEFAULT_CENTER,
     minZoom: undefined,
     maxZoom: undefined,
+
+    maxBounds: DEFAULT_MAX_BOUNDS,
 };
 
 export default class Map extends React.PureComponent {
@@ -90,13 +115,28 @@ export default class Map extends React.PureComponent {
         }
 
         const {
-            navControlPosition,
-            hideNavControl,
             mapStyle: mapStyleFromProps,
             zoom,
             center,
             minZoom,
             maxZoom,
+            maxBounds,
+
+            navOptions,
+            navControlPosition,
+            showNavControl,
+
+            locateOnStartup,
+            geoOptions,
+            geoControlPosition,
+            showGeolocationControl,
+            onGeolocationChange,
+
+            scaleOptions,
+            scaleControlPosition,
+            showScaleControl,
+
+            logoPosition,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -109,27 +149,45 @@ export default class Map extends React.PureComponent {
             center,
             minZoom,
             maxZoom,
+            maxBounds,
 
-            logoPosition: 'bottom-right',
+            logoPosition,
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
 
-        if (!hideNavControl) {
-            // NOTE: do we need to remove control on unmount?
+        if (showScaleControl) {
+            const scale = new mapboxgl.ScaleControl(scaleOptions);
+            map.addControl(scale, scaleControlPosition);
+        }
+
+        if (showNavControl) {
+            // NOTE: don't we need to remove control on unmount?
+            const nav = new mapboxgl.NavigationControl(navOptions);
             map.addControl(
-                new mapboxgl.NavigationControl(),
+                nav,
                 navControlPosition,
             );
         }
 
-        map.on('load', () => this.handleLoad(map));
+        let geolocate;
+        if (showGeolocationControl) {
+            // NOTE: don't we need to remove control on unmount?
+            geolocate = new mapboxgl.GeolocateControl(geoOptions);
+            map.addControl(
+                geolocate,
+                geoControlPosition,
+            );
+            geolocate.on('geolocate', onGeolocationChange);
+        }
+
+        map.on('load', () => this.handleLoad(map, locateOnStartup, geolocate));
         map.on('zoom', () => this.handleZoomChange(map));
         map.on(
             'style.load',
             (event) => {
                 const mapStyle = event.style.stylesheet.sprite;
-                console.info('Style has changed to', mapStyle);
+                // console.info('Style has changed to', mapStyle);
                 this.setState({ mapStyle });
             },
         );
@@ -161,7 +219,7 @@ export default class Map extends React.PureComponent {
         } = nextProps;
 
         if (oldMapStyle !== newMapStyle && newMapStyle && map) {
-            console.info('New style from props', newMapStyle);
+            // console.info('New style from props', newMapStyle);
             this.destroySources();
             map.setStyle(newMapStyle);
             return;
@@ -192,15 +250,15 @@ export default class Map extends React.PureComponent {
     }
 
     destroySources = () => {
-        console.info('EXTERNAL map removal');
+        // console.info('EXTERNAL map removal');
         forEach(this.sourceDestroyers, (key, sourceDestroyer) => {
-            console.info('EXTERNAL source removal', key);
+            // console.info('EXTERNAL source removal', key);
             sourceDestroyer();
         });
         // this.sourceDestroyers = {};
     }
 
-    handleLoad = (map) => {
+    handleLoad = (map, locateOnStartup, geolocate) => {
         // Since the map is loaded asynchronously, make sure
         // we are still mounted before doing setState
         if (!this.mounted) {
@@ -220,6 +278,10 @@ export default class Map extends React.PureComponent {
             map,
             zoomLevel: zoom,
         });
+
+        if (geolocate && locateOnStartup) {
+            geolocate.trigger();
+        }
     }
 
     handleBoundChange = (map, bounds, padding, duration) => {

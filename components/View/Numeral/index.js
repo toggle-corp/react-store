@@ -86,7 +86,7 @@ class Numeral extends React.PureComponent {
         precision = undefined,
         showSeparator = true,
         separator = ',',
-        lang = 'np',
+        lang = 'en',
     }) {
         // Only use absolute part if showSign is true (sign are added later)
         let number = isTruthy(showSign) ? Math.abs(value) : value;

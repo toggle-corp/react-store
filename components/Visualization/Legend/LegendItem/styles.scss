@@ -1,0 +1,26 @@
+@import '~base-scss/base';
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+        flex-shrink: 0;
+        margin-right: var(--spacing-small);
+        font-size: var(--font-size-large);
+    }
+
+    .color {
+        flex-shrink: 0;
+        margin-right: var(--spacing-small);
+        width: var(--font-size-medium);
+        height: var(--font-size-medium);
+    }
+
+    .label {
+        flex-grow: 1;
+        text-transform: capitalize;
+        color: var(--color-text-label);
+    }
+}
