@@ -22,12 +22,12 @@
 
             .label {
                 color: var(--color-text-label);
-                font-size: var(--font-size-small);
+                font-size: var(--font-size-extra-small);
             }
 
             .y-axis {
                 stroke-width: var(--width-separator-thin);
-                stroke: var(--color-text);
+                stroke: var(--color-accent);
             }
 
             .grid {
@@ -48,7 +48,7 @@
             .x-axis {
                 .line {
                     stroke-width: var(--width-separator-thin);
-                    stroke: var(--color-text);
+                    stroke: var(--color-accent);
                 }
 
                 .tick {
@@ -56,10 +56,11 @@
 
                     .dash {
                         stroke-width: var(--width-separator-thin);
-                        stroke: var(--color-text);
+                        stroke: var(--color-accent);
                     }
 
                     .label {
+                        font-size: var(--font-size-extra-small);
                         fill: var(--color-text);
                     }
                 }

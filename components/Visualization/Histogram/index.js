@@ -35,6 +35,7 @@ const propTypes = {
     tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
     showTooltip: PropTypes.bool,
+    noOfTicks: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -47,6 +48,7 @@ const propTypes = {
 const defaultProps = {
     colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
+    noOfTicks: 5,
     tickFormat: format('0.2f'),
     tooltipContent: undefined,
     showTooltip: true,
@@ -113,6 +115,7 @@ class Histogram extends PureComponent {
             margins,
             showAxis,
             tickFormat,
+            noOfTicks,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -140,7 +143,7 @@ class Histogram extends PureComponent {
 
         const bins = histogram()
             .domain(x.domain())
-            .thresholds(x.ticks(40))(data);
+            .thresholds(x.ticks(noOfTicks))(data);
 
         const y = scaleLinear()
             .domain([0, max(bins, d => d.length)]).nice()
@@ -178,7 +181,11 @@ class Histogram extends PureComponent {
                 .append('g')
                 .attr('class', `xaxis ${styles.xaxis}`)
                 .attr('transform', `translate(0, ${height})`)
-                .call(axisBottom(x).tickFormat(tickFormat));
+                .call(
+                    axisBottom(x)
+                        .ticks(noOfTicks)
+                        .tickFormat(tickFormat),
+                );
 
             group
                 .append('g')

@@ -228,9 +228,9 @@ class SimpleVerticalBarChart extends PureComponent {
                                     key={`grid-${d.y}`}
                                     className={_cs(styles.xGrid, 'x-grid')}
                                     x1={left}
-                                    y1={d.y}
+                                    y1={d.y + 0.5}
                                     x2={width + left}
-                                    y2={d.y}
+                                    y2={d.y + 0.5}
                                 />
                             ))
                         }
@@ -258,16 +258,17 @@ class SimpleVerticalBarChart extends PureComponent {
                         <line
                             className={_cs(styles.xAxis, 'x-axis')}
                             x1={left}
-                            y1={height + top}
+                            y1={height + top + 0.5}
                             x2={width + left}
-                            y2={height + top}
+                            y2={height + top + 0.5}
                         />
                         <g className={_cs(styles.yAxis, 'y-axis')}>
                             <line
                                 className={_cs(styles.line, 'line')}
-                                x1={left}
+                                // + 0.5 to avoid antialiasing
+                                x1={left + 0.5}
                                 y1={top}
-                                x2={left}
+                                x2={left + 0.5}
                                 y2={height + top}
                             />
                             { showTicks &&
@@ -280,10 +281,12 @@ class SimpleVerticalBarChart extends PureComponent {
                                         <line
                                             className={_cs(styles.line, 'line')}
                                             x1={0}
+                                            y1={0.5}
                                             x2={-5}
+                                            y2={0.5}
                                         />
                                         <text
-                                            className={_cs(styles.tickLabel, 'tick-label')}
+                                            className={_cs(styles.label, 'tick-label')}
                                             y={0.5}
                                             x={-6}
                                             dy="0.32em"

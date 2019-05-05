@@ -18,7 +18,7 @@
 
         .y-axis {
             .line {
-                stroke-width: var(--width-separator-medium);
+                stroke-width: var(--width-separator-thin);
                 stroke: var(--color-accent);
             }
 
@@ -30,14 +30,15 @@
                     stroke: var(--color-accent);
                 }
 
-                .text {
+                .label {
                     fill: var(--color-text);
+                    font-size: var(--font-size-extra-small);
                 }
             }
         }
 
         .x-axis {
-            stroke-width: var(--width-separator-medium);
+            stroke-width: var(--width-separator-thin);
             stroke: var(--color-accent);
         }
 

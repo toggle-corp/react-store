@@ -253,9 +253,9 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     <line
                                         key={`grid-${d.x}`}
                                         className={_cs(styles.yGrid, 'y-grid')}
-                                        x1={d.x}
+                                        x1={d.x + 0.5}
                                         y1={top}
-                                        x2={d.x}
+                                        x2={d.x + 0.5}
                                         y2={barsHeight}
                                     />
                                 ))
@@ -279,7 +279,7 @@ class SimpleHorizontalBarChart extends PureComponent {
                                         />
                                     </Tooltip>
                                     <text
-                                        className={_cs(styles.label, 'label')}
+                                        className={_cs(styles.label, 'axis-label')}
                                         x={d.x}
                                         y={d.y}
                                         dy={(d.height / 2) + 4}
@@ -295,9 +295,9 @@ class SimpleHorizontalBarChart extends PureComponent {
                         </g>
                         <line
                             className={_cs(styles.yAxis, 'y-axis')}
-                            x1={left}
+                            x1={left + 0.5}
                             y1={top}
-                            x2={left}
+                            x2={left + 0.5}
                             y2={barsHeight}
                         />
                     </svg>
@@ -317,9 +317,9 @@ class SimpleHorizontalBarChart extends PureComponent {
                             <line
                                 className={_cs(styles.line, 'x-axis-line')}
                                 x1={left}
-                                y1={2}
+                                y1={0.5}
                                 x2={width}
-                                y2={2}
+                                y2={0.5}
                             />
                             { showTicks &&
                                 axisBottomData.map(d => (
@@ -330,7 +330,9 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     >
                                         <line
                                             className={_cs(styles.dash, 'x-axis-tick-dash')}
+                                            x1={0.5}
                                             y1={5}
+                                            x2={0.5}
                                             y2={0}
                                         />
                                         <text
