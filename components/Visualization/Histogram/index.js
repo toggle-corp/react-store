@@ -32,6 +32,7 @@ const propTypes = {
     }).isRequired,
     colorRange: PropTypes.arrayOf(PropTypes.string),
     showAxis: PropTypes.bool,
+    showGrid: PropTypes.bool,
     tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
     showTooltip: PropTypes.bool,
@@ -48,6 +49,7 @@ const propTypes = {
 const defaultProps = {
     colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
+    showGrid: true,
     noOfTicks: 5,
     tickFormat: format('0.2f'),
     tooltipContent: undefined,
@@ -114,6 +116,7 @@ class Histogram extends PureComponent {
             boundingClientRect,
             margins,
             showAxis,
+            showGrid,
             tickFormat,
             noOfTicks,
         } = this.props;
@@ -191,7 +194,9 @@ class Histogram extends PureComponent {
                 .append('g')
                 .attr('class', `yaxis ${styles.yaxis}`)
                 .call(axisLeft(y));
+        }
 
+        if (showGrid) {
             group
                 .append('g')
                 .attr('class', `yaxis-grids ${styles.yaxisGrids}`)
