@@ -10,22 +10,22 @@
             stroke: var(--color-accent);
             stroke-width: var(--width-separator-thin);
         }
-
-        line {
-            visibility: hidden;
-        }
-
-        text {
-            // transform: rotate(-40deg) translateX(-5px);
-        }
     }
 
     .yaxis {
         path {
             stroke: var(--color-accent);
         }
+    }
 
+    .yaxis-grids {
         line {
+            stroke-width: var(--width-separator-thin);
+            stroke: var(--color-separator);
+            stroke-dasharray: 5, 5;
+        }
+
+        text {
             visibility: hidden;
         }
     }

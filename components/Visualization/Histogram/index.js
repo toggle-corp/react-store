@@ -191,6 +191,14 @@ class Histogram extends PureComponent {
                 .append('g')
                 .attr('class', `yaxis ${styles.yaxis}`)
                 .call(axisLeft(y));
+
+            group
+                .append('g')
+                .attr('class', `yaxis-grids ${styles.yaxisGrids}`)
+                .call(
+                    axisLeft(y)
+                        .tickSizeInner(-width),
+                );
         }
     };
 
