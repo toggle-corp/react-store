@@ -1,4 +1,3 @@
-
 .vertical-bar-chart {
     display: flex;
     align-items: center;
@@ -30,6 +29,7 @@
                     stroke-width: var(--width-separator-thin);
                     stroke: var(--color-accent);
                 }
+
                 .text {
                     fill: var(--color-text);
                 }

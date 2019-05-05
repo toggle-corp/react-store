@@ -12,6 +12,7 @@ import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
+import Numeral from '../../View/Numeral';
 import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
 
@@ -238,7 +239,9 @@ class SimpleVerticalBarChart extends PureComponent {
                         {renderData.map(d => (
                             <React.Fragment key={d.x}>
                                 <Tooltip
-                                    tooltip={`${d.label}: ${d.value}`}
+                                    tooltip={`${d.label}: ${Numeral.renderText({
+                                        value: d.value,
+                                    })}`}
                                 >
                                     <rect
                                         className={_cs(styles.bar, 'bar')}
@@ -280,12 +283,16 @@ class SimpleVerticalBarChart extends PureComponent {
                                             x2={-5}
                                         />
                                         <text
-                                            className={_cs(styles.label, 'label')}
+                                            className={_cs(styles.tickLabel, 'tick-label')}
                                             y={0.5}
                                             x={-6}
                                             dy="0.32em"
                                         >
-                                            {d.value}
+                                            {Numeral.renderText({
+                                                value: d.value,
+                                                precision: 1,
+                                                normal: true,
+                                            })}
                                         </text>
                                     </g>
                                 ))

@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { schemeSet3 } from 'd3-scale-chromatic';
 import {
     scaleOrdinal,
     scaleLinear,
@@ -10,12 +9,9 @@ import {
 import { max } from 'd3-array';
 import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
-import {
-    _cs,
-    addSeparator,
-} from '@togglecorp/fujs';
-import { axisBottom } from 'd3-axis';
+import { _cs } from '@togglecorp/fujs';
 
+import Numeral from '../../View/Numeral';
 import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
 
@@ -42,7 +38,6 @@ const propTypes = {
     }),
     tickFormat: PropTypes.func,
     noOfTicks: PropTypes.number,
-    colorScheme: PropTypes.arrayOf(PropTypes.string),
     showTicks: PropTypes.bool,
     showGrids: PropTypes.bool,
 };
@@ -61,17 +56,11 @@ const defaultProps = {
         bottom: 16,
         left: 16,
     },
-    colorScheme: schemeSet3,
     showTicks: true,
     showGrids: true,
 };
 
-const translateX = (scale, d, height) => {
-    const x = scale(d);
-    return `translate(${x}, ${height})`;
-};
-
-const MIN_BAR_HEIGHT = 16;
+const MIN_BAR_HEIGHT = 22;
 
 class SimpleHorizontalBarChart extends PureComponent {
     static propTypes = propTypes;
@@ -84,7 +73,7 @@ class SimpleHorizontalBarChart extends PureComponent {
             const step = scaleY.step();
 
             return (
-                data.map((d, i) => {
+                data.map((d) => {
                     const label = labelSelector(d);
                     const value = valueSelector(d);
 
@@ -129,32 +118,37 @@ class SimpleHorizontalBarChart extends PureComponent {
         return scaleX;
     })
 
-    getScaleY = memoize((data, height, labelSelector, bandPadding) => {
+    getScaleY = memoize((data, top, height, labelSelector, bandPadding) => {
         const scale = scaleBand()
-            .range([height, 0])
+            .range([height, top])
             .domain(data.map(labelSelector))
             .padding(bandPadding);
 
+        let barsHeight = height;
         const stepOffset = MIN_BAR_HEIGHT - scale.bandwidth();
+
         if (stepOffset > 0) {
             const newHeight = (scale.paddingOuter() * 2)
                 + ((scale.step() + stepOffset) * data.length);
-            scale.range([newHeight, 0]);
+            scale.range([newHeight, top]);
 
-            this.svgHeight = newHeight;
+            barsHeight = newHeight;
         }
 
-        return scale;
+        return {
+            barsHeight,
+            scaleY: scale,
+        };
     })
 
     getScaleColor = memoize(colorScheme => scaleOrdinal().range(colorScheme))
 
-    getAxisBottomData = memoize((scaleX, height, margins, noOfTicks, tickFormat) => {
+    getAxisBottomData = memoize((scaleX, margins, noOfTicks, tickFormat) => {
         const { left = 0 } = margins;
         return scaleX.ticks(noOfTicks).map(v => ({
             value: tickFormat ? tickFormat(v) : v,
             x: scaleX(v) + left,
-            y: height,
+            y: 0,
         }));
     })
 
@@ -169,7 +163,6 @@ class SimpleHorizontalBarChart extends PureComponent {
             exponent,
             scaleType,
             bandPadding,
-            colorScheme,
             tickFormat,
             noOfTicks,
             showTicks,
@@ -197,13 +190,13 @@ class SimpleHorizontalBarChart extends PureComponent {
 
         const width = containerWidth - left - right;
         const height = containerHeight - top - bottom;
-        this.svgHeight = height;
 
         const maxValue = this.getMaxValue(data, valueSelector);
         const scaleX = this.getScaleX(scaleType, width, maxValue, exponent);
-        const scaleY = this.getScaleY(data, height, labelSelector, bandPadding);
-
-        // const scaleColor = this.getScaleColor(colorScheme);
+        const {
+            barsHeight,
+            scaleY,
+        } = this.getScaleY(data, top, height, labelSelector, bandPadding);
 
         const renderData = this.getRenderData(
             data,
@@ -217,7 +210,6 @@ class SimpleHorizontalBarChart extends PureComponent {
 
         const axisBottomData = this.getAxisBottomData(
             scaleX,
-            height,
             margins,
             noOfTicks,
             tickFormat,
@@ -234,110 +226,131 @@ class SimpleHorizontalBarChart extends PureComponent {
         );
 
         const horizontalTextOffset = 6;
-        // const minBarHeightToRenderText = 16;
+        const heightXAxis = 30;
 
         return (
             <div
                 className={className}
-                width={containerWidth}
-                height={containerHeight}
+                style={{
+                    width: containerWidth,
+                    height: containerHeight,
+                }}
             >
-                <svg
-                    className={svgClassName}
-                    // width={width}
-                    // height={this.svgHeight}
-                    width={width + left + right}
-                    height={height + top + bottom}
+                <div
+                    className={styles.overflowContainer}
+                    style={{
+                        marginTop: top,
+                    }}
                 >
-                    <g className={_cs(styles.grid, 'grid')}>
-                        { showGrids &&
-                            axisBottomData.map((d, i) => (
-                                <line
-                                    key={`grid-${d.x}`}
-                                    className={_cs(styles.yGrid, 'y-grid')}
-                                    x1={d.x}
-                                    y1={top}
-                                    x2={d.x}
-                                    y2={height}
-                                />
-                            ))
-                        }
-                    </g>
-                    <g className={_cs(styles.bars, 'bars')}>
-                        { renderData.map(d => (
-                            <React.Fragment key={d.y}>
-                                <Tooltip
-                                    tooltip={`${d.label}: ${addSeparator(d.value, ',')} (${d.percent}%)`}
-                                >
-                                    <rect // eslint-disable-line
-                                        className={_cs(styles.bar, 'bar')}
+                    <svg
+                        className={svgClassName}
+                        width={width}
+                        height={barsHeight}
+                    >
+                        <g className={_cs(styles.grid, 'grid')}>
+                            { showGrids &&
+                                axisBottomData.map(d => (
+                                    <line
+                                        key={`grid-${d.x}`}
+                                        className={_cs(styles.yGrid, 'y-grid')}
+                                        x1={d.x}
+                                        y1={top}
+                                        x2={d.x}
+                                        y2={barsHeight}
+                                    />
+                                ))
+                            }
+                        </g>
+                        <g className={_cs(styles.bars, 'bars')}>
+                            { renderData.map(d => (
+                                <React.Fragment key={d.y}>
+                                    <Tooltip
+                                        tooltip={`${d.label}: ${Numeral.renderText({
+                                            value: d.value,
+                                            precision: 0,
+                                        })} (${d.percent}%)`}
+                                    >
+                                        <rect // eslint-disable-line
+                                            className={_cs(styles.bar, 'bar')}
+                                            x={d.x}
+                                            y={d.y}
+                                            width={d.width}
+                                            height={d.height}
+                                        />
+                                    </Tooltip>
+                                    <text
+                                        className={_cs(styles.label, 'label')}
                                         x={d.x}
                                         y={d.y}
-                                        width={d.width}
-                                        height={d.height}
-                                    />
-                                </Tooltip>
-                                <text
-                                    className={_cs(styles.label, 'label')}
-                                    x={d.x}
-                                    y={d.y}
-                                    dy={(d.height / 2) + 4}
-                                    dx={horizontalTextOffset}
-                                >
-                                    { d.label }: {addSeparator(d.value, ',')}
-                                </text>
-                            </React.Fragment>
-                        ))}
-                    </g>
-                    <line
-                        className={_cs(styles.xAxis, 'x-axis')}
-                        x1={0}
-                        y1={0}
-                        x2={0}
-                        y2={this.svgHeight}
-                    />
-                    <g>
+                                        dy={(d.height / 2) + 4}
+                                        dx={horizontalTextOffset}
+                                    >
+                                        { d.label }: {Numeral.renderText({
+                                            value: d.value,
+                                            precision: 0,
+                                        })}
+                                    </text>
+                                </React.Fragment>
+                            ))}
+                        </g>
                         <line
                             className={_cs(styles.yAxis, 'y-axis')}
                             x1={left}
                             y1={top}
                             x2={left}
-                            y2={height}
+                            y2={barsHeight}
                         />
+                    </svg>
+                </div>
+                <div
+                    className={styles.axesContainer}
+                    style={{
+                        height: heightXAxis,
+                    }}
+                >
+                    <svg
+                        className={styles.axes}
+                        width={width}
+                        height={heightXAxis}
+                    >
                         <g className={_cs(styles.xAxis, 'x-axis')}>
                             <line
-                                className={_cs(styles.line, 'line')}
+                                className={_cs(styles.line, 'x-axis-line')}
                                 x1={left}
-                                y1={height}
-                                x2={width + left}
-                                y2={height}
+                                y1={2}
+                                x2={width}
+                                y2={2}
                             />
                             { showTicks &&
-                                axisBottomData.map((d, i) => (
+                                axisBottomData.map(d => (
                                     <g
-                                        className={_cs(styles.ticks, 'ticks')}
+                                        className={_cs(styles.tick, 'x-axis-tick')}
                                         key={`tick-${d.value}`}
                                         transform={`translate(${d.x}, ${d.y})`}
                                     >
                                         <line
-                                            className={_cs(styles.line, 'line')}
+                                            className={_cs(styles.dash, 'x-axis-tick-dash')}
                                             y1={5}
                                             y2={0}
                                         />
                                         <text
-                                            className={_cs(styles.label, 'label')}
+                                            className={_cs(styles.label, 'x-axis-tick-label')}
                                             y={6}
                                             x={0.5}
                                             dy="0.71em"
                                         >
-                                            {d.value}
+                                            {Numeral.renderText({
+                                                value: d.value,
+                                                precision: 1,
+                                                normal: true,
+                                            })}
                                         </text>
                                     </g>
                                 ))
                             }
                         </g>
-                    </g>
-                </svg>
+                    </svg>
+                </div>
             </div>
         );
     }

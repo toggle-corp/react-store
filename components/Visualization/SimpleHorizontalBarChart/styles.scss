@@ -1,58 +1,68 @@
 .horizontal-bar-chart {
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
-    .svg {
-        .bars {
-            .bar {
-                fill: var(--color-accent);
-                opacity: .2;
-                cursor: pointer;
-                fill: $color-accent;
+    .overflow-container {
+        flex-grow: 1;
+        overflow: auto;
 
-                &:hover {
-                    opacity: .7;
+        .svg {
+            .bars {
+                .bar {
+                    opacity: .2;
+                    cursor: pointer;
+                    fill: var(--color-accent);
+
+                    &:hover {
+                        opacity: .3;
+                    }
+                }
+            }
+
+            .label {
+                color: var(--color-text-label);
+                font-size: var(--font-size-small);
+            }
+
+            .y-axis {
+                stroke-width: var(--width-separator-thin);
+                stroke: var(--color-text);
+            }
+
+            .grid {
+                .y-grid {
+                    fill: none;
+                    stroke-width: var(--width-separator-thin);
+                    stroke: var(--color-separator);
+                    stroke-dasharray: 5, 5;
                 }
             }
         }
+    }
 
-        .label {
-            color: var(--color-text-label);
-            font-size: var(--font-size-small);
-        }
+    .axes-container {
+        flex-shrink: 0;
 
-        .x-axis {
-            stroke-width: var(--width-separator-medium);
-            stroke: var(--color-accent);
-
-            .line {
-                stroke-width: $width-separator-medium;
-                stroke: $color-accent;
-            }
-
-            .ticks {
-                text-anchor: middle;
-
+        .axes {
+            .x-axis {
                 .line {
-                    stroke-width: $width-separator-thin;
-                    stroke: $color-accent;
+                    stroke-width: var(--width-separator-thin);
+                    stroke: var(--color-text);
                 }
-                .text {
-                    fill: $color-text;
+
+                .tick {
+                    text-anchor: middle;
+
+                    .dash {
+                        stroke-width: var(--width-separator-thin);
+                        stroke: var(--color-text);
+                    }
+
+                    .label {
+                        fill: var(--color-text);
+                    }
                 }
-            }
-        }
-
-        .y-axis {
-            stroke-width: $width-separator-medium;
-            stroke: $color-separator-light;
-        }
-
-        .grid {
-            .y-grid {
-                fill: none;
-                stroke-width: $width-separator-thin;
-                stroke: $color-separator;
-                stroke-dasharray: 5, 5;
             }
         }
     }
