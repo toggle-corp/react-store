@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
 
@@ -7,6 +8,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    imageClassName: PropTypes.string,
     src: PropTypes.string,
     alt: PropTypes.string,
     zoomable: PropTypes.bool,
@@ -14,6 +16,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    imageClassName: '',
     src: '',
     alt: '',
     zoomable: false,
@@ -69,22 +72,18 @@ export default class Image extends React.PureComponent {
             src,
             alt,
             zoomable,
+            imageClassName,
         } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.imageContainer}
-        `;
 
         return (
             <div
-                className={className}
+                className={_cs(classNameFromProps, styles.imageContainer)}
                 ref={this.containerRef}
                 onScroll={this.handleScroll}
             >
                 <img
                     ref={this.imageRef}
-                    className={styles.image}
+                    className={_cs(styles.image, imageClassName)}
                     alt={alt}
                     src={src}
                     onDragStart={this.handleImageDragStart}

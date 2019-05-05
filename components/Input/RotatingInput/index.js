@@ -27,6 +27,7 @@ const propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
+        PropTypes.bool,
     ]),
 };
 
