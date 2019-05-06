@@ -1,26 +1,70 @@
 .horizontal-bar-chart {
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
-    .svg {
-        .bars {
-            .bar {
-                fill: var(--color-accent);
-                opacity: .2;
+    .overflow-container {
+        flex-grow: 1;
+        overflow: auto;
 
-                &:hover {
-                    opacity: .3;
+        .svg {
+            .bars {
+                .bar {
+                    opacity: .2;
+                    cursor: pointer;
+                    fill: var(--color-accent);
+
+                    &:hover {
+                        opacity: .3;
+                    }
+                }
+            }
+
+            .label {
+                color: var(--color-text-label);
+                font-size: var(--font-size-small);
+            }
+
+            .y-axis {
+                stroke-width: var(--width-separator-thin);
+                stroke: var(--color-accent);
+            }
+
+            .grid {
+                .y-grid {
+                    fill: none;
+                    stroke-width: var(--width-separator-thin);
+                    stroke: var(--color-separator);
+                    stroke-dasharray: 5, 5;
                 }
             }
         }
+    }
 
-        .label {
-            color: var(--color-text-label);
-            font-size: var(--font-size-small);
-        }
+    .axes-container {
+        flex-shrink: 0;
 
-        .x-axis {
-            stroke-width: var(--width-separator-medium);
-            stroke: var(--color-accent);
+        .axes {
+            .x-axis {
+                .line {
+                    stroke-width: var(--width-separator-thin);
+                    stroke: var(--color-accent);
+                }
+
+                .tick {
+                    text-anchor: middle;
+
+                    .dash {
+                        stroke-width: var(--width-separator-thin);
+                        stroke: var(--color-accent);
+                    }
+
+                    .label {
+                        font-size: var(--font-size-extra-small);
+                        fill: var(--color-text);
+                    }
+                }
+            }
         }
     }
 }

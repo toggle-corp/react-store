@@ -1,7 +1,5 @@
 import React, { PureComponent } from 'react';
-import { schemeSet3 } from 'd3-scale-chromatic';
 import {
-    scaleOrdinal,
     scaleLinear,
     scaleBand,
     scalePow,
@@ -12,6 +10,7 @@ import { PropTypes } from 'prop-types';
 import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
+import Numeral from '../../View/Numeral';
 import Tooltip from '../../View/Tooltip';
 import Responsive from '../../General/Responsive';
 
@@ -35,7 +34,11 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    colorScheme: PropTypes.arrayOf(PropTypes.string),
+    noOfTicks: PropTypes.number,
+    showTicks: PropTypes.bool,
+    showGrids: PropTypes.bool,
+    hideXAxis: PropTypes.bool,
+    hideYAxis: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -44,28 +47,35 @@ const defaultProps = {
     className: '',
     scaleType: 'linear',
     exponent: 1,
+    noOfTicks: 5,
+    tickFormat: undefined,
     margins: {
         top: 16,
         right: 16,
         bottom: 16,
         left: 16,
     },
-    colorScheme: schemeSet3,
+    showTicks: true,
+    showGrids: true,
+    hideXAxis: false,
+    hideYAxis: false,
 };
 
 class SimpleVerticalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getRenderData = memoize((data, height, scaleX, scaleY, labelSelector, valueSelector) => {
+    getRenderData = memoize((
+        data, height, scaleX, scaleY, labelSelector, valueSelector, margins) => {
+        const { left, top, bottom } = margins;
         const renderData = data.map((d) => {
             const label = labelSelector(d);
             const value = valueSelector(d);
             const barHeight = scaleY(value);
 
             return {
-                x: scaleX(label),
-                y: height - barHeight,
+                x: scaleX(label) + left,
+                y: (height + top) - barHeight,
                 height: barHeight,
                 width: scaleX.bandwidth(),
                 label,
@@ -74,6 +84,15 @@ class SimpleVerticalBarChart extends PureComponent {
         });
 
         return renderData;
+    })
+
+    getAxisLeftData = memoize((scaleY, height, margins, noOfTicks, tickFormat) => {
+        const { left, top } = margins;
+        return scaleY.ticks(noOfTicks).map(v => ({
+            value: tickFormat ? tickFormat(v) : v,
+            x: left,
+            y: (height + top) - scaleY(v),
+        }));
     })
 
     getMaxValue = memoize((data, valueSelector) => max(data, valueSelector))
@@ -109,8 +128,6 @@ class SimpleVerticalBarChart extends PureComponent {
             .padding(bandPadding)
     ))
 
-    getScaleColor = memoize(colorScheme => scaleOrdinal().range(colorScheme))
-
     render() {
         const {
             className: classNameFromProps,
@@ -122,7 +139,12 @@ class SimpleVerticalBarChart extends PureComponent {
             exponent,
             scaleType,
             bandPadding,
-            colorScheme,
+            tickFormat,
+            noOfTicks,
+            showTicks,
+            showGrids,
+            hideXAxis,
+            hideYAxis,
         } = this.props;
 
         const {
@@ -154,7 +176,6 @@ class SimpleVerticalBarChart extends PureComponent {
         const maxValue = this.getMaxValue(data, valueSelector);
         const scaleY = this.getScaleY(scaleType, height, maxValue, exponent);
         const scaleX = this.getScaleX(data, width, labelSelector, bandPadding);
-        // const scaleColor = this.getScaleColor(colorScheme);
         const renderData = this.getRenderData(
             data,
             height,
@@ -162,6 +183,15 @@ class SimpleVerticalBarChart extends PureComponent {
             scaleY,
             labelSelector,
             valueSelector,
+            margins,
+        );
+
+        const axisLeftData = this.getAxisLeftData(
+            scaleY,
+            height,
+            margins,
+            noOfTicks,
+            tickFormat,
         );
 
         const className = _cs(
@@ -186,14 +216,30 @@ class SimpleVerticalBarChart extends PureComponent {
             >
                 <svg
                     className={svgClassName}
-                    width={width}
-                    height={height}
+                    width={width + left + right}
+                    height={height + top + bottom}
                 >
+                    <g className={_cs(styles.grid, 'grid')}>
+                        { showGrids &&
+                            axisLeftData.map((d, i) => (
+                                <line
+                                    key={`grid-${d.y}`}
+                                    className={_cs(styles.xGrid, 'x-grid')}
+                                    x1={left}
+                                    y1={d.y + 0.5}
+                                    x2={width + left}
+                                    y2={d.y + 0.5}
+                                />
+                            ))
+                        }
+                    </g>
                     <g className={_cs(styles.bars, 'bars')}>
-                        { renderData.map(d => (
+                        {renderData.map(d => (
                             <React.Fragment key={d.x}>
                                 <Tooltip
-                                    tooltip={`${d.label}: ${d.value}`}
+                                    tooltip={`${d.label}: ${Numeral.renderText({
+                                        value: d.value,
+                                    })}`}
                                 >
                                     <rect
                                         className={_cs(styles.bar, 'bar')}
@@ -206,13 +252,58 @@ class SimpleVerticalBarChart extends PureComponent {
                             </React.Fragment>
                         ))}
                     </g>
-                    <line
-                        className={_cs(styles.yAxis, 'y-axis')}
-                        x1={0}
-                        y1={height}
-                        x2={width}
-                        y2={height}
-                    />
+                    <g>
+                        {!hideXAxis && (
+                            <line
+                                className={_cs(styles.xAxis, 'x-axis')}
+                                x1={left}
+                                y1={height + top + 0.5}
+                                x2={width + left}
+                                y2={height + top + 0.5}
+                            />
+                        )}
+                        {!hideYAxis && (
+                            <g className={_cs(styles.yAxis, 'y-axis')}>
+                                <line
+                                    className={_cs(styles.line, 'line')}
+                                    // + 0.5 to avoid antialiasing
+                                    x1={left + 0.5}
+                                    y1={top}
+                                    x2={left + 0.5}
+                                    y2={height + top}
+                                />
+                                { showTicks &&
+                                    axisLeftData.map((d, i) => (
+                                        <g
+                                            className={_cs(styles.ticks, 'ticks')}
+                                            key={`tick-${d.value}`}
+                                            transform={`translate(${d.x}, ${d.y})`}
+                                        >
+                                            <line
+                                                className={_cs(styles.line, 'line')}
+                                                x1={0}
+                                                y1={0.5}
+                                                x2={-5}
+                                                y2={0.5}
+                                            />
+                                            <text
+                                                className={_cs(styles.label, 'tick-label')}
+                                                y={0.5}
+                                                x={-6}
+                                                dy="0.32em"
+                                            >
+                                                {Numeral.renderText({
+                                                    value: d.value,
+                                                    precision: 1,
+                                                    normal: true,
+                                                })}
+                                            </text>
+                                        </g>
+                                    ))
+                                }
+                            </g>
+                        )}
+                    </g>
                 </svg>
             </div>
         );

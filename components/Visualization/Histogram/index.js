@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 
 import styles from './styles.scss';
 
+import Numeral from '../../View/Numeral';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
@@ -32,9 +33,11 @@ const propTypes = {
     }).isRequired,
     colorRange: PropTypes.arrayOf(PropTypes.string),
     showAxis: PropTypes.bool,
+    showGrids: PropTypes.bool,
     tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
     showTooltip: PropTypes.bool,
+    noOfTicks: PropTypes.number,
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -47,7 +50,15 @@ const propTypes = {
 const defaultProps = {
     colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
-    tickFormat: format('0.2f'),
+    showGrids: true,
+    noOfTicks: 5,
+    tickFormat: d => (
+        Numeral.renderText({
+            value: d,
+            precision: 1,
+            normal: true,
+        })
+    ),
     tooltipContent: undefined,
     showTooltip: true,
     margins: {
@@ -78,9 +89,9 @@ class Histogram extends PureComponent {
 
         if (showTooltip) {
             const defaultContent = `
-            <span>
-              ${d.length}
-            </span>
+                <span>
+                    ${Numeral.renderText({ value: d.length, precision: 0 })}
+                </span>
             `;
 
             const content = tooltipContent ? tooltipContent(d) : defaultContent;
@@ -112,7 +123,9 @@ class Histogram extends PureComponent {
             boundingClientRect,
             margins,
             showAxis,
+            showGrids,
             tickFormat,
+            noOfTicks,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -140,7 +153,7 @@ class Histogram extends PureComponent {
 
         const bins = histogram()
             .domain(x.domain())
-            .thresholds(x.ticks(40))(data);
+            .thresholds(x.ticks(noOfTicks))(data);
 
         const y = scaleLinear()
             .domain([0, max(bins, d => d.length)]).nice()
@@ -178,12 +191,29 @@ class Histogram extends PureComponent {
                 .append('g')
                 .attr('class', `xaxis ${styles.xaxis}`)
                 .attr('transform', `translate(0, ${height})`)
-                .call(axisBottom(x).tickFormat(tickFormat));
+                .call(
+                    axisBottom(x)
+                        .ticks(noOfTicks)
+                        .tickFormat(tickFormat),
+                );
 
             group
                 .append('g')
                 .attr('class', `yaxis ${styles.yaxis}`)
-                .call(axisLeft(y));
+                .call(
+                    axisLeft(y)
+                        .tickFormat(tickFormat),
+                );
+        }
+
+        if (showGrids) {
+            group
+                .append('g')
+                .attr('class', `yaxis-grids ${styles.yaxisGrids}`)
+                .call(
+                    axisLeft(y)
+                        .tickSizeInner(-width),
+                );
         }
     };
 
