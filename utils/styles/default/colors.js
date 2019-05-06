@@ -1,7 +1,7 @@
 const colorTextOnLight = 'rgba(0, 0, 0, .7)';
 const colorTextOnDark = 'rgba(255, 255, 255, .8)';
 
-const colorText = 'rgba(0, 0, 0, .7)';
+const colorText = colorTextOnLight;
 const colorTextAlt = '#000';
 
 const colorTextPlaceholder = 'rgba(0, 0, 0, .4)';
@@ -79,6 +79,9 @@ const colorVizOrange = '#FA6900';
 const colorBackgroundHoverLayer = 'rgba(0, 0, 0, 0.16)';
 
 const colors = {
+    colorTextOnLight,
+    colorTextOnDark,
+
     colorText,
     colorTextPlaceholder,
     colorTextDisabled,
