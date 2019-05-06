@@ -26,7 +26,6 @@ const propTypes = {
     valueSelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
     bandPadding: PropTypes.number,
-    // colorSelector: PropTypes.func,
     className: PropTypes.string,
     scaleType: PropTypes.string,
     exponent: PropTypes.number,
@@ -40,6 +39,8 @@ const propTypes = {
     noOfTicks: PropTypes.number,
     showTicks: PropTypes.bool,
     showGrids: PropTypes.bool,
+    hideXAxis: PropTypes.bool,
+    hideYAxis: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -58,6 +59,8 @@ const defaultProps = {
     },
     showTicks: true,
     showGrids: true,
+    hideXAxis: false,
+    hideYAxis: false,
 };
 
 const MIN_BAR_HEIGHT = 22;
@@ -167,6 +170,8 @@ class SimpleHorizontalBarChart extends PureComponent {
             noOfTicks,
             showTicks,
             showGrids,
+            hideXAxis,
+            hideYAxis,
         } = this.props;
 
         const {
@@ -293,66 +298,70 @@ class SimpleHorizontalBarChart extends PureComponent {
                                 </React.Fragment>
                             ))}
                         </g>
-                        <line
-                            className={_cs(styles.yAxis, 'y-axis')}
-                            x1={left + 0.5}
-                            y1={top}
-                            x2={left + 0.5}
-                            y2={barsHeight}
-                        />
-                    </svg>
-                </div>
-                <div
-                    className={styles.axesContainer}
-                    style={{
-                        height: heightXAxis,
-                    }}
-                >
-                    <svg
-                        className={styles.axes}
-                        width={width}
-                        height={heightXAxis}
-                    >
-                        <g className={_cs(styles.xAxis, 'x-axis')}>
+                        {!hideYAxis && (
                             <line
-                                className={_cs(styles.line, 'x-axis-line')}
-                                x1={left}
-                                y1={0.5}
-                                x2={width}
-                                y2={0.5}
+                                className={_cs(styles.yAxis, 'y-axis')}
+                                x1={left + 0.5}
+                                y1={top}
+                                x2={left + 0.5}
+                                y2={barsHeight}
                             />
-                            { showTicks &&
-                                axisBottomData.map(d => (
-                                    <g
-                                        className={_cs(styles.tick, 'x-axis-tick')}
-                                        key={`tick-${d.value}`}
-                                        transform={`translate(${d.x}, ${d.y})`}
-                                    >
-                                        <line
-                                            className={_cs(styles.dash, 'x-axis-tick-dash')}
-                                            x1={0.5}
-                                            y1={5}
-                                            x2={0.5}
-                                            y2={0}
-                                        />
-                                        <text
-                                            className={_cs(styles.label, 'x-axis-tick-label')}
-                                            y={6}
-                                            x={0.5}
-                                            dy="0.71em"
-                                        >
-                                            {Numeral.renderText({
-                                                value: d.value,
-                                                precision: 1,
-                                                normal: true,
-                                            })}
-                                        </text>
-                                    </g>
-                                ))
-                            }
-                        </g>
+                        )}
                     </svg>
                 </div>
+                {!hideXAxis && (
+                    <div
+                        className={styles.axesContainer}
+                        style={{
+                            height: heightXAxis,
+                        }}
+                    >
+                        <svg
+                            className={styles.axes}
+                            width={width}
+                            height={heightXAxis}
+                        >
+                            <g className={_cs(styles.xAxis, 'x-axis')}>
+                                <line
+                                    className={_cs(styles.line, 'x-axis-line')}
+                                    x1={left}
+                                    y1={0.5}
+                                    x2={width}
+                                    y2={0.5}
+                                />
+                                { showTicks &&
+                                    axisBottomData.map(d => (
+                                        <g
+                                            className={_cs(styles.tick, 'x-axis-tick')}
+                                            key={`tick-${d.value}`}
+                                            transform={`translate(${d.x}, ${d.y})`}
+                                        >
+                                            <line
+                                                className={_cs(styles.dash, 'x-axis-tick-dash')}
+                                                x1={0.5}
+                                                y1={5}
+                                                x2={0.5}
+                                                y2={0}
+                                            />
+                                            <text
+                                                className={_cs(styles.label, 'x-axis-tick-label')}
+                                                y={6}
+                                                x={0.5}
+                                                dy="0.71em"
+                                            >
+                                                {Numeral.renderText({
+                                                    value: d.value,
+                                                    precision: 1,
+                                                    normal: true,
+                                                })}
+                                            </text>
+                                        </g>
+                                    ))
+                                }
+                            </g>
+                        </svg>
+                    </div>
+                ) }
             </div>
         );
     }

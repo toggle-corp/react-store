@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 
 import styles from './styles.scss';
 
+import Numeral from '../../View/Numeral';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
@@ -32,7 +33,7 @@ const propTypes = {
     }).isRequired,
     colorRange: PropTypes.arrayOf(PropTypes.string),
     showAxis: PropTypes.bool,
-    showGrid: PropTypes.bool,
+    showGrids: PropTypes.bool,
     tooltipContent: PropTypes.func,
     tickFormat: PropTypes.func,
     showTooltip: PropTypes.bool,
@@ -49,9 +50,15 @@ const propTypes = {
 const defaultProps = {
     colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
     showAxis: true,
-    showGrid: true,
+    showGrids: true,
     noOfTicks: 5,
-    tickFormat: format('0.2f'),
+    tickFormat: d => (
+        Numeral.renderText({
+            value: d,
+            precision: 1,
+            normal: true,
+        })
+    ),
     tooltipContent: undefined,
     showTooltip: true,
     margins: {
@@ -82,9 +89,9 @@ class Histogram extends PureComponent {
 
         if (showTooltip) {
             const defaultContent = `
-            <span>
-              ${d.length}
-            </span>
+                <span>
+                    ${Numeral.renderText({ value: d.length, precision: 0 })}
+                </span>
             `;
 
             const content = tooltipContent ? tooltipContent(d) : defaultContent;
@@ -116,7 +123,7 @@ class Histogram extends PureComponent {
             boundingClientRect,
             margins,
             showAxis,
-            showGrid,
+            showGrids,
             tickFormat,
             noOfTicks,
         } = this.props;
@@ -193,10 +200,13 @@ class Histogram extends PureComponent {
             group
                 .append('g')
                 .attr('class', `yaxis ${styles.yaxis}`)
-                .call(axisLeft(y));
+                .call(
+                    axisLeft(y)
+                        .tickFormat(tickFormat),
+                );
         }
 
-        if (showGrid) {
+        if (showGrids) {
             group
                 .append('g')
                 .attr('class', `yaxis-grids ${styles.yaxisGrids}`)
