@@ -12,7 +12,7 @@ const propTypes = {
 const defaultProps = {
 };
 
-export default class VirtualizedList extends React.PureComponent {
+export default class VirtualizedList extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

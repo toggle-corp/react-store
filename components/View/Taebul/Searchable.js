@@ -16,7 +16,7 @@ const defaultProps = {
 };
 
 export default (WrappedComponent) => {
-    const SearchedComponent = class extends React.PureComponent {
+    const SearchedComponent = class extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 

@@ -10,7 +10,7 @@ import styles from './styles.scss';
 const DEFAULT_MIN_COLUMN_WIDTH = 96;
 const DEFAULT_COLUMN_WIDTH = 204;
 
-class ResizableHeader extends React.PureComponent {
+class ResizableHeader extends React.Component {
     handleSeparatorMouseDown = (e) => {
         const {
             _columnKey: columnKey,
@@ -65,7 +65,7 @@ const MAX_IDLE_TIMEOUT = 200;
 
 export default (WrappedComponent) => {
     // eslint-disable-next-line react/no-multi-comp
-    const ColumnWidthComponent = class extends React.PureComponent {
+    const ColumnWidthComponent = class extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 

@@ -15,7 +15,8 @@ const defaultProps = {
     width: 0,
 };
 
-export default class Header extends React.PureComponent {
+// eslint-disable-next-line
+export default class Header extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

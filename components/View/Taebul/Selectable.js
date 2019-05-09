@@ -32,7 +32,7 @@ export const ORDER = {
 };
 
 export default (WrappedComponent) => {
-    const SelectedComponent = class extends React.PureComponent {
+    const SelectedComponent = class extends React.Component {
         static propTypes = propTypes;
         static defaultProps = defaultProps;
 
