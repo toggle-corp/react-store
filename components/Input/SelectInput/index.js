@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import {
     caseInsensitiveSubmatch,
-    getRatingForContentInString as rate,
+    compareStringSearch,
     _cs,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
@@ -125,8 +125,10 @@ class SelectInput extends React.PureComponent {
                     value === undefined || caseInsensitiveSubmatch(labelSelector(option), value)
                 ),
             )
-            .sort((a, b) => (
-                rate(value, labelSelector(a)) - rate(value, labelSelector(b))
+            .sort((a, b) => compareStringSearch(
+                labelSelector(a),
+                labelSelector(b),
+                value,
             ));
         return newOptions;
     });
