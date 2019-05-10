@@ -410,6 +410,11 @@ class HorizontalBar extends PureComponent {
                     .style('fill', fillColor);
             });
 
+        this.group
+            .select('#xaxis')
+            .selectAll('.tick text')
+            .text(d => (valueLabelFormat ? valueLabelFormat(d) : d));
+
         if (scaleType === 'log') {
             this.group
                 .select('#xaxis')
