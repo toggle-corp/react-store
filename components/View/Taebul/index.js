@@ -78,7 +78,7 @@ const getVirtualizedRenderParams = (
 
 const emptyObject = {};
 
-export default class Taebul extends React.PureComponent {
+export default class Taebul extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -270,7 +270,7 @@ export default class Taebul extends React.PureComponent {
                 columnWidths = emptyObject,
                 defaultColumnWidth,
             },
-            headClassName: headClassNameFromProps,
+            // headClassName: headClassNameFromProps,
             rowHeight,
         } = this.props;
 
@@ -283,7 +283,7 @@ export default class Taebul extends React.PureComponent {
             defaultColumnWidth,
         );
 
-        const headClassName = `${styles.head} ${headClassNameFromProps}`;
+        // const headClassName = `${styles.head} ${headClassNameFromProps}`;
 
         return (
             <div
