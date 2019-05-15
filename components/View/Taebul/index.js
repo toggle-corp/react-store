@@ -21,6 +21,8 @@ const propTypes = {
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     keySelector: PropTypes.func.isRequired,
     settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    emptyComponent: PropTypes.func,
+    rowHeight: PropTypes.number,
 };
 
 const defaultProps = {
@@ -29,6 +31,8 @@ const defaultProps = {
     data: [],
     columns: [],
     settings: {},
+    emptyComponent: undefined,
+    rowHeight: undefined,
 };
 
 const MAX_IDLE_TIMEOUT = 200;
@@ -272,6 +276,7 @@ export default class Taebul extends React.Component {
             },
             // headClassName: headClassNameFromProps,
             rowHeight,
+            emptyComponent,
         } = this.props;
 
         const className = `${styles.taebul} ${classNameFromProps}`;
@@ -308,6 +313,7 @@ export default class Taebul extends React.Component {
                     rendererClassName={rowClassName}
                     minWidth={minWidth}
                     itemHeight={rowHeight}
+                    emptyComponent={emptyComponent}
                 />
             </div>
         );
