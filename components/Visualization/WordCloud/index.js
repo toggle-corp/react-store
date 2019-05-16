@@ -4,7 +4,7 @@ import cloud from 'd3-cloud';
 import SvgSaver from 'svgsaver';
 import { select } from 'd3-selection';
 import { scaleOrdinal } from 'd3-scale';
-import { schemeSet1 } from 'd3-scale-chromatic';
+import { schemeSet2 } from 'd3-scale-chromatic';
 import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
@@ -35,13 +35,14 @@ const propTypes = {
 const defaultProps = {
     className: '',
     font: 'sans-serif',
+    // rotate: () => (Math.floor(Math.random() * 2) * 90),
     rotate: 0,
     setSaveFunction: undefined,
     onWordClick: undefined,
     onWordMouseOver: undefined,
     labelSelector: d => d.text,
     frequencySelector: d => d.size,
-    colorScheme: schemeSet1,
+    colorScheme: schemeSet2,
 };
 
 const emptyObject = {};
@@ -127,18 +128,20 @@ class WordCloud extends PureComponent {
 
         const renderArea = width * height;
         const totalLetterLength = words.join(' ').length;
-        const renderAreaFactor = renderArea / totalLetterLength;
+        const renderAreaFactor = renderArea / Math.sqrt(totalLetterLength);
 
-        const minFont = 3;
+        const minFont = 7;
         const maxFont = Math.max(
             2 * minFont,
             Math.sqrt(renderAreaFactor),
         );
 
+        /*
         const paddingFactor = 5;
         const padding = paddingFactor > 0
             ? Math.sqrt(renderAreaFactor) / paddingFactor
             : 0;
+        */
 
         const maxSize = Math.max(...frequencies, 1);
         const sizeOffset = maxFont / maxSize;
@@ -153,7 +156,7 @@ class WordCloud extends PureComponent {
         layout.size([width, height])
             .font(font)
             .words(layoutData)
-            .padding(padding)
+            .padding(2)
             .rotate(rotate)
             .text(labelSelector)
             .fontSize(fontSizeSelector)
