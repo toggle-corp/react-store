@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
-import { schemeSet1 } from 'd3-scale-chromatic';
+import { schemeSet2 } from 'd3-scale-chromatic';
 import {
     select,
     event,
@@ -64,7 +64,7 @@ const propTypes = {
 const defaultProps = {
     setSaveFunction: () => {},
     className: '',
-    colorScheme: schemeSet1,
+    colorScheme: schemeSet2,
     margins: {
         top: 10,
         right: 10,
