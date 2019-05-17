@@ -25,10 +25,11 @@ export default class HashManager extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static getNewHash = (tabs, defaultHash) => {
-        if (defaultHash) {
+        const keys = Object.keys(tabs);
+
+        if (defaultHash && keys.includes(defaultHash)) {
             return `#/${defaultHash}`;
         }
-        const keys = Object.keys(tabs);
         if (keys.length > 0) {
             return `#/${keys[0]}`;
         }
