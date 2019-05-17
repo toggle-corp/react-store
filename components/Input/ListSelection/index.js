@@ -16,6 +16,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    listClassName: PropTypes.string,
     value: PropTypes.arrayOf(PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
@@ -38,6 +39,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    listClassName: '',
     value: [],
     options: [],
     onChange: undefined,
@@ -132,11 +134,16 @@ export class NormalListSelection extends React.PureComponent {
         const {
             options,
             keySelector,
+            listClassName,
         } = this.props;
 
         return (
             <ListView
-                className={_cs(styles.options, 'list-selection-options')}
+                className={_cs(
+                    styles.options,
+                    'list-selection-options',
+                    listClassName,
+                )}
                 data={options}
                 renderer={Checkbox}
                 keySelector={keySelector}
