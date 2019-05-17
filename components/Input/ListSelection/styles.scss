@@ -5,13 +5,13 @@
         .item {
             padding: var(--spacing-extra-small) var(--spacing-small);
 
-            &:first-child {
-                padding-left: 0;
-            }
+            // &:first-child {
+            //     padding-left: 0;
+            // }
 
-            &:last-child {
-                padding-right: 0;
-            }
+            // &:last-child {
+            //     padding-right: 0;
+            // }
         }
     }
 }
