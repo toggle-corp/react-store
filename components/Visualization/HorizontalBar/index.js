@@ -365,7 +365,7 @@ class HorizontalBar extends PureComponent {
 
         const bars = groups
             .append('rect')
-            .attr('x', 0)
+            .attr('x', 1)
             .attr('y', d => this.y(labelSelector(d)))
             .attr('height', this.y.bandwidth())
             .style('fill', d => this.getColor(d))
