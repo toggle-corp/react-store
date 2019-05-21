@@ -18,11 +18,13 @@ const DEFAULT_BOUNDS = [
     80.05858661752784, 26.347836996368667,
     88.20166918432409, 30.44702867091792,
 ];
-const PADDING = 20;
+// const PADDING = 20;
+/*
 const DEFAULT_MAX_BOUNDS = [
     [80.05858661752784 - PADDING, 26.347836996368667 - PADDING],
     [88.20166918432409 + PADDING, 30.44702867091792 + PADDING],
 ];
+*/
 const WAIT_FOR_RESIZE = 200;
 
 const {
@@ -87,7 +89,8 @@ const defaultProps = {
     minZoom: undefined,
     maxZoom: undefined,
 
-    maxBounds: DEFAULT_MAX_BOUNDS,
+    maxBounds: undefined,
+    // maxBounds: DEFAULT_MAX_BOUNDS,
 };
 
 export default class Map extends React.PureComponent {
