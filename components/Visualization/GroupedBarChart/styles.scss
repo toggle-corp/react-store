@@ -1,0 +1,20 @@
+@import '../../../stylesheets/base';
+
+.grouped-bar-chart {
+    .bar{
+        cursor: pointer;
+    }
+
+    .y-axis  {
+        path {
+            stroke: $color-axis-path;
+        }
+        line {
+            stroke: $color-axis-path;
+        }
+    }
+
+    .x-axis path {
+        color: $color-axis-path;
+    }
+}
