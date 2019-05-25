@@ -34,8 +34,8 @@ const propTypes = {
     }).isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    xTickArguments: PropTypes.array,
-    yTickArguments: PropTypes.array,
+    xTickArguments: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    yTickArguments: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -46,6 +46,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     colorScheme: schemeAccent,
     xTickArguments: [],
     yTickArguments: [null, 's'],
@@ -62,7 +63,7 @@ class GroupedBarChart extends PureComponent {
     static defaultProps = defaultProps;
 
     componentDidMount() {
-   this.drawChart();
+        this.drawChart();
     }
 
     componentDidUpdate() {
@@ -111,52 +112,52 @@ class GroupedBarChart extends PureComponent {
             .range(colorScheme);
 
         const x0 = scaleBand()
-           .domain(values.map(d => groupSelector(d)))
-           .rangeRound([0, width])
-           .paddingInner(0.1);
+            .domain(values.map(d => groupSelector(d)))
+            .rangeRound([0, width])
+            .paddingInner(0.1);
 
         const x1 = scaleBand()
-          .domain(columns)
-          .rangeRound([0, x0.bandwidth()])
-          .padding(0.05);
+            .domain(columns)
+            .rangeRound([0, x0.bandwidth()])
+            .padding(0.05);
 
         const y = scaleLinear()
-           .domain([0, max(values, d => max(columns, key => d[key]))]).nice()
-           .rangeRound([height, 0]);
+            .domain([0, max(values, d => max(columns, key => d[key]))]).nice()
+            .rangeRound([height, 0]);
 
         const group = select(this.svg)
-           .append('g')
-           .attr('transform', `translate(${left}, ${top})`);
+            .append('g')
+            .attr('transform', `translate(${left}, ${top})`);
 
 
         group
-           .append('g')
-           .selectAll('g')
-           .data(values)
-           .enter()
-           .append('g')
-           .attr('transform', d => `translate(${x0(groupSelector(d))}, 0)`)
-           .selectAll('rect')
-           .data(d => columns.map(key => ({ key, value: d[key]})))
-           .enter()
-           .append('rect')
-           .attr('class', `bar ${styles.bar}`)
-           .attr('x', d => x1(d.key))
-           .attr('y', d => y(d.value))
-           .attr('width', x1.bandwidth())
-           .attr('height', d => y(0) - y(d.value))
-           .attr('fill', d => colors ? colors[d.key] : defaultColor(d.key));
+            .append('g')
+            .selectAll('g')
+            .data(values)
+            .enter()
+            .append('g')
+            .attr('transform', d => `translate(${x0(groupSelector(d))}, 0)`)
+            .selectAll('rect')
+            .data(d => columns.map(key => ({ key, value: d[key] })))
+            .enter()
+            .append('rect')
+            .attr('class', `bar ${styles.bar}`)
+            .attr('x', d => x1(d.key))
+            .attr('y', d => y(d.value))
+            .attr('width', x1.bandwidth())
+            .attr('height', d => y(0) - y(d.value))
+            .attr('fill', d => (colors ? colors[d.key] : defaultColor(d.key)));
 
         group
-           .append('g')
-           .attr('class', `x-axis ${styles.xAxis}`)
-           .attr('transform', `translate(0, ${height})`)
+            .append('g')
+            .attr('class', `x-axis ${styles.xAxis}`)
+            .attr('transform', `translate(0, ${height})`)
             .call(axisBottom(x0).tickSize(0).tickPadding(6).ticks(...xTickArguments));
 
         group
-           .append('g')
-           .attr('class', `y-axis ${styles.yAxis}`)
-           .call(axisLeft(y).ticks(...yTickArguments));
+            .append('g')
+            .attr('class', `y-axis ${styles.yAxis}`)
+            .call(axisLeft(y).ticks(...yTickArguments));
     }
 
     render() {
@@ -170,8 +171,8 @@ class GroupedBarChart extends PureComponent {
         return (
             <Fragment>
                 <svg
-                  className={svgClassName}
-                  ref={(elem) => { this.svg = elem; }}
+                    className={svgClassName}
+                    ref={(elem) => { this.svg = elem; }}
                 />
             </Fragment>
         );
