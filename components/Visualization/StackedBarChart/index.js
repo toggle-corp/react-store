@@ -49,6 +49,7 @@ const propTypes = {
     setSaveFunction: PropTypes.func,
     labelName: PropTypes.string.isRequired,
     labelSelector: PropTypes.func.isRequired,
+    colorSelector: PropTypes.func,
     className: PropTypes.string,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     margins: PropTypes.shape({
@@ -63,6 +64,7 @@ const defaultProps = {
     setSaveFunction: () => {},
     className: '',
     colorScheme: schemePaired,
+    colorSelector: undefined,
     margins: {
         top: 10,
         right: 0,
@@ -104,6 +106,7 @@ class StackedBarChart extends PureComponent {
             colorScheme,
             labelName,
             labelSelector,
+            colorSelector,
         } = this.props;
 
         const {
@@ -172,6 +175,7 @@ class StackedBarChart extends PureComponent {
             boundingClientRect,
             data,
             labelSelector,
+            colorSelector,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -198,7 +202,7 @@ class StackedBarChart extends PureComponent {
             .data(series)
             .enter()
             .append('g')
-            .attr('fill', d => colors(d.key))
+            .attr('fill', (d) => colorSelector ? colorSelector(d.key) : colors(d.key))
             .selectAll('rect')
             .data(d => d)
             .enter()
