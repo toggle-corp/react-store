@@ -2,10 +2,9 @@
 
 .donut-tooltip {
     @include shadow-medium;
-
     display: none;
     position: absolute;
-    z-index: 10;
+    z-index: 111;
     background-color: $color-foreground;
     padding: $spacing-small $spacing-medium-alt;
     color: $color-text-on-foreground;
