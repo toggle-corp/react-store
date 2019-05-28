@@ -18,3 +18,14 @@
         color: $color-axis-path;
     }
 }
+
+.tooltip {
+    @include shadow-medium;
+    @include background-color($color-foreground);
+    display: block;
+    position: absolute;
+    z-index: 10;
+    padding: $spacing-small $spacing-medium-alt;
+    animation: fade-in .2s ease-in;
+    text-align: center;
+}

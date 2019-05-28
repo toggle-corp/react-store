@@ -19,6 +19,7 @@ import { schemeAccent } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
 
 import Responsive from '../../General/Responsive';
+import Float from '../../View/Float';
 
 import styles from './styles.scss';
 
@@ -70,6 +71,26 @@ class GroupedBarChart extends PureComponent {
         this.redrawChart();
     }
 
+    mouseOverRect = (node, total) => {
+        const { value } = node;
+        const percent = isFinite(total) ? (value / total) * 100 : 0;
+        select(this.tooltip)
+            .html(`<span>${value} (${percent.toFixed(1)}%)</span>`)
+            .style('display', 'inline-block');
+    }
+
+    mouseMove = () => {
+        const { height, width } = this.tooltip.getBoundingClientRect();
+        select(this.tooltip)
+            .style('top', `${event.pageY - height - (height / 2)}px`)
+            .style('left', `${event.pageX - (width / 2)}px`);
+    }
+
+    mouseOutRect = () => {
+        select(this.tooltip)
+            .style('display', 'none');
+    }
+
     redrawChart = () => {
         const svg = select(this.svg);
         svg.selectAll('*').remove();
@@ -108,6 +129,13 @@ class GroupedBarChart extends PureComponent {
 
         const { values = [], columns = [], colors = undefined } = data;
 
+        const total = values.map((value) => {
+            const subtotal = columns
+                .map(column => value[column])
+                .reduce((acc, curr) => acc + curr, 0);
+            return subtotal;
+        }).reduce((tot, current) => tot + current, 0);
+
         const defaultColor = scaleOrdinal()
             .range(colorScheme);
 
@@ -142,6 +170,9 @@ class GroupedBarChart extends PureComponent {
             .enter()
             .append('rect')
             .attr('class', `bar ${styles.bar}`)
+            .on('mouseover', d => this.mouseOverRect(d, total))
+            .on('mousemove', this.mouseMove)
+            .on('mouseout', this.mouseOutRect)
             .attr('x', d => x1(d.key))
             .attr('y', d => y(d.value))
             .attr('width', x1.bandwidth())
@@ -174,6 +205,12 @@ class GroupedBarChart extends PureComponent {
                     className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
                 />
+                <Float>
+                    <div
+                        ref={(el) => { this.tooltip = el; }}
+                        className={styles.tooltip}
+                    />
+                </Float>
             </Fragment>
         );
     }

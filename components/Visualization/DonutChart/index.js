@@ -6,7 +6,6 @@ import { PropTypes } from 'prop-types';
 import { schemeAccent } from 'd3-scale-chromatic';
 import { select, event } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
-import "d3-transition"
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
 import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
@@ -36,7 +35,6 @@ const propTypes = {
     valueSelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
     labelModifier: PropTypes.func,
-    sideLengthRatio: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
 };
@@ -46,7 +44,6 @@ const defaultProps = {
     setSaveFunction: () => {},
     colorScheme: schemeAccent,
     className: '',
-    sideLengthRatio: 0.4,
     labelModifier: undefined,
 };
 
@@ -82,11 +79,11 @@ class DonutChart extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('donutchart', 'graph')}.svg`);
     }
 
-    arch = (padRadius, innerRadius) =>
-        arc().padRadius(padRadius).innerRadius(innerRadius);
+    arch = (padRadius, innerRadius) => arc()
+        .padRadius(padRadius).innerRadius(innerRadius);
 
-    textArch = (outerRadius, innerRadius) =>
-        arc().outerRadius(outerRadius).innerRadius(innerRadius);
+    textArch = (outerRadius, innerRadius) => arc()
+        .outerRadius(outerRadius).innerRadius(innerRadius);
 
     arcTween = (element, arcs, newRadius, delay) => (
         select(element)
@@ -165,6 +162,7 @@ class DonutChart extends PureComponent {
             colors,
             pies,
             arcs,
+            total,
         } = options;
 
         const {
@@ -185,6 +183,7 @@ class DonutChart extends PureComponent {
             .attr('d', arcs)
             .style('fill', d => colors(labelSelector(d.data)))
             .attr('pointer-events', 'none')
+            .attr('cursor', 'pointer')
             .on('mouseover', (d, i, nodes) => {
                 this.arcTween(nodes[i], arcs, outerRadius, 0);
                 select(nodes[i]).style('filter', 'url(#drop-shadow)');
@@ -192,7 +191,10 @@ class DonutChart extends PureComponent {
             .on('mousemove', (d) => {
                 const label = labelSelector(d.data);
                 const value = valueSelector(d.data);
-                const textLabel = labelModifier ? labelModifier(label, value) : `${label} ${value}`;
+                const percent = isFinite(total) ? ((value / total) * 100) : 0;
+                const textLabel = labelModifier
+                    ? labelModifier(label, value, percent)
+                    : `${label} ${value} (${percent.toFixed(1)}%)`;
 
                 select(this.tooltip)
                     .html(`<span>${textLabel}</span>`)
@@ -222,10 +224,10 @@ class DonutChart extends PureComponent {
 
     drawChart = () => {
         const {
+            colorScheme,
             boundingClientRect,
             valueSelector,
             data,
-            sideLengthRatio,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -245,7 +247,7 @@ class DonutChart extends PureComponent {
         const outerRadius = radius * 0.92;
         const innerRadius = outerRadius - (outerRadius / 3);
 
-        const colors = scaleOrdinal().range(this.props.colorScheme);
+        const colors = scaleOrdinal().range(colorScheme);
         const pies = pie()
             .sort(null)
             .value(valueSelector);
@@ -253,6 +255,7 @@ class DonutChart extends PureComponent {
         const textArcs = this.textArch(outerRadius, innerRadius);
         const arcs = this.arch(outerRadius, innerRadius);
         const period = 200;
+        const total = data.reduce((acc, current) => acc + valueSelector(current), 0);
 
         const options = {
             radius,
@@ -263,6 +266,7 @@ class DonutChart extends PureComponent {
             arcs,
             textArcs,
             period,
+            total,
         };
 
         this.addDropShadow(select(this.svg));
