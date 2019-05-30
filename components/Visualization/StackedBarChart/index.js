@@ -106,7 +106,6 @@ class StackedBarChart extends PureComponent {
             colorScheme,
             labelName,
             labelSelector,
-            colorSelector,
         } = this.props;
 
         const {
@@ -120,6 +119,13 @@ class StackedBarChart extends PureComponent {
             bottom,
             left,
         } = margins;
+
+        this.total = data.reduce((acc, curr) => {
+            const subtotal = Object.entries(curr)
+                .map(([key, value]) => ((key !== labelName) ? value : 0))
+                .reduce((a, c) => a + c, 0);
+            return acc + subtotal;
+        }, 0);
 
         this.width = width - right - left;
         this.height = height - top - bottom;
@@ -150,23 +156,22 @@ class StackedBarChart extends PureComponent {
     }
 
     mouseOverRect = (node) => {
+        const value = node[1] - node[0];
+        const percent = isFinite(this.total) ? (value / this.total) * 100 : 0;
         select(this.tooltip)
-            .html(`<span>${node[1] - node[0]}</span>`)
-            .transition()
-            .duration(50)
+            .html(`<span>${value} (${percent.toFixed(1)}%)</span>`)
             .style('display', 'inline-block');
     }
 
     mouseMove = () => {
+        const { height, width } = this.tooltip.getBoundingClientRect();
         select(this.tooltip)
-            .style('top', `${event.pageY - window.scrollY - 30}px`)
-            .style('left', `${event.pageX - window.scrollX + 20}px`);
+            .style('top', `${event.pageY - height - (height / 2)}px`)
+            .style('left', `${event.pageX - (width / 2)}px`);
     }
 
     mouseOutRect = () => {
         select(this.tooltip)
-            .transition()
-            .duration(50)
             .style('display', 'none');
     }
 
@@ -193,7 +198,6 @@ class StackedBarChart extends PureComponent {
             mouseOverRect,
             mouseMove,
             mouseOutRect,
-            width,
         } = this;
 
         group
@@ -202,11 +206,12 @@ class StackedBarChart extends PureComponent {
             .data(series)
             .enter()
             .append('g')
-            .attr('fill', (d) => colorSelector ? colorSelector(d.key) : colors(d.key))
+            .attr('fill', d => (colorSelector ? colorSelector(d.key) : colors(d.key)))
             .selectAll('rect')
             .data(d => d)
             .enter()
             .append('rect')
+            .attr('cursor', 'pointer')
             .on('mouseover', mouseOverRect)
             .on('mousemove', mouseMove)
             .on('mouseout', mouseOutRect)
