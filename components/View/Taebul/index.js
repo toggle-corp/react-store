@@ -44,6 +44,7 @@ const getVirtualizedRenderParams = (
     let startX = 0;
     let startIndex;
 
+
     for (; i < columns.length; i += 1) {
         const newStartX = startX + itemWidths[columns[i].key];
         startIndex = i;
@@ -165,6 +166,7 @@ export default class Taebul extends React.PureComponent {
             defaultColumnWidth,
         );
 
+
         const itemWidths = this.getItemWidths(
             columns,
             columnWidths,
@@ -196,6 +198,7 @@ export default class Taebul extends React.PureComponent {
         if (!target.id) {
             return;
         }
+
         if (target.id === this.localBodyId) {
             const head = document.getElementById(this.localHeadId);
 
@@ -305,6 +308,7 @@ export default class Taebul extends React.PureComponent {
                     rendererClassName={rowClassName}
                     minWidth={minWidth}
                     itemHeight={rowHeight}
+                    rowStartIndex={this.rowStartIndex}
                 />
             </div>
         );
