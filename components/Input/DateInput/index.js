@@ -72,7 +72,7 @@ const createDate = (y, m, d) => {
 
 
 // y, m, d is string
-const encodeDate = ({ y = '', m = '', d = '' }, separator) => {
+const encodeDate = ({ y = '', m = '', d = '' }, separator = '-') => {
     if (isFalsy(y, [0, '']) && isFalsy(m, [0, '']) && isFalsy(d, [0, ''])) {
         return undefined;
     }
@@ -80,7 +80,7 @@ const encodeDate = ({ y = '', m = '', d = '' }, separator) => {
 };
 
 // value is string
-const decodeDate = (value, separator) => {
+const decodeDate = (value, separator = '-') => {
     if (!value) {
         return {};
     }
@@ -93,7 +93,7 @@ const decodeDate = (value, separator) => {
 };
 
 // value is string
-const isValidDateString = (value, separator) => {
+export const isValidDateString = (value, separator = '-') => {
     if (value === '' || value === undefined) {
         return true;
     }
