@@ -166,7 +166,14 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('transform', d => `translate(${x0(groupSelector(d))}, 0)`)
             .selectAll('rect')
-            .data(d => columns.map(key => ({ key, value: d[key] })))
+            .data((d) => {
+                const out = columns
+                    .map(key => ({ key, value: d[key] }))
+                    .sort((a, b) => b.value - a.value);
+                const sortedKeys = out.map(({ key }) => key);
+                x1.domain(sortedKeys);
+                return out;
+            })
             .enter()
             .append('rect')
             .attr('class', `bar ${styles.bar}`)
