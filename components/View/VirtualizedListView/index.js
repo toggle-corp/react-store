@@ -9,7 +9,7 @@ import Message from '../Message';
 import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 
-const DefaultEmptyComponent = () => {
+const DefaultEmptyComponent = ({ message }) => {
     const className = `
         empty
         ${styles.empty}
@@ -17,7 +17,7 @@ const DefaultEmptyComponent = () => {
 
     return (
         <Message className={className}>
-            Nothing to show.
+            {message}
         </Message>
     );
 };
@@ -47,6 +47,7 @@ const propTypes = {
     emptyComponent: PropTypes.func,
 
     minWidth: PropTypes.number,
+    emptyMessage: PropTypes.string,
 };
 
 const defaultProps = {
@@ -59,6 +60,7 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
     emptyComponent: DefaultEmptyComponent,
+    emptyMessage: 'Nothing to show.',
     minWidth: undefined,
 };
 
@@ -299,6 +301,7 @@ class VirtualizedListView extends React.Component {
         const {
             className: classNameFromProps,
             emptyComponent: EmptyComponent,
+            emptyMessage,
             data,
             id,
             minWidth,
@@ -321,7 +324,9 @@ class VirtualizedListView extends React.Component {
                 <Items />
                 { data.length === 0 && (
                     <React.Fragment>
-                        { EmptyComponent && <EmptyComponent /> }
+                        { EmptyComponent && <EmptyComponent
+                            message={emptyMessage}
+                        /> }
                         { minWidth && (
                             <div
                                 style={{
