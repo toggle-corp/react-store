@@ -1,4 +1,3 @@
-
 .option {
     display: block;
     outline: none;
@@ -13,6 +12,10 @@
     font-size: inherit;
 
     &.focused {
-        background-color: get-hover-color(var(--color-foreground));
+        background-color: var(--color-background-hover);
+    }
+
+    &:hover {
+        background-color: var(--color-background-hover);
     }
 }

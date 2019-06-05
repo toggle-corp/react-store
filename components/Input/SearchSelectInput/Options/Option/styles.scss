@@ -16,4 +16,8 @@
     &.active {
         @include background-color(var(--color-accent));
     }
+
+    &:hover {
+        @include background-color(var(--color-accent));
+    }
 }
