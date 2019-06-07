@@ -128,7 +128,7 @@ class WordCloud extends PureComponent {
 
         const renderArea = width * height;
         const totalLetterLength = words.join(' ').length;
-        const renderAreaFactor = renderArea / Math.sqrt(totalLetterLength);
+        const renderAreaFactor = renderArea / totalLetterLength;
 
         const minFont = 7;
         const maxFont = Math.max(

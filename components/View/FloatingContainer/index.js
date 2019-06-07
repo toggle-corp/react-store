@@ -7,6 +7,10 @@ import Haze from '../Haze';
 
 import styles from './styles.scss';
 
+const ESCAPE_KEY = 27;
+
+const noop = () => {};
+
 const propTypes = {
     /**
      * child elements
@@ -31,6 +35,11 @@ const propTypes = {
     onInvalidate: PropTypes.func,
 
     showHaze: PropTypes.bool,
+
+    // closeOnEscape will only work if onClose function is provided with
+    closeOnEscape: PropTypes.bool,
+
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
@@ -38,7 +47,9 @@ const defaultProps = {
     focusTrap: false,
     showHaze: false,
     onBlur: undefined,
+    onClose: noop,
     onMouseDown: undefined,
+    closeOnEscape: false,
     parent: undefined,
     onInvalidate: () => {},
 };
@@ -55,14 +66,42 @@ export default class FloatingContainer extends React.PureComponent {
     }
 
     componentWillMount() {
-        const { onBlur } = this.props;
+        const {
+            onBlur,
+            closeOnEscape,
+        } = this.props;
+
         if (onBlur) {
             window.addEventListener('mousedown', this.handleMouseDown);
+        }
+        if (closeOnEscape) {
+            document.addEventListener('keydown', this.handleKeyPressed);
         }
     }
 
     componentWillUnmount() {
-        window.removeEventListener('mousedown', this.handleMouseDown);
+        const {
+            onBlur,
+            closeOnEscape,
+        } = this.props;
+
+        if (onBlur) {
+            window.removeEventListener('mousedown', this.handleMouseDown);
+        }
+        if (closeOnEscape) {
+            document.removeEventListener('keydown', this.handleKeyPressed);
+        }
+    }
+
+    handleKeyPressed = (event) => {
+        const {
+            closeOnEscape,
+            onClose,
+        } = this.props;
+
+        if (closeOnEscape && event.keyCode === ESCAPE_KEY) {
+            onClose({ escape: true });
+        }
     }
 
     handleContainerInvalidate = () => {
