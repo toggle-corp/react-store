@@ -51,6 +51,7 @@ const colorBackgroundRow = colorForeground;
 const colorBackgroundRowAlt = colorForeground;
 
 const colorNavbar = colorForeground;
+const colorNavbarMenuItemHover = colorAccent;
 const colorTextOnNavbar = colorTextOnLight;
 const colorTextActiveTab = colorPrimary;
 
@@ -130,6 +131,7 @@ const colors = {
     colorBackgroundRowAlt,
 
     colorNavbar,
+    colorNavbarMenuItemHover,
     colorTextOnNavbar,
     colorTextActiveTab,
 

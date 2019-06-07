@@ -39,6 +39,11 @@
             font-family: inherit;
             font-size: inherit;
             user-select: none;
+
+            &:hover {
+                background-color: var(--color-background-hover);
+                color: var(--color-navbar-menu-item-hover);
+            }
         }
 
         .basic-tab {
