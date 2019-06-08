@@ -1,0 +1,31 @@
+@import '../../../stylesheets/utils';
+
+.grouped-bar-chart {
+    .bar{
+        cursor: pointer;
+    }
+
+    .y-axis  {
+        path {
+            stroke: var(--color-axis-path);
+        }
+        line {
+            stroke: var(--color-axis-path);
+        }
+    }
+
+    .x-axis path {
+        color: var(--color-axis-path);
+    }
+}
+
+.tooltip {
+    @include shadow-medium;
+    display: block;
+    position: absolute;
+    z-index: 10;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium-alt);
+    animation: fade-in .2s ease-in;
+    text-align: center;
+}
