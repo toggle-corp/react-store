@@ -39,6 +39,7 @@ const propTypes = {
     sideLengthRatio: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
+    hideLabel: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -49,6 +50,7 @@ const defaultProps = {
     className: '',
     sideLengthRatio: 0.4,
     labelModifier: undefined,
+    hideLabel: false,
 };
 
 class DonutChart extends PureComponent {
@@ -298,6 +300,7 @@ class DonutChart extends PureComponent {
             valueSelector,
             data,
             sideLengthRatio,
+            hideLabel,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -312,8 +315,6 @@ class DonutChart extends PureComponent {
 
         const context = this.setContext(data, width, height);
         const slices = context.append('g').attr('class', 'slices');
-        const labels = context.append('g').attr('class', 'labels');
-        const lines = context.append('g').attr('class', 'lines');
 
         const radius = (Math.min(width, height) / 2) - 20;
         const outerRadius = radius * 0.92;
@@ -341,8 +342,12 @@ class DonutChart extends PureComponent {
 
         this.addDropShadow(select(this.svg));
         this.addPaths(slices, options);
-        this.addLabels(labels, options);
-        this.addLines(lines, options);
+        if (!hideLabel) {
+            const labels = context.append('g').attr('class', 'labels');
+            const lines = context.append('g').attr('class', 'lines');
+            this.addLabels(labels, options);
+            this.addLines(lines, options);
+        }
         this.addTransition(slices, arcs, period);
     }
 
