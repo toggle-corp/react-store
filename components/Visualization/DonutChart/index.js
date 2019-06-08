@@ -39,6 +39,7 @@ const propTypes = {
     sideLengthRatio: PropTypes.number,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
+    hideLabel: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -49,6 +50,7 @@ const defaultProps = {
     className: '',
     sideLengthRatio: 0.4,
     labelModifier: undefined,
+    hideLabel: false,
 };
 
 class DonutChart extends PureComponent {
@@ -76,6 +78,8 @@ class DonutChart extends PureComponent {
             .append('g')
             .attr('transform', `translate(${width / 2}, ${height / 2})`)
     )
+
+    midAngle = d => (d.startAngle + ((d.endAngle - d.startAngle) / 2));
 
     save = () => {
         const svg = select(this.svg);
@@ -222,6 +226,68 @@ class DonutChart extends PureComponent {
             });
     };
 
+    addLabels = (element, options) => {
+        const { labelSelector } = this.props;
+        const {
+            radius,
+            pies,
+            textArcs,
+            period,
+        } = options;
+
+        element
+            .selectAll('text')
+            .data(pies)
+            .enter()
+            .append('text')
+            .attr('dy', '.35em')
+            .html(d => (`<tspan>${labelSelector(d.data)}</tspan>`))
+            .attr('transform', (d) => {
+                const pos = textArcs.centroid(d);
+                pos[0] = radius * 0.95 * (this.midAngle(d) < Math.PI ? 1 : -1);
+                return `translate(${pos})`;
+            })
+            .style('visibility', 'hidden')
+            .transition()
+            .delay((d, i) => i * period)
+            .style('visibility', 'visible')
+            .style('text-anchor', d => (this.midAngle(d) < Math.PI ? 'start' : 'end'))
+            .style('user-select', 'none');
+    }
+
+    addLines = (element, options) => {
+        const { labelSelector } = this.props;
+        const {
+            radius,
+            outerRadius,
+            colors,
+            pies,
+            arcs,
+            textArcs,
+            period,
+        } = options;
+
+        element
+            .selectAll('polyline')
+            .data(pies)
+            .enter()
+            .append('polyline')
+            .each((d) => {
+                // eslint-disable-next-line no-param-reassign
+                d.outerRadius = outerRadius - 10;
+            })
+            .transition()
+            .delay((d, i) => i * period)
+            .attr('points', (d) => {
+                const pos = textArcs.centroid(d);
+                pos[0] = radius * 0.95 * (this.midAngle(d) < Math.PI ? 1 : -1);
+                return [arcs.centroid(d), textArcs.centroid(d), pos];
+            })
+            .style('fill', 'none')
+            .style('stroke-width', `${2}px`)
+            .style('stroke', d => colors(labelSelector(d.data)));
+    }
+
     redrawChart = () => {
         const context = select(this.svg);
         context.selectAll('*').remove();
@@ -234,6 +300,7 @@ class DonutChart extends PureComponent {
             valueSelector,
             data,
             sideLengthRatio,
+            hideLabel,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -249,7 +316,7 @@ class DonutChart extends PureComponent {
         const context = this.setContext(data, width, height);
         const slices = context.append('g').attr('class', 'slices');
 
-        const radius = Math.min(width, height) / 2;
+        const radius = (Math.min(width, height) / 2) - 20;
         const outerRadius = radius * 0.92;
         const innerRadius = outerRadius - (outerRadius * sideLengthRatio);
 
@@ -258,7 +325,7 @@ class DonutChart extends PureComponent {
             .sort(null)
             .value(valueSelector);
 
-        const textArcs = this.textArch(outerRadius, innerRadius);
+        const textArcs = this.textArch(outerRadius, outerRadius);
         const arcs = this.arch(outerRadius, innerRadius);
         const period = 200;
 
@@ -275,6 +342,12 @@ class DonutChart extends PureComponent {
 
         this.addDropShadow(select(this.svg));
         this.addPaths(slices, options);
+        if (!hideLabel) {
+            const labels = context.append('g').attr('class', 'labels');
+            const lines = context.append('g').attr('class', 'lines');
+            this.addLabels(labels, options);
+            this.addLines(lines, options);
+        }
         this.addTransition(slices, arcs, period);
     }
 
