@@ -1,6 +1,7 @@
 .responsive {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 
     .responsive-child {
         flex-grow: 1;
