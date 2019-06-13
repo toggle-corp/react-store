@@ -4,6 +4,7 @@ import { FaramListElement } from '@togglecorp/faram';
 
 import { NormalList } from '../index';
 import Message from '../../Message';
+import LoadingAnimation from '../../LoadingAnimation';
 import styles from './styles.scss';
 
 const defaultEmptyComponent = () => {
@@ -39,6 +40,8 @@ const propTypes = {
     /* Component to show when data is empty */
     emptyComponent: PropTypes.func,
     id: PropTypes.string,
+
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -46,6 +49,7 @@ const defaultProps = {
     data: [],
     emptyComponent: defaultEmptyComponent,
     id: undefined,
+    pending: false,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -59,6 +63,7 @@ export class NormalListView extends React.Component {
             data,
             emptyComponent: EmptyComponent,
             id,
+            pending,
             ...otherProps
         } = this.props;
 
@@ -93,6 +98,7 @@ export class NormalListView extends React.Component {
                 className={className}
                 id={id}
             >
+                { pending && <LoadingAnimation /> }
                 <NormalList
                     data={data}
                     {...otherProps}
