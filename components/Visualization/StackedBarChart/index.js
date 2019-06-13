@@ -29,6 +29,7 @@ import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
+import Message from '../../View/Message';
 
 import {
     getStandardFilename,
@@ -241,6 +242,7 @@ class StackedBarChart extends PureComponent {
     render() {
         const {
             className,
+            data,
         } = this.props;
 
         const svgClassName = [
@@ -251,16 +253,26 @@ class StackedBarChart extends PureComponent {
 
         return (
             <Fragment>
-                <svg
-                    ref={(element) => { this.svg = element; }}
-                    className={svgClassName}
-                />
-                <Float>
-                    <div
-                        ref={(el) => { this.tooltip = el; }}
-                        className={styles.tooltip}
-                    />
-                </Float>
+                {data.length === 0 ? (
+                    <div className={styles.messageContainer}>
+                        <Message>
+                            Data not available
+                        </Message>
+                    </div>
+                ) : (
+                    <Fragment>
+                        <svg
+                            ref={(element) => { this.svg = element; }}
+                            className={svgClassName}
+                        />
+                        <Float>
+                            <div
+                                ref={(el) => { this.tooltip = el; }}
+                                className={styles.tooltip}
+                            />
+                        </Float>
+                    </Fragment>
+                )}
             </Fragment>
         );
     }

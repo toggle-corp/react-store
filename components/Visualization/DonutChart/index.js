@@ -13,6 +13,7 @@ import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
+import Message from '../../View/Message';
 
 import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
@@ -276,6 +277,7 @@ class DonutChart extends PureComponent {
 
     render() {
         const {
+            data,
             className,
         } = this.props;
 
@@ -286,16 +288,26 @@ class DonutChart extends PureComponent {
 
         return (
             <Fragment>
-                <Float>
-                    <div
-                        ref={(el) => { this.tooltip = el; }}
-                        className={styles.donutTooltip}
-                    />
-                </Float>
-                <svg
-                    className={svgClassName}
-                    ref={(elem) => { this.svg = elem; }}
-                />
+                {data.length === 0 ? (
+                    <div className={styles.messageContainer}>
+                        <Message>
+                            Data not available
+                        </Message>
+                    </div>
+                ) : (
+                    <Fragment>
+                        <Float>
+                            <div
+                                ref={(el) => { this.tooltip = el; }}
+                                className={styles.donutTooltip}
+                            />
+                        </Float>
+                        <svg
+                            className={svgClassName}
+                            ref={(elem) => { this.svg = elem; }}
+                        />
+                    </Fragment>
+                )}
             </Fragment>
         );
     }

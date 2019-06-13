@@ -20,6 +20,7 @@ import { max } from 'd3-array';
 
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
+import Message from '../../View/Message';
 
 import styles from './styles.scss';
 
@@ -108,7 +109,7 @@ class GroupedBarChart extends PureComponent {
             yTickArguments,
         } = this.props;
 
-        if (!boundingClientRect.width || !data || data.length === 0) {
+        if (!boundingClientRect.width || !data || ((data.values || []).length === 0)) {
             return;
         }
 
@@ -199,7 +200,13 @@ class GroupedBarChart extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            data: {
+                values = [],
+            } = {},
+        } = this.props;
+
         const svgClassName = [
             'grouped-bar-chart',
             styles.groupedBarChart,
@@ -208,16 +215,26 @@ class GroupedBarChart extends PureComponent {
 
         return (
             <Fragment>
-                <svg
-                    className={svgClassName}
-                    ref={(elem) => { this.svg = elem; }}
-                />
-                <Float>
-                    <div
-                        ref={(el) => { this.tooltip = el; }}
-                        className={styles.tooltip}
-                    />
-                </Float>
+                {values.length === 0 ? (
+                    <div className={styles.messageContainer}>
+                        <Message>
+                            Data not available
+                        </Message>
+                    </div>
+                ) : (
+                    <Fragment>
+                        <svg
+                            ref={(element) => { this.svg = element; }}
+                            className={svgClassName}
+                        />
+                        <Float>
+                            <div
+                                ref={(el) => { this.tooltip = el; }}
+                                className={styles.tooltip}
+                            />
+                        </Float>
+                    </Fragment>
+                )}
             </Fragment>
         );
     }
