@@ -5,6 +5,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import ScalableVectorGraphics from '../../View/ScalableVectorGraphics';
 import iconNames from '../../../constants/iconNames';
+import imagePaths from '../../../constants/imagePaths';
 
 import styles from './styles.scss';
 
@@ -16,6 +17,11 @@ export function addIcon(type, name, value) {
 // Add default icons
 Object.keys(iconNames).forEach((key) => {
     addIcon('font', key, iconNames[key]);
+});
+
+// Add default images
+Object.keys(imagePaths).forEach((key) => {
+    addIcon('image', key, imagePaths[key]);
 });
 
 const propTypes = {

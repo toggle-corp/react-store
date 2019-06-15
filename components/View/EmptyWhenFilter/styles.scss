@@ -1,0 +1,18 @@
+.empty {
+    .message {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .icon {
+            opacity: .3;
+            margin-bottom: var(--spacing-medium);
+            width: 80%;
+            max-width: var(--width-icon-extra-large);
+            height: 80%;
+            max-height: var(--width-icon-extra-large);
+            object-position: center center;
+            object-fit: contain;
+        }
+    }
+}
