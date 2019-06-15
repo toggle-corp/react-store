@@ -1,6 +1,8 @@
 @import '../../../../stylesheets/utils';
 
 .list-view {
+    position: relative;
+
     &.list-view-empty {
         display: flex;
         flex-direction: column;
