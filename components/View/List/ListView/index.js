@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramListElement } from '@togglecorp/faram';
 
+import EmptyWhenFilter from '../../EmptyWhenFilter';
 import { NormalList } from '../index';
 import Message from '../../Message';
 import LoadingAnimation from '../../LoadingAnimation';
@@ -40,6 +41,7 @@ const propTypes = {
     /* Component to show when data is empty */
     emptyComponent: PropTypes.func,
     id: PropTypes.string,
+    isFiltered: PropTypes.bool,
 
     pending: PropTypes.bool,
 };
@@ -50,6 +52,7 @@ const defaultProps = {
     emptyComponent: defaultEmptyComponent,
     id: undefined,
     pending: false,
+    isFiltered: false,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -64,6 +67,7 @@ export class NormalListView extends React.Component {
             emptyComponent: EmptyComponent,
             id,
             pending,
+            isFiltered,
             ...otherProps
         } = this.props;
 
@@ -75,6 +79,14 @@ export class NormalListView extends React.Component {
                 list-view
                 list-view-empty
             `;
+
+            if (isFiltered) {
+                return (
+                    <div className={className}>
+                        <EmptyWhenFilter className={styles.empty} />
+                    </div>
+                );
+            }
 
             if (!EmptyComponent) {
                 return null;
