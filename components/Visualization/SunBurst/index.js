@@ -20,22 +20,59 @@ import Float from '../../View/Float';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Hierarchical data structure that can be computed to form a hierarchical layout
+     * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Accessor function to return children of node
+     */
     childrenSelector: PropTypes.func,
+    /**
+     * Select label for each node
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Modify the tooltip content
+     */
     tooltipContent: PropTypes.func,
+    /**
+     * Select a color for each node
+     */
     colorSelector: PropTypes.func,
+    /**
+     * Select the value of each node
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * if true, a tooltip is shown
+     */
     showTooltip: PropTypes.bool,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -62,7 +99,10 @@ const defaultProps = {
 
 const twoPi = 2 * Math.PI;
 const tooltipOffset = { x: 10, y: 10 };
-
+/**
+ * SunBurst shows hierarchical data as a series of rings and slices. Each slice represents a
+ * node of the tree structure. SunBurst can be thought as a multi level pie chart.
+  */
 class SunBurst extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -18,18 +18,43 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Hierarchical data structure that can be computed to form a hierarchical layout
+     * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Accessor function to return children of node
+     */
     childrenSelector: PropTypes.func,
+    /**
+     * Select the value of each node
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * Select label for each node
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
 };
 
@@ -41,6 +66,11 @@ const defaultProps = {
     className: '',
 };
 
+/**
+ * TreeMap is a rectangular space-filling approach to visualizing hierarchical data structure.
+ * The area of each rectangle denotes the value of the element on which the rectangle is based on.
+ * Subcategories are nested inside the parent rectangle.
+ */
 class TreeMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

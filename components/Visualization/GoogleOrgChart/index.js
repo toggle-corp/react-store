@@ -5,14 +5,42 @@ import { GoogleCharts } from 'google-charts';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Select a key for each data element
+     */
     keySelector: PropTypes.func.isRequired,
+    /**
+     * Select the title for each element
+     */
     titleSelector: PropTypes.func.isRequired,
+    /**
+     * Select children of each node
+     */
     childSelector: PropTypes.func.isRequired,
+    /**
+     * Selected data element
+     */
     value: PropTypes.array, // eslint-disable-line  react/forbid-prop-types
+    /**
+     * Hierarchical data element representing the organization structure
+     */
     options: PropTypes.object, // eslint-disable-line  react/forbid-prop-types
+    /**
+     * if disabled no selection and mouseover events
+     */
     disabled: PropTypes.bool,
+    /**
+     * if singleSelect only single element/node can be selected
+     */
     singleSelect: PropTypes.bool,
+    /**
+     * if multiSelect multiple elements/nodes can be selected
+     */
     multiSelect: PropTypes.bool,
+    /**
+     * onChange handler function
+     * this function is triggered when a selection is made
+     */
     onChange: PropTypes.func,
 };
 const defaultProps = {
@@ -24,6 +52,10 @@ const defaultProps = {
     onChange: () => [],
 };
 
+/**
+ * GoogleOrgChart provides a react component wrapper to google's Organization Chart.
+ * For details: <a href="https://developers.google.com/chart/interactive/docs/gallery/orgchart">Organization Chart</a>
+ */
 class GoogleOrgChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

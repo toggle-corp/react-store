@@ -17,10 +17,17 @@ import Tooltip from '../Tooltip';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Array of data points. Each data points is an object representing
+     * a coordinate {x , y }
+     */
     data: PropTypes.arrayOf(PropTypes.shape({})),
-    /*
-     * Chart Margins
+    /**
+     * Margins for the chart
      */
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -28,14 +35,41 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    /**
+     * The key for x value
+     */
     xKey: PropTypes.string.isRequired,
+    /**
+     * The key for x value
+     */
     yKey: PropTypes.string.isRequired,
+    /**
+     * TickFormat for x-axis
+     */
     xTickFormat: PropTypes.func,
+    /**
+     * TickFormat for x-axis
+     */
     yTickFormat: PropTypes.func,
+    /**
+     * Number of ticks for x-axis
+     */
     xTicks: PropTypes.number,
+    /**
+     * Number of ticks for x-axis
+     */
     yTicks: PropTypes.number,
+    /**
+     * Renderer for tooltip
+     */
     tooltipRender: PropTypes.func.isRequired,
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+    /**
+     * if true, show the area under TimeSeries chart
+     */
     showArea: PropTypes.bool,
 };
 
@@ -55,6 +89,10 @@ const defaultProps = {
     showArea: false,
 };
 
+/**
+ * TimeSeries chart helps to visualize the change in value of a variable over time.
+ * Each point in timeseries chart corresponds to a time and the variable being measured or shown.
+ */
 class TimeSeries extends React.PureComponent {
     static defaultProps = defaultProps;
     static propTypes = propTypes;

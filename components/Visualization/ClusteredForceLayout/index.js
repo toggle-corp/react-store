@@ -40,22 +40,61 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data in the form of array of nodes and links
+     * Each node element must have an id, label and corresponding group
+     * Each link element is in the form of { source: sourceId, target: targetId value: number }
+     */
     data: PropTypes.shape({
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
+    /**
+     * Select id of each node element
+     */
     idSelector: PropTypes.func.isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Select group of each node element
+     */
     groupSelector: PropTypes.func,
+    /**
+     * Select the value for link
+     * The value of link is corresponding reflected on the width of link
+     */
     valueSelector: PropTypes.func,
+    /**
+     * Select label of each node
+     */
     labelModifier: PropTypes.func,
+    /**
+     * Additional class for the graph
+     */
     className: PropTypes.string,
+    /**
+     * Array of colors as hex color codes
+     * Each node is assigned based on its group
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * The extent of circle radius as [minRadius, maxRadius]
+     * Each node is scaled based on the number of links it is associated with
+     * node with minimum number of links will have minRadius and with maximum number of links will have  maxRadius
+     */
     circleRadiusExtent: PropTypes.arrayOf(PropTypes.number),
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -83,7 +122,9 @@ const defaultProps = {
     colorScheme: schemePaired,
     circleRadiusExtent: [5, 10],
 };
-
+/**
+ * ClusteredForceLayout allows to represent the hierarchies and interconnection between entities in the form of nodes and links. The nodes are further grouped together.
+ */
 class ClusteredForceLayout extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

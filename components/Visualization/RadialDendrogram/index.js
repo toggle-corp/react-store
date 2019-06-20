@@ -12,29 +12,49 @@ import Responsive from '../../General/Responsive';
 import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
-/**
- * boundingClientRect: the width and height of the container.
- * data: the hierarchical data to be visualized.
- * childrenSelector: the accessor function to return array of data representing the children.
- * labelSelector: returns the individual label from a unit data.
- * colorScheme: the color scheme for links that connect the nodes.
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
+
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Hierarchical data structure that can be computed to form a hierarchical layout
+     * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Accessor function to return children of node
+     */
     childrenSelector: PropTypes.func,
+    /**
+     * Accessor function to return children of node
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Select the value of each node
+     */
     valueSelector: PropTypes.func,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -62,7 +82,6 @@ const defaultProps = {
  * RadialDendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical
  * clustering. The clusters are arranged in circle.
  */
-
 class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

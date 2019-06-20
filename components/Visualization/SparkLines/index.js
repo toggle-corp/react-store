@@ -25,18 +25,48 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Array of data elements each having xvalue and yvalue
+     */
     data: PropTypes.arrayOf(PropTypes.object),
+    /**
+     * Access the x-value of data point
+     */
     xValueSelector: PropTypes.func.isRequired,
+    /**
+     * Access the y-value of data point
+     */
     yValueSelector: PropTypes.func.isRequired,
+    /**
+     * Modify the x-value label
+     */
     xLabelModifier: PropTypes.func,
+    /**
+     * Modify the y-value label
+     */
     yLabelModifier: PropTypes.func,
+    /**
+     * Handle onHover functionality
+     */
     onHover: PropTypes.func,
+    /**
+     * if true, fill the area under the line
+     */
     fill: PropTypes.bool,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -62,6 +92,10 @@ const defaultProps = {
 
 const circleRadius = 5;
 
+/**
+ * SparkLines is a small line chart which shows the general shape of variation.
+ * It can be used to visualize trends and statistical information.
+ */
 class SparkLines extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

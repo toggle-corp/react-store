@@ -27,30 +27,83 @@ import styles from './styles.scss';
 const dummy = transition;
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Array of data elements each having a label and value
+     */
     data: PropTypes.arrayOf(PropTypes.object),
+    /**
+     * Select the value of element
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * Select the label of element
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Padding between two bars
+     */
     bandPadding: PropTypes.number,
+    /**
+     * Select a color for each bar
+     */
     colorSelector: PropTypes.func,
+    /**
+     * Format a value label displayed on top of bar
+     */
     valueLabelFormat: PropTypes.func,
+    /**
+     * if true, show gridlines
+     */
     showGridLines: PropTypes.bool,
+    /**
+     * if true, show tooltip
+     */
     showTooltip: PropTypes.bool,
+    /**
+     * Modify the contents of tooltip
+     */
     tooltipContent: PropTypes.func,
+    /**
+     * if true, tilt the labels on axis of chart
+     */
     tiltLabels: PropTypes.bool,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * type of scaling used for bar length
+     * one of ['exponent', 'log', 'linear']
+     * see <a href="https://github.com/d3/d3-scale/blob/master/README.md">d3.scale</a>
+     */
     scaleType: PropTypes.string,
+    /**
+     * if exponent scaleType, set the current exponent to specified value
+     */
     exponent: PropTypes.number,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
@@ -76,6 +129,10 @@ const defaultProps = {
     colorScheme: schemeSet3,
 };
 
+/**
+ * Represent categorical data with horizontal bars with values proportional to the
+ * length of each bar.
+ */
 class HorizontalBar extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
