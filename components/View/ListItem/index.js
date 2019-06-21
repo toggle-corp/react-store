@@ -16,6 +16,7 @@ const defaultProps = {
 
 export default class ListItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

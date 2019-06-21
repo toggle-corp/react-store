@@ -59,6 +59,7 @@ const defaultProps = {
 // eslint-disable-next-line react/prefer-stateless-function
 export class NormalListView extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

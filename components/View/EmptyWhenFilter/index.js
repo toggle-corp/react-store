@@ -17,7 +17,7 @@ const EmptyWhenFilter = ({
             'empty-filter',
         )}
     >
-        <Message className={styles.message} >
+        <Message className={styles.message}>
             <Icon
                 name="noSearchResults"
                 className={styles.icon}

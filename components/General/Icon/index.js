@@ -37,6 +37,7 @@ const defaultProps = {
 
 export default class Icon extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -50,7 +51,8 @@ export default class Icon extends React.PureComponent {
 
     componentDidCatch() {
         // shamelessly ignored the error and initiated the re-render
-        this.setState({ dummy: !this.state.dummy });
+        const { dummy } = this.state;
+        this.setState({ dummy: !dummy });
     }
 
     render() {

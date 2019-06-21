@@ -27,7 +27,21 @@ const defaultProps = {
 
 export default class ScalableVectorGraphics extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
+
+    // eslint-disable-next-line react/sort-comp
+    injectSVG = memoize((svg, src, evalScripts, onEnject) => {
+        if (!svg) {
+            return;
+        }
+
+        const options = {
+            evalScripts,
+        };
+
+        SVGInjector(svg, options, onEnject);
+    })
 
     constructor(props) {
         super(props);
@@ -68,18 +82,6 @@ export default class ScalableVectorGraphics extends React.PureComponent {
             svg.remove();
         }
     }
-
-    injectSVG = memoize((svg, src, evalScripts, onEnject) => {
-        if (!svg) {
-            return;
-        }
-
-        const options = {
-            evalScripts,
-        };
-
-        SVGInjector(svg, options, onEnject);
-    })
 
     render() {
         const {

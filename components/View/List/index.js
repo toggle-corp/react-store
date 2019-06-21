@@ -53,6 +53,7 @@ const defaultProps = {
 
 export class NormalList extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     renderListItem = (datum, i) => {
@@ -70,7 +71,8 @@ export class NormalList extends React.Component {
 
         if (modifier) {
             return modifier(key, datum, i, data);
-        } else if (Renderer) {
+        }
+        if (Renderer) {
             const extraProps = rendererParams ? rendererParams(key, datum, i, data) : undefined;
 
             return (

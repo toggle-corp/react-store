@@ -21,6 +21,7 @@ const defaultProps = {
 
 export default class ListItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentDidMount() {
@@ -82,6 +83,7 @@ export default class ListItem extends React.PureComponent {
             <button
                 ref={(el) => { this.container = el; }}
                 className={this.getClassName()}
+                type="button"
                 {...otherProps}
             >
                 { children }
