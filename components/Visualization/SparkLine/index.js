@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
@@ -94,6 +95,11 @@ class SparkLine extends React.PureComponent {
         this.tooltip.hide();
     }
 
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
+
     setTooltip = (tooltip) => { this.tooltip = tooltip; }
 
     updateRender() {
@@ -154,10 +160,21 @@ class SparkLine extends React.PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         return (
-            <div className={`${className} ${styles.sparkLines}`} >
+            <div
+                className={`${className} ${styles.sparkLines}`}
+                style={styleForContainer}
+            >
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip setTooltipApi={this.setTooltip} />
             </div>

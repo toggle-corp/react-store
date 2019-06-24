@@ -9,6 +9,7 @@ import {
     hierarchy,
     tree,
 } from 'd3-hierarchy';
+import memoize from 'memoize-one';
 import { scaleOrdinal } from 'd3-scale';
 import { easeSinInOut } from 'd3-ease';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -110,6 +111,11 @@ class CollapsibleTree extends React.PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     setContext = (width, height, margins) => {
         const {
@@ -380,17 +386,26 @@ class CollapsibleTree extends React.PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
+
         const treeStyle = [
             'collapsible-tree',
             className,
         ].join(' ');
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         return (
             <Fragment>
                 <svg
                     className={treeStyle}
                     ref={(elem) => { this.svg = elem; }}
+                    style={styleForContainer}
                 />
                 <Icon
                     className={styles.info}

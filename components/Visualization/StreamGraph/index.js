@@ -2,6 +2,7 @@ import React, {
     Fragment,
     PureComponent,
 } from 'react';
+import memoize from 'memoize-one';
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
 import { schemeSet2 } from 'd3-scale-chromatic';
@@ -49,7 +50,8 @@ const propTypes = {
     /**
      * The data to be visualized.
      * Array of categorical data grouped together where is group has a group identifier.
-     * Example data: [{ state: 'Province 1', river: 10, hills: 20 }, { state: 'Province 2', river: 1, hills: 3}]
+     * Example data: [{ state: 'Province 1', river: 10, hills: 20 },
+     * { state: 'Province 2', river: 1, hills: 3}]
      */
     data: PropTypes.arrayOf(
         PropTypes.shape({
@@ -202,6 +204,11 @@ class StreamGraph extends PureComponent {
             .classed('hover', 'false');
     }
 
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
+
     save = () => {
         const svgsaver = new SvgSaver();
         const svg = select(this.svg);
@@ -347,7 +354,13 @@ class StreamGraph extends PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         const svgClassName = [
             'stream-graph',
@@ -365,6 +378,7 @@ class StreamGraph extends PureComponent {
                 <svg
                     ref={(el) => { this.svg = el; }}
                     className={svgClassName}
+                    style={styleForContainer}
                 />
                 <Float>
                     <div

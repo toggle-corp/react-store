@@ -1,5 +1,6 @@
 import React from 'react';
 import { select } from 'd3-selection';
+import memoize from 'memoize-one';
 import { tree, hierarchy } from 'd3-hierarchy';
 import { extent } from 'd3-array';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -100,6 +101,11 @@ class RadialDendrogram extends React.PureComponent {
     componentDidUpdate() {
         this.renderChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     save = () => {
         const svg = select(this.svg);
@@ -225,7 +231,13 @@ class RadialDendrogram extends React.PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         const radialDendrogramStyle = [
             'radial-dendrogram',
@@ -235,6 +247,7 @@ class RadialDendrogram extends React.PureComponent {
         return (
             <svg
                 className={radialDendrogramStyle}
+                style={styleForContainer}
                 ref={(elem) => { this.svg = elem; }}
             />
         );

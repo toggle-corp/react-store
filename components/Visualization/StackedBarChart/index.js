@@ -11,6 +11,7 @@ import {
     scaleOrdinal,
     scaleBand,
 } from 'd3-scale';
+import memoize from 'memoize-one';
 import { schemePaired } from 'd3-scale-chromatic';
 import { keys } from 'd3-collection';
 import {
@@ -98,7 +99,8 @@ const defaultProps = {
 
 /**
  * StackedBarChart groups multiple variables on top of each other across multiple
- * groups. It helps to visualize the relationship among members of the group and compare the values across multiple groups.
+ * groups.It helps to visualize the relationship among members of
+ * the group and compare the values across multiple groups.
  */
 class StackedBarChart extends PureComponent {
     static propTypes = propTypes;
@@ -118,6 +120,11 @@ class StackedBarChart extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     save = () => {
         const svgsaver = new SvgSaver();
@@ -285,7 +292,13 @@ class StackedBarChart extends PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         const svgClassName = [
             'stacked-bar-chart',
@@ -298,6 +311,7 @@ class StackedBarChart extends PureComponent {
                 <svg
                     ref={(element) => { this.svg = element; }}
                     className={svgClassName}
+                    style={styleForContainer}
                 />
                 <Float>
                     <div

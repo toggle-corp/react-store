@@ -2,6 +2,7 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
+import memoize from 'memoize-one';
 import { select, event } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
 import { hierarchy, tree } from 'd3-hierarchy';
@@ -132,6 +133,11 @@ class Organigram extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     setContext = (width, height, margins) => {
         const {
@@ -349,7 +355,13 @@ class Organigram extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
 
         const svgClassName = [
             'organigram',
@@ -357,11 +369,14 @@ class Organigram extends PureComponent {
             className,
         ].join(' ');
 
+        const styleForContainer = this.getStyleForContainer(width, height);
+
         return (
             <Fragment>
                 <svg
                     ref={(elem) => { this.svg = elem; }}
                     className={svgClassName}
+                    style={styleForContainer}
                 />
                 <Icon
                     className={styles.info}

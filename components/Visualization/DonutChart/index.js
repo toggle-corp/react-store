@@ -5,6 +5,7 @@ import React, {
 import { PropTypes } from 'prop-types';
 import { schemeAccent } from 'd3-scale-chromatic';
 import { select, event } from 'd3-selection';
+import memoize from 'memoize-one';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
@@ -104,6 +105,11 @@ class DonutChart extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     setContext = (data, width, height) => (
         select(this.svg)
@@ -387,7 +393,13 @@ class DonutChart extends PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         const svgClassName = [
             'donutchart',
@@ -403,6 +415,7 @@ class DonutChart extends PureComponent {
                     />
                 </Float>
                 <svg
+                    style={styleForContainer}
                     className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
                 />
