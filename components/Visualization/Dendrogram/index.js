@@ -83,7 +83,8 @@ const defaultProps = {
 };
 
 /**
- * Dendrogram is a tree diagram showing the arrangement of clusters produced by hierarchical clustering
+ * Dendrogram is a tree diagram showing the arrangement of
+ * clusters produced by hierarchical clustering
  */
 class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;

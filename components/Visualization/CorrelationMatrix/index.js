@@ -11,6 +11,7 @@ import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
+import memoize from 'memoize-one';
 import {
     getColorOnBgColor,
     getHexFromRgb,
@@ -32,7 +33,8 @@ const propTypes = {
     /**
      * Data to be represented
      * labels: labels are variables
-     * values: a square matrix with same variables show in rows and columns with each cell representing correlation between two variables
+     * values: a square matrix with same variables show in rows and
+     * columns with each cell representing correlation between two variables
      */
     data: PropTypes.shape({
         labels: PropTypes.arrayOf(PropTypes.string),
@@ -84,7 +86,8 @@ const defaultProps = {
 };
 
 /**
- * CorrelationMatrix visualizes the correlation coefficients of multiple variables as colors in a grid
+ * CorrelationMatrix visualizes the correlation
+ * coefficients of multiple variables as colors in a grid
  */
 class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
@@ -104,6 +107,11 @@ class CorrelationMatrix extends React.PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     setContext = (width, height, margins) => {
         const {
@@ -339,14 +347,25 @@ class CorrelationMatrix extends React.PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
+
         const correlationMatrixStyle = [
             'correlation-matrix',
             className,
         ].join(' ');
+
         return (
             <svg
                 className={correlationMatrixStyle}
+                style={styleForContainer}
                 ref={(elem) => { this.svg = elem; }}
             />
         );

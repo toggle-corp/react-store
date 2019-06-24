@@ -1,6 +1,7 @@
 import React, {
     PureComponent,
 } from 'react';
+import memoize from 'memoize-one';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -113,6 +114,11 @@ class Sankey extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     setContext = (width, height, margins) => {
         const {
@@ -297,7 +303,13 @@ class Sankey extends PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
+
+        const styleForContainer = this.getStyleForContainer(width, height);
 
         const svgClassName = [
             'sankey',
@@ -308,6 +320,7 @@ class Sankey extends PureComponent {
         return (
             <svg
                 className={svgClassName}
+                style={styleForContainer}
                 ref={(elem) => { this.svg = elem; }}
             />
         );

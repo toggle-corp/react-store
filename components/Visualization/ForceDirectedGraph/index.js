@@ -1,6 +1,7 @@
 import React, {
     Fragment,
 } from 'react';
+import memoize from 'memoize-one';
 import { select, event } from 'd3-selection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { schemePaired } from 'd3-scale-chromatic';
@@ -135,6 +136,11 @@ class ForceDirectedGraph extends React.PureComponent {
     componentDidUpdate() {
         this.renderChart();
     }
+
+    getStyleForContainer = memoize((width, height) => ({
+        width,
+        height,
+    }));
 
     updateData(props) {
         this.data = JSON.parse(JSON.stringify(props.data));
@@ -360,6 +366,10 @@ class ForceDirectedGraph extends React.PureComponent {
     render() {
         const {
             className,
+            boundingClientRect: {
+                width,
+                height,
+            },
         } = this.props;
 
         const svgClassName = [
@@ -368,11 +378,14 @@ class ForceDirectedGraph extends React.PureComponent {
             className,
         ].join(' ');
 
+        const styleForContainer = this.getStyleForContainer(width, height);
+
         return (
             <Fragment>
                 <svg
                     className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
+                    style={styleForContainer}
                 />
                 <Float>
                     <div

@@ -76,8 +76,9 @@ const defaultProps = {
  * TreeMap is a rectangular space-filling approach to visualizing hierarchical data structure.
  * The area of each rectangle denotes the value of the element on which the rectangle is based on.
  * Subcategories are nested inside the parent rectangle.
- * Using this variation of TreeMap, only parent values are shown. If one needs to see chidren of each
- * node, one can click the respective parent rectangle. The graph zooms into the clicked rectangle to
+ * Using this variation of TreeMap, only parent values are shown.
+ * If one needs to see chidren of each node, one can click the respective parent rectangle.
+ * The graph zooms into the clicked rectangle to
  * show its contents.
  */
 class ZoomableTreeMap extends React.PureComponent {
