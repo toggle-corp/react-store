@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramListElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import EmptyWhenFilter from '../../EmptyWhenFilter';
 import { NormalList } from '../index';
@@ -71,39 +72,36 @@ export class NormalListView extends React.Component {
             ...otherProps
         } = this.props;
 
-        if (data.length === 0) {
-            const className = `
-                ${classNameFromProps}
-                ${styles.listView}
-                ${styles.listViewEmpty}
-                list-view
-                list-view-empty
-            `;
+        let content = null;
 
+        const isEmpty = data.length <= 0;
+
+        if (isEmpty) {
             if (isFiltered) {
-                return (
-                    <div className={className}>
-                        <EmptyWhenFilter className={styles.empty} />
-                    </div>
-                );
+                content = !pending
+                    ? <EmptyWhenFilter className={styles.empty} />
+                    : null;
+            } else {
+                content = EmptyComponent && !pending
+                    ? <EmptyComponent />
+                    : null;
             }
-
-            if (!EmptyComponent) {
-                return null;
-            }
-
-            return (
-                <div className={className}>
-                    <EmptyComponent />
-                </div>
+        } else {
+            content = (
+                <NormalList
+                    data={data}
+                    {...otherProps}
+                />
             );
         }
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.listView}
-            list-view
-        `;
+        const className = _cs(
+            classNameFromProps,
+            styles.listView,
+            'list-view',
+            isEmpty && 'list-view-empty',
+            isEmpty && styles.listViewEmpty,
+        );
 
         return (
             <div
@@ -111,10 +109,7 @@ export class NormalListView extends React.Component {
                 id={id}
             >
                 { pending && <LoadingAnimation /> }
-                <NormalList
-                    data={data}
-                    {...otherProps}
-                />
+                {content}
             </div>
         );
     }
