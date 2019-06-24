@@ -199,12 +199,9 @@ class Histogram extends PureComponent {
 
         const dataExtent = extent(data);
 
-        dataExtent[0] -= 1;
-        dataExtent[1] += 1;
-
         const x = scaleLinear()
             .domain(dataExtent).nice()
-            .rangeRound([0, width]);
+            .range([0, width]);
 
         const bins = histogram()
             .domain(x.domain())
@@ -234,7 +231,7 @@ class Histogram extends PureComponent {
             .append('rect')
             .attr('x', d => x(d.x0) + 1)
             .attr('width', (d) => {
-                const x1 = (x(d.x1) - x(d.x0)) - 1;
+                const x1 = (x(d.x1) - x(d.x0));
                 return Math.max(0, x1);
             })
             .attr('y', d => y(d.length))
