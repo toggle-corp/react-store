@@ -15,20 +15,42 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-
+    /**
+     * Data to be represented in the word cloud.
+     */
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    /**
+     * Select a label for each data point
+     */
     labelSelector: PropTypes.func,
+    /**
+     * Select the frequency value for each data point
+     */
     frequencySelector: PropTypes.func,
-
+    /**
+     * Font specification for each word cloud node
+     */
     font: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    /***
+     * Provide a rotation value for each node
+     */
     rotate: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
+    /**
+     * Handler function to save the generated svg
+     */
     setSaveFunction: PropTypes.func,
     // onWordMouseOver: PropTypes.func,
     // onWordClick: PropTypes.func,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
 };
 
@@ -48,6 +70,10 @@ const defaultProps = {
 const emptyObject = {};
 const emptyList = [];
 
+/**
+ * Display how frequently a word appears by making the size of each word proportion to its
+ * frequency.
+ */
 class WordCloud extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

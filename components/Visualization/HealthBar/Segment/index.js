@@ -9,11 +9,29 @@ import Numeral from '../../../View/Numeral';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * if ture, center tooltip
+     */
     centerTooltip: PropTypes.bool,
+    /**
+     * value of the segment
+     */
     value: PropTypes.number.isRequired,
+    /**
+     * if ture, hide the label
+     */
     hideLabel: PropTypes.bool.isRequired,
+    /**
+     * name of the segment
+     */
     label: PropTypes.string,
+    /**
+     * additional styling classes
+     */
     style: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    /**
+     * if true, increase the size of segment on hover
+     */
     enlargeOnHover: PropTypes.bool.isRequired,
 };
 
@@ -22,6 +40,10 @@ const defaultProps = {
     centerTooltip: false,
 };
 
+/**
+ * Represent a segment of HealthBar. Length of segment corresponds to the value of the data
+ * element
+ */
 export default class Segment extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

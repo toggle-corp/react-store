@@ -24,30 +24,50 @@ import { saveSvg, getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the nxn square matrix representing the directed flow amongst a network of n nodes.
- * labelsData: array of n string representing the individual nodes.
- * colorScheme: array of hex color values.
- * showLabels: if true the labels are drawn.
- * showTooltip: if true the tooltip is rendered.
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
-
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The nxn square matrix representing the directed flow amongst a network of n nodes
+     * see <a href="https://github.com/d3/d3-chord">d3-chord</a>
+     */
     data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    /**
+     * Handler function to save the generated svg
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Modifier to handle label info onMouseOver
+     */
     labelModifier: PropTypes.func,
+    /**
+     * Array of labels
+     */
     labelsData: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Handle visibility of labels on chord
+     */
     showLabels: PropTypes.bool,
+    /**
+     * Handle visibility of tooltip
+     */
     showTooltip: PropTypes.bool,
+    /**
+     * Additional sscss classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -72,13 +92,14 @@ const defaultProps = {
     },
 };
 
+const ribbonWidth = 24;
+
 /**
- * Chord diagram displays  the inter-relationships between data in a matrix.The data are arranged
+ * Chord diagram displays the inter-relationships between data in a matrix.The data are arranged
  * radially around a circle with the relationships between the data points typically drawn as arcs
  * connecting the data.
+ * see <a href="https://github.com/d3/d3-chord">d3-chord</a>
  */
-
-const ribbonWidth = 24;
 class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

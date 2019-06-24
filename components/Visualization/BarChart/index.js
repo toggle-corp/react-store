@@ -11,16 +11,12 @@ import Tooltip from '../Tooltip';
 
 import styles from './styles.scss';
 
-/*
-  TODO:
-  1. Axis label auto padding
-  */
 const propTypes = {
-    /*
+    /**
      * Padding between bars
      */
     barPadding: PropTypes.number,
-    /*
+    /**
      * Data
      * [{
      *    xKey: value,
@@ -28,7 +24,9 @@ const propTypes = {
      *  },...]
      */
     className: PropTypes.string,
-
+    /**
+     * The data to be visualized
+     */
     data: PropTypes.arrayOf(PropTypes.shape({
         x: PropTypes.oneOfType([
             PropTypes.string,
@@ -39,14 +37,14 @@ const propTypes = {
             PropTypes.number,
         ]),
     })).isRequired,
-    /*
+    /**
      * Highlight which bar
      */
     highlightBarX: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
-    /*
+    /**
      * Chart Margins
      */
     margins: PropTypes.shape({
@@ -55,22 +53,49 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    /*
+    /**
      * if length is greater, than rotate X-axis label
      */
     maxNuOfRow: PropTypes.number,
-    /*
+    /**
      * key for for x-axis and y-axis in Data
      */
     updateFromProps: PropTypes.bool,
+    /**
+     * key for x-axis data
+     */
     xKey: PropTypes.string.isRequired,
+    /**
+     * key for y-axis data
+     */
     yKey: PropTypes.string.isRequired,
+    /**
+     * Show x grid lines
+     */
     xGrid: PropTypes.bool,
+    /**
+     * Show y grid lines
+     */
     yGrid: PropTypes.bool,
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.object.isRequired, // eslint-disable-line
+    /**
+     * Tick format for x-axis
+     */
     xTickFormat: PropTypes.func,
+    /**
+     * Tick format for y-axis
+     */
     yTickFormat: PropTypes.func,
+    /**
+     * Renderer for tooltip
+     */
     tooltipRender: PropTypes.func.isRequired,
+    /**
+     * No of y ticks
+     */
     yTicks: PropTypes.number,
 };
 
@@ -93,7 +118,10 @@ const defaultProps = {
     yTicks: undefined,
 };
 
-
+/**
+ * Represent categorical data with bars with values proportional to the
+ * length of each bar.
+ */
 class BarChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -16,24 +16,38 @@ import styles from './styles.scss';
 // eslint-disable-next-line no-unused-vars
 const dummy = transition;
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the data to use to plot pie chart.
- * valueSelector: return the value for the unit data.
- * labelSelector: returns the individual label from a unit data.
- * colorScheme: array of hex color values.
- * className: additional class name for styling.
- */
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Array of elements to be visualized.
+     * Each data element consist of a label an value.
+     */
     data: PropTypes.arrayOf(PropTypes.object),
+    /**
+     * Select value of data element
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * Select the label of data element
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
 };
 
@@ -44,7 +58,10 @@ const defaultProps = {
     className: '',
 };
 
-
+/**
+ * PieChart is used to represent categorical data by dividing a circle into
+ * proportional segments. Each arc represents a proportion of each category.
+ */
 class PieChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -17,27 +17,71 @@ import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Array of data elements each having a label and value
+     */
     data: PropTypes.arrayOf(PropTypes.object),
+    /**
+     * Select the value of element
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * Select the label of element
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Padding between two bars as proportion to bar width
+     */
     bandPadding: PropTypes.number,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * type of scaling used for bar length
+     * one of ['exponent', 'log', 'linear']
+     * see <a href="https://github.com/d3/d3-scale/blob/master/README.md">d3.scale</a>
+     */
     scaleType: PropTypes.string,
+    /**
+     * if exponent scaleType, set the current exponent to specified value
+     */
     exponent: PropTypes.number,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    /**
+     * Number of ticks to be shown
+     */
     noOfTicks: PropTypes.number,
+    /**
+     * if true, tick on axis are shown
+     */
     showTicks: PropTypes.bool,
+    /**
+     * if true, grid lines are drawn
+     */
     showGrids: PropTypes.bool,
+    /**
+     * if true, x-axis is hidden
+     */
     hideXAxis: PropTypes.bool,
+    /**
+     * if true, y-axis is hidden
+     */
     hideYAxis: PropTypes.bool,
 };
 
@@ -61,6 +105,10 @@ const defaultProps = {
     hideYAxis: false,
 };
 
+/**
+ * Represent categorical data with vertical bars, heights are proportional to the
+ * data values.
+ */
 class SimpleVerticalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

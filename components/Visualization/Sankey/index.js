@@ -20,29 +20,49 @@ import Responsive from '../../General/Responsive';
 import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the data to use to plot pie chart.
- * valueSelector: return the value for the unit data.
- * labelSelector: returns the individual label from a unit data.
- * colorScheme: array of hex color values.
- * className: additional class name for styling.
- */
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * the data to use to plot pie chart
+     */
     data: PropTypes.shape({
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
+    /**
+     * Handler function to save the generated svg
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Select the value for the unit data
+     */
     valueSelector: PropTypes.func,
+    /**
+     * Select label for the data
+     */
     labelSelector: PropTypes.func,
+    /**
+     * [minFontSize, maxFontSize] for the labels.
+     * Each label is scaled based on its value
+     */
     fontSizeExtent: PropTypes.arrayOf(PropTypes.number),
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -70,6 +90,11 @@ const defaultProps = {
     },
 };
 
+/**
+ * Sankey is helps to visualize flow and quantity in proportion to one another.
+ * The width of the lines show respective magnitudes.
+ * <a href="https://github.com/d3/d3-sankey">Sankey</a>
+ */
 class Sankey extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

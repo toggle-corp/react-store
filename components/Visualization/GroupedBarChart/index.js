@@ -24,26 +24,62 @@ import Float from '../../View/Float';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data to be visualized
+     * values: Array of categorical data grouped together
+     * columns: Array of category names
+     * colors: map of columns to respective colors
+     * Example data:
+     * {
+     *     values: [{ state: 'Province 1', river: 10, hills: 20 }, { state: 'Province 2', river: 1, hills: 3}],
+     *     columns: ['river', 'hills'],
+     *     colors: { river: '#ff00ff', hills: '#0000ff' },
+     * }
+     */
     data: PropTypes.shape({
         values: PropTypes.array,
         columns: PropTypes.array,
         colors: PropTypes.object,
     }).isRequired,
+    /**
+     * Select a group for each data value.
+     */
+    groupSelector: PropTypes.func.isRequired,
+    /**
+     * Array of colors as hex color codes.
+     * It is used if colors are not provided through data.
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Axis arguments for x-axis
+     * See <a href="https://github.com/d3/d3-axis#axis_tickArguments">tickArguments</a>
+     */
     xTickArguments: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    /**
+     * Axis arguments for y-axis
+     * See <a href="https://github.com/d3/d3-axis#axis_tickArguments">tickArguments</a>
+     */
     yTickArguments: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
-    groupSelector: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -59,6 +95,11 @@ const defaultProps = {
     },
 };
 
+/**
+ * GroupedBarChart is used to represent and compare different categories of two or more groups.
+ * It helps to better visualize and interpret differences between categories across groups as they
+ * are arranged side-by-side.
+ */
 class GroupedBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

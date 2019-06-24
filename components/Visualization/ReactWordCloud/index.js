@@ -51,5 +51,8 @@ const SizeWrapper = (WrappedComponent) => {
 };
 
 const WordCloud = Responsive(SizeWrapper(ReactWordCloud));
-
+/**
+ * react-wordcloud wrapper component
+ * see <a href="https://github.com/chrisrzhou/react-wordcloud">react-wordcloud</a>
+ */
 export default WordCloud;

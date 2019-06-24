@@ -21,29 +21,46 @@ import {
 import Responsive from '../../General/Responsive';
 import { getStandardFilename } from '../../../utils/common';
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the correlation data.
- * colorScheme: the color interpolation function.
- * showLabels: show labels on the diagram?
- * showTooltip: show the tooltip?
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Data to be represented
+     * labels: labels are variables
+     * values: a square matrix with same variables show in rows and columns with each cell representing correlation between two variables
+     */
     data: PropTypes.shape({
         labels: PropTypes.arrayOf(PropTypes.string),
         values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     }).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.func,
+    /**
+     * Show labels on the diagram or not
+     */
     showLabels: PropTypes.bool,
+    /**
+     * Tilt labels or not
+     */
     tiltLabels: PropTypes.bool,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -66,11 +83,9 @@ const defaultProps = {
     },
 };
 
-/*
- * CorrelationMatrix visualizes the correlation coefficients of multiple variables as colors
- * in the grid.
- * */
-
+/**
+ * CorrelationMatrix visualizes the correlation coefficients of multiple variables as colors in a grid
+ */
 class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

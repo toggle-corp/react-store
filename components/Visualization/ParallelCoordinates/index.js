@@ -26,21 +26,51 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Data to be visualized. It consists of array of categorical data grouped
+     * together.
+     * Example: [{ name: "AMC Ambassador Brougham", economy (mpg): 13, cylinders: 8 }, ...]
+     * For each variable an axis is created and each item is represented by a line
+     */
     data: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string,
         }).isRequired,
     ).isRequired,
+    /**
+     * Handler function to save the generated svg
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Property keys to be ignored when creating axis
+     */
     ignoreProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /**
+     * The label name of group
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Color selector for each group
+     */
     colorSelector: PropTypes.func,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -62,7 +92,10 @@ const defaultProps = {
         left: 10,
     },
 };
-
+/**
+ * Parallel Coordinates visualization is used to compare multivariate numeric data.
+ * It can be used to view relationships between variables.
+ */
 class ParallelCoordinates extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

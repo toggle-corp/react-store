@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 
 import styles from './styles.scss';
 
+/**
+ * Additional css classes passed from parent
+ */
 const propTypes = {
     className: PropTypes.string,
 };
@@ -13,6 +16,9 @@ const defaultProps = {
     className: '',
 };
 
+/**
+ * Container class for ForceDirectedGraph to change the length of each link
+ */
 const ForceDirectedGraphContainer = (WrappedComponent) => {
     const WrapperComponent = class extends React.PureComponent {
         static propTypes = propTypes;

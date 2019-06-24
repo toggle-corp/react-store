@@ -7,15 +7,45 @@ import Segment from './Segment';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Additional sscss classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Title of the HealthBar
+     */
     title: PropTypes.string,
+    /**
+     * Array of data points
+     */
     data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    /**
+     * Select a label for each data element
+     */
     labelSelector: PropTypes.func,
+    /**
+     * if true, hide label name
+     */
     hideLabel: PropTypes.bool,
+    /**
+     * Select a key for each segment/ data element
+     */
     keySelector: PropTypes.func,
+    /**
+     * Select a value for each element
+     */
     valueSelector: PropTypes.func,
+    /**
+     * if true, increase the size of segment on Hover
+     */
     enlargeOnHover: PropTypes.bool,
+    /**
+     * if true, center the tooltip
+     */
     centerTooltip: PropTypes.bool,
 };
 
@@ -40,6 +70,10 @@ const defaultProps = {
     ],
 };
 
+/**
+ * Represent data points as a bar with each bar consisting of segments
+ * and each segment representing a value.
+ */
 export default class HealthBar extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -36,22 +36,56 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data points for each element
+     */
     data: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string,
         value: PropTypes.number,
     })),
+    /**
+     * Select unique id of each element
+     */
     idSelector: PropTypes.func.isRequired,
+    /**
+     * Select group id of each element
+     */
     groupSelector: PropTypes.func,
+    /**
+     * Select value of each element
+     */
     valueSelector: PropTypes.func,
+    /**
+     * Handle svg save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Scale the size of each element.
+     * Radius of each element is calculated as valueSelector(element) * scaleFactor;
+     */
     scaleFactor: PropTypes.number,
+    /**
+     * Handle hover action
+     */
     onHover: PropTypes.func,
+    /**
+     * Additional css classes passed from parent.
+     */
     className: PropTypes.string,
+    /**
+     * Array of colors as hex color codes used to color each element
+     */
     colorScheme: PropTypes.func,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -76,7 +110,10 @@ const defaultProps = {
     className: '',
     colorScheme: interpolateRainbow,
 };
-
+/**
+ * ClusterForceLayout allows to represent the hierarchies and interconnection
+ * between entities in the form of nodes and links. The nodes are further grouped together.
+ */
 class ClusterForceLayout extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -183,7 +220,7 @@ class ClusterForceLayout extends PureComponent {
 
         const noOfClusters = Object.keys(clusterGroup).length;
 
-        const color = scaleSequential(interpolateRainbow)
+        const color = scaleSequential(colorScheme)
             .domain(range(noOfClusters));
 
         const clusters = [];

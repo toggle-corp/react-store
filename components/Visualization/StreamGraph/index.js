@@ -39,20 +39,47 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data to be visualized.
+     * Array of categorical data grouped together where is group has a group identifier.
+     * Example data: [{ state: 'Province 1', river: 10, hills: 20 }, { state: 'Province 2', river: 1, hills: 3}]
+     */
     data: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string,
         }),
     ).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Select the identifier for group
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Name of the group identifier key
+     */
     labelName: PropTypes.string.isRequired,
+    /**
+     * Array of colors as hex color codes.
+     * It is used if colors are not provided through data.
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -72,7 +99,12 @@ const defaultProps = {
         left: 50,
     },
 };
-
+/**
+ * StreamGraph is a variation of Stacked Bar Chart. The variables are  plotted against a
+ * fixed axis and the values are displaced around a variying central baseline.
+ * It helps to visualize high volume data and changes in data values over time of
+ * different categories. StreamGraph are used to give general view of the data.
+ */
 class StreamGraph extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

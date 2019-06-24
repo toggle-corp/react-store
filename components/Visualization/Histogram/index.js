@@ -26,18 +26,49 @@ import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 
 const propTypes = {
+    /**
+     * Array of numeric values to be represented as histogram
+     */
     data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Array of two colors to map height of histogram
+     */
     colorRange: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * if showAxis is true, axis is shown
+     */
     showAxis: PropTypes.bool,
+    /**
+     * if showGrids is true, grids are shown
+     */
     showGrids: PropTypes.bool,
+    /**
+     * modify the values to be shown in tooltip when hovered over histogram
+     */
     tooltipContent: PropTypes.func,
+    /**
+     * Format the tick value shown in axis
+     * see <a href="https://github.com/d3/d3-scale/blob/master/README.md#tickFormat">tickFormat</a>
+     */
     tickFormat: PropTypes.func,
+    /**
+     * show tooltip if true
+     */
     showTooltip: PropTypes.bool,
+    /**
+     * Number of ticks in axis
+     */
     noOfTicks: PropTypes.number,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -69,6 +100,11 @@ const defaultProps = {
     },
 };
 
+/**
+ * Histogram shows the underlying frequency distribution of continuous data.
+ * The area of bar indicates the frequency of occurrences of each bin. However
+ * here the width of each bin is constant so height can represent the frequency.
+ */
 class Histogram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

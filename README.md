@@ -6,3 +6,9 @@ Collection of commonly used react components.
 
 #### Repo currently using react store
 - [deeper](https://github.com/the-deep/client/)
+
+### Documentation
+ * [components documentation](docs/README.md)
+
+### License
+ [react-store] (https://github.com/toggle-corp/react-store) is licensed under MIT license.

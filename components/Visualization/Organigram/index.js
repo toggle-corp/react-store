@@ -15,34 +15,64 @@ import Responsive from '../../General/Responsive';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Hierarchical data structure that can be computed to form a hierarchical layout
+     * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
-    /* the width and height of the container */
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    /* the selected values (nodes) */
+    /**
+     * Selected data element
+     */
     value: PropTypes.string,
-    /* the accessor function to return array of data representing the children */
+    /**
+     * Accessor function to return array of data representing the children
+     */
     childrenSelector: PropTypes.func,
-    /* access the individual label of each data element */
+    /**
+     * Access the individual label of each data element
+     */
     labelSelector: PropTypes.func.isRequired,
-    /* access the id of each data element */
+    /**
+     * Access the id of each data element
+     */
     idSelector: PropTypes.func.isRequired,
-    /* handle selection of nodes */
+    /**
+     * Handle selection of nodes
+     */
     onSelection: PropTypes.func,
+    /**
+     * Cluster layout's node size
+     * <a href="https://github.com/d3/d3-hierarchy#cluster_nodeSize">nodeSize</a>
+     */
     nodeSize: PropTypes.arrayOf(PropTypes.number),
-    /* if true no click events on nodes */
+    /**
+     * if true no click events on nodes
+     */
     disabled: PropTypes.bool,
-    /* default color for nodes */
+    /**
+     *  Default color for nodes
+     */
     fillColor: PropTypes.string,
-    /* nodes color when selected */
+    /**
+     * Nodes color when selected
+     */
     selectColor: PropTypes.string,
-    /* additional class name for styling */
+    /**
+     * Additional class name for styling
+     */
     className: PropTypes.string,
-    /* the margin object with properties for the four sides(clockwise from top) */
+    /**
+     *  Margin object with properties for the four sides (clockwise from top)
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -72,6 +102,9 @@ const defaultProps = {
 
 const rectWidth = 30;
 
+/**
+ * Organigram shows the structure and relationships of nodes as a hierarchy.
+ */
 class Organigram extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

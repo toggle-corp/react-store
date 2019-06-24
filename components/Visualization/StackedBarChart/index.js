@@ -34,20 +34,48 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data to be visualized
+     * Array of categorical data grouped together
+     * Example data:
+     * [{ state: 'Province 1', river: 10, hills: 20 }, { state: 'Province 2', river: 1, hills: 3}]
+     */
     data: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string,
         }),
     ).isRequired,
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Name of the group identifier key
+     */
     labelName: PropTypes.string.isRequired,
+    /**
+     * Select the identifier for group
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Array of colors as hex color codes.
+     * It is used if colors are not provided through data.
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -68,6 +96,10 @@ const defaultProps = {
     },
 };
 
+/**
+ * StackedBarChart groups multiple variables on top of each other across multiple
+ * groups. It helps to visualize the relationship among members of the group and compare the values across multiple groups.
+ */
 class StackedBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

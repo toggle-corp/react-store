@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { select } from 'd3-selection';
+ import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
 import SvgSaver from 'svgsaver';
@@ -23,21 +23,60 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Array of data elements each having a label and value
+     */
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    /**
+     * Handle chart saving functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Select the value of element
+     */
     valueSelector: PropTypes.func.isRequired,
+    /**
+     * Select the label of element
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Padding between two bars as proportion to bar width
+     */
     bandPadding: PropTypes.number,
+    /**
+     * Select a color for each bar
+     */
     colorSelector: PropTypes.func,
+    /**
+     * Handle mouseover over a bar
+     */
     onBarMouseOver: PropTypes.func,
+    /**
+     * if true, show axis
+     */
     showAxis: PropTypes.bool,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * if ture, tooltip is visible
+     */
     showTooltip: PropTypes.bool,
+    /**
+     * Handle the contents of tooltip
+     */
     tooltipContent: PropTypes.func,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -65,6 +104,10 @@ const defaultProps = {
     className: '',
 };
 
+/**
+ * VerticalBarChart represents categorical data with vertical bars. Height of each bar represent
+ * the value of data element.
+  */
 class VerticalBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

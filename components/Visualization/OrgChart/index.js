@@ -15,37 +15,60 @@ import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
 
 const propTypes = {
-    /* the width and height of the container */
+    /**
+     * Width and height of the container
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    /* the function to pass save function to parent component */
+    /**
+     * Function to pass save function to parent component
+     */
     setSaveFunction: PropTypes.func,
-    /* the selected values (nodes) */
+    /**
+     * Selected values (nodes)
+     */
     value: PropTypes.array, // eslint-disable-line
-    /* the hierarchical data to be visualized */
+    /**
+     * Hierarchical data to be visualized
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
-    /* the accessor function to return array of data representing the children */
+    /**
+     * Accessor function to return array of data representing the children
+     */
     childSelector: PropTypes.func,
-    /* access the individual label of each data element */
+    /**
+     * Access the individual label of each data element
+     */
     labelSelector: PropTypes.func,
-    /* access the id of each data element */
+    /**
+     * Access the id of each data element
+     */
     idSelector: PropTypes.func,
-    /* handle selection of nodes */
+    /**
+     * Handle selection of nodes
+     */
     onSelection: PropTypes.func,
-    /* if true no click events on nodes */
-    disabled: PropTypes.bool,
-    /* the cluster minimum layout's node size */
+    /**
+     * If true no click events on nodes
+     */
+    /**
+     * Cluster minimum layout's node size
+     */
     nodeSize: PropTypes.shape({
         minNodeWidth: PropTypes.number,
         minNodeHeight: PropTypes.number,
     }),
-    /* additional class name for styling */
+    /**
+     * Additional class name for styling
+     */
     className: PropTypes.string,
-    /* the margin object with properties for the four sides(clockwise from top) */
+    /**
+     *  Margin object with properties for the four sides(clockwise from top)
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -78,6 +101,9 @@ const defaultProps = {
 
 const rectWidth = 30;
 
+/**
+ * Organigram shows the structure and relationships of nodes as a hierarchy.
+ */
 class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

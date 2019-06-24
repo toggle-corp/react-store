@@ -16,39 +16,65 @@ import Float from '../../View/Float';
 import Responsive from '../../General/Responsive';
 import { getStandardFilename } from '../../../utils/common';
 
-// FIXME: don't use globals
-// eslint-disable-next-line no-unused-vars
 import styles from './styles.scss';
-/**
- * boundingClientRect: the width and height of the container.
- * data: the object containing array of nodes and links.
- * idSelector: returns the id of each node.
- * groupSelector: return the group which each nodes belong to.
- * valueSelector: returns the value of each link.
- * useVoronoi: use Voronoi clipping for nodes.
- * circleRadius: The radius of the circle
- * colorScheme: the array of hex color values.
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
+
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * The data in the form of array of nodes and links
+     * Each node element must have an id, label and corresponding group
+     * Each link element is in the form of { source: sourceId, target: targetId value: number }
+     */
     data: PropTypes.shape({
         nodes: PropTypes.arrayOf(PropTypes.object),
         links: PropTypes.arrayOf(PropTypes.object),
     }),
+    /**
+     * Handle diagram save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Select a unique id for each node
+     */
     idSelector: PropTypes.func.isRequired,
+    /**
+     * Select group of each node element
+     */
     groupSelector: PropTypes.func,
+    /**
+     * Select the value for link
+     * The value of link is corresponding reflected on the width of link
+     */
     valueSelector: PropTypes.func,
+    /**
+     * The radius of each voronoi circle
+     */
     circleRadius: PropTypes.number,
+    /**
+     * Length of each link
+     */
     distance: PropTypes.number,
+    /**
+     * if true, use voronoi interpolation
+     */
     useVoronoi: PropTypes.bool,
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -77,10 +103,14 @@ const defaultProps = {
         left: 0,
     },
 };
+
 /**
  * Represents the  network of nodes in force layout with many-body force.
+ * Force directed graph helps to visualize connections between nodes in a network.
+ * It can help to uncover relationships between groups as it naturally clusters well
+ * connected nodes.
+ *see <a href="https://github.com/d3/d3-force">d3-force</a>
  */
-
 class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

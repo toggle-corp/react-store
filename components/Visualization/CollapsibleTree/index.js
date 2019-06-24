@@ -23,29 +23,49 @@ import { getStandardFilename } from '../../../utils/common';
 
 import styles from './styles.scss';
 
-/**
- * boundingClientRect: the width and height of the container.
- * data: the hierarchical data to be visualized.
- * childrenSelector: the accessor function to return array of data representing the children.
- * labelSelector: returns the individual label from a unit data.
- * colorScheme: the color scheme for links that connect the nodes.
- * className: additional class name for styling.
- * margins: the margin object with properties for the four sides(clockwise from top).
- */
 const propTypes = {
+    /**
+     * Size of the parent element/component (passed by the Responsive hoc)
+     */
     boundingClientRect: PropTypes.shape({
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
+    /**
+     * Hierarchical data structure that can be computed to form a hierarchical layout
+     * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
+     */
     data: PropTypes.shape({
         name: PropTypes.string,
     }),
+    /**
+     * Handle save functionality
+     */
     setSaveFunction: PropTypes.func,
+    /**
+     * Accessor function to return children of node
+     */
     childrenSelector: PropTypes.func,
+    /**
+     * Select label for each node
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * Cluster layout's node size
+     * <a href="https://github.com/d3/d3-hierarchy#cluster_nodeSize">nodeSize</a>
+     */
     nodeSize: PropTypes.arrayOf(PropTypes.number),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Margins for the chart
+     */
     margins: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -70,9 +90,8 @@ const defaultProps = {
 };
 
 /**
- * CollapsibleTree is a tree diagram showing the hierarchical structure of the data.
+ * CollapsibleTree is a tree diagram showing the hierarchical structure of the data
  */
-
 class CollapsibleTree extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

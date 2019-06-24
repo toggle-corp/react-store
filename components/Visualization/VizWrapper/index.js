@@ -25,11 +25,29 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * if true, loading animation is show instead of actual chart
+     */
     loading: PropTypes.bool,
+    /**
+     * Header text for the warper component
+     */
     headerText: PropTypes.string,
+    /**
+     * Array of colors as hex color codes
+     */
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    /**
+     * one of 'discrete' or 'continuous'
+     */
     colorSchemeType: PropTypes.string,
+    /**
+     * Additional css classes for graph passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Additional css classes for the container/wrapper
+     */
     vizContainerClass: PropTypes.string,
 };
 
@@ -45,6 +63,10 @@ const defaultProps = {
 const continuous = 'continuous';
 const discrete = 'discrete';
 
+/**
+ * Wrapper component to wrap each Visualization component so that it can be set to  fullscreen and
+ * additional options can be provided to the child component (chart).
+ */
 const wrapViz = (WrappedComponent) => {
     const WrapperComponent = class extends React.PureComponent {
         static propTypes = propTypes;

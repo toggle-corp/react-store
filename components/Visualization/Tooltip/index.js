@@ -6,12 +6,21 @@ import { select, event } from 'd3-selection';
 import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Initial Children elements
+     */
     initialChildren: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
         PropTypes.node,
     ]),
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * Api to provide options to the component
+     */
     setTooltipApi: PropTypes.func,
 };
 
@@ -23,11 +32,7 @@ const defaultProps = {
 
 
 /**
- * Component showing tooltip
- * TODO:
- * 1. avoid tooltip from going outside page
- * 2. provide window for tooltip.
- * 3. orientation: left, right, top, bottom
+ * Tooltip component to show tooltips in charts.
  */
 export default class Tooltip extends React.PureComponent {
     static defaultProps = defaultProps;

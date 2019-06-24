@@ -8,14 +8,42 @@ import LegendItem from './LegendItem';
 // import styles from './styles.scss';
 
 const propTypes = {
+    /**
+     * Additional css classes passed from parent
+     */
     className: PropTypes.string,
+    /**
+     * styles for each item
+     */
     itemClassName: PropTypes.string,
+    /**
+     * Select an icon for each item
+     */
     iconSelector: PropTypes.func,
+    /**
+     * Select a key for each item
+     */
     keySelector: PropTypes.func.isRequired,
+    /**
+     * Select a label for each item
+     */
     labelSelector: PropTypes.func.isRequired,
+    /**
+     * Select a color for each item
+     */
     colorSelector: PropTypes.func.isRequired,
+    /**
+     * Select a value for each item
+     */
     valueSelector: PropTypes.func,
+    /**
+     * Select a className for each symbol
+     */
     symbolClassNameSelector: PropTypes.func,
+    /**
+     * Array of items that represents a legend
+     * example: [{ id: 1, color: #ff00ff, label: 'apple'},.. ],
+     */
     data: PropTypes.array, // eslint-disable-next-line react/forbid-prop-types
 };
 
@@ -28,6 +56,9 @@ const defaultProps = {
     data: [],
 };
 
+/**
+ * Generates a legend based on provided data.
+ */
 export default class Legend extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
