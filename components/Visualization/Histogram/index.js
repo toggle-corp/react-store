@@ -3,7 +3,6 @@ import React, {
     Fragment,
 } from 'react';
 import { select, event } from 'd3-selection';
-import { format } from 'd3-format';
 import {
     extent,
     max,
@@ -24,6 +23,8 @@ import styles from './styles.scss';
 import Numeral from '../../View/Numeral';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
+
+const emptyObject = {};
 
 const propTypes = {
     /**
@@ -79,7 +80,11 @@ const propTypes = {
 };
 
 const defaultProps = {
-    colorRange: [color('rgba(90, 198, 198, 1)').brighter(), color('rgba(90, 198, 198, 1)').darker()],
+    // TODO: use global styling variables
+    colorRange: [
+        color('rgba(90, 198, 198, 1)').brighter(),
+        color('rgba(90, 198, 198, 1)').darker(),
+    ],
     showAxis: true,
     showGrids: true,
     noOfTicks: 5,
@@ -92,6 +97,8 @@ const defaultProps = {
     ),
     tooltipContent: undefined,
     showTooltip: true,
+
+    // TODO: use global styling variables
     margins: {
         top: 10,
         right: 20,
@@ -161,14 +168,18 @@ class Histogram extends PureComponent {
             showAxis,
             showGrids,
             tickFormat,
-            noOfTicks,
+            noOfTicks: noOfTicksFromProps,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
             return;
         }
 
-        const { width: fullWidth, height: fullHeight } = boundingClientRect;
+        const {
+            width: fullWidth,
+            height: fullHeight,
+        } = boundingClientRect;
+
         const {
             left = 0,
             top = 0,
@@ -183,8 +194,16 @@ class Histogram extends PureComponent {
             return;
         }
 
+        const distinctData = [...new Set(data)];
+        const noOfTicks = Math.min(noOfTicksFromProps, distinctData.length);
+
+        const dataExtent = extent(data);
+
+        dataExtent[0] -= 1;
+        dataExtent[1] += 1;
+
         const x = scaleLinear()
-            .domain(extent(data)).nice()
+            .domain(dataExtent).nice()
             .rangeRound([0, width]);
 
         const bins = histogram()
@@ -214,7 +233,10 @@ class Histogram extends PureComponent {
             .attr('class', `bar ${styles.bar}`)
             .append('rect')
             .attr('x', d => x(d.x0) + 1)
-            .attr('width', d => Math.max(0, x(d.x1) - x(d.x0) - 1))
+            .attr('width', (d) => {
+                const x1 = (x(d.x1) - x(d.x0)) - 1;
+                return Math.max(0, x1);
+            })
             .attr('y', d => y(d.length))
             .attr('height', d => y(0) - y(d.length))
             .attr('fill', d => colorScale(d.length))
@@ -260,7 +282,13 @@ class Histogram extends PureComponent {
     };
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const {
+            className: classNameFromProps,
+            boundingClientRect: {
+                width,
+                height,
+            } = emptyObject,
+        } = this.props;
 
         const className = [
             'histogram',
@@ -277,6 +305,10 @@ class Histogram extends PureComponent {
             <Fragment>
                 <svg
                     className={className}
+                    style={{
+                        width,
+                        height,
+                    }}
                     ref={(elem) => { this.svg = elem; }}
                 />
                 <Float>
