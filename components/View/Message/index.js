@@ -103,9 +103,8 @@ export default class Message extends React.PureComponent {
             className: classNameFromProps,
             children,
         } = this.props;
-        const {
-            show,
-        } = this.state;
+
+        const { show } = this.state;
 
         const className = `
             ${classNameFromProps}

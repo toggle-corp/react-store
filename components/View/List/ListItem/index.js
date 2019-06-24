@@ -80,6 +80,7 @@ export default class ListItem extends React.PureComponent {
         } = this.props;
 
         return (
+            // eslint-disable-next-line react/button-has-type
             <button
                 ref={(el) => { this.container = el; }}
                 className={this.getClassName()}
