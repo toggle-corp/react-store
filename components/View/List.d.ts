@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 // import { ExternalProps } from '../General/Form/FormElement';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ExternalProps {
@@ -12,15 +13,16 @@ interface RendererProps<T> {
     data: T[];
 }
 
-interface Props<T> {
+interface Props<T, Q> {
     data?: T[];
     keySelector?(datum: T, index: number): string;
-    // FIXME: key should not be undefined
-    modifier?(key: string | undefined, dataum: T, i: number, data: T[]): React.ReactNode;
+    rendererClassName?: string;
+    rendererParams?: (key: string, data: T) => Q;
+    renderer?: React.ComponentType<Q> | ((props: Q) => React.ReactNode);
 }
 
-export type ListProps<T> = Props<T> & ExternalProps;
+export type ListProps<T, Q> = Props<T, Q> & ExternalProps;
 
-declare class List<T> extends React.Component<ListProps<T>, any> {
+declare class List<T, Q> extends React.Component<ListProps<T, Q>, any> {
 }
 export default List;

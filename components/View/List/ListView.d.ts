@@ -6,6 +6,6 @@ interface Props {
     emptyComponent?: React.ReactNode;
 }
 
-declare class ListView<T> extends React.Component<Props & ListProps<T>, any> {
+declare class ListView<T, Q> extends React.Component<Props & ListProps<T, Q>, any> {
 }
 export default ListView;

@@ -6,11 +6,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string.isRequired,
-    maxFontSize: PropTypes.number.isRequired,
-    minFontSize: PropTypes.number.isRequired,
-    maxPaddingSize: PropTypes.number.isRequired,
-    minPaddingSize: PropTypes.number.isRequired,
+    className: PropTypes.string,
+    maxFontSize: PropTypes.number,
+    minFontSize: PropTypes.number,
+    maxPaddingSize: PropTypes.number,
+    minPaddingSize: PropTypes.number,
     resizeFactor: PropTypes.number,
 };
 
@@ -37,8 +37,8 @@ const calculateRelativeValue = (minFontSize, maxFontSize, width, height, factor)
 
 export default class Message extends React.PureComponent {
     static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -103,6 +103,9 @@ export default class Message extends React.PureComponent {
             className: classNameFromProps,
             children,
         } = this.props;
+        const {
+            show,
+        } = this.state;
 
         const className = `
             ${classNameFromProps}
@@ -114,7 +117,7 @@ export default class Message extends React.PureComponent {
                 ref={this.containerRef}
                 className={className}
             >
-                { this.state.show && children }
+                { show && children }
             </div>
         );
     }

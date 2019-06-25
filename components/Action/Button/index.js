@@ -103,6 +103,7 @@ const defaultProps = {
  */
 class Button extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentWillUnmount() {
@@ -116,6 +117,7 @@ class Button extends React.PureComponent {
         const {
             onClick,
             onClickParams,
+            changeDelay,
         } = this.props;
 
         this.changeTimeout = setTimeout(
@@ -125,7 +127,7 @@ class Button extends React.PureComponent {
                     params: resolve(onClickParams),
                 });
             },
-            this.props.changeDelay,
+            changeDelay,
         );
     }
 
@@ -171,6 +173,7 @@ class Button extends React.PureComponent {
         );
 
         return (
+            // eslint-disable-next-line react/button-has-type
             <button
                 className={buttonClassName}
                 disabled={disabled || pending}

@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { typeOf } from '@togglecorp/fujs';
+import { typeOf, _cs } from '@togglecorp/fujs';
 
-import Icon from '../../General/Icon';
 import Message from '../Message';
-import Spinner from '../../View/Spinner';
+import Spinner from '../Spinner';
 
 import styles from './styles.scss';
 
@@ -26,6 +25,7 @@ const defaultProps = {
 
 export default class LoadingAnimation extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -43,16 +43,6 @@ export default class LoadingAnimation extends React.PureComponent {
 
     componentWillUnmount() {
         clearTimeout(this.timeout);
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.loadingAnimation,
-        ];
-        return classNames.join(' ');
     }
 
     renderMessage = () => {
@@ -74,18 +64,15 @@ export default class LoadingAnimation extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            delay,
+            delay, // eslint-disable-line no-unused-vars
+
             message,
             ...otherProps
         } = this.props;
 
         const { showMessage } = this.state;
 
-        const className = this.getClassName();
-        const iconClassName = `
-            ${styles.icon}
-            loading-icon
-        `;
+        const className = _cs(classNameFromProps, styles.loadingAnimation);
         const LoadingMessage = this.renderMessage;
 
         return (
