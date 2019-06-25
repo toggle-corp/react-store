@@ -228,7 +228,13 @@ class GroupedBarChart extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
         const svgClassName = [
             'grouped-bar-chart',
             styles.groupedBarChart,
@@ -240,6 +246,10 @@ class GroupedBarChart extends PureComponent {
                 <svg
                     className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div

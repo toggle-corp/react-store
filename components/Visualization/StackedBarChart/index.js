@@ -11,7 +11,6 @@ import {
     scaleOrdinal,
     scaleBand,
 } from 'd3-scale';
-import memoize from 'memoize-one';
 import { schemePaired } from 'd3-scale-chromatic';
 import { keys } from 'd3-collection';
 import {
@@ -120,11 +119,6 @@ class StackedBarChart extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
-
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
 
     save = () => {
         const svgsaver = new SvgSaver();
@@ -298,8 +292,6 @@ class StackedBarChart extends PureComponent {
             },
         } = this.props;
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         const svgClassName = [
             'stacked-bar-chart',
             styles.barchart,
@@ -311,7 +303,10 @@ class StackedBarChart extends PureComponent {
                 <svg
                     ref={(element) => { this.svg = element; }}
                     className={svgClassName}
-                    style={styleForContainer}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div

@@ -6,7 +6,6 @@ import {
     select,
     event,
 } from 'd3-selection';
-import memoize from 'memoize-one';
 import { scaleOrdinal } from 'd3-scale';
 import {
     chord,
@@ -119,11 +118,6 @@ class ChordDiagram extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
-
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
 
     setContext = (width, height, margins, data) => {
         const {
@@ -379,14 +373,15 @@ class ChordDiagram extends PureComponent {
             className,
         ].join(' ');
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         return (
             <Fragment>
                 <svg
                     ref={(elem) => { this.svg = elem; }}
                     className={chordStyle}
-                    style={styleForContainer}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div
