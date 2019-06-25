@@ -8,6 +8,7 @@ import {
     max,
     min,
     histogram,
+    thresholdSturges,
 } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 import {
@@ -41,7 +42,7 @@ const propTypes = {
     /**
      * Array of two colors to map height of histogram
      */
-    colorRange: PropTypes.arrayOf(PropTypes.string),
+    colorRange: PropTypes.arrayOf(PropTypes.object),
     /**
      * if showAxis is true, axis is shown
      */
@@ -64,9 +65,9 @@ const propTypes = {
      */
     showTooltip: PropTypes.bool,
     /**
-     * Number of ticks in axis
+     * Thresholds function to use for binning
      */
-    noOfTicks: PropTypes.number,
+    thresholds: PropTypes.func,
     /**
      * Margins for the chart
      */
@@ -87,7 +88,7 @@ const defaultProps = {
     ],
     showAxis: true,
     showGrids: true,
-    noOfTicks: 5,
+    thresholds: thresholdSturges,
     tickFormat: d => (
         Numeral.renderText({
             value: d,
@@ -168,7 +169,7 @@ class Histogram extends PureComponent {
             showAxis,
             showGrids,
             tickFormat,
-            noOfTicks: noOfTicksFromProps,
+            thresholds,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -194,9 +195,6 @@ class Histogram extends PureComponent {
             return;
         }
 
-        const distinctData = [...new Set(data)];
-        const noOfTicks = Math.min(noOfTicksFromProps, distinctData.length);
-
         const dataExtent = extent(data);
 
         const x = scaleLinear()
@@ -205,7 +203,7 @@ class Histogram extends PureComponent {
 
         const bins = histogram()
             .domain(x.domain())
-            .thresholds(x.ticks(noOfTicks))(data);
+            .thresholds(thresholds)(data);
 
         const y = scaleLinear()
             .domain([0, max(bins, d => d.length)]).nice()
@@ -229,10 +227,17 @@ class Histogram extends PureComponent {
             .append('g')
             .attr('class', `bar ${styles.bar}`)
             .append('rect')
-            .attr('x', d => x(d.x0) + 1)
+            .attr('x', (d) => {
+                if ((x(d.x1) - x(d.x0)) <= 0) {
+                    return 0;
+                }
+                return x(d.x0) + 1;
+            })
             .attr('width', (d) => {
-                const x1 = (x(d.x1) - x(d.x0));
-                return Math.max(0, x1);
+                if ((x(d.x1) - x(d.x0)) <= 0) {
+                    return width;
+                }
+                return Math.max(0, x(d.x1) - x(d.x0) - 1);
             })
             .attr('y', d => y(d.length))
             .attr('height', d => y(0) - y(d.length))
@@ -248,7 +253,6 @@ class Histogram extends PureComponent {
                 .attr('transform', `translate(0, ${height})`)
                 .call(
                     axisBottom(x)
-                        .ticks(noOfTicks)
                         .tickFormat(tickFormat),
                 );
 
