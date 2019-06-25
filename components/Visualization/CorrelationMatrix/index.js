@@ -11,7 +11,6 @@ import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
-import memoize from 'memoize-one';
 import {
     getColorOnBgColor,
     getHexFromRgb,
@@ -107,11 +106,6 @@ class CorrelationMatrix extends React.PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
-
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
 
     setContext = (width, height, margins) => {
         const {
@@ -355,8 +349,6 @@ class CorrelationMatrix extends React.PureComponent {
             },
         } = this.props;
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         const correlationMatrixStyle = [
             'correlation-matrix',
             className,
@@ -365,8 +357,11 @@ class CorrelationMatrix extends React.PureComponent {
         return (
             <svg
                 className={correlationMatrixStyle}
-                style={styleForContainer}
                 ref={(elem) => { this.svg = elem; }}
+                style={{
+                    width,
+                    height,
+                }}
             />
         );
     }

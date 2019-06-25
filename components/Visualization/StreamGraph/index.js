@@ -2,7 +2,6 @@ import React, {
     Fragment,
     PureComponent,
 } from 'react';
-import memoize from 'memoize-one';
 import SvgSaver from 'svgsaver';
 import { PropTypes } from 'prop-types';
 import { schemeSet2 } from 'd3-scale-chromatic';
@@ -204,11 +203,6 @@ class StreamGraph extends PureComponent {
             .classed('hover', 'false');
     }
 
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
-
     save = () => {
         const svgsaver = new SvgSaver();
         const svg = select(this.svg);
@@ -360,8 +354,6 @@ class StreamGraph extends PureComponent {
             },
         } = this.props;
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         const svgClassName = [
             'stream-graph',
             styles.streamGraph,
@@ -378,7 +370,10 @@ class StreamGraph extends PureComponent {
                 <svg
                     ref={(el) => { this.svg = el; }}
                     className={svgClassName}
-                    style={styleForContainer}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div

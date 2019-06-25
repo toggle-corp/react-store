@@ -1,7 +1,6 @@
 import React, {
     PureComponent,
 } from 'react';
-import memoize from 'memoize-one';
 import { PropTypes } from 'prop-types';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { select } from 'd3-selection';
@@ -81,11 +80,6 @@ class PieChart extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
-
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
 
     setContext = (data, width, height) => (
         select(this.svg)
@@ -334,8 +328,6 @@ class PieChart extends PureComponent {
             },
         } = this.props;
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         const svgClassName = [
             'piechart',
             styles.piechart,
@@ -345,7 +337,10 @@ class PieChart extends PureComponent {
         return (
             <svg
                 className={svgClassName}
-                style={styleForContainer}
+                style={{
+                    width,
+                    height,
+                }}
                 ref={(elem) => { this.svg = elem; }}
             />
         );

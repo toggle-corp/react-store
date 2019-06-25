@@ -10,7 +10,6 @@ import {
     extent,
     bisector,
 } from 'd3-array';
-import memoize from 'memoize-one';
 import { scaleLinear } from 'd3-scale';
 import { PropTypes } from 'prop-types';
 import {
@@ -108,11 +107,6 @@ class SparkLines extends PureComponent {
     componentDidUpdate() {
         this.redrawChart();
     }
-
-    getStyleForContainer = memoize((width, height) => ({
-        width,
-        height,
-    }));
 
     save = () => {
         const svg = select(this.svg);
@@ -284,8 +278,6 @@ class SparkLines extends PureComponent {
             },
         } = this.props;
 
-        const styleForContainer = this.getStyleForContainer(width, height);
-
         const sparkLinesStyle = [
             'spark-lines',
             styles.sparkLines,
@@ -297,7 +289,10 @@ class SparkLines extends PureComponent {
                 <svg
                     ref={(element) => { this.svg = element; }}
                     className={sparkLinesStyle}
-                    style={styleForContainer}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div

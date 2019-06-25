@@ -38,7 +38,10 @@ const propTypes = {
      * colors: map of columns to respective colors
      * Example data:
      * {
-     *     values: [{ state: 'Province 1', river: 10, hills: 20 }, { state: 'Province 2', river: 1, hills: 3}],
+     *     values: [
+     *         { state: 'Province 1', river: 10, hills: 20 },
+     *         { state: 'Province 2', river: 1, hills: 3},
+     *     ],
      *     columns: ['river', 'hills'],
      *     colors: { river: '#ff00ff', hills: '#0000ff' },
      * }
@@ -228,7 +231,13 @@ class GroupedBarChart extends PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            boundingClientRect: {
+                width,
+                height,
+            },
+        } = this.props;
         const svgClassName = [
             'grouped-bar-chart',
             styles.groupedBarChart,
@@ -240,6 +249,10 @@ class GroupedBarChart extends PureComponent {
                 <svg
                     className={svgClassName}
                     ref={(elem) => { this.svg = elem; }}
+                    style={{
+                        width,
+                        height,
+                    }}
                 />
                 <Float>
                     <div
