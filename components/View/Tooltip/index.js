@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isTruthyString,
+} from '@togglecorp/fujs';
 
 import FloatingContainer from '../FloatingContainer';
 import styles from './styles.scss';
@@ -128,7 +131,7 @@ export default class Tooltip extends React.PureComponent {
         return (
             <React.Fragment>
                 {React.cloneElement(child, props)}
-                {showTooltip &&
+                {isTruthyString(tooltip) && showTooltip &&
                     <FloatingContainer
                         className={_cs(
                             styles.container,
