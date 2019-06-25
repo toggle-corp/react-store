@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
+import memoize from 'memoize-one';
 
 import Responsive from '../../General/Responsive';
 
@@ -37,9 +38,29 @@ class PlotlyHistogram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    handleHover = (e) => {
-        console.warn(e);
-    }
+    getPlotData = memoize((data, markerColor, markerOpacity) => ([{
+        type: 'histogram',
+        x: data,
+        marker: {
+            color: markerColor,
+            opacity: markerOpacity,
+        },
+    }]))
+
+    getPlotLayout = memoize((width, height, margins) => ({
+        width,
+        height,
+        margin: {
+            l: margins.left,
+            r: margins.right,
+            t: margins.top,
+            b: margins.bottom,
+        },
+    }))
+
+    getPlotConfig = memoize(displayModeBar => ({
+        displayModeBar,
+    }))
 
     render() {
         const {
@@ -49,33 +70,19 @@ class PlotlyHistogram extends React.PureComponent {
                 height = 0,
             } = emptyObject,
             data,
-            margins: {
-                left: l = 0,
-                right: r = 0,
-                top: t = 0,
-                bottom: b = 0,
-            } = emptyObject,
+            margins,
         } = this.props;
+
+        const plotData = this.getPlotData(data, currentStyle.colorAccent, 0.3);
+        const plotLayout = this.getPlotLayout(width, height, margins);
+        const plotConfig = this.getPlotConfig(false);
 
         return (
             <Plot
                 className={className}
-                data={[{
-                    type: 'histogram',
-                    x: data,
-                    marker: {
-                        color: currentStyle.colorAccent,
-                        opacity: 0.3,
-                    },
-                }]}
-                layout={{
-                    width,
-                    height,
-                    margin: { l, r, t, b },
-                }}
-                config={{
-                    displayModeBar: false,
-                }}
+                data={plotData}
+                layout={plotLayout}
+                config={plotConfig}
             />
         );
     }
