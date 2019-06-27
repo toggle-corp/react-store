@@ -73,6 +73,7 @@ const defaultProps = {
  */
 class TreeMap extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

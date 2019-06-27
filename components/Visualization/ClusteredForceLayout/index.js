@@ -49,8 +49,9 @@ const propTypes = {
     }).isRequired,
     /**
      * The data in the form of array of nodes and links
-     * Each node element must have an id, label and corresponding group
-     * Each link element is in the form of { source: sourceId, target: targetId value: number }
+     * Each node element must have an id, label and corresponding
+     * group. Each link element is in the form of
+     * { source: sourceId, target: targetId value: number }
      */
     data: PropTypes.shape({
         nodes: PropTypes.arrayOf(PropTypes.object),
@@ -89,7 +90,8 @@ const propTypes = {
     /**
      * The extent of circle radius as [minRadius, maxRadius]
      * Each node is scaled based on the number of links it is associated with
-     * node with minimum number of links will have minRadius and with maximum number of links will have  maxRadius
+     * node with minimum number of links will have minRadius and with maximum
+     * number of links will have  maxRadius
      */
     circleRadiusExtent: PropTypes.arrayOf(PropTypes.number),
     /**
@@ -123,10 +125,12 @@ const defaultProps = {
     circleRadiusExtent: [5, 10],
 };
 /**
- * ClusteredForceLayout allows to represent the hierarchies and interconnection between entities in the form of nodes and links. The nodes are further grouped together.
+ * ClusteredForceLayout allows to represent the hierarchies and interconnection
+ * between entities in the form of nodes and links. The nodes are further grouped together.
  */
 class ClusteredForceLayout extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -143,8 +147,10 @@ class ClusteredForceLayout extends PureComponent {
         this.drawChart();
         this.updateData(this.props);
     }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
+        const { data } = this.props;
+        if (nextProps.data !== data) {
             this.updateData(nextProps);
         }
     }
@@ -225,13 +231,10 @@ class ClusteredForceLayout extends PureComponent {
             .curve(curveCatmullRomClosed);
         this.groupIds = set(data.nodes.map(node => node.group))
             .values()
-            .map(groupId =>
-                (
-                    {
-                        groupId,
-                        count: data.nodes.filter(node => node.group === +groupId).length,
-                    }
-                ))
+            .map(groupId => ({
+                groupId,
+                count: data.nodes.filter(node => node.group === +groupId).length,
+            }))
             .filter(out => out.count > 2)
             .map(out => out.groupId);
 
@@ -239,16 +242,17 @@ class ClusteredForceLayout extends PureComponent {
             .force('link', forceLink()
                 .id(d => idSelector(d))
                 .distance((d) => {
+                    const { value } = this.state;
                     if (d.source.group !== d.target.group) {
-                        return this.distance(+this.state.value * 2);
+                        return this.distance(+value * 2);
                     }
-                    return this.distance(this.state.value);
+                    return this.distance(value);
                 }))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
     }
 
-    updateData(props) {
+    updateData = (props) => {
         this.data = JSON.parse(JSON.stringify(props.data));
     }
 
@@ -483,6 +487,8 @@ class ClusteredForceLayout extends PureComponent {
             className,
         ].join(' ');
 
+        const { value } = this.state;
+
         return (
             <Fragment>
                 <Float>
@@ -499,7 +505,7 @@ class ClusteredForceLayout extends PureComponent {
                         type="range"
                         min="1"
                         max="10"
-                        value={this.state.value}
+                        value={value}
                         onChange={this.handleSlide}
                         step="1"
                     />

@@ -46,6 +46,7 @@ const defaultProps = {
  */
 export default class Segment extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {
@@ -68,7 +69,7 @@ export default class Segment extends PureComponent {
         );
 
         const tooltip = (
-            <div className={styles.tooltip} >
+            <div className={styles.tooltip}>
                 {label === '' ? (
                     value
                 ) : (
@@ -92,11 +93,12 @@ export default class Segment extends PureComponent {
                     className={classNames}
                     style={style}
                 >
-                    {!hideLabel &&
-                        <div className={styles.value}>
-                            {value}
-                        </div>
-                    }
+                    {!hideLabel
+                     && (
+                         <div className={styles.value}>
+                             {value}
+                         </div>
+                     )}
                 </div>
             </Tooltip>
         );

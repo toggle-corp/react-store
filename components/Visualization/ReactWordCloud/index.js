@@ -12,7 +12,7 @@ const SizeWrapper = (WrappedComponent) => {
         static propTypes = {
             // eslint-disable-next-line react/forbid-prop-types
             boundingClientRect: PropTypes.object.isRequired,
-            className: PropTypes.string.isRequired,
+            className: PropTypes.string,
         };
 
         static defaultProps = {

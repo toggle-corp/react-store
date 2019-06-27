@@ -98,6 +98,7 @@ const circleRadius = 5;
  */
 class SparkLines extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentDidMount() {

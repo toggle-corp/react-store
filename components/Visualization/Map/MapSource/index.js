@@ -48,6 +48,7 @@ const defaultProps = {
 @MapChild
 export default class MapSource extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

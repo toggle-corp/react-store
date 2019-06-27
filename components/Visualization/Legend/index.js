@@ -37,6 +37,10 @@ const propTypes = {
      */
     valueSelector: PropTypes.func,
     /**
+     * Component to show when data is empty
+    */
+    emptyComponent: PropTypes.func,
+    /**
      * Select a className for each symbol
      */
     symbolClassNameSelector: PropTypes.func,
@@ -44,7 +48,7 @@ const propTypes = {
      * Array of items that represents a legend
      * example: [{ id: 1, color: #ff00ff, label: 'apple'},.. ],
      */
-    data: PropTypes.array, // eslint-disable-next-line react/forbid-prop-types
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -53,6 +57,7 @@ const defaultProps = {
     iconSelector: () => undefined,
     valueSelector: undefined,
     symbolClassNameSelector: undefined,
+    emptyComponent: undefined,
     data: [],
 };
 
@@ -61,7 +66,14 @@ const defaultProps = {
  */
 export default class Legend extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
+
+    filterData = memoize((data, valueSelector) => (
+        valueSelector
+            ? data.filter(val => valueSelector(val) > 0)
+            : data
+    ))
 
     legendItemRendererParams = (_, d) => {
         const {
@@ -77,16 +89,9 @@ export default class Legend extends React.PureComponent {
             label: labelSelector(d),
             color: colorSelector(d),
             className: itemClassName,
-            symbolClassName: symbolClassNameSelector ?
-                symbolClassNameSelector(d) : '',
+            symbolClassName: symbolClassNameSelector ? symbolClassNameSelector(d) : '',
         });
     }
-
-    filterData = memoize((data, valueSelector) => (
-        valueSelector
-            ? data.filter(val => valueSelector(val) > 0)
-            : data
-    ))
 
     render() {
         const {

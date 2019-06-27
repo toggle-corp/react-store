@@ -108,6 +108,7 @@ const defaultProps = {
  */
 class StreamGraph extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -345,6 +346,7 @@ class StreamGraph extends PureComponent {
         svg.selectAll('*').remove();
         this.drawChart();
     }
+
     render() {
         const {
             className,

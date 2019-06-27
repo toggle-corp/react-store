@@ -56,7 +56,7 @@ const propTypes = {
     showGeolocationControl: PropTypes.bool,
     showScaleControl: PropTypes.bool,
     mapStyle: PropTypes.string,
-    zoom: PropTypes.number.isRequired,
+    zoom: PropTypes.number,
     center: PropTypes.arrayOf(PropTypes.number),
     minZoom: PropTypes.number,
     maxZoom: PropTypes.number,
@@ -95,6 +95,7 @@ const defaultProps = {
 
 export default class Map extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

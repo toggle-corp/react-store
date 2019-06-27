@@ -88,6 +88,7 @@ const defaultProps = {
  */
 class Dendrogram extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -138,8 +139,8 @@ class Dendrogram extends React.PureComponent {
     }
 
     diagonal = d => (
-        `M${d.y},${d.x}C${d.parent.y + 100},${d.x}` +
-        ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`
+        `M${d.y},${d.x}C${d.parent.y + 100},${d.x}`
+        + ` ${d.parent.y + 100},${d.parent.x} ${d.parent.y},${d.parent.x}`
     )
 
     addLines = (element, data, colors) => {

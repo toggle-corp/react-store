@@ -138,6 +138,7 @@ const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredI
 @MapChild
 export default class MapLayer extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

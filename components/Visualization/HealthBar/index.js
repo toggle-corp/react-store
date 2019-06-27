@@ -76,6 +76,7 @@ const defaultProps = {
  */
 export default class HealthBar extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     rendererParams = (key, segment, i) => {

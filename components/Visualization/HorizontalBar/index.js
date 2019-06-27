@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import {
     scaleOrdinal,
@@ -135,6 +135,7 @@ const defaultProps = {
  */
 class HorizontalBar extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

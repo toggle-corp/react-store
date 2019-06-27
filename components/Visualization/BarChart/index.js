@@ -124,19 +124,17 @@ const defaultProps = {
  */
 class BarChart extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
 
-        const { data } = props;
-
-        this.state = {
-            data,
-        };
+        const { data, barPadding } = props;
+        this.state = { data };
 
         this.scaleX = scaleBand()
-            .padding(this.props.barPadding);
+            .padding(barPadding);
         this.scaleY = scaleLinear();
     }
 
@@ -148,7 +146,9 @@ class BarChart extends React.PureComponent {
         // TODO: Is there better way ?
         // TODO: also use nexProps for updateFromProps
         const { data } = nextProps;
-        if (this.props.updateFromProps) {
+        const { updateFromProps } = this.props;
+
+        if (updateFromProps) {
             this.setData(data);
         }
     }
@@ -158,7 +158,9 @@ class BarChart extends React.PureComponent {
     }
 
     onMouseOver = (d) => {
-        this.tooltip.setTooltip(this.props.tooltipRender(d));
+        const { tooltipRender } = this.props;
+
+        this.tooltip.setTooltip(tooltipRender(d));
         this.tooltip.show();
     }
 
@@ -193,8 +195,10 @@ class BarChart extends React.PureComponent {
     setTooltip = (tooltip) => { this.tooltip = tooltip; }
 
     updateRender() {
-        const { right, top, left, bottom } = this.props.margins;
-        const { height, width } = this.props.boundingClientRect;
+        const {
+            margins: { right, top, left, bottom },
+            boundingClientRect: { height, width },
+        } = this.props;
 
         if (!width) {
             return;
@@ -210,23 +214,35 @@ class BarChart extends React.PureComponent {
     }
 
     renderBarChart() {
-        const renderData = this.state.data;
-        const { margins, xGrid, yGrid, xTickFormat, yTickFormat, yTicks, xKey, yKey } = this.props;
+        const { data } = this.state;
+        const {
+            margins,
+            xGrid,
+            yGrid,
+            yTicks,
+            xKey,
+            yKey,
+            xTickFormat,
+            yTickFormat,
+            maxNuOfRow,
+            highlightBarX,
+        } = this.props;
+
         const { top, bottom, left, right } = margins;
         const height = this.svgContainer.offsetHeight - top - bottom;
         const width = this.svgContainer.offsetWidth - right - left;
-        const nuOfRow = renderData.length;
+        const nuOfRow = data.length;
 
-        this.scaleX.domain(renderData.map(d => d[this.props.xKey]));
-        this.scaleY.domain([min([0, min(renderData, d => d[this.props.yKey])]),
-            max([0, max(renderData, d => d[this.props.yKey])])]);
+        this.scaleX.domain(data.map(d => d[xKey]));
+        this.scaleY.domain([min([0, min(data, d => d[yKey])]),
+            max([0, max(data, d => d[yKey])])]);
         this.scaleX.range([0, width]);
         this.scaleY.range([height, 0]);
 
         const svg = select(this.svg);
         svg.select('*').remove();
 
-        if (renderData.length === 0) {
+        if (data.length === 0) {
             return;
         }
 
@@ -256,7 +272,7 @@ class BarChart extends React.PureComponent {
             .attr('class', `axis ${yGrid ? 'show' : 'hide'}`)
             .call(yAxis);
 
-        if (nuOfRow > this.props.maxNuOfRow) {
+        if (nuOfRow > maxNuOfRow) {
             xAxisSvg.selectAll('text')
                 .attr('y', 0)
                 .attr('x', 9)
@@ -270,11 +286,11 @@ class BarChart extends React.PureComponent {
 
         this.barChart
             .selectAll('.bar')
-            .data(renderData)
+            .data(data)
             .enter()
             .append('rect')
             .attr('class', d => (
-                d[xKey] === this.props.highlightBarX ? 'bar bar-selected' : 'bar'
+                d[xKey] === highlightBarX ? 'bar bar-selected' : 'bar'
             ))
             .attr('x', d => this.scaleX(d[xKey]))
             .attr('y', d => (
@@ -282,8 +298,8 @@ class BarChart extends React.PureComponent {
             ))
             .attr('width', this.scaleX.bandwidth())
             .attr('height', d => (
-                (d[yKey] > 0 ? this.scaleY(0) - this.scaleY(d[yKey]) :
-                    this.scaleY(d[yKey]) - this.scaleY(0)) || 0.01
+                (d[yKey] > 0 ? this.scaleY(0) - this.scaleY(d[yKey])
+                    : this.scaleY(d[yKey]) - this.scaleY(0)) || 0.01
             ))
             .on('mouseenter', this.onMouseOver)
             .on('mousemove', this.onMouseMove)

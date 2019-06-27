@@ -94,6 +94,7 @@ const defaultProps = {
  */
 class CollapsibleTree extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -107,6 +108,7 @@ class CollapsibleTree extends React.PureComponent {
     componentDidMount() {
         this.drawChart();
     }
+
     componentDidUpdate() {
         this.redrawChart();
     }
@@ -360,8 +362,7 @@ class CollapsibleTree extends React.PureComponent {
             return;
         }
 
-        if (boundingClientRect.width === 0 ||
-            boundingClientRect.height === 0) {
+        if (boundingClientRect.width === 0 || boundingClientRect.height === 0) {
             return;
         }
 

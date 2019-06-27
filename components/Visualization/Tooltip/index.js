@@ -36,6 +36,7 @@ const defaultProps = {
  */
 export default class Tooltip extends React.PureComponent {
     static defaultProps = defaultProps;
+
     static propTypes = propTypes;
 
     constructor(props) {
@@ -56,8 +57,9 @@ export default class Tooltip extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.props.setTooltipApi) {
-            this.props.setTooltipApi(undefined);
+        const { setTooltipApi } = this.props;
+        if (setTooltipApi) {
+            setTooltipApi(undefined);
         }
     }
 

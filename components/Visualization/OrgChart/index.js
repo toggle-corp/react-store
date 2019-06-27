@@ -106,6 +106,7 @@ const rectWidth = 30;
  */
 class OrgChart extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -125,9 +126,10 @@ class OrgChart extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
-            const { value = [] } = nextProps;
-            this.setState({ selected: value });
+        const { value } = this.props;
+        if (value !== nextProps.value) {
+            const { value: newValue = [] } = nextProps;
+            this.setState({ selected: newValue });
         }
     }
 
@@ -180,10 +182,12 @@ class OrgChart extends React.PureComponent {
                 { $unique: selection => selection },
             ],
         };
-        const selected = update(this.state.selected, settings);
+        this.setState((prevState) => {
+            const selected = update(prevState.selected, settings);
+            return { selected };
+        });
 
-        this.setState({ selected });
-        this.props.onSelection(selected);
+        this.props.onSelection(this.state.selected);
     }
 
     removeSelection = (item) => {
@@ -192,10 +196,11 @@ class OrgChart extends React.PureComponent {
         const settings = {
             $splice: [[index, 1]],
         };
-        const selected = update(this.state.selected, settings);
-
-        this.setState({ selected });
-        this.props.onSelection(selected);
+        this.setState((prevState) => {
+            const selected = update(prevState.selected, settings);
+            return { selected };
+        });
+        this.props.onSelection(this.state.selected);
     }
 
     findIndexInSelectedList = (item) => {
@@ -263,10 +268,10 @@ class OrgChart extends React.PureComponent {
         const widthPerTreeLeaves = width / root.leaves().length;
         const heightPerTreeDepth = height / root.height;
         const { minNodeWidth, minNodeHeight } = nodeSize;
-        const nodeWidth = widthPerTreeLeaves < minNodeWidth ?
-            minNodeWidth : widthPerTreeLeaves;
-        const nodeHeight = heightPerTreeDepth < minNodeHeight ?
-            minNodeHeight : heightPerTreeDepth - rectWidth;
+        const nodeWidth = widthPerTreeLeaves < minNodeWidth
+            ? minNodeWidth : widthPerTreeLeaves;
+        const nodeHeight = heightPerTreeDepth < minNodeHeight
+            ? minNodeHeight : heightPerTreeDepth - rectWidth;
 
         const treemap = tree()
             .nodeSize([nodeWidth, nodeHeight])

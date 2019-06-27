@@ -70,20 +70,25 @@ const discrete = 'discrete';
 const wrapViz = (WrappedComponent) => {
     const WrapperComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
+
         static keySelector = d => d.title;
+
         static labelSelector = d => d.title;
+
         static optionLabelSelector = d => d.image;
 
 
         constructor(props) {
             super(props);
+            const { colorScheme, colorSchemeType } = this.props;
             this.state = {
-                colorScheme: this.props.colorScheme,
-                colorSchemeName: undefined,
+                colorScheme,
+                colorSchemeType,
                 fullScreen: false,
-                colorSchemeType: this.props.colorSchemeType,
-                colorSchemeOptions: this.getColorSchemeValues(this.props.colorSchemeType),
+                colorSchemeName: undefined,
+                colorSchemeOptions: this.getColorSchemeValues(colorSchemeType),
             };
         }
 
@@ -124,8 +129,8 @@ const wrapViz = (WrappedComponent) => {
                 id: color,
                 title: color,
                 image: <ColorPalette
-                    colorScheme={getCategoricalColorScheme(color) ||
-                        getCategoryForContinuousColorScheme(color)}
+                    colorScheme={getCategoricalColorScheme(color)
+                        || getCategoryForContinuousColorScheme(color)}
                 />,
             });
 
@@ -133,7 +138,8 @@ const wrapViz = (WrappedComponent) => {
                 return getDivergingColorNames()
                     .concat(getSequentialColorNames())
                     .map(color => mapContinuous(color));
-            } else if (type === discrete) {
+            }
+            if (type === discrete) {
                 return getCategoricalColorNames()
                     .map(color => mapDiscrete(color));
             }
@@ -171,8 +177,8 @@ const wrapViz = (WrappedComponent) => {
             } else if (colorSchemeType === discrete) {
                 colorScheme = getCategoricalColorScheme(data);
             } else {
-                colorScheme = getCategoricalColorScheme(data) ||
-                         getCategoryForContinuousColorScheme(data);
+                colorScheme = getCategoricalColorScheme(data)
+                    || getCategoryForContinuousColorScheme(data);
             }
 
             this.setState({
@@ -228,7 +234,7 @@ const wrapViz = (WrappedComponent) => {
                                 value={colorSchemeName}
                             />
                         </div>
-                        <div className={styles.actionButtons} >
+                        <div className={styles.actionButtons}>
                             <PrimaryButton
                                 title="Download diagram"
                                 onClick={handleSave}
@@ -281,7 +287,7 @@ const wrapViz = (WrappedComponent) => {
                         fullScreen ? (
                             <FullScreen className={styles.fullScreenContainer}>
                                 <Header fullScreen />
-                                <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                                <div className={`${styles.vizContainer} ${vizContainerClass}`}>
                                     <WrappedComponent
                                         className={styles.diagram}
                                         colorScheme={colorScheme}
@@ -291,7 +297,7 @@ const wrapViz = (WrappedComponent) => {
                                 </div>
                             </FullScreen>
                         ) : (
-                            <div className={`${styles.vizContainer} ${vizContainerClass}`} >
+                            <div className={`${styles.vizContainer} ${vizContainerClass}`}>
                                 <WrappedComponent
                                     className={styles.diagram}
                                     colorScheme={colorScheme}

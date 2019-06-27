@@ -111,6 +111,7 @@ const defaultProps = {
  */
 class SimpleVerticalBarChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getRenderData = memoize((
@@ -268,8 +269,8 @@ class SimpleVerticalBarChart extends PureComponent {
                     height={height + top + bottom}
                 >
                     <g className={_cs(styles.grid, 'grid')}>
-                        { showGrids &&
-                            axisLeftData.map((d, i) => (
+                        { showGrids
+                            && axisLeftData.map(d => (
                                 <line
                                     key={`grid-${d.y}`}
                                     className={_cs(styles.xGrid, 'x-grid')}
@@ -320,8 +321,8 @@ class SimpleVerticalBarChart extends PureComponent {
                                     x2={left + 0.5}
                                     y2={height + top}
                                 />
-                                { showTicks &&
-                                    axisLeftData.map((d, i) => (
+                                { showTicks
+                                    && axisLeftData.map(d => (
                                         <g
                                             className={_cs(styles.ticks, 'ticks')}
                                             key={`tick-${d.value}`}

@@ -83,6 +83,7 @@ const defaultProps = {
  */
 class ZoomableTreeMap extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

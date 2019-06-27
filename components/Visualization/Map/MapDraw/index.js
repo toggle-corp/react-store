@@ -17,6 +17,7 @@ const emptyObject = {};
 @MapChild
 export default class MapLayer extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentDidMount() {

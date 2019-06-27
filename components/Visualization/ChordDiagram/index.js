@@ -102,6 +102,7 @@ const ribbonWidth = 24;
  */
 class ChordDiagram extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -225,8 +226,8 @@ class ChordDiagram extends PureComponent {
                 let newArc = firstArcSection.exec(select(nodes[i]).attr('d'))[1];
                 newArc.replace(/,/g, ' ');
 
-                if (d.endAngle > (90 * (Math.PI / 180)) &&
-                    d.startAngle < (180 * (Math.PI / 180))) {
+                if (d.endAngle > (90 * (Math.PI / 180))
+                    && d.startAngle < (180 * (Math.PI / 180))) {
                     const startLoc = /M(.*?)A/;
                     const middleLoc = /A(.*?),0/;
                     const endLoc = /,1,(.*?)$/;
@@ -267,8 +268,8 @@ class ChordDiagram extends PureComponent {
             .append('text')
             .attr('pointer-events', 'none')
             .attr('dy', d => (
-                d.endAngle > (90 * (Math.PI / 180)) &&
-                d.startAngle < (180 * (Math.PI / 180)) ? -10 : 15
+                d.endAngle > (90 * (Math.PI / 180))
+                && d.startAngle < (180 * (Math.PI / 180)) ? -10 : 15
             ));
 
         group

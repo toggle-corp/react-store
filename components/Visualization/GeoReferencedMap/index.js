@@ -31,6 +31,7 @@ const defaultProps = {
 
 export default class GeoReferencedMap extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -41,6 +42,10 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     componentDidMount() {
+        const {
+            geoLocations,
+            geoPoints,
+        } = this.props;
         this.mounted = true;
         mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -59,8 +64,8 @@ export default class GeoReferencedMap extends React.PureComponent {
                 return;
             }
             this.map = map;
-            this.loadGeoRegions(this.props.geoLocations);
-            this.loadGeoPoints(this.props.geoPoints);
+            this.loadGeoRegions(geoLocations);
+            this.loadGeoPoints(geoPoints);
             this.setState({ pendingMap: false });
         });
 
@@ -112,10 +117,12 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.geoLocations !== nextProps.geoLocations) {
+        const { geoLocations, geoPoints } = this.props;
+
+        if (geoLocations !== nextProps.geoLocations) {
             this.loadGeoRegions(nextProps.geoLocations);
         }
-        if (this.props.geoPoints !== nextProps.geoPoints) {
+        if (geoPoints !== nextProps.geoPoints) {
             this.loadGeoPoints(nextProps.geoPoints);
         }
     }
@@ -145,7 +152,8 @@ export default class GeoReferencedMap extends React.PureComponent {
         const daysDifference = getDifferenceInDays(today, new Date(date));
         if (daysDifference < 30) {
             return '#fbb4b9';
-        } else if (daysDifference < 180) {
+        }
+        if (daysDifference < 180) {
             return '#f768a1';
         }
         return '#ae017e';
@@ -235,7 +243,7 @@ export default class GeoReferencedMap extends React.PureComponent {
         });
     }
 
-    loadGeoRegions(geoLocations) {
+    loadGeoRegions = (geoLocations) => {
         if (!geoLocations || !this.map) {
             return;
         }
@@ -259,7 +267,7 @@ export default class GeoReferencedMap extends React.PureComponent {
         this.addRegionsLayer();
     }
 
-    loadGeoPoints(geoPoints) {
+    loadGeoPoints = (geoPoints) => {
         if (!geoPoints || !this.map) {
             return;
         }
@@ -335,13 +343,15 @@ export default class GeoReferencedMap extends React.PureComponent {
             className,
             loading,
         } = this.props;
+        const { pendingMap } = this.state;
+
         return (
             <div
                 className={`${className} ${styles.container}`}
                 ref={(el) => { this.mapContainer = el; }}
             >
                 {
-                    (this.state.pendingMap || loading) && (
+                    (pendingMap || loading) && (
                         <LoadingAnimation />
                     )
                 }

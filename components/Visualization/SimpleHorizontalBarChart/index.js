@@ -118,6 +118,7 @@ const MIN_BAR_HEIGHT = 22;
  */
 class SimpleHorizontalBarChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getRenderData = memoize(
@@ -304,8 +305,8 @@ class SimpleHorizontalBarChart extends PureComponent {
                         height={barsHeight}
                     >
                         <g className={_cs(styles.grid, 'grid')}>
-                            { showGrids &&
-                                axisBottomData.map(d => (
+                            { showGrids
+                                && axisBottomData.map(d => (
                                     <line
                                         key={`grid-${d.x}`}
                                         className={_cs(styles.yGrid, 'y-grid')}
@@ -341,7 +342,9 @@ class SimpleHorizontalBarChart extends PureComponent {
                                         dy={(d.height / 2) + 4}
                                         dx={horizontalTextOffset}
                                     >
-                                        { d.label }: {Numeral.renderText({
+                                        { d.label }
+                                        :
+                                        {Numeral.renderText({
                                             value: d.value,
                                             precision: 0,
                                         })}
@@ -380,8 +383,8 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     x2={width}
                                     y2={0.5}
                                 />
-                                { showTicks &&
-                                    axisBottomData.map(d => (
+                                { showTicks
+                                    && axisBottomData.map(d => (
                                         <g
                                             className={_cs(styles.tick, 'x-axis-tick')}
                                             key={`tick-${d.value}`}
