@@ -15,11 +15,13 @@ const propTypes = {
         PropTypes.node,
     ]),
     delay: PropTypes.number,
+    spinnerClassName: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     message: undefined,
+    spinnerClassName: undefined,
     delay: 0,
 };
 
@@ -65,22 +67,21 @@ export default class LoadingAnimation extends React.PureComponent {
         const {
             className: classNameFromProps,
             delay, // eslint-disable-line no-unused-vars
-
             message,
+            spinnerClassName,
             ...otherProps
         } = this.props;
 
         const { showMessage } = this.state;
 
-        const className = _cs(classNameFromProps, styles.loadingAnimation);
         const LoadingMessage = this.renderMessage;
 
         return (
             <Message
-                className={className}
+                className={_cs(styles.loadingAnimation, classNameFromProps)}
                 {...otherProps}
             >
-                <Spinner />
+                <Spinner className={spinnerClassName} />
                 { message && showMessage && <LoadingMessage />}
             </Message>
         );
