@@ -38,6 +38,7 @@ export default class Haze extends React.PureComponent {
         }
         document.body.className = classNames.join(' ');
 
+        const { children } = this.props;
         const modals = Array.from(document.querySelectorAll(portalChildrenClassName))
             .filter(n => n !== children.ref.current);
 

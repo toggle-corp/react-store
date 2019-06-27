@@ -28,8 +28,9 @@ export default class YearPicker extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        const { year } = props;
         this.state = {
-            startYear: Math.round(this.props.year / YEARS_PER_PAGE) * YEARS_PER_PAGE,
+            startYear: Math.round(year / YEARS_PER_PAGE) * YEARS_PER_PAGE,
         };
     }
 

@@ -44,10 +44,15 @@ export default class DayPicker extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (
-            this.props.year !== nextProps.year
-            || this.props.month !== nextProps.month
-            || this.props.value !== nextProps.value
+        const {
+            year,
+            month,
+            value,
+        } = this.props;
+
+        if (year !== nextProps.year
+            || month !== nextProps.month
+            || value !== nextProps.value
         ) {
             this.createDays(nextProps);
         }
@@ -60,6 +65,39 @@ export default class DayPicker extends React.PureComponent {
             classNames.push(styles.selected);
         }
         return classNames.join(' ');
+    }
+
+    handleDayChange = (value) => {
+        if (!value) {
+            return;
+        }
+
+        const { year, month, onChange } = this.props;
+        const newValue = new Date(year, month - 1, value);
+
+        if (onChange) {
+            const oldTimestamp = value && new Date(value).getTime();
+            const newTimestamp = newValue.getTime();
+            onChange(newTimestamp, oldTimestamp !== newTimestamp);
+        }
+    }
+
+    handlePrevious = () => {
+        const { year, month, onYearMonthChange } = this.props;
+        if (onYearMonthChange) {
+            const date = new Date(year, month - 2, 1);
+            if (date.getFullYear() >= 1990) {
+                onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
+            }
+        }
+    }
+
+    handleNext = () => {
+        const { year, month, onYearMonthChange } = this.props;
+        if (onYearMonthChange) {
+            const date = new Date(year, month, 1);
+            onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
+        }
     }
 
     createDays({ year, month, value }) {
@@ -107,38 +145,6 @@ export default class DayPicker extends React.PureComponent {
         this.weeks = weeks;
     }
 
-    handleDayChange = (value) => {
-        if (!value) {
-            return;
-        }
-
-        const { year, month, onChange } = this.props;
-        const newValue = new Date(year, month - 1, value);
-
-        if (onChange) {
-            const oldTimestamp = value && new Date(value).getTime();
-            const newTimestamp = newValue.getTime();
-            onChange(newTimestamp, oldTimestamp !== newTimestamp);
-        }
-    }
-
-    handlePrevious = () => {
-        const { year, month, onYearMonthChange } = this.props;
-        if (onYearMonthChange) {
-            const date = new Date(year, month - 2, 1);
-            if (date.getFullYear() >= 1990) {
-                onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
-            }
-        }
-    }
-
-    handleNext = () => {
-        const { year, month, onYearMonthChange } = this.props;
-        if (onYearMonthChange) {
-            const date = new Date(year, month, 1);
-            onYearMonthChange(date.getFullYear(), date.getMonth() + 1);
-        }
-    }
 
     renderDay = day => (
         <div
