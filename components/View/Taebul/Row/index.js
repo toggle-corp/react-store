@@ -20,9 +20,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    columns: [],
-    datum: {},
-    settings: {},
 };
 
 export default class Row extends React.PureComponent {

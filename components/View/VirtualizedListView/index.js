@@ -227,6 +227,7 @@ class VirtualizedListView extends React.Component {
         if (modifier) {
             return modifier(key, datum, i, data);
         }
+
         if (Renderer) {
             const extraProps = rendererParams
                 ? rendererParams(key, datum, i, data)
