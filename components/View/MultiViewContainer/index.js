@@ -27,6 +27,7 @@ const defaultProps = {
 
 export default class MultiViewContainer extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -42,7 +43,11 @@ export default class MultiViewContainer extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.useHash) {
+        const {
+            useHash,
+        } = this.props;
+
+        if (useHash) {
             window.addEventListener('hashchange', this.handleHashChange);
         }
     }
@@ -152,7 +157,11 @@ export default class MultiViewContainer extends React.Component {
         let isActive;
 
         if (useHash) {
-            isActive = this.state.hash === String(key);
+            const {
+                hash,
+            } = this.state;
+
+            isActive = hash === String(key);
         } else {
             isActive = String(active) === String(key);
         }

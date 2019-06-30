@@ -56,6 +56,7 @@ const _cs = (...args) => args.join(' '); // eslint-disable-line no-underscore-da
 export default (WrappedComponent) => {
     class ResponsiveElement extends React.Component {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {
@@ -89,6 +90,8 @@ export default (WrappedComponent) => {
                 ...otherProps
             } = this.props;
 
+            const { rect } = this.state;
+
             return (
                 <div
                     className={_cs(className, styles.responsive, 'responsive')}
@@ -96,7 +99,7 @@ export default (WrappedComponent) => {
                 >
                     <WrappedComponent
                         className={styles.responsiveChild}
-                        boundingClientRect={this.state.rect}
+                        boundingClientRect={rect}
                         {...otherProps}
                     />
                 </div>

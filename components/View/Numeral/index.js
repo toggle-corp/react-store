@@ -77,6 +77,7 @@ const defaultProps = {
  */
 class Numeral extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static getNormalizedNumber({
@@ -150,6 +151,7 @@ class Numeral extends React.PureComponent {
             suffix,
             value,
             lang,
+            invalidText,
         } = this.props;
 
         if (isFalsy(value)) {
@@ -157,7 +159,7 @@ class Numeral extends React.PureComponent {
                 <span
                     className={className}
                 >
-                    {this.props.invalidText}
+                    {invalidText}
                 </span>
             );
         }
