@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { isFalsy, isTruthy } from '@togglecorp/fujs';
+import {
+    isFalsy,
+    isTruthy,
+    _cs,
+} from '@togglecorp/fujs';
 
 import List from '../../List';
 
@@ -74,19 +78,6 @@ export default class Body extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
-
-    getClassName = (className) => {
-        const classNames = [];
-
-        // default className for global override
-        classNames.push('body');
-        // classNames.push(styles.body);
-
-        // className provided by parent (through className)
-        classNames.push(className);
-
-        return classNames.join(' ');
-    }
 
     getRowKey = (rowData) => {
         const { keySelector } = this.props;
@@ -161,12 +152,13 @@ export default class Body extends React.PureComponent {
     }
 
     render() {
-        const { data } = this.props;
-
-        const className = this.getClassName(this.props.className);
+        const {
+            data,
+            className,
+        } = this.props;
 
         return (
-            <tbody className={className}>
+            <tbody className={_cs(className, 'body')}>
                 <List
                     data={data}
                     keySelector={this.getRowKey}

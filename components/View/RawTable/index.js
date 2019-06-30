@@ -108,8 +108,11 @@ export default class RawTable extends React.Component {
 
     constructor(props) {
         super(props);
+        const {
+            headers: headersFromProps,
+        } = this.props;
 
-        const headers = RawTable.getSortedHeaders(this.props.headers);
+        const headers = RawTable.getSortedHeaders(headersFromProps);
         const headersOrder = headers.map(RawTable.headerKeyExtractor);
         this.state = {
             headersOrder,
@@ -118,18 +121,31 @@ export default class RawTable extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        const {
+            data: oldData,
+            headers: oldHeaders,
+            onDataSort,
+        } = this.props;
+
+        const {
+            headers,
+            data,
+        } = nextProps;
+
+        const { headersOrder } = this.state;
+
         // FIXME: why is data mutated here @frozenhelium?
-        if (!isListEqual(this.props.data, nextProps.data)) {
-            if (this.props.onDataSort) {
-                this.props.onDataSort(nextProps.data);
+        if (!isListEqual(oldData, data)) {
+            if (onDataSort) {
+                onDataSort(data);
             }
         }
-        if (this.props.headers !== nextProps.headers) {
-            const newHeaders = RawTable.getSortedHeaders(nextProps.headers);
+        if (oldHeaders !== headers) {
+            const newHeaders = RawTable.getSortedHeaders(headers);
             const newHeadersOrder = newHeaders.map(RawTable.headerKeyExtractor);
 
             this.setState({ headers: newHeaders });
-            if (!isListEqual(newHeadersOrder, this.state.headersOrder)) {
+            if (!isListEqual(newHeadersOrder, headersOrder)) {
                 this.setState({ headersOrder: newHeadersOrder });
             }
         }
@@ -167,6 +183,11 @@ export default class RawTable extends React.Component {
             className,
         } = this.props;
 
+        const {
+            headers,
+            headersOrder,
+        } = this.state;
+
         const tableClassName = this.getClassName(className);
         const emptyClassName = [
             'empty',
@@ -179,7 +200,7 @@ export default class RawTable extends React.Component {
                     data.length > 0 ? (
                         <table className={tableClassName}>
                             <Headers
-                                headers={this.state.headers}
+                                headers={headers}
                                 headerModifier={headerModifier}
                                 onClick={onHeaderClick}
                             />
@@ -187,7 +208,7 @@ export default class RawTable extends React.Component {
                                 data={data}
                                 dataModifier={dataModifier}
                                 expandedRowModifier={expandedRowModifier}
-                                headersOrder={this.state.headersOrder}
+                                headersOrder={headersOrder}
                                 keySelector={keySelector}
                                 onClick={onBodyClick}
                                 onHover={onBodyHover}

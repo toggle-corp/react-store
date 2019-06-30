@@ -106,8 +106,6 @@ class SelectInput extends React.PureComponent {
         this.inputRef = React.createRef();
     }
 
-    static defaultProps = defaultProps;
-
     componentDidMount() {
         const { current: container } = this.containerRef;
         if (container) {

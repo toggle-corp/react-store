@@ -72,9 +72,13 @@ export default class Headers extends React.Component {
     }
 
     render() {
-        const { headers } = this.props;
+        const {
+            headers,
+            className: classNameFromProps,
+        } = this.props;
 
-        const className = this.getClassName(this.props.className);
+        const className = this.getClassName(classNameFromProps);
+
         return (
             <thead className={className}>
                 <tr>

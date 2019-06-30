@@ -91,8 +91,6 @@ export default (WrappedComponent) => {
             } = this.props;
             const { rect } = this.state;
 
-            const { rect } = this.state;
-
             return (
                 <div
                     className={_cs(className, styles.responsive, 'responsive')}

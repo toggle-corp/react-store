@@ -29,6 +29,7 @@ const defaultProps = {
     className: '',
     rowClassName: '',
     data: [],
+    columns: [],
     settings: {},
     emptyComponent: undefined,
     rowHeight: undefined,

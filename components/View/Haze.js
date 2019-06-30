@@ -32,7 +32,6 @@ export default class Haze extends React.PureComponent {
     componentWillUnmount() {
         const classNames = document.body.className.split(' ');
         const index = classNames.findIndex(d => d === shownClassName);
-        const { children } = this.props;
         if (index !== -1) {
             classNames.splice(index, 1);
         }
