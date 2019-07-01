@@ -23,6 +23,7 @@ const defaultProps = {
 /* Portal with invalidation and focus trap */
 export default class Float extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentWillMount() {
@@ -31,7 +32,8 @@ export default class Float extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.props.onInvalidate();
+        const { onInvalidate } = this.props;
+        onInvalidate();
     }
 
     componentWillUnmount() {
@@ -40,11 +42,13 @@ export default class Float extends React.PureComponent {
     }
 
     handleResize = () => {
-        this.props.onInvalidate();
+        const { onInvalidate } = this.props;
+        onInvalidate();
     }
 
     handleScroll = () => {
-        this.props.onInvalidate();
+        const { onInvalidate } = this.props;
+        onInvalidate();
     }
 
     render() {

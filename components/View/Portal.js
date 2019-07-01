@@ -14,6 +14,7 @@ const defaultProps = {};
 /* Attach React node to body */
 export default class Portal extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {
