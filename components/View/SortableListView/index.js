@@ -37,7 +37,7 @@ export class NormalSortableListView extends React.Component {
     render() {
         const {
             showDragHandle,
-            onChange, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

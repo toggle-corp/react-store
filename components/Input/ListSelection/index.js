@@ -42,7 +42,6 @@ const defaultProps = {
     listClassName: '',
     value: [],
     options: [],
-    onChange: undefined,
     keySelector: item => item.key,
     tooltipSelector: item => item.label,
     labelSelector: item => item.label,

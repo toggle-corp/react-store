@@ -334,10 +334,10 @@ class TabularSelectInput extends React.PureComponent {
             hint,
             showHintAndError,
             disabled,
-            onChange, // eslint-disable-line no-unused-vars
-            value, // eslint-disable-line no-unused-vars
-            options, // eslint-disable-line no-unused-vars
-            className, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            value, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            options, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

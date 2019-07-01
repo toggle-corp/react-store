@@ -125,14 +125,20 @@ export default (WrappedComponent) => {
 
         render() {
             const {
-                focusedKey, // eslint-disable-line no-unused-vars
-                options, // eslint-disable-line no-unused-vars
-                keySelector, // eslint-disable-line no-unused-vars
-                isOptionsShown, // eslint-disable-line no-unused-vars
-                onFocusChange, // eslint-disable-line no-unused-vars
-                onHideOptions, // eslint-disable-line no-unused-vars
-                onShowOptions, // eslint-disable-line no-unused-vars
-                onOptionSelect, // eslint-disable-line no-unused-vars
+                focusedKey, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                options, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                keySelector,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                isOptionsShown,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onFocusChange,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onHideOptions,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onShowOptions,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onOptionSelect,
                 ...otherProps
             } = this.props;
 

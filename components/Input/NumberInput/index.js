@@ -230,12 +230,14 @@ export class NormalNumberInput extends React.PureComponent {
     render() {
         const {
             // skip prop injection
-            value: propValue, // eslint-disable-line no-unused-vars
-            onBlur, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
-            onFocus, // eslint-disable-line no-unused-vars
-            selectOnFocus, // eslint-disable-line no-unused-vars
-            className: propClassName, // eslint-disable-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            value: propValue,
+            onBlur, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onFocus, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            selectOnFocus, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className: propClassName,
 
             error,
             hint,

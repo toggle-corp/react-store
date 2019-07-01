@@ -182,12 +182,12 @@ class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
-            className, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             disabled,
             keySelector,
             label,
             labelSelector,
-            onChange, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             readOnly,
             options,
             value,

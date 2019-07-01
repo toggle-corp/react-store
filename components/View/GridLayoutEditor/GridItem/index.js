@@ -346,21 +346,24 @@ export default class GridItem extends React.PureComponent {
             return;
         }
 
-        const layout = { ...this.state.layout };
-        if (this.isResizing) {
-            if (layout.width + sx >= this.minSize.width) {
-                layout.width += sx;
+        this.setState((oldState) => {
+            const layout = { ...oldState.layout };
+            if (this.isResizing) {
+                if (layout.width + sx >= this.minSize.width) {
+                    layout.width += sx;
+                }
+                if (layout.height + sy >= this.minSize.height) {
+                    layout.height += sy;
+                }
+            } else {
+                layout.left += sx;
+                layout.top += sy;
             }
-            if (layout.height + sy >= this.minSize.height) {
-                layout.height += sy;
-            }
-        } else {
-            layout.left += sx;
-            layout.top += sy;
-        }
-        this.setState({ layout });
-        this.testLayoutValidity(layout);
-        this.props.scrollParentContainer(sx, sy);
+
+            this.testLayoutValidity(layout);
+            this.props.scrollParentContainer(sx, sy);
+            return { layout };
+        });
     }
 
     renderHeader = () => {

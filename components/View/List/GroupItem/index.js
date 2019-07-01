@@ -37,7 +37,7 @@ export default class GroupItem extends React.PureComponent {
     render() {
         const {
             children,
-            className, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

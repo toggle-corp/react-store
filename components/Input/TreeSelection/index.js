@@ -94,9 +94,11 @@ class NormalTreeSelection extends React.PureComponent {
 
     // Toggle expand state of a node
     handleToggleExpand = (key) => {
-        const expanded = { ...this.state.expanded };
-        expanded[key] = !expanded[key];
-        this.setState({ expanded });
+        this.setState((oldState) => {
+            const expanded = { ...oldState.expanded };
+            expanded[key] = !expanded[key];
+            return { expanded };
+        });
     }
 
     // Handle toggling the state of checkbox including its children

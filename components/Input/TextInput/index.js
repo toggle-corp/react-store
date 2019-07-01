@@ -124,11 +124,12 @@ class TextInput extends React.PureComponent {
     render() {
         const {
             // skip prop injection
-            onBlur, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
-            onFocus, // eslint-disable-line no-unused-vars
-            selectOnFocus, // eslint-disable-line no-unused-vars
-            className: dummy, // eslint-disable-line no-unused-vars
+            onBlur, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onFocus, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            selectOnFocus, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className: classNameFromProps,
 
             error,
             hint,

@@ -144,9 +144,9 @@ class Button extends React.PureComponent {
             smallVerticalPadding,
             transparent,
 
-            onClick, // eslint-disable-line no-unused-vars
-            onClickParams, // eslint-disable-line no-unused-vars
-            changeDelay, // eslint-disable-line no-unused-vars
+            onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onClickParams, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

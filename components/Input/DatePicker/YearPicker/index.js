@@ -52,11 +52,15 @@ export default class YearPicker extends React.PureComponent {
     }
 
     handlePrevious = () => {
-        this.setState({ startYear: this.state.startYear - YEARS_PER_PAGE });
+        this.setState(oldState => ({
+            startYear: oldState.startYear - YEARS_PER_PAGE,
+        }));
     }
 
     handleNext = () => {
-        this.setState({ startYear: this.state.startYear + YEARS_PER_PAGE });
+        this.setState(oldState => ({
+            startYear: oldState.startYear + YEARS_PER_PAGE,
+        }));
     }
 
     render() {

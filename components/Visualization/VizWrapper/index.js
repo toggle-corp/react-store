@@ -190,7 +190,8 @@ const wrapViz = (WrappedComponent) => {
         renderHeader = ({ fullScreen }) => {
             const {
                 headerText,
-                colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                colorScheme: capturedColorScheme,
             } = this.props;
 
             const {
@@ -266,9 +267,10 @@ const wrapViz = (WrappedComponent) => {
             const {
                 className,
                 loading,
-                headerText, // eslint-disable-line no-unused-vars
+                headerText, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
                 vizContainerClass,
-                colorScheme: capturedColorScheme, // eslint-disable-line no-unused-vars,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars,
+                colorScheme: capturedColorScheme,
                 ...otherProps
             } = this.props;
 

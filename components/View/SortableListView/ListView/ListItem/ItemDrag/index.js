@@ -10,7 +10,7 @@ const propTypes = {
     dataIndex: PropTypes.number.isRequired,
     dataKey: PropTypes.string.isRequired,
 
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
 
     dragIcon: PropTypes.string,
     dragHandleModifier: PropTypes.func,

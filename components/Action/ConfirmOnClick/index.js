@@ -86,11 +86,13 @@ const ConfirmOnClick = (WrappedComponent) => {
         render() {
             const {
                 disabled,
-                onClick, // eslint-disable-line no-unused-vars
                 confirmationMessage,
                 confirmationTitle,
-                challengeValue, // eslint-disable-line no-unused-vars
-                skipConfirmation, // eslint-disable-line no-unused-vars
+                onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                challengeValue,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                skipConfirmation,
                 challengeLabel,
                 challengePlaceholder,
                 ...otherProps

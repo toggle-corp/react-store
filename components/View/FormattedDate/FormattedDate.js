@@ -52,7 +52,8 @@ export default class FormattedDate extends React.PureComponent {
                             {e.value}
                         </span>
                     );
-                } if (e.type === 'time') {
+                }
+                if (e.type === 'time') {
                     return (
                         <span
                             className="time"

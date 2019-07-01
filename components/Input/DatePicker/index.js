@@ -70,11 +70,11 @@ class DatePicker extends React.PureComponent {
     }
 
     handleYearMonthChange = (year, month, picker = undefined) => {
-        this.setState({
+        this.setState(oldState => ({
             year,
             month,
-            picker: picker || this.state.picker,
-        });
+            picker: picker || oldState.picker,
+        }));
     }
 
     renderPicker = () => {

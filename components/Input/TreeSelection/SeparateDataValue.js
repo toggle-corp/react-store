@@ -6,7 +6,7 @@ import { pick } from '@togglecorp/fujs';
 const emptyObject = {};
 
 const propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    data: PropTypes.arrayOf(PropTypes.object),
     value: PropTypes.objectOf(PropTypes.shape({
         selected: PropTypes.oneOf([true, false, 'fuzzy']),
         nodes: PropTypes.objectOf(PropTypes.object),

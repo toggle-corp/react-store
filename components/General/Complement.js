@@ -75,8 +75,8 @@ export default (WrappedComponent) => {
 
         render() {
             const {
-                value, // eslint-disable-line no-unused-vars
-                onChange, // eslint-disable-line no-unused-vars
+                value, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
                 ...otherProps
             } = this.props;
 

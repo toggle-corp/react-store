@@ -35,7 +35,7 @@ export default class DismissableListItem extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            onDismiss, // eslint-disable-line no-unused-vars
+            onDismiss, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             disabled,
 
             ...otherProps

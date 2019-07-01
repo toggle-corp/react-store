@@ -158,6 +158,7 @@ export default class DropdownMenu extends React.PureComponent {
             <button
                 onClick={this.handleDropdownClick}
                 className={className}
+                type="button"
             >
                 { iconName && (
                     <Icon

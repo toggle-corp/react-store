@@ -71,7 +71,6 @@ export const defaultProps = {
     keySelector: d => d.key,
     label: '',
     labelSelector: d => d.label,
-    onChange: undefined,
     optionLabelSelector: undefined,
     options: emptyList,
     optionsClassName: '',

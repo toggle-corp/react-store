@@ -70,8 +70,8 @@ export default class DigitalInput extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            onChange, // eslint-disable-line no-unused-vars
-            padLength, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            padLength, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

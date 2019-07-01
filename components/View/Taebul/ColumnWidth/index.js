@@ -21,9 +21,12 @@ class ResizableHeader extends React.Component {
 
     render() {
         const {
-            _columnKey: columnKey, // eslint-disable-line no-unused-vars
-            _onSeparatorMouseDown: onSeparatorMouseDown, // eslint-disable-line no-unused-vars
-            _headerRenderer: Header, // eslint-disable-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            _columnKey: columnKey,
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            _onSeparatorMouseDown: onSeparatorMouseDown,
+            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            _headerRenderer: Header,
             className: classNameFromProps,
             ...otherProps
         } = this.props;

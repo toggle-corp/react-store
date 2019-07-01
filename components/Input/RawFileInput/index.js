@@ -124,8 +124,8 @@ class RawFileInput extends React.PureComponent {
             hint,
             showHintAndError,
             value,
-            changeDelay, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

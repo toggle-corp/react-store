@@ -32,10 +32,10 @@ export default class ListViewSortableContainer extends React.Component {
 
     rendererParams = (key, datum, index) => {
         const {
-            data, // eslint-disable-line no-unused-vars
-            className, // eslint-disable-line no-unused-vars
-            keySelector, // eslint-disable-line no-unused-vars
-            emptyComponent, // eslint-disable-line no-unused-vars
+            data, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            keySelector, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            emptyComponent, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             itemClassName,
             ...otherProps
         } = this.props;
