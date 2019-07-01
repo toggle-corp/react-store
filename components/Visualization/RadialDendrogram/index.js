@@ -84,6 +84,7 @@ const defaultProps = {
  */
 class RadialDendrogram extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -177,8 +178,8 @@ class RadialDendrogram extends React.PureComponent {
         }
 
         function diagonal(d) {
-            return `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}` +
-                   ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`;
+            return `M${project(d.x, d.y)},C${project(d.x, (d.y + d.parent.y) / 2)}`
+                + ` ${project(d.parent.x, (d.y + d.parent.y) / 2)} ${project(d.parent.x, d.parent.y)}`;
         }
 
         group
@@ -213,9 +214,7 @@ class RadialDendrogram extends React.PureComponent {
         node.append('text')
             .attr('dy', '.3em')
             .style('fill', topicColors)
-            .attr('x', d =>
-                ((d.x < 180) === (!d.children) ?
-                    `${scaledValues(d.value) + 4}` : `-${scaledValues(d.value) + 4}`))
+            .attr('x', d => ((d.x < 180) === (!d.children) ? `${scaledValues(d.value) + 4}` : `-${scaledValues(d.value) + 4}`))
             .style('text-anchor', d => ((d.x < 180) === !d.children ? 'start' : 'end'))
             .style('text-shadow', '0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff')
             .attr('transform', d => `rotate(${d.x < 180 ? d.x - 90 : d.x + 90})`)

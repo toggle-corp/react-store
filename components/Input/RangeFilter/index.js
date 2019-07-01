@@ -23,6 +23,7 @@ const defaultProps = {
 
 class RangeFilter extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -33,8 +34,8 @@ class RangeFilter extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         // Checking this.value instead of this.props.value is intentional
         if (
-            this.value !== nextProps.value ||
-            this.props.options !== nextProps.options
+            this.value !== nextProps.value
+            || this.props.options !== nextProps.options
         ) {
             this.updateFromProps(nextProps);
         }
@@ -58,10 +59,10 @@ class RangeFilter extends React.PureComponent {
 
     handleUpdate() {
         const { options, onChange } = this.props;
-        const startIndex = this.startValue ?
-            options.findIndex(o => o.key === this.startValue) : 0;
-        const endIndex = this.endValue ?
-            options.findIndex(o => o.key === this.endValue) : options.length - 1;
+        const startIndex = this.startValue
+            ? options.findIndex(o => o.key === this.startValue) : 0;
+        const endIndex = this.endValue
+            ? options.findIndex(o => o.key === this.endValue) : options.length - 1;
 
         this.value = options.slice(startIndex, endIndex + 1).map(o => o.key);
         onChange(this.value);
@@ -70,8 +71,8 @@ class RangeFilter extends React.PureComponent {
     render() {
         const {
             label,
-            value, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
+            value, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

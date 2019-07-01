@@ -32,6 +32,7 @@ const defaultProps = {
 // eslint-disable-next-line react/no-multi-comp
 export default class Modal extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

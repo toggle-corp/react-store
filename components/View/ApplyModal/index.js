@@ -5,10 +5,10 @@ import Faram from '@togglecorp/faram';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
 
-import Modal from '../../View/Modal';
-import ModalHeader from '../../View/Modal/Header';
-import ModalBody from '../../View/Modal/Body';
-import ModalFooter from '../../View/Modal/Footer';
+import Modal from '../Modal';
+import ModalHeader from '../Modal/Header';
+import ModalBody from '../Modal/Body';
+import ModalFooter from '../Modal/Footer';
 
 const noOp = () => undefined;
 
@@ -31,6 +31,7 @@ const defaultProps = {
 // FIXME: remove this or move this to better place
 export default class ApplyModal extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

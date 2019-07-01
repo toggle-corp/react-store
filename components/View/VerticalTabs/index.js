@@ -35,6 +35,7 @@ const defaultProps = {
 // FIXME: change vertical tabs to use same api as ScrollTabs
 export default class VerticalTabs extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

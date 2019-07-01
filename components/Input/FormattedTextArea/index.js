@@ -33,6 +33,7 @@ const defaultProps = {
 
 class FormattedTextArea extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleFormatText = () => {
@@ -66,7 +67,7 @@ class FormattedTextArea extends React.PureComponent {
                     className={styles.area}
                     value={value}
                 />
-                { showFormatButton &&
+                { showFormatButton && (
                     <AccentButton
                         tabIndex="-1"
                         className={styles.formatButton}
@@ -78,7 +79,7 @@ class FormattedTextArea extends React.PureComponent {
                         transparent
                         disabled={disabled || readOnly || this.shouldDisableFormat(value)}
                     />
-                }
+                )}
             </div>
         );
     }

@@ -43,6 +43,7 @@ const defaultProps = {
 
 export default class Resizable extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static getMousePosition = e => ({
@@ -58,8 +59,8 @@ export default class Resizable extends React.PureComponent {
         const { x, y } = Resizable.getMousePosition(e);
 
         return (
-            x >= rc.left && x <= rc.right &&
-            y >= rc.top && y <= rc.bottom
+            x >= rc.left && x <= rc.right
+            && y >= rc.top && y <= rc.bottom
         );
     }
 
@@ -226,20 +227,24 @@ export default class Resizable extends React.PureComponent {
                     className={this.getFirstContainerClassName()}
                 >
                     { firstChild }
-                    { dragging && <div className={this.getOverlayClassName()} /> }
+                    { dragging && (
+                        <div className={this.getOverlayClassName()} />
+                    )}
                 </div>
                 <div
                     ref={(el) => { this.secondContainer = el; }}
                     className={this.getSecondContainerClassName()}
                 >
                     { secondChild }
-                    { !disabled &&
+                    { !disabled && (
                         <div
                             ref={(el) => { this.separator = el; }}
                             className={this.getSeparatorClassName()}
                         />
-                    }
-                    { dragging && <div className={this.getOverlayClassName()} /> }
+                    )}
+                    { dragging && (
+                        <div className={this.getOverlayClassName()} />
+                    )}
                 </div>
             </div>
         );

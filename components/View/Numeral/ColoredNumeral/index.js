@@ -46,8 +46,11 @@ const defaultProps = {
     value: undefined,
     referenceValue: undefined,
     referenceLine: undefined,
-    modifier: (refValue, value, refLine) =>
-        (refValue - refLine >= 0 ? styles.gainPositive : styles.gainNegative),
+    modifier: (refValue, value, refLine) => (
+        refValue - refLine >= 0
+            ? styles.gainPositive
+            : styles.gainNegative
+    ),
     inBlock: false,
 };
 
@@ -56,6 +59,7 @@ const defaultProps = {
  */
 export default class ColoredNumeral extends React.PureComponent {
     static defaultProps = defaultProps;
+
     static propTypes = propTypes;
 
     render() {

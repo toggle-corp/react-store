@@ -23,7 +23,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     tooltip: '',
-    delay: 200,
     center: false,
 };
 
@@ -33,6 +32,7 @@ const TOOLTIP_WINDOW_PADDING = 4;
 
 export default class Tooltip extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -131,7 +131,7 @@ export default class Tooltip extends React.PureComponent {
         return (
             <React.Fragment>
                 {React.cloneElement(child, props)}
-                {isTruthyString(tooltip) && showTooltip &&
+                {isTruthyString(tooltip) && showTooltip && (
                     <FloatingContainer
                         className={_cs(
                             styles.container,
@@ -144,7 +144,7 @@ export default class Tooltip extends React.PureComponent {
                     >
                         {tooltip}
                     </FloatingContainer>
-                }
+                )}
             </React.Fragment>
         );
     }

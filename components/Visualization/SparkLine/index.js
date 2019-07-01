@@ -58,6 +58,7 @@ const defaultProps = {
 
 class SparkLine extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -98,13 +99,17 @@ class SparkLine extends React.PureComponent {
 
     updateRender() {
         const {
-            right,
-            top,
-            left,
-            bottom,
-        } = this.props.margins;
-
-        const { height, width } = this.props.boundingClientRect;
+            margins: {
+                right,
+                top,
+                left,
+                bottom,
+            },
+            boundingClientRect: {
+                height,
+                width,
+            },
+        } = this.props;
 
         if (!width) {
             return;

@@ -29,6 +29,7 @@ const defaultProps = {
 
 class TimeFilter extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static defaultOptions = [
@@ -193,7 +194,7 @@ class TimeFilter extends React.PureComponent {
     render() {
         const {
             value,
-            onChange, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

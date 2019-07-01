@@ -73,9 +73,9 @@ export default class ListItem extends React.PureComponent {
     render() {
         const {
             children,
-            active, // eslint-disable-line no-unused-vars
-            scrollIntoView, // eslint-disable-line no-unused-vars
-            className, // eslint-disable-line no-unused-vars
+            active, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            scrollIntoView, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

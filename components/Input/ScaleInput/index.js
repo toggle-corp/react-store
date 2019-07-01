@@ -36,6 +36,7 @@ const defaultProps = {
 
 class ScaleInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -46,9 +47,9 @@ class ScaleInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (
-            nextProps.options !== this.props.options ||
-            (!nextProps.disabled && nextProps.disabled !== this.props.disabled) ||
-            (!nextProps.readOnly && nextProps.readOnly !== this.props.readOnly)
+            nextProps.options !== this.props.options
+            || (!nextProps.disabled && nextProps.disabled !== this.props.disabled)
+            || (!nextProps.readOnly && nextProps.readOnly !== this.props.readOnly)
         ) {
             this.checkAndSetDefaultValue(nextProps.options, nextProps.value);
         }

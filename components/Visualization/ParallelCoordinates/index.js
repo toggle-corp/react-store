@@ -80,7 +80,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    data: [],
     setSaveFunction: () => {},
     colorScheme: schemePaired,
     colorSelector: undefined,
@@ -98,6 +97,7 @@ const defaultProps = {
  */
 class ParallelCoordinates extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

@@ -105,6 +105,7 @@ const defaultProps = {
  */
 class GroupedBarChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentDidMount() {

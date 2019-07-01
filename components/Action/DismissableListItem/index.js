@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ListItem from '../../View/ListItem';
-import DangerButton from '../../Action/Button/DangerButton';
+import DangerButton from '../Button/DangerButton';
 
 import styles from './styles.scss';
 
@@ -20,6 +20,7 @@ const defaultProps = {
 
 export default class DismissableListItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleDismissButtonClick = () => {
@@ -34,7 +35,7 @@ export default class DismissableListItem extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            onDismiss, // eslint-disable-line no-unused-vars
+            onDismiss, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             disabled,
 
             ...otherProps

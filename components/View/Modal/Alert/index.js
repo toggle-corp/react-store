@@ -7,7 +7,7 @@ import ModalHeader from '../Header';
 import ModalBody from '../Body';
 import ModalFooter from '../Footer';
 
-import Modal from '../../Modal';
+import Modal from '..';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -28,6 +28,7 @@ const defaultProps = {
 
 export default class Alert extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

@@ -43,9 +43,7 @@ export default class MultiViewContainer extends React.Component {
     }
 
     componentDidMount() {
-        const {
-            useHash,
-        } = this.props;
+        const { useHash } = this.props;
 
         if (useHash) {
             window.addEventListener('hashchange', this.handleHashChange);

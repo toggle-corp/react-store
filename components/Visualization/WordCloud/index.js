@@ -38,7 +38,7 @@ const propTypes = {
      * Font specification for each word cloud node
      */
     font: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    /***
+    /**
      * Provide a rotation value for each node
      */
     rotate: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
@@ -76,6 +76,7 @@ const emptyList = [];
  */
 class WordCloud extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -138,6 +139,7 @@ class WordCloud extends PureComponent {
         this.setState({ calculatedWords: words });
     }
 
+    // eslint-disable-next-line react/sort-comp
     calculateWordCloud = memoize((
         width,
         height,

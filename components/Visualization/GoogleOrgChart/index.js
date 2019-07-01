@@ -58,6 +58,7 @@ const defaultProps = {
  */
 class GoogleOrgChart extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -96,6 +97,8 @@ class GoogleOrgChart extends React.PureComponent {
         const {
             singleSelect,
             multiSelect,
+            value,
+            onChange,
         } = this.props;
 
         const selection = this.orgChart.getSelection();
@@ -103,19 +106,19 @@ class GoogleOrgChart extends React.PureComponent {
         let selectedData = [];
         if (selection.length === 0 && this.mouseOverRow) {
             const { row } = this.mouseOverRow;
-            newSelection = this.props.value.filter(element => element.row !== row);
+            newSelection = value.filter(element => element.row !== row);
             selectedData = this.mapSelectionToData(newSelection);
         } else {
             const [item] = selection;
             if (singleSelect) {
                 newSelection = [item];
             } else if (multiSelect) {
-                newSelection = [...this.props.value, item];
+                newSelection = [...value, item];
             }
             selectedData = this.mapSelectionToData(newSelection);
         }
         this.orgChart.setSelection(newSelection);
-        this.props.onChange(newSelection, selectedData);
+        onChange(newSelection, selectedData);
     };
 
     mouseOverHandler = (row) => {

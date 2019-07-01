@@ -7,11 +7,11 @@ import styles from './styles.scss';
 /**
  * Container class to set its children to fullscreen
  */
-const FullScreen = props => (
+const FullScreen = ({ className, children }) => (
     <FloatingContainer
-        className={`${props.className} ${styles.fullscreen}`}
+        className={`${className} ${styles.fullscreen}`}
     >
-        {props.children}
+        {children}
     </FloatingContainer>
 );
 

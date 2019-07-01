@@ -69,6 +69,10 @@ const propTypes = {
      */
     thresholds: PropTypes.func,
     /**
+     * Additional classes
+     */
+    className: PropTypes.string,
+    /**
      * Margins for the chart
      */
     margins: PropTypes.shape({
@@ -89,6 +93,7 @@ const defaultProps = {
     showAxis: true,
     showGrids: true,
     thresholds: thresholdSturges,
+    className: '',
     tickFormat: d => (
         Numeral.renderText({
             value: d,
@@ -115,6 +120,7 @@ const defaultProps = {
  */
 class Histogram extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     componentDidMount() {

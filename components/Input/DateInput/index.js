@@ -104,6 +104,7 @@ export const isValidDateString = (value, separator = '-') => {
 
 class DateInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -456,13 +457,13 @@ class DateInput extends React.PureComponent {
                     hint={hint}
                     error={error}
                 />
-                { showDatePicker &&
+                { showDatePicker && (
                     <FloatingDatePicker
                         y={yearValue}
                         m={monthValue}
                         d={dayValue}
                     />
-                }
+                )}
             </div>
         );
     }

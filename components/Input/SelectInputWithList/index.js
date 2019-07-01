@@ -3,8 +3,8 @@ import React from 'react';
 import { isFalsy } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
-import MultiSelectInput from '../../Input/MultiSelectInput';
-import SearchMultiSelectInput from '../../Input/SearchMultiSelectInput';
+import MultiSelectInput from '../MultiSelectInput';
+import SearchMultiSelectInput from '../SearchMultiSelectInput';
 import DismissableListItem from '../../Action/DismissableListItem';
 import ListItem from '../../View/ListItem';
 import ListView from '../../View/List/ListView';
@@ -75,6 +75,7 @@ const emptyList = [];
 
 class SelectInputWithList extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -181,12 +182,12 @@ class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
-            className, // eslint-disable-line no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             disabled,
             keySelector,
             label,
             labelSelector,
-            onChange, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             readOnly,
             options,
             value,
@@ -220,9 +221,9 @@ class SelectInputWithList extends React.PureComponent {
         }
 
         const Item = (
-            hideRemoveFromListButton ||
-            readOnly ||
-            disabled
+            hideRemoveFromListButton
+            || readOnly
+            || disabled
         ) ? ListItem : DismissableListItem;
 
         return (

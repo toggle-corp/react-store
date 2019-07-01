@@ -32,6 +32,7 @@ const defaultProps = {
 
 class ListInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getClassName() {

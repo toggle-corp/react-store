@@ -30,6 +30,7 @@ const defaultProps = {
 
 export default class Legend extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static legendItemKeySelector = l => l.label;
@@ -59,9 +60,9 @@ export default class Legend extends React.PureComponent {
                     'legend',
                 )}
             >
-                {legendItems.length > 0 &&
+                {legendItems.length > 0 && (
                     <h5 className={styles.header}>{label}</h5>
-                }
+                )}
                 <List
                     data={legendItems}
                     rendererParams={this.legendItemRendererParams}

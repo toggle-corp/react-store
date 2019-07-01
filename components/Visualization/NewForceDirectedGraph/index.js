@@ -145,6 +145,7 @@ const circleRadius = 30;
  */
 class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -158,7 +159,8 @@ class ForceDirectedGraph extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.data = deepCopy(this.props.data);
+        const { data } = this.props;
+        this.data = deepCopy(data);
 
         const {
             boundingClientRect,
@@ -210,10 +212,10 @@ class ForceDirectedGraph extends React.PureComponent {
         } = nextProps;
 
         if (
-            data !== oldData ||
-            boundingClientRect !== oldBoundingClientRect ||
-            clusterSize !== oldClusterSize ||
-            colorScheme !== oldColorScheme
+            data !== oldData
+                || boundingClientRect !== oldBoundingClientRect
+                || clusterSize !== oldClusterSize
+                || colorScheme !== oldColorScheme
         ) {
             this.data = deepCopy(nextProps.data);
             this.renderChart({

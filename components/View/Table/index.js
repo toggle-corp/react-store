@@ -124,6 +124,7 @@ const defaultProps = {
 
 export default class Table extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -166,6 +167,7 @@ export default class Table extends React.PureComponent {
             data: newData,
             headers: newHeaders,
         } = this.props;
+
         let { activeSort: newActiveSort } = this.state;
 
         const {
@@ -208,11 +210,14 @@ export default class Table extends React.PureComponent {
 
     // eslint-disable-next-line react/sort-comp
     handleHeaderClick = (key) => {
-        const clickedHeader = this.state.headers.find(d => d.key === key);
+        const { headers } = this.state;
+
+        const clickedHeader = headers.find(d => d.key === key);
         if (clickedHeader === undefined) {
             console.error(`Header with key '${key}' not found.`);
             return;
-        } else if (!clickedHeader.sortable) {
+        }
+        if (!clickedHeader.sortable) {
             console.warn(`Header with key '${key}' is not sortable.`);
             return;
         }
@@ -230,7 +235,7 @@ export default class Table extends React.PureComponent {
             };
         }
 
-        const newHeaders = this.getStateHeaders(this.state.headers, newActiveSort);
+        const newHeaders = this.getStateHeaders(headers, newActiveSort);
 
         const newData = this.getSortedData(newHeaders, this.props.data, newActiveSort);
 

@@ -19,6 +19,7 @@ const defaultProps = {
 
 export default class ResizableV extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static getInitialSize = (topContainer) => {

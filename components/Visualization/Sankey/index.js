@@ -97,6 +97,7 @@ const defaultProps = {
  */
 class Sankey extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -104,6 +105,8 @@ class Sankey extends PureComponent {
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
+
+        this.dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
     }
 
     componentDidMount() {
@@ -134,8 +137,6 @@ class Sankey extends PureComponent {
         const { valueSelector } = this.props;
         this.dynamicFontSize.domain(extent(nodes, d => valueSelector(d)));
     }
-
-    dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
 
     save = () => {
         const svg = select(this.svg);

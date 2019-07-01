@@ -105,6 +105,7 @@ const tooltipOffset = { x: 10, y: 10 };
   */
 class SunBurst extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

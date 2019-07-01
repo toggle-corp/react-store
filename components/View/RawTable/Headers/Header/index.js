@@ -24,6 +24,7 @@ const defaultProps = {
 
 export default class Header extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getClassName = (className, highlighted, hoverable, uniqueKey) => {

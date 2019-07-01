@@ -34,6 +34,7 @@ const defaultProps = {
 const ConfirmOnClick = (WrappedComponent) => {
     const ConfirmComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {
@@ -85,11 +86,13 @@ const ConfirmOnClick = (WrappedComponent) => {
         render() {
             const {
                 disabled,
-                onClick, // eslint-disable-line no-unused-vars
                 confirmationMessage,
                 confirmationTitle,
-                challengeValue, // eslint-disable-line no-unused-vars
-                skipConfirmation, // eslint-disable-line no-unused-vars
+                onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                challengeValue,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                skipConfirmation,
                 challengeLabel,
                 challengePlaceholder,
                 ...otherProps
@@ -111,7 +114,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                         onClick={this.handleModalOpen}
                         {...otherProps}
                     />
-                    { showConfirm &&
+                    { showConfirm && (
                         <Confirm
                             show
                             disabled={confirmDisabled}
@@ -119,7 +122,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                             title={confirmationTitle}
                             autoFocus={!hasChallenge}
                         >
-                            <div className={styles.confirmContent} >
+                            <div className={styles.confirmContent}>
                                 {
                                     isConfirmationMessageNode
                                         ? confirmationMessage
@@ -129,9 +132,8 @@ const ConfirmOnClick = (WrappedComponent) => {
                                             </p>
                                         )
                                 }
-                                {
-                                    hasChallenge &&
-                                    <div className={styles.challengeForm} >
+                                { hasChallenge && (
+                                    <div className={styles.challengeForm}>
                                         <span>{challengeLabel}</span>
                                         <TextInput
                                             className={styles.challengeText}
@@ -141,10 +143,10 @@ const ConfirmOnClick = (WrappedComponent) => {
                                             autoFocus
                                         />
                                     </div>
-                                }
+                                )}
                             </div>
                         </Confirm>
-                    }
+                    )}
                 </Fragment>
             );
         }

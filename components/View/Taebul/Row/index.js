@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListView from '../../List/ListView';
 import VirtualizedList from '../../VirtualizedList';
 
 import Cell from '../Cell';
@@ -9,14 +8,14 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    datum: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     datumKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]).isRequired,
-    columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     columnKeySelector: PropTypes.func.isRequired,
-    settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -28,6 +27,7 @@ const defaultProps = {
 
 export default class Row extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     cellRendererParams = (columnKey, column) => {
@@ -58,7 +58,6 @@ export default class Row extends React.PureComponent {
             columns,
             columnKeySelector,
             className: classNameFromProps,
-            containerScrollLeft,
             startIndex,
             endIndex,
             startVirtualContainerWidth,

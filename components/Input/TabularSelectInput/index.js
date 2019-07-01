@@ -4,7 +4,7 @@ import { listToMap, isFalsy, _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import DangerButton from '../../Action/Button/DangerButton';
-import MultiSelectInput from '../../Input/MultiSelectInput';
+import MultiSelectInput from '../MultiSelectInput';
 import Table from '../../View/Table';
 
 import HintAndError from '../HintAndError';
@@ -120,6 +120,7 @@ const defaultProps = {
 
 class TabularSelectInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -154,8 +155,8 @@ class TabularSelectInput extends React.PureComponent {
         }
 
         if (
-            nextProps.blackList !== this.props.blackList ||
-            nextProps.options !== this.props.options
+            nextProps.blackList !== this.props.blackList
+            || nextProps.options !== this.props.options
         ) {
             const validOptions = this.getValidOptions(
                 nextProps.options,
@@ -333,10 +334,10 @@ class TabularSelectInput extends React.PureComponent {
             hint,
             showHintAndError,
             disabled,
-            onChange, // eslint-disable-line no-unused-vars
-            value, // eslint-disable-line no-unused-vars
-            options, // eslint-disable-line no-unused-vars
-            className, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            value, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            options, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 
@@ -348,7 +349,7 @@ class TabularSelectInput extends React.PureComponent {
         } = this.state;
 
         return (
-            <div className={this.getClassName()} >
+            <div className={this.getClassName()}>
                 <MultiSelectInput
                     className={styles.select}
                     value={selectedOptionsKeys}

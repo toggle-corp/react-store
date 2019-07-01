@@ -29,6 +29,7 @@ export default (WrappedComponent) => {
 
     const ComplementedComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {
@@ -54,9 +55,9 @@ export default (WrappedComponent) => {
                 keySelector: newKeySelector,
             } = nextProps;
             if (
-                oldOptions !== newOptions ||
-                oldValue !== newValue ||
-                oldKeySelector !== newKeySelector
+                oldOptions !== newOptions
+                || oldValue !== newValue
+                || oldKeySelector !== newKeySelector
             ) {
                 this.complementedValue = complement(newValue, newOptions, newKeySelector);
             }
@@ -74,8 +75,8 @@ export default (WrappedComponent) => {
 
         render() {
             const {
-                value, // eslint-disable-line no-unused-vars
-                onChange, // eslint-disable-line no-unused-vars
+                value, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
                 ...otherProps
             } = this.props;
 

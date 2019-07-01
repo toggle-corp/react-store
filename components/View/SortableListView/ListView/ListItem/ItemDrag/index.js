@@ -10,7 +10,7 @@ const propTypes = {
     dataIndex: PropTypes.number.isRequired,
     dataKey: PropTypes.string.isRequired,
 
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
 
     dragIcon: PropTypes.string,
     dragHandleModifier: PropTypes.func,
@@ -25,6 +25,7 @@ const defaultProps = {
 @SortableHandle
 export default class ItemDrag extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

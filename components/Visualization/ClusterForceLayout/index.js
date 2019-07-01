@@ -116,6 +116,7 @@ const defaultProps = {
  */
 class ClusterForceLayout extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -126,11 +127,14 @@ class ClusterForceLayout extends PureComponent {
     }
 
     componentDidMount() {
+        const { data } = this.props;
         this.drawChart();
-        this.updateData(this.props.data);
+        this.updateData(data);
     }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
+        const { data } = this.props;
+        if (nextProps.data !== data) {
             this.updateData(nextProps.data);
         }
     }
@@ -139,9 +143,9 @@ class ClusterForceLayout extends PureComponent {
         this.redrawChart();
     }
 
-
     onMouseOver = (d) => {
-        this.props.onHover(d);
+        const { onHover } = this.props;
+        onHover(d);
         select(this.style)
             .style('display', 'block');
     }
@@ -231,14 +235,13 @@ class ClusterForceLayout extends PureComponent {
                 id: idSelector(node),
                 radius,
                 group,
-                x: (Math.cos((group / noOfClusters) * 2 * Math.PI) * 200) +
-                      (width / 2) + Math.random(),
-                y: (Math.sin((group / noOfClusters) * 2 * Math.PI) * 200) +
-                      (height / 2) + Math.random(),
+                x: (Math.cos((group / noOfClusters) * 2 * Math.PI) * 200)
+                    + (width / 2) + Math.random(),
+                y: (Math.sin((group / noOfClusters) * 2 * Math.PI) * 200)
+                    + (height / 2) + Math.random(),
             };
             const maxElementofGroup = clusters.find(cluster => cluster.group === group);
-            if (!maxElementofGroup ||
-                (radius > maxElementofGroup.radius)) {
+            if (!maxElementofGroup || (radius > maxElementofGroup.radius)) {
                 const index = clusters.findIndex(cluster => cluster.group === group);
                 if (index === -1) {
                     clusters.push(element);

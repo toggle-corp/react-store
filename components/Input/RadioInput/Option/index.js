@@ -24,6 +24,7 @@ const defaultProps = {
 
 export default class Option extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

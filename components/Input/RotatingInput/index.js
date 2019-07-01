@@ -52,6 +52,7 @@ const emptyObject = {};
 
 class RotatingInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleButtonClick = () => {

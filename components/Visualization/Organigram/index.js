@@ -85,7 +85,6 @@ const defaultProps = {
     data: [],
     value: undefined,
     childrenSelector: d => d.children,
-    labelSelector: d => d.name,
     onSelection: () => {},
     nodeSize: [150, 300],
     disabled: false,
@@ -107,12 +106,14 @@ const rectWidth = 30;
  */
 class Organigram extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
         Object.assign(this, { x: 0, y: 0, k: 1 });
     }
+
     state = {
         selected: this.props.value,
     };
@@ -122,7 +123,8 @@ class Organigram extends PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        const { value } = this.props;
+        if (value !== nextProps.value) {
             this.setState({
                 selected: nextProps.value,
             });

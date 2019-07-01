@@ -66,7 +66,7 @@ export default class LoadingAnimation extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            delay, // eslint-disable-line no-unused-vars
+            delay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             message,
             spinnerClassName,
             ...otherProps

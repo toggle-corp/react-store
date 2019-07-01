@@ -36,6 +36,7 @@ const defaultProps = {
  */
 export default class FormattedDate extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static formatDate = (date, mode) => (
@@ -51,7 +52,8 @@ export default class FormattedDate extends React.PureComponent {
                             {e.value}
                         </span>
                     );
-                } else if (e.type === 'time') {
+                }
+                if (e.type === 'time') {
                     return (
                         <span
                             className="time"

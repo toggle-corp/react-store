@@ -30,6 +30,7 @@ const defaultProps = {
 
 export default class DayPicker extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static monthNames = [
@@ -44,9 +45,9 @@ export default class DayPicker extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (
-            this.props.year !== nextProps.year ||
-            this.props.month !== nextProps.month ||
-            this.props.value !== nextProps.value
+            this.props.year !== nextProps.year
+            || this.props.month !== nextProps.month
+            || this.props.value !== nextProps.value
         ) {
             this.createDays(nextProps);
         }
@@ -195,7 +196,9 @@ export default class DayPicker extends React.PureComponent {
                         onClick={onMonthClick}
                         transparent
                     >
-                        { monthName }, { year}
+                        { monthName }
+                        ,
+                        { year}
                     </Button>
                     <Button
                         className={styles.right}

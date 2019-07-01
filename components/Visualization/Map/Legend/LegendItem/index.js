@@ -27,6 +27,7 @@ const defaultProps = {
 
 export default class LegendItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {
@@ -64,7 +65,7 @@ export default class LegendItem extends React.PureComponent {
                             {innerText}
                         </span>
                     </div>
-                    <p className={_cs(styles.label, 'label')} >
+                    <p className={_cs(styles.label, 'label')}>
                         {label}
                     </p>
                 </div>

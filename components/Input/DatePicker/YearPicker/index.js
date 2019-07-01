@@ -23,6 +23,7 @@ const YEARS_PER_PAGE = 12;
 
 export default class YearPicker extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -51,11 +52,15 @@ export default class YearPicker extends React.PureComponent {
     }
 
     handlePrevious = () => {
-        this.setState({ startYear: this.state.startYear - YEARS_PER_PAGE });
+        this.setState(oldState => ({
+            startYear: oldState.startYear - YEARS_PER_PAGE,
+        }));
     }
 
     handleNext = () => {
-        this.setState({ startYear: this.state.startYear + YEARS_PER_PAGE });
+        this.setState(oldState => ({
+            startYear: oldState.startYear + YEARS_PER_PAGE,
+        }));
     }
 
     render() {
@@ -81,7 +86,9 @@ export default class YearPicker extends React.PureComponent {
                         className={styles.title}
                         transparent
                     >
-                        { startYear } - { endYear }
+                        { startYear }
+                        -
+                        { endYear }
                     </Button>
                     <Button
                         className={styles.right}

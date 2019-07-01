@@ -111,10 +111,12 @@ const defaultProps = {
  */
 class SimpleVerticalBarChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getRenderData = memoize((
-        data, height, scaleX, scaleY, labelSelector, valueSelector, margins) => {
+        data, height, scaleX, scaleY, labelSelector, valueSelector, margins,
+    ) => {
         const { left, top, bottom } = margins;
         const renderData = data.map((d) => {
             const label = labelSelector(d);
@@ -268,18 +270,16 @@ class SimpleVerticalBarChart extends PureComponent {
                     height={height + top + bottom}
                 >
                     <g className={_cs(styles.grid, 'grid')}>
-                        { showGrids &&
-                            axisLeftData.map((d, i) => (
-                                <line
-                                    key={`grid-${d.y}`}
-                                    className={_cs(styles.xGrid, 'x-grid')}
-                                    x1={left}
-                                    y1={d.y + 0.5}
-                                    x2={width + left}
-                                    y2={d.y + 0.5}
-                                />
-                            ))
-                        }
+                        { showGrids && axisLeftData.map(d => (
+                            <line
+                                key={`grid-${d.y}`}
+                                className={_cs(styles.xGrid, 'x-grid')}
+                                x1={left}
+                                y1={d.y + 0.5}
+                                x2={width + left}
+                                y2={d.y + 0.5}
+                            />
+                        ))}
                     </g>
                     <g className={_cs(styles.bars, 'bars')}>
                         {renderData.map(d => (
@@ -320,35 +320,33 @@ class SimpleVerticalBarChart extends PureComponent {
                                     x2={left + 0.5}
                                     y2={height + top}
                                 />
-                                { showTicks &&
-                                    axisLeftData.map((d, i) => (
-                                        <g
-                                            className={_cs(styles.ticks, 'ticks')}
-                                            key={`tick-${d.value}`}
-                                            transform={`translate(${d.x}, ${d.y})`}
+                                { showTicks && axisLeftData.map(d => (
+                                    <g
+                                        className={_cs(styles.ticks, 'ticks')}
+                                        key={`tick-${d.value}`}
+                                        transform={`translate(${d.x}, ${d.y})`}
+                                    >
+                                        <line
+                                            className={_cs(styles.line, 'line')}
+                                            x1={0}
+                                            y1={0.5}
+                                            x2={-5}
+                                            y2={0.5}
+                                        />
+                                        <text
+                                            className={_cs(styles.label, 'tick-label')}
+                                            y={0.5}
+                                            x={-6}
+                                            dy="0.32em"
                                         >
-                                            <line
-                                                className={_cs(styles.line, 'line')}
-                                                x1={0}
-                                                y1={0.5}
-                                                x2={-5}
-                                                y2={0.5}
-                                            />
-                                            <text
-                                                className={_cs(styles.label, 'tick-label')}
-                                                y={0.5}
-                                                x={-6}
-                                                dy="0.32em"
-                                            >
-                                                {Numeral.renderText({
-                                                    value: d.value,
-                                                    precision: 1,
-                                                    normal: true,
-                                                })}
-                                            </text>
-                                        </g>
-                                    ))
-                                }
+                                            {Numeral.renderText({
+                                                value: d.value,
+                                                precision: 1,
+                                                normal: true,
+                                            })}
+                                        </text>
+                                    </g>
+                                ))}
                             </g>
                         )}
                     </g>

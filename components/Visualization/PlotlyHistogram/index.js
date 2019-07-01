@@ -36,6 +36,7 @@ const emptyObject = {};
 
 class PlotlyHistogram extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getPlotData = memoize((data, markerColor, markerOpacity) => ([{

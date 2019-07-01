@@ -17,6 +17,7 @@ const defaultProps = {
 
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     renderHeader = () => {

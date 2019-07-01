@@ -82,6 +82,7 @@ const defaultProps = {
 
 export class NormalTextArea extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -168,6 +169,7 @@ export class NormalTextArea extends React.PureComponent {
             onBlur();
         }
     }
+
     render() {
         const {
             // skip prop injection
@@ -189,7 +191,7 @@ export class NormalTextArea extends React.PureComponent {
         const classNames = this.getClassName();
 
         return (
-            <div className={`${classNames} ${className}`} >
+            <div className={`${classNames} ${className}`}>
                 {
                     showLabel && (
                         <label

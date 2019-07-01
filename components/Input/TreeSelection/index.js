@@ -81,6 +81,7 @@ const setNodeSelection = (node, selected) => ({
 
 class NormalTreeSelection extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -93,9 +94,11 @@ class NormalTreeSelection extends React.PureComponent {
 
     // Toggle expand state of a node
     handleToggleExpand = (key) => {
-        const expanded = { ...this.state.expanded };
-        expanded[key] = !expanded[key];
-        this.setState({ expanded });
+        this.setState((oldState) => {
+            const expanded = { ...oldState.expanded };
+            expanded[key] = !expanded[key];
+            return { expanded };
+        });
     }
 
     // Handle toggling the state of checkbox including its children
@@ -166,9 +169,9 @@ class NormalTreeSelection extends React.PureComponent {
         );
 
         const iconName = (
-            (selected === 'fuzzy' && 'checkboxBlank') ||
-            (selected && 'checkbox') ||
-            'checkboxOutlineBlank'
+            (selected === 'fuzzy' && 'checkboxBlank')
+            || (selected && 'checkbox')
+            || 'checkboxOutlineBlank'
         );
         const isExpanded = this.state.expanded[key];
 
@@ -237,5 +240,6 @@ class NormalTreeSelection extends React.PureComponent {
 const TreeSelection = ExtraRoot(NormalTreeSelection);
 export default FaramInputElement(TreeSelection);
 export const SeparatedTreeSelection = FaramInputElement(SeparateDataValue(TreeSelection));
-export const TreeSelectionWithSelectors =
-    FaramInputElement(Select(SeparateDataValue(TreeSelection)));
+export const TreeSelectionWithSelectors = FaramInputElement(
+    Select(SeparateDataValue(TreeSelection)),
+);

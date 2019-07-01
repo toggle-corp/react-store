@@ -113,6 +113,7 @@ const defaultProps = {
  */
 class ForceDirectedGraph extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -126,8 +127,10 @@ class ForceDirectedGraph extends React.PureComponent {
         this.renderChart();
         this.updateData(this.props);
     }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
+        const { data } = this.props;
+        if (nextProps.data !== data) {
             this.updateData(nextProps);
         }
     }
@@ -136,7 +139,7 @@ class ForceDirectedGraph extends React.PureComponent {
         this.renderChart();
     }
 
-    updateData(props) {
+    updateData = (props) => {
         this.data = JSON.parse(JSON.stringify(props.data));
     }
 
@@ -156,6 +159,7 @@ class ForceDirectedGraph extends React.PureComponent {
             colorScheme,
             useVoronoi,
             margins,
+            distance,
         } = this.props;
         const { data } = this;
 
@@ -183,7 +187,7 @@ class ForceDirectedGraph extends React.PureComponent {
 
         const radius = Math.min(width, height) / 2;
 
-        const distance = scaleLinear()
+        const separation = scaleLinear()
             .domain([1, 10])
             .range([1, radius / 2]);
 
@@ -216,7 +220,7 @@ class ForceDirectedGraph extends React.PureComponent {
         }
 
         const simulation = forceSimulation()
-            .force('link', forceLink().id(d => idSelector(d)).distance(distance(this.props.distance)))
+            .force('link', forceLink().id(d => idSelector(d)).distance(separation(distance)))
             .force('charge', forceManyBody())
             .force('center', forceCenter(width / 2, height / 2));
 
@@ -357,6 +361,7 @@ class ForceDirectedGraph extends React.PureComponent {
             .force('link')
             .links(data.links);
     }
+
     render() {
         const {
             className,

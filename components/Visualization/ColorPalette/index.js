@@ -17,6 +17,7 @@ const defaultProps = {
 
 export default class ColorPalette extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {
@@ -28,20 +29,19 @@ export default class ColorPalette extends PureComponent {
         } = this.props;
 
         const float = (align === 'horizontal' ? 'left' : '');
-        const pallete = colorScheme.map(color =>
-            (
-                <span
-                    key={`pallete-${color}`}
-                    className="swatch"
-                    style={{
-                        backgroundColor: color,
-                        display: 'block',
-                        width: `${width}px`,
-                        height: `${height}px`,
-                        float: `${float}`,
-                    }}
-                />
-            ));
+        const pallete = colorScheme.map(color => (
+            <span
+                key={`pallete-${color}`}
+                className="swatch"
+                style={{
+                    backgroundColor: color,
+                    display: 'block',
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    float: `${float}`,
+                }}
+            />
+        ));
         return (
             <div>
                 { pallete }

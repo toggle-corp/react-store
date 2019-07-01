@@ -34,6 +34,7 @@ const defaultProps = {
 // NOTE: Intentionally opted out of PureComponent
 class Bundle extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -82,8 +83,8 @@ class Bundle extends React.Component {
 
     render() {
         const {
-            load, // eslint-disable-line no-unused-vars
-            decorator, // eslint-disable-line no-unused-vars
+            load, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            decorator, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             errorText,
             loadingText,
             renderer: Loading,

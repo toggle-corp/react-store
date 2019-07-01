@@ -26,6 +26,7 @@ const defaultProps = {
 
 class HiddenInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     // NOTE: noop

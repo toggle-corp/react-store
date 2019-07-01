@@ -56,6 +56,7 @@ const defaultProps = {
 
 export default class ScrollTabs extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -278,11 +279,11 @@ export default class ScrollTabs extends React.Component {
                     ref={this.tabsContainerRef}
                     className={styles.tabsContainer}
                 >
-                    { showBeforeTabs &&
+                    { showBeforeTabs && (
                         <div className={styles.nonBlank}>
                             { children }
                         </div>
-                    }
+                    )}
                     <List
                         data={tabList}
                         modifier={this.renderTab}

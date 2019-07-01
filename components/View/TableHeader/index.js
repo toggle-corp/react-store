@@ -23,6 +23,7 @@ const defaultProps = {
 
 export default class TableHeader extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {
@@ -45,19 +46,19 @@ export default class TableHeader extends React.PureComponent {
         );
 
         const iconName = (
-            (sortOrder === 'asc' && 'sortAscending') ||
-            (sortOrder === 'dsc' && 'sortDescending') ||
-            'sort'
+            (sortOrder === 'asc' && 'sortAscending')
+            || (sortOrder === 'dsc' && 'sortDescending')
+            || 'sort'
         );
 
         return (
             <div className={divClassName}>
-                { sortable &&
+                { sortable && (
                     <Icon
                         name={iconName}
                         className={iconClassName}
                     />
-                }
+                )}
                 {label}
             </div>
         );

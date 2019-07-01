@@ -49,6 +49,7 @@ const itemKeySelector = d => d;
 
 class SimpleListInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getOptionsMap = memoize((options, keySelector) => (

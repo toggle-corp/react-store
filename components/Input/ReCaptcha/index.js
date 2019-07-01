@@ -45,6 +45,7 @@ const defaultProps = {
 
 class ReCaptcha extends Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static isReady = () => (window.grecaptcha && window.grecaptcha.render)

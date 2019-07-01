@@ -64,6 +64,7 @@ const defaultProps = {
  */
 class PieChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

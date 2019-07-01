@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
- import { select } from 'd3-selection';
+import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
 import SvgSaver from 'svgsaver';
@@ -110,6 +110,7 @@ const defaultProps = {
   */
 class VerticalBarChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

@@ -24,6 +24,7 @@ const defaultProps = {
 
 export default class DigitalInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static padAndTrim = (value, padLength) => {
@@ -39,11 +40,11 @@ export default class DigitalInput extends React.PureComponent {
         // However, when value is changed from arrows in number input,
         // this algorithm cannot differentiate between the two.
         if (
-            isFalsy(newValue, ['']) ||
-            (
-                oldValue !== undefined &&
-                oldValue.length > newValue.length &&
-                newValue.match(/^0+$/)
+            isFalsy(newValue, [''])
+            || (
+                oldValue !== undefined
+                && oldValue.length > newValue.length
+                && newValue.match(/^0+$/)
             )
         ) {
             return '';
@@ -69,8 +70,8 @@ export default class DigitalInput extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            onChange, // eslint-disable-line no-unused-vars
-            padLength, // eslint-disable-line no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            padLength, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

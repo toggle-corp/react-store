@@ -88,6 +88,7 @@ const defaultProps = {
  */
 class DonutChart extends PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -120,11 +121,10 @@ class DonutChart extends PureComponent {
         svgsaver.asSvg(svg.node(), `${getStandardFilename('donutchart', 'graph')}.svg`);
     }
 
-    arch = (padRadius, innerRadius) =>
-        arc().padRadius(padRadius).innerRadius(innerRadius);
+    arch = (padRadius, innerRadius) => arc().padRadius(padRadius).innerRadius(innerRadius);
 
-    textArch = (outerRadius, innerRadius) =>
-        arc().outerRadius(outerRadius).innerRadius(innerRadius);
+    textArch = (outerRadius, innerRadius) => arc()
+        .outerRadius(outerRadius).innerRadius(innerRadius);
 
     arcTween = (element, arcs, newRadius, delay) => (
         select(element)
@@ -334,6 +334,7 @@ class DonutChart extends PureComponent {
             data,
             sideLengthRatio,
             hideLabel,
+            colorScheme,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -353,7 +354,7 @@ class DonutChart extends PureComponent {
         const outerRadius = radius * 0.92;
         const innerRadius = outerRadius - (outerRadius * sideLengthRatio);
 
-        const colors = scaleOrdinal().range(this.props.colorScheme);
+        const colors = scaleOrdinal().range(colorScheme);
         const pies = pie()
             .sort(null)
             .value(valueSelector);

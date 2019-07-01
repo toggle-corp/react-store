@@ -60,6 +60,7 @@ const defaultProps = {
 
 class RawFileInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static isValidFile = (name, mimeType, acceptString) => {
@@ -123,8 +124,8 @@ class RawFileInput extends React.PureComponent {
             hint,
             showHintAndError,
             value,
-            changeDelay, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
+            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

@@ -18,7 +18,7 @@ const propTypes = {
     rowClassName: PropTypes.string,
 
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     keySelector: PropTypes.func.isRequired,
     settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     emptyComponent: PropTypes.func,
@@ -84,6 +84,7 @@ const emptyObject = {};
 
 export default class Taebul extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static columnKeySelector = column => column.key;

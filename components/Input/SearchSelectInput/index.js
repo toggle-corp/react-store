@@ -71,7 +71,6 @@ const defaultProps = {
     keySelector: d => d.key,
     label: '',
     labelSelector: d => d.label,
-    onChange: undefined,
     optionLabelSelector: undefined,
     options: emptyList,
     optionsClassName: '',
@@ -87,6 +86,7 @@ const defaultProps = {
 
 class SearchSelectInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -367,14 +367,14 @@ class SearchSelectInput extends React.PureComponent {
                 ref={this.containerRef}
                 title={title}
             >
-                { showLabel &&
+                { showLabel && (
                     <Label
                         text={label}
                         error={!!error}
                         disabled={disabled}
                         active={inputInFocus || showOptionsPopup}
                     />
-                }
+                )}
                 <div className={inputClassName}>
                     <RawKeyInput
                         className={styles.input}
@@ -399,7 +399,7 @@ class SearchSelectInput extends React.PureComponent {
                         onOptionSelect={this.handleOptionSelect}
                     />
                     <div className={actionsClassName}>
-                        { showClearButton &&
+                        { showClearButton && (
                             <DangerButton
                                 tabIndex="-1"
                                 iconName="close"
@@ -407,15 +407,15 @@ class SearchSelectInput extends React.PureComponent {
                                 onClick={this.handleClearButtonClick}
                                 transparent
                             />
-                        }
+                        )}
                     </div>
                 </div>
-                { showHintAndError &&
+                { showHintAndError && (
                     <HintAndError
                         error={error}
                         hint={hint}
                     />
-                }
+                )}
                 <Options
                     className={optionsClassName}
                     labelSelector={labelSelector}

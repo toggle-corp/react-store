@@ -95,6 +95,7 @@ const defaultProps = {
  */
 class TimeSeries extends React.PureComponent {
     static defaultProps = defaultProps;
+
     static propTypes = propTypes;
 
     constructor(props) {
@@ -191,8 +192,18 @@ class TimeSeries extends React.PureComponent {
     setTooltip = (tooltip) => { this.tooltip = tooltip; }
 
     updateRender() {
-        const { right, top, left, bottom } = this.props.margins;
-        const { height, width } = this.props.boundingClientRect;
+        const {
+            margins: {
+                right,
+                top,
+                left,
+                bottom,
+            },
+            boundingClientRect: {
+                height,
+                width,
+            },
+        } = this.props;
 
         if (!width) {
             return;
@@ -294,19 +305,16 @@ class TimeSeries extends React.PureComponent {
             .attr('class', 'overlay')
             .attr('width', width)
             .attr('height', height)
-            .on('mouseenter', () =>
-                this.onMouseEnter(overLayLine, overLayCircle))
-            .on('mouseleave', () =>
-                this.onMouseLeave(overLayLine, overLayCircle))
-            .on('mousemove', () =>
-                this.onMouseMove(overLay, overLayLine, overLayCircle));
+            .on('mouseenter', () => this.onMouseEnter(overLayLine, overLayCircle))
+            .on('mouseleave', () => this.onMouseLeave(overLayLine, overLayCircle))
+            .on('mousemove', () => this.onMouseMove(overLay, overLayLine, overLayCircle));
     }
 
     render() {
         const { className } = this.props;
 
         return (
-            <div className={`${className} ${styles.timeSeries}`} >
+            <div className={`${className} ${styles.timeSeries}`}>
                 <svg ref={(svg) => { this.svg = svg; }} />
                 <Tooltip setTooltipApi={this.setTooltip} />
             </div>

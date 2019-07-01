@@ -90,6 +90,7 @@ const defaultProps = {
  */
 class CorrelationMatrix extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
