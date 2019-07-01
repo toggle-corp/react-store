@@ -305,18 +305,16 @@ class SimpleHorizontalBarChart extends PureComponent {
                         height={barsHeight}
                     >
                         <g className={_cs(styles.grid, 'grid')}>
-                            { showGrids
-                                && axisBottomData.map(d => (
-                                    <line
-                                        key={`grid-${d.x}`}
-                                        className={_cs(styles.yGrid, 'y-grid')}
-                                        x1={d.x + 0.5}
-                                        y1={top}
-                                        x2={d.x + 0.5}
-                                        y2={barsHeight}
-                                    />
-                                ))
-                            }
+                            { showGrids && axisBottomData.map(d => (
+                                <line
+                                    key={`grid-${d.x}`}
+                                    className={_cs(styles.yGrid, 'y-grid')}
+                                    x1={d.x + 0.5}
+                                    y1={top}
+                                    x2={d.x + 0.5}
+                                    y2={barsHeight}
+                                />
+                            ))}
                         </g>
                         <g className={_cs(styles.bars, 'bars')}>
                             { renderData.map(d => (
@@ -383,35 +381,33 @@ class SimpleHorizontalBarChart extends PureComponent {
                                     x2={width}
                                     y2={0.5}
                                 />
-                                { showTicks
-                                    && axisBottomData.map(d => (
-                                        <g
-                                            className={_cs(styles.tick, 'x-axis-tick')}
-                                            key={`tick-${d.value}`}
-                                            transform={`translate(${d.x}, ${d.y})`}
+                                { showTicks && axisBottomData.map(d => (
+                                    <g
+                                        className={_cs(styles.tick, 'x-axis-tick')}
+                                        key={`tick-${d.value}`}
+                                        transform={`translate(${d.x}, ${d.y})`}
+                                    >
+                                        <line
+                                            className={_cs(styles.dash, 'x-axis-tick-dash')}
+                                            x1={0.5}
+                                            y1={5}
+                                            x2={0.5}
+                                            y2={0}
+                                        />
+                                        <text
+                                            className={_cs(styles.label, 'x-axis-tick-label')}
+                                            y={6}
+                                            x={0.5}
+                                            dy="0.71em"
                                         >
-                                            <line
-                                                className={_cs(styles.dash, 'x-axis-tick-dash')}
-                                                x1={0.5}
-                                                y1={5}
-                                                x2={0.5}
-                                                y2={0}
-                                            />
-                                            <text
-                                                className={_cs(styles.label, 'x-axis-tick-label')}
-                                                y={6}
-                                                x={0.5}
-                                                dy="0.71em"
-                                            >
-                                                {Numeral.renderText({
-                                                    value: d.value,
-                                                    precision: 1,
-                                                    normal: true,
-                                                })}
-                                            </text>
-                                        </g>
-                                    ))
-                                }
+                                            {Numeral.renderText({
+                                                value: d.value,
+                                                precision: 1,
+                                                normal: true,
+                                            })}
+                                        </text>
+                                    </g>
+                                ))}
                             </g>
                         </svg>
                     </div>

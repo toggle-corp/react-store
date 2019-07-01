@@ -60,6 +60,7 @@ const defaultProps = {
 
 export class NormalListSelection extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getClassName = () => {

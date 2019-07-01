@@ -55,6 +55,7 @@ const defaultProps = {
 
 class Checkbox extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

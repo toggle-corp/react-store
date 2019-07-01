@@ -32,4 +32,3 @@ export const getSortedItems = (data = [], layoutSelector) => (
         return distA - distB;
     })
 );
-

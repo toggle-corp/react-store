@@ -93,12 +93,11 @@ export default class Segment extends PureComponent {
                     className={classNames}
                     style={style}
                 >
-                    {!hideLabel
-                     && (
-                         <div className={styles.value}>
-                             {value}
-                         </div>
-                     )}
+                    {!hideLabel && (
+                        <div className={styles.value}>
+                            {value}
+                        </div>
+                    )}
                 </div>
             </Tooltip>
         );

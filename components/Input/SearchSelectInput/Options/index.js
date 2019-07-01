@@ -43,6 +43,7 @@ const defaultProps = {
 
 export default class Options extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     renderOption = (_, option) => {

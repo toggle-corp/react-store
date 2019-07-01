@@ -53,6 +53,7 @@ const defaultProps = {
 
 class RadioInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     // XXX: use isTruthy
@@ -74,8 +75,8 @@ class RadioInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (
-            this.props.value !== nextProps.value ||
-            this.props.options !== nextProps.options
+            this.props.value !== nextProps.value
+            || this.props.options !== nextProps.options
         ) {
             const selectedOption = RadioInput.getSelectedOption(
                 nextProps.options,

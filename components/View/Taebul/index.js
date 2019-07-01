@@ -84,6 +84,7 @@ const emptyObject = {};
 
 export default class Taebul extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static columnKeySelector = column => column.key;

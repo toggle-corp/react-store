@@ -80,13 +80,14 @@ const isValidTimeString = (value, separator) => {
         return false;
     }
     return !(
-        (+h < MIN_HOUR || +h > MAX_HOUR) ||
-        (+m < MIN_MINUTE || +m > MAX_MINUTE)
+        (+h < MIN_HOUR || +h > MAX_HOUR)
+        || (+m < MIN_MINUTE || +m > MAX_MINUTE)
     );
 };
 
 class TimeInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

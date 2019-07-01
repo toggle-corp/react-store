@@ -44,6 +44,7 @@ const defaultProps = {
 // FIXME: deprecate this over ScrollTabs
 export default class FixedTabs extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

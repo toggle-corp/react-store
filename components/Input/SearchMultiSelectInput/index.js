@@ -92,6 +92,7 @@ export const defaultProps = {
 
 class SearchMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -340,8 +341,8 @@ class SearchMultiSelectInput extends React.PureComponent {
 
         const inputTitle = this.findPlaceholderValue(options, labelSelector, keySelector, value);
         const finalPlaceholder = (
-            inputTitle ||
-            placeholder
+            inputTitle
+            || placeholder
         );
 
         const finalSearchValue = searchValue || '';
@@ -401,14 +402,14 @@ class SearchMultiSelectInput extends React.PureComponent {
                 ref={this.containerRef}
                 title={title}
             >
-                { showLabel &&
+                { showLabel && (
                     <Label
                         text={label}
                         error={!!error}
                         disabled={disabled}
                         active={inputInFocus || showOptionsPopup}
                     />
-                }
+                )}
                 <div className={inputAndActionClassName}>
                     <RawKeyInput
                         className={styles.input}
@@ -434,7 +435,7 @@ class SearchMultiSelectInput extends React.PureComponent {
                         onOptionSelect={this.handleOptionSelect}
                     />
                     <div className={actionsClassName}>
-                        { showSelectAllButton &&
+                        { showSelectAllButton && (
                             <Button
                                 transparent
                                 tabIndex="-1"
@@ -445,8 +446,8 @@ class SearchMultiSelectInput extends React.PureComponent {
                                 type="button"
                                 iconName="checkAll"
                             />
-                        }
-                        { showClearButton &&
+                        )}
+                        { showClearButton && (
                             <DangerButton
                                 transparent
                                 tabIndex="-1"
@@ -456,15 +457,15 @@ class SearchMultiSelectInput extends React.PureComponent {
                                 disabled={disabled || readOnly}
                                 iconName="close"
                             />
-                        }
+                        )}
                     </div>
                 </div>
-                { showHintAndError &&
+                { showHintAndError && (
                     <HintAndError
                         error={error}
                         hint={hint}
                     />
-                }
+                )}
                 <Options
                     activeKeys={value}
                     data={filteredOptions}

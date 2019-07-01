@@ -124,6 +124,7 @@ const defaultProps = {
 
 export default class Table extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -212,7 +213,8 @@ export default class Table extends React.PureComponent {
         if (clickedHeader === undefined) {
             console.error(`Header with key '${key}' not found.`);
             return;
-        } else if (!clickedHeader.sortable) {
+        }
+        if (!clickedHeader.sortable) {
             console.warn(`Header with key '${key}' is not sortable.`);
             return;
         }

@@ -20,6 +20,7 @@ const emptyText = '-';
 
 export default class InputHintAndError extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

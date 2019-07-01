@@ -57,6 +57,7 @@ const defaultProps = {
 
 export default class Row extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getClassName = (hoverable, highlighted, className) => {

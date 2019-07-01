@@ -14,6 +14,7 @@ const defaultProps = {
 
 export default class ExpandedRow extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

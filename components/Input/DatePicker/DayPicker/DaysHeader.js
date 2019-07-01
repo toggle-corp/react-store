@@ -12,6 +12,7 @@ const defaultProps = {
 
 export default class DaysHeader extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static dayNames = [

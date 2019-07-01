@@ -86,6 +86,7 @@ export const defaultProps = {
 
 export class NormalMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -317,8 +318,8 @@ export class NormalMultiSelectInput extends React.PureComponent {
 
         const inputTitle = this.findPlaceholderValue(options, labelSelector, keySelector, value);
         const finalPlaceholder = (
-            inputTitle ||
-            placeholder
+            inputTitle
+            || placeholder
         );
 
         const finalSearchValue = searchValue || '';
@@ -381,14 +382,14 @@ export class NormalMultiSelectInput extends React.PureComponent {
                 ref={this.containerRef}
                 title={title}
             >
-                { showLabel &&
+                { showLabel && (
                     <Label
                         text={label}
                         error={!!error}
                         disabled={disabled}
                         active={inputInFocus || showOptionsPopup}
                     />
-                }
+                )}
                 <div className={inputAndActionClassName}>
                     <RawKeyInput
                         className={styles.input}
@@ -414,7 +415,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                         onOptionSelect={this.handleOptionSelect}
                     />
                     <div className={actionsClassName}>
-                        { showSelectAllButton &&
+                        { showSelectAllButton && (
                             <Button
                                 transparent
                                 tabIndex="-1"
@@ -425,8 +426,8 @@ export class NormalMultiSelectInput extends React.PureComponent {
                                 type="button"
                                 iconName="checkAll"
                             />
-                        }
-                        { showClearButton &&
+                        )}
+                        { showClearButton && (
                             <DangerButton
                                 transparent
                                 tabIndex="-1"
@@ -436,7 +437,7 @@ export class NormalMultiSelectInput extends React.PureComponent {
                                 disabled={disabled || readOnly}
                                 iconName="close"
                             />
-                        }
+                        )}
                         <Button
                             tabIndex="-1"
                             iconName="arrowDropdown"
@@ -447,12 +448,12 @@ export class NormalMultiSelectInput extends React.PureComponent {
                         />
                     </div>
                 </div>
-                { showHintAndError &&
+                { showHintAndError && (
                     <HintAndError
                         error={error}
                         hint={hint}
                     />
-                }
+                )}
                 <Options
                     activeKeys={value}
                     data={filteredOptions}

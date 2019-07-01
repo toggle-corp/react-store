@@ -23,6 +23,7 @@ const defaultProps = {
 
 export default class MonthPicker extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static monthNames = [

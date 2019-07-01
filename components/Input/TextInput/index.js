@@ -50,6 +50,7 @@ const defaultProps = {
 
 class TextInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

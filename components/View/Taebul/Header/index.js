@@ -18,6 +18,7 @@ const defaultProps = {
 // eslint-disable-next-line
 export default class Header extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

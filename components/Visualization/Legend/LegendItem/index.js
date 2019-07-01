@@ -32,26 +32,23 @@ export default class LegendItem extends React.PureComponent {
 
         return (
             <div className={className}>
-                { icon
-                    ? (
-                        <div
-                            className={styles.icon}
-                            style={{
-                                color,
-                            }}
-                        >
-                            { icon }
-                        </div>
-                    )
-                    : (
-                        <div
-                            className={`${styles.color} ${symbolClassName}`}
-                            style={{
-                                backgroundColor: color,
-                            }}
-                        />
-                    )
-                }
+                { icon ? (
+                    <div
+                        className={styles.icon}
+                        style={{
+                            color,
+                        }}
+                    >
+                        { icon }
+                    </div>
+                ) : (
+                    <div
+                        className={`${styles.color} ${symbolClassName}`}
+                        style={{
+                            backgroundColor: color,
+                        }}
+                    />
+                )}
                 <div className={styles.label}>
                     { label }
                 </div>

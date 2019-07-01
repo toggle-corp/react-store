@@ -34,6 +34,7 @@ const ActionButton = p => (
 
 export default class Image extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

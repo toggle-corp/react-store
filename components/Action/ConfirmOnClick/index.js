@@ -34,6 +34,7 @@ const defaultProps = {
 const ConfirmOnClick = (WrappedComponent) => {
     const ConfirmComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {
@@ -111,7 +112,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                         onClick={this.handleModalOpen}
                         {...otherProps}
                     />
-                    { showConfirm &&
+                    { showConfirm && (
                         <Confirm
                             show
                             disabled={confirmDisabled}
@@ -119,7 +120,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                             title={confirmationTitle}
                             autoFocus={!hasChallenge}
                         >
-                            <div className={styles.confirmContent} >
+                            <div className={styles.confirmContent}>
                                 {
                                     isConfirmationMessageNode
                                         ? confirmationMessage
@@ -129,9 +130,8 @@ const ConfirmOnClick = (WrappedComponent) => {
                                             </p>
                                         )
                                 }
-                                {
-                                    hasChallenge &&
-                                    <div className={styles.challengeForm} >
+                                { hasChallenge && (
+                                    <div className={styles.challengeForm}>
                                         <span>{challengeLabel}</span>
                                         <TextInput
                                             className={styles.challengeText}
@@ -141,10 +141,10 @@ const ConfirmOnClick = (WrappedComponent) => {
                                             autoFocus
                                         />
                                     </div>
-                                }
+                                )}
                             </div>
                         </Confirm>
-                    }
+                    )}
                 </Fragment>
             );
         }

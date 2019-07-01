@@ -17,6 +17,7 @@ const defaultProps = {
 export default (WrappedComponent) => {
     const DelayedComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {

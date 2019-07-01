@@ -28,6 +28,7 @@ const defaultProps = {
 
 export default class RemovableListItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleRemoveButtonClick = (e) => {

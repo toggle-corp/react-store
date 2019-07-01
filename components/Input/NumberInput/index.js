@@ -127,6 +127,7 @@ const getNumberAndSign = (value = '') => {
 
 export class NormalNumberInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

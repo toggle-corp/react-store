@@ -130,7 +130,11 @@ class BarChart extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { data, barPadding } = props;
+        const {
+            data,
+            barPadding,
+        } = props;
+
         this.state = { data };
 
         this.scaleX = scaleBand()
@@ -196,8 +200,16 @@ class BarChart extends React.PureComponent {
 
     updateRender() {
         const {
-            margins: { right, top, left, bottom },
-            boundingClientRect: { height, width },
+            margins: {
+                right,
+                top,
+                left,
+                bottom,
+            },
+            boundingClientRect: {
+                height,
+                width,
+            },
         } = this.props;
 
         if (!width) {

@@ -26,6 +26,7 @@ const emptyText = '-';
 
 export default class InputLabel extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

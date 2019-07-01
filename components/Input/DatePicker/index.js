@@ -24,6 +24,7 @@ const defaultProps = {
 
 class DatePicker extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

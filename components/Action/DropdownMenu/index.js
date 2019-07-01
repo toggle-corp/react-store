@@ -59,6 +59,7 @@ const defaultProps = {
 
 export default class DropdownMenu extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -158,22 +159,22 @@ export default class DropdownMenu extends React.PureComponent {
                 onClick={this.handleDropdownClick}
                 className={className}
             >
-                { iconName &&
+                { iconName && (
                     <Icon
                         className={leftIconClassName}
                         name={iconName}
                     />
-                }
+                )}
                 { leftComponent }
                 <span className={titleClassName}>
                     {title}
                 </span>
-                { !hideDropdownIcon &&
+                { !hideDropdownIcon && (
                     <Icon
                         className={iconClassName}
                         name={dropdownIcon}
                     />
-                }
+                )}
             </button>
         );
     }
@@ -224,9 +225,9 @@ export default class DropdownMenu extends React.PureComponent {
                 className={className}
             >
                 <DropdownButton />
-                { showDropdown &&
+                { showDropdown && (
                     <DropdownContainer />
-                }
+                )}
             </div>
         );
     }

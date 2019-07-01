@@ -25,6 +25,7 @@ const defaultProps = {
 
 export default class Header extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

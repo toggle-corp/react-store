@@ -34,6 +34,7 @@ const defaultProps = {
 @SortableElement
 export default class ListItem extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

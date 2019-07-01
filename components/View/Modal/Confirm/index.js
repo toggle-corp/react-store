@@ -8,7 +8,7 @@ import ModalHeader from '../Header';
 import ModalBody from '../Body';
 import ModalFooter from '../Footer';
 
-import Modal from '../../Modal';
+import Modal from '..';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -40,6 +40,7 @@ const defaultProps = {
 
 export default class Confirm extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleOkButtonClick = () => {
@@ -83,15 +84,15 @@ export default class Confirm extends React.PureComponent {
                     { children }
                 </ModalBody>
                 <ModalFooter>
-                    {!hideCancel &&
+                    {!hideCancel && (
                         <Button
                             className={`cancel-button ${styles.cancelButton}`}
                             onClick={this.handleCancelButtonClick}
                             autoFocus={autoFocus}
                         >
-                            Cancel
+                          Cancel
                         </Button>
-                    }
+                    )}
                     <DangerButton
                         className={`ok-button ${styles.okButton}`}
                         onClick={this.handleOkButtonClick}

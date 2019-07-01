@@ -65,6 +65,7 @@ const defaultProps = {
 
 class ColorInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

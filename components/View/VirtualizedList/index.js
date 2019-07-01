@@ -14,6 +14,7 @@ const defaultProps = {
 
 export default class VirtualizedList extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getRenderData = memoize((data, startIndex, endIndex) => {

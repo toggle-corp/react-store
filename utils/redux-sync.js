@@ -29,8 +29,8 @@ export const createActionSyncMiddleware = (actionPrefixes, tabId) => () => next 
 
     // do not set to local storage
     if (
-        !actionPrefixes.find(containsPrefix) ||
-        (!isFalsy(senderId, ['']) && !isFalsy(resenderId, ['']))
+        !actionPrefixes.find(containsPrefix)
+        || (!isFalsy(senderId, ['']) && !isFalsy(resenderId, ['']))
     ) {
         return next(action);
     }

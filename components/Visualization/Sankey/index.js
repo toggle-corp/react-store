@@ -100,13 +100,13 @@ class Sankey extends PureComponent {
 
     static defaultProps = defaultProps;
 
-    dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
-
     constructor(props) {
         super(props);
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
+
+        this.dynamicFontSize = scaleLinear().range(this.props.fontSizeExtent);
     }
 
     componentDidMount() {

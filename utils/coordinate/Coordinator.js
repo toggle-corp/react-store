@@ -79,7 +79,8 @@ export default class Coordinator {
             // current session has already completed
             // console.log('Session has already completed');
             return;
-        } else if (this.queuedActors.length <= 0 && this.activeActors.length <= 0) {
+        }
+        if (this.queuedActors.length <= 0 && this.activeActors.length <= 0) {
             // session has completed
             console.log('Session has completed');
             this.inSession = false;
@@ -88,11 +89,13 @@ export default class Coordinator {
             }
             this.totalErrors = 0;
             return;
-        } else if (this.queuedActors.length <= 0) {
+        }
+        if (this.queuedActors.length <= 0) {
             // no queued actors left, but has active actors
             // console.log('No queued actors left');
             return;
-        } else if (this.activeActors.length >= this.maxActiveActors) {
+        }
+        if (this.activeActors.length >= this.maxActiveActors) {
             // over capacity
             // console.log('Update postponed until notified');
             return;

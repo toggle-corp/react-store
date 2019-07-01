@@ -35,6 +35,7 @@ const defaultProps = {
  */
 export default class PrivateRoute extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static defaultLocation = { pathname: '/' };

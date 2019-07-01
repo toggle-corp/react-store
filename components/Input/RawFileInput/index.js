@@ -60,6 +60,7 @@ const defaultProps = {
 
 class RawFileInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static isValidFile = (name, mimeType, acceptString) => {

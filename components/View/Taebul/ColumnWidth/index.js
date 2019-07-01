@@ -67,6 +67,7 @@ export default (WrappedComponent) => {
     // eslint-disable-next-line react/no-multi-comp
     const ColumnWidthComponent = class extends React.Component {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         static columnKeySelector = column => column.key;

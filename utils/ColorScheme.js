@@ -154,4 +154,3 @@ export const getCategoricalColorScheme = name => categoricalColors[name];
 export const getDivergingColorScheme = name => divergingColors[name];
 export const getSequentialColorScheme = name => sequentialColors[name];
 export const getCategoryForContinuousColorScheme = name => categoryForContinuousColors[name];
-

@@ -45,6 +45,7 @@ const defaultProps = {
 
 export default class FileInput extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static isValidFile = (name, mimeType, acceptString) => {
@@ -120,7 +121,7 @@ export default class FileInput extends React.PureComponent {
         const { files, preview } = this.state;
 
         return (
-            <div className={`file-input ${className} ${styles.fileInputWrapper}`} >
+            <div className={`file-input ${className} ${styles.fileInputWrapper}`}>
                 {
                     showPreview && (
                         <div className={`${styles.preview} image-input-preview`}>

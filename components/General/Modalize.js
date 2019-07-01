@@ -18,6 +18,7 @@ const defaultProps = {
 const modalize = (WrappedButtonComponent) => {
     const ModalComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {

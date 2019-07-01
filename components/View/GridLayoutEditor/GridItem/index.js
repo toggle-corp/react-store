@@ -45,6 +45,7 @@ const SCROLL_INTERVAL = 30;
 
 export default class GridItem extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -126,8 +127,10 @@ export default class GridItem extends React.PureComponent {
 
         const { current: container } = this.containerRef;
 
-        const { isLayoutValid, newPossibleLayout } =
-            layoutValidator(itemKey, newLayout, this.isResizing);
+        const {
+            isLayoutValid,
+            newPossibleLayout,
+        } = layoutValidator(itemKey, newLayout, this.isResizing);
 
         if (isLayoutValid) {
             this.isLayoutValid = true;
@@ -137,8 +140,9 @@ export default class GridItem extends React.PureComponent {
         }
 
         if (newPossibleLayout) {
-            const { isLayoutValid: isNewLayoutValid } =
-                layoutValidator(itemKey, newPossibleLayout, this.isResizing);
+            const {
+                isLayoutValid: isNewLayoutValid,
+            } = layoutValidator(itemKey, newPossibleLayout, this.isResizing);
 
             if (isNewLayoutValid) {
                 this.lastValidLayout = newPossibleLayout;

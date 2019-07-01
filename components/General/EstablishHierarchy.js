@@ -21,6 +21,7 @@ const defaultProps = {
 export default (WrappedComponent) => {
     const HierarchicalComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         static deflateList = (parent, list, ...otherProps) => (

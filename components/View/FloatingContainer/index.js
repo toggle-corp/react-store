@@ -57,6 +57,7 @@ const defaultProps = {
 /* Float with parent, onFocus and onBlur */
 export default class FloatingContainer extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

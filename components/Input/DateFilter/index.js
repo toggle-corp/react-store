@@ -106,6 +106,7 @@ const presets = {
 
 class DateFilter extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static defaultOptions = [

@@ -50,6 +50,7 @@ const getNewKey = (oldKey, increment, options, keySelector) => {
 export default (WrappedComponent) => {
     const ListenerComponent = class extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         componentWillReceiveProps(nextProps) {
@@ -65,9 +66,9 @@ export default (WrappedComponent) => {
             } = nextProps;
 
             if (
-                (!oldIsOptionsShown && newIsOptionsShown) ||
-                (oldKeySelector !== newKeySelector) ||
-                (oldOptions !== newOptions)
+                (!oldIsOptionsShown && newIsOptionsShown)
+                || (oldKeySelector !== newKeySelector)
+                || (oldOptions !== newOptions)
             ) {
                 const newFocusedKey = getNewKey(
                     undefined,

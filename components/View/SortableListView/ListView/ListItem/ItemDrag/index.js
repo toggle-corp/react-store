@@ -25,6 +25,7 @@ const defaultProps = {
 @SortableHandle
 export default class ItemDrag extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

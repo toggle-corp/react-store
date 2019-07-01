@@ -97,6 +97,7 @@ const defaultProps = {
 
 export default class RawTable extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static getSortedHeaders = (headers = []) => (

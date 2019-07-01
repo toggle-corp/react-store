@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import LeadColumnHeader from '../';
+import LeadColumnHeader from '..';
 
 describe('<LeadColumnHeader />', () => {
     const wrapper = shallow(
         <LeadColumnHeader
-            label={'Title'}
-            sortOrder={'asc'}
+            label="Title"
+            sortOrder="asc"
             sortable
         />,
     );

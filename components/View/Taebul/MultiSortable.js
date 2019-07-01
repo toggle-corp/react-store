@@ -28,6 +28,7 @@ export const ORDER = {
 export default (WrappedComponent) => {
     const MultiSortedComponent = class extends React.Component {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         sortData = memoize((data, columns = [], sortOrders = {}) => {

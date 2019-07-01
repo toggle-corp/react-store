@@ -22,6 +22,7 @@ const getHashFromBrowser = () => window.location.hash.substr(2);
 
 export default class HashManager extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static getNewHash = (tabs, defaultHash) => {
@@ -49,8 +50,9 @@ export default class HashManager extends React.PureComponent {
         const { useHash } = this.props;
 
         if (useHash) {
+            const { tabs, defaultHash } = this.props;
             window.addEventListener('hashchange', this.handleHashChange);
-            this.initializeHash(this.props.tabs, this.props.defaultHash);
+            this.initializeHash(tabs, defaultHash);
         }
     }
 

@@ -19,6 +19,7 @@ const defaultProps = {
 
 export class NormalSortableListView extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     handleSortEnd = ({ oldIndex, newIndex }) => {

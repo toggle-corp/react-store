@@ -85,6 +85,7 @@ const defaultProps = {
 
 export default class HighlightedText extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     createNestedSplitsMemoized = memoize((splits, startIndexSelector, endIndexSelector) => (

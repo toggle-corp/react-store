@@ -79,6 +79,7 @@ class Side {
 
 export default class Pager extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     pagination = (totalCapacity, active, total) => {
@@ -246,7 +247,7 @@ export default class Pager extends React.PureComponent {
 
         return (
             <div className={className}>
-                { showItemsPerPageChange &&
+                { showItemsPerPageChange && (
                     <div className={styles.itemsPerPage}>
                         <SelectInput
                             className={styles.input}
@@ -262,8 +263,8 @@ export default class Pager extends React.PureComponent {
                             { perPageTitle }
                         </div>
                     </div>
-                }
-                { showInfo &&
+                )}
+                { showInfo && (
                     <div className={styles.currentRangeInformation}>
                         <div className={styles.showing}>
                             { showingTitle }
@@ -284,7 +285,7 @@ export default class Pager extends React.PureComponent {
                             {itemsCount}
                         </div>
                     </div>
-                }
+                )}
                 <div className={styles.pageList}>
                     { pages }
                 </div>

@@ -19,8 +19,7 @@ export default (WrappedComponent) => {
                 }), { ...data });
 
             if (newData.nodes) {
-                newData.nodes =
-                    newData.nodes.map(d => SelectedComponent.calcNewData(d, props));
+                newData.nodes = newData.nodes.map(d => SelectedComponent.calcNewData(d, props));
             }
 
             return newData;
@@ -28,8 +27,8 @@ export default (WrappedComponent) => {
 
         calcProps = () => {
             const { data } = this.props;
-            const newData = data &&
-                data.map(datum => SelectedComponent.calcNewData(datum, this.props));
+            const newData = data
+                && data.map(datum => SelectedComponent.calcNewData(datum, this.props));
 
             return {
                 ...this.props,

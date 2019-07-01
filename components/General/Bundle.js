@@ -34,6 +34,7 @@ const defaultProps = {
 // NOTE: Intentionally opted out of PureComponent
 class Bundle extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {

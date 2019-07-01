@@ -25,6 +25,7 @@ const defaultProps = {
 
 export default class DropZone extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     getClassName() {

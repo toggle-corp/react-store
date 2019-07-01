@@ -66,6 +66,7 @@ const MAX_IDLE_TIMEOUT = 200;
 
 class VirtualizedListView extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -225,7 +226,8 @@ class VirtualizedListView extends React.Component {
 
         if (modifier) {
             return modifier(key, datum, i, data);
-        } else if (Renderer) {
+        }
+        if (Renderer) {
             const extraProps = rendererParams
                 ? rendererParams(key, datum, i, data)
                 : undefined;

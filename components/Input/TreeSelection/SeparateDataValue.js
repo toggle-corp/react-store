@@ -50,6 +50,7 @@ const pickRecursive = (obj, keys) => {
 export default (WrappedComponent) => {
     class SeparatedComponent extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         handleChange = (value) => {

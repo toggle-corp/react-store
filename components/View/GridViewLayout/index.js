@@ -29,6 +29,7 @@ const defaultProps = {
 
 export default class GridViewLayout extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -59,8 +60,8 @@ export default class GridViewLayout extends React.PureComponent {
         } = this.props;
 
         if (
-            newLayoutSelector !== oldLayoutSelector ||
-            newData !== oldData
+            newLayoutSelector !== oldLayoutSelector
+            || newData !== oldData
         ) {
             this.bounds = getLayoutBounds(newData, newLayoutSelector);
             this.data = getSortedItems(newData, newLayoutSelector);

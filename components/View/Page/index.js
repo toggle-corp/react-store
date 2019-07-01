@@ -30,6 +30,7 @@ const defaultProps = {
 
 export default class Page extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     render() {

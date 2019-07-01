@@ -29,6 +29,7 @@ const defaultProps = {
 
 class TimeFilter extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     static defaultOptions = [

@@ -117,7 +117,10 @@ export default class GeoReferencedMap extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { geoLocations, geoPoints } = this.props;
+        const {
+            geoLocations,
+            geoPoints,
+        } = this.props;
 
         if (geoLocations !== nextProps.geoLocations) {
             this.loadGeoRegions(nextProps.geoLocations);

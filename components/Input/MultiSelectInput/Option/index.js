@@ -24,6 +24,7 @@ const defaultProps = {
 
 export default class Option extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
@@ -33,13 +34,16 @@ export default class Option extends React.PureComponent {
     }
 
     componentDidMount() {
-        if (this.props.focused) {
+        const { focused } = this.props;
+        if (focused) {
             this.scrollToFocus();
         }
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.props.focused && nextProps.focused) {
+        const { focused } = this.props;
+
+        if (!focused && nextProps.focused) {
             this.scrollToFocus();
         } else {
             this.focusedByMouse = false;

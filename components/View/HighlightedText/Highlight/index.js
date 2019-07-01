@@ -25,6 +25,7 @@ const defaultProps = {
 
 export default class Highlight extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     // FIXME: memoize this
@@ -106,15 +107,14 @@ export default class Highlight extends React.PureComponent {
                 <span className={styles.text}>
                     {children}
                 </span>
-                {
-                    label &&
+                { label && (
                     <span
                         className={styles.label}
                         style={labelStyle}
                     >
                         { label }
                     </span>
-                }
+                )}
             </span>
         );
     }

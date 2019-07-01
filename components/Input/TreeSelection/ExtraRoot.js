@@ -24,6 +24,7 @@ const defaultProps = {
 export default (WrappedComponent) => {
     class ComponentWithExtraRoot extends React.PureComponent {
         static propTypes = propTypes;
+
         static defaultProps = defaultProps;
 
         constructor(props) {

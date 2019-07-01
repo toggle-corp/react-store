@@ -27,6 +27,7 @@ const defaultProps = {
 @SortableContainer
 export default class ListViewSortableContainer extends React.Component {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     rendererParams = (key, datum, index) => {
