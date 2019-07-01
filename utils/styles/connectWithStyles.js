@@ -12,6 +12,9 @@ const connectWithStyles = (WrappedComponent, styleList = []) => (
                 updatedStyles: {},
             };
 
+            // Note: event added in constructor on purpose
+            // to avoid any pre render in children without
+            // injected props
             document.addEventListener('styleupdate', this.handleStyleUpdate);
         }
 
@@ -20,16 +23,9 @@ const connectWithStyles = (WrappedComponent, styleList = []) => (
         }
 
         handleStyleUpdate = ({ updatedStyles }) => {
-            let shouldUpdate = false;
-
-            styleList.forEach((style) => {
-                if (style in styleList) {
-                    shouldUpdate = true;
-                    return false;
-                }
-
-                return true;
-            });
+            const shouldUpdate = styleList.some(
+                style => styleList.includes(style),
+            );
 
             if (shouldUpdate || styleList.length === 0) {
                 this.setState({

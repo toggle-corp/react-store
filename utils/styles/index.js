@@ -6,7 +6,7 @@ import defaultDimens from './default/dimens';
 const emptyObject = {};
 export const currentStyle = {};
 
-const pendingStyleUpdateValues = {};
+let pendingStyleUpdateValues = {};
 let styleUpdateTimeout;
 
 const createStyleUpdateEvent = () => {
@@ -18,6 +18,7 @@ const createStyleUpdateEvent = () => {
         });
 
         document.dispatchEvent(updateEvent);
+        pendingStyleUpdateValues = {};
     }
 };
 
