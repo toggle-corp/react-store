@@ -34,22 +34,11 @@
         &:focus {
             border-bottom-color: var(--color-accent);
         }
-
-        &.error {
-            .label {
-                color: var(--color-danger);
-            }
-        }
     }
 
     %base {
         margin: var(--spacing-extra-small) 0 0;
         font-size: var(--font-size-extra-small);
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
     }
 
     &.disabled {

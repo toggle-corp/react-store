@@ -68,8 +68,9 @@ class ReCaptcha extends Component {
 
     componentWillUnmount() {
         clearTimeout(this.readyCheck);
-        if (this.props.setResetFunction) {
-            this.props.setResetFunction(undefined);
+        const { setResetFunction } = this.props;
+        if (setResetFunction) {
+            setResetFunction(undefined);
         }
     }
 

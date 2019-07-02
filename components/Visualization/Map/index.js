@@ -61,6 +61,12 @@ const propTypes = {
     minZoom: PropTypes.number,
     maxZoom: PropTypes.number,
 
+    navOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    scaleOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
+    onGeolocationChange: PropTypes.func,
+
     maxBounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
 };
 
@@ -90,6 +96,12 @@ const defaultProps = {
     maxZoom: undefined,
 
     maxBounds: undefined,
+
+    navOptions: undefined,
+    geoOptions: undefined,
+    scaleOptions: undefined,
+    onGeolocationChange: undefined,
+
     // maxBounds: DEFAULT_MAX_BOUNDS,
 };
 

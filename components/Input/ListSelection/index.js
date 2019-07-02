@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-    isDefined,
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';

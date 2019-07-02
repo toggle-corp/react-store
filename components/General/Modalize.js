@@ -61,6 +61,7 @@ const modalize = (WrappedButtonComponent) => {
                 disabled,
                 modal,
                 className: classNameFromProps,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 initialShowModal,
                 ...otherProps
             } = this.props;

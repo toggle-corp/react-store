@@ -11,9 +11,12 @@ export default class GroupTitle extends React.PureComponent {
     static propTypes = propTypes;
 
     render() {
+        const {
+            title,
+        } = this.props;
         return (
             <div className={styles.groupHeader}>
-                {this.props.title}
+                {title}
             </div>
         );
     }

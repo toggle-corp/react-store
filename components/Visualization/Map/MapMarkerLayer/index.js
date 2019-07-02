@@ -1,11 +1,22 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 
 import MapChild from '../MapChild';
 
-const propTypes = {};
+const propTypes = {
+    setDestroyer: PropTypes.func,
+    layerKey: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    map: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    geoJson: PropTypes.object.isRequired,
+    mapStyle: PropTypes.string.isRequired,
+};
 
-const defaultProps = {};
+const defaultProps = {
+    setDestroyer: undefined,
+};
 
 @MapChild
 export default class MapMarkerLayer extends React.PureComponent {

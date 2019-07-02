@@ -66,18 +66,22 @@ class RadioInput extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const selectedOption = RadioInput.getSelectedOption(
-            this.props.options,
-            this.props.value,
-        );
+        const {
+            options,
+            value,
+        } = this.props;
+
+        const selectedOption = RadioInput.getSelectedOption(options, value);
         this.state = { selectedOption };
     }
 
     componentWillReceiveProps(nextProps) {
-        if (
-            this.props.value !== nextProps.value
-            || this.props.options !== nextProps.options
-        ) {
+        const {
+            options,
+            value,
+        } = this.props;
+
+        if (value !== nextProps.value || options !== nextProps.options) {
             const selectedOption = RadioInput.getSelectedOption(
                 nextProps.options,
                 nextProps.value,
@@ -111,12 +115,15 @@ class RadioInput extends React.PureComponent {
     )
 
     render() {
-        const { className } = this.props;
+        const {
+            className,
+            options,
+        } = this.props;
 
         return (
             <ListView
                 className={`radio-input ${className} ${styles.radioInput}`}
-                data={this.props.options}
+                data={options}
                 keySelector={RadioInput.optionKeyExtractor}
                 modifier={this.renderOption}
             />

@@ -15,11 +15,13 @@ const propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.string,
     padLength: PropTypes.number,
+    className: PropTypes.string,
 };
 const defaultProps = {
     value: '',
     onChange: undefined,
     padLength: 2,
+    className: '',
 };
 
 export default class DigitalInput extends React.PureComponent {

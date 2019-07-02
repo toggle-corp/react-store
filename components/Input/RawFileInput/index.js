@@ -40,6 +40,8 @@ const propTypes = {
 
     onChange: PropTypes.func,
 
+    changeDelay: PropTypes.number,
+
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
 };
@@ -56,6 +58,7 @@ const defaultProps = {
     value: undefined,
     disabled: false,
     readOnly: false,
+    changeDelay: undefined,
 };
 
 class RawFileInput extends React.PureComponent {

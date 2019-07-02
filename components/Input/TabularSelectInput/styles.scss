@@ -32,18 +32,8 @@
         font-size: var(--font-size-extra-small);
     }
 
-    .hint {
-        @extend %base;
-        color: var(--color-text-label);
-    }
-
     .error {
         @extend %base;
         color: var(--color-danger);
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
     }
 }

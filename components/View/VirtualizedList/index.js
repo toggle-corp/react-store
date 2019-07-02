@@ -1,15 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import ListView from '../List/ListView';
 
 
 const propTypes = {
+    startIndex: PropTypes.number.isRequired,
+    endIndex: PropTypes.number.isRequired,
+    endVirtualContainerWidth: PropTypes.number.isRequired,
+    startVirtualContainerWidth: PropTypes.number.isRequired,
+    startVirtualContainerClassName: PropTypes.string,
+    endVirtualContainerClassName: PropTypes.string,
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    startVirtualContainerClassName: undefined,
+    endVirtualContainerClassName: undefined,
+    data: [],
 };
 
 export default class VirtualizedList extends React.Component {

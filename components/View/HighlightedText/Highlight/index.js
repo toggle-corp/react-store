@@ -14,6 +14,7 @@ const propTypes = {
     label: PropTypes.string,
     tooltip: PropTypes.string,
     color: PropTypes.string.isRequired,
+    highlight: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {

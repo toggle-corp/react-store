@@ -32,11 +32,9 @@ class RangeFilter extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
+        const { options } = this.props;
         // Checking this.value instead of this.props.value is intentional
-        if (
-            this.value !== nextProps.value
-            || this.props.options !== nextProps.options
-        ) {
+        if (this.value !== nextProps.value || options !== nextProps.options) {
             this.updateFromProps(nextProps);
         }
     }

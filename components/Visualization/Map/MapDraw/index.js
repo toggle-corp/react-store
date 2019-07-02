@@ -1,12 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import mapboxgl from 'mapbox-gl';
 import MapboxDraw from 'mapbox-gl-draw';
 
 import MapChild from '../MapChild';
 
 const propTypes = {
+    map: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    options: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {

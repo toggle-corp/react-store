@@ -20,12 +20,4 @@
         width: var(--spacing-small);
         height: 100%;
     }
-
-    &.resizing {
-        cursor: col-resize;
-
-        .original-header-container {
-            pointer-events: none;
-        }
-    }
 }

@@ -14,6 +14,7 @@ const propTypes = {
     mainContent: PropTypes.node,
     sidebar: PropTypes.node,
     footer: PropTypes.node,
+    containerRef: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -26,6 +27,7 @@ const defaultProps = {
     mainContent: null,
     sidebar: null,
     footer: null,
+    containerRef: undefined,
 };
 
 export default class Page extends React.PureComponent {

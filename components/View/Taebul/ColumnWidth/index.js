@@ -11,6 +11,20 @@ const DEFAULT_MIN_COLUMN_WIDTH = 96;
 const DEFAULT_COLUMN_WIDTH = 204;
 
 class ResizableHeader extends React.Component {
+    static propTypes = {
+        _columnKey: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]).isRequired,
+        _onSeparatorMouseDown: PropTypes.func.isRequired,
+        _headerRenderer: PropTypes.func.isRequired,
+        className: PropTypes.string,
+    }
+
+    static defaultProps = {
+        className: '',
+    }
+
     handleSeparatorMouseDown = (e) => {
         const {
             _columnKey: columnKey,

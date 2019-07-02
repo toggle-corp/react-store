@@ -8,8 +8,6 @@ import { isDefined, difference } from '@togglecorp/fujs';
 import MapChild from '../MapChild';
 import { forEach } from '../../../../utils/common';
 
-import styles from './styles.scss';
-
 const emptyList = [];
 
 const propTypes = {
@@ -56,6 +54,8 @@ const propTypes = {
     minzoom: PropTypes.number,
     // eslint-disable-next-line react/no-unused-prop-types
     maxzoom: PropTypes.number,
+
+    onAnimationKeyframe: PropTypes.func,
 };
 
 const defaultProps = {
@@ -73,6 +73,7 @@ const defaultProps = {
     minzoom: undefined,
     maxzoom: undefined,
     mapState: undefined,
+    onAnimationKeyframe: undefined,
 };
 
 /*
@@ -293,11 +294,7 @@ export default class MapLayer extends React.PureComponent {
     destroy = () => {
         const {
             map,
-            sourceKey,
             layerKey,
-            hoveredId,
-            selectedIds,
-            sourceLayer,
         } = this.props;
         if (!map) {
             return;
