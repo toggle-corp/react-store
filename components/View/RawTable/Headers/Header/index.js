@@ -71,6 +71,7 @@ export default class Header extends React.PureComponent {
             highlighted,
             hoverable,
             uniqueKey,
+            children,
         } = this.props;
 
         const thClassName = this.getClassName(className, highlighted, hoverable, uniqueKey);
@@ -81,7 +82,7 @@ export default class Header extends React.PureComponent {
                 role="gridcell"
                 onClick={this.handleClick}
             >
-                { this.props.children }
+                { children }
             </th>
         );
     }

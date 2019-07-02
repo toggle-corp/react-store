@@ -93,6 +93,7 @@ export default class Cell extends React.PureComponent {
             columnHighlighted,
             uniqueKey,
             onHoverOut,
+            children,
         } = this.props;
 
         const tdClassName = this.getClassName(
@@ -113,7 +114,7 @@ export default class Cell extends React.PureComponent {
                 onMouseOver={this.handleHover}
                 onMouseOut={onHoverOut}
             >
-                { this.props.children }
+                { children }
             </td>
         );
     }

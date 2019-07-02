@@ -149,6 +149,7 @@ class SelectInput extends React.PureComponent {
         return labelSelector(activeOption);
     });
 
+
     // Helper
 
     handleShowOptionsPopup = () => {

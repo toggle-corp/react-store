@@ -22,16 +22,18 @@ export default (WrappedComponent) => {
 
         constructor(props) {
             super(props);
+            const { value } = props;
 
             this.pendingChange = false;
-            this.lastValue = this.props.value;
+            this.lastValue = value;
             this.state = {
-                value: this.props.value,
+                value,
             };
         }
 
         componentWillReceiveProps(nextProps) {
-            if (this.props.value !== nextProps.value) {
+            const { value } = this.props;
+            if (value !== nextProps.value) {
                 if (!this.pendingChange) {
                     this.lastValue = nextProps.value;
                     this.setState({
@@ -80,10 +82,11 @@ export default (WrappedComponent) => {
                 changeDelay,
                 ...otherProps
             } = this.props;
+            const { value: stateValue } = this.state;
 
             return (
                 <WrappedComponent
-                    value={this.state.value}
+                    value={stateValue}
                     onChange={this.handleChange}
                     {...otherProps}
                 />

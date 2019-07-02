@@ -8,21 +8,18 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    datum: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     datumKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]).isRequired,
-    columns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     columnKeySelector: PropTypes.func.isRequired,
-    settings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
-    columns: [],
-    datum: {},
-    settings: {},
 };
 
 export default class Row extends React.PureComponent {

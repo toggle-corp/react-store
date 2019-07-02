@@ -40,7 +40,8 @@ class DatePicker extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value && nextProps.value) {
+        const { value } = this.props;
+        if (nextProps.value !== value && nextProps.value) {
             const date = new Date(nextProps.value);
             this.setState({
                 year: date.getFullYear(),

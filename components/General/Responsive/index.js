@@ -89,7 +89,6 @@ export default (WrappedComponent) => {
                 className,
                 ...otherProps
             } = this.props;
-
             const { rect } = this.state;
 
             return (

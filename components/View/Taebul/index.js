@@ -104,7 +104,9 @@ export default class Taebul extends React.Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-        this.calculateRowVirtualizationParams(this.props, this.state.scrollLeft);
+
+        const { scrollLeft } = this.state;
+        this.calculateRowVirtualizationParams(this.props, scrollLeft);
     }
 
     componentWillReceiveProps(nextProps) {

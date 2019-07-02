@@ -211,6 +211,7 @@ export default class Table extends React.PureComponent {
     // eslint-disable-next-line react/sort-comp
     handleHeaderClick = (key) => {
         const { headers } = this.state;
+        const { data } = this.props;
 
         const clickedHeader = headers.find(d => d.key === key);
         if (clickedHeader === undefined) {
@@ -237,7 +238,7 @@ export default class Table extends React.PureComponent {
 
         const newHeaders = this.getStateHeaders(headers, newActiveSort);
 
-        const newData = this.getSortedData(newHeaders, this.props.data, newActiveSort);
+        const newData = this.getSortedData(newHeaders, data, newActiveSort);
 
         this.setState({
             activeSort: newActiveSort,
@@ -293,7 +294,8 @@ export default class Table extends React.PureComponent {
     }
 
     dataModifier = (data, columnKey) => {
-        const header = this.state.headers.find(d => d.key === columnKey);
+        const { headers } = this.state;
+        const header = headers.find(d => d.key === columnKey);
 
         if (header.modifier) {
             return header.modifier(data);

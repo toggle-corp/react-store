@@ -81,6 +81,41 @@ export default (WrappedComponent) => {
             this.resizingColumnKey = undefined;
         }
 
+        modifyColumns = memoize((columns = [], columnWidths = {}, defaultWidth) => {
+            if (!columns || columns.length <= 0) {
+                return columns;
+            }
+
+            const newColumns = produce(columns, (draftColumns) => {
+                draftColumns.forEach((column, index) => {
+                    // NOTE: column key is assumed to be column.key
+                    const {
+                        key: columnKey,
+                        headerRendererParams,
+                        headerRenderer,
+                    } = column;
+                    const width = isFalsy(columnWidths[columnKey])
+                        ? defaultWidth
+                        : columnWidths[columnKey];
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerRendererParams = (...params) => ({
+                        ...headerRendererParams(...params),
+                        _columnKey: columnKey,
+                        _headerRenderer: headerRenderer,
+                        _onSeparatorMouseDown: this.handleSeparatorMouseDown,
+                    });
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerRenderer = ResizableHeader;
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].headerStyle = { width };
+                    // eslint-disable-next-line no-param-reassign
+                    draftColumns[index].cellStyle = { width };
+                });
+            });
+
+            return newColumns;
+        })
+
         handleMouseMove = (e) => {
             const {
                 settings,
@@ -143,40 +178,6 @@ export default (WrappedComponent) => {
             window.addEventListener('mouseup', this.handleMouseUp);
         }
 
-        modifyColumns = memoize((columns = [], columnWidths = {}, defaultWidth) => {
-            if (!columns || columns.length <= 0) {
-                return columns;
-            }
-
-            const newColumns = produce(columns, (draftColumns) => {
-                draftColumns.forEach((column, index) => {
-                    // NOTE: column key is assumed to be column.key
-                    const {
-                        key: columnKey,
-                        headerRendererParams,
-                        headerRenderer,
-                    } = column;
-                    const width = isFalsy(columnWidths[columnKey])
-                        ? defaultWidth
-                        : columnWidths[columnKey];
-                    // eslint-disable-next-line no-param-reassign
-                    draftColumns[index].headerRendererParams = (...params) => ({
-                        ...headerRendererParams(...params),
-                        _columnKey: columnKey,
-                        _headerRenderer: headerRenderer,
-                        _onSeparatorMouseDown: this.handleSeparatorMouseDown,
-                    });
-                    // eslint-disable-next-line no-param-reassign
-                    draftColumns[index].headerRenderer = ResizableHeader;
-                    // eslint-disable-next-line no-param-reassign
-                    draftColumns[index].headerStyle = { width };
-                    // eslint-disable-next-line no-param-reassign
-                    draftColumns[index].cellStyle = { width };
-                });
-            });
-
-            return newColumns;
-        })
 
         render() {
             const {
