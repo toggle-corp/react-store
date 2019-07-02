@@ -28,6 +28,7 @@ const propTypes = {
     rendererParams: PropTypes.func,
 
     inverted: PropTypes.bool,
+    disabled: PropTypes.bool,
     showBeforeTabs: PropTypes.bool,
     onHashChange: PropTypes.func,
 };
@@ -48,6 +49,7 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
 
+    disabled: false,
     inverted: false,
     showBeforeTabs: false,
     onHashChange: undefined,

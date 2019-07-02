@@ -7,6 +7,12 @@ const DefaultRenderer = ({ text }) => (
         {text}
     </div>
 );
+DefaultRenderer.propTypes = {
+    text: PropTypes.string,
+};
+DefaultRenderer.defaultProps = {
+    text: undefined,
+};
 DefaultRenderer.loadingStyle = {
     height: '100%',
     fontSize: '18px',
@@ -47,7 +53,8 @@ class Bundle extends React.Component {
 
     componentWillMount() {
         this.mounted = true;
-        this.props.load()
+        const { load } = this.props;
+        load()
             .then(this.handleLoad)
             .catch(this.handleLoadError);
     }
@@ -63,8 +70,9 @@ class Bundle extends React.Component {
         }
 
         let Component = BundledComponent.default || BundledComponent;
-        if (this.props.decorator) {
-            Component = this.props.decorator(Component);
+        const { decorator } = this.props;
+        if (decorator) {
+            Component = decorator(Component);
         }
 
         this.setState({

@@ -5,6 +5,19 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    columnKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
+    datumKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
+    datum: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    column: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    renderer: PropTypes.func.isRequired,
+    rendererParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {

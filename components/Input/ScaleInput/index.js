@@ -46,10 +46,16 @@ class ScaleInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
+        const {
+            options,
+            disabled,
+            readOnly,
+        } = this.props;
+
         if (
-            nextProps.options !== this.props.options
-            || (!nextProps.disabled && nextProps.disabled !== this.props.disabled)
-            || (!nextProps.readOnly && nextProps.readOnly !== this.props.readOnly)
+            nextProps.options !== options
+            || (!nextProps.disabled && nextProps.disabled !== disabled)
+            || (!nextProps.readOnly && nextProps.readOnly !== readOnly)
         ) {
             this.checkAndSetDefaultValue(nextProps.options, nextProps.value);
         }

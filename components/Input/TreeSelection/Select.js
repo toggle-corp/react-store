@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 
@@ -10,6 +11,14 @@ const selectors = {
 
 export default (WrappedComponent) => {
     class SelectedComponent extends React.PureComponent {
+        static propTypes = {
+            data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+        }
+
+        static defaultProps = {
+            data: [],
+        }
+
         static calcNewData = (data, props) => {
             const newData = Object.keys(selectors)
                 .filter(s => props[s])

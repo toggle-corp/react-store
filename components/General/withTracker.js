@@ -26,12 +26,18 @@ export default function withTracker(WrappedComponent, options = {}) {
         static propTypes = propTypes;
 
         componentWillMount() {
-            const page = this.props.location.pathname;
+            const {
+                location,
+            } = this.props;
+            const page = location.pathname;
             trackPage(page, options);
         }
 
         componentWillReceiveProps(nextProps) {
-            const currentPage = this.props.location.pathname;
+            const {
+                location,
+            } = this.props;
+            const currentPage = location.pathname;
             const nextPage = nextProps.location.pathname;
 
             if (currentPage !== nextPage) {

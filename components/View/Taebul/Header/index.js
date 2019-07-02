@@ -6,13 +6,19 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     renderer: PropTypes.func,
-    width: PropTypes.number,
+    rendererParams: PropTypes.func.isRequired,
+    columnKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
+    data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    column: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     renderer: d => d,
-    width: 0,
 };
 
 // eslint-disable-next-line

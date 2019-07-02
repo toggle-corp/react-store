@@ -92,12 +92,12 @@ export default class PrivateRoute extends React.PureComponent {
 
     render() {
         const {
-            /* eslint-disable no-unused-vars */
+            /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
             authenticated,
             component,
             invertBehavior,
             redirectLink,
-            /* eslint-enable no-unused-vars */
+            /* eslint-enable no-unused-vars, @typescript-eslint/no-unused-vars */
 
             // NOTE: Passing all other props to Route component
             ...otherProps

@@ -8,17 +8,6 @@
         background-color: var(--color-foreground);
         padding: var(--spacing-small) var(--spacing-medium-alt);
         color: var(--color-text);
-
-        .name {
-            display: block;
-        }
-
-        .value {
-            display: block;
-            text-align: center;
-            color: var(--color-text);
-            font-size: 2em;
-        }
     }
 
     .links {

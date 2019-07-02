@@ -31,10 +31,6 @@
                 @extend %button;
                 opacity: 0;
             }
-
-            .dropdown-button {
-                @extend %button;
-            }
         }
     }
 
@@ -44,12 +40,6 @@
 
             .input {
                 color: var(--color-text-disabled);
-            }
-
-            .actions {
-                .dropdown-button {
-                    color: var(--color-text-disabled);
-                }
             }
         }
     }

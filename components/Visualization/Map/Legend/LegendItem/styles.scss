@@ -35,32 +35,4 @@
             font-weight: 600;
         }
     }
-
-    &.circle {
-        padding: var(--spacing-small);
-
-        .left-child {
-            .icon-container {
-                .icon {
-                    border-radius: 50%;
-                }
-            }
-        }
-    }
-
-    &.square {
-        padding: var(--spacing-small-alt);
-
-        .left-child {
-            .icon-container {
-                .icon {
-                    border: var(--width-separator-thin) solid var(--color-separator-alt);
-
-                    &:not(:last-child) {
-                        border-bottom: 0;
-                    }
-                }
-            }
-        }
-    }
 }

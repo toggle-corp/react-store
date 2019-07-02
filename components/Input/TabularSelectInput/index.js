@@ -148,15 +148,21 @@ class TabularSelectInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.tableHeaders !== this.props.tableHeaders) {
-            const { tableHeaders } = nextProps;
-            const tableHeadersWithRemove = this.createTableHeaders(tableHeaders);
+        const {
+            tableHeaders,
+            blackList,
+            options,
+            value,
+        } = this.props;
+
+        if (nextProps.tableHeaders !== tableHeaders) {
+            const tableHeadersWithRemove = this.createTableHeaders(nextProps.tableHeaders);
             this.setState({ tableHeadersWithRemove });
         }
 
         if (
-            nextProps.blackList !== this.props.blackList
-            || nextProps.options !== this.props.options
+            nextProps.blackList !== blackList
+            || nextProps.options !== options
         ) {
             const validOptions = this.getValidOptions(
                 nextProps.options,
@@ -168,11 +174,11 @@ class TabularSelectInput extends React.PureComponent {
             });
         }
 
-        if (nextProps.value !== this.props.value) {
+        if (nextProps.value !== value) {
             const selectedOptions = this.getSelectedOptions(
                 nextProps.value,
                 nextProps.keySelector,
-                this.props.blackList,
+                blackList,
                 nextProps.options,
             );
             const selectedOptionsKeys = selectedOptions.map(d => nextProps.keySelector(d));

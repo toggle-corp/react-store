@@ -4,7 +4,7 @@ import React from 'react';
 import FormattedDate from './FormattedDate';
 
 // NOTE: capturing 'date', as it is deprecated in FormattedDate
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 const FormattedTime = ({ value, date, ...otherProps }) => {
     const newValue = value ? `1994-12-25 ${value}` : value;
     return (

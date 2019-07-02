@@ -16,6 +16,12 @@ const propTypes = {
     columns: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     columnKeySelector: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    startIndex: PropTypes.number.isRequired,
+    endIndex: PropTypes.number.isRequired,
+    startVirtualContainerWidth: PropTypes.number.isRequired,
+    endVirtualContainerWidth: PropTypes.number.isRequired,
+    itemHeight: PropTypes.number.isRequired,
 };
 
 const defaultProps = {

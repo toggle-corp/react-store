@@ -27,8 +27,10 @@ export default class Wizard extends React.Component {
     constructor(props) {
         super(props);
 
+        const { initialPage } = this.props;
+
         this.state = {
-            visiblePage: this.props.initialPage,
+            visiblePage: initialPage,
             className: '',
         };
     }

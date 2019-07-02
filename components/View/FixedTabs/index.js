@@ -173,6 +173,7 @@ export default class FixedTabs extends React.Component {
             tabs,
             useHash,
             defaultHash,
+            children,
         } = this.props;
 
         // FIXME: generate tabList when tabs change
@@ -191,7 +192,7 @@ export default class FixedTabs extends React.Component {
                     modifier={this.renderTab}
                 />
                 <div className={styles.blank}>
-                    { this.props.children }
+                    { children }
                 </div>
             </div>
         );

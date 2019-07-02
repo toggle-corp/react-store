@@ -47,6 +47,9 @@ const propTypes = {
     emptyComponent: PropTypes.func,
 
     minWidth: PropTypes.number,
+
+    itemHeight: PropTypes.number,
+    boundingClientRect: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -60,6 +63,9 @@ const defaultProps = {
     rendererParams: undefined,
     emptyComponent: DefaultEmptyComponent,
     minWidth: undefined,
+
+    itemHeight: undefined,
+    boundingClientRect: undefined,
 };
 
 const MAX_IDLE_TIMEOUT = 200;
@@ -72,10 +78,12 @@ class VirtualizedListView extends React.Component {
     constructor(props) {
         super(props);
 
+        const { itemHeight } = props;
+
         this.state = {
             itemsPerPage: undefined,
             offset: 0,
-            itemHeight: props.itemHeight,
+            itemHeight,
         };
 
         this.container = React.createRef();
@@ -154,7 +162,7 @@ class VirtualizedListView extends React.Component {
     }
 
     updateItemsPerPage = (containerBCR) => {
-        const { height } = containerBCR;
+        // const { height } = containerBCR;
         const { itemHeight } = this.state;
 
         if (!itemHeight) {
@@ -168,7 +176,7 @@ class VirtualizedListView extends React.Component {
     }
 
     updateItemsPerPage = (containerBCR) => {
-        const { height } = containerBCR;
+        // const { height } = containerBCR;
         const { itemHeight } = this.state;
 
         if (!itemHeight) {
