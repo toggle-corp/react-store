@@ -42,6 +42,10 @@ const propTypes = {
      * this function is triggered when a selection is made
      */
     onChange: PropTypes.func,
+    /**
+     * Additional css classes passed from parent
+     */
+    className: PropTypes.string,
 };
 const defaultProps = {
     value: [],
@@ -50,6 +54,7 @@ const defaultProps = {
     singleSelect: false,
     multiSelect: false,
     onChange: () => [],
+    className: '',
 };
 
 /**
@@ -154,9 +159,11 @@ class GoogleOrgChart extends React.PureComponent {
     }
 
     render() {
+        const { className } = this.props;
+
         return (
             <div
-                className={styles.orgChart}
+                className={`${className} ${styles.orgChart}`}
                 ref={(elem) => { this.elem = elem; }}
             />
         );

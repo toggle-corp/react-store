@@ -1,4 +1,7 @@
-import React, { PureComponent } from 'react';
+import React, {
+    PureComponent,
+    Fragment,
+} from 'react';
 import { select } from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
@@ -119,9 +122,6 @@ class VerticalBarChart extends PureComponent {
         if (props.setSaveFunction) {
             props.setSaveFunction(this.save);
         }
-
-        this.svgRef = React.createRef();
-        this.tooltipRef = React.createRef();
     }
 
     componentDidMount() {
@@ -132,7 +132,7 @@ class VerticalBarChart extends PureComponent {
         this.redrawChart();
     }
 
-    getColor = (d) => {
+    getColor = (d, colors) => {
         const {
             labelSelector,
             colorSelector,
@@ -142,7 +142,7 @@ class VerticalBarChart extends PureComponent {
             return colorSelector(d);
         }
 
-        return this.colors(labelSelector(d));
+        return colors(labelSelector(d));
     }
 
     save = () => {
@@ -153,8 +153,8 @@ class VerticalBarChart extends PureComponent {
     }
 
     redrawChart = () => {
-        const { current: svgElement } = this.svgRef;
-        const svg = select(svgElement);
+        const svg = select(this.svgRef);
+        svg.selectAll('*').remove();
 
         svg.selectAll('*').remove();
         this.drawChart();
@@ -185,9 +185,8 @@ class VerticalBarChart extends PureComponent {
                 </span>
             `;
             const content = tooltipContent ? tooltipContent(d) : defaultTooltip;
-            const { current: tooltip } = this.tooltipRef;
-            tooltip.innerHTML = content;
-            const { style } = tooltip;
+            this.tooltip.innerHTML = content;
+            const { style } = this.tooltip;
             style.display = 'block';
         }
     }
@@ -196,9 +195,8 @@ class VerticalBarChart extends PureComponent {
         const { showTooltip } = this.props;
 
         if (showTooltip) {
-            const { current: tooltip } = this.tooltipRef;
-            const { style } = tooltip;
-            const { width, height } = tooltip.getBoundingClientRect();
+            const { style } = this.tooltip;
+            const { width, height } = this.tooltip.getBoundingClientRect();
             // eslint-disable-next-line no-restricted-globals
             const x = event.pageX;
 
@@ -219,8 +217,7 @@ class VerticalBarChart extends PureComponent {
         } = this.props;
 
         if (showTooltip) {
-            const { current: tooltip } = this.tooltipRef;
-            const { style } = tooltip;
+            const { style } = this.tooltip;
             style.display = 'none';
         }
     }
@@ -252,13 +249,9 @@ class VerticalBarChart extends PureComponent {
         const width = fullWidth - left - right;
         const height = fullHeight - top - bottom;
 
-        this.colors = scaleOrdinal().range(colorScheme);
+        const colors = scaleOrdinal().range(colorScheme);
 
-        const { current: svgElement } = this.svgRef;
-        svgElement.setAttribute('width', `${fullWidth}px`);
-        svgElement.setAttribute('height', `${fullHeight}px`);
-
-        const group = select(svgElement)
+        const group = select(this.svgRef)
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
@@ -282,7 +275,7 @@ class VerticalBarChart extends PureComponent {
             .attr('y', d => y(valueSelector(d)))
             .attr('width', x.bandwidth())
             .attr('height', d => height - y(valueSelector(d)))
-            .style('fill', d => this.getColor(d))
+            .style('fill', d => this.getColor(d, colors))
             .on('mouseover', d => this.handleMouseOver(d))
             .on('mousemove', this.handleMouseMove)
             .on('mouseout', this.handleMouseOut);
@@ -318,24 +311,19 @@ class VerticalBarChart extends PureComponent {
             styles.tooltip,
         );
 
-        const svgClassName = _cs(
-            'svg',
-            styles.svg,
-        );
-
         return (
-            <div className={className}>
+            <Fragment>
                 <svg
-                    className={svgClassName}
-                    ref={this.svgRef}
+                    className={className}
+                    ref={(elem) => { this.svgRef = elem; }}
                 />
                 <Float>
                     <div
-                        ref={this.tooltipRef}
                         className={tooltipClassName}
+                        ref={(elem) => { this.tooltip = elem; }}
                     />
                 </Float>
-            </div>
+            </Fragment>
         );
     }
 }
