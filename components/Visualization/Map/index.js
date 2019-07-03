@@ -1,15 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
-import { _cs } from '@togglecorp/fujs';
 
 import { forEach } from '../../../utils/common';
-import Message from '../../View/Message';
 import MapContext from './context';
-import styles from './styles.scss';
-
-
-const nullComponent = () => null;
 
 const UNSUPPORTED_BROWSER = !mapboxgl.supported();
 const DEFAULT_ZOOM_LEVEL = 3;
@@ -38,11 +32,9 @@ if (TOKEN) {
 }
 
 const propTypes = {
-    className: PropTypes.string,
     bounds: PropTypes.arrayOf(PropTypes.number),
     boundsPadding: PropTypes.number,
     fitBoundsDuration: PropTypes.number,
-    panelsRenderer: PropTypes.func,
     children: PropTypes.oneOfType([
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node),
@@ -71,9 +63,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    panelsRenderer: nullComponent,
-
-    className: '',
     children: undefined,
 
     bounds: DEFAULT_BOUNDS,
@@ -247,6 +236,7 @@ export default class Map extends React.PureComponent {
 
     componentWillUnmount() {
         this.mounted = false;
+
         if (UNSUPPORTED_BROWSER) {
             return;
         }
@@ -320,8 +310,6 @@ export default class Map extends React.PureComponent {
 
     render() {
         const {
-            panelsRenderer,
-            className: classNameFromProps,
             children,
         } = this.props;
         const {
@@ -330,46 +318,23 @@ export default class Map extends React.PureComponent {
             mapStyle,
         } = this.state;
 
-        const className = _cs(
-            classNameFromProps,
-            styles.map,
-        );
-
         if (UNSUPPORTED_BROWSER) {
-            return (
-                <div className={className}>
-                    <Message>
-                        {'Your browser doesn\'t support Mapbox!'}
-                    </Message>
-                    {children}
-                </div>
-            );
+            console.warn('Your brower does not support Mapbox!');
+            return children;
         }
-
-        const Panels = panelsRenderer;
 
         const childrenProps = {
             map,
             zoomLevel,
-            setDestroyer: this.setSourceDestroyer,
             mapStyle,
+            mapContainerRef: this.mapContainerRef,
+            setDestroyer: this.setSourceDestroyer,
         };
 
         return (
-            <div
-                className={className}
-                ref={this.mapContainerRef}
-            >
-                <MapContext.Provider value={childrenProps}>
-                    {children}
-                </MapContext.Provider>
-                <div className={styles.leftBottomPanels}>
-                    <Panels
-                        map={map}
-                        zoomLevel={zoomLevel}
-                    />
-                </div>
-            </div>
+            <MapContext.Provider value={childrenProps}>
+                {children}
+            </MapContext.Provider>
         );
     }
 }
