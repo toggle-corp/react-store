@@ -35,7 +35,11 @@
             @include transition-medium;
             position: absolute;
             right: 0;
-            bottom: -calc(var(--font-size-small) + var(--spacing-medium) + calc(var(--spacing-extra-small) * 2));
+            // NOTE: Problem with var(--spacing-extra-small) * 2
+            //  Cannot use multiplication with libsass
+            // NOTE: Problem with -calc
+            // Need space between minus sign and calc
+            bottom: - calc(var(--font-size-small) + var(--spacing-medium) + var(--spacing-extra-small) + var(--spacing-extra-small));
             opacity: 0;
             z-index: 1111;
             border: var(--width-separator-thin) solid var(--color-separator);
