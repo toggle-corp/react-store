@@ -10,6 +10,7 @@ export default (ChildComponent) => {
             if (!map) {
                 return null;
             }
+
             return (
                 <ChildComponent
                     {...injectedProps}

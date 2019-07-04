@@ -3,32 +3,38 @@ import PropTypes from 'prop-types';
 
 import { _cs } from '@togglecorp/fujs';
 
-import MapChild from '../MapChild';
+import MapContext from '../context';
 import styles from './styles.scss';
 
-@MapChild
 export default class MapContainer extends React.PureComponent {
     static propTypes = {
         className: PropTypes.string,
-        // eslint-disable-next-line react/forbid-prop-types
-        mapContainerRef: PropTypes.object.isRequired,
     }
 
     static defaultProps = {
         className: undefined,
     }
 
-    render() {
+    renderChild = (injectedProps) => {
         const {
             className,
-            mapContainerRef,
         } = this.props;
-
+        const {
+            mapContainerRef,
+        } = injectedProps;
         return (
             <div
                 className={_cs(className, styles.map)}
                 ref={mapContainerRef}
             />
+        );
+    }
+
+    render() {
+        return (
+            <MapContext.Consumer>
+                {this.renderChild}
+            </MapContext.Consumer>
         );
     }
 }
