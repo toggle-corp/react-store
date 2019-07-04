@@ -5,6 +5,7 @@ import React, {
 import { PropTypes } from 'prop-types';
 import {
     select,
+    event,
 } from 'd3-selection';
 import {
     scaleOrdinal,
@@ -21,6 +22,10 @@ import { max } from 'd3-array';
 import Responsive from '../../General/Responsive';
 import Float from '../../View/Float';
 import Message from '../../View/Message';
+import {
+    saveSvg,
+    getStandardFilename,
+} from '../../../utils/common';
 
 import styles from './styles.scss';
 
@@ -34,6 +39,7 @@ const propTypes = {
         columns: PropTypes.array,
         colors: PropTypes.object,
     }).isRequired,
+    setSaveFunction: PropTypes.func,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
     xTickArguments: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -48,6 +54,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    setSaveFunction: undefined,
     className: '',
     colorScheme: schemeAccent,
     xTickArguments: [],
@@ -64,6 +71,13 @@ class GroupedBarChart extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+        if (props.setSaveFunction) {
+            props.setSaveFunction(this.save);
+        }
+    }
+h
     componentDidMount() {
         this.drawChart();
     }
@@ -72,9 +86,14 @@ class GroupedBarChart extends PureComponent {
         this.redrawChart();
     }
 
+    save = () => {
+        const svg = select(this.svg);
+        saveSvg(svg.node(), `${getStandardFilename('grouped-bar-chart', 'graph')}.svg`);
+    }
+
     mouseOverRect = (node, total) => {
         const { value } = node;
-        const percent = isFinite(total) ? (value / total) * 100 : 0;
+        const percent = Number.isFinite(total) ? (value / total) * 100 : 0;
         select(this.tooltip)
             .html(`<span>${value} (${percent.toFixed(1)}%)</span>`)
             .style('display', 'inline-block');

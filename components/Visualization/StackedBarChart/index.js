@@ -96,7 +96,7 @@ class StackedBarChart extends PureComponent {
     save = () => {
         const svgsaver = new SvgSaver();
         const svg = select(this.svg);
-        svgsaver(svg.node(), `${getStandardFilename('stacked-bar-chart', 'graph')}.svg`);
+        svgsaver.asSvg(svg.node(), `${getStandardFilename('stacked-bar-chart', 'graph')}.svg`);
     }
 
     init = () => {
@@ -158,7 +158,7 @@ class StackedBarChart extends PureComponent {
 
     mouseOverRect = (node) => {
         const value = node[1] - node[0];
-        const percent = isFinite(this.total) ? (value / this.total) * 100 : 0;
+        const percent = Number.isFinite(this.total) ? (value / this.total) * 100 : 0;
         select(this.tooltip)
             .html(`<span>${value} (${percent.toFixed(1)}%)</span>`)
             .style('display', 'inline-block');
