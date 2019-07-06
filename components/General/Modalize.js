@@ -84,7 +84,10 @@ const modalize = (WrappedButtonComponent) => {
                     { showModal && React.cloneElement(
                         modal,
                         {
+                            // FIXME: Use `onClose` instead of `closeModal` as
+                            // `onClose` is the supported prop in the Modal component.
                             closeModal: this.handleModalClose,
+                            onClose: this.handleModalClose,
                             parentBCR: this.wrappedButtonBCR,
                         },
                     )}

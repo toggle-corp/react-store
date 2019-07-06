@@ -90,29 +90,6 @@ class SelectInput extends React.PureComponent {
 
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            // FIXME: this may break
-            inputInFocus: props.autoFocus,
-            focusedKey: undefined,
-
-            showOptionsPopup: false,
-            searchValue: undefined,
-        };
-
-        this.containerRef = React.createRef();
-        this.inputRef = React.createRef();
-    }
-
-    componentDidMount() {
-        const { current: container } = this.containerRef;
-        if (container) {
-            this.boundingClientRect = container.getBoundingClientRect();
-        }
-    }
-
     filterOptions = memoize((
         options,
         labelSelector,
@@ -148,6 +125,29 @@ class SelectInput extends React.PureComponent {
 
         return labelSelector(activeOption);
     });
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            // FIXME: this may break
+            inputInFocus: props.autoFocus,
+            focusedKey: undefined,
+
+            showOptionsPopup: false,
+            searchValue: undefined,
+        };
+
+        this.containerRef = React.createRef();
+        this.inputRef = React.createRef();
+    }
+
+    componentDidMount() {
+        const { current: container } = this.containerRef;
+        if (container) {
+            this.boundingClientRect = container.getBoundingClientRect();
+        }
+    }
 
 
     // Helper
