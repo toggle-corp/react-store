@@ -443,7 +443,7 @@ export default class MapLayer extends React.PureComponent {
                 );
                 this.stateSelectedIds = newSelectedIds;
                 if (onSelectionChange) {
-                    onSelectionChange(newSelectedIds);
+                    onSelectionChange(newSelectedIds, id);
                 }
             }
 
