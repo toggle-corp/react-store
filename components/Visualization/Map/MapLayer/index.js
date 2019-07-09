@@ -32,6 +32,11 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     onClick: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onDoubleClick: PropTypes.func,
+
+    showToolTipOnDoubleClick: PropTypes.bool,
+    selectionOnDoubleClick: PropTypes.bool,
 
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     mapState: PropTypes.array,
@@ -62,6 +67,7 @@ const defaultProps = {
     layout: undefined,
     filter: undefined,
     onClick: undefined,
+    onDoubleClick: undefined,
     sourceLayer: undefined,
     setDestroyer: undefined,
     onHoverChange: undefined,
@@ -74,6 +80,8 @@ const defaultProps = {
     maxzoom: undefined,
     mapState: undefined,
     onAnimationKeyframe: undefined,
+    showToolTipOnDoubleClick: false,
+    selectionOnDoubleClick: false,
 };
 
 /*
@@ -331,6 +339,7 @@ export default class MapLayer extends React.PureComponent {
             tooltipRenderer,
             tooltipRendererParams,
             onClick,
+            onDoubleClick,
             hoveredId,
             selectedIds,
             onHoverChange,
@@ -412,7 +421,7 @@ export default class MapLayer extends React.PureComponent {
             // Get first feature (it looks to be the top-most)
             const { id, properties } = features[0];
 
-            if (tooltipRenderer) {
+            if (tooltipRenderer && !this.props.showToolTipOnDoubleClick) {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
@@ -427,7 +436,7 @@ export default class MapLayer extends React.PureComponent {
                 this.popup.addTo(map);
             }
 
-            if (enableSelection) {
+            if (enableSelection && !this.props.selectionOnDoubleClick) {
                 const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
 
                 let newSelectedIds;
@@ -453,6 +462,61 @@ export default class MapLayer extends React.PureComponent {
 
             /*
             if (tooltipRenderer || enableSelection || onClick) {
+                e.stopPropagation();
+            }
+            */
+        };
+
+        this.eventHandlers.dblclick = (e) => {
+            const {
+                lngLat: coordinates,
+                features,
+            } = e;
+
+            // Get first feature (it looks to be the top-most)
+            const { id, properties } = features[0];
+
+            if (tooltipRenderer && this.props.showToolTipOnDoubleClick) {
+                const Tooltip = tooltipRenderer;
+                const params = tooltipRendererParams(id, properties);
+
+                ReactDOM.render(
+                    React.createElement(Tooltip, params),
+                    this.tooltipContainer,
+                );
+
+                this.popup = new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setDOMContent(this.tooltipContainer);
+                this.popup.addTo(map);
+            }
+
+            if (enableSelection && this.props.selectionOnDoubleClick) {
+                const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
+
+                let newSelectedIds;
+                if (index === -1) {
+                    newSelectedIds = [...this.stateSelectedIds, id];
+                } else {
+                    newSelectedIds = [...this.stateSelectedIds];
+                    newSelectedIds.splice(index, 1);
+                }
+
+                changeSelectionState(
+                    map, sourceKey, sourceLayer, this.stateSelectedIds, newSelectedIds,
+                );
+                this.stateSelectedIds = newSelectedIds;
+                if (onSelectionChange) {
+                    onSelectionChange(newSelectedIds);
+                }
+            }
+
+            if (onDoubleClick) {
+                onDoubleClick(id, properties);
+            }
+
+            /*
+            if (tooltipRenderer || enableSelection || onDoubleClick) {
                 e.stopPropagation();
             }
             */
