@@ -19,7 +19,7 @@ const connectWithStyles = (WrappedComponent, styleList = []) => (
         }
 
         componentWillUnmount() {
-            document.removeEventListner('styleupdate', this.handleStyleUpdate);
+            document.removeEventListener('styleupdate', this.handleStyleUpdate);
         }
 
         handleStyleUpdate = ({ updatedStyles }) => {
