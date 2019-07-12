@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import memoize from 'memoize-one';
+import {
+    _cs,
+    isFalsyString,
+    caseInsensitiveSubmatch,
+    compareStringSearch,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
@@ -23,6 +29,7 @@ const propTypes = {
     keySelector: PropTypes.func,
     labelSelector: PropTypes.func,
     tooltipSelector: PropTypes.func,
+    searchText: PropTypes.string,
 
     label: PropTypes.string,
     disabled: PropTypes.bool,
@@ -42,6 +49,7 @@ const defaultProps = {
     keySelector: item => item.key,
     tooltipSelector: item => item.label,
     labelSelector: item => item.label,
+    searchText: undefined,
 
     label: '',
     disabled: false,
@@ -81,6 +89,25 @@ export class NormalListSelection extends React.PureComponent {
 
         return className;
     }
+
+    getFilteredOptions = memoize((searchText, options) => {
+        const {
+            labelSelector,
+        } = this.props;
+
+        if (isFalsyString(searchText)) {
+            return options;
+        }
+
+        const newOptions = options
+            .filter(option => caseInsensitiveSubmatch(labelSelector(option), searchText))
+            .sort((a, b) => compareStringSearch(
+                labelSelector(a),
+                labelSelector(b),
+                searchText,
+            ));
+        return newOptions;
+    });
 
     handleItemChange = (key, isSelected) => {
         const { value, onChange } = this.props;
@@ -132,7 +159,10 @@ export class NormalListSelection extends React.PureComponent {
             options,
             keySelector,
             listClassName,
+            searchText,
         } = this.props;
+
+        const filteredOptions = this.getFilteredOptions(searchText, options);
 
         return (
             <ListView
@@ -141,7 +171,7 @@ export class NormalListSelection extends React.PureComponent {
                     'list-selection-options',
                     listClassName,
                 )}
-                data={options}
+                data={filteredOptions}
                 renderer={Checkbox}
                 keySelector={keySelector}
                 rendererParams={this.renderParams}
