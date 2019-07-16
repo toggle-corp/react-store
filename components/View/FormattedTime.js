@@ -9,9 +9,9 @@ const FormattedTime = ({ value, date, ...otherProps }) => {
     const newValue = value ? `1994-12-25 ${value}` : value;
     return (
         <FormattedDate
+            mode="hh:mm"
             {...otherProps}
             value={newValue}
-            mode="hh:mm"
         />
     );
 };
