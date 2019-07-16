@@ -35,6 +35,7 @@ export default class TableHeader extends React.PureComponent {
         } = this.props;
 
         const divClassName = _cs(
+            'table-header',
             className,
             styles.tableHeader,
             sortable && styles.sortable,
