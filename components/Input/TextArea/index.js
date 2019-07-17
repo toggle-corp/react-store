@@ -4,6 +4,8 @@ import { randomString, isFalsy } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import Delay from '../../General/Delay';
+import Label from '../Label';
+import HintAndError from '../HintAndError';
 
 import styles from './styles.scss';
 
@@ -184,24 +186,23 @@ export class NormalTextArea extends React.PureComponent {
             label,
             showLabel,
             showHintAndError,
+            disabled,
             resize,
             ...otherProps
         } = this.props;
 
         const classNames = this.getClassName();
+        const { isFocused } = this.state;
 
         return (
             <div className={`${classNames} ${className}`}>
-                {
-                    showLabel && (
-                        <label
-                            className={`${styles.label} label`}
-                            htmlFor={this.inputId}
-                        >
-                            {label}
-                        </label>
-                    )
-                }
+                <Label
+                    show={showLabel}
+                    text={label}
+                    error={!!error}
+                    active={isFocused}
+                    disabled={disabled}
+                />
                 <textarea
                     className={`${styles.input} input`}
                     id={this.inputId}
@@ -211,34 +212,11 @@ export class NormalTextArea extends React.PureComponent {
                     style={{ resize }}
                     {...otherProps}
                 />
-                {
-                    showHintAndError && [
-                        !error && hint && (
-                            <p
-                                key="hint"
-                                className={`${styles.hint} hint`}
-                            >
-                                {hint}
-                            </p>
-                        ),
-                        error && !hint && (
-                            <p
-                                key="error"
-                                className={`${styles.error} error`}
-                            >
-                                {error}
-                            </p>
-                        ),
-                        !error && !hint && (
-                            <p
-                                key="empty"
-                                className={`${styles.empty} empty error`}
-                            >
-                                -
-                            </p>
-                        ),
-                    ]
-                }
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                />
             </div>
         );
     }
