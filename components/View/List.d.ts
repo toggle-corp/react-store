@@ -17,7 +17,7 @@ interface Props<T, Q> {
     data?: T[];
     keySelector?(datum: T, index: number): string | number;
     rendererClassName?: string;
-    rendererParams?: (key: string, data: T) => Q;
+    rendererParams?: (key: string | number, data: T, index: number) => Q;
     renderer?: React.ComponentType<Q> | ((props: Q) => React.ReactNode);
 }
 
