@@ -77,6 +77,15 @@ export class NormalListView extends React.Component {
 
         const isEmpty = data.length <= 0;
 
+        const className = _cs(
+            classNameFromProps,
+            styles.listView,
+            'list-view',
+            pending && styles.pending,
+            isEmpty && 'list-view-empty',
+            isEmpty && styles.listViewEmpty,
+        );
+
         if (isEmpty) {
             if (isFiltered) {
                 content = !pending
@@ -95,14 +104,6 @@ export class NormalListView extends React.Component {
                 />
             );
         }
-
-        const className = _cs(
-            classNameFromProps,
-            styles.listView,
-            'list-view',
-            isEmpty && 'list-view-empty',
-            isEmpty && styles.listViewEmpty,
-        );
 
         return (
             <div
