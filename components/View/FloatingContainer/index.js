@@ -144,7 +144,7 @@ export default class FloatingContainer extends React.PureComponent {
                 onBlur();
             }
         } else if (onMouseDown) {
-            onMouseDown();
+            onMouseDown(e);
         }
     }
 
