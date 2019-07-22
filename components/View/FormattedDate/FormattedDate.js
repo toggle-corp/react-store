@@ -10,7 +10,7 @@ const propTypes = {
     /**
      * Timestamp
      */
-    date: PropTypes.oneOfType([
+    value: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
         PropTypes.instanceOf(Date),
@@ -25,7 +25,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    date: undefined,
+    value: undefined,
     mode: 'dd-MM-yyyy',
 
     emptyComponent: () => '-',
@@ -76,7 +76,7 @@ export default class FormattedDate extends React.PureComponent {
 
     render() {
         const {
-            date,
+            value,
             mode,
             className,
             emptyComponent: Empty,
@@ -88,7 +88,7 @@ export default class FormattedDate extends React.PureComponent {
             styles.formattedDate,
         ].join(' ');
 
-        if (!date) {
+        if (!value) {
             return (
                 <div className={containerClassName}>
                     { Empty && <Empty />}
@@ -96,7 +96,7 @@ export default class FormattedDate extends React.PureComponent {
             );
         }
 
-        const children = FormattedDate.formatDate(new Date(date), mode);
+        const children = FormattedDate.formatDate(new Date(value), mode);
         return (
             <time className={containerClassName}>
                 { children }

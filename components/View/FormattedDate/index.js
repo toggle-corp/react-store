@@ -9,7 +9,7 @@ const HackedFormattedDate = ({ value, ...otherProps }) => {
         return (
             <FormattedDate
                 {...otherProps}
-                date={value}
+                value={value}
             />
         );
     }
@@ -30,6 +30,7 @@ HackedFormattedDate.propTypes = {
 HackedFormattedDate.defaultProps = {
     value: undefined,
 };
+
 HackedFormattedDate.format = FormattedDate.format;
 
 export default HackedFormattedDate;
