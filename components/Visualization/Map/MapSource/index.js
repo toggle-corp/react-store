@@ -147,6 +147,9 @@ export default class MapSource extends React.PureComponent {
             bounds,
             boundsPadding,
             images,
+            cluster,
+            clusterMaxZoom,
+            clusterRadius,
         } = props;
 
         if (images) {
@@ -165,18 +168,32 @@ export default class MapSource extends React.PureComponent {
             });
         }
 
+        const properties = {};
+
         // console.info('Adding source', this.props.sourceKey);
         if (geoJson) {
-            map.addSource(sourceKey, {
-                type: 'geojson',
-                data: geoJson,
-            });
+            properties.type = 'geojson';
+            properties.data = geoJson;
         } else if (url) {
-            map.addSource(sourceKey, {
-                type: 'vector',
-                url,
-            });
+            properties.type = 'vector';
+            properties.url = url;
         }
+
+        if (cluster) {
+            properties.cluster = cluster;
+        }
+
+        if (clusterMaxZoom) {
+            properties.clusterMaxZoom = clusterMaxZoom;
+        }
+
+        if (clusterRadius) {
+            properties.clusterRadius = clusterRadius;
+        }
+
+        // NOTE: Inject properties for source
+
+        map.addSource(sourceKey, properties);
 
         if (bounds) {
             map.fitBounds(bounds, { padding: boundsPadding });
