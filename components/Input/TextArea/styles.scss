@@ -3,12 +3,6 @@
     display: flex;
     flex-direction: column;
 
-    .label {
-        text-transform: uppercase;
-        color: var(--color-text-label);
-        font-size: var(--font-size-extra-small);
-    }
-
     .input {
         outline: none;
         border: 0;
@@ -60,33 +54,9 @@
     }
 
     &.disabled {
-        .label {
-            color: var(--color-text-disabled);
-        }
-
         .input {
             border-bottom-color: var(--color-separator);
             color: var(--color-text-disabled);
         }
-    }
-
-    %base {
-        margin: var(--spacing-extra-small) 0 0;
-        font-size: var(--font-size-extra-small);
-    }
-
-    .hint {
-        @extend %base;
-        color: var(--color-text-label);
-    }
-
-    .error {
-        @extend %base;
-        color: var(--color-danger);
-    }
-
-    .empty {
-        @extend %base;
-        visibility: hidden;
     }
 }
