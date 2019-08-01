@@ -84,25 +84,6 @@ const defaultProps = {
     selectionOnDoubleClick: false,
 };
 
-/*
-const clearHoverAndSelectionStates = (map, sourceKey, sourceLayer, hoveredId, selectedIds) => {
-    if (isDefined(selectedIds)) {
-        selectedIds.forEach((selectedId) => {
-            map.removeFeatureState(
-                { source: sourceKey, id: selectedId, sourceLayer },
-                'selected',
-            );
-        });
-    }
-    if (isDefined(hoveredId)) {
-        map.removeFeatureState(
-            { source: sourceKey, id: hoveredId, sourceLayer },
-            'hover',
-        );
-    }
-};
-*/
-
 const changeSelectionState = (map, sourceKey, sourceLayer, oldSelectedIds, newSelectedIds) => {
     const oldSelectionIdSet = new Set(oldSelectedIds);
     const newSelectionIdSet = new Set(newSelectedIds);
@@ -142,6 +123,27 @@ const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredI
             { hover: true },
         );
     }
+};
+
+const setMapState = (map, sourceKey, sourceLayer, newMapState, newSelectedIds, newHoveredId) => {
+    // Remove everything for a source
+    map.removeFeatureState({
+        source: sourceKey,
+        sourceLayer,
+    });
+
+    // add new map state
+    newMapState.forEach((item) => {
+        map.setFeatureState(
+            { source: sourceKey, id: item.id, sourceLayer },
+            item.value,
+        );
+    });
+
+    // add hoverId
+    changeSelectionState(map, sourceKey, sourceLayer, undefined, newSelectedIds);
+    // add selectedIds
+    changeHoverState(map, sourceKey, sourceLayer, undefined, newHoveredId);
 };
 
 @MapChild
@@ -197,9 +199,35 @@ export default class MapLayer extends React.PureComponent {
             this.create(nextProps);
             return;
         }
+
         if (oldMapState !== newMapState) {
-            this.setMapState(nextProps);
+            setMapState(
+                newMap, sourceKey, newSourceLayer, newMapState, newSelectedIds, newHoveredId,
+            );
+            this.stateHoveredId = newHoveredId;
+            this.stateSelectedIds = newSelectedIds;
+        } else {
+            if (
+                oldHoveredId !== newHoveredId
+                && this.stateHoveredId !== newHoveredId
+            ) {
+                changeHoverState(
+                    newMap, sourceKey, newSourceLayer, this.stateHoveredId, newHoveredId,
+                );
+                this.stateHoveredId = newHoveredId;
+            }
+
+            if (
+                oldSelectedIds !== newSelectedIds
+                && this.stateSelectedIds !== newSelectedIds
+            ) {
+                changeSelectionState(
+                    newMap, sourceKey, newSourceLayer, this.stateSelectedIds, newSelectedIds,
+                );
+                this.stateSelectedIds = newSelectedIds;
+            }
         }
+
         if (this.layer && oldLayout !== newLayout) {
             this.reloadLayout(nextProps);
         }
@@ -208,24 +236,6 @@ export default class MapLayer extends React.PureComponent {
         }
         if (this.layer && oldFilter !== newFilter) {
             this.reloadFilter(nextProps);
-        }
-
-        if (
-            oldHoveredId !== newHoveredId
-            && this.stateHoveredId !== newHoveredId
-        ) {
-            changeHoverState(newMap, sourceKey, newSourceLayer, this.stateHoveredId, newHoveredId);
-            this.stateHoveredId = newHoveredId;
-        }
-
-        if (
-            oldSelectedIds !== newSelectedIds
-            && this.stateSelectedIds !== newSelectedIds
-        ) {
-            changeSelectionState(
-                newMap, sourceKey, newSourceLayer, this.stateSelectedIds, newSelectedIds,
-            );
-            this.stateSelectedIds = newSelectedIds;
         }
     }
 
@@ -237,24 +247,6 @@ export default class MapLayer extends React.PureComponent {
         cancelAnimationFrame(this.animationKey);
 
         this.destroy();
-    }
-
-    setMapState = (props) => {
-        const {
-            map,
-            sourceKey,
-            sourceLayer,
-            mapState,
-        } = props;
-        if (!mapState) {
-            return;
-        }
-        mapState.forEach((item) => {
-            map.setFeatureState(
-                { source: sourceKey, id: item.id, sourceLayer },
-                item.value,
-            );
-        });
     }
 
     reloadLayout = (props) => {
@@ -308,8 +300,6 @@ export default class MapLayer extends React.PureComponent {
             return;
         }
 
-        // clearHoverAndSelectionStates(map, sourceKey, sourceLayer, hoveredId, selectedIds);
-
         this.destroyHandlers(map, layerKey);
 
         if (this.layer) {
@@ -340,6 +330,7 @@ export default class MapLayer extends React.PureComponent {
             tooltipRendererParams,
             onClick,
             onDoubleClick,
+            mapState,
             hoveredId,
             selectedIds,
             onHoverChange,
@@ -555,7 +546,9 @@ export default class MapLayer extends React.PureComponent {
             this.stateSelectedIds = selectedIds;
         }
 
-        this.setMapState(props);
+        setMapState(
+            map, sourceKey, sourceLayer, mapState, selectedIds, hoveredId,
+        );
 
         if (onAnimationKeyframe) {
             this.animationKey = requestAnimationFrame(this.animate);
@@ -563,7 +556,7 @@ export default class MapLayer extends React.PureComponent {
     }
 
     animate = (timestamp) => {
-        // TODO: handle componentWillRecieveProps
+        // TODO: handle componentWillReceiveProps
         const {
             onAnimationKeyframe,
             map,
