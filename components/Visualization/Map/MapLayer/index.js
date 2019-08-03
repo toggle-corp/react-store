@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import ReactDOM from 'react-dom';
 
-import { isDefined, difference } from '@togglecorp/fujs';
+import { isDefined, difference, isNotDefined } from '@togglecorp/fujs';
 
 import MapChild from '../MapChild';
 import { forEach } from '../../../../utils/common';
@@ -125,7 +125,21 @@ const changeHoverState = (map, sourceKey, sourceLayer, oldHoveredId, newHoveredI
     }
 };
 
-const setMapState = (map, sourceKey, sourceLayer, newMapState, newSelectedIds, newHoveredId) => {
+const setMapState = (
+    map,
+    sourceKey,
+    sourceLayer,
+    newMapState,
+    newSelectedIds,
+    newHoveredId,
+) => {
+    // NOTE: map state is shared between every map layers of a map source
+    // So, if mapState is not defined, it will not update the map state internally
+    // To clear out mapState, we should implicitly set mapState to emptyArray
+    if (isNotDefined(newMapState)) {
+        return;
+    }
+
     // Remove everything for a source
     map.removeFeatureState({
         source: sourceKey,
@@ -204,28 +218,34 @@ export default class MapLayer extends React.PureComponent {
             setMapState(
                 newMap, sourceKey, newSourceLayer, newMapState, newSelectedIds, newHoveredId,
             );
-            this.stateHoveredId = newHoveredId;
-            this.stateSelectedIds = newSelectedIds;
-        } else {
-            if (
-                oldHoveredId !== newHoveredId
-                && this.stateHoveredId !== newHoveredId
-            ) {
+        }
+
+        if (
+            oldHoveredId !== newHoveredId
+            && this.stateHoveredId !== newHoveredId
+        ) {
+            // if mapState has changed, then it will clear out the hovered state
+            // and set it appropriately, so no need to handle it again
+            if (oldMapState === newMapState) {
                 changeHoverState(
                     newMap, sourceKey, newSourceLayer, this.stateHoveredId, newHoveredId,
                 );
-                this.stateHoveredId = newHoveredId;
             }
+            this.stateHoveredId = newHoveredId;
+        }
 
-            if (
-                oldSelectedIds !== newSelectedIds
-                && this.stateSelectedIds !== newSelectedIds
-            ) {
+        if (
+            oldSelectedIds !== newSelectedIds
+            && this.stateSelectedIds !== newSelectedIds
+        ) {
+            // if mapState has changed, then it will clear out the selected state
+            // and set it appropriately, so no need to handle it again
+            if (oldMapState === newMapState) {
                 changeSelectionState(
                     newMap, sourceKey, newSourceLayer, this.stateSelectedIds, newSelectedIds,
                 );
-                this.stateSelectedIds = newSelectedIds;
             }
+            this.stateSelectedIds = newSelectedIds;
         }
 
         if (this.layer && oldLayout !== newLayout) {
