@@ -192,7 +192,11 @@ export default class MapLayer extends React.PureComponent {
             mapState: newMapState,
         } = nextProps;
 
-        if (oldMap !== newMap || oldMapStyle !== newMapStyle || oldSourceLayer !== newSourceLayer) {
+        if (
+            oldMap !== newMap
+            || oldMapStyle !== newMapStyle
+            || oldSourceLayer !== newSourceLayer
+        ) {
             this.destroy();
             this.create(nextProps);
             return;
@@ -334,8 +338,8 @@ export default class MapLayer extends React.PureComponent {
             paint,
             layout,
             filter,
-            enableHover,
-            enableSelection,
+            // enableHover,
+            // enableSelection,
             tooltipRenderer,
             tooltipRendererParams,
             onClick,
@@ -386,7 +390,7 @@ export default class MapLayer extends React.PureComponent {
 
         // Change the cursor to a pointer when the mouse is over the places layer.
         this.eventHandlers.mouseenter = () => {
-            if (enableSelection || enableHover || tooltipRenderer) {
+            if (this.props.enableSelection || this.props.enableHover || tooltipRenderer) {
                 // eslint-disable-next-line no-param-reassign
                 map.getCanvas().style.cursor = 'pointer';
             }
@@ -396,7 +400,7 @@ export default class MapLayer extends React.PureComponent {
         // feature state for the feature under the mouse.
         this.eventHandlers.mousemove = (e) => {
             const { features } = e;
-            if (features.length > 0 && enableHover) {
+            if (features.length > 0 && this.props.enableHover) {
                 // Get first feature (it looks to be the top-most)
                 const { id } = features[0];
 
@@ -436,7 +440,7 @@ export default class MapLayer extends React.PureComponent {
                 this.popup.addTo(map);
             }
 
-            if (enableSelection && !this.props.selectionOnDoubleClick) {
+            if (this.props.enableSelection && !this.props.selectionOnDoubleClick) {
                 const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
 
                 let newSelectedIds;
@@ -491,7 +495,7 @@ export default class MapLayer extends React.PureComponent {
                 this.popup.addTo(map);
             }
 
-            if (enableSelection && this.props.selectionOnDoubleClick) {
+            if (this.props.enableSelection && this.props.selectionOnDoubleClick) {
                 const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
 
                 let newSelectedIds;
@@ -525,7 +529,7 @@ export default class MapLayer extends React.PureComponent {
         // When the mouse leaves the state-fill layer, update the feature state of the
         // previously hovered feature.
         this.eventHandlers.mouseleave = () => {
-            if (enableHover && this.stateHoveredId) {
+            if (this.props.enableHover && this.stateHoveredId) {
                 clearHoverState(map, sourceKey, sourceLayer, this.stateHoveredId);
                 this.stateHoveredId = undefined;
                 if (onHoverChange) {
@@ -533,7 +537,7 @@ export default class MapLayer extends React.PureComponent {
                 }
             }
 
-            if (enableSelection || enableHover || tooltipRenderer) {
+            if (this.props.enableSelection || this.props.enableHover || tooltipRenderer) {
                 // Change it back to a pointer when it leaves.
                 // eslint-disable-next-line no-param-reassign
                 map.getCanvas().style.cursor = '';
