@@ -97,7 +97,6 @@ const presets = {
 
         const max = new Date();
         max.setHours(0, 0, 0, 0);
-        max.setDate(max.getDate() + 1);
         const endDate = encodeDate(max);
 
         return { startDate, endDate };
@@ -138,15 +137,11 @@ class DateFilter extends React.PureComponent {
 
     static calculateOptionsAndValue = memoize((value) => {
         const options = DateFilter.defaultOptions;
-        const { startDate, endDate: actualEndDate } = value;
+        const { startDate, endDate } = value;
 
-        if (!startDate || !actualEndDate) {
+        if (!startDate || !endDate) {
             return { options, value: undefined };
         }
-
-        const endDateObj = decodeDate(actualEndDate);
-        endDateObj.setDate(endDateObj.getDate() - 1);
-        const endDate = encodeDate(endDateObj);
 
         const preset = Object.keys(presets).find((key) => {
             const test = presets[key]();
@@ -207,13 +202,9 @@ class DateFilter extends React.PureComponent {
             return;
         }
 
-        const endDateObj = decodeDate(endDate);
-        endDateObj.setDate(endDateObj.getDate() + 1);
-        const actualEndDate = encodeDate(endDateObj);
-
         this.props.onChange({
             startDate,
-            endDate: actualEndDate,
+            endDate,
         });
     }
 
