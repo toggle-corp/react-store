@@ -49,7 +49,7 @@ const defaultProps = {
     iconName: undefined,
     leftComponent: undefined,
     hideDropdownIcon: false,
-    title: '',
+    title: undefined,
     dropdownClassName: '',
     dropdownIcon: 'chevronDown',
     dropdownIconClassName: '',
@@ -101,9 +101,11 @@ export default class DropdownMenu extends React.PureComponent {
     handleWindowClick = () => {
         const { closeOnClick } = this.props;
 
-        if (closeOnClick && this.state.showDropdown) {
-            this.setState({ showDropdown: false });
-        }
+        setTimeout(() => {
+            if (closeOnClick && this.state.showDropdown) {
+                this.setState({ showDropdown: false });
+            }
+        }, 0);
     }
 
     handleDropdownContainerInvalidate = (dropdownContainer) => {
@@ -167,9 +169,11 @@ export default class DropdownMenu extends React.PureComponent {
                     />
                 )}
                 { leftComponent }
-                <span className={titleClassName}>
-                    {title}
-                </span>
+                { title && (
+                    <span className={titleClassName}>
+                        {title}
+                    </span>
+                )}
                 { !hideDropdownIcon && (
                     <Icon
                         className={iconClassName}
