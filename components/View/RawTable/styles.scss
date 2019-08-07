@@ -1,17 +1,23 @@
-.raw-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
+.table-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow: auto;
 
-    .empty {
+    .scroll-wrapper {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         flex-grow: 1;
-        justify-content: center;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        color: var(--color-text-disabled);
+        overflow: auto;
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .empty-container {
+            flex-grow: 1;
+        }
     }
 }
-

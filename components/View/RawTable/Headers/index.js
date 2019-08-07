@@ -9,7 +9,10 @@ const propTypes = {
     className: PropTypes.string,
 
     headers: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
     })).isRequired,
 
     onClick: PropTypes.func,

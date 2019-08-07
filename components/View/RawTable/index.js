@@ -1,23 +1,25 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { isListEqual } from '@togglecorp/fujs';
+import React from 'react';
+import { isListEqual, _cs } from '@togglecorp/fujs';
 
+import LoadingAnimation from '../LoadingAnimation';
 import Message from '../Message';
+
 import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
 
-const defaultEmptyComponent = () => {
-    const classNames = [
-        'empty',
-        styles.empty,
-    ];
-
-    return (
-        <Message className={classNames.join(' ')}>
-            Nothing to show
-        </Message>
-    );
+const DefaultEmptyComponent = ({ className, message }) => (
+    <Message className={className}>
+        {message}
+    </Message>
+);
+DefaultEmptyComponent.propTypes = {
+    className: PropTypes.string,
+    message: PropTypes.string.isRequired,
+};
+DefaultEmptyComponent.defaultProps = {
+    className: undefined,
 };
 
 const propTypeKey = PropTypes.oneOfType([
@@ -28,9 +30,15 @@ const propTypeKey = PropTypes.oneOfType([
 const propTypes = {
     className: PropTypes.string,
 
+    pending: PropTypes.bool,
+    isFiltered: PropTypes.bool,
+
     headers: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
-        label: PropTypes.string,
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+        label: PropTypes.node,
     })).isRequired,
 
     data: PropTypes.arrayOf(PropTypes.shape({
@@ -83,6 +91,9 @@ const defaultProps = {
     dataModifier: undefined,
     headerModifier: undefined,
 
+    pending: false,
+    isFiltered: false,
+
     highlightCellKey: {},
     highlightColumnKey: undefined,
     highlightRowKey: undefined,
@@ -92,7 +103,7 @@ const defaultProps = {
     expandRowId: undefined,
     expandedRowModifier: undefined,
 
-    emptyComponent: defaultEmptyComponent,
+    emptyComponent: DefaultEmptyComponent,
 };
 
 export default class RawTable extends React.Component {
@@ -181,6 +192,8 @@ export default class RawTable extends React.Component {
             expandedRowModifier,
             emptyComponent: EmptyComponent,
             className,
+            pending,
+            isFiltered,
         } = this.props;
 
         const {
@@ -188,22 +201,16 @@ export default class RawTable extends React.Component {
             headersOrder,
         } = this.state;
 
-        const tableClassName = this.getClassName(className);
-        const emptyClassName = [
-            'empty',
-            styles.empty,
-        ];
-
         return (
-            <Fragment>
-                {
-                    data.length > 0 ? (
-                        <table className={tableClassName}>
-                            <Headers
-                                headers={headers}
-                                headerModifier={headerModifier}
-                                onClick={onHeaderClick}
-                            />
+            <div className={_cs(styles.tableContainer, className, 'raw-table')}>
+                <div className={_cs(styles.scrollWrapper, 'raw-table-scroll-wrapper')}>
+                    <table className={_cs(styles.table, 'table')}>
+                        <Headers
+                            headers={headers}
+                            headerModifier={headerModifier}
+                            onClick={onHeaderClick}
+                        />
+                        { data.length > 0 && (
                             <Body
                                 data={data}
                                 dataModifier={dataModifier}
@@ -218,12 +225,27 @@ export default class RawTable extends React.Component {
                                 highlightColumnKey={highlightColumnKey}
                                 expandRowId={expandRowId}
                             />
-                        </table>
-                    ) : (
-                        EmptyComponent && <EmptyComponent className={emptyClassName} />
-                    )
-                }
-            </Fragment>
+                        )}
+                    </table>
+                    { data.length <= 0 && !pending && (
+                        <div className={styles.emptyContainer}>
+                            <EmptyComponent
+                                className={_cs('empty', styles.empty)}
+                                message={
+                                    isFiltered
+                                        ? 'There are no items that match your filtering criteria.'
+                                        : 'There are no items.'
+                                }
+                            />
+                        </div>
+                    )}
+                </div>
+                { pending && (
+                    <LoadingAnimation
+                        message="Fetching data..."
+                    />
+                )}
+            </div>
         );
     }
 }

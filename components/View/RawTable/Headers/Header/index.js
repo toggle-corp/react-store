@@ -12,7 +12,10 @@ const propTypes = {
     highlighted: PropTypes.bool,
     hoverable: PropTypes.bool,
     onClick: PropTypes.func,
-    uniqueKey: PropTypes.string.isRequired,
+    uniqueKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
 };
 
 const defaultProps = {
