@@ -2,16 +2,18 @@ import * as React from 'react';
 
 interface DefaultHeader {
     key: string;
-    label: string;
+    label: React.ReactNode;
 }
 
 interface Props<Data, Header = DefaultHeader> {
     className?: string;
+    pending?: boolean;
+    isFiltered?: boolean;
 
     headers: Header[];
     data: Data[];
 
-    dataModifier?(data: Data, key: string): React.ReactNode;
+    dataModifier?(data: Data, key: keyof Data): React.ReactNode;
     headerModifier?(header: Header, headers: Header[]): React.ReactNode;
 
     expandRowId?: string | number;

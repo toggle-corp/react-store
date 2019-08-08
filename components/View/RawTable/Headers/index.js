@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import List from '../../List';
 
@@ -9,7 +10,10 @@ const propTypes = {
     className: PropTypes.string,
 
     headers: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
+        key: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
     })).isRequired,
 
     onClick: PropTypes.func,
@@ -28,18 +32,6 @@ export default class Headers extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
-
-    getClassName = (className) => {
-        const classNames = [];
-
-        // default className for global override
-        classNames.push('headers');
-
-        // className provided by parent (through className)
-        classNames.push(className);
-
-        return classNames.join(' ');
-    }
 
     getHeaderKey = header => header.key;
 
@@ -77,10 +69,8 @@ export default class Headers extends React.Component {
             className: classNameFromProps,
         } = this.props;
 
-        const className = this.getClassName(classNameFromProps);
-
         return (
-            <thead className={className}>
+            <thead className={_cs(classNameFromProps, 'header')}>
                 <tr>
                     <List
                         data={headers}
