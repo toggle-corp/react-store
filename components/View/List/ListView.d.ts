@@ -6,6 +6,7 @@ interface Props {
     emptyComponent?: React.ReactNode;
 }
 
-declare class ListView<T, Q> extends React.Component<Props & ListProps<T, Q>, any> {
+// eslint-disable-next-line react/prefer-stateless-function
+declare class ListView<T, Q, R> extends React.Component<Props & ListProps<T, Q, R>, any> {
 }
 export default ListView;
