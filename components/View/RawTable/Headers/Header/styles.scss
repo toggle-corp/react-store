@@ -1,8 +1,8 @@
-
 .header {
     position: sticky;
     top: 0;
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    // border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
     padding: 0;
     text-transform: uppercase;
     font-size: var(--font-size-small);

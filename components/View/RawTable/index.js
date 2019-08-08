@@ -9,17 +9,22 @@ import Body from './Body';
 import Headers from './Headers';
 import styles from './styles.scss';
 
-const DefaultEmptyComponent = ({ className, message }) => (
+const DefaultEmptyComponent = ({ className, isFiltered }) => (
     <Message className={className}>
-        {message}
+        {
+            isFiltered
+                ? 'There are no items that match your filtering criteria.'
+                : 'There are no items.'
+        }
     </Message>
 );
 DefaultEmptyComponent.propTypes = {
     className: PropTypes.string,
-    message: PropTypes.string.isRequired,
+    isFiltered: PropTypes.bool,
 };
 DefaultEmptyComponent.defaultProps = {
     className: undefined,
+    isFiltered: false,
 };
 
 const propTypeKey = PropTypes.oneOfType([
@@ -231,11 +236,7 @@ export default class RawTable extends React.Component {
                         <div className={styles.emptyContainer}>
                             <EmptyComponent
                                 className={_cs('empty', styles.empty)}
-                                message={
-                                    isFiltered
-                                        ? 'There are no items that match your filtering criteria.'
-                                        : 'There are no items.'
-                                }
+                                isFiltered={isFiltered}
                             />
                         </div>
                     )}
