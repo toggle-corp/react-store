@@ -74,7 +74,7 @@ const defaultProps = {
     expandedRowModifier: undefined,
 };
 
-export default class Body extends React.PureComponent {
+export default class Body extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;

@@ -55,7 +55,7 @@ const defaultProps = {
 };
 
 
-export default class Row extends React.PureComponent {
+export default class Row extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
