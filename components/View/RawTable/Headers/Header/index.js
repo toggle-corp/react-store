@@ -16,9 +16,11 @@ const propTypes = {
         PropTypes.string,
         PropTypes.number,
     ]).isRequired,
+    columnHighlighted: PropTypes.bool,
 };
 
 const defaultProps = {
+    columnHighlighted: false,
     className: '',
     highlighted: false,
     hoverable: false,
@@ -30,7 +32,7 @@ export default class Header extends React.PureComponent {
 
     static defaultProps = defaultProps;
 
-    getClassName = (className, highlighted, hoverable, uniqueKey) => {
+    getClassName = (className, highlighted, columnHighlighted, hoverable, uniqueKey) => {
         const classNames = [];
 
         // default className for global override
@@ -48,6 +50,11 @@ export default class Header extends React.PureComponent {
         if (highlighted) {
             classNames.push('highlighted');
             // classNames.push(styles.highlighted);
+        }
+
+        if (columnHighlighted) {
+            classNames.push('column-highlighted');
+            classNames.push(styles.columnHighlighted);
         }
 
         if (uniqueKey) {
@@ -75,9 +82,12 @@ export default class Header extends React.PureComponent {
             hoverable,
             uniqueKey,
             children,
+            columnHighlighted,
         } = this.props;
 
-        const thClassName = this.getClassName(className, highlighted, hoverable, uniqueKey);
+        const thClassName = this.getClassName(
+            className, highlighted, columnHighlighted, hoverable, uniqueKey,
+        );
 
         return (
             <th

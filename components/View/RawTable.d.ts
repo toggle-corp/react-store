@@ -28,7 +28,9 @@ interface Props<Data, Header = DefaultHeader> {
         rowKey: string | number;
         columnKey: string | number;
     };
-    highlightColumnKey?: string | number;
+    highlightColumnKeys?: {
+        [key: string]: boolean;
+    };
     highlightRowKey?: string | number;
 
     onDataSort?(data: Data[]): void;

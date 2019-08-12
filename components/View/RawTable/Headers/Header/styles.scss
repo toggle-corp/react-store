@@ -1,7 +1,7 @@
 .header {
     position: sticky;
     top: 0;
-    // border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    border-bottom: var(--width-separator-medium) solid var(--color-separator);
     background-color: var(--color-foreground);
     padding: 0;
     text-transform: uppercase;
@@ -9,6 +9,6 @@
     font-weight: var(--font-weight-normal);
 
     &:not(:last-child) {
-        border-right: var(--width-separator-thin) solid var(--color-separator-light);
+        border-right: var(--width-separator-thin) solid var(--color-separator);
     }
 }

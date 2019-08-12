@@ -78,7 +78,8 @@ const propTypes = {
         rowKey: propTypeKey,
     }),
 
-    highlightColumnKey: propTypeKey,
+    // eslint-disable-next-line react/forbid-prop-types
+    highlightColumnKeys: PropTypes.object,
 
     highlightRowKey: propTypeKey,
 
@@ -100,7 +101,7 @@ const defaultProps = {
     isFiltered: false,
 
     highlightCellKey: {},
-    highlightColumnKey: undefined,
+    highlightColumnKeys: undefined,
     highlightRowKey: undefined,
 
     onDataSort: undefined,
@@ -192,7 +193,7 @@ export default class RawTable extends React.Component {
             onBodyHoverOut,
             highlightCellKey,
             highlightRowKey,
-            highlightColumnKey,
+            highlightColumnKeys,
             expandRowId,
             expandedRowModifier,
             emptyComponent: EmptyComponent,
@@ -214,6 +215,7 @@ export default class RawTable extends React.Component {
                             headers={headers}
                             headerModifier={headerModifier}
                             onClick={onHeaderClick}
+                            highlightColumnKeys={highlightColumnKeys}
                         />
                         { data.length > 0 && (
                             <Body
@@ -227,7 +229,7 @@ export default class RawTable extends React.Component {
                                 onHoverOut={onBodyHoverOut}
                                 highlightCellKey={highlightCellKey}
                                 highlightRowKey={highlightRowKey}
-                                highlightColumnKey={highlightColumnKey}
+                                highlightColumnKeys={highlightColumnKeys}
                                 expandRowId={expandRowId}
                             />
                         )}

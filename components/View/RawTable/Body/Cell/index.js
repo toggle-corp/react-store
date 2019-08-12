@@ -15,7 +15,10 @@ const propTypes = {
     onClick: PropTypes.func,
     onHover: PropTypes.func,
     onHoverOut: PropTypes.func,
-    uniqueKey: PropTypes.string.isRequired,
+    uniqueKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
 };
 
 const defaultProps = {
