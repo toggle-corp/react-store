@@ -22,9 +22,11 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     highlightColumnKeys: PropTypes.object,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
+    disabled: false,
     className: '',
     onClick: undefined,
     headerModifier: undefined,
@@ -51,11 +53,12 @@ export default class Headers extends React.Component {
             headers,
             headerModifier,
             highlightColumnKeys,
+            disabled,
         } = this.props;
 
         const headerContent = headerModifier
             ? headerModifier(header, headers) // FIXME: could be optimized
-            : header.label;
+            : <div>header.label</div>;
 
         return (
             <Header
@@ -65,6 +68,7 @@ export default class Headers extends React.Component {
                 columnHighlighted={
                     isTruthy(key) && isTruthy(highlightColumnKeys) && highlightColumnKeys[key]
                 }
+                disabled={disabled}
             >
                 {headerContent}
             </Header>

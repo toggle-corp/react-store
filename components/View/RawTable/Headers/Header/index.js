@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -17,6 +18,7 @@ const propTypes = {
         PropTypes.number,
     ]).isRequired,
     columnHighlighted: PropTypes.bool,
+    disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -32,43 +34,16 @@ export default class Header extends React.PureComponent {
 
     static defaultProps = defaultProps;
 
-    getClassName = (className, highlighted, columnHighlighted, hoverable, uniqueKey) => {
-        const classNames = [];
-
-        // default className for global override
-        classNames.push('header');
-        classNames.push(styles.header);
-
-        // className provided by parent (through className)
-        classNames.push(className);
-
-        if (hoverable) {
-            classNames.push('hoverable');
-            // classNames.push(styles.hoverable);
-        }
-
-        if (highlighted) {
-            classNames.push('highlighted');
-            // classNames.push(styles.highlighted);
-        }
-
-        if (columnHighlighted) {
-            classNames.push('column-highlighted');
-            classNames.push(styles.columnHighlighted);
-        }
-
-        if (uniqueKey) {
-            classNames.push(uniqueKey);
-        }
-
-        return classNames.join(' ');
-    }
-
     handleClick = (e) => {
         const {
             onClick,
             uniqueKey,
+            disabled,
         } = this.props;
+
+        if (disabled) {
+            return;
+        }
 
         if (onClick) {
             onClick(uniqueKey, e);
@@ -83,11 +58,27 @@ export default class Header extends React.PureComponent {
             uniqueKey,
             children,
             columnHighlighted,
+            disabled,
         } = this.props;
 
-        const thClassName = this.getClassName(
-            className, highlighted, columnHighlighted, hoverable, uniqueKey,
+        const thClassName = _cs(
+            'header',
+            styles.header,
+            className,
+            hoverable && 'hoverable',
+            highlighted && 'highlighted',
+            columnHighlighted && styles.columnHighlighted,
+            columnHighlighted && 'column-highlighted',
+            uniqueKey,
+            disabled && styles.disabled,
         );
+
+        const props = {
+            hoverable,
+            highlighted,
+            uniqueKey,
+            disabled,
+        };
 
         return (
             <th
@@ -95,7 +86,7 @@ export default class Header extends React.PureComponent {
                 role="gridcell"
                 onClick={this.handleClick}
             >
-                { children }
+                { React.cloneElement(children, props)}
             </th>
         );
     }
