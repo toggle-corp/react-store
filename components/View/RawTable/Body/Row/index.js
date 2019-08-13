@@ -19,10 +19,16 @@ const propTypes = {
 
     dataModifier: PropTypes.func,
 
-    headersOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+    headersOrder: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    ).isRequired,
 
     highlightCellKey: propTypeKey,
-    highlightColumnKey: propTypeKey,
+    // eslint-disable-next-line react/forbid-prop-types
+    highlightColumnKeys: PropTypes.object,
     highlighted: PropTypes.bool,
 
     hoverable: PropTypes.bool,
@@ -46,7 +52,7 @@ const defaultProps = {
     className: '',
     dataModifier: undefined,
     highlightCellKey: undefined,
-    highlightColumnKey: undefined,
+    highlightColumnKeys: undefined,
     highlighted: false,
     hoverable: false,
     onClick: undefined,
@@ -112,7 +118,7 @@ export default class Row extends React.Component {
             areCellsHoverable,
             dataModifier,
             highlightCellKey,
-            highlightColumnKey,
+            highlightColumnKeys,
             onHoverOut,
             rowData,
         } = this.props;
@@ -130,7 +136,9 @@ export default class Row extends React.Component {
                 onHoverOut={onHoverOut}
                 hoverable={areCellsHoverable}
                 highlighted={isTruthy(key) && key === highlightCellKey}
-                columnHighlighted={isTruthy(key) && key === highlightColumnKey}
+                columnHighlighted={
+                    isTruthy(key) && isTruthy(highlightColumnKeys) && highlightColumnKeys[key]
+                }
             >
                 { data }
             </Cell>

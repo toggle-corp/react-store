@@ -37,7 +37,12 @@ const propTypes = {
 
     expandedRowModifier: PropTypes.func,
 
-    headersOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+    headersOrder: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]),
+    ).isRequired,
 
     highlightCellKey: PropTypes.shape({
         columnKey: propTypeKey,
@@ -46,7 +51,8 @@ const propTypes = {
 
     highlightRowKey: propTypeKey,
 
-    highlightColumnKey: propTypeKey,
+    // eslint-disable-next-line react/forbid-prop-types
+    highlightColumnKeys: PropTypes.object,
 
     /**
      * keySelector is used to get a unique key associated with rowData
@@ -66,7 +72,7 @@ const defaultProps = {
     dataModifier: undefined,
     highlightCellKey: {},
     highlightRowKey: undefined,
-    highlightColumnKey: undefined,
+    highlightColumnKeys: undefined,
     onClick: undefined,
     onHover: undefined,
     onHoverOut: undefined,
@@ -104,7 +110,7 @@ export default class Body extends React.Component {
             areRowsHoverable,
             dataModifier,
             highlightCellKey,
-            highlightColumnKey,
+            highlightColumnKeys,
             highlightRowKey,
             expandRowId,
             expandedRowModifier,
@@ -125,7 +131,7 @@ export default class Body extends React.Component {
                 dataModifier={dataModifier}
                 headersOrder={headersOrder}
                 highlightCellKey={cellKey}
-                highlightColumnKey={highlightColumnKey}
+                highlightColumnKeys={highlightColumnKeys}
                 highlighted={isTruthy(key) && key === highlightRowKey}
                 hoverable={areRowsHoverable}
                 onClick={this.handleRowClick}

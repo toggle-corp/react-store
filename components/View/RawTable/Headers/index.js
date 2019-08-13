@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isTruthy } from '@togglecorp/fujs';
 
 import List from '../../List';
 
@@ -19,12 +19,16 @@ const propTypes = {
     onClick: PropTypes.func,
 
     headerModifier: PropTypes.func,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    highlightColumnKeys: PropTypes.object,
 };
 
 const defaultProps = {
     className: '',
     onClick: undefined,
     headerModifier: undefined,
+    highlightColumnKeys: undefined,
 };
 
 
@@ -46,6 +50,7 @@ export default class Headers extends React.Component {
         const {
             headers,
             headerModifier,
+            highlightColumnKeys,
         } = this.props;
 
         const headerContent = headerModifier
@@ -57,6 +62,9 @@ export default class Headers extends React.Component {
                 key={key}
                 uniqueKey={key}
                 onClick={this.handleHeaderClick}
+                columnHighlighted={
+                    isTruthy(key) && isTruthy(highlightColumnKeys) && highlightColumnKeys[key]
+                }
             >
                 {headerContent}
             </Header>
@@ -70,7 +78,7 @@ export default class Headers extends React.Component {
         } = this.props;
 
         return (
-            <thead className={_cs(classNameFromProps, 'header')}>
+            <thead className={_cs(classNameFromProps, 'thead')}>
                 <tr>
                     <List
                         data={headers}
