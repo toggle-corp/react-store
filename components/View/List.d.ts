@@ -13,18 +13,24 @@ interface RendererProps<T> {
     data: T[];
 }
 
+interface AnotherProps<T, Q, R> {
+    rendererClassName?: string;
+    rendererParams?: (key: R, data: T, index: number) => Q;
+    renderer?: React.ComponentType<Q> | ((props: Q) => React.ReactNode);
+
+    // NOTE: these are faram props
+    faramElement: boolean;
+}
+
 interface Props<T, Q, R> {
     data?: T[];
     keySelector(datum: T, index: number): R;
     rendererClassName?: string;
     rendererParams?: (key: R, data: T, index: number) => Q;
     renderer?: React.ComponentType<Q> | ((props: Q) => React.ReactNode);
-
-    // NOTE: these are faram props
-    faramElement?: boolean;
 }
 
-export type ListProps<T, Q, R> = Props<T, Q, R> & ExternalProps;
+export type ListProps<T, Q, R> = (Props<T, Q, R> | AnotherProps<T, Q, R>) & ExternalProps;
 
 // eslint-disable-next-line react/prefer-stateless-function
 declare class List<T, Q, R> extends React.Component<ListProps<T, Q, R>, any> {
