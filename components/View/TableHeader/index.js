@@ -12,6 +12,7 @@ const propTypes = {
     label: PropTypes.node,
     sortOrder: PropTypes.string,
     sortable: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -19,6 +20,7 @@ const defaultProps = {
     label: '',
     sortOrder: undefined,
     sortable: false,
+    disabled: false,
 };
 
 export default class TableHeader extends React.PureComponent {
@@ -32,6 +34,7 @@ export default class TableHeader extends React.PureComponent {
             sortOrder,
             sortable,
             className,
+            disabled,
         } = this.props;
 
         const divClassName = _cs(
@@ -40,6 +43,7 @@ export default class TableHeader extends React.PureComponent {
             styles.tableHeader,
             sortable && styles.sortable,
             sortable && sortOrder && styles.active,
+            disabled && styles.disabled,
         );
 
         const iconClassName = _cs(

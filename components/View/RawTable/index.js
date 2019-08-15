@@ -216,6 +216,7 @@ export default class RawTable extends React.Component {
                             headerModifier={headerModifier}
                             onClick={onHeaderClick}
                             highlightColumnKeys={highlightColumnKeys}
+                            disabled={data.length <= 0 || pending}
                         />
                         { data.length > 0 && (
                             <Body

@@ -1,4 +1,5 @@
 .table-header {
+    border-top: var(--width-separator-thin) solid var(--color-separator);
     padding: var(--spacing-medium);
     overflow: hidden;
     text-align: left;
@@ -7,18 +8,24 @@
     user-select: none;
 
     &.sortable {
-        cursor: pointer;
-
         .icon {
             margin-right: var(--spacing-small);
         }
 
-        &.active {
-            color: var(--color-accent);
-        }
+        &:not(.disabled) {
+            cursor: pointer;
 
-        &:hover {
-            background-color: var(--color-background-hover);
+            &.active {
+                color: var(--color-accent);
+            }
+
+            &:hover {
+                background-color: var(--color-background-hover);
+            }
         }
+    }
+
+    &.disabled {
+        color: var(--color-text-disabled);
     }
 }
