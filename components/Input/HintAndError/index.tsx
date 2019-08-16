@@ -1,27 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
-const propTypes = {
-    show: PropTypes.bool,
-    error: PropTypes.string,
-    hint: PropTypes.string,
-};
+interface Props {
+    show?: boolean;
+    error?: boolean;
+    hint?: string;
+}
 
-const defaultProps = {
-    show: true,
-    error: undefined,
-    hint: undefined,
-};
-
-const emptyText = '-';
-
-export default class InputHintAndError extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
+export default class HintAndError extends React.PureComponent<Props> {
+    static defaultProps = {
+        show: true,
+    };
 
     render() {
         const {
@@ -45,12 +36,14 @@ export default class InputHintAndError extends React.PureComponent {
             !(hint || error) && 'empty',
         );
 
+        const message = error ? hint : undefined;
+
         return (
             <div
                 className={className}
-                title={error || hint}
+                title={message}
             >
-                { error || hint || emptyText }
+                { message || '-' }
             </div>
         );
     }
