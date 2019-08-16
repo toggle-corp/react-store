@@ -1,7 +1,5 @@
-
 .dismissable-list-item {
     display: flex;
-    transition: var(--duration-transition-medium) background-color ease-in-out;
     overflow: hidden;
 
     .list-item {
@@ -11,13 +9,14 @@
     .dismiss-button {
         flex-shrink: 0;
         transform: translateX(100%);
-        transition: var(--duration-transition-medium) opacity var(--duration-transition-medium) ease-in-out, var(--duration-transition-medium) var(--duration-transition-medium) transform ease-in-out;
+        // transition: var(--duration-transition-fast) opacity var(--duration-transition-medium) ease-in-out, var(--duration-transition-medium) var(--duration-transition-medium) transform ease-in-out;
         opacity: 0;
+        padding: 0 var(--spacing-small);
     }
 
     &:hover {
-        background-color: var(--color-background-hover);
-        
+        background-color: var(--color-background-accent-hint);
+
         .dismiss-button {
             transform: translateX(0);
             opacity: 1;
