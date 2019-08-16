@@ -1,70 +1,73 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
+// NOTE: can we normal button here
 
 import styles from './styles.scss';
 
-const propTypes = {
-    className: PropTypes.string,
-    imageClassName: PropTypes.string,
-    src: PropTypes.string,
-    alt: PropTypes.string,
-    zoomable: PropTypes.bool,
-};
+interface Props {
+    className?: string;
+    imageClassName?: string;
+    src: string;
+    alt: string;
+    zoomable: boolean;
+    zoomFactor: number;
+}
 
-const defaultProps = {
-    className: '',
-    imageClassName: '',
-    src: '',
-    alt: '',
-    zoomable: false,
-};
+export default class Image extends React.PureComponent<Props> {
+    static defaultProps = {
+        zoomable: false,
+        zoomFactor: 0.1,
+    };
 
-const ActionButton = p => (
-    <Button
-        {...p}
-        tabIndex="-1"
-        transparent
-        smallVerticalPadding
-        smallHorizontalPadding
-    />
-);
-
-export default class Image extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
-
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
+
         this.containerRef = React.createRef();
         this.imageRef = React.createRef();
         this.actionButtonsRef = React.createRef();
     }
 
+    private containerRef: React.RefObject<HTMLDivElement>;
+
+    private imageRef: React.RefObject<HTMLImageElement>;
+
+    private actionButtonsRef: React.RefObject<HTMLDivElement>;
+
     handlePlusButtonClick = () => {
         const { current: image } = this.imageRef;
 
-        image.style.width = `${image.offsetWidth * 1.1}px`;
-        image.style.height = `${image.offsetHeight * 1.1}px`;
+        const { zoomFactor } = this.props;
+        const increaseBy = 1 + zoomFactor;
+
+        if (image) {
+            image.style.width = `${image.offsetWidth * increaseBy}px`;
+            image.style.height = `${image.offsetHeight * increaseBy}px`;
+        }
     }
 
     handleMinusButtonClick = () => {
         const { current: image } = this.imageRef;
 
-        image.style.width = `${image.offsetWidth * 0.9}px`;
-        image.style.height = `${image.offsetHeight * 0.9}px`;
+        const { zoomFactor } = this.props;
+        const decreaseBy = 1 - zoomFactor;
+
+        if (image) {
+            image.style.width = `${image.offsetWidth * decreaseBy}px`;
+            image.style.height = `${image.offsetHeight * decreaseBy}px`;
+        }
     }
 
-    handleImageDragStart = (e) => {
+    handleImageDragStart = (e: React.DragEvent<HTMLImageElement>) => {
         e.preventDefault();
     }
 
-    handleScroll = (e) => {
+    handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const { current: actionButtons } = this.actionButtonsRef;
-        actionButtons.style.transform = `translate(${e.target.scrollLeft}px, ${e.target.scrollTop}px)`;
+        if (actionButtons) {
+            actionButtons.style.transform = `translate(${e.currentTarget.scrollLeft}px, ${e.currentTarget.scrollTop}px)`;
+        }
     }
 
     render() {
@@ -94,17 +97,25 @@ export default class Image extends React.PureComponent {
                         className={styles.actionButtons}
                         ref={this.actionButtonsRef}
                     >
-                        <ActionButton
+                        <Button
                             title="Zoom in"
                             className={styles.action}
                             iconName="plusOutline"
                             onClick={this.handlePlusButtonClick}
+                            tabIndex={-1}
+                            transparent
+                            smallVerticalPadding
+                            smallHorizontalPadding
                         />
-                        <ActionButton
+                        <Button
                             title="Zoom out"
                             className={styles.action}
                             iconName="minusOutline"
                             onClick={this.handleMinusButtonClick}
+                            tabIndex={-1}
+                            transparent
+                            smallVerticalPadding
+                            smallHorizontalPadding
                         />
                     </div>
                 )}

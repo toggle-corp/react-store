@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import { resolve, _cs } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { FaramActionElement } from '@togglecorp/faram';
 
 import Icon from '../../General/Icon';
@@ -19,112 +18,63 @@ eslint css-modules/no-unused-class: [
 */
 import styles from './styles.scss';
 
-const propTypes = {
-    /**
-     * buttonType is used to categorize a button:
-     * default, primary, danger, warning, success
-     * Generally user doesn't explicitly pass buttonType
-     */
-    buttonType: PropTypes.string,
+type ButtonType = 'button-default' | 'button-accent' | 'button-primary' | 'button-danger' | 'button-success' | 'button-warning';
+type RawButtonType = 'button' | 'submit' | 'reset';
 
-    /**
-     * required for style override
-    */
-    className: PropTypes.string,
+export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onClick' | 'ref'> {
+    className?: string;
+    children?: React.ReactNode;
+    iconName?: string;
+    onClickParams?: T;
 
-    /**
-     * children can contain a simple string or a react element
-     */
-    children: PropTypes.oneOfType([
-        PropTypes.node,
-        PropTypes.arrayOf(PropTypes.node),
-    ]),
-
-    /**
-     * if disabled is true, the action is blocked
-     */
-    disabled: PropTypes.bool,
-
-    /**
-     * if pending is true, the action is blocked and it is indicated
-     */
-    pending: PropTypes.bool,
-
-    /**
-     * iconName is the name of the icon in Ionicons 2
-     */
-    iconName: PropTypes.string,
-
-    /**
-     * action to invoke when the button is clicked
-     */
-    onClick: PropTypes.func,
-    onClickParams: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-
-
-    /**
-     * show small horizontal padding
-     */
-    smallHorizontalPadding: PropTypes.bool,
-
-    /**
-     * show small vertical padding
-     */
-    smallVerticalPadding: PropTypes.bool,
-
-    /**
-     * show small vertical padding
-     */
-    transparent: PropTypes.bool,
-
-    type: PropTypes.string,
-
-    changeDelay: PropTypes.number,
-};
-
-const defaultProps = {
-    buttonType: 'button-default',
-    type: 'button',
-    className: '',
-    disabled: false,
-    pending: false,
-    iconName: undefined,
-    onClick: () => {}, // no-op
-    children: undefined,
-    smallHorizontalPadding: false,
-    smallVerticalPadding: false,
-    transparent: false,
-    changeDelay: 0,
-    onClickParams: undefined,
-};
+    type?: RawButtonType;
+    pending?: boolean;
+    buttonType?: ButtonType;
+    transparent: boolean;
+    smallHorizontalPadding?: boolean;
+    smallVerticalPadding?: boolean;
+    // NOTE: these props represent the Clickable interface
+    disabled?: boolean;
+    onClick: (value: { event: React.MouseEvent; params?: T }) => void;
+    changeDelay?: number;
+}
 
 /**
  * Basic button component
  */
-class Button extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
+export class NormalButton<T> extends React.PureComponent<Props<T>> {
+    static defaultProps = {
+        buttonType: 'button-default' as ButtonType,
+        type: 'button' as RawButtonType,
+        disabled: false,
+        pending: false,
+        smallHorizontalPadding: false,
+        smallVerticalPadding: false,
+        transparent: false,
+        changeDelay: 0,
+    };
 
     componentWillUnmount() {
         if (this.changeTimeout) {
-            clearTimeout(this.changeTimeout);
+            window.clearTimeout(this.changeTimeout);
         }
     }
 
-    handleClick = (e) => {
-        clearTimeout(this.changeTimeout);
+    private changeTimeout?: number;
+
+    handleClick = (e: React.MouseEvent) => {
+        window.clearTimeout(this.changeTimeout);
         const {
             onClick,
             onClickParams,
             changeDelay,
         } = this.props;
 
-        this.changeTimeout = setTimeout(
+        this.changeTimeout = window.setTimeout(
             () => {
                 onClick({
                     event: e,
-                    params: resolve(onClickParams),
+                    params: onClickParams,
                 });
             },
             changeDelay,
@@ -133,17 +83,16 @@ class Button extends React.PureComponent {
 
     render() {
         const {
+            type,
             iconName,
             children,
             disabled,
             pending,
-            type,
             buttonType,
             className: classNameFromProps,
             smallHorizontalPadding,
             smallVerticalPadding,
             transparent,
-
             onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onClickParams, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -156,8 +105,8 @@ class Button extends React.PureComponent {
             styles.button,
             buttonType,
             buttonType && styles[buttonType],
-            iconName && children && 'with-icon-and-children',
-            iconName && children && styles.withIconAndChildren,
+            iconName && !!children && 'with-icon-and-children',
+            iconName && !!children && styles.withIconAndChildren,
             smallHorizontalPadding && 'small-horizontal-padding',
             smallHorizontalPadding && styles.smallHorizontalPadding,
             smallVerticalPadding && 'small-vertical-padding',
@@ -173,7 +122,6 @@ class Button extends React.PureComponent {
         );
 
         return (
-            // eslint-disable-next-line react/button-has-type
             <button
                 className={buttonClassName}
                 disabled={disabled || pending}
@@ -191,4 +139,4 @@ class Button extends React.PureComponent {
     }
 }
 
-export default FaramActionElement(Button);
+export default FaramActionElement(NormalButton);
