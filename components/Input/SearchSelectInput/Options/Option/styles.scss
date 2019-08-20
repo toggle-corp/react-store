@@ -1,4 +1,4 @@
-@import '../../../stylesheets/utils';
+@import '../../../../../stylesheets/utils';
 @import '../../../../../stylesheets/button-base';
 
 .option {
@@ -10,14 +10,11 @@
     text-align: left;
 
     &.focused {
-        background-color: get-hover-color(var(--color-foreground));
+        background-color: var(--color-background-hover);
     }
 
     &.active {
-        @include background-color(var(--color-accent));
-    }
-
-    &:hover {
-        @include background-color(var(--color-accent));
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
     }
 }
