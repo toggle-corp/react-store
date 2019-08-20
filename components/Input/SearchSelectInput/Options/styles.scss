@@ -1,7 +1,7 @@
-@import '../../../stylesheets/utils';
+@import '../../../../stylesheets/utils';
 
 .options {
-    @include background-color(var(--color-foreground));
+    background-color: var(--color-foreground);
     padding: var(--spacing-small) 0;
     max-height: 200px;
     overflow-x: hidden;

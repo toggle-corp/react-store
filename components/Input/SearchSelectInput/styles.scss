@@ -19,7 +19,7 @@
             top: var(--spacing-extra-small);
             right: 0;
             align-items: center;
-            height: calc(100% - #{var(--spacing-extra-small) * 2});
+            height: calc(100% - var(--spacing-extra-small) * 2);
 
             %button {
                 display: inline-block;
