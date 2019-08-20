@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default class InputLabel extends React.PureComponent<Props> {
-    static defaultProps = {
+    public static defaultProps = {
         className: '',
         text: '',
         error: false,
@@ -22,7 +22,7 @@ export default class InputLabel extends React.PureComponent<Props> {
         disabled: false,
     };
 
-    render() {
+    public render() {
         const {
             show,
             text,
