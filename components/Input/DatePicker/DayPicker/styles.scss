@@ -13,7 +13,6 @@
     .header {
         display: flex;
         flex-wrap: wrap;
-        background-color: var(--color-background-header);
         width: 100%;
 
         button {
@@ -28,17 +27,19 @@
         .left,
         .right {
             flex-shrink: 0;
+            background-color: var(--color-background-header);
         }
 
         .month {
             flex-grow: 1;
+            background-color: var(--color-background-header);
             text-transform: none;
         }
 
         .days {
             display: flex;
             flex-basis: 100%;
-            background-color: var(--color-background-header-alt);
+            // background-color: var(--color-background-header-alt);
             padding: var(--spacing-extra-small) 0;
 
             > span {
@@ -70,6 +71,12 @@
                     &:hover {
                         // border-color: var(--color-separator-alt);
                         background-color: var(--color-background-hover);
+                    }
+                }
+
+                &.highlighted {
+                    button {
+                        color: var(--color-primary);
                     }
                 }
 

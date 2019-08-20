@@ -45,6 +45,7 @@ const iconNames = {
     remove: 'ion-android-remove',
     search: 'ion-search',
     text: 'ion-document',
+    textFormat: 'ion-ios-circle-filled',
     upload: 'ion-android-upload',
     user: 'ion-android-contact',
     warning: 'ion-alert-circled',
