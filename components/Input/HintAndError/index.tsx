@@ -10,11 +10,11 @@ interface Props {
 }
 
 export default class HintAndError extends React.PureComponent<Props> {
-    static defaultProps = {
+    public static defaultProps = {
         show: true,
     };
 
-    render() {
+    public render() {
         const {
             show,
             error,
