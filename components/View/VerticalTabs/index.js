@@ -151,6 +151,15 @@ export default class VerticalTabs extends React.Component {
             tabs,
             useHash,
             defaultHash,
+
+            className: classNameFromProps, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+            inverted, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+            onClick, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+            replaceHistory, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+            active, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+            modifier, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars, max-len
+
+            ...otherProps
         } = this.props;
 
         const tabList = Object.keys(tabs);
@@ -166,6 +175,7 @@ export default class VerticalTabs extends React.Component {
                 <List
                     data={tabList}
                     modifier={this.renderTab}
+                    {...otherProps}
                 />
             </div>
         );

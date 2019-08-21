@@ -27,20 +27,21 @@ const defaultProps = {
     onMonthClick: undefined,
 };
 
-
 export default class DayPicker extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
 
     static monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December',
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',
     ];
 
     constructor(props) {
         super(props);
         this.createDays(props);
+
+        this.today = new Date();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -59,10 +60,22 @@ export default class DayPicker extends React.PureComponent {
     }
 
     getDayClassName = (dayKey) => {
+        const { year, month } = this.props;
+
+        const highlight = (
+            this.today.getFullYear() === year
+            && this.today.getMonth() + 1 === month
+            && this.today.getDate() === dayKey
+        );
+
         const classNames = [styles.day];
         if (this.selectedId === dayKey) {
             classNames.push('selected');
             classNames.push(styles.selected);
+        }
+        if (highlight) {
+            classNames.push('highlighted');
+            classNames.push(styles.highlighted);
         }
         return classNames.join(' ');
     }
@@ -202,9 +215,7 @@ export default class DayPicker extends React.PureComponent {
                         onClick={onMonthClick}
                         transparent
                     >
-                        { monthName }
-                        ,
-                        { year}
+                        {`${monthName} ${year}`}
                     </Button>
                     <Button
                         className={styles.right}

@@ -87,9 +87,7 @@ export default class YearPicker extends React.PureComponent {
                         className={styles.title}
                         transparent
                     >
-                        { startYear }
-                        -
-                        { endYear }
+                        {`${startYear} - ${endYear}`}
                     </Button>
                     <Button
                         className={styles.right}
