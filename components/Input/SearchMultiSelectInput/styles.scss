@@ -56,7 +56,7 @@
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{var(--width-dropdown-button) + var(--width-clear-button) + var(--spacing-extra-small)});
+                            width: calc(100% - var(--width-dropdown-button) + var(--width-clear-button) + var(--spacing-extra-small));
                         }
 
                         .actions {
@@ -75,7 +75,7 @@
                 .input-and-actions {
                     &:hover {
                         .input {
-                            width: calc(100% - #{var(--width-dropdown-button) + var(--width-select-all-button) + var(--spacing-extra-small)});
+                            width: calc(100% - var(--width-dropdown-button) + var(--width-select-all-button) + var(--spacing-extra-small));
                         }
 
                         .actions {
@@ -90,7 +90,7 @@
             &.filled:not(.hide-select-all-button):not(.hide-clear-button) {
                 &:hover {
                     .input {
-                        width: calc(100% - #{var(--width-dropdown-button) + var(--width-clear-button) + var(--width-select-all-button) + var(--spacing-extra-small)});
+                        width: calc(100% - var(--width-dropdown-button) + var(--width-clear-button) + var(--width-select-all-button) + var(--spacing-extra-small));
                     }
                 }
             }
