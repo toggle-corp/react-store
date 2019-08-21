@@ -116,17 +116,10 @@ export default class GridLayoutEditor extends React.PureComponent {
             layoutSelector,
         } = props;
 
-        this.bounds = {};
-        this.layouts = getLayouts(data, keySelector, layoutSelector);
         this.containerRef = React.createRef();
-    }
 
-    componentWillMount() {
-        const {
-            data,
-            layoutSelector,
-        } = this.props;
         this.bounds = getLayoutBounds(data, layoutSelector);
+        this.layouts = getLayouts(data, keySelector, layoutSelector);
     }
 
     componentWillReceiveProps(nextProps) {

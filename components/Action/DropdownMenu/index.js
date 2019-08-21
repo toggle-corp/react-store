@@ -72,7 +72,7 @@ export default class DropdownMenu extends React.PureComponent {
         this.boundingClientRect = {};
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('click', this.handleWindowClick);
     }
 

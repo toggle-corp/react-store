@@ -62,7 +62,7 @@ class ReCaptcha extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.pollForReadyState();
     }
 

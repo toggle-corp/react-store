@@ -25,7 +25,7 @@ export default function withTracker(WrappedComponent, options = {}) {
     return class extends Component {
         static propTypes = propTypes;
 
-        componentWillMount() {
+        componentDidMount() {
             const {
                 location,
             } = this.props;
