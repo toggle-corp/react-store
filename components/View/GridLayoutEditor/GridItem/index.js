@@ -70,11 +70,9 @@ export default class GridItem extends React.PureComponent {
         this.scrollInterval = undefined;
     }
 
-    componentWillMount() {
-        window.addEventListener('mouseup', this.handleMouseUp);
-    }
-
     componentDidMount() {
+        window.addEventListener('mouseup', this.handleMouseUp);
+
         const { dragItemClassName } = this.props;
         const { current: container } = this.containerRef;
 

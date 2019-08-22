@@ -35,11 +35,6 @@ export default class GridViewLayout extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.bounds = {};
-        this.data = [];
-    }
-
-    componentWillMount() {
         const {
             data,
             layoutSelector,

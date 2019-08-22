@@ -51,7 +51,7 @@ class Bundle extends React.Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.mounted = true;
         const { load } = this.props;
         load()

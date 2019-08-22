@@ -66,7 +66,7 @@ export default class FloatingContainer extends React.PureComponent {
         this.containerRef = React.createRef();
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const {
             onBlur,
             closeOnEscape,

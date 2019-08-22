@@ -26,12 +26,10 @@ export default class Float extends React.PureComponent {
 
     static defaultProps = defaultProps;
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('resize', this.handleResize);
         window.addEventListener('scroll', this.handleScroll, true);
-    }
 
-    componentDidMount() {
         const { onInvalidate } = this.props;
         onInvalidate();
     }

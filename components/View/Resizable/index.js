@@ -95,7 +95,7 @@ export default class Resizable extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('mousedown', this.handleMouseDown);
         window.addEventListener('mouseup', this.handleMouseUp);
         window.addEventListener('mousemove', this.handleMouseMove);
