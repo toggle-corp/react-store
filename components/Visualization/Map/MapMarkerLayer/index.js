@@ -18,8 +18,7 @@ const defaultProps = {
     setDestroyer: undefined,
 };
 
-@MapChild
-export default class MapMarkerLayer extends React.PureComponent {
+class MapMarkerLayer extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -100,3 +99,5 @@ export default class MapMarkerLayer extends React.PureComponent {
         return null;
     }
 }
+
+export default MapChild(MapMarkerLayer);

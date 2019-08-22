@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import MapContext from '../context';
 import MapChild from '../MapChild';
 
-
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     map: PropTypes.object,
@@ -44,9 +43,7 @@ const defaultProps = {
     url: undefined,
 };
 
-
-@MapChild
-export default class MapSource extends React.PureComponent {
+class MapSource extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -237,3 +234,5 @@ export default class MapSource extends React.PureComponent {
         );
     }
 }
+
+export default MapChild(MapSource);
