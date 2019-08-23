@@ -5,7 +5,7 @@ import styles from './styles.scss';
 
 interface Props {
     show?: boolean;
-    error?: boolean;
+    error?: string;
     hint?: string;
 }
 
@@ -36,7 +36,7 @@ export default class HintAndError extends React.PureComponent<Props> {
             !(hint || error) && 'empty',
         );
 
-        const message = error ? hint : undefined;
+        const message = error || hint;
 
         return (
             <div

@@ -43,7 +43,7 @@ const areLayoutsEqual = (l1, l2) => (
 const SCROLL_DISTANCE = 16;
 const SCROLL_INTERVAL = 30;
 
-export default class GridItem extends React.PureComponent {
+export default class GridItem extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;

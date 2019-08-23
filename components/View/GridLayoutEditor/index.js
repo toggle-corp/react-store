@@ -102,7 +102,7 @@ const resolveIntersect = (l1, l2, forResize) => {
     };
 };
 
-export default class GridLayoutEditor extends React.PureComponent {
+export default class GridLayoutEditor extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
