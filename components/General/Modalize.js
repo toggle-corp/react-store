@@ -7,12 +7,14 @@ const propTypes = {
     modal: PropTypes.element.isRequired,
     className: PropTypes.string,
     initialShowModal: PropTypes.bool,
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
     disabled: false,
     className: '',
     initialShowModal: false,
+    onClose: undefined,
 };
 
 const modalize = (WrappedButtonComponent) => {
@@ -54,6 +56,10 @@ const modalize = (WrappedButtonComponent) => {
 
         handleModalClose = () => {
             this.setState({ showModal: false });
+            const { onClose } = this.props;
+            if (onClose) {
+                onClose();
+            }
         }
 
         render() {
@@ -63,6 +69,8 @@ const modalize = (WrappedButtonComponent) => {
                 className: classNameFromProps,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 initialShowModal,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onClose,
                 ...otherProps
             } = this.props;
 

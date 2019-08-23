@@ -9,6 +9,7 @@ export const getStandardFilename = (title, type, date = undefined) => {
     return `${y}${m}${d} ${title} ${type}`;
 };
 
+// FIXME: deprecated
 export const unique = (object, getValue, getComparisionValue) => {
     const memory = {};
     const newArr = [];
