@@ -350,7 +350,12 @@ class DonutChart extends PureComponent {
         const context = this.setContext(data, width, height);
         const slices = context.append('g').attr('class', 'slices');
 
-        const radius = (Math.min(width, height) / 2) - 20;
+        let radius = (Math.min(width, height) / 2);
+
+        if (!hideLabel) {
+            radius -= 20;
+        }
+
         const outerRadius = radius * 0.92;
         const innerRadius = outerRadius - (outerRadius * sideLengthRatio);
 

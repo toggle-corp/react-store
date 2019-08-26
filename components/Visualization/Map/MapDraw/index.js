@@ -14,8 +14,7 @@ const defaultProps = {
 
 const emptyObject = {};
 
-@MapChild
-export default class MapLayer extends React.PureComponent {
+class MapLayer extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -86,3 +85,5 @@ export default class MapLayer extends React.PureComponent {
         return null;
     }
 }
+
+export default MapChild(MapLayer);

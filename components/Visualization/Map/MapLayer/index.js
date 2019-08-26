@@ -162,8 +162,7 @@ const setMapState = (
     changeHoverState(map, sourceKey, sourceLayer, undefined, newHoveredId);
 };
 
-@MapChild
-export default class MapLayer extends React.PureComponent {
+class MapLayer extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -409,8 +408,14 @@ export default class MapLayer extends React.PureComponent {
 
         // Change the cursor to a pointer when the mouse is over the places layer.
         this.eventHandlers.mouseenter = (e) => {
-            const selectionEnabled = !!onSelectionChange && this.props.enableSelection;
-            const hoverEnabled = !!onHoverChange && this.props.enableHover;
+            const {
+                enableSelection,
+                enableHover,
+                showToolTipOnHover,
+            } = this.props;
+
+            const selectionEnabled = !!onSelectionChange && enableSelection;
+            const hoverEnabled = !!onHoverChange && enableHover;
 
             if (selectionEnabled || hoverEnabled || tooltipRenderer || onClick || onDoubleClick) {
                 // eslint-disable-next-line no-param-reassign
@@ -424,7 +429,7 @@ export default class MapLayer extends React.PureComponent {
             // Get first feature (it looks to be the top-most)
             const { id, properties } = features[0];
 
-            if (tooltipRenderer && this.props.showToolTipOnHover) {
+            if (tooltipRenderer && showToolTipOnHover) {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
@@ -448,8 +453,14 @@ export default class MapLayer extends React.PureComponent {
         // When the mouse leaves the state-fill layer, update the feature state of the
         // previously hovered feature.
         this.eventHandlers.mouseleave = () => {
-            const selectionEnabled = !!onSelectionChange && this.props.enableSelection;
-            const hoverEnabled = !!onHoverChange && this.props.enableHover;
+            const {
+                enableSelection,
+                enableHover,
+                showToolTipOnHover,
+            } = this.props;
+
+            const selectionEnabled = !!onSelectionChange && enableSelection;
+            const hoverEnabled = !!onHoverChange && enableHover;
 
             if (hoverEnabled && this.stateHoveredId) {
                 clearHoverState(map, sourceKey, sourceLayer, this.stateHoveredId);
@@ -464,7 +475,7 @@ export default class MapLayer extends React.PureComponent {
                 map.getCanvas().style.cursor = '';
             }
 
-            if (this.popup && this.props.showToolTipOnHover) {
+            if (this.popup && showToolTipOnHover) {
                 this.popup.remove();
                 this.popup = undefined;
             }
@@ -473,7 +484,9 @@ export default class MapLayer extends React.PureComponent {
         // When the user moves their mouse over the state-fill layer, we'll update the
         // feature state for the feature under the mouse.
         this.eventHandlers.mousemove = (e) => {
-            const hoverEnabled = !!onHoverChange && this.props.enableHover;
+            const { enableHover } = this.props;
+
+            const hoverEnabled = !!onHoverChange && enableHover;
 
             const { features } = e;
             if (features.length > 0 && hoverEnabled) {
@@ -491,7 +504,12 @@ export default class MapLayer extends React.PureComponent {
         // When a click event occurs on a feature in the places layer, open a popup at the
         // location of the feature, with description HTML from its properties.
         this.eventHandlers.click = (e) => {
-            const selectionEnabled = !!onSelectionChange && this.props.enableSelection;
+            const {
+                enableSelection,
+                selectionOnDoubleClick,
+                showToolTipOnDoubleClick,
+            } = this.props;
+            const selectionEnabled = !!onSelectionChange && enableSelection;
 
             const {
                 lngLat: coordinates,
@@ -516,7 +534,7 @@ export default class MapLayer extends React.PureComponent {
                 && topmostClickableFeature.layer.id === layerKey
                 && topmostClickableFeature.source === sourceKey
             ) {
-                if (selectionEnabled && !this.props.selectionOnDoubleClick) {
+                if (selectionEnabled && !selectionOnDoubleClick) {
                     const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
 
                     let newSelectedIds;
@@ -535,7 +553,7 @@ export default class MapLayer extends React.PureComponent {
                 }
             }
 
-            if (tooltipRenderer && !this.props.showToolTipOnDoubleClick) {
+            if (tooltipRenderer && !showToolTipOnDoubleClick) {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
@@ -561,7 +579,13 @@ export default class MapLayer extends React.PureComponent {
         };
 
         this.eventHandlers.dblclick = (e) => {
-            const selectionEnabled = !!onSelectionChange && this.props.enableSelection;
+            const {
+                enableSelection,
+                selectionOnDoubleClick,
+                showToolTipOnDoubleClick,
+            } = this.props;
+
+            const selectionEnabled = !!onSelectionChange && enableSelection;
 
             const {
                 lngLat: coordinates,
@@ -586,7 +610,7 @@ export default class MapLayer extends React.PureComponent {
                 && topmostClickableFeature.layer.id === layerKey
                 && topmostClickableFeature.source === sourceKey
             ) {
-                if (selectionEnabled && this.props.selectionOnDoubleClick) {
+                if (selectionEnabled && selectionOnDoubleClick) {
                     const index = this.stateSelectedIds.findIndex(selectedId => selectedId === id);
 
                     let newSelectedIds;
@@ -605,7 +629,7 @@ export default class MapLayer extends React.PureComponent {
                 }
             }
 
-            if (tooltipRenderer && this.props.showToolTipOnDoubleClick) {
+            if (tooltipRenderer && showToolTipOnDoubleClick) {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
@@ -676,3 +700,5 @@ export default class MapLayer extends React.PureComponent {
         return null;
     }
 }
+
+export default MapChild(MapLayer);
