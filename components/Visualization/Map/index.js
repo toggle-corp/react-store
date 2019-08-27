@@ -60,6 +60,7 @@ const propTypes = {
     onGeolocationChange: PropTypes.func,
 
     maxBounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
@@ -90,6 +91,7 @@ const defaultProps = {
     geoOptions: undefined,
     scaleOptions: undefined,
     onGeolocationChange: undefined,
+    onClick: undefined,
 
     // maxBounds: DEFAULT_MAX_BOUNDS,
 };
@@ -142,6 +144,7 @@ export default class Map extends React.PureComponent {
             showScaleControl,
 
             logoPosition,
+            onClick,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -160,6 +163,10 @@ export default class Map extends React.PureComponent {
             doubleClickZoom: false,
             preserveDrawingBuffer: true,
         });
+
+        if (onClick) {
+            map.on('click', onClick);
+        }
 
         if (showScaleControl) {
             const scale = new mapboxgl.ScaleControl(scaleOptions);
