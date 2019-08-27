@@ -16,7 +16,7 @@ const propTypes = {
         PropTypes.node,
     ]),
     children: PropTypes.node.isRequired,
-    delay: PropTypes.number.isRequired,
+    delay: PropTypes.number,
     center: PropTypes.bool,
 };
 
@@ -24,6 +24,7 @@ const defaultProps = {
     className: '',
     tooltip: '',
     center: false,
+    delay: 100,
 };
 
 const noOp = () => {};
