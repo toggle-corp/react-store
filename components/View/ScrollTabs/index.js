@@ -13,6 +13,7 @@ const propTypes = {
     active: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     children: PropTypes.node,
     className: PropTypes.string,
+    blankClassName: PropTypes.string,
     itemClassName: PropTypes.string,
     activeClassName: PropTypes.string,
     defaultHash: PropTypes.string,
@@ -37,6 +38,7 @@ const defaultProps = {
     active: undefined,
     children: null,
     className: '',
+    blankClassName: undefined,
     itemClassName: '',
     activeClassName: '',
     defaultHash: undefined,
@@ -255,6 +257,7 @@ export default class ScrollTabs extends React.Component {
             defaultHash,
             showBeforeTabs,
             children,
+            blankClassName,
         } = this.props;
 
         // FIXME: generate tabList when tabs change
@@ -290,7 +293,7 @@ export default class ScrollTabs extends React.Component {
                         data={tabList}
                         modifier={this.renderTab}
                     />
-                    <div className={styles.blank}>
+                    <div className={_cs(styles.blank, blankClassName)}>
                         { !showBeforeTabs && children }
                     </div>
                 </div>
