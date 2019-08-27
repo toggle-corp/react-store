@@ -1,9 +1,9 @@
-
 .list-input {
     .item {
         display: flex;
         align-items: center;
         background-color: var(--color-background-row);
+        padding: var(--spacing-small) var(--spacing-extra-small);
 
         &:nth-child(even) {
             background-color: var(--color-background-row-alt);
@@ -19,8 +19,12 @@
             color: var(--color-danger);
         }
 
-        &:hover .action {
-            display: initial;
+        &:hover {
+            background-color: var(--color-background-accent-hint);
+
+            .action {
+                display: initial;
+            }
         }
     }
 
