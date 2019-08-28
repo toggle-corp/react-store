@@ -10,15 +10,17 @@ import styles from './styles.scss';
 const propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
-    skipConfirmation: PropTypes.bool,
     challengeValue: PropTypes.string,
     challengeLabel: PropTypes.string,
     challengePlaceholder: PropTypes.string,
+
+    skipConfirmation: PropTypes.bool,
     confirmationMessage: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.node,
     ]).isRequired,
     confirmationTitle: PropTypes.string,
+    confirmationDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -29,6 +31,7 @@ const defaultProps = {
     challengeLabel: '',
     challengePlaceholder: '',
     skipConfirmation: false,
+    confirmationDisabled: false,
 };
 
 const ConfirmOnClick = (WrappedComponent) => {
@@ -95,6 +98,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                 skipConfirmation,
                 challengeLabel,
                 challengePlaceholder,
+                confirmationDisabled,
                 ...otherProps
             } = this.props;
             const {
@@ -105,7 +109,7 @@ const ConfirmOnClick = (WrappedComponent) => {
             const hasChallenge = this.hasChallenge();
             const isConfirmationMessageNode = React.isValidElement(confirmationMessage);
             const challengeSuccess = challengeTextInputValue === challengeValue;
-            const confirmDisabled = hasChallenge && !challengeSuccess;
+            const confirmDisabled = (hasChallenge && !challengeSuccess) || confirmationDisabled;
 
             return (
                 <Fragment>
