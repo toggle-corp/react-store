@@ -43,7 +43,7 @@ export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onCl
  * Basic button component
  */
 export class NormalButton<T> extends React.PureComponent<Props<T>> {
-    static defaultProps = {
+    public static defaultProps = {
         buttonType: 'button-default' as ButtonType,
         type: 'button' as RawButtonType,
         disabled: false,
@@ -54,7 +54,7 @@ export class NormalButton<T> extends React.PureComponent<Props<T>> {
         changeDelay: 0,
     };
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         if (this.changeTimeout) {
             window.clearTimeout(this.changeTimeout);
         }
@@ -62,7 +62,7 @@ export class NormalButton<T> extends React.PureComponent<Props<T>> {
 
     private changeTimeout?: number;
 
-    handleClick = (e: React.MouseEvent) => {
+    private handleClick = (e: React.MouseEvent) => {
         window.clearTimeout(this.changeTimeout);
         const {
             onClick,
@@ -81,7 +81,7 @@ export class NormalButton<T> extends React.PureComponent<Props<T>> {
         );
     }
 
-    render() {
+    public render() {
         const {
             type,
             iconName,
@@ -122,6 +122,7 @@ export class NormalButton<T> extends React.PureComponent<Props<T>> {
         );
 
         return (
+            // eslint-disable-next-line react/button-has-type
             <button
                 className={buttonClassName}
                 disabled={disabled || pending}
