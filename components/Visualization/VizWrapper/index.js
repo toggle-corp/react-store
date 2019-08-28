@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import FullScreen from '../FullScreen';
 import ColorPalette from '../ColorPalette';
@@ -55,9 +56,9 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
-    vizContainerClass: '',
     showBackButton: false,
+    className: undefined,
+    vizContainerClass: undefined,
     colorScheme: undefined,
     colorSchemeType: undefined,
     loading: false,
@@ -297,14 +298,14 @@ const wrapViz = (WrappedComponent) => {
             const Header = this.renderHeader;
 
             return (
-                <div className={`${styles.diagramView} ${className}`}>
+                <div className={_cs(styles.diagramView, className)}>
                     { loading && <LoadingAnimation /> }
                     <Header fullScreen={fullScreen} />
                     {
                         fullScreen ? (
                             <FullScreen className={styles.fullScreenContainer}>
                                 <Header fullScreen />
-                                <div className={`${styles.vizContainer} ${vizContainerClass}`}>
+                                <div className={_cs(styles.vizContainer, vizContainerClass)}>
                                     <WrappedComponent
                                         className={styles.diagram}
                                         colorScheme={colorScheme}
@@ -314,7 +315,7 @@ const wrapViz = (WrappedComponent) => {
                                 </div>
                             </FullScreen>
                         ) : (
-                            <div className={`${styles.vizContainer} ${vizContainerClass}`}>
+                            <div className={_cs(styles.vizContainer, vizContainerClass)}>
                                 <WrappedComponent
                                     className={styles.diagram}
                                     colorScheme={colorScheme}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GoogleCharts } from 'google-charts';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -54,7 +55,7 @@ const defaultProps = {
     singleSelect: false,
     multiSelect: false,
     onChange: () => [],
-    className: '',
+    className: undefined,
 };
 
 /**
@@ -163,7 +164,7 @@ class GoogleOrgChart extends React.PureComponent {
 
         return (
             <div
-                className={`${className} ${styles.orgChart}`}
+                className={_cs(className, styles.orgChart)}
                 ref={(elem) => { this.elem = elem; }}
             />
         );

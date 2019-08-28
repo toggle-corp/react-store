@@ -51,7 +51,7 @@ const propTypes = {
     /**
      * Property keys to be ignored when creating axis
      */
-    ignoreProperties: PropTypes.arrayOf(PropTypes.string).isRequired,
+    ignoreProperties: PropTypes.arrayOf(PropTypes.string),
     /**
      * The label name of group
      */
@@ -82,6 +82,7 @@ const propTypes = {
 const defaultProps = {
     setSaveFunction: () => {},
     colorScheme: schemePaired,
+    ignoreProperties: [],
     colorSelector: undefined,
     className: '',
     margins: {
