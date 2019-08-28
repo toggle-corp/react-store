@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 import { formatPdfText } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
-import AccentButton from '../../Action/Button/AccentButton.js';
+import AccentButton from '../../Action/Button/AccentButton';
 import Delay from '../../General/Delay';
 import { NormalTextArea as TextArea } from '../TextArea';
 

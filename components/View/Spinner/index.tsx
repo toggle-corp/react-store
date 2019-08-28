@@ -1,11 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '../../General/Icon';
 import styles from './styles.scss';
 
-const Spinner = (props) => {
+interface Props {
+    className?: string;
+}
+
+function Spinner(props: Props) {
     const { className } = props;
 
     return (
@@ -14,11 +17,7 @@ const Spinner = (props) => {
             className={_cs(styles.spinner, 'spinner', className)}
         />
     );
-};
-
-Spinner.propTypes = {
-    className: PropTypes.string,
-};
+}
 
 Spinner.defaultProps = {
     className: '',
