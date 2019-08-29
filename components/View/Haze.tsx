@@ -1,35 +1,40 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { _cs } from '@togglecorp/fujs';
 
 const portalChildrenClassName = '.portal-child';
 const shownClassName = 'portal-child-shown';
 
-export default class Haze extends React.PureComponent {
-    static propTypes = {
-        // modalRef: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-        children: PropTypes.node.isRequired,
+interface Props<T> {
+    children: React.ReactElement<T>;
+}
+
+export default class Haze<T extends { className?: string }> extends React.PureComponent<Props<T>> {
+    public constructor(props: Props<T>) {
+        super(props);
+
+        this.childRef = React.createRef();
     }
 
-    componentDidMount() {
+    public componentDidMount() {
         const classNames = document.body.className.split(' ');
         classNames.push(shownClassName);
         document.body.className = classNames.join(' ');
 
         const modals = document.querySelectorAll(portalChildrenClassName);
+
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
                 // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'true';
+                (modal as HTMLElement).dataset.lastModal = 'true';
             } else {
                 // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'false';
+                (modal as HTMLElement).dataset.lastModal = 'false';
             }
         });
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         const classNames = document.body.className.split(' ');
         const index = classNames.findIndex(d => d === shownClassName);
         if (index !== -1) {
@@ -37,29 +42,37 @@ export default class Haze extends React.PureComponent {
         }
         document.body.className = classNames.join(' ');
 
-        const { children } = this.props;
         const modals = Array.from(document.querySelectorAll(portalChildrenClassName))
-            .filter(n => n !== children.ref.current);
+            .filter(n => n !== this.childRef.current);
 
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
                 // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'true';
+                (modal as HTMLElement).dataset.lastModal = 'true';
             } else {
                 // eslint-disable-next-line no-param-reassign
-                modal.dataset.lastModal = 'false';
+                (modal as HTMLElement).dataset.lastModal = 'false';
             }
         });
     }
 
-    render() {
+    private childRef: React.RefObject<HTMLElement>;
+
+    public render() {
         const {
             children,
         } = this.props;
 
+        if (!children) {
+            return null;
+        }
+
         return React.cloneElement(
             children,
-            { className: _cs(children.props.className, 'portal-child') },
+            {
+                className: _cs(children.props.className, 'portal-child'),
+                ref: this.childRef,
+            },
         );
     }
 }

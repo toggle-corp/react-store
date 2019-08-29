@@ -1,26 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { modulo } from '@togglecorp/fujs';
+import { modulo, isDefined } from '@togglecorp/fujs';
 
-const propTypes = {
-    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    // eslint-disable-next-line react/forbid-prop-types
-    options: PropTypes.array,
-    keySelector: PropTypes.func.isRequired,
-    isOptionsShown: PropTypes.bool,
-
-    onFocusChange: PropTypes.func.isRequired,
-    onHideOptions: PropTypes.func.isRequired,
-    onShowOptions: PropTypes.func.isRequired,
-    onOptionSelect: PropTypes.func.isRequired,
-};
-
-const defaultProps = {
-    focusedKey: undefined,
-    options: [],
-    isOptionsShown: false,
-};
+type Key = number | string;
 
 const TAB = 9;
 const ESC = 27;
@@ -29,31 +11,63 @@ const DOWN = 38;
 const UP = 40;
 const specialKeys = [UP, DOWN, ENTER];
 
-const getNewKey = (oldKey, increment, options, keySelector) => {
-    if (options.length <= 0) {
-        return undefined;
+/*
+export type SetDifference<A, B> = A extends B ? never : A;
+export type SetComplement<A, A1 extends A> = SetDifference<A, A1>;
+export type Subtract<T extends T1, T1 extends object> = Pick<T, SetComplement<keyof T, keyof T1>>;
+*/
+
+interface HandleKeyboardProps<T, Q> {
+    focusedKey?: Key;
+
+    options: T[];
+    keySelector: (option: T) => Q;
+    isOptionsShown: boolean;
+
+    onFocusChange: (key: Key | undefined) => void;
+    onHideOptions: () => void;
+    onShowOptions: () => void;
+    onOptionSelect: (key: Key) => void;
+}
+
+interface InjectedProps {
+    onKeyDown: (e: KeyboardEvent) => void;
+}
+
+// eslint-disable-next-line max-len
+function handleKeyboard<T, Q extends Key, P extends InjectedProps>(WrappedComponent: React.ComponentType<P>) {
+    function getNewKey(
+        oldKey: Key | undefined,
+        increment: number,
+        options: T[],
+        keySelector: (option: T) => Q,
+    ) {
+        if (options.length <= 0) {
+            return undefined;
+        }
+
+        const index = options.findIndex(o => keySelector(o) === oldKey);
+        // NOTE: index should never to -1 to begin with
+
+        let oldIndex = index;
+        if (oldIndex === -1) {
+            oldIndex = increment > 0 ? -1 : 0;
+        }
+
+        const newIndex = modulo(oldIndex + increment, options.length);
+
+        return keySelector(options[newIndex]);
     }
 
-    const index = options.findIndex(o => keySelector(o) === oldKey);
-    // NOTE: index should never to -1 to begin with
+    type Props = P & HandleKeyboardProps<T, Q>;
 
-    let oldIndex = index;
-    if (oldIndex === -1) {
-        oldIndex = increment > 0 ? -1 : 0;
-    }
+    const ListenerComponent = class extends React.PureComponent<Props> {
+        public static defaultProps = {
+            options: [],
+            isOptionsShown: false,
+        };
 
-    const newIndex = modulo(oldIndex + increment, options.length);
-
-    return keySelector(options[newIndex]);
-};
-
-export default (WrappedComponent) => {
-    const ListenerComponent = class extends React.PureComponent {
-        static propTypes = propTypes;
-
-        static defaultProps = defaultProps;
-
-        componentWillReceiveProps(nextProps) {
+        public componentWillReceiveProps(nextProps: Props) {
             const {
                 isOptionsShown: oldIsOptionsShown,
                 options: oldOptions,
@@ -80,7 +94,7 @@ export default (WrappedComponent) => {
             }
         }
 
-        handleInputKeyDown = (e) => {
+        private handleInputKeyDown = (e: KeyboardEvent) => {
             const {
                 focusedKey,
                 options,
@@ -105,10 +119,11 @@ export default (WrappedComponent) => {
                 e.preventDefault();
                 onShowOptions();
             } else if (keyCode === ENTER) {
-                if (focusedKey) {
+                if (isDefined(focusedKey)) {
                     e.stopPropagation();
                     e.preventDefault();
-                    onOptionSelect(focusedKey);
+                    // FIXME: the type for focusedKey is Key & undefined here
+                    onOptionSelect(focusedKey as Key);
                 }
             } else if (keyCode === UP) {
                 e.stopPropagation();
@@ -123,10 +138,12 @@ export default (WrappedComponent) => {
             }
         }
 
-        render() {
+        public render() {
             const {
-                focusedKey, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-                options, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                focusedKey,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                options,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 keySelector,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -139,17 +156,24 @@ export default (WrappedComponent) => {
                 onShowOptions,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 onOptionSelect,
+
                 ...otherProps
             } = this.props;
 
+            const props = {
+                ...otherProps as P,
+                onKeyDown: this.handleInputKeyDown,
+            };
+
             return (
                 <WrappedComponent
-                    onKeyDown={this.handleInputKeyDown}
-                    {...otherProps}
+                    {...props}
                 />
             );
         }
     };
 
     return hoistNonReactStatics(ListenerComponent, WrappedComponent);
-};
+}
+
+export default handleKeyboard;
