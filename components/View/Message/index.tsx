@@ -35,7 +35,7 @@ function calculateRelativeValue(
 }
 
 export default class Message extends React.PureComponent<Props, State> {
-    static defaultProps = {
+    public static defaultProps = {
         maxFontSize: 20,
         minFontSize: 8,
         maxPaddingSize: 16,
@@ -43,14 +43,14 @@ export default class Message extends React.PureComponent<Props, State> {
         resizeFactor: 0.0001,
     };
 
-    constructor(props: Props) {
+    public constructor(props: Props) {
         super(props);
 
         this.state = { show: false };
         this.containerRef = React.createRef();
     }
 
-    componentDidMount() {
+    public componentDidMount() {
         const { current: container } = this.containerRef;
         this.timeout = window.setTimeout(() => {
             if (!container || !container.parentElement) {
@@ -63,7 +63,7 @@ export default class Message extends React.PureComponent<Props, State> {
         }, 0);
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         clearTimeout(this.timeout);
 
         const { current: container } = this.containerRef;
@@ -78,10 +78,12 @@ export default class Message extends React.PureComponent<Props, State> {
     }
 
     private timeout?: number;
+
     private containerRef: React.RefObject<HTMLDivElement>;
+
     private resizeObserver?: ResizeObserver;
 
-    handleResize = (e: ResizeObserverEntry[]) => {
+    private handleResize = (e: ResizeObserverEntry[]) => {
         const {
             0: {
                 contentRect: {
@@ -116,7 +118,7 @@ export default class Message extends React.PureComponent<Props, State> {
         }
     }
 
-    render() {
+    public render() {
         const {
             className: classNameFromProps,
             children,

@@ -10,11 +10,11 @@ interface Props {
 }
 
 export default class ListItem extends React.PureComponent<Props> {
-    static defaultProps = {
+    public static defaultProps = {
         marker: '•',
     };
 
-    render() {
+    public render() {
         const {
             value,
             marker,

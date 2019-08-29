@@ -11,12 +11,12 @@ interface Props {
 
 /* Portal with invalidation and focus trap */
 export default class Float extends React.PureComponent<Props> {
-    static defaultProps = {
+    public static defaultProps = {
         focusTrap: false,
         onInvalidate: () => {}, // no-op
     };
 
-    componentDidMount() {
+    public componentDidMount() {
         window.addEventListener('resize', this.handleResize);
         window.addEventListener('scroll', this.handleScroll, true);
 
@@ -24,7 +24,7 @@ export default class Float extends React.PureComponent<Props> {
         onInvalidate();
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
         window.removeEventListener('scroll', this.handleScroll, true);
     }
@@ -39,7 +39,7 @@ export default class Float extends React.PureComponent<Props> {
         onInvalidate();
     }
 
-    render() {
+    public render() {
         const {
             children,
             focusTrap,
