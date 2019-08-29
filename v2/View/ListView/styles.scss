@@ -1,0 +1,19 @@
+@import '../../../../stylesheets/utils';
+
+.list-view {
+    position: relative;
+
+    &.list-view-empty {
+        display: flex;
+        flex-direction: column;
+
+        .empty {
+            @extend %empty-text;
+            flex-grow: 1;
+        }
+    }
+
+    &.pending {
+        pointer-events: none;
+    }
+}

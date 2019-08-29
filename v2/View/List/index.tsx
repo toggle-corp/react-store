@@ -28,6 +28,7 @@ interface NoGroupOptions {
     grouped?: false;
 }
 
+// eslint-disable-next-line max-len
 type Props<D, P, K, GP, GK> = BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions);
 
 export default class List<
@@ -125,3 +126,6 @@ export default class List<
         return children;
     }
 }
+
+// NOTE: Only aliasing because can't rename during export
+export type ListProps<D, P, K, GP, GK> = Props<D, P, K, GP, GK>;
