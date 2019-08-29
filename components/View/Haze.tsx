@@ -5,17 +5,13 @@ import { _cs } from '@togglecorp/fujs';
 const portalChildrenClassName = '.portal-child';
 const shownClassName = 'portal-child-shown';
 
+
 interface Props<T> {
-    children: React.ReactElement<T>;
+    // FIXME: temporarily added ref on children to access it
+    children: React.ReactElement<T> & { ref: React.RefObject<HTMLElement> };
 }
 
 export default class Haze<T extends { className?: string }> extends React.PureComponent<Props<T>> {
-    public constructor(props: Props<T>) {
-        super(props);
-
-        this.childRef = React.createRef();
-    }
-
     public componentDidMount() {
         const classNames = document.body.className.split(' ');
         classNames.push(shownClassName);
@@ -43,7 +39,7 @@ export default class Haze<T extends { className?: string }> extends React.PureCo
         document.body.className = classNames.join(' ');
 
         const modals = Array.from(document.querySelectorAll(portalChildrenClassName))
-            .filter(n => n !== this.childRef.current);
+            .filter(n => n !== this.props.children.ref.current);
 
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
@@ -55,8 +51,6 @@ export default class Haze<T extends { className?: string }> extends React.PureCo
             }
         });
     }
-
-    private childRef: React.RefObject<HTMLElement>;
 
     public render() {
         const {
@@ -71,7 +65,6 @@ export default class Haze<T extends { className?: string }> extends React.PureCo
             children,
             {
                 className: _cs(children.props.className, 'portal-child'),
-                ref: this.childRef,
             },
         );
     }
