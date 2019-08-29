@@ -12,7 +12,7 @@ interface Props {
     disabled?: boolean;
 }
 
-export default class InputLabel extends React.PureComponent<Props> {
+export default class Label extends React.PureComponent<Props> {
     public static defaultProps = {
         className: '',
         text: '',
