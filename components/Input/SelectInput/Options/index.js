@@ -10,7 +10,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    show: PropTypes.bool,
     data: PropTypes.arrayOf(PropTypes.object),
     keySelector: PropTypes.func.isRequired,
     labelSelector: PropTypes.func.isRequired,
@@ -32,7 +31,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    show: false,
     data: [],
     focusedKey: undefined,
     optionLabelSelector: undefined,
@@ -106,16 +104,11 @@ export default class Options extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            show,
             data,
             onBlur,
             onInvalidate,
             parentContainer,
         } = this.props;
-
-        if (!show) {
-            return null;
-        }
 
         const className = `
             ${classNameFromProps}

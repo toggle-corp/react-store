@@ -1,11 +1,12 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import List, { ListProps } from '../List';
+import { OptionKey } from '../../types';
 
 import EmptyWhenFilter from '../../../components/View/EmptyWhenFilter';
 import LoadingAnimation from '../../../components/View/LoadingAnimation';
 import Message from '../../../components/View/Message';
+import List, { ListProps } from '../List';
 
 import styles from './styles.scss';
 
@@ -24,25 +25,24 @@ const DefaultEmptyComponent = () => {
     );
 };
 
-type ListViewProps<D, P, K, GP, GK> = ListProps<D, P, K, GP, GK> & {
-    id?: string;
+type ListViewProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = {
     className?: string;
-
-    filtered: boolean;
-    pending: boolean;
     emptyComponent: React.ComponentType<unknown>;
-};
+    filtered: boolean;
+    id?: string;
+    pending: boolean;
+} & ListProps<D, P, K, GP, GK>;
 
 const defaultProps = {
     data: [],
     emptyComponent: DefaultEmptyComponent,
-    pending: false,
     filtered: false,
+    pending: false,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function, max-len
+// eslint-disable-next-line react/prefer-stateless-function
 export default class ListView<
-    D, P, K extends string | number, GP, GK extends string | number
+    D, P, K extends OptionKey, GP, GK extends OptionKey
 > extends React.Component<ListViewProps<D, P, K, GP, GK>> {
     public static defaultProps = defaultProps;
 
@@ -62,15 +62,6 @@ export default class ListView<
 
         const isEmpty = otherProps.data.length <= 0;
 
-        const className = _cs(
-            classNameFromProps,
-            styles.listView,
-            'list-view',
-            pending && styles.pending,
-            isEmpty && 'list-view-empty',
-            isEmpty && styles.listViewEmpty,
-        );
-
         if (isEmpty) {
             if (filtered) {
                 content = !pending
@@ -88,6 +79,15 @@ export default class ListView<
                 />
             );
         }
+
+        const className = _cs(
+            classNameFromProps,
+            styles.listView,
+            'list-view',
+            pending && styles.pending,
+            isEmpty && 'list-view-empty',
+            isEmpty && styles.listViewEmpty,
+        );
 
         return (
             <div

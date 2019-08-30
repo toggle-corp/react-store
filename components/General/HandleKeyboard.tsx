@@ -11,12 +11,6 @@ const DOWN = 38;
 const UP = 40;
 const specialKeys = [UP, DOWN, ENTER];
 
-/*
-export type SetDifference<A, B> = A extends B ? never : A;
-export type SetComplement<A, A1 extends A> = SetDifference<A, A1>;
-export type Subtract<T extends T1, T1 extends object> = Pick<T, SetComplement<keyof T, keyof T1>>;
-*/
-
 interface HandleKeyboardProps<T, Q> {
     focusedKey?: Key;
 
@@ -69,19 +63,19 @@ function handleKeyboard<T, Q extends Key, P extends InjectedProps>(WrappedCompon
 
         public componentWillReceiveProps(nextProps: Props) {
             const {
-                isOptionsShown: oldIsOptionsShown,
+                // isOptionsShown: oldIsOptionsShown,
                 options: oldOptions,
                 keySelector: oldKeySelector,
             } = this.props;
             const {
-                isOptionsShown: newIsOptionsShown,
+                // isOptionsShown: newIsOptionsShown,
                 options: newOptions,
                 keySelector: newKeySelector,
             } = nextProps;
 
             if (
-                (!oldIsOptionsShown && newIsOptionsShown)
-                || (oldKeySelector !== newKeySelector)
+                // (!oldIsOptionsShown && newIsOptionsShown)
+                (oldKeySelector !== newKeySelector)
                 || (oldOptions !== newOptions)
             ) {
                 const newFocusedKey = getNewKey(

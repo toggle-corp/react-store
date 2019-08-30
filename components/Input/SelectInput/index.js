@@ -166,9 +166,11 @@ class SelectInput extends React.PureComponent {
         }
         */
 
+        const { value } = this.props;
         this.setState({
             showOptionsPopup: true,
             searchValue: undefined,
+            focusedKey: value,
         });
     }
 
@@ -422,23 +424,24 @@ class SelectInput extends React.PureComponent {
                         hint={hint}
                     />
                 )}
-                <Options
-                    className={optionsClassName}
-                    labelSelector={labelSelector}
-                    onBlur={this.handleHideOptionsPopup}
-                    onInvalidate={this.handleOptionsInvalidate}
-                    onOptionClick={this.handleOptionSelect}
-                    optionLabelSelector={optionLabelSelector}
-                    parentContainer={container}
-                    renderEmpty={renderEmpty}
-                    value={value}
+                { showOptionsPopup && (
+                    <Options
+                        className={optionsClassName}
+                        labelSelector={labelSelector}
+                        onBlur={this.handleHideOptionsPopup}
+                        onInvalidate={this.handleOptionsInvalidate}
+                        onOptionClick={this.handleOptionSelect}
+                        optionLabelSelector={optionLabelSelector}
+                        parentContainer={container}
+                        renderEmpty={renderEmpty}
+                        value={value}
 
-                    show={showOptionsPopup}
-                    keySelector={keySelector}
-                    data={filteredOptions}
-                    onOptionFocus={this.handleFocusChange}
-                    focusedKey={focusedKey}
-                />
+                        keySelector={keySelector}
+                        data={filteredOptions}
+                        onOptionFocus={this.handleFocusChange}
+                        focusedKey={focusedKey}
+                    />
+                )}
             </div>
         );
     }

@@ -22,21 +22,19 @@ type ButtonType = 'button-default' | 'button-accent' | 'button-primary' | 'butto
 type RawButtonType = 'button' | 'submit' | 'reset';
 
 export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onClick' | 'ref'> {
-    className?: string;
-    children?: React.ReactNode;
-    iconName?: string;
-    onClickParams?: T;
-
-    type?: RawButtonType;
-    pending?: boolean;
     buttonType?: ButtonType;
-    transparent: boolean;
+    changeDelay?: number;
+    children?: React.ReactNode;
+    className?: string;
+    disabled?: boolean;
+    iconName?: string;
+    onClick: (value: { event: React.MouseEvent; params?: T }) => void;
+    onClickParams?: T;
+    pending?: boolean;
     smallHorizontalPadding?: boolean;
     smallVerticalPadding?: boolean;
-    // NOTE: these props represent the Clickable interface
-    disabled?: boolean;
-    onClick: (value: { event: React.MouseEvent; params?: T }) => void;
-    changeDelay?: number;
+    transparent: boolean;
+    type?: RawButtonType;
 }
 
 /**
@@ -45,13 +43,13 @@ export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onCl
 export default class Button<T> extends React.PureComponent<Props<T>> {
     public static defaultProps = {
         buttonType: 'button-default' as ButtonType,
-        type: 'button' as RawButtonType,
+        changeDelay: 0,
         disabled: false,
         pending: false,
         smallHorizontalPadding: false,
         smallVerticalPadding: false,
         transparent: false,
-        changeDelay: 0,
+        type: 'button' as RawButtonType,
     };
 
     public componentWillUnmount() {
@@ -83,19 +81,19 @@ export default class Button<T> extends React.PureComponent<Props<T>> {
 
     public render() {
         const {
-            type,
-            iconName,
-            children,
-            disabled,
-            pending,
             buttonType,
+            children,
             className: classNameFromProps,
+            disabled,
+            iconName,
+            pending,
             smallHorizontalPadding,
             smallVerticalPadding,
             transparent,
+            type,
+            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onClickParams, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 

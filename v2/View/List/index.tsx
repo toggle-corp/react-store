@@ -1,27 +1,27 @@
 import React from 'react';
 import {
-    listToGroupList,
     isNotDefined,
+    listToGroupList,
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-interface BaseProps<D, P, K> {
+import { OptionKey } from '../../types';
+
+interface BaseProps<D, P, K extends OptionKey> {
     data: D[];
     keySelector(datum: D, index: number): K;
     renderer: React.ComponentType<P>;
-    rendererParams: (key: K, datum: D, index: number, data: D[]) => P;
     rendererClassName?: string;
+    rendererParams: (key: K, datum: D, index: number, data: D[]) => P;
 }
 
-interface GroupOptions<D, P, K, GP, GK> {
-    grouped: true;
-
+interface GroupOptions<D, P, K extends OptionKey, GP, GK extends OptionKey> {
+    groupComparator?: (a: GK, b: GK) => number;
     groupKeySelector(datum: D): GK;
     groupRenderer: React.ComponentType<GP>;
-    groupRendererParams: (key: GK, index: number, data: D[]) => GP;
-
     groupRendererClassName?: string;
-    groupComparator?: (a: GK, b: GK) => number;
+    groupRendererParams: (key: GK, index: number, data: D[]) => GP;
+    grouped: true;
 }
 
 interface NoGroupOptions {
@@ -29,17 +29,19 @@ interface NoGroupOptions {
 }
 
 // eslint-disable-next-line max-len
-type Props<D, P, K, GP, GK> = BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions);
+export type ListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
+    BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions)
+);
 
 export default class List<
-    D, P, K extends string | number, GP, GK extends string | number,
-> extends React.Component<Props<D, P, K, GP, GK>> {
+    D, P, K extends OptionKey, GP, GK extends OptionKey,
+> extends React.Component<ListProps<D, P, K, GP, GK>> {
     public static defaultProps = {
         data: [],
     };
 
     // eslint-disable-next-line max-len
-    private hasGroup = (props: Props<D, P, K, GP, GK>): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) => (
+    private hasGroup = (props: ListProps<D, P, K, GP, GK>): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) => (
         !!(props as BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>).grouped
     )
 
@@ -51,16 +53,12 @@ export default class List<
         const {
             data,
             keySelector,
+            renderer: Renderer,
+            rendererClassName,
+            rendererParams,
         } = this.props;
 
         const key = keySelector(datum, i);
-
-        const {
-            rendererParams,
-            renderer: Renderer,
-            rendererClassName,
-        } = this.props;
-
         const extraProps = rendererParams(key, datum, i, data);
 
         return (
@@ -94,9 +92,7 @@ export default class List<
     }
 
     public render() {
-        const {
-            data,
-        } = this.props;
+        const { data } = this.props;
 
         if (isNotDefined(data)) {
             return null;
@@ -126,6 +122,3 @@ export default class List<
         return children;
     }
 }
-
-// NOTE: Only aliasing because can't rename during export
-export type ListProps<D, P, K, GP, GK> = Props<D, P, K, GP, GK>;

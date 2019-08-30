@@ -18,8 +18,8 @@ enum Keys {
 
 interface Props {
     className?: string;
-    onBlur: () => void;
-    onMouseDown: (e: MouseEvent) => void; // gets mouse down event
+    onBlur?: () => void;
+    onMouseDown?: (e: MouseEvent) => void; // gets mouse down event
     parent?: HTMLElement;
     focusTrap: boolean;
 
@@ -105,7 +105,7 @@ export default class FloatingContainer extends React.PureComponent<Props> {
             parent,
         } = this.props;
 
-        if (!(onBlur || onMouseDown)) {
+        if (!onBlur && !onMouseDown) {
             return;
         }
 

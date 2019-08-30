@@ -8,7 +8,7 @@ const shownClassName = 'portal-child-shown';
 
 interface Props<T> {
     // FIXME: temporarily added ref on children to access it
-    children: React.ReactElement<T> & { ref: React.RefObject<HTMLElement> };
+    children: React.ReactElement<T> & { ref?: React.RefObject<HTMLElement> };
 }
 
 export default class Haze<T extends { className?: string }> extends React.PureComponent<Props<T>> {
@@ -38,8 +38,17 @@ export default class Haze<T extends { className?: string }> extends React.PureCo
         }
         document.body.className = classNames.join(' ');
 
-        const modals = Array.from(document.querySelectorAll(portalChildrenClassName))
-            .filter(n => n !== this.props.children.ref.current);
+        const {
+            children,
+        } = this.props;
+
+        const { ref } = children;
+
+        const allModals = Array.from(document.querySelectorAll(portalChildrenClassName));
+
+        const modals = ref
+            ? allModals.filter(n => n !== ref.current)
+            : allModals;
 
         modals.forEach((modal, i) => {
             if (i === modals.length - 1) {
