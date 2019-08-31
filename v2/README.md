@@ -4,9 +4,14 @@
 - View/EmptyWhenFilter
 - View/LoadingAnimation
 
+# Class components to rewrite using Hooks
+
+- View/Float
+- View/Image
+- View/List
+
 # Backlog
 
 - Add limit on Select Input
 - Create hook to attach/de-attach listeners
-- Re-write components using Hook
 - Create a consistent api

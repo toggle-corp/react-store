@@ -21,7 +21,7 @@ interface Props<T, K extends OptionKey> {
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;
-    parentContainer: HTMLElement | null;
+    parentRef: React.RefObject<HTMLElement>;
     renderEmpty: React.ComponentType<unknown>;
     value?: K;
 }
@@ -38,7 +38,7 @@ function Options<T, K extends OptionKey>(props: Props<T, K>) {
         onOptionClick,
         onOptionFocus,
         optionLabelSelector,
-        parentContainer,
+        parentRef,
         renderEmpty: EmptyComponent,
         value,
     } = props;
@@ -81,11 +81,7 @@ function Options<T, K extends OptionKey>(props: Props<T, K>) {
         <FloatingContainer
             onBlur={onBlur}
             onInvalidate={onInvalidate}
-            parent={
-                parentContainer === null
-                    ? undefined
-                    : parentContainer
-            }
+            parentRef={parentRef}
             className={className}
         >
             <List

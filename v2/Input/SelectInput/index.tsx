@@ -348,7 +348,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                     onInvalidate={handleOptionsInvalidate}
                     onOptionClick={handleOptionSelect}
                     optionLabelSelector={optionLabelSelector}
-                    parentContainer={containerRef.current}
+                    parentRef={containerRef}
                     renderEmpty={renderEmpty}
                     value={value}
 

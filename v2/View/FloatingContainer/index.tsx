@@ -17,7 +17,7 @@ interface Props {
     onClose?: (attributes: { escape: boolean }) => void;
     onInvalidate?: (e: HTMLDivElement) => object; // gets container
     onMouseDown?: (e: MouseEvent) => void; // gets mouse down event
-    parent?: HTMLElement;
+    parentRef: React.RefObject<HTMLElement>;
     showHaze: boolean;
     children?: React.ReactNode;
 }
@@ -32,7 +32,7 @@ function FloatingContainer(props: Props) {
         onClose,
         onInvalidate,
         onMouseDown,
-        parent,
+        parentRef,
         showHaze,
     } = props;
 
@@ -59,6 +59,7 @@ function FloatingContainer(props: Props) {
     const handleMouseDown = useCallback(
         (e: MouseEvent) => {
             const { current: container } = containerRef;
+            const { current: parent } = parentRef;
 
             const isTargetOrContainsTarget = container && (
                 container === e.target || container.contains(e.target as HTMLElement)
@@ -81,7 +82,7 @@ function FloatingContainer(props: Props) {
         [
             onBlur,
             onMouseDown,
-            parent,
+            parentRef.current,
             containerRef.current,
         ],
     );
@@ -125,7 +126,7 @@ function FloatingContainer(props: Props) {
         'floating-container',
     );
     if (showHaze) {
-        ([containerId, className] = useHaze());
+        ([containerId, className] = useHaze(className));
     }
 
     return (
