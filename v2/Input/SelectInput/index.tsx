@@ -119,7 +119,6 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
 
             setShowOptionsPopup(true);
             setSearchValue(undefined);
-            setFocusKey(value);
         },
         [inputRef, value],
     );

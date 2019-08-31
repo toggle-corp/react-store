@@ -35,7 +35,7 @@ function Option<K extends OptionKey>(props: Props<K>) {
         () => {
             if (isFocused && !focusedByMouse.current && divRef.current) {
                 divRef.current.scrollIntoView({
-                    // behavior: 'smooth',
+                    behavior: 'smooth',
                     block: 'center',
                 });
             }

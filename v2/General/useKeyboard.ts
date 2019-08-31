@@ -86,7 +86,11 @@ function useKeyboard<T, Q extends OptionKey>(
 
     useEffect(
         () => {
-            if (focusedKey === undefined && selectedKey !== undefined) {
+            if (!isOptionsShown) {
+                if (focusedKey !== undefined) {
+                    onFocusChange(undefined);
+                }
+            } else if (focusedKey === undefined && selectedKey !== undefined) {
                 onFocusChange(selectedKey);
             } else {
                 const newFocusedKey = getNewKey(undefined, 1, options, keySelector);
@@ -94,6 +98,7 @@ function useKeyboard<T, Q extends OptionKey>(
             }
         },
         [
+            isOptionsShown,
             keySelector,
             options,
         ],
