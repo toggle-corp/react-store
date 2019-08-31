@@ -15,3 +15,4 @@
 - Add limit on Select Input
 - Create hook to attach/de-attach listeners
 - Create a consistent api
+- Document on breaking changes

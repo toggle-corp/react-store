@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
 interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'ref'> {
     className?: string;
-    elementRef?: React.RefObject<HTMLInputElement>;
 }
 
-function RawInput(props: Props) {
+function RawInput(props: Props, ref: React.Ref<HTMLInputElement>) {
     const {
         className: classNameFromProps,
-        elementRef,
         ...otherProps
     } = props;
 
@@ -23,11 +21,11 @@ function RawInput(props: Props) {
 
     return (
         <input
-            ref={elementRef}
+            ref={ref}
             className={className}
             {...otherProps}
         />
     );
 }
 
-export default RawInput;
+export default forwardRef(RawInput);

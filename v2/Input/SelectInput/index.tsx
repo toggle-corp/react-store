@@ -107,7 +107,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                 boundingClientRect.current = container.getBoundingClientRect();
             }
         },
-        [],
+        [containerRef.current],
     );
 
     const handleShowOptionsPopup = useCallback(
@@ -117,10 +117,29 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                 input.select();
             }
 
-            setShowOptionsPopup(true);
-            setSearchValue(undefined);
+            if (!showOptionsPopup) {
+                setShowOptionsPopup(true);
+                setSearchValue(undefined);
+            }
         },
-        [inputRef, value],
+        [inputRef, value, showOptionsPopup],
+    );
+
+    const handleToggleOptionsPopup = useCallback(
+        () => {
+            const { current: input } = inputRef;
+            if (input) {
+                input.select();
+            }
+
+            if (!showOptionsPopup) {
+                setShowOptionsPopup(true);
+                setSearchValue(undefined);
+            } else {
+                setShowOptionsPopup(false);
+            }
+        },
+        [inputRef, value, showOptionsPopup],
     );
 
     const handleHideOptionsPopup = useCallback(
@@ -163,10 +182,6 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                 : boundingClientRect.current;
 
             const offset = { ...defaultOffset };
-            // FIXME: this information should not be hard-coded
-            if (showHintAndError) {
-                offset.top = 12;
-            }
 
             const limit = { ...defaultLimit };
             if (parentRect) {
@@ -248,7 +263,10 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
 
     const isFilled = isDefined(finalSearchValue) && String(finalSearchValue).length !== 0;
 
-    const showClearButton = showClearButtonFromProps && !disabled && !readOnly && isFilled;
+    const showClearButton = showClearButtonFromProps
+        && !disabled
+        && !readOnly
+        && isFilled;
 
     const handleKeyDown = useKeyboard(
         focusedKey,
@@ -283,7 +301,6 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
     return (
         <div
             className={className}
-            ref={containerRef}
             title={title}
         >
             { showLabel && (
@@ -294,11 +311,14 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                     active={inputInFocus || showOptionsPopup}
                 />
             )}
-            <div className={_cs(styles.inputAndActions, 'input-and-actions')}>
+            <div
+                ref={containerRef}
+                className={_cs(styles.inputAndActions, 'input-and-actions')}
+            >
                 <RawInput
+                    ref={inputRef}
                     className={styles.input}
                     type="text"
-                    elementRef={inputRef}
                     onBlur={handleInputBlur}
                     onFocus={handleInputFocus}
                     onClick={handleShowOptionsPopup}
@@ -324,9 +344,11 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
                     { showDropdownArrowButton && (
                         <Button
                             tabIndex={-1}
-                            iconName="arrowDropdown"
+                            iconName={
+                                showOptionsPopup ? 'arrowDropup' : 'arrowDropdown'
+                            }
                             className={_cs('dropdown-button', styles.dropdownButton)}
-                            onClick={handleShowOptionsPopup}
+                            onClick={handleToggleOptionsPopup}
                             disabled={disabled || readOnly}
                             transparent
                         />
