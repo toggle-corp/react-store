@@ -8,26 +8,26 @@ interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'ref'> {
     elementRef?: React.RefObject<HTMLInputElement>;
 }
 
-export default class RawInput extends React.PureComponent<Props> {
-    public render() {
-        const {
-            className: classNameFromProps,
-            elementRef,
-            ...otherProps
-        } = this.props;
+function RawInput(props: Props) {
+    const {
+        className: classNameFromProps,
+        elementRef,
+        ...otherProps
+    } = props;
 
-        const className = _cs(
-            classNameFromProps,
-            styles.rawInput,
-            'raw-input',
-        );
+    const className = _cs(
+        classNameFromProps,
+        styles.rawInput,
+        'raw-input',
+    );
 
-        return (
-            <input
-                ref={elementRef}
-                className={className}
-                {...otherProps}
-            />
-        );
-    }
+    return (
+        <input
+            ref={elementRef}
+            className={className}
+            {...otherProps}
+        />
+    );
 }
+
+export default RawInput;

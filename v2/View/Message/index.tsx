@@ -1,6 +1,7 @@
-import React from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
+import React, { useCallback, useState, useRef } from 'react';
 import { _cs } from '@togglecorp/fujs';
+
+import useResizeObserver from '../../General/useResizeObserver';
 
 import styles from './styles.scss';
 
@@ -35,110 +36,94 @@ interface State {
     show: boolean;
 }
 
-export default class Message extends React.PureComponent<Props, State> {
-    public static defaultProps = {
-        maxFontSize: 20,
-        maxPaddingSize: 16,
-        minFontSize: 8,
-        minPaddingSize: 3,
-        resizeFactor: 0.0001,
-    };
+function Message(props: Props) {
+    const {
+        maxFontSize,
+        maxPaddingSize,
+        minFontSize,
+        minPaddingSize,
+        resizeFactor,
+    } = props;
 
-    public constructor(props: Props) {
-        super(props);
+    const [isChildrenShown, setIsChildrenShown] = useState(false);
 
-        this.state = { show: false };
-        this.containerRef = React.createRef();
-    }
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    public componentDidMount() {
-        const { current: container } = this.containerRef;
-        this.timeout = window.setTimeout(() => {
-            if (!container || !container.parentElement) {
-                console.warn('Cannot observer resize as container is not defined');
-                return;
-            }
-            this.resizeObserver = new ResizeObserver(this.handleResize);
-            this.resizeObserver.observe(container.parentElement);
-            this.setState({ show: true });
-        }, 0);
-    }
+    const showChildren = useCallback(
+        () => {
+            setIsChildrenShown(true);
+        },
+        [],
+    );
 
-    public componentWillUnmount() {
-        clearTimeout(this.timeout);
-
-        const { current: container } = this.containerRef;
-        if (!container || !container.parentElement) {
-            console.warn('Cannot un-observer resize as container is not defined');
-            return;
-        }
-
-        if (this.resizeObserver) {
-            this.resizeObserver.unobserve(container.parentElement);
-        }
-    }
-
-    private timeout?: number;
-
-    private containerRef: React.RefObject<HTMLDivElement>;
-
-    private resizeObserver?: ResizeObserver;
-
-    private handleResize = (e: ResizeObserverEntry[]) => {
-        const {
-            0: {
-                contentRect: {
-                    width,
-                    height,
+    const handleResize = useCallback(
+        (e: ResizeObserverEntry[]) => {
+            const {
+                0: {
+                    contentRect: {
+                        width,
+                        height,
+                    },
                 },
-            },
-        } = e;
+            } = e;
 
-        const {
+            const { current: container } = containerRef;
+
+            const fontSize = calculateRelativeValue(
+                minFontSize, maxFontSize, width, height, resizeFactor,
+            );
+            const padding = calculateRelativeValue(
+                minPaddingSize, maxPaddingSize, width, height, resizeFactor,
+            );
+
+            if (container) {
+                container.style.width = `${width}px`;
+                container.style.height = `${height}px`;
+                container.style.fontSize = `${fontSize}px`;
+                container.style.padding = `${padding}px`;
+            }
+        },
+        [
             maxFontSize,
-            minFontSize,
             maxPaddingSize,
+            minFontSize,
             minPaddingSize,
             resizeFactor,
-        } = this.props;
+            containerRef.current,
+        ],
+    );
 
-        const { current: container } = this.containerRef;
+    useResizeObserver(
+        containerRef,
+        showChildren,
+        handleResize,
+    );
 
-        const fontSize = calculateRelativeValue(
-            minFontSize, maxFontSize, width, height, resizeFactor,
-        );
-        const padding = calculateRelativeValue(
-            minPaddingSize, maxPaddingSize, width, height, resizeFactor,
-        );
+    const {
+        className: classNameFromProps,
+        children,
+    } = props;
 
-        if (container) {
-            container.style.width = `${width}px`;
-            container.style.height = `${height}px`;
-            container.style.fontSize = `${fontSize}px`;
-            container.style.padding = `${padding}px`;
-        }
-    }
+    const className = _cs(
+        classNameFromProps,
+        styles.message,
+    );
 
-    public render() {
-        const {
-            className: classNameFromProps,
-            children,
-        } = this.props;
-
-        const className = _cs(
-            classNameFromProps,
-            styles.message,
-        );
-
-        const { show } = this.state;
-
-        return (
-            <div
-                ref={this.containerRef}
-                className={className}
-            >
-                { show && children }
-            </div>
-        );
-    }
+    return (
+        <div
+            ref={containerRef}
+            className={className}
+        >
+            { isChildrenShown && children }
+        </div>
+    );
 }
+Message.defaultProps = {
+    maxFontSize: 20,
+    maxPaddingSize: 16,
+    minFontSize: 8,
+    minPaddingSize: 3,
+    resizeFactor: 0.0001,
+};
+
+export default Message;

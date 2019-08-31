@@ -9,32 +9,31 @@ interface Props {
     value: string;
 }
 
-export default class ListItem extends React.PureComponent<Props> {
-    public static defaultProps = {
-        marker: '•',
-    };
+function ListItem(props: Props) {
+    const {
+        value,
+        marker,
+        className: classNameFromProps,
+    } = props;
 
-    public render() {
-        const {
-            value,
-            marker,
-            className: classNameFromProps,
-        } = this.props;
+    const className = _cs(
+        classNameFromProps,
+        styles.listItem,
+    );
 
-        const className = _cs(
-            classNameFromProps,
-            styles.listItem,
-        );
-
-        return (
-            <div className={className}>
-                <div className={styles.marker}>
-                    { marker }
-                </div>
-                <div className={styles.label}>
-                    { value }
-                </div>
+    return (
+        <div className={className}>
+            <div className={styles.marker}>
+                { marker }
             </div>
-        );
-    }
+            <div className={styles.label}>
+                { value }
+            </div>
+        </div>
+    );
 }
+ListItem.defaultProps = {
+    marker: '•',
+};
+
+export default ListItem;
