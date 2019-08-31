@@ -5,7 +5,8 @@ import { OptionKey } from '../../types';
 
 import EmptyWhenFilter from '../../../components/View/EmptyWhenFilter';
 import LoadingAnimation from '../../../components/View/LoadingAnimation';
-import Message from '../../../components/View/Message';
+
+import Message from '../Message';
 import List, { ListProps } from '../List';
 
 import styles from './styles.scss';

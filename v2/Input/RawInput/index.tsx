@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { _cs } from '@togglecorp/fujs';
+
 import styles from './styles.scss';
 
 interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'ref'> {
@@ -12,7 +12,7 @@ export default class RawInput extends React.PureComponent<Props> {
     public render() {
         const {
             className: classNameFromProps,
-            elementRef, // eslint-disable-line react/prop-types
+            elementRef,
             ...otherProps
         } = this.props;
 

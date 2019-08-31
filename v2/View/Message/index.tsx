@@ -4,19 +4,6 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
-interface Props {
-    className?: string;
-    children: React.ReactNode;
-    maxFontSize: number;
-    minFontSize: number;
-    maxPaddingSize: number;
-    minPaddingSize: number;
-    resizeFactor: number;
-}
-interface State {
-    show: boolean;
-}
-
 function calculateDimensionCost(width: number, height: number, factor: number) {
     return width * Math.sqrt(height) * factor;
 }
@@ -34,11 +21,25 @@ function calculateRelativeValue(
     );
 }
 
+interface Props {
+    children: React.ReactNode;
+    className?: string;
+    maxFontSize: number;
+    maxPaddingSize: number;
+    minFontSize: number;
+    minPaddingSize: number;
+    resizeFactor: number;
+}
+
+interface State {
+    show: boolean;
+}
+
 export default class Message extends React.PureComponent<Props, State> {
     public static defaultProps = {
         maxFontSize: 20,
-        minFontSize: 8,
         maxPaddingSize: 16,
+        minFontSize: 8,
         minPaddingSize: 3,
         resizeFactor: 0.0001,
     };

@@ -2,26 +2,25 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
-// NOTE: can we normal button here
 
 import styles from './styles.scss';
 
 interface Props {
+    alt: string;
     className?: string;
     imageClassName?: string;
     src: string;
-    alt: string;
-    zoomable: boolean;
     zoomFactor: number;
+    zoomable: boolean;
 }
 
 export default class Image extends React.PureComponent<Props> {
-    static defaultProps = {
-        zoomable: false,
+    public static defaultProps = {
         zoomFactor: 0.1,
+        zoomable: false,
     };
 
-    constructor(props: Props) {
+    public constructor(props: Props) {
         super(props);
 
         this.containerRef = React.createRef();
@@ -35,7 +34,7 @@ export default class Image extends React.PureComponent<Props> {
 
     private actionButtonsRef: React.RefObject<HTMLDivElement>;
 
-    handlePlusButtonClick = () => {
+    private handlePlusButtonClick = () => {
         const { current: image } = this.imageRef;
 
         const { zoomFactor } = this.props;
@@ -47,7 +46,7 @@ export default class Image extends React.PureComponent<Props> {
         }
     }
 
-    handleMinusButtonClick = () => {
+    private handleMinusButtonClick = () => {
         const { current: image } = this.imageRef;
 
         const { zoomFactor } = this.props;
@@ -59,18 +58,18 @@ export default class Image extends React.PureComponent<Props> {
         }
     }
 
-    handleImageDragStart = (e: React.DragEvent<HTMLImageElement>) => {
+    private handleImageDragStart = (e: React.DragEvent<HTMLImageElement>) => {
         e.preventDefault();
     }
 
-    handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    private handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const { current: actionButtons } = this.actionButtonsRef;
         if (actionButtons) {
             actionButtons.style.transform = `translate(${e.currentTarget.scrollLeft}px, ${e.currentTarget.scrollTop}px)`;
         }
     }
 
-    render() {
+    public render() {
         const {
             className: classNameFromProps,
             src,

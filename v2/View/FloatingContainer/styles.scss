@@ -1,0 +1,11 @@
+@import '../../../stylesheets/utils';
+
+.floating-container {
+    @include shadow-small;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+}

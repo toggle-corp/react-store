@@ -4,37 +4,28 @@ import { _cs } from '@togglecorp/fujs';
 import Float from '../Float';
 import Haze from '../Haze';
 
+import { Keys } from '../../types';
+
 import styles from './styles.scss';
-
-// FIXME: reuse this
-enum Keys {
-    Tab = 9,
-    Esc = 27,
-    Enter = 13,
-    Down = 38,
-    Up = 40,
-}
-
 
 interface Props {
     className?: string;
+    closeOnEscape: boolean;
+    focusTrap: boolean;
     onBlur?: () => void;
+    onClose?: (attributes: { escape: boolean }) => void;
+    onInvalidate?: (e: HTMLInputElement) => object; // gets container
     onMouseDown?: (e: MouseEvent) => void; // gets mouse down event
     parent?: HTMLElement;
-    focusTrap: boolean;
-
-    onInvalidate?: (e: HTMLInputElement) => object; // gets container
     showHaze: boolean;
-    closeOnEscape: boolean;
-    onClose?: (attributes: { escape: boolean }) => void;
 }
 
 /* Float with parent, onFocus and onBlur */
 export default class FloatingContainer extends React.PureComponent<Props> {
     public static defaultProps = {
+        closeOnEscape: false,
         focusTrap: false,
         showHaze: false,
-        closeOnEscape: false,
     };
 
     public constructor(props: Props) {

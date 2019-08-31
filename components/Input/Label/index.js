@@ -1,28 +1,35 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { _cs } from '@togglecorp/fujs';
 import styles from './styles.scss';
 
-interface Props {
-    show?: boolean;
-    text?: string;
-    error?: boolean;
-    className?: string;
-    active?: boolean;
-    disabled?: boolean;
-}
+const propTypes = {
+    className: PropTypes.string,
+    error: PropTypes.bool,
+    show: PropTypes.bool,
+    active: PropTypes.bool,
+    disabled: PropTypes.bool,
+    text: PropTypes.string,
+};
 
-export default class Label extends React.PureComponent<Props> {
-    public static defaultProps = {
-        className: '',
-        text: '',
-        error: false,
-        show: true,
-        active: false,
-        disabled: false,
-    };
+const defaultProps = {
+    className: '',
+    error: false,
+    show: true,
+    text: '',
+    active: false,
+    disabled: false,
+};
 
-    public render() {
+const emptyText = '-';
+
+export default class InputLabel extends React.PureComponent {
+    static propTypes = propTypes;
+
+    static defaultProps = defaultProps;
+
+    render() {
         const {
             show,
             text,
@@ -57,7 +64,7 @@ export default class Label extends React.PureComponent<Props> {
                 title={text}
                 {...otherProps}
             >
-                {text}
+                { text || emptyText }
             </div>
         );
     }

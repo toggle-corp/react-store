@@ -1,0 +1,10 @@
+@import '../../../stylesheets/utils';
+
+.message {
+    @extend %empty-text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-small);
+    text-align: center;
+}

@@ -4,26 +4,16 @@ import { _cs } from '@togglecorp/fujs';
 import styles from './styles.scss';
 
 interface Props {
-    show?: boolean;
     error?: string;
     hint?: string;
 }
 
 export default class HintAndError extends React.PureComponent<Props> {
-    public static defaultProps = {
-        show: true,
-    };
-
     public render() {
         const {
-            show,
             error,
             hint,
         } = this.props;
-
-        if (!show) {
-            return null;
-        }
 
         const className = _cs(
             styles.inputHintAndError,

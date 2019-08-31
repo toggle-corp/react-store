@@ -1,30 +1,35 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import PropTypes from 'prop-types';
 
 import styles from './styles.scss';
 
-interface Props {
-    value: string;
-    marker?: string;
-    className?: string;
-}
+const propTypes = {
+    className: PropTypes.string,
+    value: PropTypes.string.isRequired,
+    marker: PropTypes.string,
+};
 
-export default class ListItem extends React.PureComponent<Props> {
-    public static defaultProps = {
-        marker: '•',
-    };
+const defaultProps = {
+    className: '',
+    marker: '•',
+};
 
-    public render() {
+export default class ListItem extends React.PureComponent {
+    static propTypes = propTypes;
+
+    static defaultProps = defaultProps;
+
+    render() {
         const {
             value,
             marker,
             className: classNameFromProps,
         } = this.props;
 
-        const className = _cs(
-            classNameFromProps,
-            styles.listItem,
-        );
+        const className = `
+            ${classNameFromProps}
+            ${styles.listItem}
+        `;
 
         return (
             <div className={className}>

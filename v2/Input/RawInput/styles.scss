@@ -1,0 +1,5 @@
+@import '../../../stylesheets/input-base';
+
+.raw-input {
+    @extend %input-base;
+}

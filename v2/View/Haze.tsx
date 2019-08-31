@@ -1,13 +1,11 @@
 import React from 'react';
-
 import { _cs } from '@togglecorp/fujs';
 
 const portalChildrenClassName = '.portal-child';
 const shownClassName = 'portal-child-shown';
 
-
 interface Props<T> {
-    // FIXME: temporarily added ref on children to access it
+    // NOTE: temporarily added ref on children to access it
     children: React.ReactElement<T> & { ref?: React.RefObject<HTMLElement> };
 }
 

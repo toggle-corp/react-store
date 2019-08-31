@@ -19,11 +19,11 @@ import {
 } from '../../../utils/bounds';
 import { OptionKey } from '../../types';
 
-import HintAndError from '../../../components/Input/HintAndError';
-import Label from '../../../components/Input/Label';
-import RawInput from '../../../components/Input/RawInput';
 import Button from '../../Action/Button';
 import useKeyboard from '../../General/useKeyboard';
+import RawInput from '../RawInput';
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 
 import Options from './Options';
 import styles from './styles.scss';

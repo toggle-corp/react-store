@@ -1,0 +1,21 @@
+@import '../../../stylesheets/input-label';
+
+.input-label {
+    @extend %input-label;
+
+    &.empty {
+        visibility: hidden;
+    }
+
+    &.active {
+        color: var(--color-accent);
+    }
+
+    &.error {
+        color: var(--color-danger);
+    }
+
+    &.disabled {
+        color: var(--color-text-disabled);
+    }
+}
