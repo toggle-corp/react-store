@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import FloatingContainer from '../../../../components/View/FloatingContainer';
+import FloatingContainer from '../../../View/FloatingContainer';
 import List from '../../../View/List';
 
 import { OptionKey } from '../../../types';
@@ -17,7 +17,7 @@ interface Props<T, K extends OptionKey> {
     keySelector: (datum: T) => K;
     labelSelector: (datum: T) => string | number;
     onBlur: () => void;
-    onInvalidate: (e: HTMLInputElement) => object;
+    onInvalidate: (e: HTMLDivElement) => object;
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;

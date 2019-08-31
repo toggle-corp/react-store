@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Float from '../Float';
-import Haze from '../Haze';
+// import Haze from '../Haze';
 
+import useHaze from '../../General/useHaze';
 import { Keys } from '../../types';
 
 import styles from './styles.scss';
@@ -14,147 +15,137 @@ interface Props {
     focusTrap: boolean;
     onBlur?: () => void;
     onClose?: (attributes: { escape: boolean }) => void;
-    onInvalidate?: (e: HTMLInputElement) => object; // gets container
+    onInvalidate?: (e: HTMLDivElement) => object; // gets container
     onMouseDown?: (e: MouseEvent) => void; // gets mouse down event
     parent?: HTMLElement;
     showHaze: boolean;
+    children?: React.ReactNode;
 }
 
-/* Float with parent, onFocus and onBlur */
-export default class FloatingContainer extends React.PureComponent<Props> {
-    public static defaultProps = {
-        closeOnEscape: false,
-        focusTrap: false,
-        showHaze: false,
-    };
+function FloatingContainer(props: Props) {
+    const {
+        children,
+        className: classNameFromProps,
+        closeOnEscape,
+        focusTrap,
+        onBlur,
+        onClose,
+        onInvalidate,
+        onMouseDown,
+        parent,
+        showHaze,
+    } = props;
 
-    public constructor(props: Props) {
-        super(props);
+    const containerRef = useRef<HTMLDivElement>(null);
 
-        this.containerRef = React.createRef();
-    }
-
-    public componentDidMount() {
-        const {
-            onBlur,
-            closeOnEscape,
-        } = this.props;
-
-        if (onBlur) {
-            window.addEventListener('mousedown', this.handleMouseDown);
-        }
-        if (closeOnEscape) {
-            document.addEventListener('keydown', this.handleKeyPressed);
-        }
-    }
-
-    public componentWillUnmount() {
-        const {
-            onBlur,
-            closeOnEscape,
-        } = this.props;
-
-        if (onBlur) {
-            window.removeEventListener('mousedown', this.handleMouseDown);
-        }
-        if (closeOnEscape) {
-            document.removeEventListener('keydown', this.handleKeyPressed);
-        }
-    }
-
-    private containerRef: React.RefObject<HTMLInputElement>;
-
-    private handleKeyPressed = (event: KeyboardEvent) => {
-        const {
-            closeOnEscape,
-            onClose,
-        } = this.props;
-
-        if (onClose && closeOnEscape && event.keyCode === Keys.Esc) {
-            onClose({ escape: true });
-        }
-    }
-
-    private handleContainerInvalidate = () => {
-        const { onInvalidate } = this.props;
-
-        const { current: container } = this.containerRef;
-        if (container && onInvalidate) {
-            const containerStyles = onInvalidate(container);
-            if (containerStyles) {
-                Object.assign(container.style, containerStyles);
-            } else {
-                console.error('FloatingContainer.onInvalidate should return style');
+    const handleContainerInvalidate = useCallback(
+        () => {
+            const { current: container } = containerRef;
+            if (container && onInvalidate) {
+                const containerStyles = onInvalidate(container);
+                if (containerStyles) {
+                    Object.assign(container.style, containerStyles);
+                } else {
+                    console.error('FloatingContainer.onInvalidate should return style');
+                }
             }
-        }
-    }
+        },
+        [
+            containerRef,
+            onInvalidate,
+        ],
+    );
 
-    private handleMouseDown = (e: MouseEvent) => {
-        const {
+    const handleMouseDown = useCallback(
+        (e: MouseEvent) => {
+            const { current: container } = containerRef;
+
+            const isTargetOrContainsTarget = container && (
+                container === e.target || container.contains(e.target as HTMLElement)
+            );
+
+            const isTargetParentOrContainedInParent = parent && (
+                parent === e.target || parent.contains(e.target as HTMLElement)
+            );
+
+            const clickedInside = isTargetOrContainsTarget || isTargetParentOrContainedInParent;
+
+            if (!clickedInside) {
+                if (onBlur) {
+                    onBlur();
+                }
+            } else if (onMouseDown) {
+                onMouseDown(e);
+            }
+        },
+        [
             onBlur,
             onMouseDown,
             parent,
-        } = this.props;
+            containerRef.current,
+        ],
+    );
 
-        if (!onBlur && !onMouseDown) {
-            return;
-        }
-
-        const { current: container } = this.containerRef;
-
-        const isTargetOrContainsTarget = container && (
-            container === e.target || container.contains(e.target as HTMLElement)
-        );
-
-        const isTargetParentOrContainedInParent = parent && (
-            parent === e.target || parent.contains(e.target as HTMLElement)
-        );
-
-        if (!(isTargetOrContainsTarget || isTargetParentOrContainedInParent)) {
-            if (onBlur) {
-                onBlur();
+    const handleKeyPressed = useCallback(
+        (event: KeyboardEvent) => {
+            if (onClose && closeOnEscape && event.keyCode === Keys.Esc) {
+                onClose({ escape: true });
             }
-        } else if (onMouseDown) {
-            onMouseDown(e);
-        }
+        },
+        [
+            closeOnEscape,
+            onClose,
+        ],
+    );
+
+    useEffect(
+        () => {
+            window.addEventListener('mousedown', handleMouseDown);
+            return () => {
+                window.removeEventListener('mousedown', handleMouseDown);
+            };
+        },
+        [handleMouseDown],
+    );
+
+    useEffect(
+        () => {
+            document.addEventListener('keydown', handleKeyPressed);
+            return () => {
+                document.removeEventListener('keydown', handleKeyPressed);
+            };
+        },
+        [handleMouseDown],
+    );
+
+    let containerId;
+    let className = _cs(
+        classNameFromProps,
+        styles.floatingContainer,
+        'floating-container',
+    );
+    if (showHaze) {
+        ([containerId, className] = useHaze());
     }
 
-    public render() {
-        const {
-            className: classNameFromProps,
-            focusTrap,
-            children,
-            showHaze,
-        } = this.props;
-
-        const className = _cs(
-            classNameFromProps,
-            styles.floatingContainer,
-            'floating-container',
-        );
-
-        const child = (
+    return (
+        <Float
+            onInvalidate={handleContainerInvalidate}
+            focusTrap={focusTrap}
+        >
             <div
+                id={containerId}
                 className={className}
-                ref={this.containerRef}
+                ref={containerRef}
             >
                 { children }
             </div>
-        );
-
-        return (
-            <Float
-                onInvalidate={this.handleContainerInvalidate}
-                focusTrap={focusTrap}
-            >
-                {showHaze ? (
-                    <Haze>
-                        {child}
-                    </Haze>
-                ) : (
-                    child
-                )}
-            </Float>
-        );
-    }
+        </Float>
+    );
 }
+FloatingContainer.defaultProps = {
+    closeOnEscape: false,
+    focusTrap: false,
+    showHaze: false,
+};
+export default FloatingContainer;

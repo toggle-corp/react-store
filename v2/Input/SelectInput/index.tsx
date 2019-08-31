@@ -155,7 +155,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
     );
 
     const handleOptionsInvalidate = useCallback(
-        (optionsContainer: HTMLInputElement) => {
+        (optionsContainer: HTMLDivElement) => {
             const contentRect = optionsContainer.getBoundingClientRect();
 
             const { current: container } = containerRef;
