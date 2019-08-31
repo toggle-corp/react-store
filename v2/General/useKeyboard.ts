@@ -5,6 +5,14 @@ import { Keys, OptionKey } from '../types';
 
 const specialKeys = [Keys.Up, Keys.Down, Keys.Enter];
 
+function getOptionIndex<T, Q extends OptionKey>(
+    key: Q | undefined,
+    options: T[],
+    keySelector: (option: T) => Q,
+) {
+    return options.findIndex(o => keySelector(o) === key);
+}
+
 function getNewKey<T, Q extends OptionKey>(
     oldKey: Q | undefined,
     increment: number,
@@ -15,8 +23,8 @@ function getNewKey<T, Q extends OptionKey>(
         return undefined;
     }
 
-    const index = options.findIndex(o => keySelector(o) === oldKey);
-    // NOTE: index should never to -1 to begin with
+    const index = getOptionIndex(oldKey, options, keySelector);
+    // NOTE: index should never be -1 to begin with
 
     let oldIndex = index;
     if (oldIndex === -1) {
@@ -90,15 +98,30 @@ function useKeyboard<T, Q extends OptionKey>(
                 if (focusedKey !== undefined) {
                     onFocusChange(undefined);
                 }
-            } else if (focusedKey === undefined && selectedKey !== undefined) {
+                return;
+            }
+
+            if (
+                selectedKey !== undefined
+                && getOptionIndex(selectedKey, options, keySelector) !== -1
+            ) {
                 onFocusChange(selectedKey);
             } else {
                 const newFocusedKey = getNewKey(undefined, 1, options, keySelector);
                 onFocusChange(newFocusedKey);
             }
         },
+        [isOptionsShown],
+    );
+
+    useEffect(
+        () => {
+            if (isOptionsShown) {
+                const newFocusedKey = getNewKey(undefined, 1, options, keySelector);
+                onFocusChange(newFocusedKey);
+            }
+        },
         [
-            isOptionsShown,
             keySelector,
             options,
         ],

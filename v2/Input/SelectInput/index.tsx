@@ -9,7 +9,8 @@ import {
     _cs,
     caseInsensitiveSubmatch,
     compareStringSearch,
-    isDefined,
+    isFalsyString,
+    isTruthyString,
 } from '@togglecorp/fujs';
 
 import {
@@ -65,6 +66,7 @@ interface Props<T, K extends OptionKey> {
     showLabel: boolean;
     title?: string;
     value?: K;
+    maxDisplayOptions?: number;
 }
 function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
     const {
@@ -76,11 +78,14 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
         keySelector,
         label,
         labelSelector,
+        maxDisplayOptions,
         onChange,
         optionLabelSelector,
         options,
         optionsClassName,
-        placeholder,
+        placeholder = maxDisplayOptions === undefined
+            ? 'Select an option'
+            : 'Search for an option',
         readOnly,
         renderEmpty,
         showClearButton: showClearButtonFromProps,
@@ -229,19 +234,24 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
 
     const filteredOptions = useMemo(
         () => {
-            if (searchValue === undefined) {
-                return options;
+            if (isFalsyString(searchValue)) {
+                return maxDisplayOptions !== undefined
+                    ? []
+                    : options;
             }
-            const newOptions = options
+            let newOptions = options
                 .filter(option => caseInsensitiveSubmatch(labelSelector(option), searchValue))
                 .sort((a, b) => compareStringSearch(
                     String(labelSelector(a)),
                     String(labelSelector(b)),
                     String(searchValue),
                 ));
+            if (maxDisplayOptions !== undefined) {
+                newOptions = newOptions.slice(0, maxDisplayOptions);
+            }
             return newOptions;
         },
-        [options, labelSelector, searchValue],
+        [options, labelSelector, maxDisplayOptions, searchValue],
     );
 
     const defaultSearchValue = useMemo(
@@ -261,7 +271,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
         ? defaultSearchValue
         : searchValue;
 
-    const isFilled = isDefined(finalSearchValue) && String(finalSearchValue).length !== 0;
+    const isFilled = isTruthyString(finalSearchValue);
 
     const showClearButton = showClearButtonFromProps
         && !disabled
@@ -274,6 +284,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
         keySelector,
         filteredOptions,
         showOptionsPopup,
+
         handleFocusChange,
         handleHideOptionsPopup,
         handleShowOptionsPopup,
@@ -387,7 +398,6 @@ SelectInput.defaultProps = {
     keySelector: (item: DefaultItem) => item.key,
     labelSelector: (item: DefaultItem) => item.label,
     options: [],
-    placeholder: 'Select an option',
     readOnly: false,
     showClearButton: true,
     showDropdownArrowButton: true,
