@@ -61,6 +61,7 @@ const propTypes = {
 
     maxBounds: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     onClick: PropTypes.func,
+    enableDoubleClickZoom: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -92,6 +93,8 @@ const defaultProps = {
     scaleOptions: undefined,
     onGeolocationChange: undefined,
     onClick: undefined,
+
+    enableDoubleClickZoom: false,
 
     // maxBounds: DEFAULT_MAX_BOUNDS,
 };
@@ -145,6 +148,7 @@ export default class Map extends React.PureComponent {
 
             logoPosition,
             onClick,
+            enableDoubleClickZoom,
         } = this.props;
 
         const { current: mapContainer } = this.mapContainerRef;
@@ -160,7 +164,7 @@ export default class Map extends React.PureComponent {
             maxBounds,
 
             logoPosition,
-            doubleClickZoom: false,
+            doubleClickZoom: enableDoubleClickZoom,
             preserveDrawingBuffer: true,
         });
 
