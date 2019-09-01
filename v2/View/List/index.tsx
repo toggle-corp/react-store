@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useMemo, Fragment } from 'react';
 import {
     isNotDefined,
     listToGroupList,
 } from '@togglecorp/fujs';
-import memoize from 'memoize-one';
 
 import { OptionKey } from '../../types';
 
@@ -28,36 +27,33 @@ interface NoGroupOptions {
     grouped?: false;
 }
 
-// eslint-disable-next-line max-len
 export type ListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
     BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions)
 );
 
-export default class List<
-    D, P, K extends OptionKey, GP, GK extends OptionKey,
-> extends React.Component<ListProps<D, P, K, GP, GK>> {
-    public static defaultProps = {
-        data: [],
-    };
 
-    // eslint-disable-next-line max-len
-    private hasGroup = (props: ListProps<D, P, K, GP, GK>): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) => (
-        !!(props as BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>).grouped
-    )
+function hasGroup<D, P, K extends OptionKey, GP, GK extends OptionKey>(
+    props: ListProps<D, P, K, GP, GK>,
+): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) {
+    return !!(props as BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>).grouped;
+}
 
-    private getGroups = memoize((data: D[], groupKeySelector: (datum: D) => GK) => (
-        listToGroupList(data, groupKeySelector)
-    ))
+function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
+    props: ListProps<D, P, K, GP, GK>,
+) {
+    const {
+        data,
+        keySelector,
+        renderer: Renderer,
+        rendererClassName,
+        rendererParams,
+    } = props;
 
-    private renderListItem = (datum: D, i: number) => {
-        const {
-            data,
-            keySelector,
-            renderer: Renderer,
-            rendererClassName,
-            rendererParams,
-        } = this.props;
+    if (isNotDefined(data)) {
+        return null;
+    }
 
+    const renderListItem = (datum: D, i: number) => {
         const key = keySelector(datum, i);
         const extraProps = rendererParams(key, datum, i, data);
 
@@ -68,57 +64,62 @@ export default class List<
                 {...extraProps}
             />
         );
+    };
+
+    if (!hasGroup(props)) {
+        return (
+            <Fragment>
+                {data.map(renderListItem)}
+            </Fragment>
+        );
     }
 
-    private renderGroup = (groupKey: GK, index: number, data: D[]) => {
-        if (this.hasGroup(this.props)) {
-            const {
-                groupRenderer: Renderer, // = GroupItem,
-                groupRendererClassName,
-                groupRendererParams,
-            } = this.props;
+    const {
+        groupKeySelector,
+        groupComparator,
+        groupRenderer: GroupRenderer,
+        groupRendererClassName,
+        groupRendererParams,
+    } = props;
 
-            const extraProps = groupRendererParams(groupKey, index, data);
+    const renderGroup = (groupKey: GK, index: number) => {
+        const extraProps = groupRendererParams(groupKey, index, data);
 
-            return (
-                <Renderer
-                    key={groupKey}
-                    className={groupRendererClassName}
-                    {...extraProps}
-                />
-            );
-        }
-        return null;
-    }
+        return (
+            <GroupRenderer
+                key={groupKey}
+                className={groupRendererClassName}
+                {...extraProps}
+            />
+        );
+    };
 
-    public render() {
-        const { data } = this.props;
+    const groups = useMemo(
+        () => listToGroupList(data, groupKeySelector),
+        [data, groupKeySelector],
+    );
+    const sortedGroupKeys = useMemo(
+        () => {
+            const keys = Object.keys(groups) as GK[];
+            return keys.sort(groupComparator);
+        },
+        [groups, groupComparator],
+    );
 
-        if (isNotDefined(data)) {
-            return null;
-        }
-
-        if (!this.hasGroup(this.props)) {
-            return data.map(this.renderListItem);
-        }
-
-        const {
-            groupKeySelector,
-            groupComparator,
-        } = this.props;
-
-        const groups = this.getGroups(data, groupKeySelector);
-
-        // FIXME: memoize this later
-        const keys = Object.keys(groups) as GK[];
-        const sortedGroupKeys = keys.sort(groupComparator);
-
-        const children: React.ReactNode[] = [];
-
-        sortedGroupKeys.forEach((groupKey, i) => {
-            children.push(this.renderGroup(groupKey, i, data));
-            children.push(...groups[groupKey].map(this.renderListItem));
-        });
-        return children;
-    }
+    const children: React.ReactNode[] = [];
+    sortedGroupKeys.forEach((groupKey, i) => {
+        children.push(renderGroup(groupKey, i));
+        children.push(...groups[groupKey].map(renderListItem));
+    });
+    return (
+        <Fragment>
+            {children}
+        </Fragment>
+    );
 }
+
+List.defaultProps = {
+    data: [],
+};
+
+export default List;

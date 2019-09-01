@@ -22,6 +22,7 @@ interface Props {
     children?: React.ReactNode;
 }
 
+/* Float with haze, close on outside click, and close on escape */
 function FloatingContainer(props: Props) {
     const {
         children,
@@ -51,7 +52,7 @@ function FloatingContainer(props: Props) {
             }
         },
         [
-            containerRef,
+            containerRef.current,
             onInvalidate,
         ],
     );

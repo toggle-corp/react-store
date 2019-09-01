@@ -6,16 +6,16 @@
 
 # Class components to rewrite using Hooks
 
-- View/Float
-- View/Image
-- View/List
+- View/Float `DONE`
+- View/Image `DONE`
+- View/List `DONE`
 
 # Backlog
 
+- Add limit on Select Input `DONE`
+- Add 'invalid option' selected warning in select input
+- Add group list support in select input
 - Create hook to attach/de-attach listeners
 - Create a consistent api
 - Document on breaking changes
-
-# Done
-
-- Add limit on Select Input 
+- Merge Float and FloatingContainer

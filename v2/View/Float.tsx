@@ -1,5 +1,5 @@
+import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 import FocusTrap from 'react-focus-trap';
-import React from 'react';
 
 import Portal from './Portal';
 
@@ -9,56 +9,67 @@ interface Props {
     onInvalidate: () => void;
 }
 
+// TODO: this can be merged inside floating container
 /* Portal with invalidation and focus trap */
-export default class Float extends React.PureComponent<Props> {
-    public static defaultProps = {
-        focusTrap: false,
-        onInvalidate: () => {}, // no-op
-    };
+function Float(props: Props) {
+    const {
+        children,
+        focusTrap,
+        onInvalidate,
+    } = props;
 
-    public componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-        window.addEventListener('scroll', this.handleScroll, true);
+    const handleInvalidate = useCallback(
+        () => {
+            if (onInvalidate) {
+                onInvalidate();
+            }
+        },
+        [onInvalidate],
+    );
 
-        const { onInvalidate } = this.props;
-        onInvalidate();
-    }
+    useLayoutEffect(
+        handleInvalidate,
+        [],
+    );
 
-    public componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('scroll', this.handleScroll, true);
-    }
+    useEffect(
+        () => {
+            window.addEventListener('resize', handleInvalidate);
+            return () => {
+                window.removeEventListener('resize', handleInvalidate);
+            };
+        },
+        [handleInvalidate],
+    );
 
-    private handleResize = () => {
-        const { onInvalidate } = this.props;
-        onInvalidate();
-    }
+    useEffect(
+        () => {
+            window.addEventListener('scroll', handleInvalidate);
+            return () => {
+                window.removeEventListener('scroll', handleInvalidate);
+            };
+        },
+        [handleInvalidate],
+    );
 
-    private handleScroll = () => {
-        const { onInvalidate } = this.props;
-        onInvalidate();
-    }
-
-    public render() {
-        const {
-            children,
-            focusTrap,
-        } = this.props;
-
-        if (focusTrap) {
-            return (
-                <Portal>
-                    <FocusTrap>
-                        { children }
-                    </FocusTrap>
-                </Portal>
-            );
-        }
-
+    if (focusTrap) {
         return (
             <Portal>
-                { children }
+                <FocusTrap>
+                    { children }
+                </FocusTrap>
             </Portal>
         );
     }
+
+    return (
+        <Portal>
+            { children }
+        </Portal>
+    );
 }
+Float.defaultProps = {
+    focusTrap: false,
+};
+
+export default Float;
