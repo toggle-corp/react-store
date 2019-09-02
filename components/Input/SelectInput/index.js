@@ -22,7 +22,6 @@ import {
     defaultLimit,
 } from '../../../utils/bounds';
 
-
 import Options from './Options';
 import styles from './styles.scss';
 

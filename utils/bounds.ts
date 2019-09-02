@@ -1,25 +1,54 @@
-export const defaultRect = {
+interface Rect {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+}
+
+interface Offset {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+}
+
+interface Limit {
+    minW: number;
+    minH: number;
+    maxW: number;
+    maxH: number;
+}
+
+export const defaultRect: Rect = {
     top: 0,
     left: 0,
     width: 0,
     height: 0,
 };
 
-export const defaultOffset = {
+export const defaultOffset: Offset = {
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
 };
 
-export const defaultLimit = {
+export const defaultLimit: Limit = {
     minW: 0,
     maxW: Infinity,
     minH: 0,
     maxH: Infinity,
 };
 
-const defaultParams = {
+interface Params {
+    contentRect: Rect;
+    parentRect: Rect;
+    boundingRect: Rect;
+    offset: Offset;
+    limit: Limit;
+}
+
+const defaultParams: Params = {
     contentRect: { ...defaultRect },
     parentRect: { ...defaultRect },
     boundingRect: { ...defaultRect },
@@ -27,7 +56,7 @@ const defaultParams = {
     limit: { ...defaultLimit },
 };
 
-export const calcFloatRect = (p) => {
+export function calcFloatRect(p: Partial<Params>) {
     const params = {
         ...defaultParams,
         ...p,
@@ -69,10 +98,10 @@ export const calcFloatRect = (p) => {
     }
 
     return newContentRect;
-};
+}
 
-export const calcFloatRectInMainWindow = p => (
-    calcFloatRect({
+export function calcFloatRectInMainWindow(p: Partial<Params>) {
+    return calcFloatRect({
         ...p,
         boundingRect: {
             top: window.scrollY,
@@ -80,15 +109,14 @@ export const calcFloatRectInMainWindow = p => (
             width: window.innerWidth,
             height: window.innerHeight,
         },
-    })
-);
+    });
+}
 
-export const calcFloatPositionInMainWindow = (p) => {
+export function calcFloatPositionInMainWindow(p: Partial<Params>) {
     const floatRect = calcFloatRectInMainWindow(p);
-
     return {
         top: `${floatRect.top}px`,
         left: `${floatRect.left}px`,
         width: `${floatRect.width}px`,
     };
-};
+}

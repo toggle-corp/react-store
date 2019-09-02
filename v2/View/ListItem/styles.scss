@@ -1,0 +1,14 @@
+.list-item {
+    display: flex;
+    padding: var(--spacing-small) 0;
+
+    .marker {
+        align-self: flex-start;
+        flex-shrink: 0;
+        padding-right: var(--spacing-small);
+    }
+
+    .label {
+        flex-grow: 1;
+    }
+}

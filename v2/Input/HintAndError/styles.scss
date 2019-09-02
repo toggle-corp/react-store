@@ -1,0 +1,19 @@
+
+.input-hint-and-error {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--font-size-extra-small);
+
+    &.input-hint {
+        color: var(--color-text-label);
+    }
+
+    &.input-error {
+        color: var(--color-danger);
+    }
+
+    &.empty {
+        visibility: hidden;
+    }
+}

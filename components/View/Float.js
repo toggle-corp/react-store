@@ -1,20 +1,30 @@
 import FocusTrap from 'react-focus-trap';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import Portal from './Portal';
 
-interface Props {
-    children: React.ReactNode;
-    focusTrap: boolean;
-    onInvalidate: () => void;
-}
+const propTypes = {
+    children: PropTypes.oneOfType([
+        PropTypes.node,
+        PropTypes.arrayOf(PropTypes.node),
+    ]).isRequired,
+
+    focusTrap: PropTypes.bool,
+
+    onInvalidate: PropTypes.func,
+};
+
+const defaultProps = {
+    focusTrap: false,
+    onInvalidate: () => {}, // no-op
+};
 
 /* Portal with invalidation and focus trap */
-export default class Float extends React.PureComponent<Props> {
-    static defaultProps = {
-        focusTrap: false,
-        onInvalidate: () => {}, // no-op
-    };
+export default class Float extends React.PureComponent {
+    static propTypes = propTypes;
+
+    static defaultProps = defaultProps;
 
     componentDidMount() {
         window.addEventListener('resize', this.handleResize);
@@ -29,12 +39,12 @@ export default class Float extends React.PureComponent<Props> {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    private handleResize = () => {
+    handleResize = () => {
         const { onInvalidate } = this.props;
         onInvalidate();
     }
 
-    private handleScroll = () => {
+    handleScroll = () => {
         const { onInvalidate } = this.props;
         onInvalidate();
     }

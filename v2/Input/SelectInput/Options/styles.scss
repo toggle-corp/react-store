@@ -1,0 +1,15 @@
+
+.options {
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) 0;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: var(--color-text-on-foreground);
+
+    .empty {
+        padding: var(--spacing-small-alt) var(--spacing-small);
+        text-align: center;
+        color: var(--color-text-disabled);
+    }
+}

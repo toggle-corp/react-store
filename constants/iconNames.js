@@ -1,7 +1,8 @@
 const iconNames = {
     add: 'ion-plus',
     applyAll: 'ion-ios-world',
-    applyAllBelow: 'ion-android-arrow-dropdown-circle',
+    applyAllBelow: 'ion-aandroid-arrow-dropdown-circle',
+    arrowDropup: 'ion-android-arrow-dropup',
     arrowDropdown: 'ion-android-arrow-dropdown',
     apps: 'ion-android-apps',
     radioOn: 'ion-android-radio-button-on',

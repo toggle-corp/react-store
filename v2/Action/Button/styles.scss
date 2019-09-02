@@ -1,0 +1,167 @@
+@import '../../../stylesheets/utils';
+
+:root {
+    --radius-button-border: 2px;
+}
+
+@mixin button-props($base-color) {
+    // border: var(--width-separator-thin) solid var(--color-separator-light);
+    // color: var(--color-text);
+    // @include background-color($base-color);
+
+    &:focus {
+        // @include outline-button($base-color);
+    }
+
+    &:not(:disabled) {
+        border: var(--width-separator-thin) solid $base-color;
+        background-color: var(--color-foreground);
+        color: $base-color;
+
+        &:hover {
+            background-color: var(--color-background-hover);
+            // color: $base-color;
+            // background-color: get-hover-color($base-color);
+        }
+    }
+}
+
+@mixin transparent-button-props ($base-color) {
+    color: $base-color;
+
+    &:focus {
+        // @include outline-button(var(--color-foreground));
+    }
+}
+
+.button {
+    border: var(--width-separator-thin) solid var(--color-separator-light);
+    border-radius: var(--radius-button-border);
+    background-color: transparent;
+    padding: var(--spacing-small) var(--spacing-small-alt);
+    text-transform: uppercase;
+    font-family: inherit;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+
+    .pending-icon {
+        animation: spin 1s linear infinite;
+        font-size: inherit;
+    }
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:not(:disabled) {
+        &:active {
+            // @include shadow-button-active;
+            transform: translateY(1px);
+        }
+    }
+
+    &:not(.transparent) {
+        // &:not(:disabled) {
+        //     @include shadow-button;
+        // }
+
+        &.button-default {
+            background-color: var(--color-foreground);
+            color: var(--color-text);
+
+            &:focus {
+                // @include outline-button(var(--color-separator-alt));
+            }
+
+            &:not(:disabled) {
+                border: var(--width-separator-thin) solid var(--color-separator-alt);
+
+                &:hover {
+                    background-color: var(--color-background-hover);
+                    // color: var(--color-text);
+                    // background-color: get-hover-color($base-color);
+                }
+            }
+            // @include button-props(var(--color-foreground-alt));
+        }
+
+        &.button-accent {
+            @include button-props(var(--color-accent));
+        }
+
+        &.button-primary {
+            @include button-props(var(--color-primary));
+        }
+
+        &.button-danger {
+            @include button-props(var(--color-danger));
+        }
+
+        &.button-success {
+            @include button-props(var(--color-success));
+        }
+
+        &.button-warning {
+            @include button-props(var(--color-warning));
+        }
+
+        &:disabled {
+            background-color: var(--color-background-disabled);
+            color: var(--color-text-disabled);
+        }
+    }
+
+    &.transparent {
+        border: 0;
+
+        &:focus {
+            border-bottom: 0;
+        }
+
+        &.button-default {
+            @include transparent-button-props(var(--color-text));
+        }
+
+        &.button-accent {
+            @include transparent-button-props(var(--color-accent));
+        }
+
+        &.button-primary {
+            @include transparent-button-props(var(--color-primary));
+        }
+
+        &.button-danger {
+            @include transparent-button-props(var(--color-danger));
+        }
+
+        &.button-success {
+            @include transparent-button-props(var(--color-success));
+        }
+
+        &.button-warning {
+            @include transparent-button-props(var(--color-warning));
+        }
+
+        &:disabled {
+            cursor: default;
+            color: var(--color-text-disabled);
+        }
+
+    }
+
+    &.with-icon-and-children {
+        .icon {
+            margin-right: var(--spacing-small);
+        }
+    }
+
+    &.small-horizontal-padding {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    &.small-vertical-padding {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
