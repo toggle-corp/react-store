@@ -17,6 +17,18 @@ eslint css-modules/no-unused-class: [
 */
 import styles from './styles.scss';
 
+/*
+# Breaking Change
+- Removed PrimaryButton, DangerButton, SuccessButton, WarningButton, AccentButton components
+- Removed changeDelay prop
+- onClickParams doesn't resolve functions by default
+
+# Todo
+- Remove smallHorizontalPadding and smallVerticalPadding
+- Introduce small, medium and large buttons
+*/
+
+
 type ButtonType = 'button-default' | 'button-accent' | 'button-primary' | 'button-danger' | 'button-success' | 'button-warning';
 type RawButtonType = 'button' | 'submit' | 'reset';
 
@@ -35,9 +47,6 @@ export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onCl
     type?: RawButtonType;
 }
 
-/**
- * Basic button component
- */
 function Button<T>(props: Props<T>) {
     const {
         buttonType,
@@ -116,6 +125,5 @@ Button.defaultProps = {
     transparent: false,
     type: 'button',
 };
-
 
 export default Button;

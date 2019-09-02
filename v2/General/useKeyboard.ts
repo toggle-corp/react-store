@@ -3,6 +3,14 @@ import { modulo, isDefined } from '@togglecorp/fujs';
 
 import { Keys, OptionKey } from '../types';
 
+/*
+# Feature
+- Handles setting value of focusedKey exclusively
+
+# Breaking change
+- Add prop selectedKey to set it as focusedKey if focusedKey is not defined
+*/
+
 const specialKeys = [Keys.Up, Keys.Down, Keys.Enter];
 
 function getOptionIndex<T, Q extends OptionKey>(
@@ -50,7 +58,7 @@ function useKeyboard<T, Q extends OptionKey>(
 ) {
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
-            // NOTE: Destructuring e here will create access error
+            // NOTE: De-structuring e here will create access error
             const { keyCode } = e;
             if (isOptionsShown && (keyCode === Keys.Tab || keyCode === Keys.Esc)) {
                 // If tab or escape was pressed and dropdown is being shown,

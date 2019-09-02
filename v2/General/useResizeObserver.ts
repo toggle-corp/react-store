@@ -16,7 +16,6 @@ function useResizeObserver(
             } else {
                 resizeObserver.current = new ResizeObserver(onResize);
                 resizeObserver.current.observe(containerToObserve.parentElement);
-                // setIsChildrenShown(true);
                 onObserve();
             }
 

@@ -29,6 +29,23 @@ import Label from '../Label';
 import Options from './Options';
 import styles from './styles.scss';
 
+/*
+# Feature
+- Auto-scroll to selected item on popup open
+- Add maxDisplayOptions to limit visible options
+- Clicking on dropdown button will toggle popup visibility
+- Can hide/un-hide dropdown button using prop showDropdownArrowButton
+- Support string or number as key
+
+# Breaking Change
+- Remove prop focusedKey
+
+# Todo
+- Support list grouping
+- Use ListView instead of List
+- Show values that are invalid (tally with current options)
+*/
+
 interface DefaultItem {
     key: string;
     label: string;
@@ -46,7 +63,6 @@ interface Props<T, K extends OptionKey> {
     className?: string;
     disabled: boolean;
     error?: string;
-    focusedKey?: K;
     hint?: string;
     keySelector: (datum: T) => K;
     label?: string;

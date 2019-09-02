@@ -6,6 +6,13 @@ import {
 
 import { OptionKey } from '../../types';
 
+/*
+# Breaking Change
+- Remove modifier prop
+- Remove default ListItem and GroupItem
+- Add prop grouped to identify grouped / non-grouped list
+*/
+
 interface BaseProps<D, P, K extends OptionKey> {
     data: D[];
     keySelector(datum: D, index: number): K;

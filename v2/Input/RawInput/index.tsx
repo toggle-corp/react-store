@@ -3,6 +3,11 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
+/*
+# Breaking Change
+- Remove elementRef prop, and use React.forwardRef
+*/
+
 interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'ref'> {
     className?: string;
 }

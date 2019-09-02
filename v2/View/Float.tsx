@@ -9,7 +9,11 @@ interface Props {
     onInvalidate: () => void;
 }
 
-// TODO: this can be merged inside floating container
+/*
+# Todo
+- Can be merged with FloatingContainer
+*/
+
 /* Portal with invalidation and focus trap */
 function Float(props: Props) {
     const {

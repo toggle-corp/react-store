@@ -5,6 +5,11 @@ const portalChildQuery = '.portal-child';
 const portalChildClassName = 'portal-child';
 const portalChildShownClassName = 'portal-child-shown';
 
+/*
+# Breaking change
+- It returns id and className that should be injected manually to children
+*/
+
 function addClassName(classNames: string, classNameToAdd: string) {
     const classNameList = classNames.split(' ');
     classNameList.push(classNameToAdd);

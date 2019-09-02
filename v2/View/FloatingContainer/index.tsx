@@ -9,6 +9,15 @@ import { Keys } from '../../types';
 
 import styles from './styles.scss';
 
+/*
+# Breaking Change
+- Change prop parent to parentRef
+
+# Todo
+- Merge with Float
+- onBlur and onClose should be merged into same function
+*/
+
 interface Props {
     className?: string;
     closeOnEscape: boolean;

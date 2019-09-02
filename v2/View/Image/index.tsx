@@ -5,6 +5,11 @@ import Button from '../../Action/Button';
 
 import styles from './styles.scss';
 
+/*
+# Feature
+- Add zoomFactor prop to control amount to zoom
+*/
+
 interface Props {
     alt: string;
     className?: string;
