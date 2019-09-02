@@ -1,5 +1,3 @@
-@import '../../../../stylesheets/utils';
-
 .options {
     background-color: var(--color-foreground);
     padding: var(--spacing-small) 0;
@@ -10,6 +8,6 @@
     .empty {
         padding: var(--spacing-small-alt) var(--spacing-small);
         text-align: center;
-        color: get-text-color(var(--color-foreground), var(--color-text-disabled-on-light), var(--color-text-disabled-on-dark));
+        color: var(--color-text-disabled);
     }
 }

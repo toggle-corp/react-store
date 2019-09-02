@@ -1,4 +1,3 @@
-@import '../../../../../stylesheets/utils';
 @import '../../../../../stylesheets/button-base';
 
 .option {
@@ -14,6 +13,11 @@
     }
 
     &.active {
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
+    }
+
+    &:hover {
         background-color: var(--color-accent);
         color: var(--color-text-on-accent);
     }

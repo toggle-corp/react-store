@@ -42,7 +42,7 @@
                 }
 
                 text {
-                    fill: get-text-color(var(--color-accent));
+                    fill: var(--color-text-on-accent);
                 }
             }
         }
