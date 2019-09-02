@@ -99,13 +99,16 @@ function FloatingContainer(props: Props) {
 
     const handleKeyPressed = useCallback(
         (event: KeyboardEvent) => {
-            if (onClose && closeOnEscape && event.keyCode === Keys.Esc) {
+            const { current: container } = containerRef;
+            const isLastModal = container && container.dataset.lastModal === 'true';
+            if (isLastModal && onClose && closeOnEscape && event.keyCode === Keys.Esc) {
                 onClose({ escape: true });
             }
         },
         [
             closeOnEscape,
             onClose,
+            containerRef.current,
         ],
     );
 
