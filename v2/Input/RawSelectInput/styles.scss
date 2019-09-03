@@ -37,6 +37,10 @@
             .dropdown-button {
                 @extend %button;
             }
+
+            .spinner {
+                margin-left: var(--spacing-extra-small);
+            }
         }
     }
 
