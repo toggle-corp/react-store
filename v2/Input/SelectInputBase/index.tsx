@@ -27,13 +27,7 @@ import Label from '../Label';
 import Options from './Options';
 import styles from './styles.scss';
 
-interface State<K> {
-    inputInFocus?: boolean;
-    focusedKey?: K;
-    showOptionsPopup: boolean;
-}
-
-export interface RawSelectInputProps<T, K extends OptionKey> {
+export interface SelectInputBaseProps<T, K extends OptionKey> {
     autoFocus?: boolean;
     className?: string;
     disabled: boolean;
@@ -45,25 +39,27 @@ export interface RawSelectInputProps<T, K extends OptionKey> {
     onChange: (key: K | undefined) => void;
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
-    onSearchChange: (text: string | undefined) => void;
+    onSearchValueChange: (text: string | undefined) => void;
+    onShowPopupChange: (value: boolean) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;
     options: T[];
     optionsClassName?: string;
-    pending: boolean;
     placeholder: 'Search for an option';
     readOnly: boolean;
     renderEmpty: React.ComponentType<unknown>;
     searchOptions: T[];
+    searchOptionsPending: boolean;
     searchValue?: string;
     showClearButton: boolean;
     showDropdownArrowButton: boolean;
     showHintAndError: boolean;
     showLabel: boolean;
+    showPopup: boolean;
     title?: string;
     value?: K;
 }
 // eslint-disable-next-line max-len
-function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputProps<T, K>) {
+function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBaseProps<T, K>) {
     const {
         autoFocus,
         className: classNameFromProps,
@@ -74,20 +70,22 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
         label,
         labelSelector,
         onChange,
-        onSearchChange: setSearchValue,
+        onSearchValueChange,
+        onShowPopupChange,
         optionLabelSelector,
         options,
         optionsClassName,
-        pending,
         placeholder,
         readOnly,
         renderEmpty,
         searchOptions,
+        searchOptionsPending,
         searchValue,
         showClearButton: showClearButtonFromProps,
         showDropdownArrowButton,
         showHintAndError,
         showLabel,
+        showPopup,
         title,
         value,
     } = props;
@@ -98,9 +96,6 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
 
     const [inputInFocus, setInputInFocus] = useState(false);
     const [focusedKey, setFocusKey] = useState();
-    const [showOptionsPopup, setShowOptionsPopup] = useState(false);
-
-    // const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
 
     useEffect(
         () => {
@@ -120,12 +115,12 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
             }
 
             // Only show if it is previously not shown else ignore
-            if (!showOptionsPopup) {
-                setShowOptionsPopup(true);
-                setSearchValue(undefined);
+            if (!showPopup) {
+                onShowPopupChange(true);
+                onSearchValueChange(undefined);
             }
         },
-        [inputRef, value, showOptionsPopup],
+        [inputRef, value, showPopup],
     );
 
     const handleToggleOptionsPopup = useCallback(
@@ -135,19 +130,19 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
                 input.select();
             }
 
-            if (!showOptionsPopup) {
-                setShowOptionsPopup(true);
-                setSearchValue(undefined);
+            if (!showPopup) {
+                onShowPopupChange(true);
+                onSearchValueChange(undefined);
             } else {
-                setShowOptionsPopup(false);
+                onShowPopupChange(false);
             }
         },
-        [inputRef, value, showOptionsPopup],
+        [inputRef, value, showPopup],
     );
 
     const handleHideOptionsPopup = useCallback(
         () => {
-            setShowOptionsPopup(false);
+            onShowPopupChange(false);
         },
         [],
     );
@@ -169,8 +164,8 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
     const handleInputChange = useCallback(
         (e: React.FormEvent<HTMLInputElement>) => {
             const { value: val } = e.currentTarget;
-            setShowOptionsPopup(true);
-            setSearchValue(val);
+            onShowPopupChange(true);
+            onSearchValueChange(val);
         },
         [],
     );
@@ -206,7 +201,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
 
     const handleOptionSelect = useCallback(
         (optionKey: K) => {
-            setShowOptionsPopup(false);
+            onShowPopupChange(false);
             if (optionKey !== value) {
                 onChange(optionKey);
             }
@@ -243,7 +238,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
         [options, labelSelector, keySelector, value],
     );
 
-    const inputText: string | undefined = !showOptionsPopup
+    const inputText: string | undefined = !showPopup
         ? selectedValueLabel
         : searchValue;
 
@@ -259,7 +254,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
         value,
         keySelector,
         searchOptions,
-        showOptionsPopup,
+        showPopup,
 
         handleFocusChange,
         handleHideOptionsPopup,
@@ -271,8 +266,8 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
         classNameFromProps,
         'select-input',
         styles.selectInput,
-        showOptionsPopup && styles.showOptions,
-        showOptionsPopup && 'show-options',
+        showPopup && styles.showOptions,
+        showPopup && 'show-options',
         disabled && styles.disabled,
         disabled && 'disabled',
         error && styles.error,
@@ -295,7 +290,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
                     text={label}
                     error={!!error}
                     disabled={disabled}
-                    active={inputInFocus || showOptionsPopup}
+                    active={inputInFocus || showPopup}
                 />
             )}
             <div
@@ -332,7 +327,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
                         <Button
                             tabIndex={-1}
                             iconName={
-                                showOptionsPopup ? 'arrowDropup' : 'arrowDropdown'
+                                showPopup ? 'arrowDropup' : 'arrowDropdown'
                             }
                             className={_cs('dropdown-button', styles.dropdownButton)}
                             onClick={handleToggleOptionsPopup}
@@ -340,7 +335,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
                             transparent
                         />
                     )}
-                    { pending && (
+                    { showPopup && searchOptionsPending && (
                         <Spinner
                             className={styles.spinner}
                         />
@@ -353,7 +348,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
                     hint={hint}
                 />
             )}
-            { showOptionsPopup && (
+            { showPopup && (
                 <Options
                     className={optionsClassName}
                     labelSelector={labelSelector}
@@ -374,7 +369,7 @@ function RawSelectInput<T, K extends OptionKey = string>(props: RawSelectInputPr
         </div>
     );
 }
-RawSelectInput.defaultProps = {
+SelectInputBase.defaultProps = {
     disabled: false,
     readOnly: false,
     showClearButton: true,
@@ -384,4 +379,4 @@ RawSelectInput.defaultProps = {
     pending: false,
 };
 
-export default RawSelectInput;
+export default SelectInputBase;

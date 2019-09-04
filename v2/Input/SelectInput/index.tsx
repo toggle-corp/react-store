@@ -10,7 +10,7 @@ import {
 
 import { OptionKey } from '../../types';
 
-import RawSelectInput, { RawSelectInputProps } from '../RawSelectInput';
+import SelectInputBase, { SelectInputBaseProps } from '../SelectInputBase';
 
 interface DefaultItem {
     key: string;
@@ -28,7 +28,7 @@ interface State<K> {
 - Clicking on dropdown button will toggle popup visibility
 - Can hide/un-hide dropdown button using prop showDropdownArrowButton
 - Support string or number as key
-- Create RawSelectInput to pull data from server
+- Create BasicSelectInput to pull data from server
 
 # Breaking Change
 - Remove prop focusedKey
@@ -39,8 +39,8 @@ interface State<K> {
 - Show values that are invalid (tally with current options)
 */
 
-type injectedProps = 'searchValue' | 'onSearchChange' | 'searchOptions';
-type Props<T, K extends OptionKey> = Omit<RawSelectInputProps<T, K>, injectedProps> & {
+type injectedProps = 'searchValue' | 'onSearchValueChange' | 'searchOptions' | 'showPopup' | 'setShowPopup';
+type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
     maxDisplayOptions?: number;
 };
 
@@ -61,13 +61,17 @@ function filterAndSearch<T, K>(
 function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
     const {
         maxDisplayOptions,
-        labelSelector,
-        options,
         placeholder,
         ...otherProps
     } = props;
 
+    const {
+        options,
+        labelSelector,
+    } = otherProps;
+
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
+    const [showPopup, setShowPopup] = useState(false);
 
     const searchOptions = useMemo(
         () => {
@@ -93,13 +97,15 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
         : 'Search for an option';
 
     return (
-        <RawSelectInput
+        <SelectInputBase
             searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            placeholder={placeholder || defaultPlaceholder}
+            onSearchValueChange={setSearchValue}
             searchOptions={searchOptions}
-            options={options}
-            labelSelector={labelSelector}
+
+            showPopup={showPopup}
+            onShowPopupChange={setShowPopup}
+
+            placeholder={placeholder || defaultPlaceholder}
             {...otherProps}
         />
     );
