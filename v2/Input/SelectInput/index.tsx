@@ -92,7 +92,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
         [options, labelSelector, maxDisplayOptions, searchValue],
     );
 
-    const defaultPlaceholder = maxDisplayOptions === undefined
+    const defaultPlaceholder = maxDisplayOptions === undefined || !showPopup
         ? 'Select an option'
         : 'Search for an option';
 

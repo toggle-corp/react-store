@@ -44,7 +44,7 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     optionLabelSelector?: (datum: T) => React.ReactNode;
     options: T[];
     optionsClassName?: string;
-    placeholder: 'Search for an option';
+    placeholder: string;
     readOnly: boolean;
     renderEmpty: React.ComponentType<unknown>;
     searchOptions: T[];

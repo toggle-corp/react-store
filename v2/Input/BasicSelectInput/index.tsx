@@ -1,13 +1,7 @@
 import React, {
-    useMemo,
     useState,
     useCallback,
 } from 'react';
-import {
-    isFalsyString,
-    caseInsensitiveSubmatch,
-    compareStringSearch,
-} from '@togglecorp/fujs';
 
 import { OptionKey } from '../../types';
 
@@ -22,6 +16,7 @@ type injectedProps = 'searchValue' | 'showPopup' | 'setShowPopup';
 type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
     onSearchValueChange: (value: string | undefined) => void;
     onOptionsChange: (options: T[]) => void;
+    minSearchValueLength: number;
 };
 
 function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
@@ -29,6 +24,8 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         onSearchValueChange,
         onOptionsChange,
         onChange,
+        minSearchValueLength,
+        placeholder,
         ...otherProps
     } = props;
 
@@ -45,9 +42,13 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         (value: string | undefined) => {
             setSearchValue(value);
 
-            onSearchValueChange(value);
+            if (value === undefined || value.length <= minSearchValueLength) {
+                onSearchValueChange(undefined);
+            } else {
+                onSearchValueChange(value);
+            }
         },
-        [onSearchValueChange],
+        [onSearchValueChange, minSearchValueLength],
     );
 
     const interceptedSetShowPopup = useCallback(
@@ -62,7 +63,6 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
 
     const interceptedOnChange = useCallback(
         (newValue: K | undefined) => {
-
             const optionIndex = options.findIndex(o => keySelector(o) === newValue);
             if (optionIndex === -1) {
                 const option = searchOptions.find(o => keySelector(o) === newValue);
@@ -76,8 +76,12 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
 
             onChange(newValue);
         },
-        [options, keySelector, onChange],
+        [options, searchOptions, keySelector, onChange, onOptionsChange],
     );
+
+    const defaultPlaceholder = !showPopup
+        ? 'Select an option'
+        : 'Search for an option';
 
     return (
         <SelectInputBase
@@ -89,6 +93,7 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
 
             onChange={interceptedOnChange}
 
+            placeholder={placeholder || defaultPlaceholder}
             {...otherProps}
         />
     );
@@ -97,7 +102,7 @@ BasicSelectInput.defaultProps = {
     keySelector: (item: DefaultItem) => item.key,
     labelSelector: (item: DefaultItem) => item.label,
     options: [],
-    placeholder: 'Search for an option',
+    minSearchValueLength: 2,
 };
 
 export default BasicSelectInput;
