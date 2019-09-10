@@ -99,7 +99,7 @@ const propTypes = {
      *
      * NOTE: see { TableHeaderPropTypes } in Table/Header for more detail
      */
-    tableHeaders: TableHeaderPropTypes.isRequired,
+    tableHeaders: TableHeaderPropTypes,
 };
 
 const defaultProps = {
@@ -116,6 +116,7 @@ const defaultProps = {
     disabled: false,
     readOnly: false,
     showHintAndError: true,
+    tableHeaders: [],
 };
 
 class TabularSelectInput extends React.PureComponent {
