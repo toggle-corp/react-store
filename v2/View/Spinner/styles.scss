@@ -2,7 +2,7 @@
     position: relative;
     transform-origin: 50% 50%;
     animation: spin 1s linear infinite;
-    font-size: var(--font-size-large);
+    font-size: inherit;
 }
 
 @keyframes spin {
