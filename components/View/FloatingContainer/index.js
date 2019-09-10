@@ -100,7 +100,10 @@ export default class FloatingContainer extends React.PureComponent {
             onClose,
         } = this.props;
 
-        if (closeOnEscape && event.keyCode === ESCAPE_KEY) {
+        const { current: container } = this.containerRef;
+        const isLastModal = container && container.dataset.lastModal === 'true';
+
+        if (isLastModal && closeOnEscape && event.keyCode === ESCAPE_KEY) {
             onClose({ escape: true });
         }
     }

@@ -98,6 +98,10 @@ export default class DropdownMenu extends React.PureComponent {
         this.setState({ showDropdown: false });
     }
 
+    handleCloseFromChildren = () => {
+        this.setState({ showDropdown: false });
+    }
+
     handleWindowClick = () => {
         const { closeOnClick } = this.props;
 
@@ -196,6 +200,13 @@ export default class DropdownMenu extends React.PureComponent {
             styles.dropdownContainer,
         );
 
+        const newProps = { closeModal: this.handleCloseFromChildren };
+
+        const modifiedChildren = React.Children.map(
+            children,
+            c => (React.isValidElement(c) ? React.cloneElement(c, newProps) : c),
+        );
+
         return (
             <FloatingContainer
                 ref={(el) => { this.dropdownContainer = el; }}
@@ -204,7 +215,7 @@ export default class DropdownMenu extends React.PureComponent {
                 parent={this.container}
                 onInvalidate={this.handleDropdownContainerInvalidate}
             >
-                { children }
+                { modifiedChildren }
             </FloatingContainer>
         );
     }
