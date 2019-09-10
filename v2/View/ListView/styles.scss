@@ -1,5 +1,3 @@
-@import '../../../../stylesheets/utils';
-
 .list-view {
     position: relative;
 
@@ -8,8 +6,8 @@
         flex-direction: column;
 
         .empty {
-            @extend %empty-text;
             flex-grow: 1;
+            color: var(--color-text-disabled);
         }
     }
 
