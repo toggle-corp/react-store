@@ -104,11 +104,13 @@ const propTypes = {
     onDataSort: PropTypes.func,
 
     emptyComponent: PropTypes.func,
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     defaultSort: undefined,
+    pending: false,
 
     highlightCellKey: {},
     highlightColumnKey: undefined,
@@ -332,6 +334,7 @@ export default class Table extends React.PureComponent {
             emptyComponent,
             expandRowId,
             expandedRowModifier,
+            pending,
         } = this.props;
 
         const {
@@ -358,6 +361,7 @@ export default class Table extends React.PureComponent {
                 emptyComponent={emptyComponent}
                 expandRowId={expandRowId}
                 expandedRowModifier={expandedRowModifier}
+                pending={pending}
             />
         );
     }
