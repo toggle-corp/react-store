@@ -102,7 +102,7 @@ BasicSelectInput.defaultProps = {
     keySelector: (item: DefaultItem) => item.key,
     labelSelector: (item: DefaultItem) => item.label,
     options: [],
-    minSearchValueLength: 2,
+    minSearchValueLength: 1,
 };
 
 export default BasicSelectInput;
