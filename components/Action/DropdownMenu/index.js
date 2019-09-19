@@ -200,12 +200,14 @@ export default class DropdownMenu extends React.PureComponent {
             styles.dropdownContainer,
         );
 
-        const newProps = { closeModal: this.handleCloseFromChildren };
 
-        const modifiedChildren = React.Children.map(
-            children,
-            c => (React.isValidElement(c) ? React.cloneElement(c, newProps) : c),
-        );
+        let modifiedChildren = children;
+
+        if (React.Children.count(children) === 1 && React.isValidElement(children)) {
+            const newProps = { closeModal: this.handleCloseFromChildren };
+
+            modifiedChildren = React.cloneElement(children, newProps);
+        }
 
         return (
             <FloatingContainer
