@@ -4,7 +4,7 @@ import React from 'react';
 import { typeOf, _cs } from '@togglecorp/fujs';
 
 import Message from '../Message';
-import Spinner from '../Spinner';
+import Spinner from '../../../v2/View/Spinner';
 
 import styles from './styles.scss';
 
@@ -32,7 +32,10 @@ export default class LoadingAnimation extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = { showMessage: false };
+        this.state = {
+            showMessage: false,
+            sizeCategory: 'medium',
+        };
     }
 
     componentDidMount() {
@@ -45,6 +48,10 @@ export default class LoadingAnimation extends React.PureComponent {
 
     componentWillUnmount() {
         clearTimeout(this.timeout);
+    }
+
+    handleSizeCategorization = (sizeCategory) => {
+        this.setState({ sizeCategory });
     }
 
     renderMessage = () => {
@@ -72,16 +79,23 @@ export default class LoadingAnimation extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const { showMessage } = this.state;
+        const {
+            showMessage,
+            sizeCategory,
+        } = this.state;
 
         const LoadingMessage = this.renderMessage;
 
         return (
             <Message
+                onSizeCategorization={this.handleSizeCategorization}
                 className={_cs(styles.loadingAnimation, classNameFromProps)}
                 {...otherProps}
             >
-                <Spinner className={spinnerClassName} />
+                <Spinner
+                    className={spinnerClassName}
+                    size={sizeCategory}
+                />
                 { message && showMessage && <LoadingMessage />}
             </Message>
         );

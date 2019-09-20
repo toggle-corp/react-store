@@ -12,6 +12,7 @@ const propTypes = {
     maxPaddingSize: PropTypes.number,
     minPaddingSize: PropTypes.number,
     resizeFactor: PropTypes.number,
+    onSizeCategorization: PropTypes.func,
 };
 
 const defaultProps = {
@@ -20,8 +21,15 @@ const defaultProps = {
     maxFontSize: 20,
     minFontSize: 8,
     maxPaddingSize: 16,
-    minPaddingSize: 3,
+    minPaddingSize: 1,
     resizeFactor: 0.0001,
+    onSizeCategorization: undefined,
+};
+
+const sizeCategoryMap = {
+    1: 'small',
+    2: 'medium',
+    3: 'large',
 };
 
 const calculateDimensionCost = (width, height, factor) => (
@@ -81,6 +89,7 @@ export default class Message extends React.PureComponent {
             maxPaddingSize,
             minPaddingSize,
             resizeFactor,
+            onSizeCategorization,
         } = this.props;
 
         const { current: container } = this.containerRef;
@@ -96,6 +105,15 @@ export default class Message extends React.PureComponent {
         container.style.height = `${height}px`;
         container.style.fontSize = `${fontSize}px`;
         container.style.padding = `${padding}px`;
+
+        if (onSizeCategorization) {
+            // small / medium / large
+            const sizeCategory = sizeCategoryMap[calculateRelativeValue(
+                1, 3, width, height, resizeFactor,
+            )];
+
+            onSizeCategorization(sizeCategory);
+        }
     }
 
     render() {
