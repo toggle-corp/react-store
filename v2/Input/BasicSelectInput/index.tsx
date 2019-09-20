@@ -2,10 +2,28 @@ import React, {
     useState,
     useCallback,
 } from 'react';
+import {
+    isTruthyString,
+} from '@togglecorp/fujs';
 
 import { OptionKey } from '../../types';
 
 import SelectInputBase, { SelectInputBaseProps } from '../SelectInputBase';
+import Message from '../../View/Message';
+
+const emptyArray: unknown[] = [];
+
+const EmptyComponent = () => (
+    <Message>
+        Start typing to search for relevant options
+    </Message>
+);
+
+const FilterEmptyComponent = () => (
+    <Message>
+        No option available for current search term
+    </Message>
+);
 
 interface DefaultItem {
     key: string;
@@ -26,17 +44,24 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         onChange,
         minSearchValueLength,
         placeholder,
+        searchOptions: searchOptionsFromProps,
         ...otherProps
     } = props;
 
     const {
         options,
         keySelector,
-        searchOptions,
     } = otherProps;
 
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
     const [showPopup, setShowPopup] = useState(false);
+
+    const isSearchValueDefined = isTruthyString(searchValue);
+
+    // FIXME: this is a quick fix until react-rest-request is fixed
+    const searchOptions = isSearchValueDefined
+        ? searchOptionsFromProps
+        : emptyArray as T[];
 
     const interceptedSetSearchValue = useCallback(
         (value: string | undefined) => {
@@ -85,13 +110,18 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
 
     return (
         <SelectInputBase
+            searchOptionsFiltered={isSearchValueDefined}
             searchValue={searchValue}
             onSearchValueChange={interceptedSetSearchValue}
+
+            emptyComponent={EmptyComponent}
+            emptyWhenFilterComponent={FilterEmptyComponent}
 
             showPopup={showPopup}
             onShowPopupChange={interceptedSetShowPopup}
 
             onChange={interceptedOnChange}
+            searchOptions={searchOptions}
 
             placeholder={placeholder || defaultPlaceholder}
             {...otherProps}

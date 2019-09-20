@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import { OptionKey } from '../../types';
 
-import EmptyWhenFilter from '../../../components/View/EmptyWhenFilter';
+import DefaultEmptyWhenFilterComponent from '../../../components/View/EmptyWhenFilter';
 import LoadingAnimation from '../../../components/View/LoadingAnimation';
 
 import List, { ListProps } from '../List';
@@ -13,7 +13,8 @@ import styles from './styles.scss';
 
 type ListViewProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = {
     className?: string;
-    emptyComponent: typeof DefaultEmptyComponent;
+    emptyComponent: any;
+    emptyWhenFilterComponent: any;
     filtered: boolean;
     id?: string;
     pending: boolean;
@@ -29,6 +30,7 @@ function ListView<
         className: classNameFromProps,
 
         emptyComponent: EmptyComponent,
+        emptyWhenFilterComponent: EmptyWhenFilterComponent,
         filtered,
         pending,
 
@@ -42,7 +44,7 @@ function ListView<
     if (isEmpty) {
         if (filtered) {
             content = !pending
-                ? <EmptyWhenFilter className={styles.empty} />
+                ? <EmptyWhenFilterComponent className={styles.empty} />
                 : null;
         } else {
             content = EmptyComponent && !pending
@@ -80,6 +82,7 @@ function ListView<
 ListView.defaultProps = {
     data: [],
     emptyComponent: DefaultEmptyComponent,
+    emptyWhenFilterComponent: DefaultEmptyWhenFilterComponent,
     filtered: false,
     pending: false,
 };
