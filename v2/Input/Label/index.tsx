@@ -5,19 +5,25 @@ import styles from './styles.scss';
 
 interface Props {
     active: boolean;
+    children?: React.ReactNode;
     className?: string;
     disabled: boolean;
     error: boolean;
-    text?: string;
+    title?: string;
+    rightComponent?: React.ReactNode;
+    rightComponentClassName?: string;
 }
 
 function Label(props: Props) {
     const {
-        text,
-        error,
-        className: classNameFromProps,
         active,
+        children,
+        className: classNameFromProps,
         disabled,
+        error,
+        title,
+        rightComponent,
+        rightComponentClassName,
         ...otherProps
     } = props;
 
@@ -25,8 +31,8 @@ function Label(props: Props) {
         classNameFromProps,
         'input-label',
         styles.inputLabel,
-        !text && 'empty',
-        !text && styles.empty,
+        !children && 'empty',
+        !children && styles.empty,
         error && styles.error,
         error && 'error',
         active && styles.active,
@@ -38,13 +44,21 @@ function Label(props: Props) {
     return (
         <div
             className={className}
-            title={text}
+            title={title}
             {...otherProps}
         >
-            {text}
+            <div className={styles.left}>
+                {children}
+            </div>
+            { rightComponent && (
+                <div className={_cs(rightComponentClassName, styles.right)}>
+                    { rightComponent }
+                </div>
+            )}
         </div>
     );
 }
+
 Label.defaultProps = {
     active: false,
     disabled: false,

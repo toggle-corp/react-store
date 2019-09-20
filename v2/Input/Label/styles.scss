@@ -1,21 +1,43 @@
-@import '../../../stylesheets/input-label';
-
 .input-label {
-    @extend %input-label;
+    display: flex;
+    overflow: auto;
+    color: var(--color-text-label);
+    font-size: var(--font-size-extra-small);
+    font-weight: var(--font-weight-bold);
+
+    .left {
+        flex-grow: 1;
+        overflow: hidden;
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .right {
+        flex-shrink: 0;
+    }
 
     &.empty {
-        visibility: hidden;
+        .left {
+            visibility: hidden;
+        }
     }
 
     &.active {
-        color: var(--color-accent);
+        .left {
+            color: var(--color-accent);
+        }
     }
 
     &.error {
-        color: var(--color-danger);
+        .left {
+            color: var(--color-danger);
+        }
     }
 
     &.disabled {
-        color: var(--color-text-disabled);
+        .left {
+            color: var(--color-text-disabled);
+        }
     }
 }

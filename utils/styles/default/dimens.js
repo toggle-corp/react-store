@@ -69,6 +69,9 @@ const durationSlow = '.3s';
 const durationMedium = '.2s';
 const durationFast = '.1s';
 
+const durationSuperSlow = '.7s';
+const durationRelaxed = '1s';
+
 const widthModalMedium = '640px';
 const widthModalSmall = '480px';
 const widthModalExtraSmall = '320px';
@@ -186,6 +189,8 @@ const dimens = {
 
     widthScrollbar,
 
+    durationSuperSlow,
+    durationRelaxed,
     durationSlow,
     durationMedium,
     durationFast,
