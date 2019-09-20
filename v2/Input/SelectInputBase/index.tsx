@@ -35,6 +35,8 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     hint?: string;
     keySelector: (datum: T) => K;
     label?: string;
+    labelRightComponent?: React.ReactNode;
+    labelRightComponentClassName?: string;
     labelSelector: (datum: T) => string | number;
     onChange: (key: K | undefined) => void;
     onOptionClick: (key: K) => void;
@@ -68,6 +70,9 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         hint,
         keySelector,
         label,
+        labelClassName,
+        labelRightComponent,
+        labelRightComponentClassName,
         labelSelector,
         onChange,
         onSearchValueChange,
@@ -264,8 +269,8 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
     const className = _cs(
         classNameFromProps,
-        'select-input',
-        styles.selectInput,
+        'select-input-base',
+        styles.selectInputBase,
         showPopup && styles.showOptions,
         showPopup && 'show-options',
         disabled && styles.disabled,
@@ -287,11 +292,16 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         >
             { showLabel && (
                 <Label
-                    text={label}
-                    error={!!error}
-                    disabled={disabled}
+                    className={labelClassName}
                     active={inputInFocus || showPopup}
-                />
+                    disabled={disabled}
+                    error={!!error}
+                    title={label}
+                    rightComponent={labelRightComponent}
+                    rightComponentClassName={labelRightComponentClassName}
+                >
+                    { label }
+                </Label>
             )}
             <div
                 ref={containerRef}
@@ -312,6 +322,9 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
                     onKeyDown={handleKeyDown}
                 />
+                { showPopup && searchOptionsPending && (
+                    <Spinner className={styles.spinner} />
+                )}
                 <div className={_cs('actions', styles.actions)}>
                     { showClearButton && (
                         <Button
@@ -323,24 +336,19 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                             transparent
                         />
                     )}
-                    { showDropdownArrowButton && (
-                        <Button
-                            tabIndex={-1}
-                            iconName={
-                                showPopup ? 'arrowDropup' : 'arrowDropdown'
-                            }
-                            className={_cs('dropdown-button', styles.dropdownButton)}
-                            onClick={handleToggleOptionsPopup}
-                            disabled={disabled || readOnly}
-                            transparent
-                        />
-                    )}
-                    { showPopup && searchOptionsPending && (
-                        <Spinner
-                            className={styles.spinner}
-                        />
-                    )}
                 </div>
+                { showDropdownArrowButton && (
+                    <Button
+                        tabIndex={-1}
+                        iconName={
+                            showPopup ? 'arrowDropup' : 'arrowDropdown'
+                        }
+                        className={_cs('dropdown-button', styles.dropdownButton)}
+                        onClick={handleToggleOptionsPopup}
+                        disabled={disabled || readOnly}
+                        transparent
+                    />
+                )}
             </div>
             { showHintAndError && (
                 <HintAndError
