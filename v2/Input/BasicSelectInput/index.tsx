@@ -43,7 +43,6 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         onOptionsChange,
         onChange,
         minSearchValueLength,
-        placeholder,
         searchOptions: searchOptionsFromProps,
         ...otherProps
     } = props;
@@ -104,10 +103,6 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         [options, searchOptions, keySelector, onChange, onOptionsChange],
     );
 
-    const defaultPlaceholder = !showPopup
-        ? 'Select an option'
-        : 'Search for an option';
-
     return (
         <SelectInputBase
             searchOptionsFiltered={isSearchValueDefined}
@@ -123,7 +118,6 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
             onChange={interceptedOnChange}
             searchOptions={searchOptions}
 
-            placeholder={placeholder || defaultPlaceholder}
             {...otherProps}
         />
     );
@@ -133,6 +127,7 @@ BasicSelectInput.defaultProps = {
     labelSelector: (item: DefaultItem) => item.label,
     options: [],
     minSearchValueLength: 0,
+    placeholder: 'Select an option',
 };
 
 export default BasicSelectInput;

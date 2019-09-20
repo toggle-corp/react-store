@@ -253,6 +253,10 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
     const isFilled = isTruthyString(inputText);
 
+    const myPlaceholder = showPopup && isTruthyString(selectedValueLabel)
+        ? selectedValueLabel
+        : placeholder;
+
     const showClearButton = showClearButtonFromProps
         && !disabled
         && !readOnly
@@ -321,7 +325,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                     onChange={handleInputChange}
                     value={inputText || ''}
                     autoFocus={autoFocus}
-                    placeholder={placeholder}
+                    placeholder={myPlaceholder}
                     disabled={disabled || readOnly}
 
                     onKeyDown={handleKeyDown}
