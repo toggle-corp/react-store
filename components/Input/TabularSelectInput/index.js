@@ -223,11 +223,12 @@ class TabularSelectInput extends React.PureComponent {
         const selectedOptions = values
             .map(v => ({
                 ...optionsMap[keySelector(v)],
-                ...values,
+                ...v,
             }))
             .filter(
                 value => !blackListMap[keySelector(value)],
             );
+
         return selectedOptions;
     }
 
