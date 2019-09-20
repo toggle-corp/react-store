@@ -4,6 +4,7 @@ import React, {
 } from 'react';
 import {
     isFalsyString,
+    isTruthyString,
     caseInsensitiveSubmatch,
     compareStringSearch,
 } from '@togglecorp/fujs';
@@ -98,6 +99,7 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
 
     return (
         <SelectInputBase
+            searchOptionsFiltered={isTruthyString(searchValue)}
             searchValue={searchValue}
             onSearchValueChange={setSearchValue}
             searchOptions={searchOptions}

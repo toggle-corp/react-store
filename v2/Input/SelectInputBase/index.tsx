@@ -10,7 +10,6 @@ import {
     isTruthyString,
 } from '@togglecorp/fujs';
 
-import Spinner from '../../View/Spinner';
 import {
     calcFloatPositionInMainWindow,
     defaultLimit,
@@ -35,6 +34,7 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     hint?: string;
     keySelector: (datum: T) => K;
     label?: string;
+    labelClassName?: string;
     labelRightComponent?: React.ReactNode;
     labelRightComponentClassName?: string;
     labelSelector: (datum: T) => string | number;
@@ -48,9 +48,11 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     optionsClassName?: string;
     placeholder: string;
     readOnly: boolean;
-    renderEmpty: React.ComponentType<unknown>;
+    emptyComponent: React.ComponentType<unknown>;
+    emptyWhenFilterComponent: React.ComponentType<unknown>;
     searchOptions: T[];
     searchOptionsPending: boolean;
+    searchOptionsFiltered: boolean;
     searchValue?: string;
     showClearButton: boolean;
     showDropdownArrowButton: boolean;
@@ -82,9 +84,11 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         optionsClassName,
         placeholder,
         readOnly,
-        renderEmpty,
+        emptyComponent,
+        emptyWhenFilterComponent,
         searchOptions,
         searchOptionsPending,
+        searchOptionsFiltered,
         searchValue,
         showClearButton: showClearButtonFromProps,
         showDropdownArrowButton,
@@ -322,9 +326,6 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
                     onKeyDown={handleKeyDown}
                 />
-                { showPopup && searchOptionsPending && (
-                    <Spinner className={styles.spinner} />
-                )}
                 <div className={_cs('actions', styles.actions)}>
                     { showClearButton && (
                         <Button
@@ -365,13 +366,16 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                     onOptionClick={handleOptionSelect}
                     optionLabelSelector={optionLabelSelector}
                     parentRef={containerRef}
-                    renderEmpty={renderEmpty}
+                    emptyComponent={emptyComponent}
+                    emptyWhenFilterComponent={emptyWhenFilterComponent}
                     value={value}
 
                     keySelector={keySelector}
                     data={searchOptions}
                     onOptionFocus={handleFocusChange}
                     focusedKey={focusedKey}
+                    filtered={searchOptionsFiltered}
+                    pending={searchOptionsPending}
                 />
             )}
         </div>
@@ -384,7 +388,6 @@ SelectInputBase.defaultProps = {
     showDropdownArrowButton: true,
     showHintAndError: true,
     showLabel: true,
-    pending: false,
 };
 
 export default SelectInputBase;

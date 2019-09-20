@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import FloatingContainer from '../../../View/FloatingContainer';
-import List from '../../../View/List';
+import ListView from '../../../View/ListView';
 
 import { OptionKey } from '../../../types';
 
@@ -22,8 +22,11 @@ interface Props<T, K extends OptionKey> {
     onOptionFocus: (key: K) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;
     parentRef: React.RefObject<HTMLElement>;
-    renderEmpty: React.ComponentType<unknown>;
+    emptyComponent: React.ComponentType<unknown>;
+    emptyWhenFilterComponent: React.ComponentType<unknown>;
     value?: K;
+    filtered: boolean;
+    pending: boolean;
 }
 
 function Options<T, K extends OptionKey>(props: Props<T, K>) {
@@ -39,8 +42,11 @@ function Options<T, K extends OptionKey>(props: Props<T, K>) {
         onOptionFocus,
         optionLabelSelector,
         parentRef,
-        renderEmpty: EmptyComponent,
+        emptyComponent: EmptyComponent,
+        emptyWhenFilterComponent: EmptyWhenFilterComponent,
         value,
+        filtered,
+        pending,
     } = props;
 
     const rendererParams = useCallback(
@@ -84,24 +90,25 @@ function Options<T, K extends OptionKey>(props: Props<T, K>) {
             parentRef={parentRef}
             className={className}
         >
-            <List
+            <ListView
                 data={data}
                 keySelector={keySelector}
                 rendererParams={rendererParams}
                 renderer={Option}
+                emptyComponent={EmptyComponent}
+                emptyWhenFilterComponent={EmptyWhenFilterComponent}
+                filtered={filtered}
+                pending={pending}
+                className={styles.list}
             />
-            {data.length <= 0 && (
-                <div className={_cs(styles.empty, 'empty')}>
-                    <EmptyComponent />
-                </div>
-            )}
         </FloatingContainer>
     );
 }
 
 Options.defaultProps = {
     data: [],
-    renderEmpty: () => <span>No option available</span>,
+    filtered: false,
+    pending: false,
 };
 
 export default Options;
