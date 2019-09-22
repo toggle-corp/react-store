@@ -39,9 +39,9 @@ const colorTextOnBackgroundHeader = colorTextOnLight;
 const colorBackgroundHeaderAlt = '#f5f5f5';
 const colorTextOnBackgroundHeaderAlt = colorTextOnLight;
 
-const colorBackgroundHover = 'rgba(0, 0, 0, .03)';
+const colorBackgroundHover = '#f7f7f7';
 const colorTextOnBackgroundHover = colorTextOnLight;
-const colorBackgroundDisabled = 'rgba(0, 0, 0, .05)';
+const colorBackgroundDisabled = '#f2f2f2';
 const colorTextOnBackgroundDisabled = colorTextOnLight;
 
 const colorBackgroundSelected = colorAccent;
