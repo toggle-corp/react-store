@@ -7,10 +7,12 @@ import {
     select,
 } from 'd3-selection';
 import {
+    scalePoint,
     scaleOrdinal,
     scaleLinear,
     scaleBand,
 } from 'd3-scale';
+import { line } from 'd3-shape';
 import {
     axisLeft,
     axisBottom,
@@ -55,6 +57,7 @@ const propTypes = {
      * Select a group for each data value.
      */
     groupSelector: PropTypes.func.isRequired,
+    lineDataSelector: PropTypes.func,
     /**
      * Array of colors as hex color codes.
      * It is used if colors are not provided through data.
@@ -90,6 +93,7 @@ const defaultProps = {
     colorScheme: schemeAccent,
     xTickArguments: [],
     yTickArguments: [null, 's'],
+    lineDataSelector: undefined,
     margins: {
         top: 10,
         right: 0,
@@ -153,6 +157,7 @@ class GroupedBarChart extends PureComponent {
             margins,
             xTickArguments,
             yTickArguments,
+            lineDataSelector,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -197,7 +202,6 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
-
         group
             .append('g')
             .selectAll('g')
@@ -229,6 +233,40 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('class', `y-axis ${styles.yAxis}`)
             .call(axisLeft(y).ticks(...yTickArguments));
+
+        if (lineDataSelector) {
+            const lineX = scalePoint()
+                .domain(values.map(d => groupSelector(d)))
+                .rangeRound([0, width])
+                .padding(0.1);
+
+            const lineY = scaleLinear()
+                .domain([0, max(values, d => max(columns, key => d[key]))]).nice()
+                .rangeRound([height, 0]);
+
+            const spline = line()
+                .x(d => lineX(groupSelector(d)))
+                .y(d => lineY(lineDataSelector(d)));
+
+            group
+                .append('g')
+                .append('path')
+                .datum(values)
+                .attr('class', `${styles.line} line`)
+                .attr('fill', 'none')
+                .attr('d', spline);
+
+            group
+                .append('g')
+                .selectAll('.dot')
+                .data(values)
+                .enter()
+                .append('circle')
+                .attr('class', `${styles.dot} dot`)
+                .attr('cx', d => lineX(groupSelector(d)))
+                .attr('cy', d => lineY(lineDataSelector(d)))
+                .attr('r', 4);
+        }
     }
 
     render() {
