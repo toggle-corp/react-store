@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 
+import Responsive from '#rscg/Responsive';
+
 const propTypes = {
     disabled: PropTypes.bool,
     modal: PropTypes.element.isRequired,
@@ -26,27 +28,51 @@ const modalize = (WrappedButtonComponent) => {
         constructor(props) {
             super(props);
 
-            this.state = { showModal: props.initialShowModal };
+            this.state = {
+                showModal: props.initialShowModal,
+                wrappedButtonBCR: undefined,
+            };
 
             this.wrappedButtonRef = React.createRef();
             this.wrappedButtonClassName = randomString();
-            this.wrappedButtonBCR = undefined;
+            this.setBCRTimeout = undefined;
+            // this.wrappedButtonBCR = undefined;
         }
 
         componentDidMount() {
             this.setWrappedButtonBCR();
+            window.addEventListener('resize', this.handleResize);
+            window.addEventListener('scroll', this.handleScroll, true);
         }
 
-        componentDidUpdate() {
-            this.setWrappedButtonBCR();
+        componentWillUnmount() {
+            window.removeEventListener('resize', this.handleResize);
+            window.removeEventListener('scroll', this.handleScroll, true);
         }
 
         setWrappedButtonBCR = () => {
             const wrappedButton = document.getElementsByClassName(this.wrappedButtonClassName)[0];
 
             if (wrappedButton) {
-                this.wrappedButtonBCR = wrappedButton.getBoundingClientRect();
+                const wrappedButtonBCR = wrappedButton.getBoundingClientRect();
+                this.setState({ wrappedButtonBCR });
             }
+        }
+
+        handleResize = () => {
+            const { showModal } = this.state;
+            if (!showModal) {
+                return;
+            }
+            this.setWrappedButtonBCR();
+        }
+
+        handleScroll = () => {
+            const { showModal } = this.state;
+            if (!showModal) {
+                return;
+            }
+            this.setWrappedButtonBCR();
         }
 
         handleWrappedButtonClick = () => {
@@ -74,12 +100,15 @@ const modalize = (WrappedButtonComponent) => {
                 ...otherProps
             } = this.props;
 
-            const { showModal } = this.state;
+            const {
+                showModal,
+                wrappedButtonBCR,
+            } = this.state;
+
             const className = _cs(
                 classNameFromProps,
                 this.wrappedButtonClassName,
             );
-
 
             return (
                 <Fragment>
@@ -93,7 +122,7 @@ const modalize = (WrappedButtonComponent) => {
                         modal,
                         {
                             closeModal: this.handleModalClose,
-                            parentBCR: this.wrappedButtonBCR,
+                            parentBCR: wrappedButtonBCR,
                         },
                     )}
                 </Fragment>
