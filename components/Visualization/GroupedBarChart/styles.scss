@@ -17,6 +17,16 @@
     .x-axis path {
         color: var(--color-axis-path);
     }
+
+    .line {
+        stroke: #008FFB;
+        stroke-width: 2;
+    }
+
+    .dot {
+        fill: #008FFB;
+        stroke: #fff;
+    }
 }
 
 .tooltip {
