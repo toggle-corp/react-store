@@ -35,6 +35,8 @@ type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedPr
     onSearchValueChange: (value: string | undefined) => void;
     onOptionsChange: (options: T[]) => void;
     minSearchValueLength: number;
+    emptyComponent: React.ComponentType<unknown>;
+    emptyWhenFilterComponent: React.ComponentType<unknown>;
 };
 
 function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
@@ -44,6 +46,8 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         onChange,
         minSearchValueLength,
         searchOptions: searchOptionsFromProps,
+        emptyComponent,
+        emptyWhenFilterComponent,
         ...otherProps
     } = props;
 
@@ -109,8 +113,8 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
             searchValue={searchValue}
             onSearchValueChange={interceptedSetSearchValue}
 
-            emptyComponent={EmptyComponent}
-            emptyWhenFilterComponent={FilterEmptyComponent}
+            emptyComponent={emptyComponent || EmptyComponent}
+            emptyWhenFilterComponent={emptyWhenFilterComponent || FilterEmptyComponent}
 
             showPopup={showPopup}
             onShowPopupChange={interceptedSetShowPopup}
