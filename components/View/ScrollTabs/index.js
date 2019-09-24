@@ -137,7 +137,7 @@ export default class ScrollTabs extends React.Component {
         }
     }
 
-    handleTabClick = (key, e) => {
+    handleTabClick = key => (e) => {
         const {
             onClick,
             useHash,
@@ -183,7 +183,7 @@ export default class ScrollTabs extends React.Component {
             ? rendererParams(data, tabs[data], index)
             : undefined;
 
-        const onClick = (e) => { this.handleTabClick(data, e); };
+        const onClick = this.handleTabClick(data);
         // const otherContent = modifier ? modifier(data, tabs[data], index) : tabs[data];
 
         if (!useHash) {
@@ -228,7 +228,7 @@ export default class ScrollTabs extends React.Component {
                 <Renderer
                     key={data}
                     className={_cs(rendererClassName, className)}
-                    isActive
+                    isActive={isActive}
                     href={`#/${data}`}
                     onClick={onClick}
                     disabled={disabled}
