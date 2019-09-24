@@ -44,7 +44,7 @@ function Image(props: Props) {
                 image.style.height = `${image.offsetHeight * increaseBy}px`;
             }
         },
-        [zoomFactor, imageRef.current],
+        [zoomFactor, imageRef],
     );
 
     const handleMinusButtonClick = useCallback(
@@ -58,7 +58,7 @@ function Image(props: Props) {
                 image.style.height = `${image.offsetHeight * increaseBy}px`;
             }
         },
-        [zoomFactor, imageRef.current],
+        [zoomFactor, imageRef],
     );
 
 
@@ -76,7 +76,7 @@ function Image(props: Props) {
                 actionButtons.style.transform = `translate(${e.currentTarget.scrollLeft}px, ${e.currentTarget.scrollTop}px)`;
             }
         },
-        [actionButtonsRef.current],
+        [actionButtonsRef],
     );
 
     return (
