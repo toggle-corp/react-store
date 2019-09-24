@@ -9,7 +9,7 @@
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .input {
-            width: calc(100% - var(--width-dropdown-button) + var(--spacing-extra-small));
+            width: calc(100% - (var(--width-dropdown-button) + var(--spacing-extra-small)));
         }
 
         .actions {
