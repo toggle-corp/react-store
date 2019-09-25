@@ -24,8 +24,6 @@ import Float from '../../View/Float';
 
 import styles from './styles.scss';
 
-const dummy = transition;
-
 const propTypes = {
     /**
      * Size of the parent element/component (passed by the Responsive hoc)

@@ -129,7 +129,8 @@ class Dendrogram extends React.PureComponent {
 
     topicColors = (node, colors) => {
         const { labelSelector } = this.props;
-        let color = colors(0);
+        // let color = colors(0);
+        let color;
         if (node.depth === 0 || node.depth === 1) {
             color = colors(labelSelector(node.data));
         } else {

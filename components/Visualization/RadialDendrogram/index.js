@@ -145,7 +145,8 @@ class RadialDendrogram extends React.PureComponent {
             .range(colorScheme);
 
         function topicColors(node) {
-            let color = colors(0);
+            // let color = colors(0);
+            let color;
             if (node.depth === 0 || node.depth === 1) {
                 color = colors(labelSelector(node.data));
             } else {
