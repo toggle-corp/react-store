@@ -38,11 +38,80 @@ export type ListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
     BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions)
 );
 
+export type GroupedListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
+    BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>
+);
 
 function hasGroup<D, P, K extends OptionKey, GP, GK extends OptionKey>(
     props: ListProps<D, P, K, GP, GK>,
 ): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) {
     return !!(props as BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>).grouped;
+}
+
+function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
+    props: GroupedListProps<D, P, K, GP, GK>,
+) {
+    const {
+        groupKeySelector,
+        groupComparator,
+        renderer: Renderer,
+        groupRenderer: GroupRenderer,
+        groupRendererClassName,
+        groupRendererParams,
+        data,
+        keySelector,
+        rendererParams,
+        rendererClassName,
+    } = props;
+
+    const renderListItem = (datum: D, i: number) => {
+        const key = keySelector(datum, i);
+        const extraProps = rendererParams(key, datum, i, data);
+
+        return (
+            <Renderer
+                key={key}
+                className={rendererClassName}
+                {...extraProps}
+            />
+        );
+    };
+    const renderGroup = (groupKey: GK, index: number) => {
+        const extraProps = groupRendererParams(groupKey, index, data);
+
+        return (
+            <GroupRenderer
+                key={groupKey}
+                className={groupRendererClassName}
+                {...extraProps}
+            />
+        );
+    };
+
+    const groups = useMemo(
+        () => listToGroupList(data, groupKeySelector),
+        [data, groupKeySelector],
+    );
+
+    const sortedGroupKeys = useMemo(
+        () => {
+            const keys = Object.keys(groups) as GK[];
+            return keys.sort(groupComparator);
+        },
+        [groups, groupComparator],
+    );
+
+    const children: React.ReactNode[] = [];
+    sortedGroupKeys.forEach((groupKey, i) => {
+        children.push(renderGroup(groupKey, i));
+        children.push(...groups[groupKey].map(renderListItem));
+    });
+
+    return (
+        <Fragment>
+            {children}
+        </Fragment>
+    );
 }
 
 function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
@@ -81,47 +150,10 @@ function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
         );
     }
 
-    const {
-        groupKeySelector,
-        groupComparator,
-        groupRenderer: GroupRenderer,
-        groupRendererClassName,
-        groupRendererParams,
-    } = props;
-
-    const renderGroup = (groupKey: GK, index: number) => {
-        const extraProps = groupRendererParams(groupKey, index, data);
-
-        return (
-            <GroupRenderer
-                key={groupKey}
-                className={groupRendererClassName}
-                {...extraProps}
-            />
-        );
-    };
-
-    const groups = useMemo(
-        () => listToGroupList(data, groupKeySelector),
-        [data, groupKeySelector],
-    );
-    const sortedGroupKeys = useMemo(
-        () => {
-            const keys = Object.keys(groups) as GK[];
-            return keys.sort(groupComparator);
-        },
-        [groups, groupComparator],
-    );
-
-    const children: React.ReactNode[] = [];
-    sortedGroupKeys.forEach((groupKey, i) => {
-        children.push(renderGroup(groupKey, i));
-        children.push(...groups[groupKey].map(renderListItem));
-    });
     return (
-        <Fragment>
-            {children}
-        </Fragment>
+        <GroupedList
+            {...props}
+        />
     );
 }
 

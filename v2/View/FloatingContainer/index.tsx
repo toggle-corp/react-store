@@ -61,7 +61,7 @@ function FloatingContainer(props: Props) {
             }
         },
         [
-            containerRef.current,
+            containerRef,
             onInvalidate,
         ],
     );
@@ -92,8 +92,8 @@ function FloatingContainer(props: Props) {
         [
             onBlur,
             onMouseDown,
-            parentRef.current,
-            containerRef.current,
+            parentRef,
+            containerRef,
         ],
     );
 
@@ -108,7 +108,7 @@ function FloatingContainer(props: Props) {
         [
             closeOnEscape,
             onClose,
-            containerRef.current,
+            containerRef,
         ],
     );
 
@@ -129,18 +129,16 @@ function FloatingContainer(props: Props) {
                 document.removeEventListener('keydown', handleKeyPressed);
             };
         },
-        [handleMouseDown],
+        [handleKeyPressed],
     );
 
-    let containerId;
-    let className = _cs(
+    const myClassName = _cs(
         classNameFromProps,
         styles.floatingContainer,
         'floating-container',
     );
-    if (showHaze) {
-        ([containerId, className] = useHaze(className));
-    }
+
+    const [containerId, className] = useHaze(myClassName, showHaze);
 
     return (
         <Float

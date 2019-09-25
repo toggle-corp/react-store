@@ -89,7 +89,7 @@ function Message(props: Props) {
             minFontSize,
             minPaddingSize,
             resizeFactor,
-            containerRef.current,
+            containerRef,
         ],
     );
 

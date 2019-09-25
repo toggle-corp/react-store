@@ -100,6 +100,7 @@ function useKeyboard<T, Q extends OptionKey>(
         ],
     );
 
+    // the missing dependencies are intentional
     useEffect(
         () => {
             if (!isOptionsShown) {
@@ -122,6 +123,7 @@ function useKeyboard<T, Q extends OptionKey>(
         [isOptionsShown],
     );
 
+    // the missing dependencies are intentional
     useEffect(
         () => {
             if (isOptionsShown) {

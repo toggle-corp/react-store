@@ -1,6 +1,7 @@
 import React, {
     useState,
     useCallback,
+    useMemo,
 } from 'react';
 import {
     isTruthyString,
@@ -54,6 +55,8 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
     const {
         options,
         keySelector,
+        labelSelector,
+        value: inputValue,
     } = otherProps;
 
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
@@ -65,6 +68,20 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
     const searchOptions = isSearchValueDefined
         ? searchOptionsFromProps
         : emptyArray as T[];
+
+    // FIXME: also calculated inside select input base
+    const selectedValueLabel = useMemo(
+        () => {
+            const activeOption = options.find(
+                d => keySelector(d) === inputValue,
+            );
+            if (activeOption === undefined) {
+                return '';
+            }
+            return String(labelSelector(activeOption));
+        },
+        [options, labelSelector, keySelector, inputValue],
+    );
 
     const interceptedSetSearchValue = useCallback(
         (value: string | undefined) => {
@@ -80,13 +97,17 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
     );
 
     const interceptedSetShowPopup = useCallback(
-        (value: boolean) => {
+        (value: boolean, initialSearchText?: string) => {
             setShowPopup(value);
             if (value) {
-                onSearchValueChange(undefined);
+                if (initialSearchText !== undefined) {
+                    interceptedSetSearchValue(initialSearchText);
+                } else {
+                    interceptedSetSearchValue(selectedValueLabel);
+                }
             }
         },
-        [onSearchValueChange],
+        [interceptedSetSearchValue, selectedValueLabel],
     );
 
     const interceptedOnChange = useCallback(

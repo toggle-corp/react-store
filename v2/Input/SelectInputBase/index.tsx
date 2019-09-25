@@ -42,7 +42,7 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
     onSearchValueChange: (text: string | undefined) => void;
-    onShowPopupChange: (value: boolean) => void;
+    onShowPopupChange: (value: boolean, initialSearchText?: string) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;
     options: T[];
     optionsClassName?: string;
@@ -113,7 +113,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                 boundingClientRect.current = container.getBoundingClientRect();
             }
         },
-        [containerRef.current],
+        [containerRef],
     );
 
     const handleShowOptionsPopup = useCallback(
@@ -126,10 +126,10 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
             // Only show if it is previously not shown else ignore
             if (!showPopup) {
                 onShowPopupChange(true);
-                onSearchValueChange(undefined);
+                // onSearchValueChange(undefined);
             }
         },
-        [inputRef, value, showPopup],
+        [inputRef, showPopup, onShowPopupChange],
     );
 
     const handleToggleOptionsPopup = useCallback(
@@ -141,19 +141,19 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
             if (!showPopup) {
                 onShowPopupChange(true);
-                onSearchValueChange(undefined);
+                // onSearchValueChange(undefined);
             } else {
                 onShowPopupChange(false);
             }
         },
-        [inputRef, value, showPopup],
+        [inputRef, showPopup, onShowPopupChange],
     );
 
     const handleHideOptionsPopup = useCallback(
         () => {
             onShowPopupChange(false);
         },
-        [],
+        [onShowPopupChange],
     );
 
     const handleInputFocus = useCallback(
@@ -173,10 +173,10 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
     const handleInputChange = useCallback(
         (e: React.FormEvent<HTMLInputElement>) => {
             const { value: val } = e.currentTarget;
-            onShowPopupChange(true);
-            onSearchValueChange(val);
+            onShowPopupChange(true, val);
+            // onSearchValueChange(val);
         },
-        [],
+        [onShowPopupChange],
     );
 
     const handleOptionsInvalidate = useCallback(
@@ -205,7 +205,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
             return optionsContainerPosition;
         },
-        [containerRef, boundingClientRect.current, showHintAndError],
+        [containerRef, boundingClientRect],
     );
 
     const handleOptionSelect = useCallback(
@@ -215,7 +215,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                 onChange(optionKey);
             }
         },
-        [value, onChange],
+        [value, onChange, onShowPopupChange],
     );
 
     const handleClearButtonClick = useCallback(

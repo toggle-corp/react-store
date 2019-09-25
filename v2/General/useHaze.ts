@@ -37,7 +37,7 @@ function refreshLastModalStatus(modals: NodeListOf<Element> | Element[]) {
     });
 }
 
-function useHaze(className?: string) {
+function useHaze(className?: string, enabled?: boolean) {
     const uniqueId = useMemo(
         () => randomString(),
         [],
@@ -45,6 +45,10 @@ function useHaze(className?: string) {
 
     useEffect(
         () => {
+            if (!enabled) {
+                return undefined;
+            }
+
             document.body.className = addClassName(
                 document.body.className,
                 portalChildShownClassName,
@@ -65,8 +69,12 @@ function useHaze(className?: string) {
                 refreshLastModalStatus(modalsExcludingMe);
             };
         },
-        [],
+        [enabled, uniqueId],
     );
+
+    if (!enabled) {
+        return [undefined, className];
+    }
 
     return [
         uniqueId,
