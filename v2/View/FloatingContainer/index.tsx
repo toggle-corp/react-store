@@ -132,16 +132,13 @@ function FloatingContainer(props: Props) {
         [handleKeyPressed],
     );
 
-    let containerId;
-    let className = _cs(
+    const myClassName = _cs(
         classNameFromProps,
         styles.floatingContainer,
         'floating-container',
     );
-    const hazeOptions = useHaze(className, showHaze);
-    if (hazeOptions) {
-        ([containerId, className] = hazeOptions);
-    }
+
+    const [containerId, className] = useHaze(myClassName, showHaze);
 
     return (
         <Float

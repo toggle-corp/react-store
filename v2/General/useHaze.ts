@@ -72,6 +72,10 @@ function useHaze(className?: string, enabled?: boolean) {
         [enabled, uniqueId],
     );
 
+    if (!enabled) {
+        return [undefined, className];
+    }
+
     return [
         uniqueId,
         _cs(className, portalChildClassName),
