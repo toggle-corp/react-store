@@ -86,6 +86,8 @@ const propTypes = {
     onDataSort: PropTypes.func,
 
     emptyComponent: PropTypes.func,
+
+    rowClassNameSelector: PropTypes.func,
 };
 
 const defaultProps = {
@@ -110,6 +112,8 @@ const defaultProps = {
     expandedRowModifier: undefined,
 
     emptyComponent: DefaultEmptyComponent,
+
+    rowClassNameSelector: undefined,
 };
 
 export default class RawTable extends React.Component {
@@ -200,6 +204,7 @@ export default class RawTable extends React.Component {
             className,
             pending,
             isFiltered,
+            rowClassNameSelector,
         } = this.props;
 
         const {
@@ -232,6 +237,7 @@ export default class RawTable extends React.Component {
                                 highlightRowKey={highlightRowKey}
                                 highlightColumnKeys={highlightColumnKeys}
                                 expandRowId={expandRowId}
+                                rowClassNameSelector={rowClassNameSelector}
                             />
                         )}
                     </table>

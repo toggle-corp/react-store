@@ -63,6 +63,7 @@ const propTypes = {
 
     onHover: PropTypes.func,
     onHoverOut: PropTypes.func,
+    rowClassNameSelector: PropTypes.func,
 };
 
 const defaultProps = {
@@ -78,6 +79,7 @@ const defaultProps = {
     onHoverOut: undefined,
     expandRowId: undefined,
     expandedRowModifier: undefined,
+    rowClassNameSelector: undefined,
 };
 
 export default class Body extends React.Component {
@@ -116,6 +118,7 @@ export default class Body extends React.Component {
             expandedRowModifier,
             headersOrder,
             onHoverOut,
+            rowClassNameSelector,
         } = this.props;
 
         let cellKey;
@@ -123,8 +126,14 @@ export default class Body extends React.Component {
             cellKey = highlightCellKey.columnKey;
         }
 
+        let className = '';
+        if (rowClassNameSelector) {
+            className = rowClassNameSelector(rowData);
+        }
+
         const myRow = (
             <Row
+                className={className}
                 key={key}
                 uniqueKey={key}
                 areCellsHoverable={areCellsHoverable}

@@ -105,6 +105,7 @@ const propTypes = {
 
     emptyComponent: PropTypes.func,
     pending: PropTypes.bool,
+    rowClassNameSelector: PropTypes.func,
 };
 
 const defaultProps = {
@@ -122,6 +123,7 @@ const defaultProps = {
     emptyComponent: undefined,
     expandRowId: undefined,
     expandedRowModifier: undefined,
+    rowClassNameSelector: undefined,
 };
 
 export default class Table extends React.PureComponent {
@@ -335,6 +337,7 @@ export default class Table extends React.PureComponent {
             expandRowId,
             expandedRowModifier,
             pending,
+            rowClassNameSelector,
         } = this.props;
 
         const {
@@ -362,6 +365,7 @@ export default class Table extends React.PureComponent {
                 expandRowId={expandRowId}
                 expandedRowModifier={expandedRowModifier}
                 pending={pending}
+                rowClassNameSelector={rowClassNameSelector}
             />
         );
     }
