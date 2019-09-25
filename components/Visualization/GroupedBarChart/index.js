@@ -131,9 +131,7 @@ class GroupedBarChart extends PureComponent {
             key,
             value,
         } = node;
-        const {
-            tooltipRenderer,
-        } = this.props;
+        const { tooltipRenderer } = this.props;
 
         const content = tooltipRenderer ? ReactDOMServer.renderToString(tooltipRenderer(node))
             : `${key}: ${value}`;
