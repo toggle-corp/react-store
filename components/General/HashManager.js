@@ -16,7 +16,7 @@ const defaultProps = {
 };
 
 // NOTE: hash should be similar to '#/metadata'
-const setHashToBrowser = hash => window.location.replace(hash);
+const setHashToBrowser = hash => window.location.replace(`#/${hash}`);
 // NOTE: receives data similar to '#/metadata'
 const getHashFromBrowser = () => window.location.hash.substr(2);
 
@@ -29,10 +29,10 @@ export default class HashManager extends React.PureComponent {
         const keys = Object.keys(tabs);
 
         if (defaultHash && keys.includes(defaultHash)) {
-            return `#/${defaultHash}`;
+            return defaultHash;
         }
         if (keys.length > 0) {
-            return `#/${keys[0]}`;
+            return keys[0];
         }
         return undefined;
     }
@@ -102,8 +102,17 @@ export default class HashManager extends React.PureComponent {
     }
 
     handleHashChange = () => {
+        const { tabs } = this.props;
         const hash = getHashFromBrowser();
-        this.props.onHashChange(hash);
+
+        const newHash = HashManager.getNewHash(
+            tabs,
+            hash,
+        );
+        if (newHash !== hash && newHash) {
+            setHashToBrowser(newHash);
+        }
+        this.props.onHashChange(newHash);
     }
 
     render() {
