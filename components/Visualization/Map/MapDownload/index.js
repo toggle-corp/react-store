@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 
 import Button from '../../../Action/Button';
 import MapChild from '../MapChild';
@@ -8,9 +8,11 @@ import MapChild from '../MapChild';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     map: PropTypes.object.isRequired,
+    legendContainerClassName: PropTypes.string,
 };
 
 const defaultProps = {
+    legendContainerClassName: undefined,
 };
 
 class MapDownload extends React.PureComponent {
@@ -26,58 +28,71 @@ class MapDownload extends React.PureComponent {
     }
 
     export = () => {
-        const { map } = this.props;
+        const {
+            map,
+            legendContainerClassName,
+        } = this.props;
         if (!map) {
             console.warn('Cannot export as there is no map');
             return;
         }
 
         this.setState({ pending: true });
+        const mapCanvas = map.getCanvas();
 
-        const canvas = map.getCanvas();
+        const canvas = document.createElement('canvas');
+        canvas.width = mapCanvas.width;
+        canvas.height = mapCanvas.height;
 
-        /*
-        const legends = this.leftBottomPanels.current.querySelectorAll('.legend, .scale-legend');
-        query selector does not return a list and hence the array spreader used below.
-        const promises = Array.from(legends).map(l => html2canvas(l));
+        const context = canvas.getContext('2d');
+        context.drawImage(mapCanvas, 0, 0);
 
-        Promise.all(promises).then((canvases) => {
-            const canvas3 = document.createElement('canvas');
-            canvas3.width = canvas1.width;
-            canvas3.height = canvas1.height;
+        const legend = document.getElementsByClassName(legendContainerClassName);
+        if (legend) {
+            const promises = Array.from(legend).map((l) => {
+                const el = l;
+                const prevHeight = el.style.height;
+                el.style.height = 'auto';
+                const elCanvas = html2canvas(l);
+                el.style.height = prevHeight;
 
-            const context = canvas3.getContext('2d');
-            context.drawImage(canvas1, 0, 0);
-
-            let x = 6;
-            canvases.forEach((canvas2) => {
-                const y = canvas1.height - canvas2.height - 6;
-                context.shadowBlur = 4;
-                context.shadowColor = "black";
-                context.drawImage(canvas2, x, y);
-                x += canvas2.width + 6;
+                return elCanvas;
             });
 
-            canvas3.toBlob((blob) => {
+            Promise.all(promises).then((canvases) => {
+                let y = 6;
+
+                canvases.forEach((c) => {
+                    const x = mapCanvas.width - 6 - c.width;
+                    context.shadowBlur = 1;
+                    context.shadowColor = 'rgba(0, 0, 0, 0.1)';
+                    context.drawImage(c, x, y);
+
+                    y += c.height + 6;
+                });
+
+                canvas.toBlob((blob) => {
+                    const link = document.createElement('a');
+                    link.download = 'map-export.png';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    this.setState({ pending: false });
+                }, 'image/png');
+            });
+        } else {
+            canvas.toBlob((blob) => {
                 const link = document.createElement('a');
                 link.download = 'map-export.png';
                 link.href = URL.createObjectURL(blob);
                 link.click();
+                this.setState({ pending: false });
             }, 'image/png');
-        });
-        */
-
-        canvas.toBlob((blob) => {
-            const link = document.createElement('a');
-            link.download = 'map-export.png';
-            link.href = URL.createObjectURL(blob);
-            link.click();
-            this.setState({ pending: false });
-        }, 'image/png');
+        }
     }
 
     render() {
         const {
+            legendContainerClassName, // capturing the prop
             ...otherProps
         } = this.props;
         const {
