@@ -135,7 +135,7 @@ class GaugeChart extends React.PureComponent {
                 return degToRad(minAngle + (ratio * deltaAngle));
             });
 
-        const tickData = range(5).map(() => 1 / noOfSections);
+        const tickData = range(noOfSections).map(() => 1 / noOfSections);
 
         group
             .selectAll('.arc')
