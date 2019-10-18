@@ -4,6 +4,7 @@ import { select } from 'd3-selection';
 import { range } from 'd3-array';
 import {
     arc,
+    pie,
     line,
     curveLinear,
 } from 'd3-shape';
@@ -21,7 +22,7 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    noOfSections: PropTypes.number.isRequired,
+    sectionPercents: PropTypes.arrayOf(PropTypes.number).isRequired,
     minAngle: PropTypes.number,
     maxAngle: PropTypes.number,
     minValue: PropTypes.number.isRequired,
@@ -53,6 +54,7 @@ const defaultProps = {
 };
 
 const degToRad = deg => deg * (Math.PI / 180);
+const radToDeg = rad => rad * (180 / Math.PI);
 
 class GaugeChart extends React.PureComponent {
     static propTypes = propTypes;
@@ -72,7 +74,7 @@ class GaugeChart extends React.PureComponent {
             boundingClientRect,
             margins,
             colorScheme,
-            noOfSections,
+            sectionPercents,
             minAngle,
             maxAngle,
             minValue,
@@ -125,17 +127,15 @@ class GaugeChart extends React.PureComponent {
 
         const arch = arc()
             .innerRadius(radius - ringWidth - ringInset)
-            .outerRadius(radius - ringInset)
-            .startAngle((d, i) => {
-                const ratio = d * i;
-                return degToRad(minAngle + (ratio * deltaAngle));
-            })
-            .endAngle((d, i) => {
-                const ratio = d * (i + 1);
-                return degToRad(minAngle + (ratio * deltaAngle));
-            });
+            .outerRadius(radius - ringInset);
 
-        const tickData = range(noOfSections).map(() => 1 / noOfSections);
+        const pies = pie()
+            .sort(null)
+            .value(d => d)
+            .startAngle(degToRad(minAngle))
+            .endAngle(degToRad(maxAngle));
+
+        const tickData = pies(sectionPercents);
 
         group
             .selectAll('.arc')
@@ -192,22 +192,22 @@ class GaugeChart extends React.PureComponent {
             .attr('transform', `rotate(${newAngle})`);
 
         if (showLabels) {
-            const ticks = scaleValue.ticks(noOfSections);
-
             group
                 .append('g')
                 .selectAll('.label')
-                .data(ticks)
+                .data(pies(sectionPercents))
                 .enter()
                 .append('g')
                 .attr('class', `${styles.label} label`)
                 .attr('transform', `translate(${radius}, ${radius})`)
                 .append('text')
-                .text(d => d)
+                .text(d => d.data)
                 .attr('transform', (d) => {
-                    const scaledValue = scaleValue(d);
-                    const angle = minAngle + (scaledValue * deltaAngle);
-                    return `rotate (${angle}) translate(0, ${(labelInsetPercent * radius) - radius})`;
+                    const end = d.endAngle;
+                    const start = d.startAngle;
+                    const center = (radToDeg(end) + radToDeg(start)) / 2;
+
+                    return `rotate (${center}) translate(0, ${(labelInsetPercent * radius) - radius})`;
                 });
         }
     }
