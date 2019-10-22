@@ -17,6 +17,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
     itemClassName: PropTypes.string,
@@ -33,6 +34,7 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     disabled: false,
+    readOnly: false,
     error: '',
     hint: '',
     itemClassName: undefined,
@@ -66,6 +68,8 @@ class SimpleListInput extends React.PureComponent {
             labelSelector,
             keySelector,
             itemClassName,
+            disabled,
+            readOnly,
         } = this.props;
 
         const optionsMap = this.getOptionsMap(options, keySelector);
@@ -75,6 +79,8 @@ class SimpleListInput extends React.PureComponent {
             value: labelSelector(optionsMap[key]),
             onRemoveButtonClick: this.handleItemRemoveButtonClick,
             className: itemClassName,
+            disabled,
+            readOnly,
         });
     }
 
