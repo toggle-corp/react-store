@@ -2,15 +2,18 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { PropTypes } from 'prop-types';
 import {
     select,
 } from 'd3-selection';
 import {
+    scalePoint,
     scaleOrdinal,
     scaleLinear,
     scaleBand,
 } from 'd3-scale';
+import { line } from 'd3-shape';
 import {
     axisLeft,
     axisBottom,
@@ -56,6 +59,10 @@ const propTypes = {
      */
     groupSelector: PropTypes.func.isRequired,
     /**
+     * Select a group for line data value
+     */
+    lineDataSelector: PropTypes.func,
+    /**
      * Array of colors as hex color codes.
      * It is used if colors are not provided through data.
      */
@@ -83,6 +90,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    tooltipRenderer: PropTypes.func,
 };
 
 const defaultProps = {
@@ -90,12 +98,14 @@ const defaultProps = {
     colorScheme: schemeAccent,
     xTickArguments: [],
     yTickArguments: [null, 's'],
+    lineDataSelector: undefined,
     margins: {
         top: 10,
         right: 0,
         bottom: 40,
         left: 40,
     },
+    tooltipRenderer: undefined,
 };
 
 /**
@@ -117,10 +127,34 @@ class GroupedBarChart extends PureComponent {
     }
 
     mouseOverRect = (node) => {
-        const { value } = node;
+        const {
+            key,
+            value,
+        } = node;
+        const {
+            tooltipRenderer,
+        } = this.props;
+
+        const content = tooltipRenderer ? ReactDOMServer.renderToString(tooltipRenderer(node))
+            : `${key}: ${value}`;
 
         select(this.tooltip)
-            .html(`<span>${value}</span>`)
+            .html(`<div>${content}</div>`)
+            .style('display', 'inline-block');
+    }
+
+    mouseOverCircle = (node) => {
+        const {
+            tooltipRenderer,
+            lineDataSelector,
+            groupSelector,
+        } = this.props;
+
+        const content = tooltipRenderer ? ReactDOMServer.renderToString(tooltipRenderer(node))
+            : `${groupSelector(node)}: ${lineDataSelector(node)}`;
+
+        select(this.tooltip)
+            .html(`<div/>${content}</div>`)
             .style('display', 'inline-block');
     }
 
@@ -153,6 +187,7 @@ class GroupedBarChart extends PureComponent {
             margins,
             xTickArguments,
             yTickArguments,
+            lineDataSelector,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -197,7 +232,6 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
-
         group
             .append('g')
             .selectAll('g')
@@ -229,6 +263,43 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('class', `y-axis ${styles.yAxis}`)
             .call(axisLeft(y).ticks(...yTickArguments));
+
+        if (lineDataSelector) {
+            const lineX = scalePoint()
+                .domain(values.map(d => groupSelector(d)))
+                .rangeRound([0, width])
+                .padding(0.1);
+
+            const lineY = scaleLinear()
+                .domain([0, max(values, d => max(columns, key => d[key]))]).nice()
+                .rangeRound([height, 0]);
+
+            const spline = line()
+                .x(d => lineX(groupSelector(d)))
+                .y(d => lineY(lineDataSelector(d)));
+
+            group
+                .append('g')
+                .append('path')
+                .datum(values)
+                .attr('class', `${styles.line} line`)
+                .attr('fill', 'none')
+                .attr('d', spline);
+
+            group
+                .append('g')
+                .selectAll('.dot')
+                .data(values)
+                .enter()
+                .append('circle')
+                .attr('class', `${styles.dot} dot`)
+                .on('mouseover', d => this.mouseOverCircle(d))
+                .on('mousemove', this.mouseMove)
+                .on('mouseout', this.mouseOutRect)
+                .attr('cx', d => lineX(groupSelector(d)))
+                .attr('cy', d => lineY(lineDataSelector(d)))
+                .attr('r', 4);
+        }
     }
 
     render() {

@@ -17,12 +17,23 @@
     .x-axis path {
         color: var(--color-axis-path);
     }
+
+    .line {
+        stroke: #008FFB;
+        stroke-width: 2;
+    }
+
+    .dot {
+        cursor: pointer;
+        fill: #008FFB;
+        stroke: #fff;
+    }
 }
 
 .tooltip {
     @include shadow-medium;
-    display: block;
-    position: absolute;
+    display: none;
+    position: fixed;
     z-index: 10;
     background-color: var(--color-foreground);
     padding: var(--spacing-small) var(--spacing-medium-alt);
