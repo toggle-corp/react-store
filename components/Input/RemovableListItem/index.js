@@ -16,12 +16,14 @@ const propTypes = {
         PropTypes.number,
     ]).isRequired,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: undefined,
     value: '',
     disabled: false,
+    readOnly: false,
     singleLine: false,
     onRemoveButtonClick: () => {},
 };
@@ -48,6 +50,7 @@ export default class RemovableListItem extends React.PureComponent {
             value,
             singleLine,
             disabled,
+            readOnly,
         } = this.props;
 
         return (
@@ -65,15 +68,17 @@ export default class RemovableListItem extends React.PureComponent {
                 >
                     { value }
                 </div>
-                <DangerButton
-                    className={styles.removeButton}
-                    iconName="close"
-                    onClick={this.handleRemoveButtonClick}
-                    smallHorizontalPadding
-                    smallVerticalPadding
-                    transparent
-                    disabled={disabled}
-                />
+                { !readOnly && (
+                    <DangerButton
+                        className={styles.removeButton}
+                        iconName="close"
+                        onClick={this.handleRemoveButtonClick}
+                        smallHorizontalPadding
+                        smallVerticalPadding
+                        transparent
+                        disabled={disabled}
+                    />
+                )}
             </div>
         );
     }
