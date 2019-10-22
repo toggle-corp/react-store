@@ -20,6 +20,7 @@
 
     .label {
         flex-grow: 1;
+        margin-right: var(--spacing-small);
         text-transform: capitalize;
         color: var(--color-text-label);
     }
