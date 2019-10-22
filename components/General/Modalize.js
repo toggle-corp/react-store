@@ -80,11 +80,11 @@ const modalize = (WrappedButtonComponent) => {
             this.setState({ showModal: true });
         }
 
-        handleModalClose = () => {
+        handleModalClose = (...args) => {
             this.setState({ showModal: false });
             const { onClose } = this.props;
             if (onClose) {
-                onClose();
+                onClose(...args);
             }
         }
 
