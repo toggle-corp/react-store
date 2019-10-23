@@ -18,6 +18,10 @@
         color: var(--color-axis-path);
     }
 
+    .text {
+        text-anchor: middle;
+    }
+
     .line {
         stroke: #008FFB;
         stroke-width: 2;
