@@ -91,6 +91,7 @@ const propTypes = {
         left: PropTypes.number,
     }),
     tooltipRenderer: PropTypes.func,
+    showValue: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -100,11 +101,12 @@ const defaultProps = {
     yTickArguments: [null, 's'],
     lineDataSelector: undefined,
     margins: {
-        top: 10,
+        top: 20,
         right: 0,
         bottom: 40,
         left: 40,
     },
+    showValue: false,
     tooltipRenderer: undefined,
 };
 
@@ -188,6 +190,7 @@ class GroupedBarChart extends PureComponent {
             xTickArguments,
             yTickArguments,
             lineDataSelector,
+            showValue,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -232,7 +235,7 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('transform', `translate(${left}, ${top})`);
 
-        group
+        const groups = group
             .append('g')
             .selectAll('g')
             .data(values)
@@ -240,8 +243,9 @@ class GroupedBarChart extends PureComponent {
             .append('g')
             .attr('transform', d => `translate(${x0(groupSelector(d))}, 0)`)
             .selectAll('rect')
-            .data(d => columns.map(key => ({ key, value: d[key] })))
-            .enter()
+            .data(d => columns.map(key => ({ key, value: d[key] })));
+
+        groups.enter()
             .append('rect')
             .attr('class', `bar ${styles.bar}`)
             .on('mouseover', d => this.mouseOverRect(d))
@@ -252,6 +256,15 @@ class GroupedBarChart extends PureComponent {
             .attr('width', x1.bandwidth())
             .attr('height', d => y(0) - y(d.value))
             .attr('fill', d => (colors ? colors[d.key] : defaultColor(d.key)));
+        if (showValue) {
+            groups
+                .enter()
+                .append('text')
+                .attr('class', `text ${styles.text}`)
+                .attr('x', d => x1(d.key) + x1.bandwidth() / 2)
+                .attr('y', d => y(d.value) - 2)
+                .text(({ value }) => value);
+        }
 
         group
             .append('g')
