@@ -1,10 +1,11 @@
-
 .removable-list-item {
     display: flex;
     align-items: center;
+    padding: var(--spacing-extra-small) var(--spacing-small);
 
     .label {
         flex-grow: 1;
+        padding: var(--spacing-small) 0;
     }
 
     &.single-line {
@@ -24,7 +25,7 @@
     }
 
     &:hover {
-        background-color: var(--color-background-hover);
+        background-color: var(--color-background-accent-hint);
 
         .remove-button {
             opacity: 1;
