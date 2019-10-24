@@ -261,7 +261,7 @@ class GroupedBarChart extends PureComponent {
                 .enter()
                 .append('text')
                 .attr('class', `text ${styles.text}`)
-                .attr('x', d => x1(d.key) + x1.bandwidth() / 2)
+                .attr('x', d => x1(d.key) + (x1.bandwidth() / 2))
                 .attr('y', d => y(d.value) - 2)
                 .text(({ value }) => value);
         }

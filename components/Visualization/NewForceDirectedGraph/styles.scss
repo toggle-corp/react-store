@@ -1,6 +1,10 @@
 @import '../../../stylesheets/utils';
 
 .force-directed-graph-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow-y: auto;
 
     .tooltip {
         @include shadow-medium;
