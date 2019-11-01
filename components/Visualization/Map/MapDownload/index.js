@@ -93,6 +93,10 @@ class MapDownload extends React.PureComponent {
     render() {
         const {
             legendContainerClassName, // capturing the prop
+            setDestroyer,
+            zoomLevel,
+            mapContainerRef,
+            mapStyle, // capturing the prop
             ...otherProps
         } = this.props;
         const {
