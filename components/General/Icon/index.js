@@ -63,6 +63,7 @@ export default class Icon extends React.PureComponent {
         } = this.props;
 
         const icon = iconMapping[name];
+
         if (!icon) {
             return null;
         }

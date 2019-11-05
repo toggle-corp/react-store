@@ -31,7 +31,7 @@ const updateCurrentStyle = (key, value) => {
     styleUpdateTimeout = setTimeout(createStyleUpdateEvent, 0);
 };
 
-const setStyleProperty = (key, value) => {
+export const setStyleProperty = (key, value) => {
     const prevValue = currentStyle[key];
     if (prevValue !== value) {
         document.documentElement.style.setProperty(
