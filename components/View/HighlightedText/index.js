@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import Highlight from './Highlight';
 import styles from './styles.scss';
@@ -98,7 +101,7 @@ export default class HighlightedText extends React.PureComponent {
     componentDidUpdate() {
         const container = document.getElementsByClassName(styles.highlightedText);
 
-        if (container && container[0] && this.scrollTop) {
+        if (container && container[0] && isDefined(this.scrollTop)) {
             container[0].scrollTop = this.scrollTop;
         }
     }

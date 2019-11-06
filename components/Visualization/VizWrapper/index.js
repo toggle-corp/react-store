@@ -8,6 +8,7 @@ import SelectInput from '../../Input/SelectInput';
 import AccentButton from '../../Action/Button/AccentButton';
 import PrimaryButton from '../../Action/Button/PrimaryButton';
 import DangerButton from '../../Action/Button/DangerButton';
+import Button from '../../Action/Button';
 import LoadingAnimation from '../../View/LoadingAnimation';
 
 import Label from '../../Input/Label';
@@ -49,11 +50,14 @@ const propTypes = {
      * Additional css classes for the container/wrapper
      */
     vizContainerClass: PropTypes.string,
+
+    showBackButton: PropTypes.boolean,
 };
 
 const defaultProps = {
     className: '',
     vizContainerClass: '',
+    showBackButton: false,
     colorScheme: undefined,
     colorSchemeType: undefined,
     loading: false,
@@ -192,6 +196,7 @@ const wrapViz = (WrappedComponent) => {
                 headerText,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 colorScheme: capturedColorScheme,
+                showBackButton,
             } = this.props;
 
             const {
@@ -212,6 +217,15 @@ const wrapViz = (WrappedComponent) => {
             return (
                 <div className={styles.header}>
                     <h3 className={styles.heading}>
+                        {(showBackButton && fullScreen) && (
+                            <Button
+                                title="Go back"
+                                onClick={removeFullScreen}
+                                iconName="back"
+                                className={styles.showBackButton}
+                                transparent
+                            />
+                        )}
                         {headerText}
                     </h3>
                     <div className={styles.rightContent}>
@@ -242,14 +256,15 @@ const wrapViz = (WrappedComponent) => {
                                 iconName="download"
                                 transparent
                             />
-                            { fullScreen ? (
+                            {(fullScreen && !showBackButton) && (
                                 <DangerButton
                                     title="Close fullscreen"
                                     onClick={removeFullScreen}
                                     iconName="close"
                                     transparent
                                 />
-                            ) : (
+                            )}
+                            {!fullScreen && (
                                 <AccentButton
                                     title="Show on fullscreen"
                                     onClick={setFullScreen}
