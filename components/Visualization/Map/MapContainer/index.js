@@ -16,6 +16,12 @@ class MapContainer extends React.PureComponent {
         className: undefined,
     }
 
+    resizeMap = memoize((boundingClientRect) => {
+        if (this.context.map) {
+            this.context.map.resize();
+        }
+    })
+
     renderChild = (injectedProps) => {
         const {
             className,
@@ -31,12 +37,6 @@ class MapContainer extends React.PureComponent {
             />
         );
     }
-
-    resizeMap = memoize((boundingClientRect) => {
-        if (this.context.map) {
-            this.context.map.resize();
-        }
-    })
 
     render() {
         const { boundingClientRect } = this.props;

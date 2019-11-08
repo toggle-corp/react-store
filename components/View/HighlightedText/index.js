@@ -2,8 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
-import Highlight from './Highlight';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
+import Highlight from './Highlight';
+import styles from './styles.scss';
 
 const createNestedSplits = (splits = []) => {
     const parents = [];
@@ -87,6 +92,19 @@ export default class HighlightedText extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
+
+    componentWillUpdate() {
+        const container = document.getElementsByClassName(styles.highlightedText);
+        this.scrollTop = container ? container[0].scrollTop : undefined;
+    }
+
+    componentDidUpdate() {
+        const container = document.getElementsByClassName(styles.highlightedText);
+
+        if (container && container[0] && isDefined(this.scrollTop)) {
+            container[0].scrollTop = this.scrollTop;
+        }
+    }
 
     createNestedSplitsMemoized = memoize((splits, startIndexSelector, endIndexSelector) => (
         createNestedSplits(
@@ -186,7 +204,7 @@ export default class HighlightedText extends React.PureComponent {
         );
 
         return (
-            <p className={className}>
+            <p className={_cs(className, styles.highlightedText)}>
                 {this.renderSplits(text, nestedSplits)}
             </p>
         );

@@ -16,6 +16,7 @@
     height: 100%;
 
     .header {
+
         .right-content {
             .color-scheme-input-container {
                 display: flex;
@@ -47,6 +48,13 @@
 
 .full-screen-container {
     @extend %viz-content;
+
+    .heading {
+        .back-button {
+            padding: var(--spacing-small) var(--spacing-medium);
+            font-size: var(--font-size-large);
+        }
+    }
 }
 
 .select-input-options {
