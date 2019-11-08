@@ -1,4 +1,3 @@
-
 .file-input-wrapper {
     display: inline-block;
     width: 100%;
@@ -6,11 +5,14 @@
     .label {
         display: block;
         border: var(--width-separator-thin) solid var(--color-separator);
+        border-radius: 2px;
         cursor: pointer;
-        padding: var(--spacing-medium);
+        padding: var(--spacing-small) var(--spacing-medium);
         text-align: center;
         text-transform: capitalize;
-        color: var(--color-text-label);
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-bold);
     }
 
     .input {
