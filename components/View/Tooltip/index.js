@@ -31,7 +31,7 @@ const noOp = () => {};
 
 const TOOLTIP_WINDOW_PADDING = 4;
 
-export default class Tooltip extends React.PureComponent {
+export default class Tooltip extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;

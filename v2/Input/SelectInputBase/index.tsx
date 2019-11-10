@@ -77,7 +77,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         labelRightComponentClassName,
         labelSelector,
         onChange,
-        onSearchValueChange,
+        // onSearchValueChange,
         onShowPopupChange,
         optionLabelSelector,
         options,

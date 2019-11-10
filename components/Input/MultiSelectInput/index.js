@@ -307,8 +307,8 @@ export class NormalMultiSelectInput extends React.PureComponent {
         } = this.state;
 
 
-        const isFilled = value && value.length !== 0;
-        const isAllFilled = value && value.length === options.length;
+        const isFilled = value.length !== 0;
+        const isAllFilled = value.length === options.length;
 
         const showClearButton = isFilled && !(hideClearButton || disabled || readOnly);
         const showSelectAllButton = !isAllFilled && !(hideSelectAllButton || disabled || readOnly);

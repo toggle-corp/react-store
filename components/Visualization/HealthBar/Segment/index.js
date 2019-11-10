@@ -68,25 +68,23 @@ export default class Segment extends PureComponent {
             'tc-health-bar-segment',
         );
 
-        const tooltip = (
-            <div className={styles.tooltip}>
-                {label === '' ? (
-                    value
-                ) : (
-                    <div>
-                        {`${label}: `}
-                        <Numeral
-                            value={value}
-                            precision={0}
-                        />
-                    </div>
-                )}
-            </div>
-        );
-
         return (
             <Tooltip
-                tooltip={tooltip}
+                tooltip={
+                    <div className={styles.tooltip}>
+                        {label === '' ? (
+                            value
+                        ) : (
+                            <div>
+                                {`${label}: `}
+                                <Numeral
+                                    value={value}
+                                    precision={0}
+                                />
+                            </div>
+                        )}
+                    </div>
+                }
                 center={centerTooltip}
             >
                 <div

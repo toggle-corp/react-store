@@ -80,6 +80,10 @@ export default class DropdownMenu extends React.PureComponent {
         window.removeEventListener('click', this.handleWindowClick);
     }
 
+    createContainerRef = (el) => { this.container = el; }
+
+    createDropdownContainerRef = (el) => { this.dropdownContainer = el; }
+
     handleDropdownClick = (e) => {
         e.stopPropagation();
 
@@ -88,7 +92,7 @@ export default class DropdownMenu extends React.PureComponent {
         }
 
         const { showDropdown: oldShowDropdown } = this.state;
-        this.setState({ showDropdown: !oldShowDropdown });
+        this.setState(state => ({ showDropdown: !state.oldShowDropdown }));
 
         const { onClick } = this.props;
         onClick(!oldShowDropdown, e);
@@ -211,7 +215,7 @@ export default class DropdownMenu extends React.PureComponent {
 
         return (
             <FloatingContainer
-                ref={(el) => { this.dropdownContainer = el; }}
+                ref={this.createDropdownContainerRef}
                 className={className}
                 onBlur={this.handleDropdownContainerBlur}
                 parent={this.container}
@@ -239,7 +243,7 @@ export default class DropdownMenu extends React.PureComponent {
 
         return (
             <div
-                ref={(el) => { this.container = el; }}
+                ref={this.createContainerRef}
                 className={className}
             >
                 <DropdownButton />
