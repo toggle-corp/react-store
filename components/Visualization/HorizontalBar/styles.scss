@@ -1,7 +1,10 @@
 @import '../../../stylesheets/utils';
 
-.horizontal-bar {
-    overflow: auto;
+.horizontal-bar-chart {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
 
     .svg {
         .grid line {
@@ -20,8 +23,10 @@
                 stroke: var(--color-axis-path);
             }
 
-            .tick line {
-                visibility: hidden;
+            :global {
+                .tick line {
+                    visibility: hidden;
+                }
             }
         }
 
@@ -29,8 +34,10 @@
             path {
                 stroke: var(--color-axis-path);
 
-                .tick line {
-                    visibility: hidden;
+                :global {
+                    .tick line {
+                        visibility: hidden;
+                    }
                 }
             }
         }

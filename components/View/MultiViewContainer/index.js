@@ -7,7 +7,7 @@ import List from '../List';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    className: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     views: PropTypes.shape(PropTypes.Node),
     activeClassName: PropTypes.string,
     containerClassName: PropTypes.string,
@@ -80,12 +80,13 @@ export default class MultiViewContainer extends React.Component {
 
     renderContainer = (p) => {
         const {
-            view,
-            isActive,
-
             activeClassName,
             containerClassName,
+        } = this.props;
 
+        const {
+            view,
+            isActive,
             ...otherProps
         } = p;
 
