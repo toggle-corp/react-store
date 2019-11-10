@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 
-import Responsive from '#rscg/Responsive';
-
 const propTypes = {
     disabled: PropTypes.bool,
     modal: PropTypes.element.isRequired,

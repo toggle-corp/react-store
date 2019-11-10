@@ -29,18 +29,22 @@ const propTypes = {
     /**
      * Select a label for each data point
      */
+    // eslint-disable-next-line react/no-unused-prop-types
     labelSelector: PropTypes.func,
     /**
      * Select the frequency value for each data point
      */
+    // eslint-disable-next-line react/no-unused-prop-types
     frequencySelector: PropTypes.func,
     /**
      * Font specification for each word cloud node
      */
+    // eslint-disable-next-line react/no-unused-prop-types
     font: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     /**
      * Provide a rotation value for each node
      */
+    // eslint-disable-next-line react/no-unused-prop-types
     rotate: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
     /**
      * Handler function to save the generated svg
@@ -60,8 +64,8 @@ const defaultProps = {
     // rotate: () => (Math.floor(Math.random() * 2) * 90),
     rotate: 0,
     setSaveFunction: undefined,
-    onWordClick: undefined,
-    onWordMouseOver: undefined,
+    // onWordClick: undefined,
+    // onWordMouseOver: undefined,
     labelSelector: d => d.text,
     frequencySelector: d => d.size,
     colorScheme: schemeSet2,
@@ -202,11 +206,6 @@ class WordCloud extends PureComponent {
             } = emptyObject,
             data,
             colorScheme,
-            font,
-            padding,
-            rotate,
-            labelSelector,
-            frequencySelector,
         } = this.props;
 
         const isContainerInvalid = !containerWidth;

@@ -13,7 +13,6 @@ import {
     axisBottom,
 } from 'd3-axis';
 import { max } from 'd3-array';
-import { transition } from 'd3-transition';
 import { PropTypes } from 'prop-types';
 import SvgSaver from 'svgsaver';
 import { _cs, getColorOnBgColor } from '@togglecorp/fujs';
@@ -23,8 +22,6 @@ import { getStandardFilename } from '../../../utils/common';
 import Float from '../../View/Float';
 
 import styles from './styles.scss';
-
-const dummy = transition;
 
 const propTypes = {
     /**

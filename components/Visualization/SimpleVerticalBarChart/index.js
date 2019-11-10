@@ -117,7 +117,7 @@ class SimpleVerticalBarChart extends PureComponent {
     getRenderData = memoize((
         data, height, scaleX, scaleY, labelSelector, valueSelector, margins,
     ) => {
-        const { left, top, bottom } = margins;
+        const { left, top } = margins;
         const renderData = data.map((d) => {
             const label = labelSelector(d);
             const value = valueSelector(d);
@@ -255,8 +255,8 @@ class SimpleVerticalBarChart extends PureComponent {
             styles.svg,
         );
 
-        const horizontalTextOffset = 6;
-        const minBarWidthToRenderText = 16;
+        // const horizontalTextOffset = 6;
+        // const minBarWidthToRenderText = 16;
 
         return (
             <div

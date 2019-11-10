@@ -174,7 +174,8 @@ class CollapsibleTree extends React.PureComponent {
 
     topicColors = (node) => {
         const { labelSelector } = this.props;
-        let color = this.colors(0);
+        // let color = this.colors(0);
+        let color;
         if (node.depth === 0 || node.depth === 1) {
             color = this.colors(labelSelector(node.data));
         } else {

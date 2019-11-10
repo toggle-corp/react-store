@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { _cs } from '@togglecorp/fujs';
+
 import List from '../List';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    className: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     views: PropTypes.shape(PropTypes.Node),
     activeClassName: PropTypes.string,
     containerClassName: PropTypes.string,
@@ -18,10 +20,10 @@ const propTypes = {
 
 const defaultProps = {
     active: undefined,
-    className: '',
+    className: undefined,
     views: {},
     activeClassName: styles.active,
-    containerClassName: '',
+    containerClassName: undefined,
     useHash: false,
 };
 
@@ -72,49 +74,16 @@ export default class MultiViewContainer extends React.Component {
         window.location.hash.substr(2)
     )
 
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            'multi-content-view',
-        ];
-
-        return classNames.join(' ');
-    }
-
-    getContainerClassName = (isActive) => {
-        const {
-            containerClassName,
-            activeClassName,
-        } = this.props;
-
-        const classNames = [
-            containerClassName,
-            styles.container,
-        ];
-
-        if (isActive) {
-            classNames.push(activeClassName);
-        }
-
-        return classNames.join(' ');
-    }
-
-    getContentClassName = (isActive) => {
-        const { activeClassName } = this.props;
-        const classNames = [];
-
-        if (isActive) {
-            classNames.push(activeClassName);
-        }
-    }
-
     handleHashChange = () => {
         this.setState({ hash: this.getHash() });
     }
 
     renderContainer = (p) => {
+        const {
+            activeClassName,
+            containerClassName,
+        } = this.props;
+
         const {
             view,
             isActive,
@@ -124,7 +93,11 @@ export default class MultiViewContainer extends React.Component {
         const Component = view.component;
 
         if (view.wrapContainer) {
-            const className = this.getContainerClassName(isActive);
+            const className = _cs(
+                containerClassName,
+                styles.container,
+                isActive && activeClassName,
+            );
 
             return (
                 <div className={className}>
@@ -135,7 +108,10 @@ export default class MultiViewContainer extends React.Component {
             );
         }
 
-        const className = this.getContentClassName(isActive);
+        const className = _cs(
+            isActive && activeClassName,
+        );
+
         return (
             <Component
                 className={className}
@@ -207,6 +183,8 @@ export default class MultiViewContainer extends React.Component {
 
     render() {
         const { views } = this.props;
+
+        // FIXME: memoize this
         const viewList = Object.keys(views);
 
         return (
