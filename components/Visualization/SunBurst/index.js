@@ -207,7 +207,7 @@ class SunBurst extends PureComponent {
     }
 
     filterText = (d) => {
-        if (d && d.depth === 0) {
+        if (d.depth === 0) {
             return false;
         }
         const CHAR_SPACE = 6;

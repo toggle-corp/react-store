@@ -12,6 +12,8 @@ const propTypes = {
     label: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    onClick: PropTypes.func.isRequired,
+    optionKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
 
 const defaultProps = {
@@ -33,6 +35,14 @@ export default class Option extends React.PureComponent {
         this.inputId = randomString();
     }
 
+    handleClick = () => {
+        const {
+            onClick,
+            optionKey,
+        } = this.props;
+        onClick(optionKey);
+    }
+
     render() {
         const {
             className: classNameFromProps,
@@ -40,6 +50,8 @@ export default class Option extends React.PureComponent {
             label,
             disabled,
             readOnly,
+            optionKey, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 
@@ -69,6 +81,7 @@ export default class Option extends React.PureComponent {
                     id={this.inputId}
                     type="radio"
                     disabled={disabled || readOnly}
+                    onClick={this.handleOptionClick}
                     {...otherProps}
                 />
                 <Icon

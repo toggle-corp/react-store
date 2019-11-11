@@ -16,12 +16,12 @@ const propTypes = {
     /**
      * unique name for the radio input
      */
-    name: PropTypes.string.isRequired,
+    // name: PropTypes.string.isRequired,
 
     /**
      * Is input disabled?
      */
-    disabled: PropTypes.bool,
+    // disabled: PropTypes.bool,
 
     /**
      * list of options
@@ -35,7 +35,7 @@ const propTypes = {
 
     onChange: PropTypes.func,
 
-    readOnly: PropTypes.bool,
+    // readOnly: PropTypes.bool,
 
     /**
      * key for selected option
@@ -47,8 +47,8 @@ const defaultProps = {
     className: '',
     onChange: undefined,
     value: undefined,
-    disabled: false,
-    readOnly: false,
+    // disabled: false,
+    // readOnly: false,
 };
 
 class RadioInput extends React.PureComponent {
@@ -103,16 +103,15 @@ class RadioInput extends React.PureComponent {
         );
     }
 
-    renderOption = (key, option) => (
-        <Option
-            key={key}
-            name={this.props.name}
-            label={option.label}
-            checked={this.state.selectedOption && key === this.state.selectedOption.key}
-            onClick={() => this.handleOptionClick(key)}
-            {...this.props}
-        />
-    )
+    rendererParams = (key, option) => ({
+        checked: this.state.selectedOption && key === this.state.selectedOption.key,
+        onClick: () => this.handleOptionClick(key),
+        optionKey: key,
+        // TODO: use label extractor
+        label: option.label,
+        // FIXME: should check about injecting all values to Option
+        ...this.props,
+    })
 
     render() {
         const {
@@ -125,7 +124,8 @@ class RadioInput extends React.PureComponent {
                 className={`radio-input ${className} ${styles.radioInput}`}
                 data={options}
                 keySelector={RadioInput.optionKeyExtractor}
-                modifier={this.renderOption}
+                renderer={Option}
+                rendererParams={this.rendererParams}
             />
         );
     }
