@@ -29,6 +29,7 @@ const propTypes = {
     ]),
     selectOnFocus: PropTypes.bool,
     title: PropTypes.string,
+    persistantHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -46,6 +47,7 @@ const defaultProps = {
     value: '',
     selectOnFocus: false,
     title: undefined,
+    persistantHintAndError: true,
 };
 
 class TextInput extends React.PureComponent {
@@ -138,6 +140,7 @@ class TextInput extends React.PureComponent {
             showHintAndError,
             disabled,
             title,
+            persistantHintAndError,
             ...otherProps
         } = this.props;
 
@@ -170,6 +173,7 @@ class TextInput extends React.PureComponent {
                     show={showHintAndError}
                     hint={hint}
                     error={error}
+                    persistant={persistantHintAndError}
                 />
             </div>
         );

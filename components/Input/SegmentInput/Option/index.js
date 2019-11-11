@@ -74,6 +74,8 @@ export default class SegmentOption extends React.PureComponent {
             checked,
             label,
             name,
+            renderer: Renderer,
+            data,
         } = this.props;
 
         const classNames = this.getClassName();
@@ -92,7 +94,7 @@ export default class SegmentOption extends React.PureComponent {
                     value={id}
                     name={name}
                 />
-                {label}
+                { Renderer ? <Renderer data={data} /> : label}
             </label>
         );
     }

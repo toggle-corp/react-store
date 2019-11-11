@@ -141,6 +141,9 @@ class SegmentInput extends React.PureComponent {
         error: this.props.error,
         readOnly: this.props.readOnly,
         disabled: this.props.disabled,
+        renderer: this.props.renderer,
+        className: this.props.itemClassName,
+        data,
     });
 
     render() {
