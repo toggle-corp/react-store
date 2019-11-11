@@ -67,6 +67,10 @@ const propTypes = {
      * If true hide the labels from chart
      */
     hideLabel: PropTypes.bool,
+    /**
+     * Delay period for transition
+     */
+    period: PropTypes.number,
 };
 
 const defaultProps = {
@@ -78,6 +82,7 @@ const defaultProps = {
     sideLengthRatio: 0.4,
     labelModifier: undefined,
     hideLabel: false,
+    period: 200,
 };
 
 /**
@@ -335,6 +340,7 @@ class DonutChart extends PureComponent {
             sideLengthRatio,
             hideLabel,
             colorScheme,
+            period,
         } = this.props;
 
         if (!boundingClientRect.width || !data || data.length === 0) {
@@ -366,7 +372,6 @@ class DonutChart extends PureComponent {
 
         const textArcs = this.textArch(outerRadius, outerRadius);
         const arcs = this.arch(outerRadius, innerRadius);
-        const period = 200;
 
         const options = {
             radius,

@@ -1,31 +1,28 @@
 @import '../../../stylesheets/utils';
 
 .vertical-bar-chart {
-    overflow: auto;
 
-    .svg {
-        .bar{
-            cursor: pointer;
+    .bar{
+        cursor: pointer;
+    }
+
+    .xaxis {
+        path {
+            stroke: var(--color-axis-path);
         }
 
-        .xaxis {
-            path {
-                stroke: var(--color-axis-path);
-            }
+        line {
+            visibility: hidden;
+        }
+    }
 
-            line {
-                visibility: hidden;
-            }
+    .yaxis {
+        path {
+            stroke: var(--color-axis-path);
         }
 
-        .yaxis {
-            path {
-                stroke: var(--color-axis-path);
-            }
-
-            line {
-                visibility: hidden;
-            }
+        line {
+            visibility: hidden;
         }
     }
 }

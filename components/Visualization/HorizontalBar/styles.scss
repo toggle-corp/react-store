@@ -1,43 +1,41 @@
 @import '../../../stylesheets/utils';
 
-.horizontal-bar-chart {
+.horizontal-bar {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     overflow-y: auto;
 
-    .svg {
-        .grid line {
-            stroke: var(--color-grid-path);
-            shape-rendering: crispEdges;
+    .grid line {
+        stroke: var(--color-grid-path);
+        shape-rendering: crispEdges;
+    }
+
+    .grid {
+        path {
+            stroke: var(--color-axis-path);
+        }
+    }
+
+    .x-axis {
+        path {
+            stroke: var(--color-axis-path);
         }
 
-        .grid {
-            path {
-                stroke: var(--color-axis-path);
+        :global {
+            .tick line {
+                visibility: hidden;
             }
         }
+    }
 
-        .x-axis {
-            path {
-                stroke: var(--color-axis-path);
-            }
+    .y-axis {
+        path {
+            stroke: var(--color-axis-path);
 
             :global {
                 .tick line {
                     visibility: hidden;
-                }
-            }
-        }
-
-        .y-axis {
-            path {
-                stroke: var(--color-axis-path);
-
-                :global {
-                    .tick line {
-                        visibility: hidden;
-                    }
                 }
             }
         }
