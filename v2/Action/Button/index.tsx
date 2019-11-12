@@ -29,7 +29,7 @@ import styles from './styles.scss';
 */
 
 
-type ButtonType = 'button-default' | 'button-accent' | 'button-primary' | 'button-danger' | 'button-success' | 'button-warning';
+export type ButtonType = 'button-default' | 'button-accent' | 'button-primary' | 'button-danger' | 'button-success' | 'button-warning';
 type RawButtonType = 'button' | 'submit' | 'reset';
 
 export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onClick' | 'ref'> {
