@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Float from '../../View/Float';
+import Portal from '../../View/Portal';
 import Button, { Props, ButtonType } from '../Button';
 
 import styles from './styles.scss';
@@ -13,7 +13,7 @@ function FloatingButton<T>(props: Props<T>) {
     } = props;
 
     return (
-        <Float>
+        <Portal>
             <Button
                 className={_cs(
                     styles.floatingButton,
@@ -21,7 +21,7 @@ function FloatingButton<T>(props: Props<T>) {
                 )}
                 {...otherProps}
             />
-        </Float>
+        </Portal>
     );
 }
 FloatingButton.defaultProps = {
