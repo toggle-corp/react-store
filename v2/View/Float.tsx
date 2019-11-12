@@ -6,7 +6,7 @@ import Portal from './Portal';
 interface Props {
     children: React.ReactNode;
     focusTrap: boolean;
-    onInvalidate: () => void;
+    onInvalidate?: () => void;
 }
 
 /*
