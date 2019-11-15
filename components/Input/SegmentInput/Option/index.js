@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { randomString, isFalsy } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+    isFalsy,
+} from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -16,12 +20,22 @@ const propTypes = {
     error: PropTypes.string,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
+    rendererParams: PropTypes.func,
+    index: PropTypes.number.isRequired,
+    datum: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     error: '',
     disabled: false,
     readOnly: false,
+    renderer: undefined,
+    rendererClassName: '',
+    rendererParams: undefined,
+    datum: {},
 };
 
 export default class SegmentOption extends React.PureComponent {
@@ -35,48 +49,38 @@ export default class SegmentOption extends React.PureComponent {
         this.inputId = randomString();
     }
 
-    getClassName = () => {
-        const {
-            disabled,
-            error,
-            readOnly,
-            checked,
-        } = this.props;
-
-        const classNames = [
-            'segment-option',
-            styles.segmentOption,
-        ];
-
-        if (checked) {
-            classNames.push('checked');
-            classNames.push(styles.checked);
-        }
-        if (readOnly) {
-            classNames.push('read-only');
-            classNames.push(styles.readOnly);
-        }
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-        if (!isFalsy(error, [''])) {
-            classNames.push('error');
-            classNames.push(styles.error);
-        }
-        return classNames.join(' ');
-    }
-
     render() {
         const {
-            id,
-            onChange,
             checked,
+            data,
+            datum,
+            disabled,
+            error,
+            id,
+            index,
             label,
             name,
+            onChange,
+            readOnly,
+            renderer: Renderer,
+            rendererClassName,
+            rendererParams,
         } = this.props;
 
-        const classNames = this.getClassName();
+        const classNames = _cs(
+            'segment-option',
+            styles.segmentOption,
+            checked && 'checked',
+            checked && styles.checked,
+            readOnly && 'read-only',
+            readOnly && styles.readOnly,
+            disabled && 'disabled',
+            disabled && styles.disabled,
+            !isFalsy(error, ['']) && 'error',
+            !isFalsy(error, ['']) && styles.error,
+        );
+
+        const extraProps = rendererParams ? rendererParams(id, datum, index, data) : undefined;
 
         return (
             <label
@@ -84,7 +88,7 @@ export default class SegmentOption extends React.PureComponent {
                 className={classNames}
             >
                 <input
-                    className={`${styles.segmentButtonInput} segment-option-input`}
+                    className={_cs(styles.segmentButtonInput, 'segment-option-input')}
                     type="radio"
                     onChange={onChange}
                     checked={checked}
@@ -92,7 +96,14 @@ export default class SegmentOption extends React.PureComponent {
                     value={id}
                     name={name}
                 />
-                {label}
+                { Renderer ? (
+                    <Renderer
+                        className={rendererClassName}
+                        {...extraProps}
+                    />
+                ) : (
+                    label
+                )}
             </label>
         );
     }
