@@ -16,6 +16,8 @@ const propTypes = {
      */
     className: PropTypes.string,
 
+    itemClassName: PropTypes.string,
+
     /**
      * Is input disabled?
      */
@@ -52,6 +54,10 @@ const propTypes = {
     keySelector: PropTypes.func,
     readOnly: PropTypes.bool,
 
+    renderer: PropTypes.func,
+    rendererClassName: PropTypes.string,
+    rendererParams: PropTypes.func,
+
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -63,6 +69,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    itemClassName: '',
     disabled: false,
     readOnly: false,
     error: '',
@@ -74,6 +81,9 @@ const defaultProps = {
     keySelector: d => d.key,
     labelSelector: d => d.label,
     showHintAndError: true,
+    renderer: undefined,
+    rendererClassName: '',
+    rendererParams: undefined,
     value: '',
     name: '',
     options: [],
@@ -132,19 +142,39 @@ class SegmentInput extends React.PureComponent {
         }
     }
 
-    rendererParams = (key, data) => ({
-        label: this.props.labelSelector(data),
-        id: String(this.props.keySelector(data)),
-        onChange: this.handleInputChange,
-        name: this.props.name,
-        checked: String(this.props.value) === String(key),
-        error: this.props.error,
-        readOnly: this.props.readOnly,
-        disabled: this.props.disabled,
-        renderer: this.props.renderer,
-        className: this.props.itemClassName,
-        data,
-    });
+    rendererParams = (key, datum, index, data) => {
+        const {
+            labelSelector,
+            keySelector,
+            name,
+            value,
+            error,
+            readOnly,
+            renderer,
+            disabled,
+            itemClassName,
+            rendererParams,
+            rendererClassName,
+        } = this.props;
+
+        return ({
+            label: labelSelector(datum),
+            id: String(keySelector(datum)),
+            onChange: this.handleInputChange,
+            name,
+            checked: String(value) === String(key),
+            error,
+            readOnly,
+            disabled,
+            renderer,
+            className: itemClassName,
+            rendererParams,
+            rendererClassName,
+            datum,
+            index,
+            data,
+        });
+    }
 
     render() {
         const {
