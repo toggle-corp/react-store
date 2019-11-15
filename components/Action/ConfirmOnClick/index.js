@@ -53,11 +53,17 @@ const ConfirmOnClick = (WrappedComponent) => {
             const {
                 skipConfirmation,
                 onClick,
+                onMessageShown,
             } = this.props;
+
             if (skipConfirmation) {
                 onClick();
             } else {
                 this.setState({ showConfirm: true });
+
+                if (onMessageShown) {
+                    onMessageShown();
+                }
             }
         }
 
@@ -101,6 +107,7 @@ const ConfirmOnClick = (WrappedComponent) => {
                 confirmationDisabled,
                 ...otherProps
             } = this.props;
+
             const {
                 showConfirm,
                 challengeTextInputValue,
