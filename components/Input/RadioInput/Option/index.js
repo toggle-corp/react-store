@@ -35,7 +35,7 @@ export default class Option extends React.PureComponent {
         this.inputId = randomString();
     }
 
-    handleClick = () => {
+    handleOptionClick = () => {
         const {
             onClick,
             optionKey,

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramInputElement } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import ListView from '../../View/List/ListView';
 
@@ -26,14 +27,13 @@ const propTypes = {
     /**
      * list of options
      */
-    options: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-            label: PropTypes.string,
-        }),
-    ).isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    options: PropTypes.array,
 
     onChange: PropTypes.func,
+
+    keySelector: PropTypes.func,
+    labelSelector: PropTypes.func,
 
     // readOnly: PropTypes.bool,
 
@@ -47,6 +47,11 @@ const defaultProps = {
     className: '',
     onChange: undefined,
     value: undefined,
+
+    keySelector: item => item.key,
+    labelSelector: item => item.label,
+
+    options: [],
     // disabled: false,
     // readOnly: false,
 };
@@ -57,73 +62,61 @@ class RadioInput extends React.PureComponent {
     static defaultProps = defaultProps;
 
     // XXX: use isTruthy
-    static getSelectedOption = (options, value) => (
-        value && options.find(d => d.key === value)
-    )
+    getSelectedOption = memoize((options, value, keySelector) => (
+        options && options.find(d => keySelector(d) === value)
+    ))
 
-    static optionKeyExtractor = option => option.key;
+    handleOptionClick = (key) => {
+        const { options } = this.props;
 
-    constructor(props) {
-        super(props);
+        if (!options) {
+            return;
+        }
 
-        const {
-            options,
-            value,
-        } = this.props;
+        const option = options.find(d => d.key === key);
 
-        const selectedOption = RadioInput.getSelectedOption(options, value);
-        this.state = { selectedOption };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            options,
-            value,
-        } = this.props;
-
-        if (value !== nextProps.value || options !== nextProps.options) {
-            const selectedOption = RadioInput.getSelectedOption(
-                nextProps.options,
-                nextProps.value,
-            );
-            this.setState({ selectedOption });
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(key);
         }
     }
 
-    handleOptionClick = (key) => {
-        const option = this.props.options.find(d => d.key === key);
+    rendererParams = (key, option) => {
+        const {
+            labelSelector,
+            keySelector,
+            options,
+            className,
+            value,
+            onChange,
+            ...otherProps
+        } = this.props;
 
-        this.setState(
-            { selectedOption: option },
-            () => {
-                if (this.props.onChange) {
-                    this.props.onChange(key);
-                }
-            },
-        );
+        const selectedOption = this.getSelectedOption(options, value, keySelector);
+
+        return {
+            ...otherProps,
+            optionKey: key,
+            checked: selectedOption && key === keySelector(selectedOption),
+            onClick: this.handleOptionClick,
+            label: labelSelector(option),
+        };
     }
-
-    rendererParams = (key, option) => ({
-        checked: this.state.selectedOption && key === this.state.selectedOption.key,
-        onClick: () => this.handleOptionClick(key),
-        optionKey: key,
-        // TODO: use label extractor
-        label: option.label,
-        // FIXME: should check about injecting all values to Option
-        ...this.props,
-    })
 
     render() {
         const {
             className,
             options,
+            keySelector,
+            value,
+            name,
         } = this.props;
 
         return (
             <ListView
                 className={`radio-input ${className} ${styles.radioInput}`}
                 data={options}
-                keySelector={RadioInput.optionKeyExtractor}
+                keySelector={keySelector}
                 renderer={Option}
                 rendererParams={this.rendererParams}
             />
