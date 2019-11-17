@@ -8,7 +8,8 @@ import { select, event } from 'd3-selection';
 import { arc, pie } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { interpolateNumber } from 'd3-interpolate';
-import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
+// import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
+import { transition } from 'd3-transition';
 import SvgSaver from 'svgsaver';
 
 import Responsive from '../../General/Responsive';
@@ -16,6 +17,9 @@ import Float from '../../View/Float';
 
 import { getStandardFilename } from '../../../utils/common';
 import styles from './styles.scss';
+
+// eslint-disable-next-line no-unused-vars
+const dummy = transition;
 
 const propTypes = {
     /**
@@ -392,7 +396,7 @@ class DonutChart extends PureComponent {
             this.addLabels(labels, options);
             this.addLines(lines, options);
         }
-        this.addTransition(slices, arcs, period);
+        // this.addTransition(slices, arcs, period);
     }
 
     render() {
