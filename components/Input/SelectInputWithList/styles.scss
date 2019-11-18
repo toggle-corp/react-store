@@ -21,6 +21,25 @@
             flex-shrink: 0;
             padding: var(--spacing-extra-small) var(--spacing-small);
         }
+
+        &.inline-list {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            border: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground-alt);
+            width: 100%;
+
+            .inline-list-item {
+                padding: var(--spacing-extra-small);
+                // max-width: calc(50% - var(--spacing-extra-small));
+                font-size: var(--font-size-small);
+            }
+
+            .inline-list-item-for-dismissable {
+                padding: 0;
+            }
+        }
     }
 
     &.error {

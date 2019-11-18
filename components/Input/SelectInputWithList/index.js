@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFalsy } from '@togglecorp/fujs';
+import {
+    _cs,
+    isFalsy,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import MultiSelectInput from '../MultiSelectInput';
@@ -50,6 +53,9 @@ const propTypes = {
 
     emptyComponent: PropTypes.func,
     maxDisplayOptions: PropTypes.number,
+
+    // NOTE: Supports block and inline types
+    listType: PropTypes.string,
 };
 
 const defaultProps = {
@@ -63,6 +69,7 @@ const defaultProps = {
     options: [],
     value: [],
     label: '',
+    listType: 'block',
     hideRemoveFromListButton: false,
     topRightChild: undefined,
     disabled: false,
@@ -111,41 +118,23 @@ class SelectInputWithList extends React.PureComponent {
         ));
     }
 
-    getClassName = () => {
-        const {
-            className,
-            disabled,
-        } = this.props;
-        const { error } = this.state;
-
-        const classNames = [
-            className,
-            styles.selectInputWithList,
-            'select-input-with-list',
-        ];
-
-        if (!isFalsy(error, [''])) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-        }
-
-        return classNames.join(' ');
-    }
-
     getListItemParams = (key, datum) => {
         const {
             labelSelector,
+            listType,
         } = this.props;
 
         return {
             value: labelSelector(datum),
             itemKey: key,
             onDismiss: this.handleItemDismiss,
-            className: styles.listItem,
+            marker: listType === 'inline' && '',
+            listItemClassName: listType === 'inline' && styles.inlineListItemForDismissable,
+            type: listType === 'inline' && 'consize',
+            className: _cs(
+                styles.listItem,
+                listType === 'inline' && styles.inlineListItem,
+            ),
         };
     }
 
@@ -182,7 +171,7 @@ class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
-            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className,
             disabled,
             keySelector,
             label,
@@ -198,27 +187,22 @@ class SelectInputWithList extends React.PureComponent {
             topRightChild: TopRightChild,
             hideRemoveFromListButton,
             maxDisplayOptions,
+            listType,
 
             ...otherProps
         } = this.props;
 
-        const { objectValues } = this.state;
+        const {
+            objectValues,
+            error,
+        } = this.state;
 
-        const listClassNames = [
-            listClassName,
-            styles.list,
-            'list',
-        ];
-
-        const selectClassNames = [
+        const selectClassNames = _cs(
             selectClassName,
             styles.input,
             'select',
-        ];
-
-        if (TopRightChild) {
-            selectClassNames.push(styles.hasTopRightChild);
-        }
+            TopRightChild && styles.hasTopRightChild,
+        );
 
         const Item = (
             hideRemoveFromListButton
@@ -227,11 +211,20 @@ class SelectInputWithList extends React.PureComponent {
         ) ? ListItem : DismissableListItem;
 
         return (
-            <div className={this.getClassName()}>
+            <div
+                className={_cs(
+                    className,
+                    styles.selectInputWithList,
+                    'select-input-with-list',
+                    !isFalsy(error, ['']) && styles.error,
+                    !isFalsy(error, ['']) && 'error',
+                    disabled && styles.disabled,
+                )}
+            >
                 <div className={styles.headerContainer}>
                     { maxDisplayOptions === undefined ? (
                         <MultiSelectInput
-                            className={selectClassNames.join(' ')}
+                            className={selectClassNames}
                             disabled={disabled}
                             readOnly={readOnly}
                             keySelector={keySelector}
@@ -244,7 +237,7 @@ class SelectInputWithList extends React.PureComponent {
                         />
                     ) : (
                         <SearchMultiSelectInput
-                            className={selectClassNames.join(' ')}
+                            className={selectClassNames}
                             disabled={disabled}
                             readOnly={readOnly}
                             keySelector={keySelector}
@@ -259,15 +252,24 @@ class SelectInputWithList extends React.PureComponent {
                     )}
                     {TopRightChild && <TopRightChild />}
                 </div>
-                <ListView
-                    className={listClassNames.join(' ')}
-                    data={objectValues}
-                    renderer={Item}
-                    rendererParams={this.getListItemParams}
-                    keySelector={keySelector}
-                    emptyComponent={emptyComponent}
-                    {...listProps}
-                />
+                {objectValues.length > 0 && (
+                    <ListView
+                        className={
+                            _cs(
+                                listClassName,
+                                styles.list,
+                                listType === 'inline' && styles.inlineList,
+                                'list',
+                            )
+                        }
+                        data={objectValues}
+                        renderer={Item}
+                        rendererParams={this.getListItemParams}
+                        keySelector={keySelector}
+                        emptyComponent={emptyComponent}
+                        {...listProps}
+                    />
+                )}
             </div>
         );
     }

@@ -1,3 +1,7 @@
+:root {
+    --width-dismiss-button: 24px;
+}
+
 .dismissable-list-item {
     display: flex;
     overflow: hidden;
@@ -9,7 +13,6 @@
     .dismiss-button {
         flex-shrink: 0;
         transform: translateX(100%);
-        // transition: var(--duration-transition-fast) opacity var(--duration-transition-medium) ease-in-out, var(--duration-transition-medium) var(--duration-transition-medium) transform ease-in-out;
         opacity: 0;
         padding: 0 var(--spacing-small);
     }
@@ -20,6 +23,20 @@
         .dismiss-button {
             transform: translateX(0);
             opacity: 1;
+        }
+    }
+
+    &.consize {
+        position: relative;
+        margin: var(--spacing-extra-small);
+        border: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding-right: var(--width-dismiss-button);
+
+        .dismiss-button {
+            position: absolute;
+            right: 0;
+            background-color: #fff;
         }
     }
 }

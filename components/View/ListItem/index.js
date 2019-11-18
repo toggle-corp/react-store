@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -10,7 +11,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     marker: '•',
 };
 
@@ -26,13 +27,8 @@ export default class ListItem extends React.PureComponent {
             className: classNameFromProps,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.listItem}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.listItem)}>
                 <div className={styles.marker}>
                     { marker }
                 </div>
