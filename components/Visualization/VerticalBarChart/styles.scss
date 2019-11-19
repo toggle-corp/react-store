@@ -29,11 +29,12 @@
 .tooltip {
     @include shadow-medium;
     @include background-color($color-foreground);
-    position: fixed;
+    display: flex;
+    position: absolute;
     z-index: 10;
     padding: $spacing-small $spacing-medium-alt;
     animation: fade-in .2s ease-in;
-    pointer-events: none;
+    text-align: center;
 
     .label {
         display: block;

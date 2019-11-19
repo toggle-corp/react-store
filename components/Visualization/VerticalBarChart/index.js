@@ -2,7 +2,10 @@ import React, {
     PureComponent,
     Fragment,
 } from 'react';
-import { select } from 'd3-selection';
+import {
+    select,
+    event,
+} from 'd3-selection';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { max } from 'd3-array';
 import SvgSaver from 'svgsaver';
@@ -127,17 +130,19 @@ class VerticalBarChart extends PureComponent {
         if (showTooltip) {
             const value = valueSelector(d);
             const label = labelSelector(d);
+
             const defaultTooltip = `
             <span class="${styles.label}">
-                 ${label || ''}
+                 ${label}
             </span>
             <span class="${styles.value}">
-                 ${value || ''}
+                 ${value}
             </span>`;
             const content = tooltipContent ? tooltipContent(d) : defaultTooltip;
-            this.tooltip.innerHTML = content;
-            const { style } = this.tooltip;
-            style.display = 'block';
+
+            select(this.tooltip)
+                .html(content)
+                .style('display', 'inline-block');
         }
     }
 
@@ -147,19 +152,11 @@ class VerticalBarChart extends PureComponent {
         } = this.props;
 
         if (showTooltip) {
-            const { style } = this.tooltip;
             const { width, height } = this.tooltip.getBoundingClientRect();
-            // eslint-disable-next-line no-restricted-globals
-            const x = event.pageX;
 
-            // eslint-disable-next-line no-restricted-globals
-            const y = event.pageY;
-
-            const posX = x - (width / 2);
-            const posY = y - (height + 10);
-
-            style.top = `${posY}px`;
-            style.left = `${posX}px`;
+            select(this.tooltip)
+                .style('top', `${event.pageY - height - (height / 2)}px`)
+                .style('left', `${event.pageX - (width / 2)}px`);
         }
     }
 
@@ -169,8 +166,8 @@ class VerticalBarChart extends PureComponent {
         } = this.props;
 
         if (showTooltip) {
-            const { style } = this.tooltip;
-            style.display = 'none';
+            select(this.tooltip)
+                .style('display', 'none');
         }
     }
 
@@ -228,7 +225,7 @@ class VerticalBarChart extends PureComponent {
             .attr('width', x.bandwidth())
             .attr('height', d => height - y(valueSelector(d)))
             .style('fill', d => this.getColor(d))
-            .on('mouseover', d => this.handleMouseOver(d))
+            .on('mouseover', this.handleMouseOver)
             .on('mousemove', this.handleMouseMove)
             .on('mouseout', this.handleMouseOut);
 
@@ -258,11 +255,6 @@ class VerticalBarChart extends PureComponent {
             classNameFromProps,
         ].join(' ');
 
-        const tooltipClassName = [
-            'tooltip',
-            styles.tooltip,
-        ].join(' ');
-
         return (
             <Fragment>
                 <svg
@@ -272,7 +264,7 @@ class VerticalBarChart extends PureComponent {
                 <Float>
                     <div
                         ref={(el) => { this.tooltip = el; }}
-                        className={tooltipClassName}
+                        className={styles.tooltip}
                     />
                 </Float>
             </Fragment>
