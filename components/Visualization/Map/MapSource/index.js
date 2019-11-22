@@ -201,7 +201,9 @@ class MapSource extends React.PureComponent {
         map.addSource(sourceKey, properties);
 
         if (bounds) {
-            map.fitBounds(bounds, { padding: boundsPadding });
+            setTimeout(() => {
+                map.fitBounds(bounds, { padding: boundsPadding });
+            }, 1000);
         }
 
         this.source = sourceKey;

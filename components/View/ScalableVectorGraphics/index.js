@@ -13,7 +13,7 @@ const propTypes = {
         false,
     ]),
     fallback: PropTypes.string,
-    onEnject: PropTypes.func,
+    onInject: PropTypes.func,
     src: PropTypes.string,
 };
 
@@ -21,7 +21,7 @@ const defaultProps = {
     className: undefined,
     evalScripts: undefined,
     fallback: undefined,
-    onEnject: undefined,
+    onInject: undefined,
     src: undefined,
 };
 
@@ -31,7 +31,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
     static defaultProps = defaultProps;
 
     // eslint-disable-next-line react/sort-comp
-    injectSVG = memoize((svg, src, evalScripts, onEnject) => {
+    injectSVG = memoize((svg, src, evalScripts, onInject) => {
         if (!svg) {
             return;
         }
@@ -40,7 +40,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
             evalScripts,
         };
 
-        SVGInjector(svg, options, onEnject);
+        SVGInjector(svg, options, onInject);
     })
 
     constructor(props) {
@@ -53,26 +53,26 @@ export default class ScalableVectorGraphics extends React.PureComponent {
         const {
             src,
             evalScripts,
-            onEnject,
+            onInject,
         } = this.props;
 
         const svg = document.getElementById(this.id);
         if (svg) {
-            this.injectSVG(svg, src, evalScripts, onEnject);
+            this.injectSVG(svg, src, evalScripts, onInject);
         }
     }
 
     componentDidUpdate() {
         const {
             evalScripts,
-            onEnject,
+            onInject,
             src,
         } = this.props;
 
         const svg = document.getElementById(this.id);
         if (svg) {
             svg.setAttribute('data-src', src);
-            this.injectSVG(svg, src, evalScripts, onEnject);
+            this.injectSVG(svg, src, evalScripts, onInject);
         }
     }
 
@@ -88,6 +88,9 @@ export default class ScalableVectorGraphics extends React.PureComponent {
             className,
             src,
             fallback,
+            evalScripts,
+            onInject,
+            ...otherProps
         } = this.props;
 
         return (
@@ -96,6 +99,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
                 className={className}
                 data-src={src}
                 data-fallback={fallback}
+                {...otherProps}
             />
         );
     }
