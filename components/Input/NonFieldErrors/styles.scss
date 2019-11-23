@@ -8,9 +8,12 @@
         padding: var(--spacing-small);
 
         &.empty {
-            display: none;
-            // color: transparent;
+            color: transparent;
             user-select: none;
+        }
+
+        &.remove {
+            display: none;
         }
 
         &:not(:last-child) {
