@@ -60,7 +60,7 @@ const propTypes = {
     optionLabelSelector: PropTypes.func,
 
     renderEmpty: PropTypes.func,
-    persistantHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -83,7 +83,7 @@ const defaultProps = {
     showLabel: true,
     title: undefined,
     value: undefined,
-    persistantHintAndError: true,
+    persistentHintAndError: true,
 };
 
 class SelectInput extends React.PureComponent {
@@ -294,7 +294,7 @@ class SelectInput extends React.PureComponent {
             autoFocus,
             hideClearButton,
             className: classNameFromProps,
-            persistantHintAndError,
+            persistentHintAndError,
             options,
         } = this.props;
 
@@ -422,7 +422,7 @@ class SelectInput extends React.PureComponent {
                     show={showHintAndError}
                     error={error}
                     hint={hint}
-                    persistant={persistantHintAndError}
+                    persistent={persistentHintAndError}
                 />
                 <Options
                     className={optionsClassName}
