@@ -8,14 +8,14 @@ const propTypes = {
     show: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
-    persistant: PropTypes.bool,
+    persistent: PropTypes.bool,
 };
 
 const defaultProps = {
     show: true,
     error: undefined,
     hint: undefined,
-    persistant: false,
+    persistent: true,
 };
 
 const emptyText = '-';
@@ -30,10 +30,10 @@ export default class InputHintAndError extends React.PureComponent {
             show,
             error,
             hint,
-            persistant,
+            persistent,
         } = this.props;
 
-        if (!show || (!persistant && !error)) {
+        if (!show || (!persistent && !error)) {
             return null;
         }
 

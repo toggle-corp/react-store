@@ -50,7 +50,7 @@ const propTypes = {
 
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
-    persistantHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -62,7 +62,7 @@ const defaultProps = {
     showHintAndError: true,
     disabled: false,
     readOnly: false,
-    persistantHintAndError: true,
+    persistentHintAndError: true,
 };
 
 class ColorInput extends React.PureComponent {
@@ -138,7 +138,7 @@ class ColorInput extends React.PureComponent {
             hint,
             disabled,
             readOnly,
-            persistantHintAndError,
+            persistentHintAndError,
         } = this.props;
 
         const { showColorPicker } = this.state;
@@ -182,7 +182,7 @@ class ColorInput extends React.PureComponent {
                     show={showHintAndError}
                     hint={hint}
                     error={error}
-                    persistant={persistantHintAndError}
+                    persistent={persistentHintAndError}
                 />
                 {
                     showColorPicker && (

@@ -63,7 +63,7 @@ const propTypes = {
     resize: PropTypes.string,
 
     selectOnFocus: PropTypes.bool,
-    persistantHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -81,7 +81,7 @@ const defaultProps = {
     showHintAndError: true,
     value: '',
     selectOnFocus: false,
-    persistantHintAndError: true,
+    persistentHintAndError: true,
 };
 
 export class NormalTextArea extends React.PureComponent {
@@ -190,7 +190,7 @@ export class NormalTextArea extends React.PureComponent {
             showHintAndError,
             disabled,
             resize,
-            persistantHintAndError,
+            persistentHintAndError,
             ...otherProps
         } = this.props;
 
@@ -219,7 +219,7 @@ export class NormalTextArea extends React.PureComponent {
                     show={showHintAndError}
                     hint={hint}
                     error={error}
-                    persistant={persistantHintAndError}
+                    persistent={persistentHintAndError}
                 />
             </div>
         );
