@@ -4,6 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { FaramErrorMessageElement } from '@togglecorp/faram';
 
 import styles from './styles.scss';
@@ -13,11 +14,13 @@ const propTypes = {
     errors: PropTypes.arrayOf(
         PropTypes.string,
     ),
+    persistent: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     errors: [],
+    persistent: true,
 };
 
 class NonFieldErrors extends React.PureComponent {
@@ -29,13 +32,14 @@ class NonFieldErrors extends React.PureComponent {
         const {
             errors,
             className,
+            persistent,
         } = this.props;
 
         let errorComponents;
         if (errors && errors.length > 0) {
             errorComponents = errors.map(error => (
                 <div
-                    className={`${styles.error} error`}
+                    className={_cs(styles.error, 'error')}
                     key={error}
                 >
                     { error }
@@ -43,14 +47,20 @@ class NonFieldErrors extends React.PureComponent {
             ));
         } else {
             errorComponents = (
-                <div className={`${styles.error} ${styles.empty}`}>
+                <div
+                    className={_cs(
+                        styles.error,
+                        styles.empty,
+                        !persistent && styles.remove,
+                    )}
+                >
                     -
                 </div>
             );
         }
 
         return (
-            <div className={`${styles.nonFieldErrors} ${className}`}>
+            <div className={_cs(styles.nonFieldErrors, className)}>
                 { errorComponents }
             </div>
         );
