@@ -160,7 +160,10 @@ class StackedBarChart extends PureComponent {
         const value = node[1] - node[0];
         const percent = Number.isFinite(this.total) ? (value / this.total) * 100 : 0;
         select(this.tooltip)
-            .html(`<span>${value} (${percent.toFixed(1)}%)</span>`)
+            .html(`<span>
+                ${value} (${percent.toFixed(1)}%)
+                <br/>Total: ${this.total}
+                </span>`)
             .style('display', 'inline-block');
     }
 
