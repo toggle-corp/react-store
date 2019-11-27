@@ -9,6 +9,8 @@ import {
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
+import HintAndError from '../HintAndError';
+import Label from '../Label';
 import Icon from '../../General/Icon';
 import Button from '../../Action/Button';
 import Select from './Select';
@@ -34,7 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     onChange: noOp,
     value: [],
     initialExpandState: {},
@@ -205,7 +207,7 @@ class NormalTreeSelection extends React.PureComponent {
                 </div>
 
                 {nodes && this.state.expanded[key] && (
-                    <TreeSelection
+                    <NormalTreeSelection
                         value={nodes}
                         onChange={children => this.handleChildrenChange(key, children)}
                     />
@@ -215,15 +217,19 @@ class NormalTreeSelection extends React.PureComponent {
     }
 
     render() {
-        const { className, value } = this.props;
-        const classNames = [
-            className,
+        const {
+            className: classNameFromProps,
+            value,
+        } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
             styles.treeSelection,
             'tree-selection',
-        ];
+        );
 
         return (
-            <div className={classNames.join(' ')}>
+            <div className={className}>
                 <this.SortableTree
                     items={value}
                     onSortEnd={this.handleSortEnd}
@@ -237,9 +243,51 @@ class NormalTreeSelection extends React.PureComponent {
     }
 }
 
-const TreeSelection = ExtraRoot(NormalTreeSelection);
+const FinalTreeSelection = ExtraRoot(NormalTreeSelection);
+
+const TreeSelection = (props) => {
+    const {
+        className,
+        showLabel,
+        label,
+        error,
+        disabled,
+        showHintAndError,
+        hint,
+        persistentHintAndError,
+        title,
+        ...otherProps
+    } = props;
+    return (
+        <div
+            className={className}
+            title={title}
+        >
+            <Label
+                show={showLabel}
+                text={label}
+                error={!!error}
+                // active={isFocused}
+                disabled={disabled}
+            />
+            <FinalTreeSelection
+                disabled={disabled}
+                {...otherProps}
+            />
+            <HintAndError
+                show={showHintAndError}
+                hint={hint}
+                error={error}
+                persistent={persistentHintAndError}
+            />
+        </div>
+    );
+};
+
 export default FaramInputElement(TreeSelection);
+
 export const SeparatedTreeSelection = FaramInputElement(SeparateDataValue(TreeSelection));
+
 export const TreeSelectionWithSelectors = FaramInputElement(
     Select(SeparateDataValue(TreeSelection)),
 );
