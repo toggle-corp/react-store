@@ -97,7 +97,7 @@ const wrapViz = (WrappedComponent) => {
             };
         }
 
-        componentWillReceiveProps(newProps) {
+        UNSAFE_componentWillReceiveProps(newProps) {
             const {
                 colorScheme: oldColorScheme,
                 colorSchemeType: oldColorSchemeType,

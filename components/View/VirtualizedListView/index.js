@@ -95,7 +95,7 @@ class VirtualizedListView extends React.Component {
         this.setItemHeight();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             itemHeight,
             boundingClientRect,

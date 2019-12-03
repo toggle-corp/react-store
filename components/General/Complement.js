@@ -43,7 +43,7 @@ export default (WrappedComponent) => {
             this.complementedValue = complement(value, options, keySelector);
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 options: oldOptions,
                 value: oldValue,

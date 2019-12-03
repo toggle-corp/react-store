@@ -56,7 +56,7 @@ export default class HashManager extends React.PureComponent {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             tabs: oldTabs,
             useHash: oldUseHash,

@@ -33,7 +33,7 @@ export default function withTracker(WrappedComponent, options = {}) {
             trackPage(page, options);
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 location,
             } = this.props;

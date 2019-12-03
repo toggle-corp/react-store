@@ -39,7 +39,7 @@ export default class Alert extends React.PureComponent {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             show: nextProps.show,
         });

@@ -184,7 +184,7 @@ class MapLayer extends React.PureComponent {
         this.create(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             map: oldMap,
             mapStyle: oldMapStyle,
@@ -679,7 +679,7 @@ class MapLayer extends React.PureComponent {
     }
 
     animate = (timestamp) => {
-        // TODO: handle componentWillReceiveProps
+        // TODO: handle UNSAFE_componentWillReceiveProps
         const {
             onAnimationKeyframe,
             map,

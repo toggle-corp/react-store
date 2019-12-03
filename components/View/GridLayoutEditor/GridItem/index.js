@@ -86,7 +86,7 @@ export default class GridItem extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: oldLayoutSelector,
             datum: oldDatum,

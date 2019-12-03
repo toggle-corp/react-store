@@ -122,7 +122,7 @@ class Organigram extends PureComponent {
         this.drawChart();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (value !== nextProps.value) {
             this.setState({

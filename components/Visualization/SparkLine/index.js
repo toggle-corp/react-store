@@ -72,7 +72,7 @@ class SparkLine extends React.PureComponent {
         this.updateRender();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps !== this.props) {
             this.updateRender();
         }

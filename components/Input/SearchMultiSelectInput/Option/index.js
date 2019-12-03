@@ -40,7 +40,7 @@ export default class Option extends React.PureComponent {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { focused } = this.props;
         if (!focused && nextProps.focused) {
             this.scrollToFocus();

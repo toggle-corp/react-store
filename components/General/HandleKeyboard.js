@@ -53,7 +53,7 @@ export default (WrappedComponent) => {
 
         static defaultProps = defaultProps;
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 isOptionsShown: oldIsOptionsShown,
                 options: oldOptions,

@@ -188,7 +188,7 @@ class ForceDirectedGraph extends React.PureComponent {
         });
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: oldData,
             boundingClientRect: oldBoundingClientRect,

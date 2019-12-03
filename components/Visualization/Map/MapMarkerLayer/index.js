@@ -37,7 +37,7 @@ class MapMarkerLayer extends React.PureComponent {
         this.create(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             map: oldMap,
             mapStyle: oldMapStyle,

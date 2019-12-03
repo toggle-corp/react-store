@@ -148,7 +148,7 @@ class ClusteredForceLayout extends PureComponent {
         this.updateData(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { data } = this.props;
         if (nextProps.data !== data) {
             this.updateData(nextProps);

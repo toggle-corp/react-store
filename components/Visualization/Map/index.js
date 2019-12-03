@@ -215,7 +215,7 @@ export default class Map extends React.PureComponent {
         );
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (UNSUPPORTED_BROWSER) {
             return;
         }

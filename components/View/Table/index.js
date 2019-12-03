@@ -160,7 +160,7 @@ export default class Table extends React.PureComponent {
     }
 
     // normal, next, new, state
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: nextData,
             headers: nextHeaders,

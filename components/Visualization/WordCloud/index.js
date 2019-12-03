@@ -97,7 +97,7 @@ class WordCloud extends PureComponent {
         this.startWordCloudComputation(props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         this.startWordCloudComputation(nextProps);
     }
 

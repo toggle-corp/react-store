@@ -71,7 +71,7 @@ export default class Toast extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { notification: nextNotification } = nextProps;
         const { notification: currentNotification } = this.props;
 

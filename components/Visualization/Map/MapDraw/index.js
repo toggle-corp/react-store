@@ -29,7 +29,7 @@ class MapLayer extends React.PureComponent {
         this.attatchEvents(map, this.props, emptyObject, this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             map,
             options,

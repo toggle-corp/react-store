@@ -116,7 +116,7 @@ export default class GeoReferencedMap extends React.PureComponent {
         this.mapResizeTimeout = setTimeout(() => { map.resize(); }, 900);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             geoLocations,
             geoPoints,

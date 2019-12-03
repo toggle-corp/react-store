@@ -141,7 +141,7 @@ export default class RawTable extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: oldData,
             headers: oldHeaders,

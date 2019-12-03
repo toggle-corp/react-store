@@ -41,7 +41,7 @@ export default class Option extends React.PureComponent {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { isFocused } = this.props;
 
         if (!isFocused && nextProps.isFocused) {
