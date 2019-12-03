@@ -43,7 +43,7 @@ export default class GridViewLayout extends React.PureComponent {
         this.data = getSortedItems(data, layoutSelector);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: newLayoutSelector,
             data: newData,

@@ -90,7 +90,7 @@ class SelectInputWithList extends React.PureComponent {
         this.state = { objectValues };
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         const {
             value: newValue,
             options,

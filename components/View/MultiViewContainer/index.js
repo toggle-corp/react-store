@@ -52,7 +52,7 @@ export default class MultiViewContainer extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { useHash: newUseHash } = nextProps;
         const { useHash: oldUseHash } = this.props;
 

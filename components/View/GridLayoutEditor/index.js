@@ -122,7 +122,7 @@ export default class GridLayoutEditor extends React.Component {
         this.layouts = getLayouts(data, keySelector, layoutSelector);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: newLayoutSelector,
             data: newData,

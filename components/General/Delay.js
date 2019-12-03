@@ -31,7 +31,7 @@ export default (WrappedComponent) => {
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             const { value } = this.props;
             if (value !== nextProps.value) {
                 if (!this.pendingChange) {

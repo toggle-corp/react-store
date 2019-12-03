@@ -39,7 +39,7 @@ class DatePicker extends React.PureComponent {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (nextProps.value !== value && nextProps.value) {
             const date = new Date(nextProps.value);

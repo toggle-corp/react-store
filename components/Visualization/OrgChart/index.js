@@ -125,7 +125,7 @@ class OrgChart extends React.PureComponent {
         this.drawChart();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (value !== nextProps.value) {
             const { value: newValue = [] } = nextProps;

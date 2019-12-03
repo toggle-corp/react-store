@@ -110,7 +110,7 @@ class TimeSeries extends React.PureComponent {
         this.updateRender();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (this.props !== nextProps) {
             this.updateRender();
         }

@@ -18,7 +18,7 @@ const findDifferenceInObject = (o, n) => {
 export default function (name) {
     return WrappedComponent => (
         class extends React.PureComponent {
-            componentWillReceiveProps(nextProps) {
+            UNSAFE_componentWillReceiveProps(nextProps) {
                 console.warn(`Received change for Component ${name}`);
                 const changes = findDifferenceInObject(this.props, nextProps);
                 console.info(

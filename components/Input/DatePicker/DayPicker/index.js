@@ -44,7 +44,7 @@ export default class DayPicker extends React.PureComponent {
         this.today = new Date();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             year,
             month,

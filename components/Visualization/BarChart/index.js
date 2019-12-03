@@ -146,7 +146,7 @@ class BarChart extends React.PureComponent {
         this.updateRender();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         // TODO: Is there better way ?
         // TODO: also use nexProps for updateFromProps
         const { data } = nextProps;
