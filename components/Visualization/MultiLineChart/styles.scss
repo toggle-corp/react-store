@@ -1,0 +1,18 @@
+@import '../../../stylesheets/utils';
+
+.multiline {
+    .grid  line,
+    .grid path {
+        stroke: var(--color-axis-path);
+    }
+
+    .y-axis line,
+    .y-axis path {
+        stroke: var(--color-axis-path);
+    }
+
+    .x-axis line,
+    .x-axis path {
+        stroke: var(--color-axis-path);
+    }
+}
