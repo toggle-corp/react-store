@@ -1,8 +1,14 @@
 .highlighted-text {
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     text-align: justify;
     line-height: 2;
     white-space: pre-wrap;
     color: var(--color-text);
     font-family: inherit;
+
+    p {
+        flex-grow: 1;
+    }
 }

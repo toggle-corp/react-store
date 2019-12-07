@@ -204,9 +204,11 @@ export default class HighlightedText extends React.PureComponent {
         );
 
         return (
-            <p className={_cs(className, styles.highlightedText)}>
-                {this.renderSplits(text, nestedSplits)}
-            </p>
+            <div className={_cs(className, styles.highlightedText)}>
+                <p>
+                    {this.renderSplits(text, nestedSplits)}
+                </p>
+            </div>
         );
     }
 }
