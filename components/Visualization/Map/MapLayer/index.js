@@ -433,8 +433,18 @@ class MapLayer extends React.PureComponent {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
+                const {
+                    closeButton,
+                    closeOnClick,
+                    anchor,
+                    offset,
+                    containerClassName: className,
+                    maxWidth,
+                    ...elementParams
+                } = params;
+
                 ReactDOM.render(
-                    React.createElement(Tooltip, params),
+                    React.createElement(Tooltip, elementParams),
                     this.tooltipContainer,
                 );
 
@@ -443,9 +453,19 @@ class MapLayer extends React.PureComponent {
                     this.popup = undefined;
                 }
 
-                this.popup = new mapboxgl.Popup()
+                const popupOptions = {
+                    closeButton,
+                    closeOnClick,
+                    anchor,
+                    offset,
+                    className,
+                    maxWidth,
+                };
+
+                this.popup = new mapboxgl.Popup(popupOptions)
                     .setLngLat(coordinates)
                     .setDOMContent(this.tooltipContainer);
+
                 this.popup.addTo(map);
             }
         };
@@ -557,8 +577,18 @@ class MapLayer extends React.PureComponent {
                 const Tooltip = tooltipRenderer;
                 const params = tooltipRendererParams(id, properties);
 
+                const {
+                    closeButton,
+                    closeOnClick,
+                    anchor,
+                    offset,
+                    containerClassName: className,
+                    maxWidth,
+                    ...elementParams
+                } = params;
+
                 ReactDOM.render(
-                    React.createElement(Tooltip, params),
+                    React.createElement(Tooltip, elementParams),
                     this.tooltipContainer,
                 );
 
@@ -567,7 +597,16 @@ class MapLayer extends React.PureComponent {
                     this.popup = undefined;
                 }
 
-                this.popup = new mapboxgl.Popup()
+                const popupOptions = {
+                    closeButton,
+                    closeOnClick,
+                    anchor,
+                    offset,
+                    className,
+                    maxWidth,
+                };
+
+                this.popup = new mapboxgl.Popup(popupOptions)
                     .setLngLat(coordinates)
                     .setDOMContent(this.tooltipContainer);
                 this.popup.addTo(map);
