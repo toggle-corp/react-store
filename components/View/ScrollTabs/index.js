@@ -30,6 +30,8 @@ const propTypes = {
 
     inverted: PropTypes.bool,
     disabled: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    disabledTabs: PropTypes.array,
     showBeforeTabs: PropTypes.bool,
     onHashChange: PropTypes.func,
 };
@@ -45,6 +47,7 @@ const defaultProps = {
     onClick: () => {},
     replaceHistory: false,
     tabs: {},
+    disabledTabs: [],
     useHash: false,
 
     renderer: undefined,
@@ -101,30 +104,27 @@ export default class ScrollTabs extends React.Component {
         return classNames.join(' ');
     }
 
-    getTabClassName = (isActive, isBasic) => {
+    getTabClassName = ({
+        isActive,
+        isBasic,
+        isDisabled,
+    }) => {
         const {
             itemClassName,
             activeClassName,
         } = this.props;
 
-        const classNames = [
+        return _cs(
             itemClassName,
             styles.tab,
             'scroll-tab',
-        ];
-        if (isBasic) {
-            classNames.push(styles.basicTab);
-        } else {
-            classNames.push(styles.tab);
-        }
-
-        if (isActive) {
-            classNames.push(styles.active);
-            classNames.push('active');
-            classNames.push(activeClassName);
-        }
-
-        return classNames.join(' ');
+            isBasic && styles.basicTab,
+            !isBasic && styles.tab,
+            isActive && styles.active,
+            isActive && 'active',
+            isActive && activeClassName,
+            isDisabled && styles.disabledLink,
+        );
     }
 
     handleHashChange = (hash) => {
@@ -173,6 +173,7 @@ export default class ScrollTabs extends React.Component {
             rendererClassName,
             rendererParams,
             disabled,
+            disabledTabs,
         } = this.props;
 
         if (!tabs[data]) {
@@ -185,25 +186,34 @@ export default class ScrollTabs extends React.Component {
 
         const onClick = this.handleTabClick(data);
         // const otherContent = modifier ? modifier(data, tabs[data], index) : tabs[data];
+        const isTabDisabled = disabled || disabledTabs.includes(data);
 
         if (!useHash) {
             const isActive = data === String(active);
 
             if (Renderer) {
-                const className = this.getTabClassName(isActive, true);
+                const className = this.getTabClassName({
+                    isActive,
+                    isBasic: true,
+                    isDisabled: isTabDisabled,
+                });
+
                 return (
                     <Renderer
                         key={data}
                         className={_cs(rendererClassName, className)}
                         isActive={isActive}
                         onClick={onClick}
-                        disabled={disabled}
+                        disabled={isTabDisabled}
                         {...extraProps}
                     />
                 );
             }
 
-            const className = this.getTabClassName(isActive);
+            const className = this.getTabClassName({
+                isActive,
+                isDisabled: isTabDisabled,
+            });
             return (
                 <button
                     key={data}
@@ -211,7 +221,7 @@ export default class ScrollTabs extends React.Component {
                     onClick={onClick}
                     tabIndex="-1"
                     type="button"
-                    disabled={disabled}
+                    disabled={isTabDisabled}
                 >
                     {tabs[data]}
                 </button>
@@ -223,7 +233,11 @@ export default class ScrollTabs extends React.Component {
         const isActive = hash === data;
 
         if (Renderer) {
-            const className = this.getTabClassName(isActive, true);
+            const className = this.getTabClassName({
+                isActive,
+                isBasic: true,
+                isDisabled: isTabDisabled,
+            });
             return (
                 <Renderer
                     key={data}
@@ -231,17 +245,32 @@ export default class ScrollTabs extends React.Component {
                     isActive={isActive}
                     href={`#/${data}`}
                     onClick={onClick}
-                    disabled={disabled}
+                    disabled={isTabDisabled}
                     {...extraProps}
                 />
             );
         }
 
-        const className = this.getTabClassName(isActive);
+        const className = this.getTabClassName({
+            isActive,
+            isDisabled: isTabDisabled,
+        });
+
+        if (isTabDisabled) {
+            return (
+                <div
+                    key={data}
+                    className={className}
+                >
+                    { tabs[data] }
+                </div>
+            );
+        }
+
         return (
             <a
                 key={data}
-                className={_cs(className, disabled && styles.disabledLink)}
+                className={className}
                 onClick={onClick}
                 href={`#/${data}`}
             >

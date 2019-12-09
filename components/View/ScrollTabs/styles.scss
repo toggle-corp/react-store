@@ -43,6 +43,15 @@
                 background-color: var(--color-background-hover);
                 color: var(--color-navbar-menu-item-hover);
             }
+
+            &.disabled-link {
+                cursor: not-allowed;
+
+                &:hover {
+                    background-color: var(--color-background-hover);
+                    color: var(--color-text-disabled);
+                }
+            }
         }
 
         .basic-tab {
@@ -63,11 +72,6 @@
             align-self: stretch;
             flex-grow: 1;
             justify-content: flex-end;
-        }
-
-        .disabled-link {
-            pointer-events: none;
-            cursor: default;
         }
     }
 
