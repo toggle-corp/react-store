@@ -2,13 +2,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--color-accent);
 
     .svg {
         animation: rotate calc(2 * var(--duration-relaxed)) linear infinite;
+        color: currentColor;
 
         .path {
             animation: dash calc(2 * var(--duration-super-slow)) ease-in-out infinite;
-            stroke: var(--color-accent);
+            stroke: currentColor;
             fill: none;
             stroke-linecap: round;
         }

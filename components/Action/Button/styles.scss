@@ -44,11 +44,6 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
 
-    .pending-icon {
-        animation: spin 1s linear infinite;
-        font-size: inherit;
-    }
-
     &:not(:disabled) {
         cursor: pointer;
     }
@@ -147,6 +142,13 @@
             color: var(--color-text-disabled);
         }
 
+    }
+
+    .spinner {
+        display: inline-flex;
+        margin-right: var(--spacing-small);
+        vertical-align: middle;
+        color: var(--color-text);
     }
 
     &.with-icon-and-children {
