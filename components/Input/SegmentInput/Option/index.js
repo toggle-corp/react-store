@@ -65,13 +65,24 @@ export default class SegmentOption extends React.PureComponent {
             renderer: Renderer,
             rendererClassName,
             rendererParams,
+            activeClassName,
+            className,
         } = this.props;
 
+        const extraProps = rendererParams ? rendererParams(id, datum, index, data) : undefined;
+        const {
+            containerClassName,
+            ...otherProps
+        } = extraProps;
+
         const classNames = _cs(
+            className,
+            containerClassName,
             'segment-option',
             styles.segmentOption,
             checked && 'checked',
             checked && styles.checked,
+            checked && activeClassName,
             readOnly && 'read-only',
             readOnly && styles.readOnly,
             disabled && 'disabled',
@@ -79,8 +90,6 @@ export default class SegmentOption extends React.PureComponent {
             !isFalsy(error, ['']) && 'error',
             !isFalsy(error, ['']) && styles.error,
         );
-
-        const extraProps = rendererParams ? rendererParams(id, datum, index, data) : undefined;
 
         return (
             <label
@@ -99,7 +108,7 @@ export default class SegmentOption extends React.PureComponent {
                 { Renderer ? (
                     <Renderer
                         className={rendererClassName}
-                        {...extraProps}
+                        {...otherProps}
                     />
                 ) : (
                     label
