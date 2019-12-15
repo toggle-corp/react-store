@@ -56,6 +56,7 @@ const propTypes = {
 
     renderer: PropTypes.func,
     rendererClassName: PropTypes.string,
+    activeClassName: PropTypes.string,
     rendererParams: PropTypes.func,
 
     value: PropTypes.oneOfType([
@@ -83,6 +84,7 @@ const defaultProps = {
     showHintAndError: true,
     renderer: undefined,
     rendererClassName: '',
+    activeClassName: undefined,
     rendererParams: undefined,
     value: '',
     name: '',
@@ -154,6 +156,7 @@ class SegmentInput extends React.PureComponent {
             disabled,
             itemClassName,
             rendererParams,
+            activeClassName,
             rendererClassName,
         } = this.props;
 
@@ -169,6 +172,7 @@ class SegmentInput extends React.PureComponent {
             renderer,
             className: itemClassName,
             rendererParams,
+            activeClassName,
             rendererClassName,
             datum,
             index,
