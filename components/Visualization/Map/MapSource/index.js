@@ -22,6 +22,7 @@ const propTypes = {
     geoJson: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     url: PropTypes.string,
+    rasterTiles: PropTypes.arrayOf(PropTypes.string),
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
     boundsPadding: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
@@ -41,6 +42,7 @@ const defaultProps = {
     images: undefined,
     geoJson: undefined,
     url: undefined,
+    rasterTiles: undefined,
 };
 
 class MapSource extends React.PureComponent {
@@ -140,6 +142,7 @@ class MapSource extends React.PureComponent {
             sourceKey,
             geoJson,
             url,
+            rasterTiles,
             onSourceAdded,
             bounds,
             boundsPadding,
@@ -174,6 +177,9 @@ class MapSource extends React.PureComponent {
         } else if (url) {
             properties.type = 'vector';
             properties.url = url;
+        } else if (rasterTiles) {
+            properties.type = 'raster';
+            properties.tiles = rasterTiles;
         }
 
         if (cluster) {
