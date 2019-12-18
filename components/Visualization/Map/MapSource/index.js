@@ -22,6 +22,7 @@ const propTypes = {
     geoJson: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     url: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     rasterTiles: PropTypes.arrayOf(PropTypes.string),
     mapStyle: PropTypes.string.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.number),
@@ -180,6 +181,7 @@ class MapSource extends React.PureComponent {
         } else if (rasterTiles) {
             properties.type = 'raster';
             properties.tiles = rasterTiles;
+            properties.tileSize = 256;
         }
 
         if (cluster) {
