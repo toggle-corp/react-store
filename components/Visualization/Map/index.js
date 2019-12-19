@@ -99,6 +99,14 @@ const defaultProps = {
     // maxBounds: DEFAULT_MAX_BOUNDS,
 };
 
+const orderMapLayers = (map, layerIdList) => {
+    for (let i = 0; i < layerIdList.length - 1; i += 1) {
+        if (map.getLayer(layerIdList[i]) && map.getLayer(layerIdList[i + 1])) {
+            map.moveLayer(layerIdList[i], layerIdList[i + 1]);
+        }
+    }
+};
+
 export default class Map extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -225,6 +233,7 @@ export default class Map extends React.PureComponent {
         const {
             bounds: oldBounds,
             mapStyle: oldMapStyle,
+            layerOrder: oldLayerOrder,
         } = this.props;
 
         const {
@@ -232,6 +241,7 @@ export default class Map extends React.PureComponent {
             mapStyle: newMapStyle,
             boundsPadding,
             fitBoundsDuration,
+            layerOrder,
         } = nextProps;
 
         if (oldMapStyle !== newMapStyle && newMapStyle && map) {
@@ -240,8 +250,13 @@ export default class Map extends React.PureComponent {
             map.setStyle(newMapStyle);
             return;
         }
+
         if (oldBounds !== newBounds) {
             this.handleBoundChange(map, newBounds, boundsPadding, fitBoundsDuration);
+        }
+
+        if (oldLayerOrder !== layerOrder) {
+            orderMapLayers(map, layerOrder);
         }
     }
 
