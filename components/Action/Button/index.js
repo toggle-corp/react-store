@@ -3,6 +3,7 @@ import React from 'react';
 import { resolve, _cs } from '@togglecorp/fujs';
 import { FaramActionElement } from '@togglecorp/faram';
 
+import Spinner from '../../../v2/View/Spinner';
 import Icon from '../../General/Icon';
 
 /*
@@ -158,10 +159,12 @@ class Button extends React.PureComponent {
             buttonType && styles[buttonType],
             iconName && children && 'with-icon-and-children',
             iconName && children && styles.withIconAndChildren,
+
             smallHorizontalPadding && 'small-horizontal-padding',
             smallHorizontalPadding && styles.smallHorizontalPadding,
             smallVerticalPadding && 'small-vertical-padding',
             smallVerticalPadding && styles.smallVerticalPadding,
+
             transparent && 'transparent',
             transparent && styles.transparent,
         );
@@ -169,7 +172,7 @@ class Button extends React.PureComponent {
         const iconClassName = _cs(
             'icon',
             styles.icon,
-            pending && styles.pendingIcon,
+            // pending && styles.pendingIcon,
         );
 
         return (
@@ -181,10 +184,17 @@ class Button extends React.PureComponent {
                 type={type}
                 {...otherProps}
             >
-                <Icon
-                    name={pending ? 'spinner' : iconName}
-                    className={iconClassName}
-                />
+                {pending ? (
+                    <Spinner
+                        className={styles.spinner}
+                        size="small"
+                    />
+                ) : (
+                    <Icon
+                        name={iconName}
+                        className={iconClassName}
+                    />
+                )}
                 { children }
             </button>
         );

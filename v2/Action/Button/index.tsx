@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import Spinner from '../../View/Spinner';
 import Icon from '../../../components/General/Icon';
 
 /*
@@ -96,7 +97,6 @@ function Button<T>(props: Props<T>) {
     const iconClassName = _cs(
         'icon',
         styles.icon,
-        pending && styles.pendingIcon,
     );
 
     return (
@@ -108,10 +108,17 @@ function Button<T>(props: Props<T>) {
             type={type}
             {...otherProps}
         >
-            <Icon
-                name={pending ? 'spinner' : iconName}
-                className={iconClassName}
-            />
+            {pending ? (
+                <Spinner
+                    className={styles.spinner}
+                    size="small"
+                />
+            ) : (
+                <Icon
+                    name={iconName}
+                    className={iconClassName}
+                />
+            )}
             { children }
         </button>
     );
