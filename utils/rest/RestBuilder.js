@@ -1,8 +1,4 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
-
-import RestRequest from './RestRequest';
+import { RestRequest } from '@togglecorp/react-rest-request';
 
 /* Builder class for RestRequest */
 export default class RestBuilder {
@@ -17,17 +13,17 @@ export default class RestBuilder {
     }
 
     success(fn) {
-        this.successFn = fn;
+        this.successFn = (key, ...props) => fn(...props);
         return this;
     }
 
     failure(fn) {
-        this.failureFn = fn;
+        this.failureFn = (key, ...props) => fn(...props);
         return this;
     }
 
     fatal(fn) {
-        this.fatalFn = fn;
+        this.fatalFn = (key, ...props) => fn(...props);
         return this;
     }
 
@@ -76,15 +72,19 @@ export default class RestBuilder {
         return this;
     }
 
+    /*
     decay(val) {
         this.decayVal = val;
         return this;
     }
+    */
 
+    /*
     maxRetryTime(val) {
         this.maxRetryTimeVal = val;
         return this;
     }
+    */
 
     delay(val) {
         this.delayVal = val;
@@ -92,35 +92,42 @@ export default class RestBuilder {
     }
 
     build() {
-        return new RestRequest(
-            this.urlValue,
-            this.paramsValue,
-            this.successFn,
-            this.failureFn,
-            this.fatalFn,
-            this.abortFn,
-            this.preLoadFn,
-            this.postLoadFn,
-            this.afterLoadFn,
-            this.retryTimeVal,
-            this.maxRetryTimeVal,
-            this.decayVal,
-            this.maxRetryAttemptsVal,
-            this.pollTimeVal,
-            this.maxPollAttemptsVal,
-            this.shouldPollFn,
-            this.delayVal,
-        );
+        return new RestRequest({
+            key: 'unknown',
+            url: this.urlValue,
+            params: this.paramsValue,
+
+            delay: this.delayVal,
+
+            shouldPoll: this.shouldPollFn,
+            pollTime: this.pollTimeVal,
+            maxPollAttempts: this.maxPollAttemptsVal,
+
+            onSuccess: this.successFn,
+            onFailure: this.failureFn,
+            onFatal: this.fatalFn,
+            onAbort: this.abortFn,
+            onPreLoad: this.preLoadFn,
+            onPostLoad: this.postLoadFn,
+            onAfterLoad: this.afterLoadFn,
+
+            // shouldRetry, (new)
+            retryTime: this.retryTimeVal,
+            maxRetryAttemptsVal: this.maxRetryAttemptsVal,
+
+            // this.maxRetryTimeVal, (obsolete)
+            // this.decayVal, (obsolete)
+        });
     }
 }
 
 export class BgRestBuilder extends RestBuilder {
     constructor() {
         super();
-        this.delayVal = 200; // ms
+        this.delayVal = 100; // ms
 
-        this.decayVal = 0.3;
-        this.maxRetryTimeVal = 3000;
+        // this.decayVal = 0.3;
+        // this.maxRetryTimeVal = 3000;
     }
 }
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-import { RestRequest } from '../../utils/rest';
+import { parseUrlParams } from '@togglecorp/react-rest-request';
 
 const propTypes = {
     /*
@@ -64,7 +64,7 @@ export default class PrivateRoute extends React.PureComponent {
                 // and redirect to `next` if there is.
 
                 const searchString = from.search.replace('?', '');
-                const queryParams = RestRequest.parseUrlParams(searchString);
+                const queryParams = parseUrlParams(searchString);
                 if (queryParams.next) {
                     const params = {
                         pathname: queryParams.next,
