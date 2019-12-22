@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFalsy } from '@togglecorp/fujs';
+import { _cs, listToMap } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import MultiSelectInput from '../MultiSelectInput';
 import SearchMultiSelectInput from '../SearchMultiSelectInput';
@@ -46,10 +47,13 @@ const propTypes = {
             label: PropTypes.string,
         }),
     ),
-    topRightChild: PropTypes.func,
+    topRightChild: PropTypes.node,
 
     emptyComponent: PropTypes.func,
     maxDisplayOptions: PropTypes.number,
+
+    hideList: PropTypes.bool,
+    hideInput: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -69,72 +73,24 @@ const defaultProps = {
     readOnly: false,
     emptyComponent: undefined,
     maxDisplayOptions: undefined,
+
+    hideList: false,
+    hideInput: false,
 };
 
-const emptyList = [];
-
-class SelectInputWithList extends React.PureComponent {
+class MultiSelectInputWithList extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-        const {
-            options,
+    getObjectFromValue = memoize((options, value, keySelector) => {
+        const valueMapping = listToMap(
             value,
-        } = this.props;
-
-        const objectValues = this.getObjectFromValue(options, value);
-
-        this.state = { objectValues };
-    }
-
-    UNSAFE_componentWillReceiveProps(newProps) {
-        const {
-            value: newValue,
-            options,
-        } = newProps;
-
-        const { value: oldValue } = this.props;
-
-        if (newValue !== oldValue) {
-            const objectValues = this.getObjectFromValue(options, newValue);
-            this.setState({ objectValues });
-        }
-    }
-
-    getObjectFromValue = (options = emptyList, value) => {
-        const { keySelector } = this.props;
-        return options.filter(d => (
-            value.indexOf(keySelector(d)) !== -1
-        ));
-    }
-
-    getClassName = () => {
-        const {
-            className,
-            disabled,
-        } = this.props;
-        const { error } = this.state;
-
-        const classNames = [
-            className,
-            styles.selectInputWithList,
-            'select-input-with-list',
-        ];
-
-        if (!isFalsy(error, [''])) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-        }
-
-        return classNames.join(' ');
-    }
+            v => v,
+            () => true,
+        );
+        return options.filter(d => !!valueMapping[keySelector(d)]);
+    })
 
     getListItemParams = (key, datum) => {
         const {
@@ -167,13 +123,7 @@ class SelectInputWithList extends React.PureComponent {
     }
 
     handleSelectInputChange = (values) => {
-        const {
-            onChange,
-            options,
-        } = this.props;
-
-        const objectValues = this.getObjectFromValue(options, values);
-        this.setState({ objectValues });
+        const { onChange } = this.props;
 
         if (onChange) {
             onChange(values);
@@ -182,69 +132,62 @@ class SelectInputWithList extends React.PureComponent {
 
     render() {
         const {
-            className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            className: classNameFromProps,
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             disabled,
             keySelector,
             label,
             labelSelector,
-            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             readOnly,
             options,
             value,
-            selectClassName,
+            selectClassName: selectClassNameFromProps,
             listProps,
             emptyComponent,
-            listClassName,
-            topRightChild: TopRightChild,
+            listClassName: listClassNameFromProps,
+            topRightChild,
             hideRemoveFromListButton,
+            hideList,
+            hideInput,
             maxDisplayOptions,
 
             ...otherProps
         } = this.props;
 
-        const { objectValues } = this.state;
 
-        const listClassNames = [
-            listClassName,
+        const className = _cs(
+            classNameFromProps,
+            styles.selectInputWithList,
+            'select-input-with-list',
+            disabled && styles.disabled,
+        );
+
+        const listClassName = _cs(
+            listClassNameFromProps,
             styles.list,
             'list',
-        ];
+        );
 
-        const selectClassNames = [
-            selectClassName,
+        const selectClassName = _cs(
+            selectClassNameFromProps,
             styles.input,
             'select',
-        ];
+        );
 
-        if (TopRightChild) {
-            selectClassNames.push(styles.hasTopRightChild);
-        }
+        const Item = (hideRemoveFromListButton || readOnly || disabled)
+            ? ListItem
+            : DismissableListItem;
 
-        const Item = (
-            hideRemoveFromListButton
-            || readOnly
-            || disabled
-        ) ? ListItem : DismissableListItem;
+        const Input = (maxDisplayOptions === undefined)
+            ? MultiSelectInput
+            : SearchMultiSelectInput;
 
         return (
-            <div className={this.getClassName()}>
+            <div className={className}>
                 <div className={styles.headerContainer}>
-                    { maxDisplayOptions === undefined ? (
-                        <MultiSelectInput
-                            className={selectClassNames.join(' ')}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            keySelector={keySelector}
-                            label={label}
-                            labelSelector={labelSelector}
-                            onChange={this.handleSelectInputChange}
-                            options={options}
-                            value={value}
-                            {...otherProps}
-                        />
-                    ) : (
-                        <SearchMultiSelectInput
-                            className={selectClassNames.join(' ')}
+                    {!hideInput && (
+                        <Input
+                            className={selectClassName}
                             disabled={disabled}
                             readOnly={readOnly}
                             keySelector={keySelector}
@@ -257,20 +200,22 @@ class SelectInputWithList extends React.PureComponent {
                             {...otherProps}
                         />
                     )}
-                    {TopRightChild && <TopRightChild />}
+                    {topRightChild}
                 </div>
-                <ListView
-                    className={listClassNames.join(' ')}
-                    data={objectValues}
-                    renderer={Item}
-                    rendererParams={this.getListItemParams}
-                    keySelector={keySelector}
-                    emptyComponent={emptyComponent}
-                    {...listProps}
-                />
+                {!hideList && (
+                    <ListView
+                        className={listClassName}
+                        data={this.getObjectFromValue(options, value, keySelector)}
+                        renderer={Item}
+                        rendererParams={this.getListItemParams}
+                        keySelector={keySelector}
+                        emptyComponent={emptyComponent}
+                        {...listProps}
+                    />
+                )}
             </div>
         );
     }
 }
 
-export default FaramInputElement(SelectInputWithList);
+export default FaramInputElement(MultiSelectInputWithList);
