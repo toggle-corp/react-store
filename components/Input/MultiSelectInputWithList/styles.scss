@@ -23,10 +23,6 @@
         }
     }
 
-    &.error {
-        border-bottom-color: var(--color-danger);
-    }
-
     &.disabled {
         .list {
             .list-item {
