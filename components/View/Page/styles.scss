@@ -82,3 +82,51 @@
         }
     }
 }
+
+.page-with-header-above-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small) var(--spacing-medium);
+        color: var(--color-text-on-background-header)
+    }
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        overflow: auto;
+
+        .sidebar {
+            flex-basis: var(--width-sidebar);
+            flex-grow: 0;
+            flex-shrink: 0;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            color: var(--color-text-on-foreground);
+        }
+
+        .main-content {
+            position: relative;
+            flex-grow: 1;
+            margin: var(--page-margin);
+            border: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground-alt);
+            overflow: auto;
+            color: var(--color-text-on-foreground-alt)
+        }
+
+        .footer {
+            flex-shrink: 0;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-medium);
+            color: var(--color-text-on-foreground);
+        }
+    }
+}
