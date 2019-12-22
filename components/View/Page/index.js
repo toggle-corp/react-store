@@ -15,9 +15,11 @@ const propTypes = {
     sidebar: PropTypes.node,
     footer: PropTypes.node,
     containerRef: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    headerAboveSidebar: PropTypes.bool,
 };
 
 const defaultProps = {
+    headerAboveSidebar: false,
     className: '',
     headerClassName: '',
     mainContentClassName: '',
@@ -47,9 +49,38 @@ export default class Page extends React.PureComponent {
             footer,
             footerClassName,
             containerRef,
+            headerAboveSidebar,
         } = this.props;
 
         if (sidebar) {
+            if (headerAboveSidebar) {
+                return (
+                    <div
+                        className={_cs(className, styles.pageWithHeaderAboveSidebar)}
+                        ref={containerRef}
+                    >
+                        <header className={_cs(headerClassName, styles.header)}>
+                            { header }
+                        </header>
+                        <div className={styles.content}>
+                            <aside className={_cs(sidebarClassName, styles.sidebar)}>
+                                { sidebar }
+                            </aside>
+                            { mainContent && (
+                                <main className={_cs(mainContentClassName, styles.mainContent)}>
+                                    { mainContent }
+                                </main>
+                            )}
+                            { footer && (
+                                <footer className={_cs(footerClassName, styles.footer)}>
+                                    { footer }
+                                </footer>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div
                     className={_cs(className, styles.pageWithSidebar)}
