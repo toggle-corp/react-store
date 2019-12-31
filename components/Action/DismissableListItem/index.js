@@ -10,7 +10,7 @@ const propTypes = {
     className: PropTypes.string,
     onDismiss: PropTypes.func,
     onEdit: PropTypes.func,
-    itemKey: PropTypes.string,
+    itemKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     disabled: PropTypes.bool,
 };
 

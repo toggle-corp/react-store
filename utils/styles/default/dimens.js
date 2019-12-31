@@ -119,6 +119,8 @@ const fontSizeLoadingIconSmall = '16px';
 const fontSizeLoadingIconMedium = '24px';
 const fontSizeLoadingIconLarge = '32px';
 
+const widthMarkerRadius = '8px';
+
 const pageMargin = '8px';
 
 const dimens = {
@@ -241,6 +243,8 @@ const dimens = {
     fontSizeLoadingIconSmall,
     fontSizeLoadingIconMedium,
     fontSizeLoadingIconLarge,
+
+    widthMarkerRadius,
 
     pageMargin,
 };

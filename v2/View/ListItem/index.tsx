@@ -5,15 +5,15 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    marker: string;
+    color: string;
     value: string;
 }
 
 function ListItem(props: Props) {
     const {
         value,
-        marker,
         className: classNameFromProps,
+        color,
     } = props;
 
     const className = _cs(
@@ -21,11 +21,16 @@ function ListItem(props: Props) {
         styles.listItem,
     );
 
+    const style = {
+        backgroundColor: color,
+    };
+
     return (
         <div className={className}>
-            <div className={styles.marker}>
-                { marker }
-            </div>
+            <div
+                style={style}
+                className={styles.marker}
+            />
             <div className={styles.label}>
                 { value }
             </div>
@@ -33,7 +38,7 @@ function ListItem(props: Props) {
     );
 }
 ListItem.defaultProps = {
-    marker: '•',
+    color: '#dddddd',
 };
 
 export default ListItem;
