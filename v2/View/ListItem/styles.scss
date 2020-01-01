@@ -5,7 +5,10 @@
     .marker {
         align-self: flex-start;
         flex-shrink: 0;
-        padding-right: var(--spacing-small);
+        margin: var(--spacing-extra-small) var(--spacing-small);
+        border-radius: 50%;
+        width: var(--width-marker-radius);
+        height: var(--width-marker-radius);
     }
 
     .label {
