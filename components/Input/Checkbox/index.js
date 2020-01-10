@@ -61,7 +61,7 @@ class Checkbox extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.inputId = randomString();
+        this.inputId = randomString(16);
     }
 
     handleInputChange = (e) => {

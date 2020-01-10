@@ -96,7 +96,7 @@ export default class Taebul extends React.Component {
             scrollLeft: 0,
         };
 
-        const rand = randomString();
+        const rand = randomString(16);
         this.localContainerId = `taebul-container-${rand}`;
         this.localHeadId = `taebul-head-${rand}`;
         this.localBodyId = `taebul-body-${rand}`;

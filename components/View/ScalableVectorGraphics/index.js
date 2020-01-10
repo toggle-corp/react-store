@@ -46,7 +46,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.id = randomString();
+        this.id = randomString(16);
     }
 
     componentDidMount() {
