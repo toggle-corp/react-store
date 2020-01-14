@@ -32,7 +32,7 @@ const modalize = (WrappedButtonComponent) => {
             };
 
             this.wrappedButtonRef = React.createRef();
-            this.wrappedButtonClassName = randomString();
+            this.wrappedButtonClassName = randomString(16);
             this.setBCRTimeout = undefined;
             // this.wrappedButtonBCR = undefined;
         }

@@ -1,0 +1,14 @@
+.drop-zone {
+    position: relative;
+
+    .hover-children {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        border: var(--width-separator-medium) dashed var(--color-separator);
+        background-color: var(--color-foreground-alt);
+        width: 100%;
+        height: 100%;
+    }
+}

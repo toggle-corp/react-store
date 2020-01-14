@@ -74,7 +74,7 @@ export default class FileInput extends React.PureComponent {
             preview: undefined,
         };
 
-        this.inputId = randomString();
+        this.inputId = randomString(16);
     }
 
     handleChange = (e) => {

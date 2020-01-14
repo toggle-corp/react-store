@@ -93,7 +93,7 @@ export class NormalTextArea extends React.PureComponent {
         super(props);
 
         this.state = { isFocused: false };
-        this.inputId = randomString();
+        this.inputId = randomString(16);
     }
 
     getClassName() {

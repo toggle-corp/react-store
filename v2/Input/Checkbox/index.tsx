@@ -31,7 +31,7 @@ const Checkbox = (props: Props) => {
     } = props;
 
     const inputId = useMemo(
-        () => randomString(),
+        () => randomString(16),
         [],
     );
 

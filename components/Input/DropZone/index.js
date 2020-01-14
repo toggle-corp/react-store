@@ -23,7 +23,7 @@ const defaultProps = {
     disabled: false,
 };
 
-export default class DropZone extends React.PureComponent {
+export default class DropZone extends React.Component {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;

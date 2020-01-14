@@ -76,7 +76,7 @@ class ColorInput extends React.PureComponent {
             showColorPicker: false,
         };
 
-        this.inputId = randomString();
+        this.inputId = randomString(16);
         this.boundingClientRect = {};
     }
 

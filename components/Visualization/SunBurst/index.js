@@ -309,7 +309,7 @@ class SunBurst extends PureComponent {
         }
 
         this.init();
-        const uniqueId = randomString();
+        const uniqueId = randomString(16);
 
         const {
             width,

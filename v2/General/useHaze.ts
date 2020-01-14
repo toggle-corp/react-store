@@ -39,7 +39,7 @@ function refreshLastModalStatus(modals: NodeListOf<Element> | Element[]) {
 
 function useHaze(className?: string, enabled?: boolean) {
     const uniqueId = useMemo(
-        () => randomString(),
+        () => randomString(16),
         [],
     );
 
