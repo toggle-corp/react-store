@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SketchPicker } from 'react-color';
 
-import { randomString } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import { calcFloatingPositionInMainWindow } from '../../../utils/common';
@@ -37,12 +40,12 @@ const propTypes = {
     /**
      * A callback for when the input changes its content
      */
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
 
     /**
      * label for the checkbox
      */
-    label: PropTypes.node.isRequired,
+    label: PropTypes.node,
 
     showLabel: PropTypes.bool,
 
@@ -57,12 +60,14 @@ const defaultProps = {
     className: '',
     showLabel: true,
     value: undefined,
+    label: undefined,
     error: '',
     hint: '',
     showHintAndError: true,
     disabled: false,
     readOnly: false,
     persistentHintAndError: true,
+    onChange: undefined,
 };
 
 class ColorInput extends React.PureComponent {
@@ -105,7 +110,10 @@ class ColorInput extends React.PureComponent {
 
     handleInputChange = (e) => {
         const value = e.target.checked;
-        this.props.onChange(value);
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(value);
+        }
     }
 
     handleColorBoxClick = () => {
@@ -142,24 +150,14 @@ class ColorInput extends React.PureComponent {
         } = this.props;
 
         const { showColorPicker } = this.state;
-        const buttonClassNames = [
-            styles.colorBox,
-            'color-box',
-        ];
-
-        const classNames = [
-            styles.colorInput,
-            className,
-        ];
-
-        if (disabled) {
-            buttonClassNames.push(styles.disabled);
-            classNames.push(styles.disabled);
-        }
 
         return (
             <div
-                className={classNames.join(' ')}
+                className={_cs(
+                    styles.colorInput,
+                    className,
+                    disabled && styles.disabled,
+                )}
                 ref={(el) => { this.container = el; }}
             >
                 <Label
@@ -169,12 +167,17 @@ class ColorInput extends React.PureComponent {
                 />
                 <button
                     type="button"
-                    className={buttonClassNames.join(' ')}
+                    className={_cs(
+                        styles.colorBox,
+                        'color-box',
+                        disabled && styles.disabled,
+                        readOnly && styles.readOnly,
+                    )}
                     onClick={this.handleColorBoxClick}
                     disabled={disabled || readOnly}
                 >
                     <span
-                        className={`${styles.color} color`}
+                        className={_cs(styles.color, 'color')}
                         style={{ backgroundColor: value }}
                     />
                 </button>
