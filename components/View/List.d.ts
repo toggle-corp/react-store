@@ -28,6 +28,7 @@ interface Props<T, Q, R> {
     rendererClassName?: string;
     rendererParams?: (key: R, data: T, index: number) => Q;
     renderer?: React.ComponentType<Q> | ((props: Q) => React.ReactNode);
+    pending?: boolean;
 }
 
 export type ListProps<T, Q, R> = (Props<T, Q, R> | AnotherProps<T, Q, R>) & ExternalProps;
