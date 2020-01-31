@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { SortableElement } from 'react-sortable-hoc';
+import { _cs } from '@togglecorp/fujs';
 
 import ItemDrag from './ItemDrag';
 import styles from './styles.scss';
@@ -8,7 +9,10 @@ import styles from './styles.scss';
 const propTypes = {
     data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     dataIndex: PropTypes.number.isRequired,
-    dataKey: PropTypes.string.isRequired,
+    dataKey: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]).isRequired,
 
     showDragHandle: PropTypes.bool,
     dragIconPosition: PropTypes.string,
@@ -65,7 +69,7 @@ export default class ListItem extends React.Component {
             />
         );
 
-        const className = `${styles.sortableItem} ${classNameFromProps} sortable-item`;
+        const className = _cs(styles.sortableItem, classNameFromProps, 'sortable-item');
 
         // FIXME: fourth argument to rendererParams is not available
         const extraProps = rendererParams ? rendererParams(dataKey, data, dataIndex) : undefined;
