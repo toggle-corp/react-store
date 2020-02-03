@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { SketchPicker } from 'react-color';
+import {
+    SketchPicker,
+    TwitterPicker,
+} from 'react-color';
 
 import {
     _cs,
@@ -54,6 +57,8 @@ const propTypes = {
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     persistentHintAndError: PropTypes.bool,
+    type: PropTypes.string,
+    colors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -68,6 +73,20 @@ const defaultProps = {
     readOnly: false,
     persistentHintAndError: true,
     onChange: undefined,
+    // normal | palette
+    type: 'normal',
+    colors: [
+        '#ff6900',
+        '#fcb900',
+        '#7bdcb5',
+        '#00d084',
+        '#8ed1fc',
+        '#0693e3',
+        '#795548',
+        '#eb144c',
+        '#f78da7',
+        '#9900ef',
+    ],
 };
 
 class ColorInput extends React.PureComponent {
@@ -147,9 +166,16 @@ class ColorInput extends React.PureComponent {
             disabled,
             readOnly,
             persistentHintAndError,
+            type,
+            colors,
         } = this.props;
 
         const { showColorPicker } = this.state;
+
+        let Picker = SketchPicker;
+        if (type === 'palette') {
+            Picker = TwitterPicker;
+        }
 
         return (
             <div
@@ -196,9 +222,10 @@ class ColorInput extends React.PureComponent {
                             focusTrap
                             showHaze
                         >
-                            <SketchPicker
+                            <Picker
                                 color={value}
                                 onChange={this.handleColorChange}
+                                colors={colors}
                             />
                         </FloatingContainer>
                     )
