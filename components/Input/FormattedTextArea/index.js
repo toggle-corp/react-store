@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { formatPdfText } from '@togglecorp/fujs';
+import {
+    _cs,
+    formatPdfText,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '../../Action/Button/AccentButton';
@@ -59,7 +62,7 @@ class FormattedTextArea extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${className} ${styles.formattedText}`}>
+            <div className={_cs(className, styles.formattedText)}>
                 <TextArea
                     {...otherProps}
                     disabled={disabled}
