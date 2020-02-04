@@ -8,17 +8,23 @@
         height: 100%;
     }
 
-    .format-button {
+    .button-container {
         @include transition-medium;
+        display: flex;
         position: absolute;
         right: var(--spacing-large);
         bottom: var(--spacing-extra-large);
+        align-items: center;
+        flex-direction: column;
         opacity: .1;
-        font-size: var(--font-size-extra-large);
+
+        .format-button {
+            font-size: var(--font-size-extra-large);
+        }
     }
 
     &:hover {
-        .format-button {
+        .button-container {
             opacity: 1;
         }
     }

@@ -58,6 +58,7 @@ class FormattedTextArea extends React.PureComponent {
             className,
             showFormatButton,
             value,
+            extraButtons,
             ...otherProps
         } = this.props;
 
@@ -70,19 +71,22 @@ class FormattedTextArea extends React.PureComponent {
                     className={styles.area}
                     value={value}
                 />
-                { showFormatButton && (
-                    <AccentButton
-                        tabIndex="-1"
-                        className={styles.formatButton}
-                        iconName="textFormat"
-                        onClick={this.handleFormatText}
-                        title="Click here to format the text"
-                        smallVerticalPadding
-                        smallHorizontalPadding
-                        transparent
-                        disabled={disabled || readOnly || this.shouldDisableFormat(value)}
-                    />
-                )}
+                <div className={styles.buttonContainer}>
+                    {extraButtons}
+                    { showFormatButton && (
+                        <AccentButton
+                            tabIndex="-1"
+                            className={styles.formatButton}
+                            iconName="textFormat"
+                            onClick={this.handleFormatText}
+                            title="Click here to format the text"
+                            smallVerticalPadding
+                            smallHorizontalPadding
+                            transparent
+                            disabled={disabled || readOnly || this.shouldDisableFormat(value)}
+                        />
+                    )}
+                </div>
             </div>
         );
     }
