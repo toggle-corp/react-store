@@ -1,0 +1,73 @@
+.tree-node-list {
+    padding: var(--spacing-small);
+}
+
+.tree-node {
+    display: flex;
+    padding: var(--spacing-extra-small);
+
+    >.left {
+        display: flex;
+        flex-direction: column;
+
+        .expand-button {
+            flex-shrink: 0;
+            outline: none;
+            padding: var(--spacing-extra-small) var(--spacing-small);
+
+            &:disabled {
+                visibility: hidden;
+            }
+        }
+
+        .stem {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+            cursor: pointer;
+
+            .line {
+                border-right: var(--width-separator-thin) dashed var(--color-separator);
+            }
+
+            &:hover {
+                background-color: var(--color-background-accent-hint);
+
+                .line {
+                    border-right: var(--width-separator-medium) solid var(--color-accent);
+                }
+            }
+        }
+    }
+
+    .right {
+        .checkbox {
+            display: flex;
+            align-items: center;
+
+            .check-icon {
+                padding: var(--spacing-extra-small);
+            }
+
+            .label {
+                padding: var(--spacing-extra-small);
+            }
+        }
+    }
+
+    &.collapsed {
+        .right {
+            .node-list {
+                display: none;
+            }
+        }
+    }
+
+    &:not(.collapsed) {
+        >.left {
+            .expand-button {
+                transform: rotate(90deg);
+            }
+        }
+    }
+}

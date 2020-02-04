@@ -10,12 +10,18 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
+    labelClassName?: string;
+    checkIconClassName?: string;
+
     disabled?: boolean;
     value: boolean;
     onChange: (value: boolean) => void;
-    label?: string;
+    label?: string | number;
     tooltip?: string;
     readOnly?: boolean;
+
+    // NOTE: if value is false and indetermiate is true, show a filled checkbox
+    indeterminate?: boolean;
 }
 
 const Checkbox = (props: Props) => {
@@ -27,6 +33,9 @@ const Checkbox = (props: Props) => {
         disabled,
         readOnly,
         onChange,
+        checkIconClassName,
+        labelClassName: labelClassNameFromProps,
+        indeterminate,
         ...otherProps
     } = props;
 
@@ -47,17 +56,18 @@ const Checkbox = (props: Props) => {
         styles.checkbox,
         'checkbox',
         classNameFromProps,
-        value && styles.checked,
-        value && 'checked',
+        (value || indeterminate) && styles.checked,
+        (value || indeterminate) && 'checked',
         disabled && styles.disabled,
         disabled && 'disabled',
         readOnly && styles.readOnly,
         readOnly && 'read-only',
     );
 
-    const spanClassName = _cs(
+    const iconName = _cs(
         styles.checkmark,
         'checkmark',
+        checkIconClassName,
     );
 
     const inputClassName = _cs(
@@ -68,6 +78,7 @@ const Checkbox = (props: Props) => {
     const labelClassName = _cs(
         'label',
         styles.label,
+        labelClassNameFromProps,
     );
 
     return (
@@ -77,8 +88,12 @@ const Checkbox = (props: Props) => {
             title={tooltip}
         >
             <Icon
-                name={value ? 'checkbox' : 'checkboxOutlineBlank'}
-                className={spanClassName}
+                name={
+                    (value && 'checkbox')
+                        || (indeterminate && 'checkboxBlank')
+                        || 'checkboxOutlineBlank'
+                }
+                className={iconName}
             />
             <input
                 id={inputId}
