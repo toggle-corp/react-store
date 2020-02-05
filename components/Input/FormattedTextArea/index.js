@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { formatPdfText } from '@togglecorp/fujs';
+import {
+    _cs,
+    formatPdfText,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '../../Action/Button/AccentButton';
@@ -55,11 +58,12 @@ class FormattedTextArea extends React.PureComponent {
             className,
             showFormatButton,
             value,
+            extraButtons,
             ...otherProps
         } = this.props;
 
         return (
-            <div className={`${className} ${styles.formattedText}`}>
+            <div className={_cs(className, styles.formattedText)}>
                 <TextArea
                     {...otherProps}
                     disabled={disabled}
@@ -67,19 +71,22 @@ class FormattedTextArea extends React.PureComponent {
                     className={styles.area}
                     value={value}
                 />
-                { showFormatButton && (
-                    <AccentButton
-                        tabIndex="-1"
-                        className={styles.formatButton}
-                        iconName="textFormat"
-                        onClick={this.handleFormatText}
-                        title="Click here to format the text"
-                        smallVerticalPadding
-                        smallHorizontalPadding
-                        transparent
-                        disabled={disabled || readOnly || this.shouldDisableFormat(value)}
-                    />
-                )}
+                <div className={styles.buttonContainer}>
+                    {extraButtons}
+                    { showFormatButton && (
+                        <AccentButton
+                            tabIndex="-1"
+                            className={styles.formatButton}
+                            iconName="textFormat"
+                            onClick={this.handleFormatText}
+                            title="Click here to format the text"
+                            smallVerticalPadding
+                            smallHorizontalPadding
+                            transparent
+                            disabled={disabled || readOnly || this.shouldDisableFormat(value)}
+                        />
+                    )}
+                </div>
             </div>
         );
     }

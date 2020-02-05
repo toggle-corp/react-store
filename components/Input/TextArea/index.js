@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { randomString, isFalsy } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+    isTruthyString,
+} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import Delay from '../../General/Delay';
@@ -96,45 +100,6 @@ export class NormalTextArea extends React.PureComponent {
         this.inputId = randomString(16);
     }
 
-    getClassName() {
-        const classNames = [];
-
-        const {
-            disabled,
-            error,
-            required,
-        } = this.props;
-
-        const {
-            isFocused,
-        } = this.state;
-
-        classNames.push('text-area');
-        classNames.push(styles.textArea);
-
-        if (disabled) {
-            classNames.push(styles.disabled);
-            classNames.push('disabled');
-        }
-
-        if (isFocused) {
-            classNames.push(styles.focused);
-            classNames.push('focused');
-        }
-
-        if (!isFalsy(error, [''])) {
-            classNames.push(styles.error);
-            classNames.push('error');
-        }
-
-        if (required) {
-            classNames.push(styles.required);
-            classNames.push('required');
-        }
-
-        return classNames.join(' ');
-    }
-
     handleChange = (event) => {
         const { value } = event.target;
         const { onChange } = this.props;
@@ -151,9 +116,7 @@ export class NormalTextArea extends React.PureComponent {
             event.target.select();
         }
 
-        this.setState({
-            isFocused: true,
-        });
+        this.setState({ isFocused: true });
 
         if (onFocus) {
             onFocus();
@@ -165,9 +128,7 @@ export class NormalTextArea extends React.PureComponent {
             onBlur,
         } = this.props;
 
-        this.setState({
-            isFocused: false,
-        });
+        this.setState({ isFocused: false });
 
         if (onBlur) {
             onBlur();
@@ -181,7 +142,7 @@ export class NormalTextArea extends React.PureComponent {
             onChange, // eslint-disable-line
             onFocus, // eslint-disable-line
             selectOnFocus, // eslint-disable-line
-            className,
+            className: classNameFromProps,
 
             error,
             hint,
@@ -190,15 +151,29 @@ export class NormalTextArea extends React.PureComponent {
             showHintAndError,
             disabled,
             resize,
+            required,
             persistentHintAndError,
             ...otherProps
         } = this.props;
 
-        const classNames = this.getClassName();
         const { isFocused } = this.state;
 
+        const classNames = _cs(
+            classNameFromProps,
+            'text-area',
+            styles.textArea,
+            disabled && 'disabled',
+            disabled && styles.disabled,
+            isFocused && 'focused',
+            isFocused && styles.focused,
+            isTruthyString(error) && 'error',
+            isTruthyString(error) && styles.error,
+            required && styles.required,
+            required && 'required',
+        );
+
         return (
-            <div className={`${classNames} ${className}`}>
+            <div className={classNames}>
                 <Label
                     show={showLabel}
                     text={label}
@@ -207,12 +182,13 @@ export class NormalTextArea extends React.PureComponent {
                     disabled={disabled}
                 />
                 <textarea
-                    className={`${styles.input} input`}
+                    className={_cs(styles.input, 'input')}
                     id={this.inputId}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     onFocus={this.handleFocus}
                     style={{ resize }}
+                    disabled={disabled}
                     {...otherProps}
                 />
                 <HintAndError
