@@ -52,6 +52,7 @@ export default class FixedTabs extends React.Component {
         this.state = {
             hash: undefined,
         };
+        console.warn('Fixed tabs is deprecated, please use ScrollTabs');
     }
 
     getClassName = () => {

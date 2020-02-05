@@ -3,6 +3,7 @@ import React from 'react';
 import {
     SketchPicker,
     TwitterPicker,
+    GithubPicker,
 } from 'react-color';
 
 import {
@@ -73,7 +74,7 @@ const defaultProps = {
     readOnly: false,
     persistentHintAndError: true,
     onChange: undefined,
-    // normal | palette
+    // options: twitterPicker, githubPicker, normal
     type: 'normal',
     colors: [
         '#ff6900',
@@ -86,6 +87,10 @@ const defaultProps = {
         '#eb144c',
         '#f78da7',
         '#9900ef',
+        '#ccdb39',
+        '#009587',
+        '#3e50b4',
+        '#9b27af',
     ],
 };
 
@@ -124,7 +129,10 @@ class ColorInput extends React.PureComponent {
         const optionsContainerPosition = (
             calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
         );
-        return optionsContainerPosition;
+        return {
+            ...optionsContainerPosition,
+            width: 'auto',
+        };
     }
 
     handleInputChange = (e) => {
@@ -145,8 +153,9 @@ class ColorInput extends React.PureComponent {
     }
 
     handleColorChange = (newColor) => {
-        if (this.props.onChange) {
-            this.props.onChange(newColor.hex);
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newColor.hex);
         }
     }
 
@@ -173,8 +182,11 @@ class ColorInput extends React.PureComponent {
         const { showColorPicker } = this.state;
 
         let Picker = SketchPicker;
-        if (type === 'palette') {
+        if (type === 'twitterPicker') {
             Picker = TwitterPicker;
+        }
+        if (type === 'githubPicker') {
+            Picker = GithubPicker;
         }
 
         return (
@@ -219,6 +231,7 @@ class ColorInput extends React.PureComponent {
                             parent={this.container}
                             onBlur={this.handleColorPickerBlur}
                             onInvalidate={this.handleColorPickerInvalidate}
+                            className={styles.colorFloatingContainer}
                             focusTrap
                             showHaze
                         >
@@ -226,6 +239,7 @@ class ColorInput extends React.PureComponent {
                                 color={value}
                                 onChange={this.handleColorChange}
                                 colors={colors}
+                                triangle="hide"
                             />
                         </FloatingContainer>
                     )
