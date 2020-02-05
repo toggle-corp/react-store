@@ -4,6 +4,7 @@ const iconNames = {
     applyAllBelow: 'ion-aandroid-arrow-dropdown-circle',
     arrowDropup: 'ion-android-arrow-dropup',
     arrowDropdown: 'ion-android-arrow-dropdown',
+    arrowDropright: 'ion-android-arrow-dropright',
     apps: 'ion-android-apps',
     radioOn: 'ion-android-radio-button-on',
     radioOff: 'ion-android-radio-button-off',
