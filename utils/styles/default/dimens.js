@@ -37,7 +37,7 @@ const spacingSuperLargeAlt = '42px';
 const spacingDefault = spacingMedium;
 
 const heightNavbar = '48px';
-const heightProgressBar = '3px';
+const heightProgressBar = '6px';
 
 const widthSeparatorThin = '1px';
 const widthSeparatorMedium = '2px';
@@ -94,6 +94,7 @@ const radiusBorderSmall = '2px';
 const radiusBorderLarge = '5px';
 
 const radiusButtonBorder = radiusBorderSmall;
+const radiusProgressBarBorder = radiusBorderMedium;
 
 const durationTransitionSlow = '.4s';
 const durationTransitionMedium = '.2s';
@@ -219,6 +220,8 @@ const dimens = {
     radiusBorderLarge,
 
     radiusButtonBorder,
+
+    radiusProgressBarBorder,
 
     durationTransitionSlow,
     durationTransitionMedium,
