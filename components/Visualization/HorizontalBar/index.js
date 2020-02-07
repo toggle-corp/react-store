@@ -399,18 +399,28 @@ class HorizontalBar extends PureComponent {
         if (showGridLines) {
             this.addGrid(group, x, y);
         } else {
+            const xAxis = axisBottom(x)
+                .tickSizeInner(-height)
+                .tickSizeOuter(0)
+                .tickPadding(10)
+                .tickFormat(valueLabelFormat);
+
+            const yAxis = axisLeft(y)
+                .tickSizeInner(-width)
+                .tickSizeOuter(0)
+                .tickPadding(10);
+
             group
                 .append('g')
                 .attr('id', 'xaxis')
                 .attr('class', `x-axis ${styles.xAxis}`)
                 .attr('transform', `translate(0, ${height})`)
-                .call(axisBottom(x));
-
+                .call(xAxis);
             group
                 .append('g')
                 .attr('id', 'yaxis')
                 .attr('class', `y-axis ${styles.yAxis}`)
-                .call(axisLeft(y));
+                .call(yAxis);
         }
 
         if (tiltLabels) {
@@ -461,6 +471,7 @@ class HorizontalBar extends PureComponent {
             .attr('dy', '.35em')
             .attr('text-anchor', 'end')
             .style('fill', 'none')
+            .style('padding', '0 10px')
             .transition()
             .delay(750)
             .text(d => (valueLabelFormat ? valueLabelFormat(valueSelector(d)) : valueSelector(d)))
