@@ -126,6 +126,8 @@ class ReCaptcha extends Component {
             'expired-callback': this.expiredCallback,
         });
 
+        console.warn('rendering recaptcha');
+
         if (onloadCallback) {
             onloadCallback();
         }

@@ -227,7 +227,10 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const {
+            className: classNameFromProps,
+            tooltip,
+        } = this.props;
         const { showDropdown } = this.state;
 
         const className = _cs(
@@ -245,6 +248,7 @@ export default class DropdownMenu extends React.PureComponent {
             <div
                 ref={this.createContainerRef}
                 className={className}
+                title={tooltip}
             >
                 <DropdownButton />
                 { showDropdown && (
