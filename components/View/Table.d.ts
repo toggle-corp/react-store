@@ -18,8 +18,8 @@ interface Props<Data> {
     data: Data[];
 
     defaultSort?: {
-        key: string,
-        order: number,
+        key: string;
+        order: 'asc' | 'dsc';
     };
 
     dataModifier?(data: Data, key: string): React.ReactNode;

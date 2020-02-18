@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import { max, isDefined } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 
@@ -32,6 +33,10 @@ const propTypes = {
      * Select a color for each item
      */
     colorSelector: PropTypes.func.isRequired,
+    /**
+     * Select a color for each item
+     */
+    radiusSelector: PropTypes.func.isRequired,
     /**
      * Select a value for each item
      */
@@ -75,19 +80,30 @@ export default class Legend extends React.PureComponent {
             : data
     ))
 
-    legendItemRendererParams = (_, d) => {
+    legendItemRendererParams = (_, d, i, data) => {
         const {
             iconSelector,
             labelSelector,
             colorSelector,
+            radiusSelector,
             itemClassName,
             symbolClassNameSelector,
         } = this.props;
+
+        // FIXME: memoize this
+
+        const radiuses = radiusSelector
+            ? data.map(radiusSelector)
+            : [];
+
+        const maxRadius = Math.max(...radiuses);
 
         return ({
             icon: iconSelector(d),
             label: labelSelector(d),
             color: colorSelector(d),
+            radius: radiusSelector ? radiusSelector(d) : undefined,
+            maxRadius,
             className: itemClassName,
             symbolClassName: symbolClassNameSelector ? symbolClassNameSelector(d) : '',
         });

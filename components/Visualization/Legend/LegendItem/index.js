@@ -9,6 +9,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    radius: 5,
+    maxRadius: 5,
 };
 
 export default class LegendItem extends React.PureComponent {
@@ -23,6 +25,8 @@ export default class LegendItem extends React.PureComponent {
             icon,
             label,
             color,
+            radius,
+            maxRadius,
         } = this.props;
 
         const className = `
@@ -46,6 +50,9 @@ export default class LegendItem extends React.PureComponent {
                         className={`${styles.color} ${symbolClassName}`}
                         style={{
                             backgroundColor: color,
+                            width: `${2 * radius}px`,
+                            height: `${2 * radius}px`,
+                            margin: `${maxRadius - radius}px`,
                         }}
                     />
                 )}
