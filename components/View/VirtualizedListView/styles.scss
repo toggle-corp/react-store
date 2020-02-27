@@ -1,4 +1,4 @@
-@import '../../../stylesheets/utils.scss';
+// @import '../../../stylesheets/utils.scss';
 
 .virtualized-list-view {
     position: relative;
@@ -20,7 +20,7 @@
     }
 
     .empty {
-        @extend %empty-text;
+        // @extend %empty-text;
         position: sticky;
         top: 0;
         left: 0;

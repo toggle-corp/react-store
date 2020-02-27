@@ -1,7 +1,7 @@
-@import '../../../../../stylesheets/utils.scss';
+// @import '../../../../../stylesheets/utils.scss';
 
 .row {
-    @extend %background-alternating-row;
+    // @extend %background-alternating-row;
     transition: var(--duration-transition-medium) background-color ease-in-out, var(--duration-transition-medium) color ease-in-out;
 
     &.hoverable {

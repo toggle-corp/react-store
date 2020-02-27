@@ -1,7 +1,7 @@
-@import '../../../../../stylesheets/button-base.scss';
+// @import '../../../../../stylesheets/button-base.scss';
 
 .option {
-    @extend %button-base;
+    // @extend %button-base;
     display: block;
     cursor: pointer;
     padding: var(--spacing-small) var(--spacing-small-alt);

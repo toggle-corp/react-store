@@ -1,10 +1,10 @@
-@import '../../../stylesheets/button-base.scss';
+// @import '../../../stylesheets/button-base.scss';
 
 .vertical-tabs {
     overflow-y: auto;
 
     .tab {
-        @extend %button-base;
+        // @extend %button-base;
         display: block;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-small) var(--spacing-medium);

@@ -30,12 +30,12 @@
             }
 
             .clear-button {
-                @extend %button;
+                // @extend %button;
                 opacity: 0;
             }
 
             .dropdown-button {
-                @extend %button;
+                // @extend %button;
             }
         }
     }

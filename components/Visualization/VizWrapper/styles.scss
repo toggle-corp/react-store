@@ -1,5 +1,5 @@
-@import '../../../stylesheets/utils.scss';
-@import '../../../stylesheets/visualizations.scss';
+// @import '../../../stylesheets/utils.scss';
+// @import '../../../stylesheets/visualizations.scss';
 
 .diagram {
     flex-grow: 1;
@@ -9,7 +9,7 @@
 }
 
 .diagram-view {
-    @extend %viz-content;
+    // @extend %viz-content;
     display: flex;
     position: relative;
     flex-direction: column;
@@ -48,7 +48,7 @@
 }
 
 .full-screen-container {
-    @extend %viz-content;
+    // @extend %viz-content;
 
     .heading {
         .back-button {

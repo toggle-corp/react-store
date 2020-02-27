@@ -1,8 +1,8 @@
-@import '../../../stylesheets/input-border.scss';
+// @import '../../../stylesheets/input-border.scss';
 
 .text-input {
     .input {
-        @extend %input-border;
+        // @extend %input-border;
     }
 
     &.error {

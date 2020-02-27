@@ -24,12 +24,12 @@
             flex-shrink: 0;
 
             .clear-button {
-                @extend %button;
+                // @extend %button;
             }
         }
 
         .dropdown-button {
-            @extend %button;
+            // @extend %button;
         }
 
     }

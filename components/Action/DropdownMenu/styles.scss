@@ -1,4 +1,4 @@
-@import '../../../stylesheets/utils.scss';
+// @import '../../../stylesheets/utils.scss';
 
 .dropdown-container {
     @include shadow-small;
@@ -22,7 +22,7 @@
 
 .dropdown-menu {
     .dropdown-button {
-        @extend %button-basic;
+        // @extend %button-basic;
         display: flex;
         align-items: center;
         padding: var(--spacing-extra-small) var(--spacing-small);

@@ -1,6 +1,6 @@
-@import '../../../stylesheets/utils.scss';
-@import '../../../stylesheets/input-base.scss';
-@import '../../../stylesheets/input-border.scss';
+// @import '../../../stylesheets/utils.scss';
+// @import '../../../stylesheets/input-base.scss';
+// @import '../../../stylesheets/input-border.scss';
 
 :root {
     --width-time-input: 120px;
@@ -11,7 +11,7 @@
     min-width: var(--width-time-input);
 
     .input {
-        @extend %input-border;
+        // @extend %input-border;
         display: flex;
         align-items: center;
 
@@ -20,7 +20,7 @@
             flex-grow: 1;
 
             .unit {
-                @extend %input-base;
+                // @extend %input-base;
                 width: calc(2ch + var(--width-input-spinner));
                 font-family: var(--font-family-monospace);
             }

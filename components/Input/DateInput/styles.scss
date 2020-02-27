@@ -1,6 +1,6 @@
-@import '../../../stylesheets/utils.scss';
-@import '../../../stylesheets/input-base.scss';
-@import '../../../stylesheets/input-border.scss';
+// @import '../../../stylesheets/utils.scss';
+// @import '../../../stylesheets/input-base.scss';
+// @import '../../../stylesheets/input-border.scss';
 
 :root {
     --width-date-picker-container-min: 208px;
@@ -57,7 +57,7 @@
 
     &:not(.disabled) {
         .input {
-            @extend %input-border;
+            // @extend %input-border;
         }
 
         &.focused {

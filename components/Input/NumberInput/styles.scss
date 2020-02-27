@@ -1,10 +1,10 @@
-@import '../../../stylesheets/input-base.scss';
-@import '../../../stylesheets/input-border.scss';
+// @import '../../../stylesheets/input-base.scss';
+// @import '../../../stylesheets/input-border.scss';
 
 .number-input {
     .input {
-        @extend %input-base;
-        @extend %input-border;
+        // @extend %input-base;
+        // @extend %input-border;
     }
 
     &.focused {

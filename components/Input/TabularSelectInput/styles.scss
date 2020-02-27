@@ -33,7 +33,7 @@
     }
 
     .error {
-        @extend %base;
+        // @extend %base;
         color: var(--color-danger);
     }
 }

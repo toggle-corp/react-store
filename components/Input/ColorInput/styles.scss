@@ -1,8 +1,8 @@
-@import '../../../stylesheets/input-label.scss';
+// @import '../../../stylesheets/input-label.scss';
 
 .color-input {
     .label {
-        @extend %input-label;
+        // @extend %input-label;
         padding-bottom: var(--spacing-extra-small);
     }
 

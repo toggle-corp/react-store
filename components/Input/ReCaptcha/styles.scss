@@ -17,18 +17,18 @@
 
     /*
     .hint {
-        @extend %base;
+        // @extend %base;
         color: var(--color-text-label);
     }
     */
 
     .error {
-        @extend %base;
+        // @extend %base;
         color: var(--color-danger);
     }
 
     .empty {
-        @extend %base;
+        // @extend %base;
         visibility: hidden;
     }
 }

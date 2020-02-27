@@ -1,4 +1,4 @@
-@import '../../../../stylesheets/utils.scss';
+// @import '../../../../stylesheets/utils.scss';
 
 .list-view {
     position: relative;
@@ -8,7 +8,7 @@
         flex-direction: column;
 
         .empty {
-            @extend %empty-text;
+            // @extend %empty-text;
             flex-grow: 1;
         }
     }

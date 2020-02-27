@@ -1,5 +1,5 @@
-@import '../../../stylesheets/input-base.scss';
-@import '../../../stylesheets/input-border.scss';
+// @import '../../../stylesheets/input-base.scss';
+// @import '../../../stylesheets/input-border.scss';
 
 :root {
     --width-multiselect-dropdown-button: 10px;
@@ -35,17 +35,17 @@
             }
 
             .clear-button {
-                @extend %button;
+                // @extend %button;
                 opacity: 0;
             }
 
             .select-all-button {
-                @extend %button;
+                // @extend %button;
                 opacity: 0;
             }
 
             .dropdown-button {
-                @extend %button;
+                // @extend %button;
             }
         }
     }
