@@ -1,6 +1,6 @@
-@import '../../../stylesheets/utils';
-@import '../../../stylesheets/input-base';
-@import '../../../stylesheets/input-border';
+@import '../../../stylesheets/utils.scss';
+@import '../../../stylesheets/input-base.scss';
+@import '../../../stylesheets/input-border.scss';
 
 :root {
     --width-time-input: 120px;
