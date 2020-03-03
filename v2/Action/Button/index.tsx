@@ -39,7 +39,7 @@ export interface Props<T> extends Omit<React.HTMLProps<HTMLButtonElement>, 'onCl
     className?: string;
     disabled?: boolean;
     iconName?: string;
-    onClick: (value: { event: React.MouseEvent; params?: T }) => void;
+    onClick?: (value: { event: React.MouseEvent; params?: T }) => void;
     onClickParams?: T;
     pending?: boolean;
     smallHorizontalPadding?: boolean;
@@ -67,10 +67,12 @@ function Button<T>(props: Props<T>) {
 
     const handleClick = useCallback(
         (e: React.MouseEvent) => {
-            onClick({
-                event: e,
-                params: onClickParams,
-            });
+            if (onClick) {
+                onClick({
+                    event: e,
+                    params: onClickParams,
+                });
+            }
         },
         [
             onClick,
