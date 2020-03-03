@@ -69,7 +69,7 @@ export default class DropZone extends React.Component {
 
 
         const data = e.dataTransfer.getData('text');
-        e.dataTransfer.clearData();
+        // e.dataTransfer.clearData();
 
         let formattedData;
         try {

@@ -79,8 +79,8 @@ function Spinner(props: Props) {
             <svg
                 className={styles.svg}
                 style={{
-                    width: spinnerSize,
-                    height: spinnerSize,
+                    width: `${spinnerSize}px`,
+                    height: `${spinnerSize}px`,
                 }}
             >
                 <circle
