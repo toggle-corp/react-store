@@ -1,0 +1,37 @@
+.calendar {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+
+        >* {
+            flex-grow: 1;
+        }
+    }
+
+    .sub-header {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .body {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+.cell {
+    flex-basis: calc(100% / 7);
+    flex-shrink: 0;
+    padding: var(--spacing-extra-small);
+    text-align: center;
+
+    &.selected {
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
+    }
+
+    &.today {
+        font-weight: bold;
+    }
+}
