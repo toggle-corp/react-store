@@ -36,7 +36,7 @@ const propTypes = {
     /**
      * Select a color for each item
      */
-    radiusSelector: PropTypes.func.isRequired,
+    radiusSelector: PropTypes.func,
     /**
      * Select a value for each item
      */
@@ -64,6 +64,7 @@ const defaultProps = {
     symbolClassNameSelector: undefined,
     emptyComponent: undefined,
     data: [],
+    radiusSelector: undefined,
 };
 
 /**

@@ -500,7 +500,10 @@ class HorizontalBar extends PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const {
+            className: classNameFromProps,
+            svgStyle,
+        } = this.props;
 
         const className = _cs(
             'horizontal-bar-chart',
@@ -518,6 +521,7 @@ class HorizontalBar extends PureComponent {
                 <svg
                     className={className}
                     ref={(elem) => { this.svgRef = elem; }}
+                    style={svgStyle}
                 />
                 <Float>
                     <div
