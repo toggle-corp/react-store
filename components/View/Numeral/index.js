@@ -4,6 +4,7 @@ import {
     addSeparator,
     isFalsy,
     isTruthy,
+    isNotDefined,
     formattedNormalize,
 } from '@togglecorp/fujs';
 import { FaramOutputElement } from '@togglecorp/faram';
@@ -72,6 +73,13 @@ const defaultProps = {
 };
 
 
+const addNepaliSeparator = (num) => {
+    if (isNotDefined(num)) {
+        return num;
+    }
+    return String(num).replace(/\B(?=(\d{3})(?!\d))/, ',').replace(/\B(?=(\d{2})+(?=,))/g, ',');
+};
+
 /**
  * Numeral component for formatted numbers
  */
@@ -108,7 +116,9 @@ class Numeral extends React.PureComponent {
 
         // Convert number to add separator
         if (showSeparator) {
-            number = addSeparator(number, separator);
+            number = lang === 'np'
+                ? addNepaliSeparator(number)
+                : addSeparator(number, separator);
         }
 
         return { number, normalizeSuffix };
