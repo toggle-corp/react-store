@@ -19,7 +19,18 @@ import Label from '../Label';
 import Calendar from './Calendar';
 import styles from './styles.scss';
 
-// FIXME: use from utils
+function getTodayMiti() {
+    const today = new Date();
+    const englishMiti = new Miti(
+        today.getFullYear(),
+        today.getMonth() + 1,
+        today.getDate(),
+        AD,
+    );
+    const nepaliMiti = englishMiti.convertTo(BS);
+    return nepaliMiti;
+}
+
 function getValueMiti(value: string) {
     const [y, m, d] = value
         ? value.split('-').map(item => +item)
@@ -28,6 +39,7 @@ function getValueMiti(value: string) {
     const nepaliMiti = englishMiti.convertTo(BS);
     return nepaliMiti;
 }
+
 
 // TODO:
 // 1. support range
@@ -51,9 +63,10 @@ interface Props {
     value?: string;
     labelRightComponent?: React.ReactNode;
     labelRightComponentClassName?: string;
+    hideClearButton?: boolean;
 }
 
-const CalendarInput = (props: Props) => {
+const NepaliDateInput = (props: Props) => {
     const {
         className,
         disabled,
@@ -62,6 +75,7 @@ const CalendarInput = (props: Props) => {
         label,
         showHintAndError,
         showLabel,
+
         title,
         labelClassName,
         labelRightComponent,
@@ -69,6 +83,7 @@ const CalendarInput = (props: Props) => {
         value,
         readOnly,
         onChange,
+        hideClearButton,
     } = props;
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -98,8 +113,8 @@ const CalendarInput = (props: Props) => {
 
             const limit = { ...defaultLimit };
             if (parentRect) {
-                limit.minW = parentRect.width;
-                limit.maxW = parentRect.width;
+                limit.minW = 240;
+                limit.maxW = 240;
             }
 
             const optionsContainerPosition = calcFloatPositionInMainWindow({
@@ -129,6 +144,11 @@ const CalendarInput = (props: Props) => {
             return valueMiti.convertTo(BS).getString();
         },
         [valueMiti],
+    );
+
+    const todayMiti = useMemo(
+        () => getTodayMiti(),
+        [],
     );
 
     const [calendarShown, setCalendarShown] = useState(false);
@@ -161,14 +181,22 @@ const CalendarInput = (props: Props) => {
         [handleChange],
     );
 
+    const handleSetToday = useCallback(
+        () => {
+            const englishMiti = todayMiti.convertTo(AD);
+            handleChange(englishMiti.getString());
+        },
+        [handleChange, todayMiti],
+    );
+
     return (
         <div
-            className={_cs(className, styles.calendarInput)}
+            className={_cs(className, styles.nepaliDateInput)}
             title={title}
         >
             {showLabel && (
                 <Label
-                    className={labelClassName}
+                    className={_cs(styles.label, labelClassName)}
                     disabled={disabled}
                     error={!!error}
                     title={label}
@@ -179,21 +207,47 @@ const CalendarInput = (props: Props) => {
                 </Label>
             )}
             <div
-                className={styles.date}
+                className={_cs(styles.inputContainer, 'input-container')}
                 ref={containerRef}
-                onClick={handleCalendarShow}
-                onKeyDown={handleCalendarShow}
-                tabIndex={-1}
-                role="button"
             >
-                {nepaliMitiText || '0000-00-00'}
+                <div
+                    className={_cs(styles.date, !nepaliMitiText && styles.empty)}
+                    onClick={handleCalendarShow}
+                    onKeyDown={handleCalendarShow}
+                    tabIndex={-1}
+                    role="button"
+                >
+                    {nepaliMitiText || 'yyyy-mm-dd'}
+                </div>
+                <div className={styles.actions}>
+                    <Button
+                        className={styles.todayButton}
+                        iconName="clock"
+                        title="Set today"
+                        transparent
+                        onClick={handleSetToday}
+                        smallHorizontalPadding
+                        smallVerticalPadding
+                        disabled={
+                            disabled
+                            || readOnly
+                            || (valueMiti && todayMiti.isEqual(valueMiti))
+                        }
+                    />
+                    {!hideClearButton && (
+                        <Button
+                            className={styles.clearButton}
+                            smallHorizontalPadding
+                            smallVerticalPadding
+                            iconName="close"
+                            transparent
+                            title="Clear"
+                            onClick={handleClear}
+                            disabled={disabled || readOnly || !value}
+                        />
+                    )}
+                </div>
             </div>
-            <Button
-                onClick={handleClear}
-                disabled={disabled || readOnly || !value}
-            >
-                Clear
-            </Button>
             {calendarShown && (
                 <FloatingContainer
                     onBlur={handleCalendarHide}
@@ -203,8 +257,10 @@ const CalendarInput = (props: Props) => {
                     <Calendar
                         disabled={disabled}
                         readOnly={readOnly}
-                        value={value}
                         onChange={handleChange}
+                        valueMiti={valueMiti}
+                        todayMiti={todayMiti}
+                        hideClearButton={hideClearButton}
                     />
                 </FloatingContainer>
             )}
@@ -218,11 +274,11 @@ const CalendarInput = (props: Props) => {
     );
 };
 
-CalendarInput.defaultProps = {
+NepaliDateInput.defaultProps = {
     disabled: false,
     readOnly: false,
     showHintAndError: true,
     showLabel: true,
 };
 
-export default CalendarInput;
+export default NepaliDateInput;

@@ -25,33 +25,14 @@ const months = [
     'Chaitra',
 ];
 
-function getTodayMiti() {
-    const today = new Date();
-    const englishMiti = new Miti(
-        today.getFullYear(),
-        today.getMonth() + 1,
-        today.getDate(),
-        AD,
-    );
-    const nepaliMiti = englishMiti.convertTo(BS);
-    return nepaliMiti;
-}
-
-function getValueMiti(value: string) {
-    const [y, m, d] = value
-        ? value.split('-').map(item => +item)
-        : [];
-    const englishMiti = new Miti(y, m, d, AD);
-    const nepaliMiti = englishMiti.convertTo(BS);
-    return nepaliMiti;
-}
-
 interface YearModeProps {
     onChange: (value: number) => void;
     className?: string;
+    year: number;
 }
+
 const YearMode = (props: YearModeProps) => {
-    const { onChange, className } = props;
+    const { onChange, className, year } = props;
 
     const minYear = BS.getMinYmd().getYear();
     const maxYear = BS.getMaxYmd().getYear();
@@ -62,13 +43,20 @@ const YearMode = (props: YearModeProps) => {
     );
 
     return (
-        <div className={_cs(styles.calendar, className)}>
-            <div className={styles.body}>
+        <div className={_cs(styles.yearCalendar, className)}>
+            <header className={styles.header}>
+                <h3 className={styles.heading}>
+                    Select year
+                </h3>
+            </header>
+            <div className={styles.content}>
                 {cells.map((_, index) => (
                     <Cell
                         key={`year-${String(index + minYear)}`}
                         cellKey={index + minYear}
                         onClick={onChange}
+                        scrollIntoView={year === index + minYear}
+                        selected={year === index + minYear}
                     >
                         {index + minYear}
                     </Cell>
@@ -81,18 +69,31 @@ const YearMode = (props: YearModeProps) => {
 interface MonthModeProps {
     onChange: (value: number) => void;
     className?: string;
+    year: number;
+    month: number;
 }
 const MonthMode = (props: MonthModeProps) => {
-    const { onChange, className } = props;
+    const {
+        onChange,
+        className,
+        year,
+        month: monthFromProps,
+    } = props;
 
     return (
-        <div className={_cs(styles.calendar, className)}>
-            <div className={styles.body}>
+        <div className={_cs(styles.monthCalendar, className)}>
+            <header className={styles.header}>
+                <h3 className={styles.heading}>
+                    {`Select Month for ${year}`}
+                </h3>
+            </header>
+            <div className={styles.content}>
                 {months.map((month, index) => (
                     <Cell
                         key={month}
                         cellKey={index + 1}
                         onClick={onChange}
+                        selected={monthFromProps === index + 1}
                     >
                         {month}
                     </Cell>
@@ -107,7 +108,9 @@ interface CalendarProps {
     disabled?: boolean;
     onChange: (value: string | undefined) => void;
     readOnly?: boolean;
-    value?: string;
+    valueMiti?: Miti;
+    todayMiti: Miti;
+    hideClearButton?: boolean;
 }
 
 const Calendar = (props: CalendarProps) => {
@@ -116,24 +119,15 @@ const Calendar = (props: CalendarProps) => {
         disabled,
         onChange,
         readOnly,
-        value,
+        valueMiti,
+        todayMiti,
+        hideClearButton,
     } = props;
 
-    const todayMiti = useMemo(
-        () => getTodayMiti(),
-        [],
-    );
-    const valueMiti = useMemo(
-        () => (
-            value ? getValueMiti(value) : undefined
-        ),
-        [value],
-    );
     const currentMiti = useMemo(
         () => valueMiti || todayMiti,
         [valueMiti, todayMiti],
     );
-
 
     const [currentYear, setCurrentYear] = useState(currentMiti.getYear());
     const [currentMonth, setCurrentMonth] = useState(currentMiti.getMonth());
@@ -242,6 +236,7 @@ const Calendar = (props: CalendarProps) => {
     if (mode === 'year') {
         return (
             <YearMode
+                year={currentYear}
                 onChange={handleYearModeChange}
             />
         );
@@ -249,46 +244,50 @@ const Calendar = (props: CalendarProps) => {
     if (mode === 'month') {
         return (
             <MonthMode
+                month={currentMonth}
+                year={currentYear}
                 onChange={handleMonthModeChange}
             />
         );
     }
 
     return (
-        <div className={_cs(styles.calendar, className)}>
-            <div className={styles.header}>
-                <div
+        <div className={_cs(styles.dateCalendar, className)}>
+            <header className={styles.header}>
+                <Button
                     className={styles.yearMonth}
-                    tabIndex={-1}
-                    role="button"
                     onClick={setYearMode}
-                    onKeyDown={setYearMode}
+                    transparent
                 >
                     {`${currentYear} ${months[currentMonth - 1]}`}
+                </Button>
+                <div className={styles.actions}>
+                    <Button
+                        className={styles.prevButton}
+                        onClick={handleMonthDecrease}
+                        transparent
+                        disabled={
+                            // for BS, minDate starts in between so skipping that year
+                            currentYear <= (BS.getMinYmd().getYear() + 1)
+                            && currentMonth <= 1
+                        }
+                        iconName="chevronLeft"
+                        title="Previous"
+                    />
+                    <Button
+                        className={styles.nextButton}
+                        onClick={handleMonthIncrease}
+                        transparent
+                        disabled={
+                            currentYear >= BS.getMaxYmd().getYear()
+                            && currentMonth >= 12
+                        }
+                        title="Next"
+                        iconName="chevronRight"
+                    />
                 </div>
-                <Button
-                    onClick={handleMonthDecrease}
-                    transparent
-                    disabled={
-                        // for BS, minDate starts in between so skipping that year
-                        currentYear <= (BS.getMinYmd().getYear() + 1)
-                        && currentMonth <= 1
-                    }
-                    iconName="chevronLeft"
-                    title="Previous"
-                />
-                <Button
-                    onClick={handleMonthIncrease}
-                    transparent
-                    disabled={
-                        currentYear >= BS.getMaxYmd().getYear()
-                        && currentMonth >= 12
-                    }
-                    title="Next"
-                    iconName="chevronRight"
-                />
-            </div>
-            <div className={styles.subHeader}>
+            </header>
+            <div className={styles.content}>
                 <Cell>Su</Cell>
                 <Cell>Mo</Cell>
                 <Cell>Tu</Cell>
@@ -296,8 +295,6 @@ const Calendar = (props: CalendarProps) => {
                 <Cell>Th</Cell>
                 <Cell>Fr</Cell>
                 <Cell>Sa</Cell>
-            </div>
-            <div className={styles.body}>
                 {emptySpaces.map((_, index) => (
                     <Cell key={`empty-${String(index + 1)}`} />
                 ))}
@@ -324,9 +321,10 @@ const Calendar = (props: CalendarProps) => {
                     </Cell>
                 ))}
             </div>
-            <div className={styles.footer}>
+            <footer className={styles.footer}>
                 <Button
                     onClick={handleSetToday}
+                    transparent
                     disabled={
                         disabled
                         || readOnly
@@ -335,13 +333,16 @@ const Calendar = (props: CalendarProps) => {
                 >
                     Set today
                 </Button>
-                <Button
-                    onClick={handleClear}
-                    disabled={disabled || readOnly || !value}
-                >
-                    Clear
-                </Button>
-            </div>
+                {hideClearButton && (
+                    <Button
+                        transparent
+                        onClick={handleClear}
+                        disabled={disabled || readOnly || !valueMiti}
+                    >
+                        Clear
+                    </Button>
+                )}
+            </footer>
         </div>
     );
 };
