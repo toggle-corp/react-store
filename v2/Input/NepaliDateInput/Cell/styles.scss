@@ -1,0 +1,28 @@
+.cell {
+    border: var(--width-separator-thin) solid transparent;
+    border-radius: 3px;
+    padding: var(--spacing-small);
+    text-align: center;
+
+    &.clickable {
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--color-background-hover);
+        }
+    }
+
+    &:not(.clickable) {
+        outline: none;
+        font-weight: var(--font-weight-bold);
+    }
+
+    &.selected {
+        border-color: var(--color-accent);
+    }
+
+    &.today {
+        font-weight: bold;
+    }
+
+}

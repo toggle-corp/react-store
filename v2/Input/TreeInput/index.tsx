@@ -155,8 +155,10 @@ function TreeNode<T, K extends OptionKey>(props: TreeNodeProps<T, K>) {
                 {!collapsed && !isLeaf && (
                     <div
                         className={styles.stem}
-                        role="presentation"
+                        role="button"
                         onClick={handleCollapseOption}
+                        onKeyDown={handleCollapseOption}
+                        tabIndex={-1}
                     >
                         <div className={styles.line} />
                     </div>
