@@ -4,21 +4,15 @@
         align-items: baseline;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
-        .date {
-            outline: none;
-            cursor: pointer;
-            padding: var(--spacing-extra-small) 0;
-            padding: 0 var(--spacing-extra-small-alt);
-            font-family: var(--font-family-monospace);
-
-            &.empty {
-                color: var(--color-text-placeholder);
-            }
-        }
-
         .actions {
+            flex-shrink: 0;
             padding: 0 var(--spacing-small);
             font-size: var(--font-size-large);
+
+            .calendar-button {
+                outline: none;
+                padding: 0 var(--spacing-extra-small-alt);
+            }
 
             .today-button {
                 outline: none;

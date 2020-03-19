@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
     BS,
     AD,
@@ -6,17 +6,14 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 
-import {
-    calcFloatPositionInMainWindow,
-    defaultLimit,
-    defaultOffset,
-} from '../../../utils/bounds';
 import Button from '../../Action/Button';
 import FloatingContainer from '../../View/FloatingContainer';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 
 import Calendar from './Calendar';
+import Input from './Input';
+import useFloatingContainer from './useFloatingContainer';
 import styles from './styles.scss';
 
 function getTodayMiti() {
@@ -46,17 +43,16 @@ function getValueMiti(value: string) {
 // 2. support starting week
 // 3. support holidays
 // 4. support min / max value
-// 5. support year/month jump
 
 interface Props {
     className?: string;
     labelClassName?: string;
-    disabled?: boolean;
+    disabled: boolean;
     error?: string;
     hint?: string;
     label?: string;
     onChange: (value: string | undefined) => void;
-    readOnly?: boolean;
+    readOnly: boolean;
     showHintAndError: boolean;
     showLabel: boolean;
     title?: string;
@@ -86,48 +82,9 @@ const NepaliDateInput = (props: Props) => {
         hideClearButton,
     } = props;
 
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [containerRef, handleOptionsInvalidate] = useFloatingContainer();
 
-    const boundingClientRect = useRef<ClientRect>();
-
-    useEffect(
-        () => {
-            const { current: container } = containerRef;
-            if (container) {
-                boundingClientRect.current = container.getBoundingClientRect();
-            }
-        },
-        [containerRef],
-    );
-
-    const handleOptionsInvalidate = useCallback(
-        (optionsContainer: HTMLDivElement) => {
-            const contentRect = optionsContainer.getBoundingClientRect();
-
-            const { current: container } = containerRef;
-            const parentRect = container
-                ? container.getBoundingClientRect()
-                : boundingClientRect.current;
-
-            const offset = { ...defaultOffset };
-
-            const limit = { ...defaultLimit };
-            if (parentRect) {
-                limit.minW = 240;
-                limit.maxW = 240;
-            }
-
-            const optionsContainerPosition = calcFloatPositionInMainWindow({
-                parentRect,
-                contentRect,
-                offset,
-                limit,
-            });
-
-            return optionsContainerPosition;
-        },
-        [containerRef, boundingClientRect],
-    );
+    const [calendarShown, setCalendarShown] = useState(false);
 
     const valueMiti = useMemo(
         () => (
@@ -136,22 +93,10 @@ const NepaliDateInput = (props: Props) => {
         [value],
     );
 
-    const nepaliMitiText = useMemo(
-        () => {
-            if (!valueMiti) {
-                return undefined;
-            }
-            return valueMiti.convertTo(BS).getString();
-        },
-        [valueMiti],
-    );
-
     const todayMiti = useMemo(
         () => getTodayMiti(),
         [],
     );
-
-    const [calendarShown, setCalendarShown] = useState(false);
 
     const handleCalendarShow = useCallback(
         () => {
@@ -210,16 +155,24 @@ const NepaliDateInput = (props: Props) => {
                 className={_cs(styles.inputContainer, 'input-container')}
                 ref={containerRef}
             >
-                <div
-                    className={_cs(styles.date, !nepaliMitiText && styles.empty)}
-                    onClick={handleCalendarShow}
-                    onKeyDown={handleCalendarShow}
-                    tabIndex={-1}
-                    role="button"
-                >
-                    {nepaliMitiText || 'yyyy-mm-dd'}
-                </div>
+                <Input
+                    value={valueMiti}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                />
                 <div className={styles.actions}>
+                    <Button
+                        className={styles.calendarButton}
+                        iconName="calendar"
+                        title="Show calendar"
+                        transparent
+                        onClick={handleCalendarShow}
+                        smallHorizontalPadding
+                        smallVerticalPadding
+                        disabled={disabled || readOnly}
+                        tabIndex={-1}
+                    />
                     <Button
                         className={styles.todayButton}
                         iconName="clock"
@@ -233,6 +186,7 @@ const NepaliDateInput = (props: Props) => {
                             || readOnly
                             || (valueMiti && todayMiti.isEqual(valueMiti))
                         }
+                        tabIndex={-1}
                     />
                     {!hideClearButton && (
                         <Button
@@ -244,6 +198,7 @@ const NepaliDateInput = (props: Props) => {
                             title="Clear"
                             onClick={handleClear}
                             disabled={disabled || readOnly || !value}
+                            tabIndex={-1}
                         />
                     )}
                 </div>
