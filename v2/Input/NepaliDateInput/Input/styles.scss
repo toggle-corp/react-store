@@ -1,0 +1,7 @@
+.date-input {
+    flex-grow: 1;
+
+    &.invalid {
+        background-color: yellow;
+    }
+}

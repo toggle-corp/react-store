@@ -6,7 +6,7 @@ import {
     Miti,
 } from '@togglecorp/fujs';
 import Button from '../../../Action/Button';
-import Cell from '../Cell';
+import Cell from './Cell';
 
 import styles from './styles.scss';
 
