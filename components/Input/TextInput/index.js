@@ -180,4 +180,5 @@ class TextInput extends React.PureComponent {
     }
 }
 
+export const NormalTextInput = Delay(TextInput);
 export default FaramInputElement(Delay(TextInput));
