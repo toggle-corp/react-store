@@ -91,7 +91,7 @@ const defaultProps = {
     options: [],
 };
 
-class SegmentInput extends React.PureComponent {
+export class NormalSegmentInput extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -220,4 +220,4 @@ class SegmentInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(SegmentInput);
+export default FaramInputElement(NormalSegmentInput);

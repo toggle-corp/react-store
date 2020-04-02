@@ -53,7 +53,7 @@ const defaultProps = {
     changeDelay: undefined,
 };
 
-class Checkbox extends React.PureComponent {
+export class NormalCheckbox extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -137,4 +137,4 @@ class Checkbox extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(Checkbox);
+export default FaramInputElement(NormalCheckbox);

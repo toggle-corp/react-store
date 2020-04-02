@@ -86,7 +86,7 @@ const defaultProps = {
     persistentHintAndError: true,
 };
 
-class SelectInput extends React.PureComponent {
+export class NormalSelectInput extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -446,4 +446,4 @@ class SelectInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(SelectInput);
+export default FaramInputElement(NormalSelectInput);
