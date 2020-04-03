@@ -1,4 +1,3 @@
-
 .option {
     cursor: pointer;
 
@@ -26,6 +25,8 @@
     }
 
     &.disabled {
+        cursor: default;
+
         .label {
             color: var(--color-text-disabled);
         }
