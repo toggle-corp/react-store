@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 import memoize from 'memoize-one';
 
@@ -56,7 +57,7 @@ const defaultProps = {
     // readOnly: false,
 };
 
-class RadioInput extends React.PureComponent {
+export class NormalRadioInput extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -67,15 +68,14 @@ class RadioInput extends React.PureComponent {
     ))
 
     handleOptionClick = (key) => {
-        const { options } = this.props;
+        const {
+            options,
+            onChange,
+        } = this.props;
 
         if (!options) {
             return;
         }
-
-        const option = options.find(d => d.key === key);
-
-        const { onChange } = this.props;
         if (onChange) {
             onChange(key);
         }
@@ -83,12 +83,12 @@ class RadioInput extends React.PureComponent {
 
     rendererParams = (key, option) => {
         const {
+            className, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            onChange, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
             labelSelector,
             keySelector,
             options,
-            className,
             value,
-            onChange,
             ...otherProps
         } = this.props;
 
@@ -108,13 +108,11 @@ class RadioInput extends React.PureComponent {
             className,
             options,
             keySelector,
-            value,
-            name,
         } = this.props;
 
         return (
             <ListView
-                className={`radio-input ${className} ${styles.radioInput}`}
+                className={_cs('radio-input', className, styles.radioInput)}
                 data={options}
                 keySelector={keySelector}
                 renderer={Option}
@@ -124,4 +122,4 @@ class RadioInput extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(RadioInput);
+export default FaramInputElement(NormalRadioInput);
