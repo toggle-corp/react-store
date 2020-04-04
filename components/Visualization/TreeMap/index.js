@@ -5,6 +5,7 @@ import {
     scaleOrdinal,
 } from 'd3-scale';
 import { schemeSet3 } from 'd3-scale-chromatic';
+import 'd3-transition'; // https://github.com/d3/d3-selection/issues/185
 import {
     hierarchy,
     treemap,
