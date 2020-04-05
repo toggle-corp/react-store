@@ -107,13 +107,13 @@ class TreeMap extends React.PureComponent {
     handleMouseOver = (element) => {
         select(element)
             .transition()
-            .attr('opacity', 1);
+            .attr('opacity', 0.8);
     }
 
     handleMouseOut = (element) => {
         select(element)
             .transition()
-            .attr('opacity', 0.8);
+            .attr('opacity', 1);
     }
 
     drawChart = () => {
@@ -164,9 +164,10 @@ class TreeMap extends React.PureComponent {
             .attr('width', d => d.x1 - d.x0)
             .attr('height', d => d.y1 - d.y0)
             .attr('fill', d => colors(labelSelector(d.parent.data)))
-            .attr('opacity', 0.8)
+            .attr('opacity', 1)
             .on('mouseover', (d, i, nodes) => this.handleMouseOver(nodes[i]))
             .on('mouseout', (d, i, nodes) => this.handleMouseOut(nodes[i]));
+
 
         cell
             .append('text')
@@ -184,7 +185,7 @@ class TreeMap extends React.PureComponent {
 
         cell
             .append('title')
-            .text(d => `${labelSelector(d.data)}`);
+            .text(d => `${labelSelector(d.data)}\n${valueSelector(d.data)}`);
     }
 
     render() {
