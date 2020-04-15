@@ -5,6 +5,7 @@ import {
     AD,
     Miti,
     _cs,
+    padStart,
 } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
@@ -25,11 +26,13 @@ function getValueMiti(value: string | number, lang: 'en' | 'np') {
 }
 
 interface Props {
+    style?: React.CSSProperties;
     className?: string;
     value?: string | number;
     lang?: 'en' | 'np';
-    dateTransformer?: (value: number) => string | number;
-    // timeTransformer?: (value: number) => string | number;
+    dateTransformer?: (value: string) => string | number;
+    timeTransformer?: (value: string) => string | number;
+    timeShown?: boolean;
 }
 
 const NepaliFormattedDate = (props: Props) => {
@@ -38,7 +41,9 @@ const NepaliFormattedDate = (props: Props) => {
         className,
         lang = 'np',
         dateTransformer,
-        // timeTransformer,
+        style,
+        timeTransformer,
+        timeShown,
     } = props;
 
     const containerClassName = _cs(
@@ -54,6 +59,19 @@ const NepaliFormattedDate = (props: Props) => {
         [value, lang],
     );
 
+    const [hour, minute] = useMemo(
+        () => {
+            if (!value) {
+                return ['00', '00'];
+            }
+            const date = new Date(value);
+            const hh = date.getHours();
+            const mm = date.getMinutes();
+            return [padStart(hh, 2), padStart(mm, 2)];
+        },
+        [value],
+    );
+
     if (!miti) {
         return (
             <div className={containerClassName}>
@@ -62,12 +80,15 @@ const NepaliFormattedDate = (props: Props) => {
         );
     }
 
-    const year = miti.getYear();
-    const month = miti.getMonth();
-    const day = miti.getDay();
+    const year = padStart(miti.getYear(), 4);
+    const month = padStart(miti.getMonth(), 2);
+    const day = padStart(miti.getDay(), 2);
 
     return (
-        <time className={containerClassName}>
+        <time
+            className={containerClassName}
+            style={style}
+        >
             <span className="date">
                 {dateTransformer ? dateTransformer(year) : year}
             </span>
@@ -83,6 +104,20 @@ const NepaliFormattedDate = (props: Props) => {
             <span className="date">
                 {dateTransformer ? dateTransformer(day) : day}
             </span>
+            {timeShown && (
+                <>
+                    <span className={_cs('separator', styles.separator)} />
+                    <span className="time">
+                        {timeTransformer ? timeTransformer(hour) : hour}
+                    </span>
+                    <span className="separator">
+                        :
+                    </span>
+                    <span className="time">
+                        {timeTransformer ? timeTransformer(minute) : minute}
+                    </span>
+                </>
+            )}
         </time>
     );
 };
