@@ -19,6 +19,7 @@
     .label {
         color: var(--color-text);
         font-weight: var(--font-weight-normal);
+
         &:hover {
             background-color: var(--color-background-accent-hint);
         }
