@@ -17,6 +17,9 @@ const propTypes = {
      * reqired for style override
      */
     className: PropTypes.string,
+
+    style: PropTypes.object,
+
     /**
      * string to show, if value is unexpected
      * Default: -
@@ -55,11 +58,14 @@ const propTypes = {
      */
     value: PropTypes.number,
 
+    transformer: PropTypes.func,
+
     lang: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    style: undefined,
     invalidText: '-',
     normal: false,
     precision: 2,
@@ -70,6 +76,7 @@ const defaultProps = {
     suffix: undefined,
     value: undefined,
     lang: undefined,
+    transformer: undefined,
 };
 
 
@@ -83,7 +90,7 @@ const addNepaliSeparator = (num) => {
 /**
  * Numeral component for formatted numbers
  */
-class Numeral extends React.PureComponent {
+export class NormalNumeral extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -116,7 +123,7 @@ class Numeral extends React.PureComponent {
 
         // Convert number to add separator
         if (showSeparator) {
-            number = lang === 'np'
+            number = lang === 'ne'
                 ? addNepaliSeparator(number)
                 : addSeparator(number, separator);
         }
@@ -136,17 +143,18 @@ class Numeral extends React.PureComponent {
             value,
             invalidText,
             lang,
+            transformer,
         } = { ...defaultProps, ...props };
 
         if (isFalsy(value)) {
             return invalidText;
         }
 
-        const { number, normalizeSuffix = '' } = Numeral.getNormalizedNumber({
+        const { number, normalizeSuffix = '' } = NormalNumeral.getNormalizedNumber({
             value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
-        return `${prefix}${number}${normalizeSuffix}${suffix}`;
+        return `${prefix}${transformer ? transformer(number) : number}${normalizeSuffix}${suffix}`;
     }
 
     render() {
@@ -162,6 +170,8 @@ class Numeral extends React.PureComponent {
             value,
             lang,
             invalidText,
+            transformer,
+            style,
         } = this.props;
 
         if (isFalsy(value)) {
@@ -174,12 +184,15 @@ class Numeral extends React.PureComponent {
             );
         }
 
-        const { number, normalizeSuffix } = Numeral.getNormalizedNumber({
+        const { number, normalizeSuffix } = NormalNumeral.getNormalizedNumber({
             value, showSign, normal, precision, showSeparator, separator, lang,
         });
 
         return (
-            <span className={`numeral ${className} ${styles.numeral}`}>
+            <span
+                className={`numeral ${className} ${styles.numeral}`}
+                style={style}
+            >
                 {
                     isTruthy(prefix) && (
                         <span className="prefix">
@@ -195,7 +208,7 @@ class Numeral extends React.PureComponent {
                     )
                 }
                 <span className="number">
-                    {number}
+                    {transformer ? transformer(number) : number}
                 </span>
                 {
                     isTruthy(normalizeSuffix) && (
@@ -216,4 +229,4 @@ class Numeral extends React.PureComponent {
     }
 }
 
-export default FaramOutputElement(Numeral);
+export default FaramOutputElement(NormalNumeral);

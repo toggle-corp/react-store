@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '@togglecorp/fujs';
+import { randomString, _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 import HintAndError from '../HintAndError';
 import styles from './styles.scss';
@@ -26,6 +26,8 @@ const propTypes = {
     multiple: PropTypes.bool,
 
     className: PropTypes.string,
+    labelClassName: PropTypes.string,
+    statusClassName: PropTypes.string,
 
     showHintAndError: PropTypes.bool,
 
@@ -44,10 +46,14 @@ const propTypes = {
 
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
+    labelClassName: undefined,
+    statusClassName: undefined,
     error: '',
     hint: '',
     onChange: undefined,
@@ -59,6 +65,7 @@ const defaultProps = {
     disabled: false,
     readOnly: false,
     changeDelay: undefined,
+    persistentHintAndError: true,
 };
 
 class RawFileInput extends React.PureComponent {
@@ -122,6 +129,8 @@ class RawFileInput extends React.PureComponent {
         const {
             showStatus,
             className,
+            labelClassName,
+            statusClassName,
             children,
             error,
             hint,
@@ -129,19 +138,20 @@ class RawFileInput extends React.PureComponent {
             value,
             changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            persistentHintAndError,
             ...otherProps
         } = this.props;
 
         return (
-            <div className={`file-input ${className} ${styles.fileInputWrapper}`}>
+            <div className={_cs('file-input', styles.fileInputWrapper, className)}>
                 <label
-                    className={`label ${styles.label}`}
+                    className={_cs('label', styles.label, labelClassName)}
                     htmlFor={this.inputId}
                 >
                     { children }
                 </label>
                 <input
-                    className={`input ${styles.input}`}
+                    className={_cs('input', styles.input)}
                     id={this.inputId}
                     onChange={this.handleChange}
                     // FIXME: ref may not be needed
@@ -151,7 +161,7 @@ class RawFileInput extends React.PureComponent {
                 />
                 {
                     showStatus && (
-                        <p className={styles.status}>
+                        <p className={_cs(styles.status, statusClassName)}>
                             {this.getFileStatus(value)}
                         </p>
                     )
@@ -160,6 +170,7 @@ class RawFileInput extends React.PureComponent {
                     show={showHintAndError}
                     hint={hint}
                     error={error}
+                    persistent={persistentHintAndError}
                 />
             </div>
         );

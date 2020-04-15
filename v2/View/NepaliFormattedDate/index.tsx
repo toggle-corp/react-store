@@ -9,26 +9,36 @@ import {
 
 import styles from './styles.scss';
 
-function getValueMiti(value: string | number) {
+function getValueMiti(value: string | number, lang: 'en' | 'np') {
     const date = new Date(value);
     const y = date.getFullYear();
     const m = date.getMonth() + 1;
     const d = date.getDate();
 
     const englishMiti = new Miti(y, m, d, AD);
-    const nepaliMiti = englishMiti.convertTo(BS);
-    return nepaliMiti;
+
+    if (lang === 'np') {
+        const nepaliMiti = englishMiti.convertTo(BS);
+        return nepaliMiti;
+    }
+    return englishMiti;
 }
 
 interface Props {
     className?: string;
     value?: string | number;
+    lang?: 'en' | 'np';
+    dateTransformer?: (value: number) => string | number;
+    // timeTransformer?: (value: number) => string | number;
 }
 
 const NepaliFormattedDate = (props: Props) => {
     const {
         value,
         className,
+        lang = 'np',
+        dateTransformer,
+        // timeTransformer,
     } = props;
 
     const containerClassName = _cs(
@@ -39,9 +49,9 @@ const NepaliFormattedDate = (props: Props) => {
 
     const miti = useMemo(
         () => (
-            value ? getValueMiti(value) : undefined
+            value ? getValueMiti(value, lang) : undefined
         ),
-        [value],
+        [value, lang],
     );
 
     if (!miti) {
@@ -52,22 +62,26 @@ const NepaliFormattedDate = (props: Props) => {
         );
     }
 
+    const year = miti.getYear();
+    const month = miti.getMonth();
+    const day = miti.getDay();
+
     return (
         <time className={containerClassName}>
             <span className="date">
-                {miti.getYear()}
+                {dateTransformer ? dateTransformer(year) : year}
             </span>
             <span className="separator">
                 -
             </span>
             <span className="date">
-                {miti.getMonth()}
+                {dateTransformer ? dateTransformer(month) : month}
             </span>
             <span className="separator">
                 -
             </span>
             <span className="date">
-                {miti.getDay()}
+                {dateTransformer ? dateTransformer(day) : day}
             </span>
         </time>
     );
