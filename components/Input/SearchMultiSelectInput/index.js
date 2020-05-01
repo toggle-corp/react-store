@@ -89,6 +89,9 @@ export const defaultProps = {
     maxDisplayOptions: 100,
 };
 
+const asIs = d => d;
+const justTrue = () => true;
+
 class SearchMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -117,6 +120,40 @@ class SearchMultiSelectInput extends React.PureComponent {
         }
     }
 
+    getFilteredOptions = memoize((
+        options,
+        labelSelector,
+        keySelector,
+        searchValue,
+        inputValue,
+        maxDisplayOptions,
+        showOptionsPopup,
+    ) => {
+        if (!searchValue || searchValue.length === 0) {
+            if (!showOptionsPopup) {
+                return [];
+            }
+
+            const valueMap = listToMap(inputValue, asIs, justTrue);
+            return options.filter(d => valueMap[keySelector(d)]);
+        }
+
+        const newOptions = options
+            .filter(
+                option => (
+                    searchValue === undefined
+                    || caseInsensitiveSubmatch(labelSelector(option), searchValue)
+                ),
+            )
+            .sort((a, b) => compareStringSearch(
+                labelSelector(a),
+                labelSelector(b),
+                searchValue,
+            ))
+            .slice(0, maxDisplayOptions);
+        return newOptions;
+    })
+
     findPlaceholderValue = memoize((
         options,
         labelSelector,
@@ -133,31 +170,6 @@ class SearchMultiSelectInput extends React.PureComponent {
             .filter(isDefined)
             .map(v => labelSelector(v));
         return selectedOptions.join(', ');
-    })
-
-    filterOptions = memoize((
-        options,
-        labelSelector,
-        value,
-        maxDisplayOptions,
-    ) => {
-        if (!value || value.length === 0) {
-            return [];
-        }
-
-        const newOptions = options
-            .filter(
-                option => (
-                    value === undefined || caseInsensitiveSubmatch(labelSelector(option), value)
-                ),
-            )
-            .sort((a, b) => compareStringSearch(
-                labelSelector(a),
-                labelSelector(b),
-                value,
-            ))
-            .slice(0, maxDisplayOptions);
-        return newOptions;
     })
 
     // Helper
@@ -346,11 +358,14 @@ class SearchMultiSelectInput extends React.PureComponent {
 
         const finalSearchValue = searchValue || '';
 
-        const filteredOptions = this.filterOptions(
+        const filteredOptions = this.getFilteredOptions(
             options,
             labelSelector,
+            keySelector,
             searchValue,
+            value,
             maxDisplayOptions,
+            showOptionsPopup,
         );
 
         const className = _cs(
