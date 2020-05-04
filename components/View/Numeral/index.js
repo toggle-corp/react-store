@@ -90,7 +90,7 @@ const addNepaliSeparator = (num) => {
 /**
  * Numeral component for formatted numbers
  */
-class NormalNumeral extends React.PureComponent {
+export class NormalNumeral extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;

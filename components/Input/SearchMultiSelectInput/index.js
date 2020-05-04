@@ -91,6 +91,7 @@ export const defaultProps = {
 
 const asIs = d => d;
 const justTrue = () => true;
+const emptyFilteredOptions = [];
 
 class SearchMultiSelectInput extends React.PureComponent {
     static propTypes = propTypes;
@@ -125,19 +126,8 @@ class SearchMultiSelectInput extends React.PureComponent {
         labelSelector,
         keySelector,
         searchValue,
-        inputValue,
         maxDisplayOptions,
-        showOptionsPopup,
     ) => {
-        if (!searchValue || searchValue.length === 0) {
-            if (!showOptionsPopup) {
-                return [];
-            }
-
-            const valueMap = listToMap(inputValue, asIs, justTrue);
-            return options.filter(d => valueMap[keySelector(d)]);
-        }
-
         const newOptions = options
             .filter(
                 option => (
@@ -152,6 +142,21 @@ class SearchMultiSelectInput extends React.PureComponent {
             ))
             .slice(0, maxDisplayOptions);
         return newOptions;
+    })
+
+    getFilteredOptionsWhileEmptySearch = memoize((
+        options,
+        searchValue,
+        inputValue,
+        keySelector,
+        showOptionsPopup,
+    ) => {
+        if (!showOptionsPopup) {
+            return emptyFilteredOptions;
+        }
+
+        const valueMap = listToMap(inputValue, asIs, justTrue);
+        return options.filter(d => valueMap[keySelector(d)]);
     })
 
     findPlaceholderValue = memoize((
@@ -188,7 +193,6 @@ class SearchMultiSelectInput extends React.PureComponent {
 
         this.setState({
             showOptionsPopup: true,
-            searchValue: undefined,
         });
     }
 
@@ -358,15 +362,25 @@ class SearchMultiSelectInput extends React.PureComponent {
 
         const finalSearchValue = searchValue || '';
 
-        const filteredOptions = this.getFilteredOptions(
-            options,
-            labelSelector,
-            keySelector,
-            searchValue,
-            value,
-            maxDisplayOptions,
-            showOptionsPopup,
-        );
+        let filteredOptions = emptyFilteredOptions;
+        if (!searchValue || searchValue.length === 0) {
+            filteredOptions = this.getFilteredOptionsWhileEmptySearch(
+                options,
+                searchValue,
+                value,
+                keySelector,
+                showOptionsPopup,
+            );
+        } else {
+            filteredOptions = this.getFilteredOptions(
+                options,
+                labelSelector,
+                keySelector,
+                searchValue,
+                maxDisplayOptions,
+            );
+        }
+
 
         const className = _cs(
             classNameFromProps,
@@ -390,26 +404,6 @@ class SearchMultiSelectInput extends React.PureComponent {
             value.length === options.length && 'completely-filled',
         );
 
-        const inputAndActionClassName = `
-            input-and-actions
-            ${styles.inputAndActions}
-        `;
-
-        const actionsClassName = `
-            actions
-            ${styles.actions}
-        `;
-
-        const clearButtonClassName = `
-            clear-button
-            ${styles.clearButton}
-        `;
-
-        const selectAllButtonClassName = `
-            select-all-button
-            ${styles.selectAllButton}
-        `;
-
         return (
             <div
                 className={className}
@@ -424,7 +418,7 @@ class SearchMultiSelectInput extends React.PureComponent {
                         active={inputInFocus || showOptionsPopup}
                     />
                 )}
-                <div className={inputAndActionClassName}>
+                <div className={_cs('input-and-actions', styles.inputAndActions)}>
                     <RawKeyInput
                         className={styles.input}
                         type="text"
@@ -448,12 +442,12 @@ class SearchMultiSelectInput extends React.PureComponent {
                         onShowOptions={this.handleShowOptionsPopup}
                         onOptionSelect={this.handleOptionSelect}
                     />
-                    <div className={actionsClassName}>
+                    <div className={_cs('actions', styles.actions)}>
                         { showSelectAllButton && (
                             <Button
                                 transparent
                                 tabIndex="-1"
-                                className={selectAllButtonClassName}
+                                className={_cs('select-all-button', styles.selectAllButton)}
                                 onClick={this.handleSelectAllButtonClick}
                                 title="Select all options"
                                 disabled={disabled || readOnly}
@@ -465,7 +459,7 @@ class SearchMultiSelectInput extends React.PureComponent {
                             <DangerButton
                                 transparent
                                 tabIndex="-1"
-                                className={clearButtonClassName}
+                                className={_cs('clear-button', styles.clearButton)}
                                 onClick={this.handleClearButtonClick}
                                 title="Clear selected option(s)"
                                 disabled={disabled || readOnly}
