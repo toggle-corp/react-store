@@ -6,6 +6,7 @@ import {
     caseInsensitiveSubmatch,
     compareStringSearch,
     isDefined,
+    isFalsyString,
     _cs,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
@@ -131,7 +132,7 @@ class SearchMultiSelectInput extends React.PureComponent {
         const newOptions = options
             .filter(
                 option => (
-                    searchValue === undefined
+                    isFalsyString(searchValue)
                     || caseInsensitiveSubmatch(labelSelector(option), searchValue)
                 ),
             )
@@ -168,12 +169,12 @@ class SearchMultiSelectInput extends React.PureComponent {
         const optionsMap = listToMap(
             options,
             keySelector,
-            element => element,
+            asIs,
         );
         const selectedOptions = value
             .map(k => optionsMap[k])
             .filter(isDefined)
-            .map(v => labelSelector(v));
+            .map(labelSelector);
         return selectedOptions.join(', ');
     })
 
@@ -363,7 +364,8 @@ class SearchMultiSelectInput extends React.PureComponent {
         const finalSearchValue = searchValue || '';
 
         let filteredOptions = emptyFilteredOptions;
-        if (!searchValue || searchValue.length === 0) {
+        let showHint = false;
+        if (isFalsyString(searchValue)) {
             filteredOptions = this.getFilteredOptionsWhileEmptySearch(
                 options,
                 searchValue,
@@ -371,6 +373,7 @@ class SearchMultiSelectInput extends React.PureComponent {
                 keySelector,
                 showOptionsPopup,
             );
+            showHint = filteredOptions.length > 0;
         } else {
             filteredOptions = this.getFilteredOptions(
                 options,
@@ -489,6 +492,7 @@ class SearchMultiSelectInput extends React.PureComponent {
                     renderEmpty={renderEmpty}
                     show={showOptionsPopup}
                     focusedKey={focusedKey}
+                    showHint={showHint}
                 />
             </div>
         );
