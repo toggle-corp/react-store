@@ -38,11 +38,6 @@ const DigitalInput = (props: Props) => {
             },
         } = event;
 
-        if (isFalsyString(newValue) || newValue.match(/^0+$/)) {
-            onChange('');
-            return;
-        }
-
         if (newValue.length <= padLength) {
             onChange(newValue);
             return;
@@ -50,6 +45,22 @@ const DigitalInput = (props: Props) => {
 
         const sanitizedValue = newValue.substr(newValue.length - padLength);
         onChange(sanitizedValue);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!onChange) {
+            return;
+        }
+        const {
+            key,
+            currentTarget: {
+                value: oldValue,
+            },
+        } = event;
+        if (key === 'Backspace' && isTruthyString(oldValue) && /^0+$/.test(oldValue.slice(0, -1))) {
+            onChange('');
+            event.preventDefault();
+        }
     };
 
     const className = _cs(
@@ -63,6 +74,7 @@ const DigitalInput = (props: Props) => {
             className={className}
             type="number"
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             value={(
                 isTruthyString(value)
                     ? padStart(value, padLength)

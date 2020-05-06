@@ -52,7 +52,7 @@ const propTypes = {
      */
     vizContainerClass: PropTypes.string,
 
-    showBackButton: PropTypes.boolean,
+    showBackButton: PropTypes.bool,
 };
 
 const defaultProps = {
