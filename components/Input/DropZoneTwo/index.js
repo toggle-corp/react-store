@@ -16,7 +16,7 @@ const propTypes = {
         PropTypes.arrayOf(
             PropTypes.node,
         ),
-    ]).isRequired,
+    ]),
 
     hoverChildren: PropTypes.node,
 
@@ -27,6 +27,7 @@ const propTypes = {
 
 const defaultProps = {
     className: undefined,
+    children: undefined,
     hoverChildrenClassName: undefined,
     hoverChildren: (
         <Message>
