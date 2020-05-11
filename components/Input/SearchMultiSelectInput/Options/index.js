@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { listToMap, isListEqual } from '@togglecorp/fujs';
+import memoize from 'memoize-one';
+import {
+    _cs,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import FloatingContainer from '../../../View/FloatingContainer';
-import List from '../../../View/List';
+import ListView from '../../../View/List/ListView';
 import Option from '../Option';
 
 import styles from './styles.scss';
+
+const emptyComponent = () => null;
 
 const propTypes = {
     activeKeys: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -22,6 +28,7 @@ const propTypes = {
     parentContainer: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     renderEmpty: PropTypes.func,
     show: PropTypes.bool.isRequired,
+    showHint: PropTypes.bool.isRequired,
     focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
@@ -38,40 +45,13 @@ export default class Options extends React.PureComponent {
 
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-        this.generateActiveMap(props);
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        const { activeKeys: oldActiveKeys } = this.props;
-        const { activeKeys: newActiveKeys } = nextProps;
-
-        if (!isListEqual(oldActiveKeys, newActiveKeys)) {
-            this.generateActiveMap(nextProps);
-        }
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.options,
-        ];
-
-        return classNames.join(' ');
-    }
-
-    generateActiveMap = (props) => {
-        const { activeKeys } = props;
-
-        this.activeKeysMap = listToMap(
+    generateActiveMap = memoize(activeKeys => (
+        listToMap(
             activeKeys,
             optionKey => optionKey,
             () => true,
-        );
-    }
+        )
+    ))
 
     renderOption = (k, data) => {
         const {
@@ -81,6 +61,7 @@ export default class Options extends React.PureComponent {
             onOptionFocus,
             optionLabelSelector,
             focusedKey,
+            activeKeys,
         } = this.props;
 
         const key = keySelector(data);
@@ -89,7 +70,9 @@ export default class Options extends React.PureComponent {
         ) : (
             labelSelector(data)
         );
-        const isActive = !!this.activeKeysMap[key];
+        const activeKeysMap = this.generateActiveMap(activeKeys);
+
+        const isActive = !!activeKeysMap[key];
         const isFocused = key === focusedKey;
 
         return (
@@ -105,24 +88,6 @@ export default class Options extends React.PureComponent {
         );
     }
 
-    renderEmpty = () => {
-        const {
-            renderEmpty: EmptyComponent,
-            data,
-        } = this.props;
-
-        if (data.length > 0) {
-            return null;
-        }
-
-        const className = `empty ${styles.empty}`;
-        return (
-            <div className={className}>
-                <EmptyComponent />
-            </div>
-        );
-    }
-
     render() {
         const {
             onBlur,
@@ -130,10 +95,10 @@ export default class Options extends React.PureComponent {
             parentContainer,
             data,
             show,
+            className,
+            renderEmpty: EmptyComponent,
+            showHint,
         } = this.props;
-
-        const className = this.getClassName();
-        const Empty = this.renderEmpty;
 
         if (!show) {
             return null;
@@ -141,16 +106,27 @@ export default class Options extends React.PureComponent {
 
         return (
             <FloatingContainer
+                className={_cs(className, styles.options)}
                 onBlur={onBlur}
                 onInvalidate={onInvalidate}
                 parent={parentContainer}
-                className={className}
             >
-                <List
+                <ListView
+                    className={styles.list}
                     data={data}
                     modifier={this.renderOption}
+                    emptyComponent={emptyComponent}
                 />
-                <Empty />
+                {data.length <= 0 && (
+                    <div className={_cs('empty', styles.empty)}>
+                        <EmptyComponent />
+                    </div>
+                )}
+                {showHint && (
+                    <div className={_cs('options-hint', styles.optionsHint)}>
+                        Type to Search
+                    </div>
+                )}
             </FloatingContainer>
         );
     }
