@@ -12,6 +12,8 @@ const propTypes = {
     emptyComponent: PropTypes.func,
     keySelector: PropTypes.func,
     faramElement: PropTypes.bool,
+    pending: PropTypes.bool,
+    isFiltered: PropTypes.bool,
     itemClassName: PropTypes.string,
 };
 
@@ -22,6 +24,8 @@ const defaultProps = {
     emptyComponent: undefined,
     faramElement: false,
     itemClassName: '',
+    pending: undefined,
+    isFiltered: undefined,
 };
 
 @SortableContainer
@@ -36,6 +40,8 @@ export default class ListViewSortableContainer extends React.Component {
             className, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             keySelector, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             emptyComponent, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            pending, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            isFiltered, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             itemClassName,
             ...otherProps
         } = this.props;
@@ -58,8 +64,11 @@ export default class ListViewSortableContainer extends React.Component {
             keySelector,
             emptyComponent,
             faramElement,
+            pending,
+            isFiltered,
         } = this.props;
 
+        // FIXME: why faramElement is passed to NormalListView
         return (
             <NormalListView
                 className={className}
@@ -69,6 +78,8 @@ export default class ListViewSortableContainer extends React.Component {
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
                 faramElement={faramElement}
+                pending={pending}
+                isFiltered={isFiltered}
             />
         );
     }
