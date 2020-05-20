@@ -101,6 +101,42 @@ const presets = {
 
         return { startDate, endDate };
     },
+    lastThreeMonths: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 90);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    lastSixMonths: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 180);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
+    lastOneYear: () => {
+        const min = new Date();
+        min.setHours(0, 0, 0, 0);
+        min.setDate(min.getDate() - 365);
+        const startDate = encodeDate(min);
+
+        const max = new Date();
+        max.setHours(0, 0, 0, 0);
+        const endDate = encodeDate(max);
+
+        return { startDate, endDate };
+    },
 };
 
 class DateFilter extends React.PureComponent {
@@ -115,6 +151,9 @@ class DateFilter extends React.PureComponent {
         { key: 'lastSevenDays', label: 'Last 7 days' },
         { key: 'currentMonth', label: 'This month' },
         { key: 'lastThirtyDays', label: 'Last 30 days' },
+        { key: 'lastThreeMonths', label: 'Last 3 months' },
+        { key: 'lastSixMonths', label: 'Last 6 months' },
+        { key: 'lastOneYear', label: 'Last 1 year' },
         { key: 'customExact', label: 'Select an exact date' },
         { key: 'customRange', label: 'Select a date range' },
     ];
