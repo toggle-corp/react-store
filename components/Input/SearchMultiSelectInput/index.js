@@ -48,6 +48,7 @@ export const propTypes = {
     className: PropTypes.string,
     error: PropTypes.string,
     hint: PropTypes.string,
+    persistentHintAndError: PropTypes.bool,
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     optionsClassName: PropTypes.string,
     placeholder: PropTypes.string,
@@ -87,6 +88,7 @@ export const defaultProps = {
     showLabel: true,
     title: undefined,
     value: emptyList,
+    persistentHintAndError: true,
     maxDisplayOptions: 100,
 };
 
@@ -327,6 +329,7 @@ class SearchMultiSelectInput extends React.PureComponent {
             placeholder,
             optionLabelSelector,
             maxDisplayOptions,
+            persistentHintAndError,
         } = this.props;
 
         const {
@@ -471,10 +474,11 @@ class SearchMultiSelectInput extends React.PureComponent {
                         )}
                     </div>
                 </div>
-                { showHintAndError && (
+                {showHintAndError && (
                     <HintAndError
                         error={error}
                         hint={hint}
+                        persistentHintAndError={persistentHintAndError}
                     />
                 )}
                 <Options

@@ -31,6 +31,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    emptyComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -47,6 +48,7 @@ const defaultProps = {
     showHintAndError: true,
     showLabel: true,
     value: [],
+    emptyComponent: undefined,
 };
 
 const itemKeySelector = d => d;
@@ -109,6 +111,7 @@ class SimpleListInput extends React.PureComponent {
             showHintAndError,
             showLabel,
             value,
+            emptyComponent,
         } = this.props;
 
         return (
@@ -131,6 +134,7 @@ class SimpleListInput extends React.PureComponent {
                     renderer={DismissableListItem}
                     rendererParams={this.getRendererParams}
                     keySelector={itemKeySelector}
+                    emptyComponent={emptyComponent}
                 />
                 <HintAndError
                     className={styles.hintAndError}

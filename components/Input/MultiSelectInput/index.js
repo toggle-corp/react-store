@@ -58,6 +58,7 @@ export const propTypes = {
     optionLabelSelector: PropTypes.func,
 
     renderEmpty: PropTypes.func,
+
 };
 
 export const defaultProps = {
