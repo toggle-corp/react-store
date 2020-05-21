@@ -8,11 +8,13 @@ import {
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
-import RemovableListItem from '../RemovableListItem';
+import DismissableListItem from '../../Action/DismissableListItem';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 import styles from './styles.scss';
+
+// NOTE: Deprecated
 
 const propTypes = {
     className: PropTypes.string,
@@ -77,7 +79,7 @@ class SimpleListInput extends React.PureComponent {
         return ({
             itemKey: key,
             value: labelSelector(optionsMap[key]),
-            onRemoveButtonClick: this.handleItemRemoveButtonClick,
+            onDismiss: this.handleItemRemoveButtonClick,
             className: itemClassName,
             disabled,
             readOnly,
@@ -126,7 +128,7 @@ class SimpleListInput extends React.PureComponent {
                 <ListView
                     className={styles.list}
                     data={value}
-                    renderer={RemovableListItem}
+                    renderer={DismissableListItem}
                     rendererParams={this.getRendererParams}
                     keySelector={itemKeySelector}
                 />

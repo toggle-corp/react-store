@@ -1,17 +1,35 @@
+.marker {
+    border-radius: 50%;
+    width: var(--width-marker-radius);
+    height: var(--width-marker-radius);
+}
+
 .list-item {
     display: flex;
     align-items: center;
-    padding: var(--spacing-extra-small) 0;
+    padding: var(--spacing-extra-small) calc(var(--spacing-small) - var(--spacing-extra-small));
 
-    .marker {
+    .icons {
         flex-shrink: 0;
-        margin: var(--spacing-extra-small) var(--spacing-small);
-        border-radius: 50%;
-        width: var(--width-marker-radius);
-        height: var(--width-marker-radius);
+        padding: 0 var(--spacing-extra-small);
     }
 
     .label {
         flex-grow: 1;
+        padding: 0 var(--spacing-extra-small);
+    }
+
+    .actions {
+        flex-shrink: 0;
+        opacity: 0;
+        padding: 0 var(--spacing-extra-small);
+    }
+
+    &:hover {
+        background-color: var(--color-background-accent-hint);
+
+        .actions {
+            opacity: 1;
+        }
     }
 }
