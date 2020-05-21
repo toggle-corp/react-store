@@ -11,9 +11,13 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    labelClassName: PropTypes.string,
+    iconsClassName: PropTypes.string,
+    actionsClassName: PropTypes.string,
     itemKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    actions: PropTypes.node,
 
     onEdit: PropTypes.func,
     onDismiss: PropTypes.func,
@@ -23,6 +27,10 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    labelClassName: undefined,
+    iconsClassName: undefined,
+    actionsClassName: undefined,
+
     itemKey: undefined,
     disabled: false,
     readOnly: false,
@@ -30,6 +38,7 @@ const defaultProps = {
     onDismiss: undefined,
     color: undefined,
     value: undefined,
+    actions: undefined,
 };
 
 function DismissableListItem(props) {
@@ -37,12 +46,17 @@ function DismissableListItem(props) {
         disabled,
         readOnly,
         className,
+        labelClassName,
+        iconsClassName,
+        actionsClassName,
         value,
 
         color,
         itemKey,
         onDismiss,
         onEdit,
+
+        actions,
     } = props;
 
     const handleEditButtonClick = useCallback(
@@ -64,6 +78,9 @@ function DismissableListItem(props) {
     return (
         <ListItem
             className={_cs(className, styles.dismissableListItem)}
+            labelClassName={labelClassName}
+            iconsClassName={iconsClassName}
+            actionsClassName={actionsClassName}
             icons={(
                 <DefaultIcon
                     color={color}
@@ -72,6 +89,7 @@ function DismissableListItem(props) {
             actions={
                 !readOnly && (
                     <>
+                        {actions}
                         {onEdit && (
                             <WarningButton
                                 disabled={disabled}

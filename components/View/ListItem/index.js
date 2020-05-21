@@ -7,6 +7,7 @@ import styles from './styles.scss';
 export function DefaultIcon(props) {
     const {
         color,
+        title,
     } = props;
 
     const style = {
@@ -16,24 +17,30 @@ export function DefaultIcon(props) {
     return (
         <div
             style={style}
+            title={title}
             className={styles.marker}
         />
     );
 }
 DefaultIcon.propTypes = {
     color: PropTypes.string,
+    title: PropTypes.string,
 };
 DefaultIcon.defaultProps = {
     color: 'var(--color-text-disabled)',
+    title: undefined,
 };
 
 function ListItem(props) {
     const {
         value,
-
-        className,
         actions,
         icons,
+
+        className,
+        iconsClassName,
+        labelClassName,
+        actionsClassName,
     } = props;
 
     const finalIcons = icons === undefined
@@ -43,15 +50,15 @@ function ListItem(props) {
     return (
         <div className={_cs(styles.listItem, className)}>
             {finalIcons && (
-                <div className={styles.icons}>
+                <div className={_cs(styles.icons, iconsClassName)}>
                     {finalIcons}
                 </div>
             )}
-            <div className={styles.label}>
+            <div className={_cs(styles.label, labelClassName)}>
                 {value}
             </div>
             {actions && (
-                <div className={styles.actions}>
+                <div className={_cs(styles.actions, actionsClassName)}>
                     {actions}
                 </div>
             )}
@@ -61,16 +68,22 @@ function ListItem(props) {
 
 ListItem.defaultProps = {
     className: undefined,
-    value: undefined,
+    iconsClassName: undefined,
+    labelClassName: undefined,
+    actionsClassName: undefined,
 
+    value: undefined,
     icons: undefined,
     actions: undefined,
 };
 
 ListItem.propTypes = {
     className: PropTypes.string,
-    value: PropTypes.node,
+    iconsClassName: PropTypes.string,
+    labelClassName: PropTypes.string,
+    actionsClassName: PropTypes.string,
 
+    value: PropTypes.node,
     icons: PropTypes.node,
     actions: PropTypes.node,
 };
