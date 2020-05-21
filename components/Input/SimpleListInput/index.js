@@ -8,11 +8,13 @@ import {
 import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '../../View/List/ListView';
-import RemovableListItem from '../RemovableListItem';
+import DismissableListItem from '../../Action/DismissableListItem';
 
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 import styles from './styles.scss';
+
+// NOTE: Deprecated
 
 const propTypes = {
     className: PropTypes.string,
@@ -29,6 +31,7 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
     showLabel: PropTypes.bool,
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    emptyComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -45,6 +48,7 @@ const defaultProps = {
     showHintAndError: true,
     showLabel: true,
     value: [],
+    emptyComponent: undefined,
 };
 
 const itemKeySelector = d => d;
@@ -77,7 +81,7 @@ class SimpleListInput extends React.PureComponent {
         return ({
             itemKey: key,
             value: labelSelector(optionsMap[key]),
-            onRemoveButtonClick: this.handleItemRemoveButtonClick,
+            onDismiss: this.handleItemRemoveButtonClick,
             className: itemClassName,
             disabled,
             readOnly,
@@ -107,6 +111,7 @@ class SimpleListInput extends React.PureComponent {
             showHintAndError,
             showLabel,
             value,
+            emptyComponent,
         } = this.props;
 
         return (
@@ -126,9 +131,10 @@ class SimpleListInput extends React.PureComponent {
                 <ListView
                     className={styles.list}
                     data={value}
-                    renderer={RemovableListItem}
+                    renderer={DismissableListItem}
                     rendererParams={this.getRendererParams}
                     keySelector={itemKeySelector}
+                    emptyComponent={emptyComponent}
                 />
                 <HintAndError
                     className={styles.hintAndError}

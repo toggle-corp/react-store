@@ -62,7 +62,7 @@ const defaultProps = {
 };
 
 
-export class NormalListSelection extends React.PureComponent {
+export class NormalChecklistInput extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -211,4 +211,4 @@ export class NormalListSelection extends React.PureComponent {
     }
 }
 
-export default FaramInputElement(NormalListSelection);
+export default FaramInputElement(NormalChecklistInput);

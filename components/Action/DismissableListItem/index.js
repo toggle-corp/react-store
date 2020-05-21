@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import ListItem from '../../View/ListItem';
+
+import { _cs } from '@togglecorp/fujs';
+
+import ListItem, { DefaultIcon } from '../../View/ListItem';
 import DangerButton from '../Button/DangerButton';
 import WarningButton from '../Button/WarningButton';
 
@@ -8,91 +11,115 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    onDismiss: PropTypes.func,
-    onEdit: PropTypes.func,
+    labelClassName: PropTypes.string,
+    iconsClassName: PropTypes.string,
+    actionsClassName: PropTypes.string,
     itemKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    actions: PropTypes.node,
+
+    onEdit: PropTypes.func,
+    onDismiss: PropTypes.func,
+    color: PropTypes.string,
+    value: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    labelClassName: undefined,
+    iconsClassName: undefined,
+    actionsClassName: undefined,
+
     itemKey: undefined,
     disabled: false,
+    readOnly: false,
     onEdit: undefined,
     onDismiss: undefined,
+    color: undefined,
+    value: undefined,
+    actions: undefined,
 };
 
-export default class DismissableListItem extends React.PureComponent {
-    static propTypes = propTypes;
+function DismissableListItem(props) {
+    const {
+        disabled,
+        readOnly,
+        className,
+        labelClassName,
+        iconsClassName,
+        actionsClassName,
+        value,
 
-    static defaultProps = defaultProps;
+        color,
+        itemKey,
+        onDismiss,
+        onEdit,
 
-    handleEditButtonClick = () => {
-        const {
-            onEdit,
-            itemKey,
-        } = this.props;
+        actions,
+    } = props;
 
-        if (onEdit) {
-            onEdit(itemKey);
-        }
-    }
+    const handleEditButtonClick = useCallback(
+        () => {
+            if (onEdit) {
+                onEdit(itemKey);
+            }
+        },
+        [onEdit, itemKey],
+    );
 
-    handleDismissButtonClick = () => {
-        const {
-            onDismiss,
-            itemKey,
-        } = this.props;
+    const handleDismissButtonClick = useCallback(
+        () => {
+            onDismiss(itemKey);
+        },
+        [onDismiss, itemKey],
+    );
 
-        onDismiss(itemKey);
-    }
-
-    render() {
-        const {
-            className: classNameFromProps,
-            onDismiss,
-            onEdit,
-            disabled,
-
-            ...otherProps
-        } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.dismissableListItem}
-        `;
-
-        return (
-            <div className={className}>
-                <ListItem
-                    className={styles.listItem}
-                    {...otherProps}
+    return (
+        <ListItem
+            className={_cs(className, styles.dismissableListItem)}
+            labelClassName={labelClassName}
+            iconsClassName={iconsClassName}
+            actionsClassName={actionsClassName}
+            icons={(
+                <DefaultIcon
+                    color={color}
                 />
-                <div className={styles.actions}>
-                    { onEdit && (
-                        <WarningButton
-                            disabled={disabled}
-                            className={styles.editButton}
-                            onClick={this.handleEditButtonClick}
-                            transparent
-                            iconName="edit"
-                            smallVerticalPadding
-                            smallHorizontalPadding
-                        />
-                    )}
-                    { onDismiss && (
-                        <DangerButton
-                            disabled={disabled}
-                            className={styles.dismissButton}
-                            onClick={this.handleDismissButtonClick}
-                            transparent
-                            iconName="close"
-                            smallVerticalPadding
-                            smallHorizontalPadding
-                        />
-                    )}
-                </div>
-            </div>
-        );
-    }
+            )}
+            actions={
+                !readOnly && (
+                    <>
+                        {actions}
+                        {onEdit && (
+                            <WarningButton
+                                disabled={disabled}
+                                className={styles.editButton}
+                                onClick={handleEditButtonClick}
+                                transparent
+                                iconName="edit"
+                                smallVerticalPadding
+                                smallHorizontalPadding
+                            />
+                        )}
+                        {onDismiss && (
+                            <DangerButton
+                                disabled={disabled}
+                                className={styles.dismissButton}
+                                onClick={handleDismissButtonClick}
+                                transparent
+                                iconName="close"
+                                smallVerticalPadding
+                                smallHorizontalPadding
+                            />
+                        )}
+                    </>
+                )
+            }
+            value={value}
+        />
+    );
 }
+DismissableListItem.defaultProps = defaultProps;
+DismissableListItem.propTypes = propTypes;
+
+export default memo(DismissableListItem);

@@ -1,8 +1,8 @@
 import React from 'react';
-import ListSelection from './ListSelection';
+import ChecklistInput from './ChecklistInput';
 
 const MultiSegmentInput = props => (
-    <ListSelection
+    <ChecklistInput
         {...props}
         segment
     />
