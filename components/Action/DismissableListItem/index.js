@@ -22,7 +22,7 @@ const propTypes = {
     onEdit: PropTypes.func,
     onDismiss: PropTypes.func,
     color: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
 };
 
 const defaultProps = {
