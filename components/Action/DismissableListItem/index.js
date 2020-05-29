@@ -22,7 +22,7 @@ const propTypes = {
     onEdit: PropTypes.func,
     onDismiss: PropTypes.func,
     color: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
 };
 
 const defaultProps = {
@@ -90,9 +90,8 @@ function DismissableListItem(props) {
                 !readOnly && (
                     <>
                         {actions}
-                        {onEdit && (
+                        {onEdit && !disabled && (
                             <WarningButton
-                                disabled={disabled}
                                 className={styles.editButton}
                                 onClick={handleEditButtonClick}
                                 transparent
@@ -101,9 +100,8 @@ function DismissableListItem(props) {
                                 smallHorizontalPadding
                             />
                         )}
-                        {onDismiss && (
+                        {onDismiss && !disabled && (
                             <DangerButton
-                                disabled={disabled}
                                 className={styles.dismissButton}
                                 onClick={handleDismissButtonClick}
                                 transparent
