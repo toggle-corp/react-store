@@ -101,8 +101,9 @@ function Button<T>(props: Props<T>) {
         styles.icon,
     );
 
+
+    /* eslint-disable react/button-has-type */
     return (
-        // eslint-disable-next-line react/button-has-type
         <button
             className={buttonClassName}
             disabled={disabled || pending}
@@ -124,6 +125,7 @@ function Button<T>(props: Props<T>) {
             { children }
         </button>
     );
+    /* eslint-enable react/button-has-type */
 }
 Button.defaultProps = {
     buttonType: 'button-default' as ButtonType,
