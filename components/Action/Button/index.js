@@ -175,8 +175,8 @@ class Button extends React.PureComponent {
             // pending && styles.pendingIcon,
         );
 
+        /* eslint-disable react/button-has-type */
         return (
-            // eslint-disable-next-line react/button-has-type
             <button
                 className={buttonClassName}
                 disabled={disabled || pending}
@@ -198,6 +198,7 @@ class Button extends React.PureComponent {
                 { children }
             </button>
         );
+        /* eslint-enable react/button-has-type */
     }
 }
 
