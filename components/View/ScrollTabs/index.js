@@ -108,6 +108,7 @@ export default class ScrollTabs extends React.Component {
         isActive,
         isBasic,
         isDisabled,
+        key,
     }) => {
         const {
             itemClassName,
@@ -124,6 +125,7 @@ export default class ScrollTabs extends React.Component {
             isActive && 'active',
             isActive && activeClassName,
             isDisabled && styles.disabledLink,
+            `tab-${String(key)}`,
         );
     }
 
@@ -196,6 +198,7 @@ export default class ScrollTabs extends React.Component {
                     isActive,
                     isBasic: true,
                     isDisabled: isTabDisabled,
+                    key: data,
                 });
 
                 return (
@@ -213,6 +216,7 @@ export default class ScrollTabs extends React.Component {
             const className = this.getTabClassName({
                 isActive,
                 isDisabled: isTabDisabled,
+                key: data,
             });
             return (
                 <button
@@ -237,6 +241,7 @@ export default class ScrollTabs extends React.Component {
                 isActive,
                 isBasic: true,
                 isDisabled: isTabDisabled,
+                key: data,
             });
             return (
                 <Renderer
@@ -254,6 +259,7 @@ export default class ScrollTabs extends React.Component {
         const className = this.getTabClassName({
             isActive,
             isDisabled: isTabDisabled,
+            key: data,
         });
 
         if (isTabDisabled) {
