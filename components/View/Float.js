@@ -17,8 +17,7 @@ const propTypes = {
 
 const defaultProps = {
     focusTrap: false,
-    // eslint-disable-next-line
-    onInvalidate: () => {}, // no-op
+    onInvalidate: undefined, // no-op
 };
 
 /* Portal with invalidation and focus trap */
@@ -32,7 +31,9 @@ export default class Float extends React.PureComponent {
         window.addEventListener('scroll', this.handleScroll, true);
 
         const { onInvalidate } = this.props;
-        onInvalidate();
+        if (onInvalidate) {
+            onInvalidate();
+        }
     }
 
     componentWillUnmount() {
@@ -42,12 +43,16 @@ export default class Float extends React.PureComponent {
 
     handleResize = () => {
         const { onInvalidate } = this.props;
-        onInvalidate();
+        if (onInvalidate) {
+            onInvalidate();
+        }
     }
 
     handleScroll = () => {
         const { onInvalidate } = this.props;
-        onInvalidate();
+        if (onInvalidate) {
+            onInvalidate();
+        }
     }
 
     render() {

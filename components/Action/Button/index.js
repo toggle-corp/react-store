@@ -90,7 +90,7 @@ const defaultProps = {
     disabled: false,
     pending: false,
     iconName: undefined,
-    onClick: () => {}, // no-op
+    onClick: undefined,
     children: undefined,
     smallHorizontalPadding: false,
     smallVerticalPadding: false,
@@ -120,6 +120,11 @@ class Button extends React.PureComponent {
             onClickParams,
             changeDelay,
         } = this.props;
+
+        if (!onClick) {
+            return;
+        }
+
 
         this.changeTimeout = setTimeout(
             () => {
