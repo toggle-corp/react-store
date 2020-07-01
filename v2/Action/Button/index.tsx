@@ -113,7 +113,7 @@ function Button<T>(props: Props<T>) {
         >
             {pending ? (
                 <Spinner
-                    className={styles.spinner}
+                    className={_cs(styles.spinner, 'tc-v2-button-spinner')}
                     size="small"
                 />
             ) : (

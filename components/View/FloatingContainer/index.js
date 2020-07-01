@@ -9,8 +9,6 @@ import styles from './styles.scss';
 
 const ESCAPE_KEY = 27;
 
-const noop = () => {};
-
 const propTypes = {
     /**
      * child elements
@@ -47,11 +45,11 @@ const defaultProps = {
     focusTrap: false,
     showHaze: false,
     onBlur: undefined,
-    onClose: noop,
+    onClose: undefined,
     onMouseDown: undefined,
     closeOnEscape: false,
     parent: undefined,
-    onInvalidate: () => {},
+    onInvalidate: undefined,
 };
 
 /* Float with parent, onFocus and onBlur */
@@ -103,13 +101,16 @@ export default class FloatingContainer extends React.PureComponent {
         const { current: container } = this.containerRef;
         const isLastModal = container && container.dataset.lastModal === 'true';
 
-        if (isLastModal && closeOnEscape && event.keyCode === ESCAPE_KEY) {
+        if (isLastModal && closeOnEscape && event.keyCode === ESCAPE_KEY && onClose) {
             onClose({ escape: true });
         }
     }
 
     handleContainerInvalidate = () => {
         const { onInvalidate } = this.props;
+        if (!onInvalidate) {
+            return;
+        }
 
         const { current: container } = this.containerRef;
         if (container) {

@@ -9,8 +9,6 @@ import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
 
-const noOp = () => {};
-
 /**
  * Iconleft is the name of ionicon in left of title button
  * showDropdown shows chevron on right of title button
@@ -53,7 +51,7 @@ const defaultProps = {
     dropdownClassName: '',
     dropdownIcon: 'chevronDown',
     dropdownIconClassName: '',
-    onClick: noOp,
+    onClick: undefined,
     closeOnClick: false,
 };
 
@@ -92,10 +90,12 @@ export default class DropdownMenu extends React.PureComponent {
         }
 
         const { showDropdown: oldShowDropdown } = this.state;
-        this.setState(state => ({ showDropdown: !state.oldShowDropdown }));
+        this.setState(state => ({ showDropdown: !state.showDropdown }));
 
         const { onClick } = this.props;
-        onClick(!oldShowDropdown, e);
+        if (onClick) {
+            onClick(!oldShowDropdown, e);
+        }
     };
 
     handleDropdownContainerBlur = () => {
