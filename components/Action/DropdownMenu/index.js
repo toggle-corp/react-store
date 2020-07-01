@@ -9,6 +9,7 @@ import FloatingContainer from '../../View/FloatingContainer';
 
 import styles from './styles.scss';
 
+// eslint-disable-next-line
 const noOp = () => {};
 
 /**
@@ -92,7 +93,7 @@ export default class DropdownMenu extends React.PureComponent {
         }
 
         const { showDropdown: oldShowDropdown } = this.state;
-        this.setState(state => ({ showDropdown: !state.oldShowDropdown }));
+        this.setState(state => ({ showDropdown: !state.showDropdown }));
 
         const { onClick } = this.props;
         onClick(!oldShowDropdown, e);

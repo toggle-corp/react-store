@@ -75,7 +75,14 @@ function Spinner(props: Props) {
     );
 
     return (
-        <div className={_cs(className, styles.spinner, sizeClassNameMap[size])}>
+        <div
+            className={_cs(
+                className,
+                styles.spinner,
+                sizeClassNameMap[size],
+                'tc-v2-spinner',
+            )}
+        >
             <svg
                 className={styles.svg}
                 style={{

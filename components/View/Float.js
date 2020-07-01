@@ -17,6 +17,7 @@ const propTypes = {
 
 const defaultProps = {
     focusTrap: false,
+    // eslint-disable-next-line
     onInvalidate: () => {}, // no-op
 };
 

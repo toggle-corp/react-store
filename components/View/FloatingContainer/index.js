@@ -9,6 +9,7 @@ import styles from './styles.scss';
 
 const ESCAPE_KEY = 27;
 
+// eslint-disable-next-line
 const noop = () => {};
 
 const propTypes = {
@@ -51,6 +52,7 @@ const defaultProps = {
     onMouseDown: undefined,
     closeOnEscape: false,
     parent: undefined,
+    // eslint-disable-next-line
     onInvalidate: () => {},
 };
 
