@@ -45,6 +45,7 @@ const propTypes = {
 
     rendererParams: PropTypes.func,
     emptyComponent: PropTypes.func,
+    onInitialHeightSet: PropTypes.func,
 
     minWidth: PropTypes.number,
 
@@ -62,6 +63,7 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
     emptyComponent: DefaultEmptyComponent,
+    onInitialHeightSet: undefined,
     minWidth: undefined,
 
     itemHeight: undefined,
@@ -129,6 +131,7 @@ class VirtualizedListView extends React.Component {
     }
 
     setItemHeight = () => {
+        const { onInitialHeightSet } = this.props;
         clearTimeout(this.containerHeightTimeout);
 
         const { current: container } = this.container;
@@ -158,6 +161,10 @@ class VirtualizedListView extends React.Component {
                 itemsPerPage,
                 itemHeight,
             });
+
+            if (onInitialHeightSet) {
+                onInitialHeightSet(itemHeight);
+            }
         }
     }
 
