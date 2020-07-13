@@ -50,6 +50,8 @@ const propTypes = {
 
     itemHeight: PropTypes.number,
     boundingClientRect: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
+    onItemHeightCalculate: PropTypes.func,
 };
 
 const defaultProps = {
@@ -66,6 +68,7 @@ const defaultProps = {
 
     itemHeight: undefined,
     boundingClientRect: undefined,
+    onItemHeightCalculate: undefined,
 };
 
 const MAX_IDLE_TIMEOUT = 200;
@@ -129,6 +132,7 @@ class VirtualizedListView extends React.Component {
     }
 
     setItemHeight = () => {
+        const { onItemHeightCalculate } = this.props;
         clearTimeout(this.containerHeightTimeout);
 
         const { current: container } = this.container;
@@ -158,6 +162,10 @@ class VirtualizedListView extends React.Component {
                 itemsPerPage,
                 itemHeight,
             });
+
+            if (onItemHeightCalculate) {
+                onItemHeightCalculate(itemHeight);
+            }
         }
     }
 
