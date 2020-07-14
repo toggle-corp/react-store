@@ -51,7 +51,7 @@ function useKeyboard<T, Q extends OptionKey>(
     options: T[],
     isOptionsShown: boolean,
 
-    onFocusChange: (key: Q | undefined) => void,
+    onFocusChange: (key: Q | ((key: Q | undefined) => Q | undefined) | undefined) => void,
     onHideOptions: () => void,
     onShowOptions: () => void,
     onOptionSelect: (key: Q) => void,
@@ -100,13 +100,20 @@ function useKeyboard<T, Q extends OptionKey>(
         ],
     );
 
-    // the missing dependencies are intentional
+    // while opening
+    useEffect(
+        () => {
+            if (!isOptionsShown && focusedKey !== undefined) {
+                onFocusChange(undefined);
+            }
+        },
+        [focusedKey, isOptionsShown, onFocusChange],
+    );
+
+    // while closing
     useEffect(
         () => {
             if (!isOptionsShown) {
-                if (focusedKey !== undefined) {
-                    onFocusChange(undefined);
-                }
                 return;
             }
 
@@ -116,25 +123,14 @@ function useKeyboard<T, Q extends OptionKey>(
             ) {
                 onFocusChange(selectedKey);
             } else {
-                const newFocusedKey = getNewKey(undefined, 1, options, keySelector);
-                onFocusChange(newFocusedKey);
+                onFocusChange((oldKey) => {
+                    // NOTE: this just check if the key exists or not
+                    const newFocusedKey = getNewKey(oldKey, 0, options, keySelector);
+                    return newFocusedKey;
+                });
             }
         },
-        [isOptionsShown],
-    );
-
-    // the missing dependencies are intentional
-    useEffect(
-        () => {
-            if (isOptionsShown) {
-                const newFocusedKey = getNewKey(undefined, 1, options, keySelector);
-                onFocusChange(newFocusedKey);
-            }
-        },
-        [
-            keySelector,
-            options,
-        ],
+        [isOptionsShown, options, keySelector, onFocusChange, selectedKey],
     );
 
     return handleKeyDown;

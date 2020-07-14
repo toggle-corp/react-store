@@ -26,7 +26,7 @@ import Label from '../Label';
 import Options from './Options';
 import styles from './styles.scss';
 
-export interface SelectInputBaseProps<T, K extends OptionKey> {
+export interface MultiSelectInputBaseProps<T, K extends OptionKey> {
     autoFocus?: boolean;
     className?: string;
     disabled: boolean;
@@ -38,7 +38,7 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     labelRightComponent?: React.ReactNode;
     labelRightComponentClassName?: string;
     labelSelector: (datum: T) => string | number;
-    onChange: (key: K | undefined) => void;
+    onChange: (key: K[]) => void;
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
     onSearchValueChange: (text: string | undefined) => void;
@@ -60,10 +60,10 @@ export interface SelectInputBaseProps<T, K extends OptionKey> {
     showLabel: boolean;
     showPopup: boolean;
     title?: string;
-    value?: K;
+    value?: K[];
 }
 // eslint-disable-next-line max-len
-function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBaseProps<T, K>) {
+function MultiSelectInputBase<T, K extends OptionKey = string>(props: MultiSelectInputBaseProps<T, K>) {
     const {
         autoFocus,
         className: classNameFromProps,
@@ -205,29 +205,38 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
     const handleOptionSelect = useCallback(
         (optionKey: K) => {
-            onShowPopupChange(false);
-            if (optionKey !== value) {
-                onChange(optionKey);
-            }
-        },
-        [value, onChange, onShowPopupChange],
-    );
+            // onShowPopupChange(false);
 
-    const handleClearButtonClick = useCallback(
-        () => {
-            if (value !== undefined) {
-                onChange(undefined);
+            // If option is already selected
+            if (value && value.includes(optionKey)) {
+                onChange(value.filter(item => item !== optionKey));
+                return;
+            }
+
+            // If option is not already selected
+            if (value) {
+                onChange([...value, optionKey]);
+            } else {
+                onChange([optionKey]);
             }
         },
         [value, onChange],
     );
 
+    const handleClearButtonClick = useCallback(
+        () => {
+            onChange([]);
+        },
+        [onChange],
+    );
+
     const selectedOptions = useMemo(
         () => {
-            const activeOption = options.find(
-                d => keySelector(d) === value,
+            // FIXME: optimize this
+            const activeOptions = options.filter(
+                d => value && value.includes(keySelector(d)),
             );
-            return activeOption ? [activeOption] : [];
+            return activeOptions;
         },
         [keySelector, options, value],
     );
@@ -239,7 +248,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
             }
             return selectedOptions
                 .map(labelSelector)
-                .join(',');
+                .join(', ');
         },
         [selectedOptions, labelSelector],
     );
@@ -261,7 +270,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
 
     const handleKeyDown = useKeyboard(
         focusedKey,
-        value,
+        undefined, // value,
         keySelector,
         searchOptions,
         showPopup,
@@ -356,13 +365,13 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                     />
                 )}
             </div>
-            { showHintAndError && (
+            {showHintAndError && (
                 <HintAndError
                     error={error}
                     hint={hint}
                 />
             )}
-            { showPopup && (
+            {showPopup && (
                 <Options
                     className={optionsClassName}
                     labelSelector={labelSelector}
@@ -376,9 +385,9 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
                     value={value}
 
                     keySelector={keySelector}
-                    data={data}
                     onOptionFocus={setFocusKey}
                     focusedKey={focusedKey}
+                    data={data}
                     filtered={searchOptionsFiltered}
                     pending={searchOptionsPending}
                 >
@@ -392,7 +401,7 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         </div>
     );
 }
-SelectInputBase.defaultProps = {
+MultiSelectInputBase.defaultProps = {
     disabled: false,
     readOnly: false,
     showClearButton: true,
@@ -401,4 +410,4 @@ SelectInputBase.defaultProps = {
     showLabel: true,
 };
 
-export default SelectInputBase;
+export default MultiSelectInputBase;

@@ -1,0 +1,19 @@
+@import '../../../../../stylesheets/button-base';
+
+.option {
+    @extend %button-base;
+    display: block;
+    padding: var(--spacing-small) var(--spacing-small-alt);
+    width: 100%;
+    text-align: left;
+
+    &.focused {
+        background-color: var(--color-background-hover);
+        // background-color: get-hover-color(var(--color-foreground));
+    }
+
+    .checkbox {
+        margin-right: var(--spacing-small);
+        color: var(--color-accent);
+    }
+}

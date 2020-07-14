@@ -9,7 +9,7 @@ import {
 
 import { OptionKey } from '../../types';
 
-import SelectInputBase, { SelectInputBaseProps } from '../SelectInputBase';
+import MultiSelectInputBase, { MultiSelectInputBaseProps } from '../MultiSelectInputBase';
 import Message from '../../View/Message';
 
 const emptyArray: unknown[] = [];
@@ -41,15 +41,15 @@ type injectedProps = 'searchValue'
 | 'searchOptionsFiltered'
 | 'onShowPopupChange';
 
-type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
+type Props<T, K extends OptionKey> = Omit<MultiSelectInputBaseProps<T, K>, injectedProps> & {
     onSearchValueChange: (value: string | undefined) => void;
     onOptionsChange: (options: T[]) => void;
     minSearchValueLength: number;
-    emptyComponent?: React.ComponentType<unknown>;
-    emptyWhenFilterComponent?: React.ComponentType<unknown>;
+    emptyComponent: React.ComponentType<unknown>;
+    emptyWhenFilterComponent: React.ComponentType<unknown>;
 };
 
-function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
+function BasicMultiSelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
     const {
         onSearchValueChange,
         onOptionsChange,
@@ -78,7 +78,9 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
 
     const interceptedSetSearchValue = useCallback(
         (value: string | undefined) => {
+            console.warn('value', value);
             setSearchValue(value);
+
             onSearchValueChange(
                 value === undefined || value.length <= minSearchValueLength
                     ? undefined
@@ -98,14 +100,21 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
     );
 
     const interceptedOnChange = useCallback(
-        (newValue: K | undefined) => {
-            const optionIndex = options.findIndex(o => keySelector(o) === newValue);
-            if (optionIndex === -1) {
-                const option = searchOptions.find(o => keySelector(o) === newValue);
-                if (option !== undefined) {
+        (newValue: K[]) => {
+            const optionKeys = options.map(keySelector);
+
+            // FIXME: optimize
+            const keysNotInOptions = newValue.filter(
+                item => !optionKeys.includes(item),
+            );
+            if (keysNotInOptions.length > 0) {
+                // FIXME: optimize
+                const option = searchOptions.filter(o => keysNotInOptions.includes(keySelector(o)));
+
+                if (option.length > 0) {
                     onOptionsChange([
                         ...options,
-                        option,
+                        ...option,
                     ]);
                 }
             }
@@ -116,7 +125,7 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
     );
 
     return (
-        <SelectInputBase
+        <MultiSelectInputBase
             searchOptionsFiltered={isSearchValueDefined}
             searchValue={searchValue}
             onSearchValueChange={interceptedSetSearchValue}
@@ -134,12 +143,12 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         />
     );
 }
-BasicSelectInput.defaultProps = {
+BasicMultiSelectInput.defaultProps = {
     keySelector: (item: DefaultItem) => item.key,
     labelSelector: (item: DefaultItem) => item.label,
     options: [],
     minSearchValueLength: 0,
-    placeholder: 'Select an option',
+    placeholder: 'Select options',
 };
 
-export default BasicSelectInput;
+export default BasicMultiSelectInput;
