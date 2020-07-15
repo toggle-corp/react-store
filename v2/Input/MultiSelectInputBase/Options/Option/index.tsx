@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import Icon from '../../../../../components/General/Icon';
 import { OptionKey } from '../../../../types';
 
 
@@ -75,8 +76,8 @@ function Option<K extends OptionKey>(props: Props<K>) {
         classNameFromProps,
         styles.option,
         'option',
-        isActive && styles.active,
-        isActive && 'active',
+        // isActive && styles.active,
+        // isActive && 'active',
         isFocused && styles.focused,
         isFocused && 'focused',
     );
@@ -90,6 +91,10 @@ function Option<K extends OptionKey>(props: Props<K>) {
             onMouseLeave={handleMouseLeave}
             type="button"
         >
+            <Icon
+                className={_cs('checkbox', styles.checkbox)}
+                name={isActive ? 'checkbox' : 'checkboxOutlineBlank'}
+            />
             { children }
         </button>
     );

@@ -24,7 +24,7 @@ interface Props<T, K extends OptionKey> {
     parentRef: React.RefObject<HTMLElement>;
     emptyComponent: React.ComponentType<unknown>;
     emptyWhenFilterComponent: React.ComponentType<unknown>;
-    value?: K;
+    value?: K[];
     filtered: boolean;
     pending: boolean;
     children?: React.ReactNode;
@@ -57,7 +57,7 @@ function Options<T, K extends OptionKey>(props: Props<T, K>) {
                 ? optionLabelSelector(option)
                 : labelSelector(option);
 
-            const isActive = key === value;
+            const isActive = value ? value.includes(key) : false;
             const isFocused = key === focusedKey;
 
             return {

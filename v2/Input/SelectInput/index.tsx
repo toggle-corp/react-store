@@ -40,11 +40,6 @@ interface State<K> {
 - Show values that are invalid (tally with current options)
 */
 
-type injectedProps = 'searchValue' | 'onSearchValueChange' | 'searchOptions' | 'showPopup' | 'setShowPopup';
-type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
-    maxDisplayOptions?: number;
-};
-
 function filterAndSearch<T, K>(
     options: T[],
     labelSelector: (datum: T) => string | number,
@@ -58,6 +53,18 @@ function filterAndSearch<T, K>(
             String(searchValue),
         ));
 }
+
+type injectedProps = 'searchValue'
+    | 'onSearchValueChange'
+    | 'searchOptions'
+    | 'searchOptionsFiltered'
+    | 'showPopup'
+    | 'setShowPopup'
+    | 'onShowPopupChange';
+
+type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
+    maxDisplayOptions?: number;
+};
 
 function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props<T, K>) {
     const {
