@@ -176,8 +176,8 @@ export default class DropdownMenu extends React.PureComponent {
                         name={iconName}
                     />
                 )}
-                { leftComponent }
-                { title && (
+                {leftComponent}
+                {title && (
                     <span className={titleClassName}>
                         {title}
                     </span>

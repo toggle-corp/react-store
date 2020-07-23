@@ -10,7 +10,7 @@ const propTypes = {
 
 const defaultProps = {
     value: undefined,
-    onChange: () => {},
+    onChange: undefined,
     changeDelay: 100,
 };
 
@@ -68,7 +68,9 @@ export default (WrappedComponent) => {
                 () => {
                     this.pendingChange = false;
                     // this.setState({ value: this.lastValue });
-                    onChange(value, error, info);
+                    if (onChange) {
+                        onChange(value, error, info);
+                    }
                 },
                 changeDelay,
             );

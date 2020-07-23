@@ -9,8 +9,6 @@ import styles from './styles.scss';
 
 const ESCAPE_KEY = 27;
 
-const noop = () => {};
-
 const propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
@@ -26,7 +24,7 @@ const defaultProps = {
     className: '',
     closeOnEscape: false,
     closeOnOutsideClick: false,
-    onClose: noop,
+    onClose: undefined,
 };
 
 // eslint-disable-next-line react/no-multi-comp
@@ -58,7 +56,7 @@ export default class Modal extends React.PureComponent {
 
         const { current: wrapper } = this.wrapperRef;
 
-        if (closeOnOutsideClick && !wrapper.contains(event.target)) {
+        if (closeOnOutsideClick && !wrapper.contains(event.target) && onClose) {
             onClose({ outsideClick: true });
         }
     }
@@ -73,7 +71,7 @@ export default class Modal extends React.PureComponent {
         const isLastModal = container && container.dataset.lastModal === 'true';
 
 
-        if (isLastModal && closeOnEscape && event.keyCode === ESCAPE_KEY) {
+        if (isLastModal && closeOnEscape && event.keyCode === ESCAPE_KEY && onClose) {
             onClose({ escape: true });
         }
     }
