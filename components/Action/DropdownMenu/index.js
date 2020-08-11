@@ -37,7 +37,7 @@ const propTypes = {
     dropdownIcon: PropTypes.string,
     dropdownIconClassName: PropTypes.string,
 
-    onClick: PropTypes.func,
+    onDropdownVisibilityChange: PropTypes.func,
 
     closeOnClick: PropTypes.bool,
 };
@@ -51,7 +51,7 @@ const defaultProps = {
     dropdownClassName: '',
     dropdownIcon: 'chevronDown',
     dropdownIconClassName: '',
-    onClick: undefined,
+    onDropdownVisibilityChange: undefined,
     closeOnClick: false,
 };
 
@@ -92,18 +92,26 @@ export default class DropdownMenu extends React.PureComponent {
         const { showDropdown: oldShowDropdown } = this.state;
         this.setState(state => ({ showDropdown: !state.showDropdown }));
 
-        const { onClick } = this.props;
-        if (onClick) {
-            onClick(!oldShowDropdown, e);
+        const { onDropdownVisibilityChange } = this.props;
+        if (onDropdownVisibilityChange) {
+            onDropdownVisibilityChange(!oldShowDropdown, e);
         }
     };
 
     handleDropdownContainerBlur = () => {
         this.setState({ showDropdown: false });
+        const { onDropdownVisibilityChange } = this.props;
+        if (onDropdownVisibilityChange) {
+            onDropdownVisibilityChange(false);
+        }
     }
 
     handleCloseFromChildren = () => {
         this.setState({ showDropdown: false });
+        const { onDropdownVisibilityChange } = this.props;
+        if (onDropdownVisibilityChange) {
+            onDropdownVisibilityChange(false);
+        }
     }
 
     handleWindowClick = () => {
@@ -111,7 +119,12 @@ export default class DropdownMenu extends React.PureComponent {
 
         setTimeout(() => {
             if (closeOnClick && this.state.showDropdown) {
-                this.setState({ showDropdown: false });
+                this.setState({ showDropdown: false }, () => {
+                    const { onDropdownVisibilityChange } = this.props;
+                    if (onDropdownVisibilityChange) {
+                        onDropdownVisibilityChange(false);
+                    }
+                });
             }
         }, 0);
     }
