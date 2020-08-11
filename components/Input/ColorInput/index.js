@@ -4,6 +4,7 @@ import {
     SketchPicker,
     TwitterPicker,
     GithubPicker,
+    SwatchesPicker,
 } from 'react-color';
 
 import {
@@ -52,6 +53,7 @@ const propTypes = {
     label: PropTypes.node,
 
     showLabel: PropTypes.bool,
+    showSwatches: PropTypes.bool,
 
     showHintAndError: PropTypes.bool,
 
@@ -60,6 +62,7 @@ const propTypes = {
     persistentHintAndError: PropTypes.bool,
     type: PropTypes.string,
     colors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    swatchesColors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -72,6 +75,7 @@ const defaultProps = {
     showHintAndError: true,
     disabled: false,
     readOnly: false,
+    showSwatches: false,
     persistentHintAndError: true,
     onChange: undefined,
     // options: twitterPicker, githubPicker, normal
@@ -92,6 +96,7 @@ const defaultProps = {
         '#3e50b4',
         '#9b27af',
     ],
+    swatchesColors: undefined,
 };
 
 class ColorInput extends React.PureComponent {
@@ -177,6 +182,8 @@ class ColorInput extends React.PureComponent {
             persistentHintAndError,
             type,
             colors,
+            swatchesColors,
+            showSwatches,
         } = this.props;
 
         const { showColorPicker } = this.state;
@@ -241,6 +248,15 @@ class ColorInput extends React.PureComponent {
                                 colors={colors}
                                 triangle="hide"
                             />
+                            {showSwatches && (
+                                <SwatchesPicker
+                                    className={styles.swatches}
+                                    color={value}
+                                    colors={swatchesColors}
+                                    onChange={this.handleColorChange}
+                                    triangle="hide"
+                                />
+                            )}
                         </FloatingContainer>
                     )
                 }

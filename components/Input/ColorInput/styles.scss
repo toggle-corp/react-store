@@ -54,6 +54,12 @@
 }
 
 .color-floating-container {
+    display:flex;
     border: none;
+    box-shadow: none;
     background-color: transparent;
+
+    .swatches {
+        margin-left: var(--spacing-small);
+    }
 }
