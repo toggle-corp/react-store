@@ -100,10 +100,18 @@ export default class DropdownMenu extends React.PureComponent {
 
     handleDropdownContainerBlur = () => {
         this.setState({ showDropdown: false });
+        const { onClick } = this.props;
+        if (onClick) {
+            onClick(false);
+        }
     }
 
     handleCloseFromChildren = () => {
         this.setState({ showDropdown: false });
+        const { onClick } = this.props;
+        if (onClick) {
+            onClick(false);
+        }
     }
 
     handleWindowClick = () => {
@@ -111,7 +119,12 @@ export default class DropdownMenu extends React.PureComponent {
 
         setTimeout(() => {
             if (closeOnClick && this.state.showDropdown) {
-                this.setState({ showDropdown: false });
+                this.setState({ showDropdown: false }, () => {
+                    const { onClick } = this.props;
+                    if (onClick) {
+                        onClick(false);
+                    }
+                });
             }
         }, 0);
     }
