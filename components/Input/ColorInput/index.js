@@ -1,5 +1,7 @@
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { _cs } from '@togglecorp/fujs';
+import colorBrewer from 'colorbrewer';
 import {
     SketchPicker,
     TwitterPicker,
@@ -7,21 +9,219 @@ import {
     SwatchesPicker,
 } from 'react-color';
 
-import {
-    _cs,
-    randomString,
-} from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import { calcFloatingPositionInMainWindow } from '../../../utils/common';
 
 import FloatingContainer from '../../View/FloatingContainer';
+import Message from '../../View/Message';
+import SegmentInput from '../../Input/SegmentInput';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 
 import styles from './styles.scss';
 
-const propTypes = {
+const schemeOptions = [
+    { key: 'singlehue', label: 'Single hue' },
+    { key: 'sequential', label: 'Multi hue' },
+    { key: 'qualitative', label: 'Qualitative' },
+    { key: 'diverging', label: 'Diverging' },
+];
+
+const optionKeySelector = d => d.key;
+const optionLabelSelector = d => d.label;
+
+const numberOfColors = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const numberKeySelector = d => d;
+
+function ColorInput(props) {
+    const {
+        onChange,
+        showHintAndError,
+        label,
+        className,
+        value,
+        showLabel,
+        error,
+        hint,
+        disabled,
+        readOnly,
+        persistentHintAndError,
+        type,
+        colors,
+        showSwatches,
+    } = props;
+
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    const [boundingClientRect, setBoundingClientRect] = useState({});
+    const containerRef = useRef(undefined);
+    const [selectedScheme, setSelectedScheme] = useState('sequential');
+    // NOTE: In color brewer each scheme group has at least one color swatch with 8 items
+    const [selectedNumberOfColors, setSelectedNumberOfColors] = useState('8');
+
+    const handleColorPickerInvalidate = useCallback((colorPickerContainer) => {
+        const containerRect = colorPickerContainer.getBoundingClientRect();
+        let parentRect = boundingClientRect;
+        if (containerRef) {
+            const { current: container } = containerRef;
+            parentRect = container.getBoundingClientRect();
+        }
+
+        const offset = {
+            top: 2,
+            right: 0,
+            bottom: 0,
+            left: 0,
+        };
+        if (showHintAndError) {
+            offset.top = 12;
+        }
+
+        const optionsContainerPosition = (
+            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
+        );
+        return {
+            ...optionsContainerPosition,
+            width: 'auto',
+        };
+    }, [containerRef, boundingClientRect, showHintAndError]);
+
+    const handleColorBoxClick = useCallback(() => {
+        const { current: container } = containerRef;
+        setBoundingClientRect(container.getBoundingClientRect());
+        setShowColorPicker(true);
+    }, [setBoundingClientRect, setShowColorPicker]);
+
+    const handleColorChange = useCallback((newColor) => {
+        if (onChange) {
+            onChange(newColor.hex);
+        }
+    }, [onChange]);
+
+    const handleColorPickerBlur = useCallback(() => {
+        setShowColorPicker(false);
+    }, [setShowColorPicker]);
+
+    const Picker = useMemo(() => {
+        if (type === 'twitterPicker') {
+            return TwitterPicker;
+        }
+        if (type === 'githubPicker') {
+            return GithubPicker;
+        }
+        return SketchPicker;
+    }, [type]);
+
+    const swatchesColors = useMemo(() => {
+        const schemes = colorBrewer.schemeGroups[selectedScheme];
+        const colorsForSwatches = [];
+        schemes.forEach((scheme) => {
+            const colorsForScheme = colorBrewer[scheme];
+            if (colorsForScheme[selectedNumberOfColors]) {
+                colorsForSwatches.push(colorsForScheme[selectedNumberOfColors]);
+            }
+        });
+        return colorsForSwatches;
+    }, [selectedScheme, selectedNumberOfColors]);
+
+    return (
+        <div
+            className={_cs(
+                styles.colorInput,
+                className,
+                disabled && styles.disabled,
+            )}
+            ref={containerRef}
+        >
+            <Label
+                className={styles.label}
+                show={showLabel}
+                text={label}
+            />
+            <button
+                type="button"
+                className={_cs(
+                    styles.colorBox,
+                    'color-box',
+                    disabled && styles.disabled,
+                    readOnly && styles.readOnly,
+                )}
+                onClick={handleColorBoxClick}
+                disabled={disabled || readOnly}
+            >
+                <span
+                    className={_cs(styles.color, 'color')}
+                    style={{ backgroundColor: value }}
+                />
+            </button>
+            <HintAndError
+                show={showHintAndError}
+                hint={hint}
+                error={error}
+                persistent={persistentHintAndError}
+            />
+            {
+                showColorPicker && (
+                    <FloatingContainer
+                        parent={containerRef && containerRef.current}
+                        onBlur={handleColorPickerBlur}
+                        onInvalidate={handleColorPickerInvalidate}
+                        className={styles.colorFloatingContainer}
+                        focusTrap
+                        showHaze
+                    >
+                        <Picker
+                            color={value}
+                            onChange={handleColorChange}
+                            colors={colors}
+                            triangle="hide"
+                        />
+                        {showSwatches && (
+                            <div className={styles.swatchesContainer}>
+                                <div className={styles.headerContainer}>
+                                    <SegmentInput
+                                        label="Color Scheme"
+                                        value={selectedScheme}
+                                        options={schemeOptions}
+                                        onChange={setSelectedScheme}
+                                        keySelector={optionKeySelector}
+                                        labelSelector={optionLabelSelector}
+                                    />
+                                    <SegmentInput
+                                        className={styles.numberSelectInput}
+                                        label="Number of Colors"
+                                        value={selectedNumberOfColors}
+                                        options={numberOfColors}
+                                        onChange={setSelectedNumberOfColors}
+                                        keySelector={numberKeySelector}
+                                        labelSelector={numberKeySelector}
+                                    />
+                                </div>
+                                {swatchesColors.length > 0 ? (
+                                    <SwatchesPicker
+                                        className={styles.swatches}
+                                        color={value}
+                                        colors={swatchesColors}
+                                        onChange={handleColorChange}
+                                        triangle="hide"
+                                    />
+                                ) : (
+                                    <div className={styles.swatches}>
+                                        <Message>
+                                            There are no colors for selected options.
+                                        </Message>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </FloatingContainer>
+                )
+            }
+        </div>
+    );
+}
+
+ColorInput.propTypes = {
     /**
      * for styling by className
      */
@@ -62,10 +262,9 @@ const propTypes = {
     persistentHintAndError: PropTypes.bool,
     type: PropTypes.string,
     colors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    swatchesColors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
-const defaultProps = {
+ColorInput.defaultProps = {
     className: '',
     showLabel: true,
     value: undefined,
@@ -96,173 +295,6 @@ const defaultProps = {
         '#3e50b4',
         '#9b27af',
     ],
-    swatchesColors: undefined,
 };
-
-class ColorInput extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            showColorPicker: false,
-        };
-
-        this.inputId = randomString(16);
-        this.boundingClientRect = {};
-    }
-
-    handleColorPickerInvalidate = (colorPickerContainer) => {
-        const containerRect = colorPickerContainer.getBoundingClientRect();
-        let parentRect = this.boundingClientRect;
-        if (this.container) {
-            parentRect = this.container.getBoundingClientRect();
-        }
-
-        const offset = {
-            top: 2,
-            right: 0,
-            bottom: 0,
-            left: 0,
-        };
-        if (this.props.showHintAndError) {
-            offset.top = 12;
-        }
-
-        const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
-        );
-        return {
-            ...optionsContainerPosition,
-            width: 'auto',
-        };
-    }
-
-    handleInputChange = (e) => {
-        const value = e.target.checked;
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(value);
-        }
-    }
-
-    handleColorBoxClick = () => {
-        this.boundingClientRect = this.container.getBoundingClientRect();
-        this.setState({ showColorPicker: true });
-    }
-
-    handleCloseColorPickerClick = () => {
-        this.setState({ showColorPicker: false });
-    }
-
-    handleColorChange = (newColor) => {
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(newColor.hex);
-        }
-    }
-
-    handleColorPickerBlur = () => {
-        this.setState({ showColorPicker: false });
-    }
-
-    render() {
-        const {
-            label,
-            className,
-            value,
-            showLabel,
-            showHintAndError,
-            error,
-            hint,
-            disabled,
-            readOnly,
-            persistentHintAndError,
-            type,
-            colors,
-            swatchesColors,
-            showSwatches,
-        } = this.props;
-
-        const { showColorPicker } = this.state;
-
-        let Picker = SketchPicker;
-        if (type === 'twitterPicker') {
-            Picker = TwitterPicker;
-        }
-        if (type === 'githubPicker') {
-            Picker = GithubPicker;
-        }
-
-        return (
-            <div
-                className={_cs(
-                    styles.colorInput,
-                    className,
-                    disabled && styles.disabled,
-                )}
-                ref={(el) => { this.container = el; }}
-            >
-                <Label
-                    className={styles.label}
-                    show={showLabel}
-                    text={label}
-                />
-                <button
-                    type="button"
-                    className={_cs(
-                        styles.colorBox,
-                        'color-box',
-                        disabled && styles.disabled,
-                        readOnly && styles.readOnly,
-                    )}
-                    onClick={this.handleColorBoxClick}
-                    disabled={disabled || readOnly}
-                >
-                    <span
-                        className={_cs(styles.color, 'color')}
-                        style={{ backgroundColor: value }}
-                    />
-                </button>
-                <HintAndError
-                    show={showHintAndError}
-                    hint={hint}
-                    error={error}
-                    persistent={persistentHintAndError}
-                />
-                {
-                    showColorPicker && (
-                        <FloatingContainer
-                            parent={this.container}
-                            onBlur={this.handleColorPickerBlur}
-                            onInvalidate={this.handleColorPickerInvalidate}
-                            className={styles.colorFloatingContainer}
-                            focusTrap
-                            showHaze
-                        >
-                            <Picker
-                                color={value}
-                                onChange={this.handleColorChange}
-                                colors={colors}
-                                triangle="hide"
-                            />
-                            {showSwatches && (
-                                <SwatchesPicker
-                                    className={styles.swatches}
-                                    color={value}
-                                    colors={swatchesColors}
-                                    onChange={this.handleColorChange}
-                                    triangle="hide"
-                                />
-                            )}
-                        </FloatingContainer>
-                    )
-                }
-            </div>
-        );
-    }
-}
 
 export default FaramInputElement(ColorInput);

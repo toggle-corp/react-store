@@ -59,7 +59,44 @@
     box-shadow: none;
     background-color: transparent;
 
-    .swatches {
+    .swatches-container {
+        display: flex;
+        flex-direction: column;
         margin-left: var(--spacing-small);
+        border-radius: var(--radius-border-large);
+        background-color: var(--color-foreground-alt);
+        overflow-y: auto;
+
+        .header-container {
+            flex-shrink: 0;
+            padding: var(--spacing-medium);
+            padding-bottom: 0;
+        }
+
+        :global {
+            .swatches-picker {
+                * {
+                    box-shadow: none;
+                    overflow-y: auto!important;
+                }
+            }
+        }
+
+        .swatches {
+            flex-grow: 1;
+
+            :global {
+                span {
+                    >div {
+                        height: 16px!important;
+                        overflow-y: hidden!important;
+
+                        svg {
+                            height: 16px!important;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
