@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import colorBrewer from 'colorbrewer';
 import {
     SketchPicker,
@@ -34,6 +37,82 @@ const optionLabelSelector = d => d.label;
 const numberOfColors = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const numberKeySelector = d => d;
 
+const propTypes = {
+    /**
+     * for styling by className
+     */
+    className: PropTypes.string,
+
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+
+    /**
+     * String to show in case of error
+     */
+    error: PropTypes.string,
+
+    /**
+     * Hint text
+     */
+    hint: PropTypes.string,
+
+    /**
+     * A callback for when the input changes its content
+     */
+    onChange: PropTypes.func,
+
+    /**
+     * label for the checkbox
+     */
+    label: PropTypes.node,
+
+    showLabel: PropTypes.bool,
+    showSwatches: PropTypes.bool,
+
+    showHintAndError: PropTypes.bool,
+
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
+    type: PropTypes.string,
+    colors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+};
+
+const defaultProps = {
+    className: '',
+    showLabel: true,
+    value: undefined,
+    label: undefined,
+    error: '',
+    hint: '',
+    showHintAndError: true,
+    disabled: false,
+    readOnly: false,
+    showSwatches: false,
+    persistentHintAndError: true,
+    onChange: undefined,
+    // options: twitterPicker, githubPicker, normal
+    type: 'normal',
+    colors: [
+        '#ff6900',
+        '#fcb900',
+        '#7bdcb5',
+        '#00d084',
+        '#8ed1fc',
+        '#0693e3',
+        '#795548',
+        '#eb144c',
+        '#f78da7',
+        '#9900ef',
+        '#ccdb39',
+        '#009587',
+        '#3e50b4',
+        '#9b27af',
+    ],
+};
+
 function ColorInput(props) {
     const {
         onChange,
@@ -57,7 +136,7 @@ function ColorInput(props) {
     const containerRef = useRef(undefined);
     const [selectedScheme, setSelectedScheme] = useState('sequential');
     // NOTE: In color brewer each scheme group has at least one color swatch with 8 items
-    const [selectedNumberOfColors, setSelectedNumberOfColors] = useState('8');
+    const [selectedNumberOfColors, setSelectedNumberOfColors] = useState(8);
 
     const handleColorPickerInvalidate = useCallback((colorPickerContainer) => {
         const containerRect = colorPickerContainer.getBoundingClientRect();
@@ -114,14 +193,8 @@ function ColorInput(props) {
 
     const swatchesColors = useMemo(() => {
         const schemes = colorBrewer.schemeGroups[selectedScheme];
-        const colorsForSwatches = [];
-        schemes.forEach((scheme) => {
-            const colorsForScheme = colorBrewer[scheme];
-            if (colorsForScheme[selectedNumberOfColors]) {
-                colorsForSwatches.push(colorsForScheme[selectedNumberOfColors]);
-            }
-        });
-        return colorsForSwatches;
+        return schemes.map(scheme => colorBrewer[scheme][selectedNumberOfColors])
+            .filter(isDefined);
     }, [selectedScheme, selectedNumberOfColors]);
 
     return (
@@ -220,81 +293,7 @@ function ColorInput(props) {
         </div>
     );
 }
-
-ColorInput.propTypes = {
-    /**
-     * for styling by className
-     */
-    className: PropTypes.string,
-
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-    ]),
-
-    /**
-     * String to show in case of error
-     */
-    error: PropTypes.string,
-
-    /**
-     * Hint text
-     */
-    hint: PropTypes.string,
-
-    /**
-     * A callback for when the input changes its content
-     */
-    onChange: PropTypes.func,
-
-    /**
-     * label for the checkbox
-     */
-    label: PropTypes.node,
-
-    showLabel: PropTypes.bool,
-    showSwatches: PropTypes.bool,
-
-    showHintAndError: PropTypes.bool,
-
-    disabled: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    persistentHintAndError: PropTypes.bool,
-    type: PropTypes.string,
-    colors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-};
-
-ColorInput.defaultProps = {
-    className: '',
-    showLabel: true,
-    value: undefined,
-    label: undefined,
-    error: '',
-    hint: '',
-    showHintAndError: true,
-    disabled: false,
-    readOnly: false,
-    showSwatches: false,
-    persistentHintAndError: true,
-    onChange: undefined,
-    // options: twitterPicker, githubPicker, normal
-    type: 'normal',
-    colors: [
-        '#ff6900',
-        '#fcb900',
-        '#7bdcb5',
-        '#00d084',
-        '#8ed1fc',
-        '#0693e3',
-        '#795548',
-        '#eb144c',
-        '#f78da7',
-        '#9900ef',
-        '#ccdb39',
-        '#009587',
-        '#3e50b4',
-        '#9b27af',
-    ],
-};
+ColorInput.propTypes = propTypes;
+ColorInput.defaultProps = defaultProps;
 
 export default FaramInputElement(ColorInput);

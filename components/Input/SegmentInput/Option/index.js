@@ -15,7 +15,7 @@ const propTypes = {
     ]).isRequired,
     onChange: PropTypes.func.isRequired,
     checked: PropTypes.bool.isRequired,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     name: PropTypes.string.isRequired,
     error: PropTypes.string,
     disabled: PropTypes.bool,
@@ -24,7 +24,8 @@ const propTypes = {
     rendererClassName: PropTypes.string,
     rendererParams: PropTypes.func,
     index: PropTypes.number.isRequired,
-    datum: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    datum: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]),
     data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 

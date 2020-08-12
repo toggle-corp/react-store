@@ -48,7 +48,10 @@ const propTypes = {
 
     showHintAndError: PropTypes.bool,
 
-    options: PropTypes.arrayOf(PropTypes.object),
+    options: PropTypes.arrayOf(PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.number,
+    ])),
 
     labelSelector: PropTypes.func,
     keySelector: PropTypes.func,
