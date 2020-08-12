@@ -54,6 +54,47 @@
 }
 
 .color-floating-container {
+    display:flex;
     border: none;
+    box-shadow: none;
     background-color: transparent;
+    max-height: calc(49vh);
+
+    .swatches-container {
+        display: flex;
+        flex-direction: column;
+        margin-left: var(--spacing-small);
+        border-radius: var(--radius-border-large);
+        background-color: var(--color-foreground-alt);
+        width: 360px;
+        overflow-y: auto;
+
+        .header-container {
+            flex-shrink: 0;
+            padding: var(--spacing-medium);
+            padding-bottom: 0;
+        }
+
+        .swatches-picker {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+
+            .swatch {
+                display: flex;
+                flex-direction: column;
+                padding: var(--spacing-small);
+
+                .color-block {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: var(--spacing-extra-small);
+                    padding: 0;
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+    }
 }
