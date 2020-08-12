@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import {
     _cs,
     isDefined,
+    getColorOnBgColor,
 } from '@togglecorp/fujs';
 import colorBrewer from 'colorbrewer';
 import {
     SketchPicker,
     TwitterPicker,
     GithubPicker,
-    SwatchesPicker,
 } from 'react-color';
 
 import { FaramInputElement } from '@togglecorp/faram';
@@ -17,12 +17,132 @@ import { FaramInputElement } from '@togglecorp/faram';
 import { calcFloatingPositionInMainWindow } from '../../../utils/common';
 
 import FloatingContainer from '../../View/FloatingContainer';
+import Icon from '../../General/Icon';
+import ListView from '../../View/List/ListView';
 import Message from '../../View/Message';
+import Button from '../../Action/Button';
 import SegmentInput from '../../Input/SegmentInput';
 import HintAndError from '../HintAndError';
 import Label from '../Label';
 
 import styles from './styles.scss';
+
+const identitySelector = d => d;
+
+function ColorBlock(props) {
+    const {
+        color,
+        value,
+        onColorChange,
+    } = props;
+
+    const handleColorChange = useCallback(() => {
+        onColorChange(color);
+    }, [onColorChange, color]);
+
+    return (
+        <Button
+            onClick={handleColorChange}
+            className={styles.colorBlock}
+            style={{ backgroundColor: color }}
+        >
+            {value === color && (
+                <Icon
+                    style={{
+                        color: getColorOnBgColor(
+                            color,
+                            'var(--color-text-on-light)',
+                            'var(--color-text-on-dark)',
+                        ),
+                    }}
+                    name="check"
+                />
+            )}
+        </Button>
+    );
+}
+
+ColorBlock.propTypes = {
+    value: PropTypes.string,
+    color: PropTypes.string.isRequired,
+    onColorChange: PropTypes.func.isRequired,
+};
+
+ColorBlock.defaultProps = {
+    value: undefined,
+};
+
+function Swatch(props) {
+    const {
+        colors,
+        value,
+        onColorChange,
+    } = props;
+
+    const colorsRendererParams = useCallback((key, data) => ({
+        color: data,
+        value,
+        onColorChange,
+    }), [onColorChange, value]);
+
+    return (
+        <ListView
+            className={styles.swatch}
+            data={colors}
+            keySelector={identitySelector}
+            rendererParams={colorsRendererParams}
+            renderer={ColorBlock}
+        />
+    );
+}
+
+Swatch.propTypes = {
+    value: PropTypes.string,
+    colors: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onColorChange: PropTypes.func.isRequired,
+};
+
+Swatch.defaultProps = {
+    value: undefined,
+};
+
+const swatchKeySelector = d => d.join(',');
+
+function SwatchesPicker(props) {
+    const {
+        onChange,
+        value,
+        swatches,
+    } = props;
+
+    const swatchRendererParams = useCallback((key, data) => ({
+        colors: data,
+        value,
+        onColorChange: onChange,
+    }), [onChange, value]);
+
+    return (
+        <ListView
+            keySelector={swatchKeySelector}
+            className={styles.swatchesPicker}
+            data={swatches}
+            renderer={Swatch}
+            rendererParams={swatchRendererParams}
+        />
+    );
+}
+
+SwatchesPicker.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    swatches: PropTypes.array,
+    value: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
+};
+
+SwatchesPicker.defaultProps = {
+    swatches: [],
+    value: undefined,
+};
 
 const schemeOptions = [
     { key: 'singlehue', label: 'Single hue' },
@@ -171,6 +291,12 @@ function ColorInput(props) {
         setShowColorPicker(true);
     }, [setBoundingClientRect, setShowColorPicker]);
 
+    const handleSwatchColorClick = useCallback((newColor) => {
+        if (onChange) {
+            onChange(newColor);
+        }
+    }, [onChange]);
+
     const handleColorChange = useCallback((newColor) => {
         if (onChange) {
             onChange(newColor.hex);
@@ -261,7 +387,6 @@ function ColorInput(props) {
                                         labelSelector={optionLabelSelector}
                                     />
                                     <SegmentInput
-                                        className={styles.numberSelectInput}
                                         label="Number of Colors"
                                         value={selectedNumberOfColors}
                                         options={numberOfColors}
@@ -272,14 +397,12 @@ function ColorInput(props) {
                                 </div>
                                 {swatchesColors.length > 0 ? (
                                     <SwatchesPicker
-                                        className={styles.swatches}
-                                        color={value}
-                                        colors={swatchesColors}
-                                        onChange={handleColorChange}
-                                        triangle="hide"
+                                        value={value}
+                                        swatches={swatchesColors}
+                                        onChange={handleSwatchColorClick}
                                     />
                                 ) : (
-                                    <div className={styles.swatches}>
+                                    <div className={styles.swatchesPicker}>
                                         <Message>
                                             There are no colors for selected options.
                                         </Message>

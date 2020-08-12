@@ -58,6 +58,7 @@
     border: none;
     box-shadow: none;
     background-color: transparent;
+    max-height: calc(49vh);
 
     .swatches-container {
         display: flex;
@@ -65,6 +66,7 @@
         margin-left: var(--spacing-small);
         border-radius: var(--radius-border-large);
         background-color: var(--color-foreground-alt);
+        width: 360px;
         overflow-y: auto;
 
         .header-container {
@@ -73,28 +75,24 @@
             padding-bottom: 0;
         }
 
-        :global {
-            .swatches-picker {
-                * {
-                    box-shadow: none;
-                    overflow-y: auto!important;
-                }
-            }
-        }
-
-        .swatches {
+        .swatches-picker {
+            display: flex;
             flex-grow: 1;
+            flex-wrap: wrap;
 
-            :global {
-                span {
-                    >div {
-                        height: 16px!important;
-                        overflow-y: hidden!important;
+            .swatch {
+                display: flex;
+                flex-direction: column;
+                padding: var(--spacing-small);
 
-                        svg {
-                            height: 16px!important;
-                        }
-                    }
+                .color-block {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: var(--spacing-extra-small);
+                    padding: 0;
+                    width: 16px;
+                    height: 16px;
                 }
             }
         }
