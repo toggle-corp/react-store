@@ -56,7 +56,7 @@ export class NormalList extends React.Component {
 
     static defaultProps = defaultProps;
 
-    renderListItem = (datum, i) => {
+    renderListItem = (datum, i, namespace) => {
         const {
             data,
             keySelector,
@@ -69,6 +69,8 @@ export class NormalList extends React.Component {
         const keyFromSelector = keySelector && keySelector(datum, i);
         const key = keyFromSelector === undefined ? datum : keyFromSelector;
 
+        const finalKey = namespace ? `${namespace}-${key}` : key;
+
         if (modifier) {
             return modifier(key, datum, i, data);
         }
@@ -78,7 +80,7 @@ export class NormalList extends React.Component {
             return (
                 <Renderer
                     className={rendererClassName}
-                    key={key}
+                    key={finalKey}
                     {...extraProps}
                 />
             );
@@ -86,14 +88,14 @@ export class NormalList extends React.Component {
 
         // If there is no modifier, then return a ListItem
         return (
-            <ListItem key={key}>
+            <ListItem key={finalKey}>
                 { datum }
             </ListItem>
         );
     }
 
     renderListItemFromGroup = (datum, groupKey, i) => (
-        this.renderListItem(datum, i)
+        this.renderListItem(datum, i, groupKey)
     )
 
     renderGroup = (groupKey) => {
