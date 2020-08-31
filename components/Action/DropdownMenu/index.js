@@ -260,7 +260,7 @@ export default class DropdownMenu extends React.PureComponent {
                 className={className}
             >
                 <DropdownButton />
-                { showDropdown && (
+                {showDropdown && (
                     <DropdownContainer />
                 )}
             </div>

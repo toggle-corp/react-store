@@ -15,7 +15,7 @@ interface Props<K extends OptionKey> {
     onClick: (key: K) => void;
     onFocus: (key: K) => void;
     optionKey: K;
-    scrollOffset?: number;
+    // scrollOffset?: number;
 }
 
 function Option<K extends OptionKey>(props: Props<K>) {

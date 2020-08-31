@@ -90,7 +90,7 @@ export default class Confirm extends React.PureComponent {
                             onClick={this.handleCancelButtonClick}
                             autoFocus={autoFocus}
                         >
-                          Cancel
+                            Cancel
                         </Button>
                     )}
                     <DangerButton
