@@ -24,7 +24,7 @@ interface Props {
     focusTrap: boolean;
     onBlur?: () => void;
     onClose?: (attributes: { escape: boolean }) => void;
-    onInvalidate?: (e: HTMLDivElement) => object; // gets container
+    onInvalidate?: (e: HTMLDivElement) => Record<string, unknown>; // gets container
     onMouseDown?: (e: MouseEvent) => void; // gets mouse down event
     parentRef: React.RefObject<HTMLElement>;
     showHaze: boolean;

@@ -449,20 +449,18 @@ export default class GridItem extends React.Component {
 
         return (
             <React.Fragment>
-                {
+                <div
+                    className={className}
+                    ref={this.containerRef}
+                    style={style}
                     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-                    <div
-                        className={className}
-                        ref={this.containerRef}
-                        style={style}
-                        // onMouseDown={this.handleMouseDown}
-                        // onMouseUp={this.handleMouseUp}
-                    >
-                        <Header />
-                        <Content />
-                        <ResizeHandle />
-                    </div>
-                }
+                    // onMouseDown={this.handleMouseDown}
+                    // onMouseUp={this.handleMouseUp}
+                >
+                    <Header />
+                    <Content />
+                    <ResizeHandle />
+                </div>
                 <GhostItem />
             </React.Fragment>
         );

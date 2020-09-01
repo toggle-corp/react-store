@@ -17,7 +17,7 @@ interface Props<T, K extends OptionKey> {
     keySelector: (datum: T) => K;
     labelSelector: (datum: T) => string | number;
     onBlur: () => void;
-    onInvalidate: (e: HTMLDivElement) => object;
+    onInvalidate: (e: HTMLDivElement) => Record<string, unknown>;
     onOptionClick: (key: K) => void;
     onOptionFocus: (key: K) => void;
     optionLabelSelector?: (datum: T) => React.ReactNode;
