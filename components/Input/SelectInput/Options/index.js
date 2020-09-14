@@ -21,8 +21,9 @@ const propTypes = {
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
+        PropTypes.bool,
     ]),
-    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    focusedKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
     onBlur: PropTypes.func.isRequired,
     onInvalidate: PropTypes.func.isRequired,
 

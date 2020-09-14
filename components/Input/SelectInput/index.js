@@ -28,6 +28,7 @@ import styles from './styles.scss';
 const propTypeKey = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
+    PropTypes.bool,
 ]);
 
 const RawKeyInput = handleKeyboard(RawInput);
