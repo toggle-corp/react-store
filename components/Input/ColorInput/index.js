@@ -14,8 +14,6 @@ import {
 
 import { FaramInputElement } from '@togglecorp/faram';
 
-import { calcFloatingPositionInMainWindow } from '../../../utils/common';
-
 import FloatingContainer from '../../View/FloatingContainer';
 import Icon from '../../General/Icon';
 import ListView from '../../View/List/ListView';
@@ -26,6 +24,8 @@ import HintAndError from '../HintAndError';
 import Label from '../Label';
 
 import styles from './styles.scss';
+
+const WINDOW_PADDING = 24;
 
 const identitySelector = d => d;
 
@@ -259,31 +259,41 @@ function ColorInput(props) {
     const [selectedNumberOfColors, setSelectedNumberOfColors] = useState(8);
 
     const handleColorPickerInvalidate = useCallback((colorPickerContainer) => {
-        const containerRect = colorPickerContainer.getBoundingClientRect();
+        const contentRect = colorPickerContainer.getBoundingClientRect();
         let parentRect = boundingClientRect;
         if (containerRef) {
             const { current: container } = containerRef;
             parentRect = container.getBoundingClientRect();
         }
+        const {
+            top: parentBCRTop,
+            left: parentBCRLeft,
+        } = parentRect;
 
-        const offset = {
-            top: 2,
-            right: 0,
-            bottom: 0,
-            left: 0,
+        const windowRect = {
+            width: window.innerWidth,
+            height: window.innerHeight,
         };
-        if (showHintAndError) {
-            offset.top = 12;
+
+        let topCalc = parentBCRTop;
+        let leftCalc = parentBCRLeft - contentRect.width;
+
+        if (leftCalc < 0) {
+            leftCalc = WINDOW_PADDING;
         }
 
-        const optionsContainerPosition = (
-            calcFloatingPositionInMainWindow(parentRect, containerRect, offset)
-        );
-        return {
-            ...optionsContainerPosition,
+        if ((topCalc + contentRect.height) > (windowRect.height - WINDOW_PADDING)) {
+            topCalc -= ((contentRect.height + topCalc + WINDOW_PADDING) - windowRect.height);
+        }
+
+        const optionsContainerPosition = {
+            top: `${topCalc}px`,
+            left: `${leftCalc}px`,
             width: 'auto',
         };
-    }, [containerRef, boundingClientRect, showHintAndError]);
+
+        return optionsContainerPosition;
+    }, [containerRef, boundingClientRect]);
 
     const handleColorBoxClick = useCallback(() => {
         const { current: container } = containerRef;
