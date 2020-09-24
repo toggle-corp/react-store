@@ -365,9 +365,9 @@ function ColorInput(props) {
                         parent={containerRef && containerRef.current}
                         onBlur={handleColorPickerBlur}
                         onInvalidate={handleColorPickerInvalidate}
-                        className={styles.colorFloatingContainer}
+                        className={_cs(styles.colorFloatingContainer, 'floating-util')}
                         focusTrap
-                        showHaze
+                        // showHaze
                     >
                         <Picker
                             color={value}
