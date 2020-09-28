@@ -9,46 +9,18 @@ import {
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
-import HintAndError from '../HintAndError';
-import Label from '../Label';
-import Icon from '../../General/Icon';
 import Button from '../../Action/Button';
-import Select from './Select';
 import ExtraRoot from './ExtraRoot';
+import HintAndError from '../HintAndError';
+import Icon from '../../General/Icon';
+import Label from '../Label';
+import Select from './Select';
 import SeparateDataValue from './SeparateDataValue';
 
 import styles from './styles.scss';
 
 
 const noOp = () => undefined;
-
-const propTypes = {
-    className: PropTypes.string,
-    value: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
-        title: PropTypes.string,
-        nodes: PropTypes.arrayOf(PropTypes.object),
-        selected: PropTypes.oneOf([true, false, 'fuzzy']),
-        draggable: PropTypes.bool,
-    })),
-    onChange: PropTypes.func,
-    initialExpandState: PropTypes.shape({}),
-};
-
-const defaultProps = {
-    className: undefined,
-    onChange: noOp,
-    value: [],
-    initialExpandState: {},
-};
-
-const DragHandle = SortableHandle(() => (
-    <Icon
-        className={`${styles.dragHandle} drag-handle`}
-        name="dragHandle"
-    />
-));
-
 
 // Get cumulative selected state from a list of nodes
 const getSelectedState = (nodes) => {
@@ -80,6 +52,131 @@ const setNodeSelection = (node, selected) => ({
     nodes: node.nodes && node.nodes.map(n => setNodeSelection(n, selected)),
     selected,
 });
+
+const DragHandle = SortableHandle(() => (
+    <Icon
+        className={`${styles.dragHandle} drag-handle`}
+        name="dragHandle"
+    />
+));
+
+const SortableNode = SortableElement((props) => {
+    const {
+        value: {
+            selected,
+            key,
+            nodes,
+            title,
+            draggable,
+        },
+        isExpanded,
+        onClick,
+        onExpand,
+        onChildrenChange,
+    } = props;
+
+    // Based on selected values (true/false/'fuzzy'), get class-name
+    // for checkbox
+    const className = _cs(
+        styles.checkbox,
+        'checkbox',
+    );
+
+    const iconName = (
+        (selected === 'fuzzy' && 'checkboxBlank')
+        || (selected && 'checkbox')
+        || 'checkboxOutlineBlank'
+    );
+    // const isExpanded = this.state.expanded[key];
+
+    return (
+        <div className={`${styles.treeNode} tree-node`}>
+            <div className={`${styles.parentNode} parent-node`}>
+                {draggable && <DragHandle />}
+                <Button
+                    className={className}
+                    iconName={iconName}
+                    // onClick={() => this.handleCheckBox(key)}
+                    onClick={() => onClick(key)}
+                    transparent
+                />
+                { nodes ? (
+                    <Button
+                        className={`${styles.nodeTitle} node-title`}
+                        // onClick={() => this.handleToggleExpand(key)}
+                        onClick={() => onExpand(key)}
+                        transparent
+                    >
+                        { title }
+                        <Icon
+                            className={`expand-arrow ${styles.expandArrow}`}
+                            name={isExpanded ? 'chevronUp' : 'chevronDown'}
+                        />
+                    </Button>
+                ) : (
+                    <span className={`${styles.nodeTitle} node-title`}>
+                        {title}
+                    </span>
+                )}
+            </div>
+
+            {nodes && isExpanded && (
+                <NormalTreeSelection
+                    value={nodes}
+                    // onChange={children => this.handleChildrenChange(key, children)}
+                    onChange={children => onChildrenChange(key, children)}
+                />
+            )}
+        </div>
+    );
+});
+
+const SortableTree = SortableContainer((props) => {
+    const {
+        items = [],
+        onExpand,
+        onClick,
+        onChildrenChange,
+        expanded,
+        // isExpanded,
+    } = props;
+    return (
+        <div>
+            {items.map((node, index) => (
+                <SortableNode
+                    key={node.key}
+                    index={index}
+
+                    value={node}
+                    onExpand={onExpand}
+                    onClick={onClick}
+                    onChildrenChange={onChildrenChange}
+                    isExpanded={expanded[node.key]}
+                />
+            ))}
+        </div>
+    );
+});
+
+const propTypes = {
+    className: PropTypes.string,
+    value: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.string,
+        title: PropTypes.string,
+        nodes: PropTypes.arrayOf(PropTypes.object),
+        selected: PropTypes.oneOf([true, false, 'fuzzy']),
+        draggable: PropTypes.bool,
+    })),
+    onChange: PropTypes.func,
+    initialExpandState: PropTypes.shape({}),
+};
+
+const defaultProps = {
+    className: undefined,
+    onChange: noOp,
+    value: [],
+    initialExpandState: {},
+};
 
 class NormalTreeSelection extends React.PureComponent {
     static propTypes = propTypes;
@@ -146,75 +243,7 @@ class NormalTreeSelection extends React.PureComponent {
         }
     };
 
-    SortableNode = SortableElement(({ value }) => this.renderNode(value))
-
-    SortableTree = SortableContainer(({ items = [] }) => (
-        <div>
-            {items.map((node, index) => (
-                <this.SortableNode
-                    key={node.key}
-                    index={index}
-                    value={node}
-                />
-            ))}
-        </div>
-    ));
-
     // End sortable stuffs
-
-    renderNode = ({ selected, key, nodes, title, draggable }) => {
-        // Based on selected values (true/false/'fuzzy'), get class-name
-        // for checkbox
-        const className = _cs(
-            styles.checkbox,
-            'checkbox',
-        );
-
-        const iconName = (
-            (selected === 'fuzzy' && 'checkboxBlank')
-            || (selected && 'checkbox')
-            || 'checkboxOutlineBlank'
-        );
-        const isExpanded = this.state.expanded[key];
-
-        return (
-            <div className={`${styles.treeNode} tree-node`}>
-                <div className={`${styles.parentNode} parent-node`}>
-                    {draggable && <DragHandle />}
-                    <Button
-                        className={className}
-                        iconName={iconName}
-                        onClick={() => this.handleCheckBox(key)}
-                        transparent
-                    />
-                    { nodes ? (
-                        <Button
-                            className={`${styles.nodeTitle} node-title`}
-                            onClick={() => this.handleToggleExpand(key)}
-                            transparent
-                        >
-                            { title }
-                            <Icon
-                                className={`expand-arrow ${styles.expandArrow}`}
-                                name={isExpanded ? 'chevronUp' : 'chevronDown'}
-                            />
-                        </Button>
-                    ) : (
-                        <span className={`${styles.nodeTitle} node-title`}>
-                            {title}
-                        </span>
-                    )}
-                </div>
-
-                {nodes && this.state.expanded[key] && (
-                    <NormalTreeSelection
-                        value={nodes}
-                        onChange={children => this.handleChildrenChange(key, children)}
-                    />
-                )}
-            </div>
-        );
-    }
 
     render() {
         const {
@@ -230,8 +259,13 @@ class NormalTreeSelection extends React.PureComponent {
 
         return (
             <div className={className}>
-                <this.SortableTree
+                <SortableTree
                     items={value}
+                    onExpand={this.handleToggleExpand}
+                    onClick={this.handleCheckBox}
+                    onChildrenChange={this.handleChildrenChange}
+                    expanded={this.state.expanded}
+
                     onSortEnd={this.handleSortEnd}
                     lockAxis="y"
                     lockToContainerEdges
@@ -245,7 +279,7 @@ class NormalTreeSelection extends React.PureComponent {
 
 const FinalTreeSelection = ExtraRoot(NormalTreeSelection);
 
-const TreeSelection = (props) => {
+function TreeSelection(props) {
     const {
         className,
         showLabel,
@@ -282,11 +316,15 @@ const TreeSelection = (props) => {
             />
         </div>
     );
-};
+}
 
-export default FaramInputElement(TreeSelection);
+export default FaramInputElement(
+    TreeSelection,
+);
 
-export const SeparatedTreeSelection = FaramInputElement(SeparateDataValue(TreeSelection));
+export const SeparatedTreeSelection = FaramInputElement(
+    SeparateDataValue(TreeSelection),
+);
 
 export const TreeSelectionWithSelectors = FaramInputElement(
     Select(SeparateDataValue(TreeSelection)),

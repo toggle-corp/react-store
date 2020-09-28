@@ -78,7 +78,6 @@ function BasicMultiSelectInput<T = DefaultItem, K extends OptionKey = string>(pr
 
     const interceptedSetSearchValue = useCallback(
         (value: string | undefined) => {
-            console.warn('value', value);
             setSearchValue(value);
 
             onSearchValueChange(
