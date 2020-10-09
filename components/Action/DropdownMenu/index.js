@@ -40,6 +40,7 @@ const propTypes = {
     onDropdownVisibilityChange: PropTypes.func,
 
     closeOnClick: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -53,6 +54,7 @@ const defaultProps = {
     dropdownIconClassName: '',
     onDropdownVisibilityChange: undefined,
     closeOnClick: false,
+    disabled: false,
 };
 
 export default class DropdownMenu extends React.PureComponent {
@@ -147,6 +149,7 @@ export default class DropdownMenu extends React.PureComponent {
 
     renderDropdownButton = () => {
         const {
+            disabled,
             title,
             hideDropdownIcon,
             dropdownIcon,
@@ -163,6 +166,7 @@ export default class DropdownMenu extends React.PureComponent {
         const className = _cs(
             'dropdown-button',
             styles.dropdownButton,
+            disabled && styles.disabled,
             (leftComponent || iconName) && styles.hasLeft,
         );
 
@@ -182,6 +186,7 @@ export default class DropdownMenu extends React.PureComponent {
                 onClick={this.handleDropdownClick}
                 className={className}
                 type="button"
+                disabled={disabled}
             >
                 { iconName && (
                     <Icon
@@ -240,16 +245,12 @@ export default class DropdownMenu extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
-        const { showDropdown } = this.state;
+        const {
+            className,
+            disabled,
+        } = this.props;
 
-        const className = _cs(
-            classNameFromProps,
-            'dropdown-menu',
-            styles.dropdownMenu,
-            showDropdown && 'active',
-            showDropdown && styles.active,
-        );
+        const { showDropdown } = this.state;
 
         const DropdownButton = this.renderDropdownButton;
         const DropdownContainer = this.renderDropdownContainer;
@@ -257,7 +258,14 @@ export default class DropdownMenu extends React.PureComponent {
         return (
             <div
                 ref={this.createContainerRef}
-                className={className}
+                className={_cs(
+                    className,
+                    'dropdown-menu',
+                    styles.dropdownMenu,
+                    showDropdown && 'active',
+                    showDropdown && styles.active,
+                    disabled && styles.disabled,
+                )}
             >
                 <DropdownButton />
                 {showDropdown && (
