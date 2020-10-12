@@ -1,133 +1,154 @@
+import React, { Fragment, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 
-const propTypes = {
+const controlledWrapperPropTypes = {
     disabled: PropTypes.bool,
     modal: PropTypes.element.isRequired,
     className: PropTypes.string,
-    initialShowModal: PropTypes.bool,
     onClose: PropTypes.func,
+    showModal: PropTypes.bool,
+    onModalVisibilityChange: PropTypes.func,
 };
 
-const defaultProps = {
+const controlledWrapperDefaultProps = {
+    showModal: false,
     disabled: false,
     className: '',
-    initialShowModal: false,
     onClose: undefined,
+    onModalVisibilityChange: undefined,
 };
 
-const modalize = (WrappedButtonComponent) => {
-    const ModalComponent = class extends React.PureComponent {
-        static propTypes = propTypes;
+export const controlledModalize = (WrappedButtonComponent) => {
+    const ModalComponent = (props) => {
+        const {
+            disabled,
+            modal,
+            className: classNameFromProps,
+            onClose,
+            showModal,
+            onModalVisibilityChange,
+            ...otherProps
+        } = props;
 
-        static defaultProps = defaultProps;
+        const [wrappedButtonClassName] = useState(() => randomString(16));
+        const [wrappedButtonBCR, setWrappedButtonBCR] = useState(undefined);
 
-        constructor(props) {
-            super(props);
-
-            this.state = {
-                showModal: props.initialShowModal,
-                wrappedButtonBCR: undefined,
-            };
-
-            this.wrappedButtonRef = React.createRef();
-            this.wrappedButtonClassName = randomString(16);
-            this.setBCRTimeout = undefined;
-            // this.wrappedButtonBCR = undefined;
-        }
-
-        componentDidMount() {
-            this.setWrappedButtonBCR();
-            window.addEventListener('resize', this.handleResize);
-            window.addEventListener('scroll', this.handleScroll, true);
-        }
-
-        componentWillUnmount() {
-            window.removeEventListener('resize', this.handleResize);
-            window.removeEventListener('scroll', this.handleScroll, true);
-        }
-
-        setWrappedButtonBCR = () => {
-            const wrappedButton = document.getElementsByClassName(this.wrappedButtonClassName)[0];
+        const handleWrappedButtonBCRChange = useCallback(() => {
+            const wrappedButton = document.getElementsByClassName(wrappedButtonClassName)[0];
 
             if (wrappedButton) {
-                const wrappedButtonBCR = wrappedButton.getBoundingClientRect();
-                this.setState({ wrappedButtonBCR });
+                const newWrappedButtonBCR = wrappedButton.getBoundingClientRect();
+                setWrappedButtonBCR(newWrappedButtonBCR);
             }
-        }
+        }, [setWrappedButtonBCR, wrappedButtonClassName]);
 
-        handleResize = () => {
-            const { showModal } = this.state;
+        useEffect(() => {
+            handleWrappedButtonBCRChange();
+        }, [handleWrappedButtonBCRChange]);
+
+        const handleResize = useCallback(() => {
             if (!showModal) {
                 return;
             }
-            this.setWrappedButtonBCR();
-        }
+            handleWrappedButtonBCRChange();
+        }, [handleWrappedButtonBCRChange, showModal]);
 
-        handleScroll = () => {
-            const { showModal } = this.state;
+        const handleScroll = useCallback(() => {
             if (!showModal) {
                 return;
             }
-            this.setWrappedButtonBCR();
-        }
+            handleWrappedButtonBCRChange();
+        }, [handleWrappedButtonBCRChange, showModal]);
 
-        handleWrappedButtonClick = () => {
-            this.setWrappedButtonBCR();
-            this.setState({ showModal: true });
-        }
+        useEffect(() => {
+            window.addEventListener('scroll', handleScroll, true);
+            window.addEventListener('resize', handleResize);
 
-        handleModalClose = (...args) => {
-            this.setState({ showModal: false });
-            const { onClose } = this.props;
+            return () => {
+                window.removeEventListener('scroll', handleScroll, true);
+                window.removeEventListener('resize', handleResize);
+            };
+        }, [handleScroll, handleResize]);
+
+        const handleWrappedButtonClick = useCallback(() => {
+            handleWrappedButtonBCRChange();
+
+            if (onModalVisibilityChange) {
+                onModalVisibilityChange(true);
+            }
+        }, [handleWrappedButtonBCRChange, onModalVisibilityChange]);
+
+        const handleModalClose = useCallback((...args) => {
+            if (onModalVisibilityChange) {
+                onModalVisibilityChange(false);
+            }
             if (onClose) {
                 onClose(...args);
             }
-        }
+        }, [onClose, onModalVisibilityChange]);
 
-        render() {
-            const {
-                disabled,
-                modal,
-                className: classNameFromProps,
-                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-                initialShowModal,
-                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-                onClose,
-                ...otherProps
-            } = this.props;
+        const className = _cs(
+            classNameFromProps,
+            wrappedButtonClassName,
+        );
 
-            const {
-                showModal,
-                wrappedButtonBCR,
-            } = this.state;
-
-            const className = _cs(
-                classNameFromProps,
-                this.wrappedButtonClassName,
-            );
-
-            return (
-                <Fragment>
-                    <WrappedButtonComponent
-                        disabled={disabled || showModal}
-                        onClick={this.handleWrappedButtonClick}
-                        className={className}
-                        {...otherProps}
-                    />
-                    { showModal && React.cloneElement(
-                        modal,
-                        {
-                            closeModal: this.handleModalClose,
-                            parentBCR: wrappedButtonBCR,
-                        },
-                    )}
-                </Fragment>
-            );
-        }
+        return (
+            <Fragment>
+                <WrappedButtonComponent
+                    disabled={disabled || showModal}
+                    onClick={handleWrappedButtonClick}
+                    className={className}
+                    {...otherProps}
+                />
+                { showModal && React.cloneElement(
+                    modal,
+                    {
+                        closeModal: handleModalClose,
+                        parentBCR: wrappedButtonBCR,
+                    },
+                )}
+            </Fragment>
+        );
     };
+
+    ModalComponent.propTypes = controlledWrapperPropTypes;
+    ModalComponent.defaultProps = controlledWrapperDefaultProps;
 
     return ModalComponent;
 };
+
+const propTypes = {
+    initialShowModal: PropTypes.bool,
+};
+
+const defaultProps = {
+    initialShowModal: false,
+};
+
+const modalize = (WrappedButtonComponent) => {
+    const ControlledWrappedComponent = controlledModalize(WrappedButtonComponent);
+
+    const ModalComponent = (props) => {
+        const {
+            initialShowModal,
+            ...otherProps
+        } = props;
+        const [showModal, setShowModal] = useState(initialShowModal);
+
+        return (
+            <ControlledWrappedComponent
+                showModal={showModal}
+                onModalVisibilityChange={setShowModal}
+                {...otherProps}
+            />
+        );
+    };
+
+    ModalComponent.propTypes = propTypes;
+    ModalComponent.defaultProps = defaultProps;
+
+    return ModalComponent;
+};
+
 export default modalize;
