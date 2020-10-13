@@ -13,7 +13,6 @@
     outline: none;
     border: 0;
     background-color: transparent;
-    cursor: pointer;
     text-transform: uppercase;
     color: inherit;
     font-family: inherit;
@@ -38,6 +37,10 @@
             align-items: center;
             flex-shrink: 0;
             padding: 0 var(--spacing-extra-small);
+        }
+
+        &:not(.disabled) {
+            cursor: pointer;
         }
 
         .dropdown-icon {
