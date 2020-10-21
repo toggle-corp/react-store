@@ -70,7 +70,7 @@ function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
 
         return (
             <Renderer
-                key={key}
+                key={String(key)}
                 className={rendererClassName}
                 {...extraProps}
             />
@@ -81,7 +81,7 @@ function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
 
         return (
             <GroupRenderer
-                key={groupKey}
+                key={String(groupKey)}
                 className={groupRendererClassName}
                 {...extraProps}
             />
@@ -104,7 +104,7 @@ function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
     const children: React.ReactNode[] = [];
     sortedGroupKeys.forEach((groupKey, i) => {
         children.push(renderGroup(groupKey, i));
-        children.push(...groups[groupKey].map(renderListItem));
+        children.push(...groups[String(groupKey)].map(renderListItem));
     });
 
     return (
@@ -135,7 +135,7 @@ function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
 
         return (
             <Renderer
-                key={key}
+                key={String(key)}
                 className={rendererClassName}
                 {...extraProps}
             />

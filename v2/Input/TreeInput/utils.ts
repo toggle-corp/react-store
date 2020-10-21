@@ -23,7 +23,7 @@ export interface ExtendedRelation<T, K> {
     children: T[];
 }
 
-export function generateRelations<T, K extends string | number>(
+export function generateRelations<T, K extends string | number | boolean>(
     options: T[],
     keySelector: (item: T) => K,
     parentKeySelector: (item: T) => K | undefined,
@@ -36,7 +36,7 @@ export function generateRelations<T, K extends string | number>(
         // NOTE: item in acc
         const id = keySelector(node);
 
-        const elementFromAcc = acc[id];
+        const elementFromAcc = acc[String(id)];
         const parentKey = parentKeySelector(node);
         const elem: InternalRelation<K> = elementFromAcc
             ? ({
@@ -50,19 +50,19 @@ export function generateRelations<T, K extends string | number>(
                 problematic: false,
                 children: {},
             });
-        acc[id] = elem;
+        acc[String(id)] = elem;
 
         // Iterate over all parents
         let parentId = parentKeySelector(node);
         while (parentId) {
-            const parentFromAcc = acc[parentId];
+            const parentFromAcc = acc[String(parentId)];
             const parent: InternalRelation<K> = parentFromAcc
                 ? ({
-                    ...acc[parentId],
+                    ...acc[String(parentId)],
                     children: {
                         ...parentFromAcc.children,
                         ...elem.children,
-                        [id]: id,
+                        [String(id)]: id,
                     },
                 })
                 : ({
@@ -71,10 +71,10 @@ export function generateRelations<T, K extends string | number>(
                     problematic: true,
                     children: {
                         ...elem.children,
-                        [id]: id,
+                        [String(id)]: id,
                     },
                 });
-            acc[parentId] = parent;
+            acc[String(parentId)] = parent;
 
             parentId = parent.parentKey;
         }
@@ -94,7 +94,7 @@ export function generateRelations<T, K extends string | number>(
     );
 }
 
-export function generateExtendedRelations<T, K extends string | number>(
+export function generateExtendedRelations<T, K extends string | number | boolean>(
     options: T[],
     keySelector: (item: T) => K,
     parentKeySelector: (item: T) => K | undefined,
@@ -114,7 +114,9 @@ export function generateExtendedRelations<T, K extends string | number>(
             item
                 ? ({
                     ...item,
-                    children: item.children.map(k => mapping[k]).filter(isDefined),
+                    children: item.children
+                        .map(k => mapping[String(k)])
+                        .filter(isDefined),
                 })
                 : undefined
         ),

@@ -1,4 +1,4 @@
-export type OptionKey = string | number;
+export type OptionKey = string | number | boolean;
 
 // eslint-disable-next-line import/prefer-default-export
 export enum Keys {
