@@ -54,7 +54,7 @@ function TreeNode<T, K extends OptionKey>(props: TreeNodeProps<T, K>) {
 
     const [collapsed, setCollapsed] = useState(level >= defaultCollapseLevel);
 
-    const relation = relations[nodeKey];
+    const relation = relations[String(nodeKey)];
     const allOwnOptions = relation ? relation.children : undefined;
 
     const ownOptions = useMemo(
