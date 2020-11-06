@@ -2,13 +2,13 @@ import React, { useRef, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
+import Modal from '../../../components/View/Modal';
+import ModalBody from '../../../components/View/Modal/Body';
+import modalize from '../../../components/General/Modalize';
 
 import styles from './styles.scss';
 
-/*
-# Feature
-- Add zoomFactor prop to control amount to zoom
-*/
+const ModalButton = modalize(Button);
 
 interface Props {
     alt: string;
@@ -17,7 +17,42 @@ interface Props {
     src: string;
     zoomFactor: number;
     zoomable: boolean;
+    expandable: boolean;
 }
+
+interface ImageInModalProps extends Props {
+    closeModal?: () => void;
+}
+
+function ImageInModal(props: ImageInModalProps) {
+    const {
+        closeModal,
+    } = props;
+
+    return (
+        <Modal
+            className={styles.modal}
+            closeOnEscape
+            closeOnOutsideClick
+            onClose={closeModal}
+        >
+            <ModalBody
+                className={styles.modalBody}
+            >
+                <Image
+                    {...props}
+                    className={styles.image}
+                    expandable={false}
+                />
+            </ModalBody>
+        </Modal>
+    );
+}
+
+/*
+# Feature
+- Add zoomFactor prop to control amount to zoom
+*/
 
 function Image(props: Props) {
     const {
@@ -27,6 +62,7 @@ function Image(props: Props) {
         src,
         zoomFactor,
         zoomable,
+        expandable,
     } = props;
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -61,7 +97,6 @@ function Image(props: Props) {
         [zoomFactor, imageRef],
     );
 
-
     const handleImageDragStart = useCallback(
         (e: React.DragEvent<HTMLImageElement>) => {
             e.preventDefault();
@@ -92,39 +127,60 @@ function Image(props: Props) {
                 src={src}
                 onDragStart={handleImageDragStart}
             />
-            { zoomable && (
-                <div
-                    className={styles.actionButtons}
-                    ref={actionButtonsRef}
-                >
-                    <Button
-                        title="Zoom in"
+            <div
+                className={styles.actionButtons}
+                ref={actionButtonsRef}
+            >
+                { expandable && (
+                    <ModalButton
+                        title=""
                         className={styles.action}
-                        iconName="plusOutline"
-                        onClick={handlePlusButtonClick}
+                        iconName="expandContent"
                         tabIndex={-1}
                         transparent
                         smallVerticalPadding
                         smallHorizontalPadding
+                        modal={(
+                            <ImageInModal
+                                {...props}
+                                expandable={false}
+                            />
+                        )}
                     />
-                    <Button
-                        title="Zoom out"
-                        className={styles.action}
-                        iconName="minusOutline"
-                        onClick={handleMinusButtonClick}
-                        tabIndex={-1}
-                        transparent
-                        smallVerticalPadding
-                        smallHorizontalPadding
-                    />
-                </div>
-            )}
+                )}
+                { zoomable && (
+                    <>
+                        <Button
+                            title="Zoom in"
+                            className={styles.action}
+                            iconName="plusOutline"
+                            onClick={handlePlusButtonClick}
+                            tabIndex={-1}
+                            transparent
+                            smallVerticalPadding
+                            smallHorizontalPadding
+                        />
+                        <Button
+                            title="Zoom out"
+                            className={styles.action}
+                            iconName="minusOutline"
+                            onClick={handleMinusButtonClick}
+                            tabIndex={-1}
+                            transparent
+                            smallVerticalPadding
+                            smallHorizontalPadding
+                        />
+                    </>
+                )}
+            </div>
         </div>
     );
 }
+
 Image.defaultProps = {
     zoomFactor: 0.1,
     zoomable: false,
+    expandable: false,
 };
 
 export default Image;
