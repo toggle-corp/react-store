@@ -3,7 +3,9 @@
     overflow: auto;
 
     .image {
-        // Nothing here?
+        width: calc(100% - var(--spacing-small));
+        height: calc(100% - var(--spacing-small));
+        object-fit: contain;
     }
 
     .action-buttons {
@@ -19,7 +21,7 @@
         .action {
             display: block;
             padding: 0 var(--spacing-small);
-            color: var(--color-foreground);
+            color: var(--color-foreground)!important;
             font-size: var(--font-size-large);
         }
     }
@@ -32,8 +34,8 @@
 }
 
 .modal {
-    width: 720px;
-    height: 640px;
+    width: 96vw;
+    height: 96vh;
 
     .modal-body {
         width: 100%;
@@ -41,6 +43,9 @@
         overflow: auto;
 
         .image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             height: 100%;
         }
     }
