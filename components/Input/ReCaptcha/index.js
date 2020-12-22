@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -22,7 +23,8 @@ const propTypes = {
     showHintAndError: PropTypes.bool,
     error: PropTypes.string,
 
-    setResetFunction: PropTypes.func,
+    // eslint-disable-next-line react/forbid-prop-types
+    componentRef: PropTypes.object,
 };
 
 const defaultProps = {
@@ -40,109 +42,122 @@ const defaultProps = {
     showHintAndError: true,
     error: '',
 
-    setResetFunction: undefined,
+    componentRef: undefined,
 };
 
-class ReCaptcha extends Component {
-    static propTypes = propTypes;
+const isReady = () => (window.grecaptcha && window.grecaptcha.render);
 
-    static defaultProps = defaultProps;
+function ReCaptcha(props) {
+    const {
+        className,
+        showHintAndError,
+        error,
 
-    static isReady = () => (window.grecaptcha && window.grecaptcha.render)
+        expiredCallback,
+        onChange,
+        onloadCallback,
+        siteKey,
+        theme,
+        size,
+        tabindex,
+        type,
+        hl,
+        badge,
+        componentRef,
+    } = props;
 
-    constructor(props) {
-        super(props);
+    const [ready, setReady] = useState(isReady);
+    const reCaptchaDom = useRef();
+    const widgetRef = useRef();
 
-        this.state = {
-            ready: ReCaptcha.isReady(),
-        };
+    const containerStyle = _cs(styles.recaptcha, className);
+    const reCaptchaStyle = _cs(styles.gRecaptcha, showHintAndError && error && styles.errored);
 
-        if (props.setResetFunction) {
-            props.setResetFunction(this.reset);
-        }
-    }
+    useEffect(
+        () => {
+            if (ready) {
+                return () => {};
+            }
+            const timer = setInterval(
+                () => {
+                    const r = isReady();
+                    if (r) {
+                        setReady(r);
+                    }
+                },
+                1000,
+            );
+            return () => {
+                clearTimeout(timer);
+            };
+        },
+        [ready],
+    );
 
-    componentDidMount() {
-        this.pollForReadyState();
-    }
+    useEffect(
+        () => {
+            if (!ready) {
+                return;
+            }
 
-    componentWillUnmount() {
-        clearTimeout(this.readyCheck);
-        const { setResetFunction } = this.props;
-        if (setResetFunction) {
-            setResetFunction(undefined);
-        }
-    }
+            widgetRef.current = window.grecaptcha.render(reCaptchaDom.current, {
+                sitekey: siteKey,
+                callback: (token) => {
+                    if (onChange) {
+                        onChange(token);
+                    }
+                },
+                theme,
+                type,
+                size,
+                tabindex,
+                hl,
+                badge,
+                'expired-callback': () => {
+                    if (onChange) {
+                        onChange('');
+                    }
+                    if (expiredCallback) {
+                        expiredCallback();
+                    }
+                },
+            });
 
-    pollForReadyState = () => {
-        if (ReCaptcha.isReady()) {
-            this.setState({ ready: true }, this.renderGrecaptcha);
-        } else {
-            this.readyCheck = setTimeout(this.pollForReadyState, 1000);
-        }
-    };
+            if (onloadCallback) {
+                onloadCallback();
+            }
+        },
+        [
+            ready,
+            siteKey, theme, size, tabindex, type, hl, badge,
+            onloadCallback, onChange, expiredCallback,
+        ],
+    );
 
-    handleChange = (token) => {
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(token);
-        }
-    }
+    const handleReset = useCallback(
+        () => {
+            if (ready && widgetRef.current !== null) {
+                window.grecaptcha.reset(widgetRef.current);
+            }
+            if (onChange) {
+                onChange('');
+            }
+        },
+        [onChange, ready],
+    );
+    useEffect(
+        () => {
+            componentRef.current = {
+                reset: handleReset,
+            };
+        },
+        [handleReset, componentRef],
+    );
 
-    expiredCallback = () => {
-        // Clear old values
-        this.handleChange('');
-
-        const { expiredCallback } = this.props;
-        if (expiredCallback) {
-            expiredCallback();
-        }
-    }
-
-    reset = () => {
-        if (this.state.ready && this.widget !== null) {
-            window.grecaptcha.reset(this.widget);
-        }
-        // Clear old values
-        this.handleChange('');
-    }
-
-    renderGrecaptcha = () => {
-        const {
-            onloadCallback,
-            siteKey,
-            theme, size, tabindex, type, hl, badge,
-        } = this.props;
-
-        this.widget = window.grecaptcha.render(this.recaptchaDom, {
-            sitekey: siteKey,
-            callback: this.handleChange,
-            theme,
-            type,
-            size,
-            tabindex,
-            hl,
-            badge,
-            'expired-callback': this.expiredCallback,
-        });
-
-        if (onloadCallback) {
-            onloadCallback();
-        }
-    }
-
-    renderError = () => {
-        const {
-            showHintAndError,
-            error,
-        } = this.props;
-
-        if (!showHintAndError) {
-            return null;
-        }
-
+    let errorComp;
+    if (showHintAndError) {
         if (error) {
-            return (
+            errorComp = (
                 <p
                     className={styles.error}
                     key="error"
@@ -150,44 +165,31 @@ class ReCaptcha extends Component {
                     {error}
                 </p>
             );
-        }
-
-        return (
-            <p
-                className={`${styles.empty} ${styles.error}`}
-                key="empty"
-            >
-                -
-            </p>
-        );
-    }
-
-    render() {
-        const {
-            className,
-            showHintAndError,
-            error,
-        } = this.props;
-
-        const Error = this.renderError;
-
-        const { ready } = this.state;
-
-        const containerStyle = `${styles.recaptcha} ${className}`;
-        const reCaptchaStyle = `${styles.gRecaptcha} ${(showHintAndError && error) ? styles.errored : ''}`;
-
-        return (
-            <div className={containerStyle}>
-                <div
-                    ref={(recaptchaDom) => { this.recaptchaDom = recaptchaDom; }}
-                    className={reCaptchaStyle}
+        } else {
+            errorComp = (
+                <p
+                    className={`${styles.empty} ${styles.error}`}
+                    key="empty"
                 >
-                    { !ready && 'Loading...' }
-                </div>
-                <Error />
-            </div>
-        );
+                    -
+                </p>
+            );
+        }
     }
+
+    return (
+        <div className={containerStyle}>
+            <div
+                ref={reCaptchaDom}
+                className={reCaptchaStyle}
+            >
+                { !ready && 'Loading...' }
+            </div>
+            {errorComp}
+        </div>
+    );
 }
+ReCaptcha.propTypes = propTypes;
+ReCaptcha.defaultProps = defaultProps;
 
 export default FaramInputElement(ReCaptcha);
