@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     SortableContainer,
     SortableElement,
@@ -55,7 +55,7 @@ const setNodeSelection = (node, selected) => ({
 
 const DragHandle = SortableHandle(() => (
     <Icon
-        className={`${styles.dragHandle} drag-handle`}
+        className={_cs(styles.dragHandle, 'drag-handle')}
         name="dragHandle"
     />
 ));
@@ -75,56 +75,58 @@ const SortableNode = SortableElement((props) => {
         onChildrenChange,
     } = props;
 
-    // Based on selected values (true/false/'fuzzy'), get class-name
-    // for checkbox
-    const className = _cs(
-        styles.checkbox,
-        'checkbox',
-    );
-
     const iconName = (
         (selected === 'fuzzy' && 'checkboxBlank')
         || (selected && 'checkbox')
         || 'checkboxOutlineBlank'
     );
-    // const isExpanded = this.state.expanded[key];
+
+    const handleCheckboxClick = useCallback(() => {
+        onClick(key);
+    }, [onClick, key]);
+
+    const handleToggleExpandKey = useCallback(() => {
+        onExpand(key);
+    }, [onExpand, key]);
+
+    const handleTreeSelectionChange = useCallback((children) => {
+        onChildrenChange(key, children);
+    }, [onChildrenChange, key]);
 
     return (
-        <div className={`${styles.treeNode} tree-node`}>
-            <div className={`${styles.parentNode} parent-node`}>
+        <div className={_cs(styles.treeNode, 'tree-node')}>
+            <div className={_cs(styles.parentNode, 'parent-node')}>
                 {draggable && <DragHandle />}
                 <Button
-                    className={className}
+                    // Based on selected values (true/false/'fuzzy'), get class-name
+                    // for checkbox
+                    className={_cs(styles.checkbox, 'checkbox')}
                     iconName={iconName}
-                    // onClick={() => this.handleCheckBox(key)}
-                    onClick={() => onClick(key)}
+                    onClick={handleCheckboxClick}
                     transparent
                 />
                 { nodes ? (
                     <Button
-                        className={`${styles.nodeTitle} node-title`}
-                        // onClick={() => this.handleToggleExpand(key)}
-                        onClick={() => onExpand(key)}
+                        className={_cs(styles.nodeTitle, 'node-title')}
+                        onClick={handleToggleExpandKey}
                         transparent
                     >
                         { title }
                         <Icon
-                            className={`expand-arrow ${styles.expandArrow}`}
+                            className={_cs('expand-arrow', styles.expandArrow)}
                             name={isExpanded ? 'chevronUp' : 'chevronDown'}
                         />
                     </Button>
                 ) : (
-                    <span className={`${styles.nodeTitle} node-title`}>
+                    <span className={_cs(styles.nodeTitle, 'node-title')}>
                         {title}
                     </span>
                 )}
             </div>
-
             {nodes && isExpanded && (
                 <NormalTreeSelection
                     value={nodes}
-                    // onChange={children => this.handleChildrenChange(key, children)}
-                    onChange={children => onChildrenChange(key, children)}
+                    onChange={handleTreeSelectionChange}
                 />
             )}
         </div>
@@ -138,10 +140,12 @@ const SortableTree = SortableContainer((props) => {
         onClick,
         onChildrenChange,
         expanded,
+        className,
         // isExpanded,
     } = props;
+
     return (
-        <div>
+        <div className={className}>
             {items.map((node, index) => (
                 <SortableNode
                     key={node.key}
@@ -158,7 +162,98 @@ const SortableTree = SortableContainer((props) => {
     );
 });
 
-const propTypes = {
+function NormalTreeSelection(props) {
+    const {
+        className: classNameFromProps,
+        value,
+        direction,
+        initialExpandState,
+        onChange,
+    } = props;
+
+    const [expanded, setExpanded] = useState(initialExpandState);
+    // Toggle expand state of a node
+    const handleToggleExpand = useCallback((key) => {
+        setExpanded((oldExpanded) => {
+            const newExpanded = { ...oldExpanded };
+            newExpanded[key] = !newExpanded[key];
+            return newExpanded;
+        });
+    }, []);
+
+    // Handle toggling the state of checkbox including its children
+    const handleCheckBox = useCallback((key) => {
+        const tempValue = [...value];
+
+        const index = tempValue.findIndex(v => v.key === key);
+        const state = !tempValue[index].selected;
+        tempValue[index] = setNodeSelection(tempValue[index], state);
+
+        if (onChange) {
+            onChange(tempValue);
+        }
+    }, [onChange, value]);
+
+    // Update the children nodes
+    // Change may include selected state and order of the children
+    const handleChildrenChange = useCallback((key, nodes) => {
+        const tempValue = [...value];
+        const index = tempValue.findIndex(v => v.key === key);
+        const selected = getSelectedState(nodes);
+
+        // Create new nodeValue and replace
+        const nodeValue = {
+            ...tempValue[index],
+            selected,
+            nodes,
+        };
+
+        tempValue[index] = nodeValue;
+
+        if (onChange) {
+            onChange(tempValue);
+        }
+    }, [onChange, value]);
+
+    // Start sortable stuffs
+
+    const handleSortEnd = useCallback(({ oldIndex, newIndex }) => {
+        const newValue = arrayMove(value, oldIndex, newIndex);
+        if (onChange) {
+            onChange(newValue);
+        }
+    }, [onChange, value]);
+
+
+    return (
+        <div
+            className={_cs(
+                classNameFromProps,
+                styles.treeSelection,
+                direction === 'horizontal' && styles.horizontal,
+                'tree-selection',
+            )}
+        >
+            <SortableTree
+                items={value}
+                onExpand={handleToggleExpand}
+                onClick={handleCheckBox}
+                onChildrenChange={handleChildrenChange}
+                expanded={expanded}
+                className={direction === 'horizontal' && styles.horizontal}
+
+                onSortEnd={handleSortEnd}
+                lockAxis={direction === 'vertical' ? 'y' : ''}
+                axis={direction === 'vertical' ? 'y' : 'xy'}
+                lockToContainerEdges
+                useDragHandle
+                lockOffset="0%"
+            />
+        </div>
+    );
+}
+
+NormalTreeSelection.propTypes = {
     className: PropTypes.string,
     value: PropTypes.arrayOf(PropTypes.shape({
         key: PropTypes.string,
@@ -169,113 +264,16 @@ const propTypes = {
     })),
     onChange: PropTypes.func,
     initialExpandState: PropTypes.shape({}),
+    // NOTE: Options are horizontal and vertical
+    direction: PropTypes.string,
 };
-
-const defaultProps = {
+NormalTreeSelection.defaultProps = {
     className: undefined,
     onChange: noOp,
     value: [],
     initialExpandState: {},
+    direction: 'vertical',
 };
-
-class NormalTreeSelection extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            expanded: props.initialExpandState,
-        };
-    }
-
-    // Toggle expand state of a node
-    handleToggleExpand = (key) => {
-        this.setState((oldState) => {
-            const expanded = { ...oldState.expanded };
-            expanded[key] = !expanded[key];
-            return { expanded };
-        });
-    }
-
-    // Handle toggling the state of checkbox including its children
-    handleCheckBox = (key) => {
-        const value = [...this.props.value];
-
-        const index = value.findIndex(v => v.key === key);
-        const state = !value[index].selected;
-        value[index] = setNodeSelection(value[index], state);
-
-        if (this.props.onChange) {
-            this.props.onChange(value);
-        }
-    }
-
-    // Update the children nodes
-    // Change may include selected state and order of the children
-    handleChildrenChange = (key, nodes) => {
-        const value = [...this.props.value];
-        const index = value.findIndex(v => v.key === key);
-        const selected = getSelectedState(nodes);
-
-        // Create new nodeValue and replace
-        const nodeValue = {
-            ...value[index],
-            selected,
-            nodes,
-        };
-
-        value[index] = nodeValue;
-
-        if (this.props.onChange) {
-            this.props.onChange(value);
-        }
-    }
-
-    // Start sortable stuffs
-
-    handleSortEnd = ({ oldIndex, newIndex }) => {
-        const value = arrayMove(this.props.value, oldIndex, newIndex);
-        if (this.props.onChange) {
-            this.props.onChange(value);
-        }
-    };
-
-    // End sortable stuffs
-
-    render() {
-        const {
-            className: classNameFromProps,
-            value,
-        } = this.props;
-
-        const className = _cs(
-            classNameFromProps,
-            styles.treeSelection,
-            'tree-selection',
-        );
-
-        return (
-            <div className={className}>
-                <SortableTree
-                    items={value}
-                    onExpand={this.handleToggleExpand}
-                    onClick={this.handleCheckBox}
-                    onChildrenChange={this.handleChildrenChange}
-                    expanded={this.state.expanded}
-
-                    onSortEnd={this.handleSortEnd}
-                    lockAxis="y"
-                    lockToContainerEdges
-                    useDragHandle
-                    lockOffset="0%"
-                />
-            </div>
-        );
-    }
-}
 
 const FinalTreeSelection = ExtraRoot(NormalTreeSelection);
 
@@ -292,6 +290,7 @@ function TreeSelection(props) {
         title,
         ...otherProps
     } = props;
+
     return (
         <div
             className={className}
@@ -317,6 +316,30 @@ function TreeSelection(props) {
         </div>
     );
 }
+
+TreeSelection.propTypes = {
+    className: PropTypes.string,
+    label: PropTypes.string,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    showLabel: PropTypes.bool,
+    disabled: PropTypes.bool,
+    showHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
+    title: PropTypes.string,
+};
+
+TreeSelection.defaultProps = {
+    className: undefined,
+    showLabel: true,
+    disabled: false,
+    showHintAndError: true,
+    title: undefined,
+    label: undefined,
+    persistentHintAndError: undefined,
+    hint: undefined,
+    error: undefined,
+};
 
 export default FaramInputElement(
     TreeSelection,
