@@ -38,10 +38,13 @@ const propTypes = {
     closeOnEscape: PropTypes.bool,
 
     onClose: PropTypes.func,
+
+    elementRef: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
+    elementRef: undefined,
     focusTrap: false,
     showHaze: false,
     onBlur: undefined,
@@ -61,7 +64,8 @@ export default class FloatingContainer extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.containerRef = React.createRef();
+        const { elementRef } = props;
+        this.containerRef = elementRef ?? React.createRef();
     }
 
     componentDidMount() {
