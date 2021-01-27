@@ -6,6 +6,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    title: PropTypes.string,
 
     /**
      * Timestamp
@@ -25,6 +26,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    title: undefined,
     date: undefined,
     mode: 'dd-MM-yyyy',
 
@@ -79,6 +81,7 @@ export default class FormattedDate extends React.PureComponent {
             date,
             mode,
             className,
+            title,
             emptyComponent: Empty,
         } = this.props;
 
@@ -98,7 +101,10 @@ export default class FormattedDate extends React.PureComponent {
 
         const children = FormattedDate.formatDate(new Date(date), mode);
         return (
-            <time className={containerClassName}>
+            <time
+                title={title}
+                className={containerClassName}
+            >
                 { children }
             </time>
         );
