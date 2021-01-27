@@ -74,9 +74,9 @@ export default class Header extends React.PureComponent {
         );
 
         const props = {
-            hoverable,
-            highlighted,
-            uniqueKey,
+            hoverable: hoverable.toString(),
+            highlighted: highlighted.toString(),
+            key: uniqueKey,
             disabled,
         };
 
