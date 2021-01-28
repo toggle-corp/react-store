@@ -8,9 +8,10 @@ interface Props {
     width: number;
     arcWidth: number;
     value: number;
-    src: string;
+    src?: string;
     imagePadding: number;
     className?: string;
+    arcClassName?: string;
 }
 
 function CircularProgressBar(props: Props) {
@@ -21,19 +22,20 @@ function CircularProgressBar(props: Props) {
         src,
         imagePadding,
         className,
+        arcClassName,
     } = props;
+
     const height = width;
     const arcOuterRadius = width / 2;
     const arcInnerRadius = (width / 2) - arcWidth;
     const innerCircleRadius = arcInnerRadius - imagePadding;
-    const imageWidth = (innerCircleRadius - (imagePadding)) * 2 * Math.sqrt(0.5);
+    const imageWidth = (innerCircleRadius - (0.1 * imagePadding)) * Math.sqrt(2);
 
     const arcGenerator = arc()
         .innerRadius(arcInnerRadius)
         .outerRadius(arcOuterRadius)
         .startAngle(0)
         .cornerRadius(5);
-
 
     const progressArc = (v: number) => arcGenerator({ endAngle: 2 * Math.PI * v });
 
@@ -47,7 +49,7 @@ function CircularProgressBar(props: Props) {
             </g>
             <g transform={`translate(${width / 2}, ${height / 2})`}>
                 <path
-                    className={styles.arc}
+                    className={_cs(styles.arc, arcClassName)}
                     d={progressArc(value / 100)}
                 />
             </g>
@@ -56,13 +58,15 @@ function CircularProgressBar(props: Props) {
                     className={styles.circle}
                     r={innerCircleRadius}
                 />
-                <image
-                    width={imageWidth}
-                    height={imageWidth}
-                    href={src}
-                    x={-(imageWidth / 2)}
-                    y={-(imageWidth / 2)}
-                />
+                { src && (
+                    <use
+                        width={imageWidth}
+                        height={imageWidth}
+                        href={src}
+                        x={-(imageWidth / 2)}
+                        y={-(imageWidth / 2)}
+                    />
+                )}
             </g>
         </svg>
     );
