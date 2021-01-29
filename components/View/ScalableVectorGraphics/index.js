@@ -88,6 +88,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
             className,
             src,
             fallback,
+            ...otherProps
         } = this.props;
 
         return (
@@ -96,6 +97,7 @@ export default class ScalableVectorGraphics extends React.PureComponent {
                 className={className}
                 data-src={src}
                 data-fallback={fallback}
+                {...otherProps}
             />
         );
     }
