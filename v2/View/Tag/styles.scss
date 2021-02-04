@@ -1,0 +1,26 @@
+.tag {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-around;
+    border-radius: var(--tag-border-radius);
+    background-color: var(--color-background-alt);
+    padding: var(--spacing-small) var(--spacing-medium);
+    text-align: center;
+
+    .action {
+        display: flex;
+        padding-left: var(--spacing-medium);
+    }
+}
+
+.selected {
+    background-color: var(--color-background-selected);
+    color: var(--color-text-on-dark);
+}
+
+.disabled {
+    background-color: var(--color-background-disabled);
+    color: var(--color-text-disabled);
+    pointer-events: none;
+}

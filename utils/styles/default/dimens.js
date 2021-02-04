@@ -124,6 +124,8 @@ const widthMarkerRadius = '8px';
 
 const pageMargin = '8px';
 
+const tagBorderRadius = '16px';
+
 const dimens = {
     fontSizeSuperSmall,
     fontSizeSuperSmallAlt,
@@ -250,6 +252,8 @@ const dimens = {
     widthMarkerRadius,
 
     pageMargin,
+    tagBorderRadius,
 };
+
 
 export default dimens;
