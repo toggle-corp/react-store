@@ -1,14 +1,12 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '../../Action/Button';
 import Modal from '../../../components/View/Modal';
 import ModalBody from '../../../components/View/Modal/Body';
-import modalize from '../../../components/General/Modalize';
+import ModalHeader from '../../../components/View/Modal/Header';
 
 import styles from './styles.scss';
-
-const ModalButton = modalize(Button);
 
 interface Props {
     alt: string;
@@ -36,6 +34,16 @@ function ImageInModal(props: ImageInModalProps) {
             closeOnOutsideClick
             onClose={closeModal}
         >
+            <ModalHeader
+                rightComponent={(
+                    <Button
+                        onClick={closeModal}
+                        buttonType="button-danger"
+                        iconName="close"
+                        transparent
+                    />
+                )}
+            />
             <ModalBody
                 className={styles.modalBody}
             >
@@ -68,6 +76,7 @@ function Image(props: Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
     const actionButtonsRef = useRef<HTMLDivElement>(null);
+    const [showImageModal, setShowImageModal] = useState(false);
 
     const handlePlusButtonClick = useCallback(
         () => {
@@ -104,6 +113,14 @@ function Image(props: Props) {
         [],
     );
 
+    const handleImageClick = useCallback(() => {
+        setShowImageModal(true);
+    }, []);
+
+    const handleImageClose = useCallback(() => {
+        setShowImageModal(false);
+    }, []);
+
     const handleScroll = useCallback(
         (e: React.UIEvent<HTMLDivElement>) => {
             const { current: actionButtons } = actionButtonsRef;
@@ -125,29 +142,15 @@ function Image(props: Props) {
                 className={_cs(styles.image, imageClassName)}
                 alt={alt}
                 src={src}
+                title="Click to expand"
+                onClick={handleImageClick}
+                role="presentation"
                 onDragStart={handleImageDragStart}
             />
             <div
                 className={styles.actionButtons}
                 ref={actionButtonsRef}
             >
-                { expandable && (
-                    <ModalButton
-                        title=""
-                        className={styles.action}
-                        iconName="expandContent"
-                        tabIndex={-1}
-                        transparent
-                        smallVerticalPadding
-                        smallHorizontalPadding
-                        modal={(
-                            <ImageInModal
-                                {...props}
-                                expandable={false}
-                            />
-                        )}
-                    />
-                )}
                 { zoomable && (
                     <>
                         <Button
@@ -171,6 +174,13 @@ function Image(props: Props) {
                             smallHorizontalPadding
                         />
                     </>
+                )}
+                {(expandable && showImageModal) && (
+                    <ImageInModal
+                        {...props}
+                        expandable={false}
+                        closeModal={handleImageClose}
+                    />
                 )}
             </div>
         </div>
