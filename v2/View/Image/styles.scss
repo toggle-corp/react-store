@@ -3,6 +3,7 @@
     overflow: auto;
 
     .image {
+        cursor: pointer;
         width: calc(100% - var(--spacing-small));
         height: calc(100% - var(--spacing-small));
         object-fit: contain;
