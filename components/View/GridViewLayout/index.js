@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import List from '../List';
 import GridItem from './GridItem';
@@ -18,12 +19,14 @@ const propTypes = {
     itemContentModifier: PropTypes.func.isRequired,
     layoutSelector: PropTypes.func.isRequired,
     keySelector: PropTypes.func.isRequired,
+    itemRendererParams: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     itemClassName: '',
     data: [],
+    itemRendererParams: undefined,
 };
 
 
@@ -68,28 +71,26 @@ export default class GridViewLayout extends React.PureComponent {
             layoutSelector,
             itemHeaderModifier: headerModifier,
             itemContentModifier: contentModifier,
+            itemRendererParams,
         } = this.props;
+
+        const newParams = itemRendererParams ? itemRendererParams(key, datum) : {};
 
         return {
             layoutSelector,
             headerModifier,
             contentModifier,
             datum,
+            ...newParams,
         };
     }
 
     render() {
         const {
-            className: classNameFromProps,
+            className,
             keySelector,
             itemClassName,
         } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.gridViewLayout}
-            'grid-view-layout'
-        `;
 
         const style = {
             width: `${this.bounds.width}px`,
@@ -98,7 +99,7 @@ export default class GridViewLayout extends React.PureComponent {
 
         return (
             <div
-                className={className}
+                className={_cs(className, styles.gridViewLayout, 'grid-view-layout')}
                 style={style}
             >
                 <List

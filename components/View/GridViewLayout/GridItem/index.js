@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 import React from 'react';
 
 import styles from './styles.scss';
@@ -39,16 +40,10 @@ export default class GridItem extends React.PureComponent {
 
     render() {
         const {
-            className: classNameFromProps,
+            className,
             layoutSelector,
             datum,
         } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            grid-item
-            ${styles.gridItem}
-        `;
 
         const Header = this.renderHeader;
         const Content = this.renderContent;
@@ -61,7 +56,7 @@ export default class GridItem extends React.PureComponent {
 
         return (
             <div
-                className={className}
+                className={_cs(styles.gridItem, className, 'grid-item')}
                 style={style}
             >
                 <Header />
