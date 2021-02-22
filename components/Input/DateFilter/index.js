@@ -145,6 +145,8 @@ class DateFilter extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static defaultOptions = [
+        { key: 'customRange', label: 'Select a date range' },
+        { key: 'customExact', label: 'Select an exact date' },
         { key: 'today', label: 'Today' },
         { key: 'yesterday', label: 'Yesterday' },
         { key: 'currentWeek', label: 'This week' },
@@ -154,8 +156,6 @@ class DateFilter extends React.PureComponent {
         { key: 'lastThreeMonths', label: 'Last 3 months' },
         { key: 'lastSixMonths', label: 'Last 6 months' },
         { key: 'lastOneYear', label: 'Last 1 year' },
-        { key: 'customExact', label: 'Select an exact date' },
-        { key: 'customRange', label: 'Select a date range' },
     ];
 
     static exactModalSchema = {
