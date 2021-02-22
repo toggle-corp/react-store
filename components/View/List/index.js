@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { listToGroupList } from '@togglecorp/fujs';
+import { _cs, listToGroupList } from '@togglecorp/fujs';
 import { FaramListElement } from '@togglecorp/faram';
 
 import ListItem from './ListItem';
@@ -79,9 +79,9 @@ export class NormalList extends React.Component {
 
             return (
                 <Renderer
-                    className={rendererClassName}
                     key={finalKey}
                     {...extraProps}
+                    className={_cs(rendererClassName, extraProps?.className)}
                 />
             );
         }
