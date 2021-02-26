@@ -5,6 +5,7 @@ import { FaramInputElement } from '@togglecorp/faram';
 import memoize from 'memoize-one';
 
 import ListView from '../../View/List/ListView';
+import HintAndError from '../HintAndError';
 
 import Option from './Option';
 import styles from './styles.scss';
@@ -41,7 +42,15 @@ const propTypes = {
     /**
      * key for selected option
      */
-    value: PropTypes.string,
+    persistentHintAndError: PropTypes.bool,
+    showHintAndError: PropTypes.bool,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+    hint: PropTypes.string,
+    error: PropTypes.string,
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
@@ -55,6 +64,11 @@ const defaultProps = {
     options: [],
     // disabled: false,
     // readOnly: false,
+    persistentHintAndError: true,
+    showHintAndError: true,
+    hint: '',
+    error: '',
+    changeDelay: undefined,
 };
 
 export class NormalRadioInput extends React.PureComponent {
@@ -85,6 +99,13 @@ export class NormalRadioInput extends React.PureComponent {
         const {
             className, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
             onChange, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            hint, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            error, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            changeDelay, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+            showHintAndError,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+            persistentHintAndError,
             labelSelector,
             keySelector,
             options,
@@ -108,16 +129,28 @@ export class NormalRadioInput extends React.PureComponent {
             className,
             options,
             keySelector,
+            persistentHintAndError,
+            showHintAndError,
+            hint,
+            error,
         } = this.props;
 
         return (
-            <ListView
-                className={_cs('radio-input', className, styles.radioInput)}
-                data={options}
-                keySelector={keySelector}
-                renderer={Option}
-                rendererParams={this.rendererParams}
-            />
+            <>
+                <ListView
+                    className={_cs('radio-input', className, styles.radioInput)}
+                    data={options}
+                    keySelector={keySelector}
+                    renderer={Option}
+                    rendererParams={this.rendererParams}
+                />
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                    persistent={persistentHintAndError}
+                />
+            </>
         );
     }
 }
