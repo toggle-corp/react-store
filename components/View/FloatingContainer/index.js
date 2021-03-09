@@ -174,6 +174,7 @@ export default class FloatingContainer extends React.PureComponent {
             <div
                 className={className}
                 ref={this.containerRef}
+                style={this.props.style}
             >
                 { children }
             </div>
