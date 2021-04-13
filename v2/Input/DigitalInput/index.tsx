@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     padStart,
-    isFalsyString,
     isTruthyString,
     _cs,
 } from '@togglecorp/fujs';

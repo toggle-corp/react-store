@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { select } from 'd3-selection';
 // FIXME: idk if this has a side-effect
-import { range } from 'd3-array';
+// import { range } from 'd3-array';
 import {
     arc,
     pie,

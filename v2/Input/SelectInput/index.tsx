@@ -18,10 +18,6 @@ interface DefaultItem {
     label: string;
 }
 
-interface State<K> {
-    searchValue?: string;
-}
-
 /*
 # Feature
 - Auto-scroll to selected item on popup open
@@ -40,7 +36,7 @@ interface State<K> {
 - Show values that are invalid (tally with current options)
 */
 
-function filterAndSearch<T, K>(
+function filterAndSearch<T>(
     options: T[],
     labelSelector: (datum: T) => string | number,
     searchValue: string,
