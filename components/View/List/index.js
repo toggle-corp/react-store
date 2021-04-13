@@ -126,7 +126,7 @@ export class NormalList extends React.Component {
         } = this.props;
 
         if (!groupKeySelector) {
-            return data.map(this.renderListItem);
+            return data.map((datum, index) => this.renderListItem(datum, index));
         }
 
         // TODO: memoize this operation

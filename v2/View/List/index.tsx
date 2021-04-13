@@ -21,7 +21,7 @@ interface BaseProps<D, P, K extends OptionKey> {
     rendererParams: (key: K, datum: D, index: number, data: D[]) => P;
 }
 
-interface GroupOptions<D, P, K extends OptionKey, GP, GK extends OptionKey> {
+interface GroupOptions<D, GP, GK extends OptionKey> {
     groupComparator?: (a: GK, b: GK) => number;
     groupKeySelector(datum: D): GK;
     groupRenderer: React.ComponentType<GP>;
@@ -35,17 +35,17 @@ interface NoGroupOptions {
 }
 
 export type ListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
-    BaseProps<D, P, K> & (GroupOptions<D, P, K, GP, GK> | NoGroupOptions)
+    BaseProps<D, P, K> & (GroupOptions<D, GP, GK> | NoGroupOptions)
 );
 
 export type GroupedListProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = (
-    BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>
+    BaseProps<D, P, K> & GroupOptions<D, GP, GK>
 );
 
 function hasGroup<D, P, K extends OptionKey, GP, GK extends OptionKey>(
     props: ListProps<D, P, K, GP, GK>,
-): props is (BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>) {
-    return !!(props as BaseProps<D, P, K> & GroupOptions<D, P, K, GP, GK>).grouped;
+): props is (BaseProps<D, P, K> & GroupOptions<D, GP, GK>) {
+    return !!(props as BaseProps<D, P, K> & GroupOptions<D, GP, GK>).grouped;
 }
 
 function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
@@ -160,5 +160,3 @@ function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
 List.defaultProps = {
     data: [],
 };
-
-export default List;

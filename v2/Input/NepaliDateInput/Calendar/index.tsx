@@ -38,7 +38,7 @@ const YearMode = (props: YearModeProps) => {
     const maxYear = BS.getMaxYmd().getYear();
 
     const cells = useMemo(
-        () => [...new Array(maxYear - minYear + 1)],
+        () => [...new Array((maxYear - minYear) + 1)],
         [maxYear, minYear],
     );
 

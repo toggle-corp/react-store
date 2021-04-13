@@ -92,11 +92,11 @@ class MapDownload extends React.PureComponent {
 
     render() {
         const {
-            legendContainerClassName, // capturing the prop
-            setDestroyer,
-            zoomLevel,
-            mapContainerRef,
-            mapStyle, // capturing the prop
+            legendContainerClassName, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars, max-len
+            setDestroyer, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            zoomLevel, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            mapContainerRef, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars, max-len
+            mapStyle, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
         const {

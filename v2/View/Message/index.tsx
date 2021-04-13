@@ -32,10 +32,6 @@ interface Props {
     resizeFactor: number;
 }
 
-interface State {
-    show: boolean;
-}
-
 function Message(props: Props) {
     const {
         maxFontSize,
