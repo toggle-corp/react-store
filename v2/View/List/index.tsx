@@ -157,6 +157,8 @@ function List<D, P, K extends OptionKey, GP, GK extends OptionKey>(
     );
 }
 
+export default List;
+
 List.defaultProps = {
     data: [],
 };
