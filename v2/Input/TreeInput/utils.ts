@@ -58,7 +58,7 @@ export function generateRelations<T, K extends string | number | boolean>(
             const parentFromAcc = acc[String(parentId)];
             const parent: InternalRelation<K> = parentFromAcc
                 ? ({
-                    ...acc[String(parentId)],
+                    ...parentFromAcc,
                     children: {
                         ...parentFromAcc.children,
                         ...elem.children,

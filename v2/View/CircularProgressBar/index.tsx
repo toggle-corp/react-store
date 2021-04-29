@@ -14,6 +14,9 @@ interface Props {
     arcClassName?: string;
 }
 
+const arcGenerator = arc()
+    .cornerRadius(5);
+
 function CircularProgressBar(props: Props) {
     const {
         width,
@@ -31,26 +34,25 @@ function CircularProgressBar(props: Props) {
     const innerCircleRadius = arcInnerRadius - imagePadding;
     const imageWidth = (innerCircleRadius - (0.1 * imagePadding)) * Math.sqrt(2);
 
-    const arcGenerator = arc()
-        .innerRadius(arcInnerRadius)
-        .outerRadius(arcOuterRadius)
-        .startAngle(0)
-        .cornerRadius(5);
-
-    const progressArc = (v: number) => arcGenerator({ endAngle: 2 * Math.PI * v });
+    const progressArc = (v: number) => arcGenerator({
+        endAngle: 2 * Math.PI * v,
+        startAngle: 0,
+        innerRadius: arcInnerRadius,
+        outerRadius: arcOuterRadius,
+    });
 
     return (
         <svg className={_cs(styles.progressBar, className)} height={height} width={width}>
             <g transform={`translate(${width / 2}, ${height / 2})`}>
                 <path
                     className={styles.arcBackground}
-                    d={progressArc(1)}
+                    d={progressArc(1) ?? undefined}
                 />
             </g>
             <g transform={`translate(${width / 2}, ${height / 2})`}>
                 <path
                     className={_cs(styles.arc, arcClassName)}
-                    d={progressArc(value / 100)}
+                    d={progressArc(value / 100) ?? undefined}
                 />
             </g>
             <g transform={`translate(${width / 2}, ${height / 2})`}>
