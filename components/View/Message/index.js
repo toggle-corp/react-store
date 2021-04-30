@@ -75,13 +75,13 @@ export default class Message extends React.PureComponent {
 
     handleResize = (e) => {
         const {
-            0: {
-                contentRect: {
-                    width,
-                    height,
-                },
-            },
+            0: { target },
         } = e;
+
+        const {
+            width,
+            height,
+        } = target.getBoundingClientRect();
 
         const {
             maxFontSize,
