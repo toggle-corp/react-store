@@ -54,7 +54,6 @@ function Message(props: Props) {
 
     const handleResize = useCallback(
         (e: ResizeObserverEntry[]) => {
-            /*
             const {
                 0: {
                     contentRect: {
@@ -63,9 +62,6 @@ function Message(props: Props) {
                     },
                 },
             } = e;
-             */
-
-            const { width, height } = e[0]?.target?.getBoundingClientRect() ?? {};
 
             const { current: container } = containerRef;
 
