@@ -35,6 +35,8 @@ interface DefaultItem {
     label: string;
 }
 
+const defaultOptions: unknown[] = [];
+
 type injectedProps = 'searchValue'
 | 'showPopup'
 | 'setShowPopup'
@@ -54,17 +56,15 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
         onSearchValueChange,
         onOptionsChange,
         onChange,
-        minSearchValueLength,
+        minSearchValueLength = 0,
         searchOptions: searchOptionsFromProps,
         emptyComponent = EmptyComponent,
         emptyWhenFilterComponent = FilterEmptyComponent,
+        placeholder = 'Select an option',
+        options = defaultOptions as T[],
+        keySelector,
         ...otherProps
     } = props;
-
-    const {
-        options,
-        keySelector,
-    } = otherProps;
 
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
     const [showPopup, setShowPopup] = useState(false);
@@ -130,16 +130,12 @@ function BasicSelectInput<T = DefaultItem, K extends OptionKey = string>(props: 
             onChange={interceptedOnChange}
             searchOptions={searchOptions}
 
+            placeholder={placeholder}
+            options={options}
+            keySelector={keySelector}
             {...otherProps}
         />
     );
 }
-BasicSelectInput.defaultProps = {
-    keySelector: (item: DefaultItem) => item.key,
-    labelSelector: (item: DefaultItem) => item.label,
-    options: [],
-    minSearchValueLength: 0,
-    placeholder: 'Select an option',
-};
 
 export default BasicSelectInput;

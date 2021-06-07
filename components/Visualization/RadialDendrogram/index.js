@@ -25,9 +25,7 @@ const propTypes = {
      * Hierarchical data structure that can be computed to form a hierarchical layout
      * <a href="https://github.com/d3/d3-hierarchy">d3-hierarchy</a>
      */
-    data: PropTypes.shape({
-        name: PropTypes.string,
-    }),
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     /**
      * Handle save functionality
      */

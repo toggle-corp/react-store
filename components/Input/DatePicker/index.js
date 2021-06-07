@@ -39,6 +39,7 @@ class DatePicker extends React.PureComponent {
         };
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (nextProps.value !== value && nextProps.value) {

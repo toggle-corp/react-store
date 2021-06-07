@@ -148,6 +148,7 @@ class ClusteredForceLayout extends PureComponent {
         this.updateData(this.props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { data } = this.props;
         if (nextProps.data !== data) {

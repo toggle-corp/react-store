@@ -215,6 +215,7 @@ export default class Map extends React.PureComponent {
         );
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (UNSUPPORTED_BROWSER) {
             return;

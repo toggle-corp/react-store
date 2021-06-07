@@ -83,6 +83,8 @@ const propTypes = {
      * if true, y-axis is hidden
      */
     hideYAxis: PropTypes.bool,
+
+    tickFormat: PropTypes.func,
 };
 
 const defaultProps = {

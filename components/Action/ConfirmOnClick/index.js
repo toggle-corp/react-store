@@ -21,6 +21,7 @@ const propTypes = {
     ]).isRequired,
     confirmationTitle: PropTypes.string,
     confirmationDisabled: PropTypes.bool,
+    onMessageShown: PropTypes.func,
 };
 
 const defaultProps = {
@@ -32,6 +33,7 @@ const defaultProps = {
     challengePlaceholder: '',
     skipConfirmation: false,
     confirmationDisabled: false,
+    onMessageShown: undefined,
 };
 
 const ConfirmOnClick = (WrappedComponent) => {

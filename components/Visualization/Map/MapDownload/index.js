@@ -9,10 +9,19 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     map: PropTypes.object.isRequired,
     legendContainerClassName: PropTypes.string,
+    setDestroyer: PropTypes.func,
+    zoomLevel: PropTypes.number,
+    mapContainerRef: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    mapStyle: PropTypes.string,
 };
 
 const defaultProps = {
     legendContainerClassName: undefined,
+
+    setDestroyer: undefined,
+    zoomLevel: undefined,
+    mapContainerRef: undefined,
+    mapStyle: undefined,
 };
 
 class MapDownload extends React.PureComponent {

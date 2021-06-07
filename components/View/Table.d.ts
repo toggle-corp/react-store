@@ -43,6 +43,7 @@ interface Props<Data> {
     emptyComponent?: React.ReactNode;
 }
 
+// eslint-disable-next-line react/prefer-stateless-function, @typescript-eslint/no-explicit-any
 declare class Table<D> extends React.Component<Props<D>, any> {
 }
 export default Table;

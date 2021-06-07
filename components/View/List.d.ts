@@ -33,7 +33,7 @@ interface Props<T, Q, R> {
 
 export type ListProps<T, Q, R> = (Props<T, Q, R> | AnotherProps<T, Q, R>) & ExternalProps;
 
-// eslint-disable-next-line react/prefer-stateless-function
+// eslint-disable-next-line react/prefer-stateless-function, @typescript-eslint/no-explicit-any
 declare class List<T, Q, R> extends React.Component<ListProps<T, Q, R>, any> {
 }
 export default List;

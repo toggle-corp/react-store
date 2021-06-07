@@ -45,6 +45,7 @@ class ScaleInput extends React.PureComponent {
         this.checkAndSetDefaultValue(props.options, props.value);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             options,

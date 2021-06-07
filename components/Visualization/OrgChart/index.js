@@ -29,13 +29,11 @@ const propTypes = {
     /**
      * Selected values (nodes)
      */
-    value: PropTypes.array, // eslint-disable-line
+    value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     /**
      * Hierarchical data to be visualized
      */
-    data: PropTypes.shape({
-        name: PropTypes.string,
-    }),
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     /**
      * Accessor function to return array of data representing the children
      */
@@ -75,12 +73,14 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+
+    disabled: PropTypes.boolean,
 };
 
 const defaultProps = {
     className: '',
     value: [],
-    data: {},
+    data: [],
     setSaveFunction: () => {},
     childSelector: d => d.children,
     labelSelector: d => d.name,
@@ -125,6 +125,7 @@ class OrgChart extends React.PureComponent {
         this.drawChart();
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (value !== nextProps.value) {

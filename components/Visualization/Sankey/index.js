@@ -31,10 +31,7 @@ const propTypes = {
     /**
      * the data to use to plot pie chart
      */
-    data: PropTypes.shape({
-        nodes: PropTypes.arrayOf(PropTypes.object),
-        links: PropTypes.arrayOf(PropTypes.object),
-    }),
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     /**
      * Handler function to save the generated svg
      */

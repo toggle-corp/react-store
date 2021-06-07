@@ -29,6 +29,7 @@ class MapLayer extends React.PureComponent {
         this.attatchEvents(map, this.props, emptyObject, this.props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             map,

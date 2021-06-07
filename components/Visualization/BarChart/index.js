@@ -146,6 +146,7 @@ class BarChart extends React.PureComponent {
         this.updateRender();
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         // TODO: Is there better way ?
         // TODO: also use nexProps for updateFromProps

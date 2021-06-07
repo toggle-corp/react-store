@@ -141,6 +141,7 @@ export default class RawTable extends React.Component {
         };
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: oldData,
@@ -177,7 +178,6 @@ export default class RawTable extends React.Component {
 
         // default className for global override
         classNames.push('raw-table');
-        classNames.push(styles.rawTable);
 
         // className provided by parent (through className)
         classNames.push(className);
@@ -244,7 +244,7 @@ export default class RawTable extends React.Component {
                     { data.length <= 0 && !pending && (
                         <div className={styles.emptyContainer}>
                             <EmptyComponent
-                                className={_cs('empty', styles.empty)}
+                                className={_cs('empty')}
                                 isFiltered={isFiltered}
                             />
                         </div>

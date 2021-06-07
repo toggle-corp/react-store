@@ -194,7 +194,6 @@ const Input = (props: Props) => {
             onBlur={handleBlur}
         >
             <DigitalInput
-                className={styles.input}
                 value={yearValue}
                 min={BS.getMinYmd().getYear()}
                 max={BS.getMaxYmd().getYear()}
@@ -205,7 +204,6 @@ const Input = (props: Props) => {
                 readOnly={readOnly}
             />
             <DigitalInput
-                className={styles.input}
                 value={monthValue}
                 min={1}
                 max={12}
@@ -215,7 +213,6 @@ const Input = (props: Props) => {
                 readOnly={readOnly}
             />
             <DigitalInput
-                className={styles.input}
                 value={dayValue}
                 min={1}
                 max={32}

@@ -5,10 +5,18 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    symbolClassName: PropTypes.string,
+    label: PropTypes.string,
+    color: PropTypes.string,
+    icon: PropTypes.node,
 };
 
 const defaultProps = {
     className: '',
+    symbolClassName: undefined,
+    label: undefined,
+    color: undefined,
+    icon: undefined,
 };
 
 export default class LegendItem extends React.PureComponent {

@@ -328,10 +328,7 @@ function TreeInput<T, K extends OptionKey = string>(props: TreeProps<T, K>) {
     const className = _cs(
         classNameFromProps,
         'tree',
-        styles.tree,
-        disabled && styles.disabled,
         disabled && 'disabled',
-        error && styles.error,
         error && 'error',
     );
 

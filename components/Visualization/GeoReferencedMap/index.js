@@ -12,6 +12,7 @@ const propTypes = {
     geoLocations: PropTypes.arrayOf(PropTypes.shape({
         key: PropTypes.string,
         title: PropTypes.string,
+        // eslint-disable-next-line react/forbid-prop-types
         geoJson: PropTypes.object,
     })),
     geoPoints: PropTypes.arrayOf(PropTypes.shape({
@@ -116,6 +117,7 @@ export default class GeoReferencedMap extends React.PureComponent {
         this.mapResizeTimeout = setTimeout(() => { map.resize(); }, 900);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             geoLocations,

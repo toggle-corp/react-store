@@ -7,6 +7,7 @@ interface Props {
     scrollIntoView?: boolean;
 }
 
+// eslint-disable-next-line react/prefer-stateless-function, @typescript-eslint/no-explicit-any
 declare class ListItem extends React.Component<Props, any> {
 }
 export default ListItem;

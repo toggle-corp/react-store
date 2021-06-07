@@ -52,7 +52,6 @@ class SearchInput extends React.PureComponent {
                     name="search"
                 />
                 <TextInput
-                    className={styles.textInput}
                     type="search"
                     disabled={disabled}
                     {...otherProps}

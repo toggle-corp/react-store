@@ -58,6 +58,8 @@ type injectedProps = 'searchValue'
     | 'setShowPopup'
     | 'onShowPopupChange';
 
+const defaultOptions: unknown[] = [];
+
 type Props<T, K extends OptionKey> = Omit<SelectInputBaseProps<T, K>, injectedProps> & {
     maxDisplayOptions?: number;
 };
@@ -66,13 +68,10 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
     const {
         maxDisplayOptions,
         placeholder,
+        options = defaultOptions as T[],
+        labelSelector,
         ...otherProps
     } = props;
-
-    const {
-        options,
-        labelSelector,
-    } = otherProps;
 
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
     const [showPopup, setShowPopup] = useState(false);
@@ -111,14 +110,11 @@ function SelectInput<T = DefaultItem, K extends OptionKey = string>(props: Props
             onShowPopupChange={setShowPopup}
 
             placeholder={placeholder || defaultPlaceholder}
+            options={options}
+            labelSelector={labelSelector}
             {...otherProps}
         />
     );
 }
-SelectInput.defaultProps = {
-    keySelector: (item: DefaultItem) => item.key,
-    labelSelector: (item: DefaultItem) => item.label,
-    options: [],
-};
 
 export default SelectInput;

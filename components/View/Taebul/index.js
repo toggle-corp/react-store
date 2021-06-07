@@ -109,6 +109,7 @@ export default class Taebul extends React.Component {
         this.calculateRowVirtualizationParams(this.props, scrollLeft);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { scrollLeft } = this.state;
         this.calculateRowVirtualizationParams(nextProps, scrollLeft);

@@ -49,11 +49,7 @@ const propTypes = {
      *     colors: { river: '#ff00ff', hills: '#0000ff' },
      * }
      */
-    data: PropTypes.shape({
-        values: PropTypes.array,
-        columns: PropTypes.array,
-        colors: PropTypes.object,
-    }).isRequired,
+    data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     /**
      * Select a group for each data value.
      */

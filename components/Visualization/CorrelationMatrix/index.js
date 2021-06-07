@@ -35,10 +35,7 @@ const propTypes = {
      * values: a square matrix with same variables show in rows and
      * columns with each cell representing correlation between two variables
      */
-    data: PropTypes.shape({
-        labels: PropTypes.arrayOf(PropTypes.string),
-        values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
-    }).isRequired,
+    data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     /**
      * Handle save functionality
      */

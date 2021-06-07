@@ -43,6 +43,7 @@ export default class Options extends React.PureComponent {
         this.generateActiveMap(props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { activeKeys: oldActiveKeys } = this.props;
         const { activeKeys: newActiveKeys } = nextProps;

@@ -122,6 +122,7 @@ export default class GridLayoutEditor extends React.Component {
         this.layouts = getLayouts(data, keySelector, layoutSelector);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: newLayoutSelector,

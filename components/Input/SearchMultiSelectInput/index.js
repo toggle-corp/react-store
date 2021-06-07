@@ -400,13 +400,10 @@ class SearchMultiSelectInput extends React.PureComponent {
             inputInFocus && 'input-in-focus',
             error && styles.error,
             error && 'error',
-            hideClearButton && styles.hideClearButton,
             hideClearButton && 'hide-clear-button',
-            hideSelectAllButton && styles.hideSelectAllButton,
             hideSelectAllButton && 'hide-select-all-button',
             value.length !== 0 && styles.filled,
             value.length !== 0 && 'filled',
-            value.length === options.length && styles.completelyFilled,
             value.length === options.length && 'completely-filled',
         );
 

@@ -53,6 +53,7 @@ export default (WrappedComponent) => {
 
         static defaultProps = defaultProps;
 
+        // eslint-disable-next-line camelcase
         UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 isOptionsShown: oldIsOptionsShown,

@@ -79,11 +79,8 @@ export class NormalChecklistInput extends React.PureComponent {
             classNameFromProps,
             styles.listSelection,
             'list-selection',
-            segment ? styles.multiSegment : styles.singleSegment,
             segment ? 'multi-segment' : 'single-segment',
-            disabled && styles.disabled,
             disabled && 'disabled',
-            error && styles.error,
             error && 'error',
         );
 
@@ -134,15 +131,8 @@ export class NormalChecklistInput extends React.PureComponent {
         } = this.props;
 
         const selected = value.indexOf(key) >= 0;
-        /*
-        const className = _cs(
-            styles.item,
-            isDefined(selected) && styles.checked,
-        );
-        */
 
         return {
-            // className,
             className: styles.item,
             label: labelSelector(itemData),
             tooltip: tooltipSelector(itemData),

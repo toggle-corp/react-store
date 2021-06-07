@@ -33,6 +33,7 @@ export default function withTracker(WrappedComponent, options = {}) {
             trackPage(page, options);
         }
 
+        // eslint-disable-next-line camelcase
         UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 location,

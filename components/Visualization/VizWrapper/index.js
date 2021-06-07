@@ -97,6 +97,7 @@ const wrapViz = (WrappedComponent) => {
             };
         }
 
+        // eslint-disable-next-line camelcase
         UNSAFE_componentWillReceiveProps(newProps) {
             const {
                 colorScheme: oldColorScheme,
@@ -217,13 +218,12 @@ const wrapViz = (WrappedComponent) => {
 
             return (
                 <div className={styles.header}>
-                    <h3 className={styles.heading}>
+                    <h3>
                         {(showBackButton && fullScreen) && (
                             <Button
                                 title="Go back"
                                 onClick={removeFullScreen}
                                 iconName="back"
-                                className={styles.showBackButton}
                                 transparent
                             />
                         )}
@@ -305,7 +305,7 @@ const wrapViz = (WrappedComponent) => {
                         fullScreen ? (
                             <FullScreen className={styles.fullScreenContainer}>
                                 <Header fullScreen />
-                                <div className={_cs(styles.vizContainer, vizContainerClass)}>
+                                <div className={_cs(vizContainerClass)}>
                                     <WrappedComponent
                                         className={styles.diagram}
                                         colorScheme={colorScheme}
@@ -315,7 +315,7 @@ const wrapViz = (WrappedComponent) => {
                                 </div>
                             </FullScreen>
                         ) : (
-                            <div className={_cs(styles.vizContainer, vizContainerClass)}>
+                            <div className={_cs(vizContainerClass)}>
                                 <WrappedComponent
                                     className={styles.diagram}
                                     colorScheme={colorScheme}

@@ -52,6 +52,7 @@ export default class MultiViewContainer extends React.Component {
         }
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { useHash: newUseHash } = nextProps;
         const { useHash: oldUseHash } = this.props;

@@ -21,6 +21,7 @@ const propTypes = {
     readOnly: PropTypes.bool,
     showFormatButton: PropTypes.bool,
     value: PropTypes.string,
+    extraButtons: PropTypes.node,
 };
 
 const defaultProps = {
@@ -31,6 +32,7 @@ const defaultProps = {
     required: false,
     showFormatButton: true,
     value: undefined,
+    extraButtons: undefined,
 };
 
 

@@ -4,4 +4,5 @@ export declare function getObjectChildren(
     obj: object,
     // FIXME: handle undefined in reverseRoute
     keys: (undefined| number | string)[],
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): (any | undefined);

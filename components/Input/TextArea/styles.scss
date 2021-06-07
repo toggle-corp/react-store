@@ -25,30 +25,9 @@
         }
     }
 
-    &.focused {
-        .label {
-            color: var(--color-accent);
-        }
-    }
-
     &.error {
         .input {
             border-bottom-color: var(--color-danger);
-        }
-
-        .label {
-            color: var(--color-danger);
-        }
-
-    }
-
-    &.required {
-        .label {
-            font-weight: var(--font-weight-medium);
-
-            &::after {
-                content: '*';
-            }
         }
     }
 

@@ -31,15 +31,10 @@ const propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
     }).isRequired,
-    data: PropTypes.shape({
-        series: PropTypes.arrayOf(PropTypes.shape({
-            name: PropTypes.string,
-            color: PropTypes.string,
-            values: PropTypes.arrayOf(PropTypes.number),
-        })),
-        dates: PropTypes.array,
-    }).isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    data: PropTypes.array.isRequired,
     colorScheme: PropTypes.arrayOf(PropTypes.string),
+    // eslint-disable-next-line react/forbid-prop-types
     tickArguments: PropTypes.array,
     margins: PropTypes.shape({
         top: PropTypes.number,
@@ -47,6 +42,7 @@ const propTypes = {
         bottom: PropTypes.number,
         left: PropTypes.number,
     }),
+    className: PropTypes.string,
 };
 const defaultProps = {
     colorScheme: schemeAccent,
@@ -57,6 +53,7 @@ const defaultProps = {
         bottom: 40,
         left: 40,
     },
+    className: undefined,
 };
 
 class MultiLineChart extends React.PureComponent {
@@ -202,7 +199,6 @@ class MultiLineChart extends React.PureComponent {
                 <Float>
                     <div
                         ref={(el) => { this.tooltip = el; }}
-                        className={styles.tooltip}
                     />
                 </Float>
             </>
