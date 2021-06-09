@@ -16,12 +16,12 @@ const emptyList: unknown[] = [];
 type ListViewProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = {
     className?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emptyComponent: any;
+    emptyComponent?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emptyWhenFilterComponent: any;
-    filtered: boolean;
+    emptyWhenFilterComponent?: any;
+    filtered?: boolean;
     id?: string;
-    pending: boolean;
+    pending?: boolean;
 } & ListProps<D, P, K, GP, GK>;
 
 function ListView<
