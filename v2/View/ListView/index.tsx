@@ -11,9 +11,13 @@ import DefaultEmptyComponent from './EmptyComponent';
 
 import styles from './styles.scss';
 
+const emptyList: unknown[] = [];
+
 type ListViewProps<D, P, K extends OptionKey, GP, GK extends OptionKey> = {
     className?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emptyComponent: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emptyWhenFilterComponent: any;
     filtered: boolean;
     id?: string;
@@ -29,17 +33,18 @@ function ListView<
         id,
         className: classNameFromProps,
 
-        emptyComponent: EmptyComponent,
-        emptyWhenFilterComponent: EmptyWhenFilterComponent,
-        filtered,
-        pending,
+        emptyComponent: EmptyComponent = DefaultEmptyComponent,
+        emptyWhenFilterComponent: EmptyWhenFilterComponent = DefaultEmptyWhenFilterComponent,
+        filtered = false,
+        pending = false,
+        data = emptyList as D[],
 
         ...otherProps
     } = props;
 
     let content = null;
 
-    const isEmpty = otherProps.data.length <= 0;
+    const isEmpty = data.length <= 0;
 
     if (isEmpty) {
         if (filtered) {
@@ -54,6 +59,7 @@ function ListView<
     } else {
         content = (
             <List
+                data={data}
                 {...otherProps}
             />
         );
@@ -78,13 +84,5 @@ function ListView<
         </div>
     );
 }
-
-ListView.defaultProps = {
-    data: [],
-    emptyComponent: DefaultEmptyComponent,
-    emptyWhenFilterComponent: DefaultEmptyWhenFilterComponent,
-    filtered: false,
-    pending: false,
-};
 
 export default ListView;

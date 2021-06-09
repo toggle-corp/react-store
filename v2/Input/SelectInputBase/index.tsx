@@ -284,7 +284,6 @@ function SelectInputBase<T, K extends OptionKey = string>(props: SelectInputBase
         error && 'error',
         inputInFocus && styles.inputInFocus,
         inputInFocus && 'input-in-focus',
-        !showClearButton && styles.hideClearButton,
         !showClearButton && 'hide-clear-button',
         isFilled && styles.filled,
         isFilled && 'filled',

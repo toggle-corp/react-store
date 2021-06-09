@@ -128,6 +128,7 @@ class ForceDirectedGraph extends React.PureComponent {
         this.updateData(this.props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { data } = this.props;
         if (nextProps.data !== data) {
@@ -295,7 +296,7 @@ class ForceDirectedGraph extends React.PureComponent {
         if (useVoronoi) {
             node
                 .append('circle')
-                .attr('class', `circle ${styles.cirlce}`)
+                .attr('class', 'circle')
                 .attr('r', circleRadius)
                 .attr('fill', d => color(groupSelector(d)));
 

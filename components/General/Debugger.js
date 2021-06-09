@@ -15,9 +15,10 @@ const findDifferenceInObject = (o, n) => {
     return changes;
 };
 
-export default function (name) {
+export default function Debugger(name) {
     return WrappedComponent => (
         class extends React.PureComponent {
+            // eslint-disable-next-line camelcase
             UNSAFE_componentWillReceiveProps(nextProps) {
                 console.warn(`Received change for Component ${name}`);
                 const changes = findDifferenceInObject(this.props, nextProps);

@@ -18,6 +18,7 @@ const propTypes = {
      */
     className: PropTypes.string,
 
+    // eslint-disable-next-line react/forbid-prop-types
     style: PropTypes.object,
 
     /**

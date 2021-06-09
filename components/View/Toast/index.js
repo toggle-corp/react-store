@@ -71,6 +71,7 @@ export default class Toast extends React.Component {
         }
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { notification: nextNotification } = nextProps;
         const { notification: currentNotification } = this.props;

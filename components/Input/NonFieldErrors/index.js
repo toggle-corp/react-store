@@ -11,9 +11,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    errors: PropTypes.arrayOf(
+    errors: PropTypes.oneOf([
+        PropTypes.arrayOf(PropTypes.string),
         PropTypes.string,
-    ),
+    ]),
     persistent: PropTypes.bool,
 };
 
@@ -36,7 +37,19 @@ class NonFieldErrors extends React.PureComponent {
         } = this.props;
 
         let errorComponents;
-        if (errors && errors.length > 0) {
+        if (typeof errors === 'string') {
+            errorComponents = (
+                <div
+                    className={_cs(
+                        styles.error,
+                        styles.empty,
+                        !persistent && styles.remove,
+                    )}
+                >
+                    {errors}
+                </div>
+            );
+        } else if (errors && errors.length > 0) {
             errorComponents = errors.map(error => (
                 <div
                     className={_cs(styles.error, 'error')}

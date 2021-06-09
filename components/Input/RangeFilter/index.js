@@ -31,6 +31,7 @@ class RangeFilter extends React.PureComponent {
         this.updateFromProps(props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { options } = this.props;
         // Checking this.value instead of this.props.value is intentional

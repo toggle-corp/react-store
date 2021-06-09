@@ -43,6 +43,7 @@ export default (WrappedComponent) => {
             this.complementedValue = complement(value, options, keySelector);
         }
 
+        // eslint-disable-next-line camelcase
         UNSAFE_componentWillReceiveProps(nextProps) {
             const {
                 options: oldOptions,

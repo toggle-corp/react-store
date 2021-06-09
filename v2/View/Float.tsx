@@ -33,7 +33,7 @@ function Float(props: Props) {
 
     useLayoutEffect(
         handleInvalidate,
-        [],
+        [handleInvalidate],
     );
 
     useEffect(

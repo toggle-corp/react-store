@@ -122,6 +122,7 @@ class Organigram extends PureComponent {
         this.drawChart();
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { value } = this.props;
         if (value !== nextProps.value) {

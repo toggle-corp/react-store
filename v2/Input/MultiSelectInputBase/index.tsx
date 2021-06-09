@@ -293,7 +293,6 @@ function MultiSelectInputBase<T, K extends OptionKey = string>(props: MultiSelec
         error && 'error',
         inputInFocus && styles.inputInFocus,
         inputInFocus && 'input-in-focus',
-        !showClearButton && styles.hideClearButton,
         !showClearButton && 'hide-clear-button',
         isFilled && styles.filled,
         isFilled && 'filled',

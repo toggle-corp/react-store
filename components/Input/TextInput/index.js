@@ -77,11 +77,9 @@ class TextInput extends React.PureComponent {
             'text-input',
             disabled && styles.disabled,
             disabled && 'disabled',
-            isFocused && styles.focused,
             isFocused && 'focused',
             error && styles.error,
             error && 'error',
-            required && styles.required,
             required && 'required',
         );
 

@@ -39,6 +39,7 @@ export default class Alert extends React.PureComponent {
         };
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             show: nextProps.show,

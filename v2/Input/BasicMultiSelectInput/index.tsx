@@ -41,6 +41,8 @@ type injectedProps = 'searchValue'
 | 'searchOptionsFiltered'
 | 'onShowPopupChange';
 
+const defaultOptions: unknown[] = [];
+
 type Props<T, K extends OptionKey> = Omit<MultiSelectInputBaseProps<T, K>, injectedProps> & {
     onSearchValueChange: (value: string | undefined) => void;
     onOptionsChange: (options: T[]) => void;
@@ -54,17 +56,15 @@ function BasicMultiSelectInput<T = DefaultItem, K extends OptionKey = string>(pr
         onSearchValueChange,
         onOptionsChange,
         onChange,
-        minSearchValueLength,
+        minSearchValueLength = 0,
         searchOptions: searchOptionsFromProps,
         emptyComponent = EmptyComponent,
         emptyWhenFilterComponent = FilterEmptyComponent,
+        placeholder = 'Select options',
+        options = defaultOptions as T[],
+        keySelector,
         ...otherProps
     } = props;
-
-    const {
-        options,
-        keySelector,
-    } = otherProps;
 
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
     const [showPopup, setShowPopup] = useState(false);
@@ -138,16 +138,12 @@ function BasicMultiSelectInput<T = DefaultItem, K extends OptionKey = string>(pr
             onChange={interceptedOnChange}
             searchOptions={searchOptions}
 
+            placeholder={placeholder}
+            options={options}
+            keySelector={keySelector}
             {...otherProps}
         />
     );
 }
-BasicMultiSelectInput.defaultProps = {
-    keySelector: (item: DefaultItem) => item.key,
-    labelSelector: (item: DefaultItem) => item.label,
-    options: [],
-    minSearchValueLength: 0,
-    placeholder: 'Select options',
-};
 
 export default BasicMultiSelectInput;

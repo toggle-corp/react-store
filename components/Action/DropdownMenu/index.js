@@ -166,7 +166,6 @@ export default class DropdownMenu extends React.PureComponent {
         const className = _cs(
             'dropdown-button',
             styles.dropdownButton,
-            disabled && styles.disabled,
             (leftComponent || iconName) && styles.hasLeft,
         );
 
@@ -247,7 +246,6 @@ export default class DropdownMenu extends React.PureComponent {
     render() {
         const {
             className,
-            disabled,
         } = this.props;
 
         const { showDropdown } = this.state;
@@ -264,7 +262,6 @@ export default class DropdownMenu extends React.PureComponent {
                     styles.dropdownMenu,
                     showDropdown && 'active',
                     showDropdown && styles.active,
-                    disabled && styles.disabled,
                 )}
             >
                 <DropdownButton />

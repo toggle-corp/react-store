@@ -394,7 +394,6 @@ class SunBurst extends PureComponent {
         const { className } = this.props;
         const svgClassName = [
             'sunburst',
-            styles.sunburst,
             className,
         ].join(' ');
 

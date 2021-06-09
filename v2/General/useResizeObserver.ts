@@ -35,7 +35,7 @@ function useResizeObserver(
         [
             onObserve,
             onResize,
-            containerRef.current,
+            containerRef,
         ],
     );
 }

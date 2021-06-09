@@ -46,6 +46,7 @@ export default class GridViewLayout extends React.PureComponent {
         this.data = getSortedItems(data, layoutSelector);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             layoutSelector: newLayoutSelector,

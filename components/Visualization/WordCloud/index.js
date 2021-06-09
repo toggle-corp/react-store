@@ -97,6 +97,7 @@ class WordCloud extends PureComponent {
         this.startWordCloudComputation(props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.startWordCloudComputation(nextProps);
     }
@@ -220,13 +221,6 @@ class WordCloud extends PureComponent {
             styles.wordCloud,
             'word-cloud',
         );
-
-        /*
-        const svgClassName = _cs(
-            'svg',
-            styles.svg,
-        );
-        */
 
         const colorScale = this.getColorScale(colorScheme);
         const { calculatedWords } = this.state;

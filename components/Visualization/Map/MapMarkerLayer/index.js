@@ -37,6 +37,7 @@ class MapMarkerLayer extends React.PureComponent {
         this.create(this.props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             map: oldMap,

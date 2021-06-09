@@ -160,6 +160,7 @@ export default class Table extends React.PureComponent {
     }
 
     // normal, next, new, state
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: nextData,

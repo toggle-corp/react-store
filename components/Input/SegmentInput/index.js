@@ -123,7 +123,6 @@ export class NormalSegmentInput extends React.PureComponent {
         }
         if (required) {
             classNames.push('required');
-            classNames.push(styles.required);
         }
         return classNames.join(' ');
     }

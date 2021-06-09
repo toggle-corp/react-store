@@ -340,7 +340,6 @@ class SearchSelectInput extends React.PureComponent {
             error && 'error',
             inputInFocus && styles.inputInFocus,
             inputInFocus && 'input-in-focus',
-            hideClearButton && styles.hideClearButton,
             hideClearButton && 'hide-clear-button',
             isFilled && styles.filled,
             isFilled && 'filled',

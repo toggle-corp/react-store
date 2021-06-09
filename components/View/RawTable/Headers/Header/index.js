@@ -67,7 +67,6 @@ export default class Header extends React.PureComponent {
             className,
             hoverable && 'hoverable',
             highlighted && 'highlighted',
-            columnHighlighted && styles.columnHighlighted,
             columnHighlighted && 'column-highlighted',
             uniqueKey,
             disabled && styles.disabled,

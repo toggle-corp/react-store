@@ -40,6 +40,7 @@ const propTypes = {
     onClose: PropTypes.func,
 
     elementRef: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -53,6 +54,7 @@ const defaultProps = {
     closeOnEscape: false,
     parent: undefined,
     onInvalidate: undefined,
+    style: undefined,
 };
 
 /* Float with parent, onFocus and onBlur */

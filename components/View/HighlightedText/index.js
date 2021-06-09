@@ -63,6 +63,7 @@ const propTypes = {
     highlights: PropTypes.arrayOf(PropTypes.shape({
         start: PropTypes.number,
         end: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         item: PropTypes.object,
     })).isRequired,
     renderer: PropTypes.func,

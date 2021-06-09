@@ -165,10 +165,8 @@ export class NormalTextArea extends React.PureComponent {
             disabled && 'disabled',
             disabled && styles.disabled,
             isFocused && 'focused',
-            isFocused && styles.focused,
             isTruthyString(error) && 'error',
             isTruthyString(error) && styles.error,
-            required && styles.required,
             required && 'required',
         );
 

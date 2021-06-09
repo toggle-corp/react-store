@@ -40,6 +40,7 @@ export default class Option extends React.PureComponent {
         }
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { focused } = this.props;
 

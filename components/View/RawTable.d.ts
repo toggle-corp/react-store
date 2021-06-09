@@ -36,6 +36,7 @@ interface Props<Data, Header = DefaultHeader> {
     onDataSort?(data: Data[]): void;
 }
 
+// eslint-disable-next-line react/prefer-stateless-function, @typescript-eslint/no-explicit-any
 declare class RawTable<D, H> extends React.Component<Props<D, H>, any> {
 }
 export default RawTable;

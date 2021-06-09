@@ -31,6 +31,7 @@ export default (WrappedComponent) => {
             };
         }
 
+        // eslint-disable-next-line camelcase
         UNSAFE_componentWillReceiveProps(nextProps) {
             const { value } = this.props;
             if (value !== nextProps.value) {

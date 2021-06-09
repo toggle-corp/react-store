@@ -44,6 +44,7 @@ export default class DayPicker extends React.PureComponent {
         this.today = new Date();
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             year,

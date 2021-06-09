@@ -188,6 +188,7 @@ class ForceDirectedGraph extends React.PureComponent {
         });
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             data: oldData,

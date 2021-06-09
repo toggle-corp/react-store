@@ -98,6 +98,7 @@ class VirtualizedListView extends React.Component {
         this.setItemHeight();
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             itemHeight,

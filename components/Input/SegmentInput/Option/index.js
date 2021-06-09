@@ -27,6 +27,9 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     datum: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]),
     data: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    activeClassName: PropTypes.string,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
@@ -37,6 +40,8 @@ const defaultProps = {
     rendererClassName: '',
     rendererParams: undefined,
     datum: {},
+    activeClassName: undefined,
+    className: undefined,
 };
 
 export default class SegmentOption extends React.PureComponent {
