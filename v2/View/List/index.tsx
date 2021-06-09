@@ -13,8 +13,10 @@ import { OptionKey } from '../../types';
 - Add prop grouped to identify grouped / non-grouped list
 */
 
+const emptyList: unknown[] = [];
+
 interface BaseProps<D, P, K extends OptionKey> {
-    data: D[];
+    data: D[] | undefined;
     keySelector(datum: D, index: number): K;
     renderer: React.ComponentType<P>;
     rendererClassName?: string;
@@ -58,7 +60,7 @@ function GroupedList<D, P, K extends OptionKey, GP, GK extends OptionKey>(
         groupRenderer: GroupRenderer,
         groupRendererClassName,
         groupRendererParams,
-        data,
+        data = emptyList as D[],
         keySelector,
         rendererParams,
         rendererClassName,
