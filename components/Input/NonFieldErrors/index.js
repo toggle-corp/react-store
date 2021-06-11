@@ -39,13 +39,7 @@ class NonFieldErrors extends React.PureComponent {
         let errorComponents;
         if (typeof errors === 'string') {
             errorComponents = (
-                <div
-                    className={_cs(
-                        styles.error,
-                        styles.empty,
-                        !persistent && styles.remove,
-                    )}
-                >
+                <div className={_cs(styles.error, 'error')}>
                     {errors}
                 </div>
             );
