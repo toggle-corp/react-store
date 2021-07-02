@@ -104,6 +104,8 @@ const ConfirmOnClick = (WrappedComponent) => {
                 challengeValue,
                 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
                 skipConfirmation,
+                // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+                onMessageShown,
                 challengeLabel,
                 challengePlaceholder,
                 confirmationDisabled,
