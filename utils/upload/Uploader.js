@@ -113,6 +113,9 @@ export default class Uploader {
         formData.append('title', this.file.name);
 
         const parameters = typeof this.params === 'function' ? this.params() : this.params;
+        if (parameters.withCredentials) {
+            this.xhr.withCredentials = true;
+        }
 
         // DEBUG:
         console.log(`Fetching ${this.uploadUrl}`, parameters);
