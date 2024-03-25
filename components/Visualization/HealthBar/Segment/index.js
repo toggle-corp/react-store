@@ -70,7 +70,7 @@ export default class Segment extends PureComponent {
 
         return (
             <Tooltip
-                tooltip={
+                tooltip={(
                     <div className={styles.tooltip}>
                         {label === '' ? (
                             value
@@ -84,7 +84,7 @@ export default class Segment extends PureComponent {
                             </div>
                         )}
                     </div>
-                }
+                )}
                 center={centerTooltip}
             >
                 <div
