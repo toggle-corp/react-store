@@ -1,9 +1,5 @@
 @import '../../../stylesheets/utils';
 
-:root {
-    --radius-button-border: 2px;
-}
-
 @mixin button-props($base-color) {
     // border: var(--width-separator-thin) solid var(--color-separator-light);
     // color: var(--color-text);
@@ -35,113 +31,99 @@
 }
 
 .button {
-    border: var(--width-separator-thin) solid var(--color-separator-light);
+    --background-color: transparent;
+    --color: var(--color-text);
+    --border-color: transparent;
+
+    border: var(--width-separator-thin) solid var(--border-color);
     border-radius: var(--radius-button-border);
-    background-color: transparent;
+    background-color: var(--background-color);
     padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: uppercase;
+    color: var(--color);
     font-family: inherit;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
 
+    &:disabled {
+        --background-color: var(--color-background-disabled);
+        --color: var(--color-text-disabled);
+        --border-color: var(--color-separator-light);
+    }
+
     &:not(:disabled) {
         cursor: pointer;
-    }
 
-    &:not(:disabled) {
+        &.button-default {
+            --color: var(--color-text);
+        }
+
+        &.button-accent {
+            --color: var(--color-accent);
+        }
+
+        &.button-primary {
+            --color: var(--color-primary);
+        }
+
+        &.button-danger {
+            --color: var(--color-danger);
+        }
+
+        &.button-success {
+            --color: var(--color-success);
+        }
+
+        &.button-warning {
+            --color: var(--color-warning);
+        }
+
         &:active {
-            // @include shadow-button-active;
             transform: translateY(1px);
         }
-    }
 
-    &:not(.transparent) {
-        &:not(:disabled) {
-            // @include shadow-button;
-        }
+        &:not(.transparent) {
+            --background-color: var(--color-foreground);
 
-        &.button-default {
-            background-color: var(--color-foreground);
-            color: var(--color-text);
-
-            &:focus {
-                // @include outline-button(var(--color-separator-alt));
+            &.button-default {
+                --border-color: var(--color-separator);
             }
 
-            &:not(:disabled) {
-                border: var(--width-separator-thin) solid var(--color-separator-alt);
-
-                &:hover {
-                    background-color: var(--color-background-hover);
-                    // color: var(--color-text);
-                    // background-color: get-hover-color($base-color);
-                }
+            &.button-accent {
+                --border-color: var(--color-accent);
             }
-            // @include button-props(var(--color-foreground-alt));
+
+            &.button-primary {
+                --border-color: var(--color-primary);
+            }
+
+            &.button-danger {
+                --border-color: var(--color-danger);
+            }
+
+            &.button-success {
+                --border-color: var(--color-success);
+            }
+
+            &.button-warning {
+                --border-color: var(--color-warning);
+            }
+
+            &:hover {
+                --background-color: var(--color-background-hover);
+            }
         }
 
-        &.button-accent {
-            @include button-props(var(--color-accent));
-        }
-
-        &.button-primary {
-            @include button-props(var(--color-primary));
-        }
-
-        &.button-danger {
-            @include button-props(var(--color-danger));
-        }
-
-        &.button-success {
-            @include button-props(var(--color-success));
-        }
-
-        &.button-warning {
-            @include button-props(var(--color-warning));
-        }
-
-        &:disabled {
-            background-color: var(--color-background-disabled);
-            color: var(--color-text-disabled);
-        }
     }
+
 
     &.transparent {
-        border: 0;
-
-        &:focus {
-            border-bottom: 0;
-        }
-
-        &.button-default {
-            @include transparent-button-props(var(--color-text));
-        }
-
-        &.button-accent {
-            @include transparent-button-props(var(--color-accent));
-        }
-
-        &.button-primary {
-            @include transparent-button-props(var(--color-primary));
-        }
-
-        &.button-danger {
-            @include transparent-button-props(var(--color-danger));
-        }
-
-        &.button-success {
-            @include transparent-button-props(var(--color-success));
-        }
-
-        &.button-warning {
-            @include transparent-button-props(var(--color-warning));
-        }
+        --background-color: transparent;
+        --border-color: transparent;
 
         &:disabled {
-            cursor: default;
-            color: var(--color-text-disabled);
+            --color: var(--color-text-disabled);
         }
-
     }
 
     .spinner {

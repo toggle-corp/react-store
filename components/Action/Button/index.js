@@ -18,6 +18,7 @@ eslint css-modules/no-unused-class: [
     }
 ]
 */
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -99,34 +100,42 @@ const defaultProps = {
     onClickParams: undefined,
 };
 
-/**
- * Basic button component
- */
-class Button extends React.PureComponent {
-    static propTypes = propTypes;
+function Button(props) {
+    const {
+        onClick,
+        onClickParams,
+        changeDelay,
+        iconName,
+        children,
+        disabled,
+        pending,
+        type,
+        buttonType,
+        className: classNameFromProps,
+        smallHorizontalPadding,
+        smallVerticalPadding,
+        transparent,
 
-    static defaultProps = defaultProps;
+        ...otherProps
+    } = props;
 
-    componentWillUnmount() {
-        if (this.changeTimeout) {
-            clearTimeout(this.changeTimeout);
+    const changeTimeoutRef = React.useRef(null);
+
+    React.useEffect(() => (
+        () => {
+            window.clearTimeout(changeTimeoutRef.current);
         }
-    }
+    ), []);
 
-    handleClick = (e) => {
-        clearTimeout(this.changeTimeout);
-        const {
-            onClick,
-            onClickParams,
-            changeDelay,
-        } = this.props;
+    const handleClick = React.useCallback((e) => {
+        clearTimeout(changeTimeoutRef.current);
 
         if (!onClick) {
             return;
         }
 
 
-        this.changeTimeout = setTimeout(
+        changeTimeoutRef.current = window.setTimeout(
             () => {
                 onClick({
                     event: e,
@@ -135,76 +144,58 @@ class Button extends React.PureComponent {
             },
             changeDelay,
         );
-    }
+    }, [onClick, changeDelay, onClickParams]);
 
-    render() {
-        const {
-            iconName,
-            children,
-            disabled,
-            pending,
-            type,
-            buttonType,
-            className: classNameFromProps,
-            smallHorizontalPadding,
-            smallVerticalPadding,
-            transparent,
+    const buttonClassName = _cs(
+        classNameFromProps,
+        'button',
+        styles.button,
+        buttonType,
+        buttonType && styles[buttonType],
+        iconName && children && 'with-icon-and-children',
+        iconName && children && styles.withIconAndChildren,
 
-            onClick, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            onClickParams, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            changeDelay, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            ...otherProps
-        } = this.props;
+        smallHorizontalPadding && 'small-horizontal-padding',
+        smallHorizontalPadding && styles.smallHorizontalPadding,
+        smallVerticalPadding && 'small-vertical-padding',
+        smallVerticalPadding && styles.smallVerticalPadding,
 
-        const buttonClassName = _cs(
-            classNameFromProps,
-            'button',
-            styles.button,
-            buttonType,
-            buttonType && styles[buttonType],
-            iconName && children && 'with-icon-and-children',
-            iconName && children && styles.withIconAndChildren,
+        transparent && 'transparent',
+        transparent && styles.transparent,
+    );
 
-            smallHorizontalPadding && 'small-horizontal-padding',
-            smallHorizontalPadding && styles.smallHorizontalPadding,
-            smallVerticalPadding && 'small-vertical-padding',
-            smallVerticalPadding && styles.smallVerticalPadding,
+    const iconClassName = _cs(
+        'icon',
+        styles.icon,
+    );
 
-            transparent && 'transparent',
-            transparent && styles.transparent,
-        );
-
-        const iconClassName = _cs(
-            'icon',
-            styles.icon,
-            // pending && styles.pendingIcon,
-        );
-
-        /* eslint-disable react/button-has-type */
-        return (
-            <button
-                className={buttonClassName}
-                disabled={disabled || pending}
-                onClick={this.handleClick}
-                type={type}
-                {...otherProps}
-            >
-                {pending ? (
-                    <Spinner
-                        className={styles.spinner}
-                        size="small"
-                    />
-                ) : (
-                    <Icon
-                        name={iconName}
-                        className={iconClassName}
-                    />
-                )}
-                { children }
-            </button>
-        );
-        /* eslint-enable react/button-has-type */
-    }
+    /* eslint-disable react/button-has-type */
+    return (
+        <button
+            className={buttonClassName}
+            disabled={disabled || pending}
+            onClick={handleClick}
+            type={type}
+            {...otherProps}
+        >
+            {pending ? (
+                <Spinner
+                    className={styles.spinner}
+                    size="small"
+                />
+            ) : (
+                <Icon
+                    name={iconName}
+                    className={iconClassName}
+                />
+            )}
+            { children }
+        </button>
+    );
+    /* eslint-enable react/button-has-type */
 }
+
+Button.propTypes = propTypes;
+Button.defaultProps = defaultProps;
 
 export default FaramActionElement(Button);
